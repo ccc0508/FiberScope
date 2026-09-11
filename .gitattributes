@@ -1,0 +1,11 @@
+* text=auto
+*.py text eol=lf
+*.sql text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.vue text eol=lf
+*.ts text eol=lf
+*.xlsx binary
+*.docx binary
+*.pptx binary
+*.pdf binary
