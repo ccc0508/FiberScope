@@ -1,0 +1,201 @@
+{
+  "status": "PASS",
+  "generated_at_utc": "2026-08-02T08:46:04.628541+00:00",
+  "data_directory": "D:\\develop\\srp2.0\\data",
+  "blocking_error_count": 0,
+  "warning_count": 2,
+  "warnings": [
+    "R016：透气度源表未标单位，数值原样保留，设计暂按μm/(Pa·s)记录",
+    "R017：耐折度单位待确认，数值原样写入folding_endurance_raw"
+  ],
+  "counts": {
+    "sample": {
+      "expected": 61,
+      "actual": 61,
+      "matched": true
+    },
+    "experiment_sample": {
+      "expected": 63,
+      "actual": 63,
+      "matched": true
+    },
+    "sample_component": {
+      "expected": 70,
+      "actual": 70,
+      "matched": true
+    },
+    "fiber_measurement": {
+      "expected": 61,
+      "actual": 61,
+      "matched": true
+    },
+    "paper_measurement": {
+      "expected": 61,
+      "actual": 61,
+      "matched": true
+    },
+    "data_source": {
+      "expected": 178,
+      "actual": 178,
+      "matched": true
+    }
+  },
+  "source_files": [
+    {
+      "file_name": "针叶木-打浆转数-打浆度(1).xlsx",
+      "version": "原始版",
+      "sheet_name": "Sheet1",
+      "expected_rows": 28,
+      "actual_rows": 28,
+      "sha256": "c712c20a369f5a56e446adf04ceb45eade7a5422e9fec1b0dcdf9c1144eca914"
+    },
+    {
+      "file_name": "针叶木-打浆转数-纤维特性(1).xlsx",
+      "version": "原始版",
+      "sheet_name": "Sheet1",
+      "expected_rows": 28,
+      "actual_rows": 28,
+      "sha256": "334598b2ddcfb1fd3851643ce0413903ce122d034f11b4b5f2f15898de1c55e2"
+    },
+    {
+      "file_name": "针叶木-打浆转数-纸张性能(1).xlsx",
+      "version": "原始版",
+      "sheet_name": "Sheet1",
+      "expected_rows": 28,
+      "actual_rows": 28,
+      "sha256": "191d86fda36e2c31523274f17cbaa24ef75cdd28e6651dee23185c65db93fdef"
+    },
+    {
+      "file_name": "data1-阔叶木-打浆转数-打浆度(1).xlsx",
+      "version": "原始版",
+      "sheet_name": "Sheet1",
+      "expected_rows": 24,
+      "actual_rows": 24,
+      "sha256": "729d4820415cd69c1495a0787dcd7ed0c4b3d14662b5785073fa2fab73c082ff"
+    },
+    {
+      "file_name": "data2-阔叶木-打浆转数-纤维特性(1).xlsx",
+      "version": "原始版",
+      "sheet_name": "Sheet1",
+      "expected_rows": 24,
+      "actual_rows": 24,
+      "sha256": "84d2559e5c78edcd8187228c1be64819aaa6f68c0b8d2bbeb52e5668cde6ac8a"
+    },
+    {
+      "file_name": "data3-阔叶木-打浆转数-纸张性能(1).xlsx",
+      "version": "原始版",
+      "sheet_name": "Sheet1",
+      "expected_rows": 24,
+      "actual_rows": 24,
+      "sha256": "705c12b6a9bddba2549c12e4b82ce3b8a32e33875cecfe1589115a81dc36cf93"
+    },
+    {
+      "file_name": "data4-针阔-复配-纤维特性0110(1).xlsx",
+      "version": "0110",
+      "sheet_name": "Sheet1",
+      "expected_rows": 11,
+      "actual_rows": 11,
+      "sha256": "5b3762913f2dea79a26c9649b1b321b81d23b63e741fd3a3c3a77d61d83e1a14"
+    },
+    {
+      "file_name": "data5-针阔-复配-纸张特性0110(1).xlsx",
+      "version": "0110",
+      "sheet_name": "Sheet1",
+      "expected_rows": 11,
+      "actual_rows": 11,
+      "sha256": "c7de273d78619c2474bee1c16c652eed251152870b8dc2f117be2d686ace7016"
+    }
+  ],
+  "checks": [
+    {
+      "rule_id": "R001",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R002",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R003",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R004",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R005",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R006",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R007",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R008",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R009",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R010",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R011",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R012",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R013",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R014",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R015",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R016",
+      "status": "WARNING"
+    },
+    {
+      "rule_id": "R017",
+      "status": "WARNING"
+    },
+    {
+      "rule_id": "R018",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R019",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R020",
+      "status": "PASS"
+    },
+    {
+      "rule_id": "R021",
+      "status": "NOT_CHECKED",
+      "reason": "由数据库权限脚本V004检查"
+    },
+    {
+      "rule_id": "R022",
+      "status": "NOT_CHECKED",
+      "reason": "应在备份交付阶段执行"
+    }
+  ]
+}
