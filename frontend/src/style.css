@@ -7,7 +7,7 @@
     "Microsoft YaHei",
     sans-serif;
   color: #354052;
-  background: #f7f8fa;
+  background: var(--canvas);
   font-synthesis: none;
   font-size: 14px;
   --blue: #4386bf;
@@ -18,12 +18,15 @@
   --teal: #67aaa0;
   --amber: #b77c2b;
   --radius: 8px;
+  --canvas: #f9fbfc;
+  --sidebar-background: #f9fbfc;
 }
 * {
   box-sizing: border-box;
 }
 body {
   margin: 0;
+  background: var(--canvas);
 }
 button,
 input,
@@ -110,7 +113,7 @@ small {
   position: fixed;
   inset: 0 auto 0 0;
   width: 232px;
-  background: #fff;
+  background: var(--sidebar-background);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -141,7 +144,7 @@ small {
   display: flex;
   align-items: center;
   gap: 11px;
-  background: #f8f9fb;
+  background: #fff;
   border: 1px solid #edf0f3;
   border-radius: 7px;
   margin: 29px 0 24px;
@@ -215,6 +218,33 @@ small {
 }
 .nav-item.active:hover {
   background: #e3edf8;
+}
+.sliding-navigation {
+  position: relative;
+  isolation: isolate;
+}
+.nav-highlight {
+  position: absolute;
+  inset: 0 0 auto;
+  border-radius: 7px;
+  background: #e4edfb;
+  pointer-events: none;
+  z-index: -1;
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), height 240ms ease;
+}
+.sliding-navigation .nav-item,
+.sliding-navigation .nav-item:hover {
+  background: transparent;
+  transition: color 160ms ease;
+}
+.sliding-navigation .nav-item:hover {
+  color: #377bb5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-highlight,
+  .sliding-navigation .nav-item {
+    transition: none;
+  }
 }
 .sidebar-bottom {
   margin-top: auto;
@@ -404,7 +434,7 @@ h1 {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 19px 20px 17px;
-  box-shadow: 0 2px 3px #25395202;
+  box-shadow: none;
 }
 .metric-label {
   font-size: 13px;
@@ -449,7 +479,7 @@ h1 {
   background: white;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: 0 2px 3px #25395202;
+  box-shadow: none;
 }
 .summary-grid {
   display: grid;
@@ -692,28 +722,9 @@ h1 {
   width: 20px;
   height: 24px;
 }
-.type-select {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  border: 1px solid #dfe5ec;
-  border-radius: 5px;
-  height: 35px;
-  padding: 0 9px;
-  color: #8191a5;
-}
-.type-select select {
-  outline: none;
-  border: 0;
-  color: #617085;
-  background: white;
-  font-size: 13px;
-  padding: 3px 9px 3px 0;
-  cursor: pointer;
-}
-.type-select:focus-within {
-  box-shadow: 0 0 0 2px #ebf3fa;
-  border-color: #81afd3;
+.table-refreshing {
+  opacity: 0.45;
+  pointer-events: none;
 }
 .toolbar-spacer {
   flex: 1;
@@ -1388,9 +1399,6 @@ dialog::backdrop {
   .search-field {
     width: 100%;
     height: 37px;
-  }
-  .type-select {
-    height: 34px;
   }
   .toolbar-spacer {
     display: none;

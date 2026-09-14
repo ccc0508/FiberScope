@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import {
   LayoutDashboard,
   ChartNoAxesCombined,
@@ -16,6 +16,38 @@ import {
 } from "lucide-vue-next";
 const navOpen = ref(false);
 const info = ref<HTMLDialogElement>();
+const navigation = ref<HTMLElement>();
+const highlight = ref({ y: 0, height: 43 });
+const hoveredItem = ref<HTMLElement>();
+let navObserver: ResizeObserver | undefined;
+function moveHighlight(item?: HTMLElement) {
+  const target = item ?? navigation.value?.querySelector<HTMLElement>(".active");
+  if (!target || !navigation.value) return;
+  const bounds = target.getBoundingClientRect();
+  highlight.value = {
+    y: bounds.top - navigation.value.getBoundingClientRect().top,
+    height: bounds.height,
+  };
+}
+function hoverNavigation(event: PointerEvent) {
+  if (event.pointerType === "touch") return;
+  const item = (event.target as HTMLElement).closest<HTMLElement>(".nav-item");
+  if (item) {
+    hoveredItem.value = item;
+    moveHighlight(item);
+  }
+}
+function resetHighlight() {
+  hoveredItem.value = undefined;
+  const focused = document.activeElement as HTMLElement | null;
+  moveHighlight(focused?.matches(".nav-item") && navigation.value?.contains(focused) ? focused : undefined);
+}
+onMounted(() => {
+  moveHighlight();
+  navObserver = new ResizeObserver(() => moveHighlight(hoveredItem.value));
+  if (navigation.value) navObserver.observe(navigation.value);
+});
+onBeforeUnmount(() => navObserver?.disconnect());
 const upcoming = [
   { name: "打浆分析", icon: ChartNoAxesCombined },
   { name: "复配分析", icon: Combine },
@@ -54,7 +86,19 @@ const upcoming = [
       ><span>植物纤维研究<small>实验数据工作台</small></span>
     </div>
     <div class="nav-label">工作空间</div>
-    <nav>
+    <nav
+      ref="navigation"
+      class="sliding-navigation"
+      @pointermove="hoverNavigation"
+      @pointerleave="resetHighlight"
+      @focusin="moveHighlight($event.target as HTMLElement)"
+      @focusout="moveHighlight()"
+    >
+      <div
+        class="nav-highlight"
+        aria-hidden="true"
+        :style="{ transform: `translateY(${highlight.y}px)`, height: `${highlight.height}px` }"
+      ></div>
       <RouterLink
         to="/"
         class="nav-item active"
