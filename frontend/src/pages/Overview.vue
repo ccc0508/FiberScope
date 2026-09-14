@@ -10,7 +10,6 @@ import {
   ChevronRight,
   CircleHelp,
   Database,
-  Filter,
   FlaskConical,
   Layers3,
   ListFilter,
@@ -31,6 +30,7 @@ import {
   type SampleType,
 } from "../api";
 import SampleDetail from "../components/SampleDetail.vue";
+import FilterSelect from "../components/FilterSelect.vue";
 
 const route = useRoute(),
   router = useRouter();
@@ -67,6 +67,15 @@ const filterCount = computed(
   () => Number(!!query.value) + Number(!!kind.value),
 );
 const counts = computed(() => metadata.value?.counts);
+const filterOptions = computed(() => [
+  { value: "", label: "全部样本类型", count: counts.value?.samples },
+  ...typeKeys.map((type, index) => ({
+    value: type,
+    label: typeNames[type],
+    count: counts.value ? typeCounts.value[type] : undefined,
+    color: ["#5796ce", "#79b7ad", "#ad9aca"][index],
+  })),
+]);
 const points = computed(() =>
   counts.value ? counts.value.beating + counts.value.blends : null,
 );
@@ -130,7 +139,6 @@ async function loadRows() {
   loading.value = true;
   error.value = "";
   requestId.value = "";
-  rows.value = [];
   try {
     const result = await get<ListResult<Sample>>(
       "samples",
@@ -149,6 +157,7 @@ async function loadRows() {
     if (page.value > Math.max(1, totalPages.value)) update({ page: 1 });
   } catch (e) {
     if (!current.signal.aborted) {
+      rows.value = [];
       error.value = e instanceof Error ? e.message : "样本读取失败。";
       requestId.value = e instanceof ApiError ? (e.requestId ?? "") : "";
     }
@@ -418,19 +427,13 @@ onBeforeUnmount(() => {
             <X :size="14" />
           </button>
         </form>
-        <label class="type-select"
-          ><Filter :size="15" /><span class="sr-only">样本类型</span
-          ><select
-            aria-label="样本类型"
-            :value="kind"
-            @change="chooseType(($event.target as HTMLSelectElement).value)"
-          >
-            <option value="">全部样本类型</option>
-            <option v-for="type in typeKeys" :key="type" :value="type">
-              {{ typeNames[type] }}
-            </option>
-          </select></label
-        >
+        <FilterSelect
+          id="sample-type"
+          label="样本类型"
+          :model-value="kind"
+          :options="filterOptions"
+          @update:model-value="chooseType"
+        />
         <span class="toolbar-spacer"></span
         ><span class="result-label"
           ><ListFilter :size="15" />{{
@@ -490,18 +493,22 @@ onBeforeUnmount(() => {
               <th><span class="sr-only">查看详情</span></th>
             </tr>
           </thead>
-          <tbody v-if="loading">
+          <tbody v-if="loading && !rows.length">
             <tr v-for="i in 6" :key="i">
               <td v-for="j in 8" :key="j">
                 <span class="skeleton cell-skeleton"></span>
               </td>
             </tr>
           </tbody>
-          <tbody v-else>
+          <tbody v-else :class="{ 'table-refreshing': loading }">
             <tr v-for="(sample, index) in rows" :key="sample.canonical_code">
               <td class="row-index">{{ (page - 1) * size + index + 1 }}</td>
               <td>
-                <button class="sample-code" @click="selected = sample">
+                <button
+                  class="sample-code"
+                  :disabled="loading"
+                  @click="selected = sample"
+                >
                   {{ sample.canonical_code }}
                 </button>
               </td>
@@ -545,6 +552,7 @@ onBeforeUnmount(() => {
               <td>
                 <button
                   class="icon-button row-detail"
+                  :disabled="loading"
                   :aria-label="`查看${sample.canonical_code}详情`"
                   @click="selected = sample"
                 >
