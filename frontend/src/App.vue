@@ -69,9 +69,8 @@ const upcoming = [
     <div class="brand">
       <RouterLink class="brand-link" to="/" @click="navOpen = false">
         <img src="/favicon.svg" width="34" height="34" alt="" />
-        <span
-          ><strong>FiberScope</strong><small>纤维视界</small></span
-        > </RouterLink
+        <strong class="platform-name"><span>植物纤维</span><span>可视化分析平台</span></strong>
+        </RouterLink
       ><button
         class="icon-button mobile-close"
         type="button"

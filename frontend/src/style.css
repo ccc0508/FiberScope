@@ -1429,6 +1429,19 @@ dialog::backdrop {
   gap: 11px;
   color: inherit;
 }
+.brand .platform-name {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+.platform-name span {
+  display: block;
+  white-space: nowrap;
+}
+.brand-link img {
+  flex-shrink: 0;
+}
 
 @media (max-width: 720px) {
   .sidebar {
