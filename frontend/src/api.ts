@@ -24,6 +24,7 @@ export interface ListResult<T> {
   meta: { view: string; notes: string[] };
 }
 export interface Metadata {
+  indicators: { key: string }[];
   counts: Record<string, number>;
   blocks: { block_code: string }[];
   notes: string[];

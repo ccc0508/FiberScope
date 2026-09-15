@@ -4,7 +4,6 @@ import { useRoute, useRouter } from "vue-router";
 import {
   LayoutDashboard as LayoutIcon,
   ArrowDownAZ,
-  ArrowRight,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -87,19 +86,6 @@ const matched = computed(() =>
 let timer: ReturnType<typeof setTimeout> | undefined;
 let controller: AbortController | undefined;
 let summaryController: AbortController | undefined;
-const qualityDialog = ref<HTMLDialogElement>();
-const qualityRows = ref<
-  {
-    source_row: number;
-    block_code: string;
-    cycle_no: number;
-    length_distribution_sum_pct: number;
-    deviation_from_100_pct: number;
-  }[]
->([]);
-const qualityLoading = ref(false),
-  qualityError = ref("");
-
 async function loadSummary() {
   summaryController?.abort();
   const current = new AbortController();
@@ -208,22 +194,6 @@ function refresh() {
   void loadSummary();
   void loadRows();
 }
-async function showQuality() {
-  qualityDialog.value?.showModal();
-  qualityLoading.value = true;
-  qualityError.value = "";
-  try {
-    qualityRows.value = (
-      await get<ListResult<(typeof qualityRows.value)[number]>>("quality", {
-        page_size: 500,
-      })
-    ).data;
-  } catch (e) {
-    qualityError.value = e instanceof Error ? e.message : "复核记录读取失败。";
-  } finally {
-    qualityLoading.value = false;
-  }
-}
 watch(
   () => route.query,
   () => {
@@ -304,14 +274,12 @@ onBeforeUnmount(() => {
         </div>
         <p>{{ number(metadata?.blocks.length) }} 个数据块 · {{ number(counts?.["recycled/cycles"]) }} 个循环汇总点</p>
       </article>
-      <article class="metric quality-metric">
-        <div class="metric-label">待复核观测 <TriangleAlert :size="17" /></div>
+      <article class="metric">
+        <div class="metric-label">已收录指标 <ListFilter :size="17" /></div>
         <div class="metric-value" :class="{ skeleton: summaryLoading }">
-          {{ number(counts?.quality) }}<small>条</small>
+          {{ number(metadata ? new Set(metadata.indicators.map(item => item.key)).size : undefined) }}<small>项</small>
         </div>
-        <button class="text-button amber" @click="showQuality">
-          长度分布偏差 · 查看记录 <ArrowRight :size="13" />
-        </button>
+        <p>纤维特性、纸张性能、长度分布</p>
       </article>
     </section>
 
@@ -621,60 +589,5 @@ onBeforeUnmount(() => {
       ><span>{{ lastRead ? `最近读取 ${lastRead}` : "等待读取数据" }}</span>
     </footer>
     <SampleDetail :sample="selected" @close="selected = null" />
-    <dialog
-      ref="qualityDialog"
-      aria-label="长度分布待复核记录"
-      class="info-dialog quality-dialog"
-      @click="$event.target === qualityDialog && qualityDialog?.close()"
-    >
-      <div class="dialog-heading">
-        <div>
-          <span class="eyebrow">数据质量</span>
-          <h2>长度分布待复核记录</h2>
-        </div>
-        <button
-          class="icon-button"
-          aria-label="关闭质量复核"
-          @click="qualityDialog?.close()"
-        >
-          <X :size="20" />
-        </button>
-      </div>
-      <p>
-        十档长度分布合计偏离100%超过1个百分点。以下保留原始数值，不做归一化。
-      </p>
-      <div v-if="qualityLoading" role="status" class="inline-empty">
-        正在读取…
-      </div>
-      <div v-else-if="qualityError" role="alert">
-        <p>{{ qualityError }}</p>
-        <button class="button" @click="showQuality">重试</button>
-      </div>
-      <div v-else class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Excel行</th>
-              <th>数据块</th>
-              <th>循环</th>
-              <th>合计 / %</th>
-              <th>偏差 / 百分点</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in qualityRows" :key="row.source_row">
-              <td>{{ row.source_row }}</td>
-              <td>{{ row.block_code }}</td>
-              <td>{{ row.cycle_no }}</td>
-              <td>{{ number(row.length_distribution_sum_pct, 4) }}</td>
-              <td class="amber">{{ number(row.deviation_from_100_pct, 4) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="muted">
-        来源：数据汇总(1).xlsx · Sheet1。显示保留4位小数，数据库原值不变。
-      </p>
-    </dialog>
   </div>
 </template>

@@ -466,13 +466,6 @@ h1 {
   color: #6e7e92;
   font-size: 12px;
 }
-.quality-metric .metric-label svg,
-.quality-metric .metric-value {
-  color: #b78340;
-}
-.quality-metric .text-button {
-  font-size: 12px;
-}
 .card {
   background: white;
   border: 1px solid var(--border);
@@ -1051,12 +1044,6 @@ dialog::backdrop {
 .info-dialog li {
   margin-top: 9px;
 }
-.quality-dialog {
-  width: min(720px, calc(100vw - 36px));
-}
-.quality-dialog .table-scroll {
-  margin-top: 20px;
-}
 .muted {
   color: #94a0ad !important;
   font-size: 13px !important;
@@ -1197,9 +1184,6 @@ dialog::backdrop {
     font-size: 12px;
   }
   .metric p,
-  .quality-metric .text-button {
-    font-size: 11px;
-  }
   .metric-value {
     font-size: 30px;
   }
@@ -1360,10 +1344,6 @@ dialog::backdrop {
   }
   .metric p {
     line-height: 1.6;
-  }
-  .quality-metric .text-button {
-    line-height: 1.6;
-    text-align: left;
   }
   .summary-grid {
     margin-bottom: 18px;
