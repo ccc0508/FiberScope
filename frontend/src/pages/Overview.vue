@@ -302,7 +302,7 @@ onBeforeUnmount(() => {
         <div class="metric-value" :class="{ skeleton: summaryLoading }">
           {{ number(counts?.["recycled/details"]) }}<small>条</small>
         </div>
-        <p>{{ number(counts?.["recycled/cycles"]) }} 个数据块 × 循环汇总点</p>
+        <p>{{ number(metadata?.blocks.length) }} 个数据块 · {{ number(counts?.["recycled/cycles"]) }} 个循环汇总点</p>
       </article>
       <article class="metric quality-metric">
         <div class="metric-label">待复核观测 <TriangleAlert :size="17" /></div>
