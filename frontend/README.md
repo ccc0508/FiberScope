@@ -45,7 +45,8 @@ build先执行严格TypeScript检查，再生成dist；preview在4173端口预�
 | 文件 | 职责 |
 |---|---|
 | src/App.vue | 左侧导航、顶部路径、数据说明弹窗 |
-| src/pages/Overview.vue | 全库统计、筛选分页、样本表格及质量记录 |
+| src/pages/Overview.vue | 全库统计、筛选分页、样本表格 |
+| src/pages/Beating.vue | 打浆分析、指标筛选、趋势图、实验明细 |
 | src/components/SampleDetail.vue | 样本详情和来源追溯抽屉 |
 | src/api.ts | 请求、超时、取消、错误和数据类型 |
 | src/style.css | 统一配色、字号、间距、组件和响应式规则 |
@@ -59,3 +60,7 @@ build先执行严格TypeScript检查，再生成dist；preview在4173端口预�
 采用自有FiberScope标识和实现，没有复制Metabase源码或品牌资产。
 
 验证结果见 [前端验收记录](../docs/FRONTEND_VALIDATION.md)。
+
+## 打浆分析
+
+访问 `/beating`。原料可选全部、针叶木、阔叶木；支持打浆度及接口目录中21项核心指标。筛选条件保存在URL中。曲线按打浆转数排序，缺失值断开，零值保留。悬停或键盘聚焦数据点查看数值，点击或Enter/空格打开样本来源抽屉。明细表展示全部筛选记录；手机端图表与表格分别横向滚动。

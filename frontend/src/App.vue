@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
+import { useRoute } from "vue-router";
 import {
   LayoutDashboard,
   ChartNoAxesCombined,
@@ -15,13 +23,24 @@ import {
   X,
 } from "lucide-vue-next";
 const navOpen = ref(false);
+const route = useRoute();
+const pageTitle = computed(() =>
+  route.path === "/beating" ? "打浆分析" : "数据总览",
+);
+watch(pageTitle, async (title) => {
+  document.title = `${title} · 植物纤维可视化分析平台`;
+  await nextTick();
+  hoveredItem.value = undefined;
+  moveHighlight();
+});
 const info = ref<HTMLDialogElement>();
 const navigation = ref<HTMLElement>();
 const highlight = ref({ y: 0, height: 43 });
 const hoveredItem = ref<HTMLElement>();
 let navObserver: ResizeObserver | undefined;
 function moveHighlight(item?: HTMLElement) {
-  const target = item ?? navigation.value?.querySelector<HTMLElement>(".active");
+  const target =
+    item ?? navigation.value?.querySelector<HTMLElement>(".active");
   if (!target || !navigation.value) return;
   const bounds = target.getBoundingClientRect();
   highlight.value = {
@@ -40,16 +59,20 @@ function hoverNavigation(event: PointerEvent) {
 function resetHighlight() {
   hoveredItem.value = undefined;
   const focused = document.activeElement as HTMLElement | null;
-  moveHighlight(focused?.matches(".nav-item") && navigation.value?.contains(focused) ? focused : undefined);
+  moveHighlight(
+    focused?.matches(".nav-item") && navigation.value?.contains(focused)
+      ? focused
+      : undefined,
+  );
 }
 onMounted(() => {
+  document.title = `${pageTitle.value} · 植物纤维可视化分析平台`;
   moveHighlight();
   navObserver = new ResizeObserver(() => moveHighlight(hoveredItem.value));
   if (navigation.value) navObserver.observe(navigation.value);
 });
 onBeforeUnmount(() => navObserver?.disconnect());
 const upcoming = [
-  { name: "打浆分析", icon: ChartNoAxesCombined },
   { name: "复配分析", icon: Combine },
   { name: "纤维—纸张关联", icon: ScatterChart },
   { name: "再生纸浆循环", icon: Repeat2 },
@@ -69,8 +92,9 @@ const upcoming = [
     <div class="brand">
       <RouterLink class="brand-link" to="/" @click="navOpen = false">
         <img src="/favicon.svg" width="34" height="34" alt="" />
-        <strong class="platform-name"><span>植物纤维</span><span>可视化分析平台</span></strong>
-        </RouterLink
+        <strong class="platform-name"
+          ><span>植物纤维</span><span>可视化分析平台</span></strong
+        > </RouterLink
       ><button
         class="icon-button mobile-close"
         type="button"
@@ -96,16 +120,27 @@ const upcoming = [
       <div
         class="nav-highlight"
         aria-hidden="true"
-        :style="{ transform: `translateY(${highlight.y}px)`, height: `${highlight.height}px` }"
+        :style="{
+          transform: `translateY(${highlight.y}px)`,
+          height: `${highlight.height}px`,
+        }"
       ></div>
       <RouterLink
         to="/"
-        class="nav-item active"
-        aria-current="page"
+        class="nav-item"
+        :class="{ active: route.path === '/' }"
         @click="navOpen = false"
         ><LayoutDashboard :size="18" /><span>数据总览</span></RouterLink
       >
-      <div class="nav-label second">分析与探索 <span>后续开放</span></div>
+      <div class="nav-label second">分析与探索</div>
+      <RouterLink
+        to="/beating"
+        class="nav-item"
+        :class="{ active: route.path === '/beating' }"
+        @click="navOpen = false"
+      >
+        <ChartNoAxesCombined :size="18" /><span>打浆分析</span>
+      </RouterLink>
       <button
         v-for="item in upcoming"
         :key="item.name"
@@ -136,9 +171,9 @@ const upcoming = [
           @click="navOpen = true"
         >
           <PanelLeftOpen :size="20" /></button
-        ><span>植物纤维研究</span><ChevronRight :size="14" /><strong
-          >数据总览</strong
-        >
+        ><span>植物纤维研究</span><ChevronRight :size="14" /><strong>{{
+          pageTitle
+        }}</strong>
       </div>
       <span class="topbar-note">实验数据分析平台</span>
     </header>
