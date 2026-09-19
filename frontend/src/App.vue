@@ -25,7 +25,11 @@ import {
 const navOpen = ref(false);
 const route = useRoute();
 const pageTitle = computed(() =>
-  route.path === "/beating" ? "打浆分析" : "数据总览",
+  route.path === "/blends"
+    ? "复配分析"
+    : route.path === "/beating"
+      ? "打浆分析"
+      : "数据总览",
 );
 watch(pageTitle, async (title) => {
   document.title = `${title} · 植物纤维可视化分析平台`;
@@ -73,7 +77,6 @@ onMounted(() => {
 });
 onBeforeUnmount(() => navObserver?.disconnect());
 const upcoming = [
-  { name: "复配分析", icon: Combine },
   { name: "纤维—纸张关联", icon: ScatterChart },
   { name: "再生纸浆循环", icon: Repeat2 },
   { name: "质量与追溯", icon: ScanSearch },
@@ -140,6 +143,14 @@ const upcoming = [
         @click="navOpen = false"
       >
         <ChartNoAxesCombined :size="18" /><span>打浆分析</span>
+      </RouterLink>
+      <RouterLink
+        to="/blends"
+        class="nav-item"
+        :class="{ active: route.path === '/blends' }"
+        @click="navOpen = false"
+      >
+        <Combine :size="18" /><span>复配分析</span>
       </RouterLink>
       <button
         v-for="item in upcoming"
