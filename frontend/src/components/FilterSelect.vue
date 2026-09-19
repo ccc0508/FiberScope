@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import { Check, ChevronDown, Filter } from "lucide-vue-next";
 
 interface Option {
@@ -19,6 +26,13 @@ const root = ref<HTMLElement>();
 const trigger = ref<HTMLButtonElement>();
 const open = ref(false);
 const active = ref(0);
+watch([active, open], async () => {
+  await nextTick();
+  if (open.value)
+    root.value
+      ?.querySelector<HTMLElement>(`[id="${props.id}-${active.value}"]`)
+      ?.scrollIntoView({ block: "nearest" });
+});
 const selected = computed(
   () =>
     props.options.find((o) => o.value === props.modelValue) ?? props.options[0],
@@ -188,6 +202,8 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
   top: calc(100% + 7px);
   width: 252px;
   max-width: calc(100vw - 48px);
+  max-height: min(360px, 50vh);
+  overflow-y: auto;
   background: white;
   border: 1px solid #e0e7ef;
   border-radius: 9px;
