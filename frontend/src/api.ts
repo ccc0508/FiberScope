@@ -33,7 +33,13 @@ export interface Metadata {
     unit_status: string;
   }[];
   counts: Record<string, number>;
-  blocks: { block_code: string }[];
+  blocks: {
+    block_code: string;
+    block_name: string;
+    block_order: number;
+    raw_material_grade: string | null;
+    condition_label: string | null;
+  }[];
   notes: string[];
   sample_types: Record<SampleType, string>;
 }

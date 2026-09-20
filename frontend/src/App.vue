@@ -25,13 +25,15 @@ import {
 const navOpen = ref(false);
 const route = useRoute();
 const pageTitle = computed(() =>
-  route.path === "/association"
-    ? "纤维—纸张关联"
-    : route.path === "/blends"
-      ? "复配分析"
-      : route.path === "/beating"
-        ? "打浆分析"
-        : "数据总览",
+  route.path === "/recycled"
+    ? "再生纸浆循环"
+    : route.path === "/association"
+      ? "纤维—纸张关联"
+      : route.path === "/blends"
+        ? "复配分析"
+        : route.path === "/beating"
+          ? "打浆分析"
+          : "数据总览",
 );
 watch(pageTitle, async (title) => {
   document.title = `${title} · 植物纤维可视化分析平台`;
@@ -78,10 +80,7 @@ onMounted(() => {
   if (navigation.value) navObserver.observe(navigation.value);
 });
 onBeforeUnmount(() => navObserver?.disconnect());
-const upcoming = [
-  { name: "再生纸浆循环", icon: Repeat2 },
-  { name: "质量与追溯", icon: ScanSearch },
-];
+const upcoming = [{ name: "质量与追溯", icon: ScanSearch }];
 </script>
 
 <template>
@@ -160,6 +159,14 @@ const upcoming = [
         @click="navOpen = false"
       >
         <ScatterChart :size="18" /><span>纤维—纸张关联</span>
+      </RouterLink>
+      <RouterLink
+        to="/recycled"
+        class="nav-item"
+        :class="{ active: route.path === '/recycled' }"
+        @click="navOpen = false"
+      >
+        <Repeat2 :size="18" /><span>再生纸浆循环</span>
       </RouterLink>
       <button
         v-for="item in upcoming"
