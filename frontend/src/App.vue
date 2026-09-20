@@ -57,17 +57,19 @@ watch(navOpen, async (open) => {
 });
 const route = useRoute();
 const pageTitle = computed(() =>
-  route.path === "/sources"
-    ? "数据来源"
-    : route.path === "/recycled"
-      ? "再生纸浆循环"
-      : route.path === "/association"
-        ? "纤维—纸张关联"
-        : route.path === "/blends"
-          ? "复配分析"
-          : route.path === "/beating"
-            ? "打浆分析"
-            : "数据总览",
+  route.path === "/literature"
+    ? "文献问答"
+    : route.path === "/sources"
+      ? "数据来源"
+      : route.path === "/recycled"
+        ? "再生纸浆循环"
+        : route.path === "/association"
+          ? "纤维—纸张关联"
+          : route.path === "/blends"
+            ? "复配分析"
+            : route.path === "/beating"
+              ? "打浆分析"
+              : "数据总览",
 );
 watch(pageTitle, async (title) => {
   document.title = `${title} · 植物纤维可视化分析平台`;
@@ -220,6 +222,15 @@ onBeforeUnmount(() => {
         @click="navOpen = false"
       >
         <ScanSearch :size="18" /><span>数据来源</span>
+      </RouterLink>
+      <div class="nav-label second">科研助手</div>
+      <RouterLink
+        to="/literature"
+        class="nav-item"
+        :class="{ active: route.path === '/literature' }"
+        @click="navOpen = false"
+      >
+        <BookOpen :size="18" /><span>文献问答</span>
       </RouterLink>
     </nav>
     <div class="sidebar-bottom">
