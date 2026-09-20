@@ -1,9 +1,11 @@
 # 植物纤维平台 API v1
 
-首版采用 FastAPI + PostgreSQL、Vue 3 + TypeScript + ECharts。浏览器仅访问 `/api/v1`。
-首版提供只读展示和探索；模型预测、Agent交互、用户管理与数据编辑不在本次实现范围。
+采用 FastAPI + PostgreSQL、Vue 3 + TypeScript，图表使用SVG。浏览器仅访问 `/api/v1`。
+实验数据提供只读展示和探索，另有独立文献问答；模型预测、实验数据Agent、用户管理与数据编辑尚未实现。
 
 ## 接口
+
+以下10个实验数据接口保持原有契约。新增3个文献接口：`GET /literature/documents`、`POST /literature/ask`、`GET /literature/documents/{document_id}/pdf`，请求、响应和超时规则见[文献问答接口说明](LITERATURE_QA.md)。
 
 | GET 路径 | 数据视图 | 基线 | 筛选参数 |
 |---|---|---:|---|

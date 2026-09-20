@@ -1,6 +1,8 @@
 .env
 .env.*
+.rag-data/
 !.env.example
+!.env.literature.example
 .venv/
 __pycache__/
 *.py[cod]

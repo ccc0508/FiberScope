@@ -18,6 +18,7 @@ from psycopg_pool import ConnectionPool, PoolTimeout
 from starlette.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from .catalog import INDICATORS, NOTES, VIEWS
+from .literature import router as literature_router
 
 
 class Settings(BaseSettings):
@@ -98,7 +99,8 @@ def create_app(settings: Settings | None = None):
 
     app = FastAPI(title='植物纤维数据分析 API', version='1.0.0', lifespan=lifespan)
     app.state.pool = pool
-    app.add_middleware(CORSMiddleware, allow_origins=config.cors_origins, allow_methods=['GET'], allow_headers=['Accept','Content-Type'])
+    app.add_middleware(CORSMiddleware, allow_origins=config.cors_origins, allow_methods=['GET','POST'], allow_headers=['Accept','Content-Type'])
+    app.include_router(literature_router())
 
     @app.middleware('http')
     async def request_id(request, call_next):
@@ -114,7 +116,7 @@ def create_app(settings: Settings | None = None):
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request, exc):
-        return failure(request,422,'INVALID_QUERY','查询参数无效，请检查筛选条件、页码和每页条数。')
+        return failure(request,422,'INVALID_QUERY','请求参数无效，请检查输入内容、筛选条件或分页设置。')
 
     @app.exception_handler(StarletteHTTPException)
     async def http_error(request, exc):
