@@ -4,6 +4,7 @@ import App from "./App.vue";
 import Overview from "./pages/Overview.vue";
 import Beating from "./pages/Beating.vue";
 import Blends from "./pages/Blends.vue";
+import Association from "./pages/Association.vue";
 import "@fontsource/lato/latin-400.css";
 import "@fontsource/lato/latin-700.css";
 import "@fontsource/lato/latin-900.css";
@@ -15,6 +16,7 @@ const router = createRouter({
     { path: "/", component: Overview },
     { path: "/beating", component: Beating },
     { path: "/blends", component: Blends },
+    { path: "/association", component: Association },
     { path: "/:pathMatch(.*)*", redirect: "/" },
   ],
 });
