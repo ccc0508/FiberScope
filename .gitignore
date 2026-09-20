@@ -10,6 +10,8 @@ dist/
 coverage/
 test-results/
 playwright-report/
+.playwright-cli/
+output/playwright/
 tmp/
 .codex_tmp/
 .sites-runtime/

@@ -49,7 +49,10 @@ const loading = ref(true),
   error = ref(""),
   requestId = ref("");
 const selected = ref<Sample | null>(null);
-const page = computed(() => Math.max(1, Number(route.query.page) || 1));
+const page = computed(() => {
+  const value = Number(route.query.page);
+  return Number.isInteger(value) && value >= 1 && value <= 100000 ? value : 1;
+});
 const size = computed(() =>
   [10, 25, 50].includes(Number(route.query.size))
     ? Number(route.query.size)
@@ -272,12 +275,21 @@ onBeforeUnmount(() => {
         <div class="metric-value" :class="{ skeleton: summaryLoading }">
           {{ number(counts?.["recycled/details"]) }}<small>条</small>
         </div>
-        <p>{{ number(metadata?.blocks.length) }} 个数据块 · {{ number(counts?.["recycled/cycles"]) }} 个循环汇总点</p>
+        <p>
+          {{ number(metadata?.blocks.length) }} 个数据块 ·
+          {{ number(counts?.["recycled/cycles"]) }} 个循环汇总点
+        </p>
       </article>
       <article class="metric">
         <div class="metric-label">已收录指标 <ListFilter :size="17" /></div>
         <div class="metric-value" :class="{ skeleton: summaryLoading }">
-          {{ number(metadata ? new Set(metadata.indicators.map(item => item.key)).size : undefined) }}<small>项</small>
+          {{
+            number(
+              metadata
+                ? new Set(metadata.indicators.map((item) => item.key)).size
+                : undefined,
+            )
+          }}<small>项</small>
         </div>
         <p>纤维特性、纸张性能、长度分布</p>
       </article>

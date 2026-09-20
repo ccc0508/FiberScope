@@ -172,8 +172,9 @@ load();
     </div>
     <template v-else>
       <div class="card filters">
-        <label
-          >数据块<FilterSelect
+        <div class="filter-field">
+          <span>数据块</span
+          ><FilterSelect
             id="recycled-block"
             :model-value="block?.block_code ?? ''"
             :options="
@@ -184,15 +185,18 @@ load();
             "
             label="选择数据块"
             @update:model-value="update('block', $event)"
-        /></label>
-        <label
-          >观察指标<FilterSelect
+          />
+        </div>
+        <div class="filter-field">
+          <span>观察指标</span
+          ><FilterSelect
             id="recycled-metric"
             :model-value="metric?.key ?? ''"
             :options="metrics.map((m) => ({ value: m.key, label: m.name }))"
             label="选择循环指标"
             @update:model-value="update('metric', $event)"
-        /></label>
+          />
+        </div>
         <span class="dataset-count"
           >全库 {{ blocks.length }} 个数据块 · {{ rows.length }} 个循环汇总点 ·
           {{ originals.length }} 条原始观测</span
@@ -394,7 +398,7 @@ load();
   padding: 20px;
   flex-wrap: wrap;
 }
-.filters label {
+.filters .filter-field {
   display: grid;
   gap: 9px;
   font-size: 12px;
@@ -522,7 +526,7 @@ load();
   .filters {
     gap: 16px;
   }
-  .filters label {
+  .filters .filter-field {
     width: 100%;
     min-width: 0;
   }
