@@ -25,15 +25,17 @@ import {
 const navOpen = ref(false);
 const route = useRoute();
 const pageTitle = computed(() =>
-  route.path === "/recycled"
-    ? "再生纸浆循环"
-    : route.path === "/association"
-      ? "纤维—纸张关联"
-      : route.path === "/blends"
-        ? "复配分析"
-        : route.path === "/beating"
-          ? "打浆分析"
-          : "数据总览",
+  route.path === "/sources"
+    ? "数据来源"
+    : route.path === "/recycled"
+      ? "再生纸浆循环"
+      : route.path === "/association"
+        ? "纤维—纸张关联"
+        : route.path === "/blends"
+          ? "复配分析"
+          : route.path === "/beating"
+            ? "打浆分析"
+            : "数据总览",
 );
 watch(pageTitle, async (title) => {
   document.title = `${title} · 植物纤维可视化分析平台`;
@@ -80,7 +82,6 @@ onMounted(() => {
   if (navigation.value) navObserver.observe(navigation.value);
 });
 onBeforeUnmount(() => navObserver?.disconnect());
-const upcoming = [{ name: "质量与追溯", icon: ScanSearch }];
 </script>
 
 <template>
@@ -168,15 +169,14 @@ const upcoming = [{ name: "质量与追溯", icon: ScanSearch }];
       >
         <Repeat2 :size="18" /><span>再生纸浆循环</span>
       </RouterLink>
-      <button
-        v-for="item in upcoming"
-        :key="item.name"
+      <RouterLink
+        to="/sources"
         class="nav-item"
-        disabled
-        :title="`${item.name}将在后续版本开放`"
+        :class="{ active: route.path === '/sources' }"
+        @click="navOpen = false"
       >
-        <component :is="item.icon" :size="18" /><span>{{ item.name }}</span>
-      </button>
+        <ScanSearch :size="18" /><span>数据来源</span>
+      </RouterLink>
     </nav>
     <div class="sidebar-bottom">
       <button class="nav-item" @click="info?.showModal()">

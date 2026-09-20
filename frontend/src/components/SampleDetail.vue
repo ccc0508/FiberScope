@@ -122,6 +122,13 @@ onBeforeUnmount(() => controller?.abort());
           <span class="count-badge">{{ loading ? "…" : lineage.length }}</span>
         </h3>
         <p class="muted">同一来源行可以承担多个用途。</p>
+        <RouterLink
+          class="button"
+          :to="{ path: '/sources', query: { q: sample.canonical_code } }"
+          @click="close"
+        >
+          查看合并后的来源行
+        </RouterLink>
         <div v-if="loading" class="inline-empty" role="status">
           正在读取来源…
         </div>
