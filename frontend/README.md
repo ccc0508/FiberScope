@@ -66,6 +66,7 @@ build先执行严格TypeScript检查，再生成dist；preview在4173端口预�
 采用自有FiberScope标识和实现，没有复制Metabase源码或品牌资产。
 
 验证结果见 [前端验收记录](../docs/FRONTEND_VALIDATION.md)。
+全站回归命令及范围见 [全站验收记录](../docs/FULL_SITE_VALIDATION.md)，浏览器检查脚本位于 `scripts/browser-audit.js`。
 
 ## 打浆分析
 

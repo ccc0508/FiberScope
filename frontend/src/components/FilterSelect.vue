@@ -23,15 +23,37 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{ "update:modelValue": [value: string] }>();
 const root = ref<HTMLElement>();
+const popover = ref<HTMLElement>();
+const popoverLeft = ref(0);
+function positionPopover() {
+  if (!open.value || !root.value || !popover.value) return;
+  const bounds = root.value.getBoundingClientRect();
+  const width = popover.value.getBoundingClientRect().width;
+  popoverLeft.value = Math.max(
+    16 - bounds.left,
+    Math.min(
+      0,
+      document.documentElement.clientWidth - 16 - bounds.left - width,
+    ),
+  );
+}
 const trigger = ref<HTMLButtonElement>();
 const open = ref(false);
 const active = ref(0);
 watch([active, open], async () => {
   await nextTick();
-  if (open.value)
-    root.value
-      ?.querySelector<HTMLElement>(`[id="${props.id}-${active.value}"]`)
-      ?.scrollIntoView({ block: "nearest" });
+  if (open.value && popover.value) {
+    positionPopover();
+    const option = root.value?.querySelector<HTMLElement>(
+      `[id="${props.id}-${active.value}"]`,
+    );
+    if (!option) return;
+    const item = option.getBoundingClientRect(),
+      box = popover.value.getBoundingClientRect();
+    if (item.top < box.top) popover.value.scrollTop -= box.top - item.top;
+    else if (item.bottom > box.bottom)
+      popover.value.scrollTop += item.bottom - box.bottom;
+  }
 });
 const selected = computed(
   () =>
@@ -89,8 +111,14 @@ function keydown(event: KeyboardEvent) {
 function outside(event: PointerEvent) {
   if (!root.value?.contains(event.target as Node)) open.value = false;
 }
-onMounted(() => document.addEventListener("pointerdown", outside));
-onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
+onMounted(() => {
+  document.addEventListener("pointerdown", outside);
+  window.addEventListener("resize", positionPopover);
+});
+onBeforeUnmount(() => {
+  document.removeEventListener("pointerdown", outside);
+  window.removeEventListener("resize", positionPopover);
+});
 </script>
 
 <template>
@@ -117,7 +145,12 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
       ><ChevronDown :size="14" class="filter-chevron" />
     </button>
     <Transition name="filter-pop">
-      <div v-if="open" class="filter-popover">
+      <div
+        v-if="open"
+        ref="popover"
+        class="filter-popover"
+        :style="{ left: `${popoverLeft}px` }"
+      >
         <div class="filter-popover-title">{{ label }}</div>
         <div :id="`${id}-options`" role="listbox" :aria-label="label">
           <div

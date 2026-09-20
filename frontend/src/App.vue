@@ -23,6 +23,38 @@ import {
   X,
 } from "lucide-vue-next";
 const navOpen = ref(false);
+const sidebar = ref<HTMLElement>();
+const navToggle = ref<HTMLButtonElement>();
+let mobileViewport: MediaQueryList | undefined;
+function syncViewport() {
+  if (!mobileViewport?.matches) navOpen.value = false;
+}
+function navigationKey(event: KeyboardEvent) {
+  if (!navOpen.value || info.value?.open) return;
+  if (event.key === "Escape") {
+    event.preventDefault();
+    navOpen.value = false;
+  } else if (event.key === "Tab") {
+    const items = sidebar.value?.querySelectorAll<HTMLElement>(
+      "a[href], button:not(:disabled)",
+    );
+    if (!items?.length) return;
+    const first = items[0]!,
+      last = items[items.length - 1]!;
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+}
+watch(navOpen, async (open) => {
+  await nextTick();
+  if (open) sidebar.value?.querySelector<HTMLElement>("nav .active")?.focus();
+  else navToggle.value?.focus({ preventScroll: true });
+});
 const route = useRoute();
 const pageTitle = computed(() =>
   route.path === "/sources"
@@ -76,12 +108,19 @@ function resetHighlight() {
   );
 }
 onMounted(() => {
+  mobileViewport = window.matchMedia("(max-width: 720px)");
+  mobileViewport.addEventListener("change", syncViewport);
+  document.addEventListener("keydown", navigationKey);
   document.title = `${pageTitle.value} · 植物纤维可视化分析平台`;
   moveHighlight();
   navObserver = new ResizeObserver(() => moveHighlight(hoveredItem.value));
   if (navigation.value) navObserver.observe(navigation.value);
 });
-onBeforeUnmount(() => navObserver?.disconnect());
+onBeforeUnmount(() => {
+  navObserver?.disconnect();
+  mobileViewport?.removeEventListener("change", syncViewport);
+  document.removeEventListener("keydown", navigationKey);
+});
 </script>
 
 <template>
@@ -92,7 +131,12 @@ onBeforeUnmount(() => navObserver?.disconnect());
     aria-label="关闭导航"
     @click="navOpen = false"
   ></button>
-  <aside class="sidebar" :class="{ open: navOpen }" aria-label="主导航">
+  <aside
+    ref="sidebar"
+    class="sidebar"
+    :class="{ open: navOpen }"
+    aria-label="主导航"
+  >
     <div class="brand">
       <RouterLink class="brand-link" to="/" @click="navOpen = false">
         <img src="/favicon.svg" width="34" height="34" alt="" />
@@ -188,10 +232,11 @@ onBeforeUnmount(() => navObserver?.disconnect());
       </div>
     </div>
   </aside>
-  <div class="shell">
+  <div class="shell" :inert="navOpen">
     <header class="topbar">
       <div class="breadcrumbs">
         <button
+          ref="navToggle"
           class="icon-button mobile-toggle"
           aria-label="展开导航"
           :aria-expanded="navOpen"

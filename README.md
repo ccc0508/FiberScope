@@ -11,6 +11,7 @@ FastAPI只读后端与自动化集成测试，以及接入真实API的数据总�
 | [后端运行说明](backend/README.md) | 安装、配置、启动与测试 |
 | [前端运行说明](frontend/README.md) | 六个页面的启动地址、功能和数据口径说明 |
 | [前端验收记录](docs/FRONTEND_VALIDATION.md) | 构建、真实浏览器交互和响应式检查 |
+| [全站验收记录](docs/FULL_SITE_VALIDATION.md) | 六个页面的数据核对、完整流程、异常状态和响应式回归 |
 | [API契约](docs/API_CONTRACT.md) | 10个接口、分页筛选、单位与错误格式 |
 | [恢复与验收](docs/RECOVERY.md) | 独立恢复实例与验收脚本适用阶段 |
 | [本阶段验收记录](docs/VALIDATION_REPORT.md) | 实际完成范围、数量与限制 |

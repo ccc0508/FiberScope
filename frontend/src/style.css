@@ -1183,7 +1183,6 @@ dialog::backdrop {
   .metric-label {
     font-size: 12px;
   }
-  .metric p,
   .metric-value {
     font-size: 30px;
   }
