@@ -16,3 +16,8 @@ are kept in `tests/test_literature_answers.py`, `test_literature_retrieval.py` a
 `test_literature_citations.py`, with renamed test fakes to avoid collisions.
 
 Local papers, index files and model credentials are excluded from Git.
+
+The history integration extends this snapshot with explicit refusal reason codes,
+allowlisted configuration fingerprints, and provider-reported token usage. It does
+not change the single retrieval pass or citation validation rules. Stored feedback
+is user feedback, not a ground-truth label or a semantic correctness evaluation.

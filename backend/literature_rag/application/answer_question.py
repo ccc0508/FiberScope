@@ -130,13 +130,14 @@ class AnswerService:
                 "result_count": 0,
             },
         )
-        return self._refusal(retrieved_chunk_ids, model, latency_ms)
+        return self._refusal(retrieved_chunk_ids, model, latency_ms, reason_code)
 
     @staticmethod
     def _refusal(
         retrieved_chunk_ids: Sequence[str],
         model: str | None,
         latency_ms: int,
+        reason_code: str = 'no_evidence',
     ) -> Answer:
         return Answer(
             status=AnswerStatus.REFUSED,
@@ -146,4 +147,5 @@ class AnswerService:
             retrieved_chunk_ids=tuple(retrieved_chunk_ids),
             model=model,
             latency_ms=latency_ms,
+            reason_code=reason_code,
         )

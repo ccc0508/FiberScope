@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field, StringConstraints, ValidationError
 from literature_rag.application.prompts import SYSTEM_PROMPT, evidence_prompt
 from literature_rag.domain.errors import ProviderError, ProviderResponseError
 from literature_rag.domain.models import Evidence, GeneratedAnswer, GeneratedClaim
+from literature_rag.diagnostics import provider_usage
 
 NonBlankString = Annotated[
     str,
@@ -76,6 +77,7 @@ class DeepSeekGenerator:
         evidences: Sequence[Evidence],
         retry_feedback: str | None = None,
     ) -> GeneratedAnswer:
+        self.last_usage = None
         messages = [
             {
                 "role": "system",
@@ -94,6 +96,7 @@ class DeepSeekGenerator:
                 messages=messages,
                 response_format={"type": "json_object"},
             )
+            self.last_usage = provider_usage(response)
         except ValidationError as error:
             error_type = type(error).__name__
             response_failure = True

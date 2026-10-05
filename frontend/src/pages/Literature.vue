@@ -8,27 +8,14 @@ import {
   ExternalLink,
 } from "lucide-vue-next";
 import { get } from "../api";
+import LiteratureHistory from "../components/LiteratureHistory.vue";
+import { literatureRequest, feedbackTags, timeLabel, type Answer, type HistoryRecord, type HistoryItem, type Feedback } from "../literature";
 
 interface Document {
   id: string;
   filename: string;
   page_count: number;
   chunk_count: number;
-}
-interface Citation {
-  ref: string;
-  document_id: string;
-  filename: string;
-  page_start: number;
-  page_end: number;
-  chunk_id: string;
-  excerpt: string;
-}
-interface Answer {
-  status: "answered" | "refused";
-  answer: string;
-  citations: Citation[];
-  latency_ms: number;
 }
 const documents = ref<Document[]>([]),
   enabled = ref(false),
@@ -39,12 +26,19 @@ const question = ref(""),
   asking = ref(false),
   error = ref(""),
   answer = ref<Answer | null>(null);
+const historyPanel = ref<InstanceType<typeof LiteratureHistory>>();
+const historyReady = ref(false), selected = ref<HistoryRecord | null>(null);
+const rating = ref<Feedback["rating"] | "">(""), tags = ref<string[]>([]), note = ref("");
+const feedbackSaving = ref(false), feedbackError = ref(""), feedbackSaved = ref(false);
+let pendingSubmission: { question: string; request_id: string } | undefined;
+let pollTimer: number | undefined, disposed = false, selectionVersion = 0;
 const canAsk = computed(
   () =>
     enabled.value &&
     documents.value.length > 0 &&
     !loading.value &&
     !asking.value &&
+    historyReady.value &&
     question.value.trim().length >= 2,
 );
 const lines = computed(
@@ -89,29 +83,82 @@ async function load() {
     if (!current.signal.aborted) loading.value = false;
   }
 }
-async function ask() {
+function showRecord(record: HistoryRecord) {
+  selected.value = record;
+  submitted.value = record.question;
+  answer.value = record.status === "answered" || record.status === "refused" ? record.result : null;
+  asking.value = record.status === "processing";
+  rating.value = record.feedback?.rating ?? "";
+  tags.value = [...(record.feedback?.tags ?? [])];
+  note.value = record.feedback?.note ?? "";
+  feedbackSaved.value = !!record.feedback;
+  feedbackError.value = "";
+  const failures: Record<string, string> = {
+    timeout: "本次问答超时，记录已保存，可以重新提问。",
+    provider_error: "模型服务暂不可用，本次失败记录已保存。",
+    retrieval_error: "文献检索失败，本次失败记录已保存。",
+    worker_error: "文献问答处理失败，本次失败记录已保存。",
+    service_restarted: "服务在处理期间中断，本次记录已保存，可以重新提问。",
+  };
+  error.value = record.status === "failed" || record.status === "interrupted"
+    ? failures[record.reason_code ?? ""] ?? "本次处理失败，可以重新提问。" : "";
+}
+async function openRecord(id: string, keepQuestion = false) {
+  clearTimeout(pollTimer);
+  answerController?.abort();
+  const version = ++selectionVersion;
+  const current = new AbortController();
+  answerController = current;
+  const timer = window.setTimeout(() => current.abort(), 15000);
+  try {
+    const record = await literatureRequest<HistoryRecord>(`history/${encodeURIComponent(id)}`, undefined, current.signal);
+    if (disposed || version !== selectionVersion) return;
+    showRecord(record);
+    if (!keepQuestion) question.value = record.question;
+    if (record.status === "processing") {
+      pollTimer = window.setTimeout(() => openRecord(id, true), 1500);
+    } else {
+      pendingSubmission = undefined;
+      historyPanel.value?.refresh();
+    }
+  } catch (e) {
+    if (disposed || version !== selectionVersion) return;
+    asking.value = false;
+    error.value = "暂时无法读取回答，请点击历史记录重试。已接收的问题会继续在后台处理。";
+  } finally { clearTimeout(timer); }
+}
+function historyLoaded(latest?: HistoryItem) {
+  historyReady.value = true;
+  if (!selected.value && !pendingSubmission && latest) openRecord(latest.id);
+}
+async function ask(fresh = false) {
   if (!canAsk.value) return;
+  clearTimeout(pollTimer);
+  answerController?.abort();
+  const version = ++selectionVersion;
   const current = new AbortController();
   answerController = current;
   asking.value = true;
   error.value = "";
   answer.value = null;
+  selected.value = null;
   submitted.value = question.value.trim();
-  const timeout = window.setTimeout(() => current.abort(), 105000);
+  if (fresh || !pendingSubmission || pendingSubmission.question !== submitted.value) {
+    pendingSubmission = { question: submitted.value, request_id: crypto.randomUUID() };
+  }
+  const timeout = window.setTimeout(() => current.abort(), 15000);
   try {
-    const response = await fetch("/api/v1/literature/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: submitted.value }),
-      signal: current.signal,
-    });
-    const body = await response.json();
-    if (!response.ok)
-      throw new Error(body?.error?.message ?? "文献问答暂不可用，请稍后重试。");
-    answer.value = body;
+    const record = await literatureRequest<HistoryRecord>("ask", pendingSubmission, current.signal);
+    if (disposed || version !== selectionVersion) return;
+    showRecord(record);
+    historyPanel.value?.refresh();
+    if (record.status === "processing") pollTimer = window.setTimeout(() => openRecord(record.id, true), 1000);
+    else pendingSubmission = undefined;
   } catch (e) {
+    if (disposed || version !== selectionVersion) return;
+    asking.value = false;
     error.value = current.signal.aborted
-      ? "等待回答超时，请稍后重试。"
+      ? "提交响应超时，请先刷新历史确认是否已接收，重试会沿用本次提交编号。"
       : e instanceof TypeError || e instanceof SyntaxError
         ? "暂时无法连接文献问答服务，请检查连接后重试。"
         : e instanceof Error
@@ -119,13 +166,36 @@ async function ask() {
           : "文献问答暂不可用，请稍后重试。";
   } finally {
     clearTimeout(timeout);
-    asking.value = false;
   }
+}
+function reask() {
+  if (!selected.value || asking.value) return;
+  question.value = selected.value.question;
+  ask(true);
+}
+async function saveFeedback(value?: Feedback["rating"]) {
+  if (!selected.value || feedbackSaving.value) return;
+  if (value) { rating.value = value; tags.value = []; }
+  if (!rating.value) return;
+  const id = selected.value.id;
+  feedbackSaving.value = true; feedbackError.value = ""; feedbackSaved.value = false;
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), 15000);
+  try {
+    const feedback = await literatureRequest<Feedback>(`history/${id}/feedback`, { rating: rating.value, tags: rating.value === "helpful" ? [] : tags.value, note: note.value }, controller.signal);
+    if (disposed || selected.value?.id !== id) return;
+    selected.value.feedback = feedback;
+    feedbackSaved.value = true;
+  } catch (e) {
+    if (!disposed && selected.value?.id === id) feedbackError.value = e instanceof Error ? e.message : "评价保存失败，请重试。";
+  } finally { clearTimeout(timer); feedbackSaving.value = false; }
 }
 function focusCitation(ref: string) {
   document.getElementById(`literature-citation-${ref.slice(1, -1)}`)?.focus();
 }
 onBeforeUnmount(() => {
+  disposed = true;
+  clearTimeout(pollTimer);
   libraryController?.abort();
   answerController?.abort();
 });
@@ -144,6 +214,7 @@ load();
         <RefreshCw :size="15" />刷新文献库
       </button>
     </section>
+    <LiteratureHistory ref="historyPanel" :selected="selected?.id" @ready="historyLoaded" @select="openRecord" />
     <p v-if="loading" class="card literature-state" role="status">
       正在读取文献库…
     </p>
@@ -184,7 +255,7 @@ load();
           暂无已完成导入的文献，请先补充文献。
         </p>
       </details>
-      <form class="card question-card" @submit.prevent="ask">
+      <form class="card question-card" @submit.prevent="ask()">
         <label for="literature-question">你想了解什么？</label
         ><textarea
           id="literature-question"
@@ -197,7 +268,7 @@ load();
         />
         <div class="question-foot">
           <p id="literature-question-help">
-            每次提问独立处理，不沿用上一次对话。<span
+            每次提问独立处理，已接收的问题会自动保存。<span
               >{{ question.length }} / 2000</span
             >
           </p>
@@ -227,11 +298,11 @@ load();
     >
       <BookOpen :size="26" />
       <h2>正在检索文献并核对引用</h2>
-      <p>回答可能需要几十秒，完成引用校验后会一次展示。</p>
+      <p>回答可能需要几十秒。已接收的问题会在后台继续处理，刷新后可从历史记录查看。</p>
     </section>
     <section v-if="error" class="card literature-state" role="alert">
       <p>{{ error }}</p>
-      <button class="button" :disabled="!canAsk" @click="ask">重新提问</button>
+      <button class="button" :disabled="!canAsk" @click="ask(!!selected)">{{ selected ? "重新提问" : "重试提交" }}</button>
     </section>
     <section
       v-if="answer"
@@ -269,6 +340,28 @@ load();
       <p class="answer-note">
         回答仅反映当前文献中的证据。引用校验确保来源可追溯，不替代对研究结论和适用条件的判断。
       </p>
+      <div v-if="selected" class="record-info">
+        <span>已保存 · {{ timeLabel(selected.created_at) }}<template v-if="selected.latency_ms != null"> · 用时 {{ (selected.latency_ms / 1000).toFixed(1) }} 秒</template></span>
+        <button class="button" :disabled="asking || feedbackSaving" @click="reask">重新提问</button>
+      </div>
+      <section v-if="selected" class="feedback-section" aria-label="用户反馈">
+        <h3>这个回答对你有帮助吗？</h3>
+        <div class="feedback-actions">
+          <button :class="['button', { chosen: rating === 'helpful' }]" :disabled="feedbackSaving" @click="saveFeedback('helpful')">有帮助</button>
+          <button :class="['button', { chosen: rating === 'inaccurate' }]" :disabled="feedbackSaving" @click="rating = 'inaccurate'; feedbackSaved = false">不准确</button>
+          <span v-if="feedbackSaving" role="status">正在保存…</span><span v-else-if="feedbackSaved" role="status">评价已保存，可修改</span>
+        </div>
+        <form v-if="rating === 'inaccurate'" @submit.prevent="saveFeedback()">
+          <fieldset :disabled="feedbackSaving"><legend>哪些地方需要改进？（可多选）</legend>
+            <label v-for="tag in feedbackTags" :key="tag.key"><input v-model="tags" type="checkbox" :value="tag.key" @change="feedbackSaved = false" />{{ tag.label }}</label>
+          </fieldset>
+          <label class="feedback-note" for="feedback-note">补充说明（选填）</label>
+          <textarea id="feedback-note" v-model="note" maxlength="2000" rows="3" :disabled="feedbackSaving" placeholder="例如：这项数值与原文表格不一致。" @input="feedbackSaved = false" />
+          <button class="button" :disabled="feedbackSaving" type="submit">保存评价</button>
+        </form>
+        <p v-if="feedbackError" class="feedback-error" role="alert">{{ feedbackError }}</p>
+        <p class="answer-note">评价用于改进问答，不代表专家审核或标准答案。</p>
+      </section>
     </section>
     <section
       v-if="answer?.citations.length"
@@ -310,6 +403,16 @@ load();
 </template>
 
 <style scoped>
+.record-info, .feedback-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 18px; font-size: 12px; color: #8191a4; }
+.record-info { justify-content: space-between; }
+.feedback-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid #edf1f5; }
+.feedback-section h3 { font-size: 14px; margin: 0; }
+.chosen { background: #edf5fc; border-color: #8eb8dc; color: #4386bf; }
+.feedback-section fieldset { display: flex; flex-wrap: wrap; gap: 12px; border: 0; padding: 12px 0; margin: 14px 0 0; font-size: 12px; }
+.feedback-section legend, .feedback-note { color: #8191a4; font-size: 12px; }
+.feedback-section fieldset label { display: inline-flex; align-items: center; gap: 5px; }
+.feedback-section textarea { box-sizing: border-box; width: 100%; margin: 8px 0 12px; border: 1px solid #dce5ed; border-radius: 6px; padding: 10px; font: inherit; font-size: 13px; resize: vertical; }
+.feedback-error { color: #b16642; font-size: 12px; }
 .literature-page {
   display: flex;
   flex-direction: column;

@@ -122,3 +122,4 @@ class Answer:
     retrieved_chunk_ids: tuple[str, ...]
     model: str | None
     latency_ms: int
+    reason_code: str | None = None
