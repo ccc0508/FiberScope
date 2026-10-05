@@ -110,6 +110,7 @@ def test_answer_refuses_without_evidence_and_does_not_call_generator(
         retrieved_chunk_ids=(),
         model=None,
         latency_ms=answer.latency_ms,
+        reason_code='no_evidence',
     )
     assert answer.answer == REFUSAL_TEXT
     assert retriever.calls == [("Question?", 8, 0.35)]

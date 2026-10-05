@@ -20,6 +20,8 @@ def main():
     from literature_rag.application.retrieve import RetrievalService
     from literature_rag.application.answer_question import AnswerService
     from literature_rag.application.citations import CitationValidator
+    from literature_rag.diagnostics import configuration_snapshot
+    from literature_rag.domain.errors import ProviderError, InfrastructureError
 
     body = json.loads(sys.stdin.read())
     root = Path(body['data_dir']).resolve()
@@ -45,6 +47,27 @@ def main():
     generator_type = DeepSeekGenerator if settings.llm_provider == 'deepseek' else OpenAIGenerator
     generator = generator_type(settings.llm_model, settings.llm_api_key.get_secret_value(), settings.llm_base_url)
     evidence_by_chunk = {}
+    generation_calls = []
+    generated_answers = []
+    configuration = configuration_snapshot(Path(__file__).resolve().parent / '.env.literature')
+    configuration['documents'] = [
+        {'document_id': doc.id, 'filename': doc.filename, 'file_hash': doc.file_hash}
+        for doc in metadata.list_documents() if doc.status.value == 'completed'
+    ]
+
+    class CapturedGenerator:
+        model_name = generator.model_name
+
+        def generate(self, *args):
+            call = {'attempt': len(generation_calls) + 1, 'usage': None, 'outcome': 'failed'}
+            generation_calls.append(call)
+            try:
+                result = generator.generate(*args)
+                generated_answers.append(result)
+                call['outcome'] = 'generated'
+                return result
+            finally:
+                call['usage'] = getattr(generator, 'last_usage', None)
 
     class CapturedRetriever(RetrievalService):
         def retrieve(self, *args):
@@ -52,14 +75,27 @@ def main():
             evidence_by_chunk.update({e.chunk_id: e for e in evidences})
             return evidences
 
-    answer = AnswerService(CapturedRetriever(metadata, vectors, embedder), generator, CitationValidator()).answer(
-        body['question'], settings.top_k, settings.min_score)
+    try:
+        answer = AnswerService(CapturedRetriever(metadata, vectors, embedder), CapturedGenerator(), CitationValidator()).answer(
+            body['question'], settings.top_k, settings.min_score)
+    except (ProviderError, InfrastructureError) as error:
+        print(json.dumps({'status': 'failed', 'answer': '', 'citations': [],
+                          'reason_code': 'provider_error' if isinstance(error, ProviderError) else 'retrieval_error',
+                          'error_status': 503, 'configuration': configuration,
+                          'retrieved_evidence': [asdict(e) for e in evidence_by_chunk.values()],
+                          'embedding_usage': getattr(embedder, 'last_usage', None),
+                          'generation_calls': generation_calls, 'claims': [], 'latency_ms': 0}, ensure_ascii=False))
+        return
     citations = []
     for citation in answer.citations:
         evidence = evidence_by_chunk[citation.chunk_id]
         citations.append({**asdict(citation), 'document_id': evidence.document_id, 'excerpt': evidence.text})
     print(json.dumps({'status': answer.status.value, 'answer': answer.answer, 'citations': citations,
-                      'latency_ms': answer.latency_ms}, ensure_ascii=False))
+                      'latency_ms': answer.latency_ms, 'reason_code': answer.reason_code,
+                      'configuration': configuration, 'generation_calls': generation_calls,
+                      'embedding_usage': getattr(embedder, 'last_usage', None),
+                      'claims': [asdict(claim) for claim in generated_answers[-1].claims] if answer.status.value == 'answered' else [],
+                      'retrieved_evidence': [asdict(e) for e in evidence_by_chunk.values()]}, ensure_ascii=False))
 
 
 if __name__ == '__main__':

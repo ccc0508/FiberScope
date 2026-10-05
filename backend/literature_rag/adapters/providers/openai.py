@@ -79,6 +79,8 @@ class OpenAIEmbedder:
         return self._dimensions
 
     def embed_documents(self, texts: Sequence[str]) -> list[list[float]]:
+        from literature_rag.diagnostics import provider_usage
+        self.last_usage = None
         if not texts:
             return []
 
@@ -167,6 +169,8 @@ class OpenAIGenerator:
         evidences: Sequence[Evidence],
         retry_feedback: str | None = None,
     ) -> GeneratedAnswer:
+        from literature_rag.diagnostics import provider_usage
+        self.last_usage = None
         system = {"role": "system", "content": SYSTEM_PROMPT}
         user = {
             "role": "user",
@@ -181,6 +185,8 @@ class OpenAIGenerator:
                 text_format=_AnswerPayload,
                 store=False,
             )
+            self.last_usage = provider_usage(response)
+            self.last_usage = provider_usage(response)
         except ValidationError as error:
             error_type = type(error).__name__
             response_failure = True

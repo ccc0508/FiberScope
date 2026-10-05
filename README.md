@@ -13,7 +13,7 @@ FastAPI实验数据只读后端与自动化集成测试，以及数据总览、�
 | [文献问答](docs/LITERATURE_QA.md) | 文献快照、模型配置、引用原文、接口与验收 |
 | [前端验收记录](docs/FRONTEND_VALIDATION.md) | 构建、真实浏览器交互和响应式检查 |
 | [全站验收记录](docs/FULL_SITE_VALIDATION.md) | 六个页面的数据核对、完整流程、异常状态和响应式回归 |
-| [API契约](docs/API_CONTRACT.md) | 10个实验数据接口与3个文献接口、分页、单位与错误格式 |
+| [API契约](docs/API_CONTRACT.md) | 10个实验数据接口与7个文献及问答记录接口、分页、单位与错误格式 |
 | [恢复与验收](docs/RECOVERY.md) | 独立恢复实例与验收脚本适用阶段 |
 | [本阶段验收记录](docs/VALIDATION_REPORT.md) | 实际完成范围、数量与限制 |
 | [数据库迁移](database/migrations/) | V001—V012 |
@@ -26,3 +26,6 @@ FastAPI实验数据只读后端与自动化集成测试，以及数据总览、�
 2026-09-13已完成原数据库验收，创建fiber_app，并将本机API接入原数据库5432端口；
 10个接口实际HTTP检查通过，8个数据接口与原数据库逐行对照一致。实验数据未修改。
 当前没有公网部署；默认API只监听本机。
+
+文献问答支持服务端历史保存、浏览器会话隔离、用户评价和JSONL评测素材导出。
+记录保存在独立的`.rag-data/qa_history.sqlite3`，不写入实验数据库；备份及全量导出见[问答记录说明](docs/QA_HISTORY.md)。

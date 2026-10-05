@@ -3,6 +3,8 @@
 FastAPI + Psycopg连接池。全部业务查询仅使用8个数据库分析视图。
 接口契约见 [API_CONTRACT.md](../docs/API_CONTRACT.md)。
 
+实验数据库连接保持只读；文献问答的历史、评价写入独立SQLite记录库，见[问答记录说明](../docs/QA_HISTORY.md)。
+
 ## 安装
 
 在项目根目录的PowerShell中执行（本次验证环境为Python 3.14.2）：
