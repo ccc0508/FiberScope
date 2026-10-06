@@ -8,6 +8,7 @@ import Association from "./pages/Association.vue";
 import Recycled from "./pages/Recycled.vue";
 import Sources from "./pages/Sources.vue";
 import Literature from "./pages/Literature.vue";
+import LiteratureData from "./pages/LiteratureData.vue";
 import "@fontsource/lato/latin-400.css";
 import "@fontsource/lato/latin-700.css";
 import "@fontsource/lato/latin-900.css";
@@ -23,6 +24,7 @@ const router = createRouter({
     { path: "/recycled", component: Recycled },
     { path: "/sources", component: Sources },
     { path: "/literature", component: Literature },
+    { path: "/literature-data", component: LiteratureData },
     { path: "/:pathMatch(.*)*", redirect: "/" },
   ],
 });

@@ -4,7 +4,7 @@ FastAPI + Psycopg连接池。全部业务查询仅使用8个数据库分析视�
 接口契约见 [API_CONTRACT.md](../docs/API_CONTRACT.md)。
 
 实验数据库连接保持只读；文献问答的历史、评价写入独立SQLite记录库，见[问答记录说明](../docs/QA_HISTORY.md)。
-文献表格提取任务、原文证据和候选结果保存于另一个独立SQLite记录库，接口和使用脚本见[表格提取说明](../docs/LITERATURE_EXTRACTION.md)。
+文献表格提取任务、原文证据、候选结果和人工审核版本保存于另一个独立SQLite记录库，接口和使用脚本见[提取与审核说明](../docs/LITERATURE_EXTRACTION.md)。
 
 ## 安装
 
@@ -72,4 +72,4 @@ Set-Location backend
 实验数据接口仅允许GET只读访问；文献问答新增POST提问及GET文献/PDF接口，配置与实验数据库分开，见[文献问答接入说明](../docs/LITERATURE_QA.md)。没有用户登录、实验数据写入或预测接口。
 默认仅监听本机。公网使用前需要反向代理访问控制、HTTPS和独立部署验收。
 数据库不可用时返回503，不向客户端暴露连接信息。服务不会自动执行迁移或导入。
-前端已提供七个页面，运行方式见[前端说明](../frontend/README.md)。
+前端已提供八个页面，运行方式见[前端说明](../frontend/README.md)。
