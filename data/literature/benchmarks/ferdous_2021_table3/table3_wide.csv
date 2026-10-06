@@ -1,0 +1,23 @@
+﻿sample_id,raw_material_original,raw_material_zh,fiber_length_mm,fiber_width_um,wall_thickness_um,slender_ratio,runkel_ratio,flexibility_coefficient,tensile_index_unrefined_Nm_g,tensile_index_refined_Nm_g,burst_index_unrefined_kPam2_g,burst_index_refined_kPam2_g,tear_index_unrefined_mNm2_g,tear_index_refined_mNm2_g,source_pdf_page,source_table,source_row,source_issue,human_review_status
+ferdous_2021_1c02933_T3_R01,bagasse,甘蔗渣,1.36,16.2,1.9,79.2,0.317,73.45,58.96,85.41,3.41,4.9,6.6,5.98,5,Table 3,1,slender_ratio_inconsistent,pending
+ferdous_2021_1c02933_T3_R02,bamboo,竹子,2.0,18.4,2.6,108.7,0.4,70.65,25.8,60.8,1.2,5.5,12.1,14.5,5,Table 3,2,,pending
+ferdous_2021_1c02933_T3_R03,banana pseudo stem,香蕉假茎,1.22,14.81,1.51,82.37,0.27,78.3,44.64,76,3.59,5.16,10.1,6.85,5,Table 3,3,,pending
+ferdous_2021_1c02933_T3_R04,banana leaf,香蕉叶,1.92,13.75,2.52,139.63,0.57,63.3,48.74,83.7,3.69,5.93,10.58,7.6,5,Table 3,4,,pending
+ferdous_2021_1c02933_T3_R05,banana peduncle,香蕉花梗,1.5,25.18,1.27,59.57,0.16,86.2,48.5,70.4,3.11,4.54,7.47,7,5,Table 3,5,,pending
+ferdous_2021_1c02933_T3_R06,cassava stalks,木薯茎秆,0.65,25.5,2.09,25.49,0.204,78.9,38.1,52.9,1.2,2.43,4.6,5,5,Table 3,6,,pending
+ferdous_2021_1c02933_T3_R07,chia stalks,奇亚籽茎秆,0.67,15.55,1.91,43.1,0.34,71.43,43.3,72.3,1.7,3.8,5.9,4.4,5,Table 3,7,,pending
+ferdous_2021_1c02933_T3_R08,corn stalks,玉米茎秆,0.9,15.7,1.78,57.3,0.33,66.9,52.39,78,2.82,4.15,6.85,5.36,5,Table 3,8,,pending
+ferdous_2021_1c02933_T3_R09,cotton stalks,棉花茎秆,0.9,17.2,2.21,52.3,0.36,71.1,25.2,66,1,3.3,5.6,5,5,Table 3,9,,pending
+ferdous_2021_1c02933_T3_R10,dhaincha stalks,田菁茎秆,0.73,19.5,2.12,37.4,0.28,78.7,55.6,93.7,2.2,5.6,8.1,8.1,5,Table 3,10,,pending
+ferdous_2021_1c02933_T3_R11,eggplant stalks,茄子茎秆,0.58,13.2,2.49,43.84,0.678,55.61,34.1,58.2,1.9,3.5,6.65,6.85,5,Table 3,11,,pending
+ferdous_2021_1c02933_T3_R12,jute fiber,黄麻纤维,2.02,10.8,3.5,187.03,1.71,37.96,28.9,85.7,2.2,6.8,18.7,20.8,5,Table 3,12,,pending
+ferdous_2021_1c02933_T3_R13,jute stick,黄麻秆,0.67,20.7,3.5,32.37,0.54,62.3,34.8,70.3,3.1,5.3,6.8,6.3,5,Table 3,13,,pending
+ferdous_2021_1c02933_T3_R14,kash stalks,甘蔗属野生草茎秆（kash）,0.86,13.6,2,63.2,0.408,72.1,64.71,87,3.31,5.26,6.85,6.6,5,Table 3,14,,pending
+ferdous_2021_1c02933_T3_R15,kaun straw,谷子秸秆（kaun）,0.814,13.9,3.3,58.56,1.015,46.76,42.8,67.3,2.3,3.7,6.23,4.98,5,Table 3,15,,pending
+ferdous_2021_1c02933_T3_R16,mulberry,桑树茎秆,0.65,16.3,2.21,39.88,0.391,69.38,33.59,67.56,2.24,3.79,7.47,6.9,5,Table 3,16,,pending
+ferdous_2021_1c02933_T3_R17,mustard stalks,芥菜茎秆,0.87,13.7,2.53,63.5,0.61,60.1,43,73.5,1.7,3.2,5.9,5.4,5,Table 3,17,,pending
+ferdous_2021_1c02933_T3_R18,okra stalks,秋葵茎秆,1.14,21,1.75,54.29,0.339,77.23,40.1,78.2,2.14,4.04,7.47,7.06,5,Table 3,18,,pending
+ferdous_2021_1c02933_T3_R19,pineapple leaves,菠萝叶,1.06,7.35,1.9,144.2,1.08,47.6,40.3,73.2,2.4,3.5,7.21,7.1,5,Table 3,19,,pending
+ferdous_2021_1c02933_T3_R20,red lentil stalks,红扁豆茎秆,0.74,14.3,2.32,51.7,0.49,66,36.1,58.6,1,3.3,2,3,5,Table 3,20,,pending
+ferdous_2021_1c02933_T3_R21,rice straw,稻草,0.78,11.6,1.83,83.87,0.56,60.21,60.5,80.4,2.9,5.1,5.7,6.4,5,Table 3,21,slender_ratio_inconsistent,pending
+ferdous_2021_1c02933_T3_R22,wheat straw,麦草,0.97,9.3,1.99,83.62,0.65,61.63,36.1,53.5,2.14,3.11,5.6,4.98,5,Table 3,22,slender_ratio_inconsistent,pending

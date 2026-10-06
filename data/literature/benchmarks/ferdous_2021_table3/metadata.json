@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "benchmark_id": "ferdous_2021_1c02933_table3_v1",
+  "purpose": "literal_table_extraction_reference",
+  "title": "Non-Wood Fibers: Relationships of Fiber Properties with Pulp Properties",
+  "doi": "10.1021/acsomega.1c02933",
+  "journal": "ACS Omega",
+  "publication_year": 2021,
+  "authors": [
+    "Taslima Ferdous",
+    "Yonghao Ni",
+    "Mohammad Abdul Quaiyyum",
+    "Mohammad Nashir Uddin",
+    "Md Sarwar Jahan"
+  ],
+  "publisher_url": "https://pubs.acs.org/doi/10.1021/acsomega.1c02933",
+  "source_pdf_url": "https://cdn.most.gov.bd/image/64bb6cd676770",
+  "source_pdf_sha256": "9fc172a87635c26f3bfc13a3e67ae5396a88ff8671c60066154d4fded295bd15",
+  "source_pdf_page_count": 10,
+  "source_version_note": "公开作者文章副本，页脚仍为 ACS Omega XXXX；页码按此PDF物理页计，未与出版商最终排版逐项核对。",
+  "source_pdf_page": 5,
+  "source_printed_page_label": "E",
+  "source_table": "Table 3",
+  "source_table_title": "Morphological Properties of Raw Materials and Papermaking Properties of the Corresponding Pulp",
+  "sample_count": 22,
+  "numeric_columns": 12,
+  "measurement_count": 264,
+  "raw_material_morphology_measurements": 132,
+  "paper_performance_measurements": 132,
+  "paper_state_count": 44,
+  "paper_state_count_note": "22种原料×2种打浆状态，不代表44个独立重复实验；原料形态只保存一次。",
+  "verification_date": "2026-10-06",
+  "transcription_verification": {
+    "method": "visual_transcription_and_positioned_pdf_word_comparison",
+    "material_labels_matched": 22,
+    "raw_numeric_lexemes_matched": 264
+  },
+  "human_review_status": "pending",
+  "approved_for_training": false,
+  "units_policy": "按表头保存；比值与柔性系数无单位标记，不自行补百分号或换算。",
+  "condition_policy": "Table 3未列每种原料的具体打浆度/时间/转数；refined不能解释为统一打浆条件。",
+  "mapping_policy": "中文名称只用于显示；以原文名称和表内行号关联。不得按此编号关联现有实验样本。",
+  "anomaly_check": {
+    "formula": "fiber_length_mm * 1000 / fiber_width_um",
+    "relative_difference_threshold": 0.05,
+    "is_source_correction": false,
+    "flagged_rows": [
+      {
+        "sample_id": "ferdous_2021_1c02933_T3_R01",
+        "raw_material": "bagasse",
+        "reported_slender_ratio": 79.2,
+        "calculated_length_width_ratio": 83.9506,
+        "reason": "表内长宽比与长度×1000/宽度相差超过5%；保留原值，原因未确定。"
+      },
+      {
+        "sample_id": "ferdous_2021_1c02933_T3_R21",
+        "raw_material": "rice straw",
+        "reported_slender_ratio": 83.87,
+        "calculated_length_width_ratio": 67.2414,
+        "reason": "表内长宽比与长度×1000/宽度相差超过5%；保留原值，原因未确定。"
+      },
+      {
+        "sample_id": "ferdous_2021_1c02933_T3_R22",
+        "raw_material": "wheat straw",
+        "reported_slender_ratio": 83.62,
+        "calculated_length_width_ratio": 104.3011,
+        "reason": "表内长宽比与长度×1000/宽度相差超过5%；保留原值，原因未确定。"
+      }
+    ]
+  },
+  "fields": [
+    {
+      "field": "fiber_length_mm",
+      "name_zh": "纤维长度",
+      "metric": "fiber_length",
+      "raw_header": "fiber length",
+      "raw_unit": "mm",
+      "measurement_state": "raw_material",
+      "state_zh": "原料形态"
+    },
+    {
+      "field": "fiber_width_um",
+      "name_zh": "纤维宽度",
+      "metric": "fiber_width",
+      "raw_header": "fiber width",
+      "raw_unit": "μm",
+      "measurement_state": "raw_material",
+      "state_zh": "原料形态"
+    },
+    {
+      "field": "wall_thickness_um",
+      "name_zh": "细胞壁厚度",
+      "metric": "wall_thickness",
+      "raw_header": "wall thickness",
+      "raw_unit": "μm",
+      "measurement_state": "raw_material",
+      "state_zh": "原料形态"
+    },
+    {
+      "field": "slender_ratio",
+      "name_zh": "长宽比",
+      "metric": "slender_ratio",
+      "raw_header": "slender ratio",
+      "raw_unit": "",
+      "measurement_state": "raw_material",
+      "state_zh": "原料形态"
+    },
+    {
+      "field": "runkel_ratio",
+      "name_zh": "Runkel 比",
+      "metric": "runkel_ratio",
+      "raw_header": "runkel ratio",
+      "raw_unit": "",
+      "measurement_state": "raw_material",
+      "state_zh": "原料形态"
+    },
+    {
+      "field": "flexibility_coefficient",
+      "name_zh": "柔性系数",
+      "metric": "flexibility_coefficient",
+      "raw_header": "flexibility coefficient",
+      "raw_unit": "",
+      "measurement_state": "raw_material",
+      "state_zh": "原料形态"
+    },
+    {
+      "field": "tensile_index_unrefined_Nm_g",
+      "name_zh": "抗张指数（未打浆）",
+      "metric": "tensile_index",
+      "raw_header": "tensile index",
+      "raw_unit": "N·m/g",
+      "measurement_state": "unrefined",
+      "state_zh": "未打浆"
+    },
+    {
+      "field": "tensile_index_refined_Nm_g",
+      "name_zh": "抗张指数（打浆后）",
+      "metric": "tensile_index",
+      "raw_header": "tensile index",
+      "raw_unit": "N·m/g",
+      "measurement_state": "refined",
+      "state_zh": "打浆后"
+    },
+    {
+      "field": "burst_index_unrefined_kPam2_g",
+      "name_zh": "耐破指数（未打浆）",
+      "metric": "burst_index",
+      "raw_header": "burst index",
+      "raw_unit": "kPa·m²/g",
+      "measurement_state": "unrefined",
+      "state_zh": "未打浆"
+    },
+    {
+      "field": "burst_index_refined_kPam2_g",
+      "name_zh": "耐破指数（打浆后）",
+      "metric": "burst_index",
+      "raw_header": "burst index",
+      "raw_unit": "kPa·m²/g",
+      "measurement_state": "refined",
+      "state_zh": "打浆后"
+    },
+    {
+      "field": "tear_index_unrefined_mNm2_g",
+      "name_zh": "撕裂指数（未打浆）",
+      "metric": "tear_index",
+      "raw_header": "tear index",
+      "raw_unit": "mN·m²/g",
+      "measurement_state": "unrefined",
+      "state_zh": "未打浆"
+    },
+    {
+      "field": "tear_index_refined_mNm2_g",
+      "name_zh": "撕裂指数（打浆后）",
+      "metric": "tear_index",
+      "raw_header": "tear index",
+      "raw_unit": "mN·m²/g",
+      "measurement_state": "refined",
+      "state_zh": "打浆后"
+    }
+  ]
+}
