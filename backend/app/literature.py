@@ -30,6 +30,7 @@ class LiteratureSettings(BaseSettings):
     enabled: bool = False
     data_dir: Path = BACKEND.parent / '.rag-data'
     timeout_seconds: int = Field(90, ge=5, le=90)
+    extraction_timeout_seconds: int = Field(180, ge=10, le=300)
 
     @property
     def root(self) -> Path:
@@ -304,4 +305,6 @@ def router(config: LiteratureSettings | None = None, allowed_origins: list[str] 
             raise HTTPException(404, '没有找到这条问答记录。')
         return result
 
+    from .extraction import router as extraction_router
+    routes.include_router(extraction_router(config, check_origin))
     return routes

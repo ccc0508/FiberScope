@@ -1,3 +1,4 @@
 # Optional document-QA worker dependencies; install after requirements-lock.txt.
 chromadb==1.5.9
 openai==2.46.0
+pdfplumber==0.11.9
