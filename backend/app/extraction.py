@@ -19,6 +19,7 @@ from fastapi.responses import FileResponse
 from filelock import FileLock, Timeout as LockTimeout
 
 from .qa_history import HistoryStore, now
+from .extraction_review import ReviewStoreMixin, initialize_reviews, review_summary
 
 BACKEND = Path(__file__).resolve().parents[1]
 MAX_PDF_BYTES = 12 * 1024 * 1024
@@ -39,7 +40,7 @@ ERROR_MESSAGES = {
 }
 
 
-class ExtractionStore(HistoryStore):
+class ExtractionStore(ReviewStoreMixin, HistoryStore):
     # Reuse the existing hashed browser-session protocol and connection helper;
     # this database has no questions/feedback tables and no QA writes.
     def initialize(self):
@@ -60,6 +61,7 @@ class ExtractionStore(HistoryStore):
                 CREATE INDEX IF NOT EXISTS extraction_owner_time ON extraction_tasks(owner_id,created_at DESC,id DESC);
                 PRAGMA user_version=1;
             ''')
+            initialize_reviews(conn)
 
     def recover(self):
         with self.connection() as conn:
@@ -112,13 +114,21 @@ class ExtractionStore(HistoryStore):
     def get(self, owner, record_id):
         with self.connection() as conn:
             row = conn.execute('SELECT * FROM extraction_tasks WHERE owner_id=? AND id=?', (owner, record_id)).fetchone()
-            return self.public(row) if row else None
+            if row is None:
+                return None
+            result = self.public(row)
+            result['reviews'] = self.reviews(record_id)
+            result['review_summary'] = review_summary(result,result['reviews'])
+            return result
 
-    def list(self, owner, page, page_size):
+    def list(self, owner, page, page_size, q=''):
         with self.connection() as conn:
-            total = conn.execute('SELECT count(*) FROM extraction_tasks WHERE owner_id=?', (owner,)).fetchone()[0]
-            rows = conn.execute('SELECT * FROM extraction_tasks WHERE owner_id=? ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?',
-                                (owner, page_size, (page - 1) * page_size)).fetchall()
+            conn.execute('BEGIN')
+            where="owner_id=? AND (instr(lower(json_extract(source_json,'$.filename')),lower(?))>0 OR instr(lower(json_extract(source_json,'$.table')),lower(?))>0)"
+            values=(owner,q,q)
+            total = conn.execute('SELECT count(*) FROM extraction_tasks WHERE '+where,values).fetchone()[0]
+            rows = conn.execute('SELECT * FROM extraction_tasks WHERE '+where+' ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?',
+                                (*values, page_size, (page - 1) * page_size)).fetchall()
             return {'data': [self.public(r, False) for r in rows], 'pagination': {
                 'page': page, 'page_size': page_size, 'total': total, 'total_pages': ceil(total / page_size)}}
 
@@ -297,9 +307,9 @@ def router(config, check_origin):
         return result
 
     @routes.get('')
-    def listing(request: Request, response: Response, page: int = Query(1, ge=1, le=100000), page_size: int = Query(10, ge=1, le=100)):
+    def listing(request: Request, response: Response, page: int = Query(1, ge=1, le=100000), page_size: int = Query(10, ge=1, le=100), q: str = Query('',max_length=200)):
         owner = runner.session(request, response)
-        return runner.database(runner.store.list, owner, page, page_size)
+        return runner.database(runner.store.list, owner, page, page_size,q)
 
     @routes.get('/{record_id}')
     def get(record_id: UUID, request: Request, response: Response):
@@ -326,5 +336,27 @@ def router(config, check_origin):
         response_headers = {k: v for k, v in headers.headers.items() if k != 'content-length'}
         return Response(json.dumps(item, ensure_ascii=False) + '\n', media_type='application/x-ndjson',
                         headers={**response_headers, 'Content-Disposition': 'attachment; filename="literature-extraction.jsonl"'})
+
+    @routes.get('/{record_id}/page')
+    def page_image(record_id: UUID,request: Request):
+        holder=Response()
+        owner=runner.session(request,holder)
+        item=detail(owner,str(record_id))
+        source=item['source']
+        image=runner.root/'jobs'/str(record_id)/'page.png'
+        if not image.exists():
+            pdf=runner.root/'pdfs'/(source['pdf_sha256']+'.pdf')
+            try:
+                result=subprocess.run([sys.executable,'-I',str(BACKEND/'extraction_page_worker.py'),str(pdf),str(source['page']),str(image)],
+                    capture_output=True,timeout=20,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
+                if result.returncode or not image.exists():
+                    raise HTTPException(422,'该页无法预览，请查看完整PDF。')
+            except (OSError,subprocess.TimeoutExpired):
+                raise HTTPException(503,'原文预览暂时不可用。') from None
+        headers={k:v for k,v in holder.headers.items() if k!='content-length'}
+        return FileResponse(image,media_type='image/png',headers=headers)
+
+    from .extraction_review import router as review_router
+    routes.include_router(review_router(runner,detail,check_origin))
 
     return routes

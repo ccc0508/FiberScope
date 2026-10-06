@@ -1,6 +1,6 @@
 # FiberScope 分析平台前端
 
-Vue 3 + TypeScript + Vite。已实现六个实验数据页面，以及接入已有文献RAG的文献问答页面。实验数据保持只读。
+Vue 3 + TypeScript + Vite。已实现六个实验数据页面、文献问答和文献数据提取审核，共八个页面。实验数据保持只读。
 
 ## 启动
 
@@ -48,6 +48,9 @@ build先执行严格TypeScript检查，再生成dist；preview在4173端口预�
 | src/pages/Recycled.vue | 再生纸浆循环趋势、循环平均值与原始观测来源 |
 | src/pages/Sources.vue | 来源文件、来源检索、用途详情和数量口径说明 |
 | src/pages/Literature.vue | 单轮文献问答、引用定位、原文片段与PDF页码跳转 |
+| src/pages/LiteratureData.vue | 上传提取、任务搜索、逐项核对、审核历史和已确认数据导出 |
+| src/components/ExtractionOriginal.vue | 原文页预览、缩放和数值/表头/行名证据定位 |
+| src/extraction.ts | 候选与审核类型、原料分组、初始审核口径及请求 |
 | src/sources.ts | 来源行合并、用途标签和检索 |
 | src/pages/Overview.vue | 全库统计、筛选分页、样本表格 |
 | src/pages/Association.vue | 纤维与纸张指标散点图、分组相关系数及配对明细 |
@@ -100,3 +103,9 @@ Pearson r按当前筛选及样本类型分别计算。少于3对有效数据或�
 ## 文献问答
 
 访问 `/literature`。展示已导入文献，支持独立单轮问题、校验后的回答及引用、原文片段和PDF跳页。提交后轮询服务端记录，刷新自动恢复最近一次问答；历史支持搜索、分页、重新提问及JSONL导出，评价支持修改和问题标签。未启用、空库、忙碌、超时、服务失败和保存失败均有明确反馈。不渲染模型HTML，也不把模型密钥发送到前端。真实文献库和模型配置需要独立部署，详见[文献问答接入说明](../docs/LITERATURE_QA.md)及[记录说明](../docs/QA_HISTORY.md)。
+
+## 文献数据提取与审核
+
+访问 `/literature-data` 或左侧“科研助手 → 文献数据”。上传可复制文字的PDF，指定页码和表格编号；支持任务搜索、分页、刷新恢复、失败重提取。原文页可缩放，点击候选指标定位数值及原料、表头、单位和打浆状态证据。
+
+审核支持原料、指标、测量状态、数值和单位修改，以及补充带来源的实验条件；确认抄录与建模适用性分别标记。保存后可查看完整版本历史，原始提取快照不覆盖。已确认数据可导出CSV或JSONL，未审核或驳回记录不进入该导出。浏览器会话隔离，没有实名专家审核。详见[使用说明](../docs/LITERATURE_EXTRACTION.md)和[审核验证记录](../docs/LITERATURE_REVIEW_VALIDATION.md)。

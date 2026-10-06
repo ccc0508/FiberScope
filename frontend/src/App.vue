@@ -20,6 +20,7 @@ import {
   PanelLeftOpen,
   ChevronRight,
   BookOpen,
+  FileSpreadsheet,
   X,
 } from "lucide-vue-next";
 const navOpen = ref(false);
@@ -57,19 +58,21 @@ watch(navOpen, async (open) => {
 });
 const route = useRoute();
 const pageTitle = computed(() =>
-  route.path === "/literature"
-    ? "文献问答"
-    : route.path === "/sources"
-      ? "数据来源"
-      : route.path === "/recycled"
-        ? "再生纸浆循环"
-        : route.path === "/association"
-          ? "纤维—纸张关联"
-          : route.path === "/blends"
-            ? "复配分析"
-            : route.path === "/beating"
-              ? "打浆分析"
-              : "数据总览",
+  route.path === "/literature-data"
+    ? "文献数据"
+    : route.path === "/literature"
+      ? "文献问答"
+      : route.path === "/sources"
+        ? "数据来源"
+        : route.path === "/recycled"
+          ? "再生纸浆循环"
+          : route.path === "/association"
+            ? "纤维—纸张关联"
+            : route.path === "/blends"
+              ? "复配分析"
+              : route.path === "/beating"
+                ? "打浆分析"
+                : "数据总览",
 );
 watch(pageTitle, async (title) => {
   document.title = `${title} · 植物纤维可视化分析平台`;
@@ -231,6 +234,14 @@ onBeforeUnmount(() => {
         @click="navOpen = false"
       >
         <BookOpen :size="18" /><span>文献问答</span>
+      </RouterLink>
+      <RouterLink
+        to="/literature-data"
+        class="nav-item"
+        :class="{ active: route.path === '/literature-data' }"
+        @click="navOpen = false"
+      >
+        <FileSpreadsheet :size="18" /><span>文献数据</span>
       </RouterLink>
     </nav>
     <div class="sidebar-bottom">
