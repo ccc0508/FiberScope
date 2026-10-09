@@ -138,7 +138,11 @@ const groupOptions = computed(() =>
   })).filter(g => g.count > 0),
 );
 const metricOptions = computed(() =>
-  [...new Set([draft.value?.metric ?? "", ...Object.keys(metricNames)])]
+  [...new Set([
+    ...Object.keys(metricNames),
+    ...measurements.value.map((r) => r.metric),
+    draft.value?.metric ?? "",
+  ])]
     .filter(Boolean)
     .map((v) => ({ value: v, label: metricNames[v] ?? v })),
 );
@@ -851,20 +855,20 @@ onBeforeUnmount(() => {
                       maxlength="200"
                       required
                   /></label>
-                  <label
-                    >指标<FilterSelect
+                  <div class="select-field">
+                    <span>指标</span><FilterSelect
                       id="review-metric"
                       label="审核指标"
                       v-model="draft.metric"
                       :options="metricOptions"
-                  /></label>
-                  <label
-                    >测量状态<FilterSelect
+                  /></div>
+                  <div class="select-field">
+                    <span>测量状态</span><FilterSelect
                       id="review-measurement-state"
                       label="审核测量状态"
                       v-model="draft.measurement_state"
                       :options="stateOptions"
-                  /></label>
+                  /></div>
                   <label
                     >数值<input
                       v-model="draft.raw_value"
@@ -1064,7 +1068,8 @@ summary > span {
   gap: 16px;
   margin-top: 20px;
 }
-label {
+label,
+.select-field {
   display: grid;
   gap: 7px;
   font-size: 12px;
