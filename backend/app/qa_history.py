@@ -1,4 +1,4 @@
-"""Private, durable question records. No experimental or literature metadata writes."""
+"""Durable public question records, with session-owned feedback and submissions."""
 from __future__ import annotations
 
 from contextlib import contextmanager
@@ -50,6 +50,7 @@ class HistoryStore:
                     UNIQUE(owner_id, request_key)
                 );
                 CREATE INDEX IF NOT EXISTS questions_owner_time ON questions(owner_id, created_at DESC, id DESC);
+                CREATE INDEX IF NOT EXISTS questions_time ON questions(created_at DESC, id DESC);
                 CREATE TABLE IF NOT EXISTS feedback (
                     question_id TEXT PRIMARY KEY REFERENCES questions(id),
                     rating TEXT NOT NULL CHECK(rating IN ('helpful','inaccurate')),
@@ -110,10 +111,11 @@ class HistoryStore:
 
     def get(self, owner: str, record_id: str):
         with self.connection() as conn:
-            row = conn.execute('SELECT * FROM questions WHERE id=? AND owner_id=?', (record_id, owner)).fetchone()
+            row = conn.execute('SELECT * FROM questions WHERE id=?', (record_id,)).fetchone()
             if not row:
                 return None
             item = self.decode(row)
+            item['can_feedback'] = row['owner_id'] == owner
             feedback = conn.execute('SELECT rating,tags_json,note,updated_at FROM feedback WHERE question_id=?', (record_id,)).fetchone()
             if feedback:
                 item['feedback'] = dict(feedback)
@@ -122,11 +124,11 @@ class HistoryStore:
 
     def list(self, owner: str, page: int, page_size: int, search: str):
         # Literal substring search: %, _ and SQL-looking strings are ordinary text.
-        where = 'owner_id=? AND instr(lower(question),lower(?))>0'
+        where = 'instr(lower(question),lower(?))>0'
         with self.connection() as conn:
-            total = conn.execute(f'SELECT count(*) FROM questions WHERE {where}', (owner, search)).fetchone()[0]
+            total = conn.execute(f'SELECT count(*) FROM questions WHERE {where}', (search,)).fetchone()[0]
             rows = conn.execute(f'SELECT id,question,status,created_at,completed_at,latency_ms,reason_code FROM questions WHERE {where} ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?',
-                                (owner, search, page_size, (page - 1) * page_size)).fetchall()
+                                (search, page_size, (page - 1) * page_size)).fetchall()
         return {'data': [dict(row) for row in rows], 'pagination': {'page': page, 'page_size': page_size, 'total': total, 'total_pages': (total + page_size - 1) // page_size}}
 
     def feedback(self, owner: str, record_id: str, rating: str, tags: list[str], note: str):

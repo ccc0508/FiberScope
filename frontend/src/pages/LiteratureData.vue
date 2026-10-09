@@ -102,6 +102,7 @@ const review = computed(() =>
     ? currentReview(task.value, chosen.value)
     : undefined,
 );
+const canReview = computed(() => task.value?.can_review === true);
 const dirty = computed(
   () => !!draft.value && JSON.stringify(draft.value) !== baseline.value,
 );
@@ -403,7 +404,7 @@ function setStatus(value: Review["status"]) {
   if (value !== "confirmed") draft.value.suitability = "unassessed";
 }
 async function saveReview() {
-  if (!task.value || !chosen.value || !draft.value || saving.value) return;
+  if (!task.value || !chosen.value || !draft.value || saving.value || !canReview.value) return;
   const d = draft.value;
   const numeric = Number(d.raw_value.replaceAll(",", ""));
   if (
@@ -619,11 +620,12 @@ onBeforeUnmount(() => {
       <p class="upload-note">
         {{ extractionMode === 'document' ? '无需填写页码或表格编号。模型逐页寻找相关表格和正文数值，结果保留原文出处；图中读数和扫描件暂不支持。' : '页码按 PDF 文件中的实际页序填写。' }}
         提取在后台继续，刷新页面后可从任务列表恢复。
+        上传的论文、提取结果和审核记录长期保存，所有访问者可查看。
       </p>
     </details>
     <details class="card task-panel" open>
       <summary>
-        <History :size="17" />我的提取任务<span>{{ total }} 条</span>
+        <History :size="17" />提取记录<span>{{ total }} 条</span>
       </summary>
       <div class="task-toolbar">
         <form
@@ -694,7 +696,7 @@ onBeforeUnmount(() => {
         </button>
       </div>
       <p class="muted-note privacy-note">
-        仅当前浏览器会话可查看。清除 Cookie 或更换浏览器后，可能无法找回原记录。
+        记录长期保存在服务器，所有访问者均可查看和导出。清除 Cookie 或更换浏览器不影响查看。
       </p>
     </details>
     <template v-if="task">
@@ -846,7 +848,8 @@ onBeforeUnmount(() => {
                   {{ chosen.raw_material }}</small
                 >
               </div>
-              <fieldset class="editable-review" :disabled="saving">
+              <p v-if="!canReview" class="muted-note">公开记录可查看、下载和查看审核历史；修改仅限原提交浏览器。</p>
+              <fieldset class="editable-review" :disabled="saving || !canReview">
                 <div class="editor-fields">
                   <label class="full-field"
                     >原料<input
@@ -941,38 +944,39 @@ onBeforeUnmount(() => {
                     placeholder="修改、驳回或评估建模适用性时，请说明依据。"
                   />
                 </label>
-                <div class="editor-actions">
-                  <button class="button primary" :disabled="saving || !dirty">
-                    <Check :size="15" />{{
-                      saving ? "正在保存…" : "保存审核"
-                    }}</button
-                  ><button
-                    class="button"
-                    type="button"
-                    :disabled="saving || !dirty"
-                    @click="
-                      resetDraft();
-                      error = '';
-                      notice = '';
-                    "
-                  >
-                    取消修改</button
-                  ><button
-                    class="button"
-                    type="button"
-                    :disabled="saving || dirty"
-                    @click="task && openTask(task.id)"
-                  >
-                    重新读取</button
-                  ><button
-                    class="button audit-toggle"
-                    type="button"
-                    @click="toggleEvents"
-                  >
-                    审核记录
-                  </button>
-                </div>
               </fieldset>
+              <div class="editor-actions">
+                <button v-if="canReview" class="button primary" :disabled="saving || !dirty">
+                  <Check :size="15" />{{
+                    saving ? "正在保存…" : "保存审核"
+                  }}</button
+                ><button
+                  v-if="canReview"
+                  class="button"
+                  type="button"
+                  :disabled="saving || !dirty"
+                  @click="
+                    resetDraft();
+                    error = '';
+                    notice = '';
+                  "
+                >
+                  取消修改</button
+                ><button
+                  class="button"
+                  type="button"
+                  :disabled="saving || dirty"
+                  @click="task && openTask(task.id)"
+                >
+                  重新读取</button
+                ><button
+                  class="button audit-toggle"
+                  type="button"
+                  @click="toggleEvents"
+                >
+                  审核记录
+                </button>
+              </div>
               <div v-if="eventsOpen" class="audit-list">
                 <p v-if="eventsError" role="alert">{{ eventsError }}</p>
                 <p v-else-if="!events.length" class="muted-note">
