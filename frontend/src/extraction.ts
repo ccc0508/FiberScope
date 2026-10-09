@@ -13,6 +13,11 @@ export interface Measurement {
   header_word_ids: string[];
   unit_word_ids: string[];
   state_word_ids: string[];
+  context_word_ids?: string[];
+  source_quote?: string;
+  source_kind?: "table" | "text";
+  source_value_text?: string;
+  value_qualifier?: string;
 }
 export interface ReviewData {
   raw_material: string;
@@ -37,7 +42,9 @@ export interface ExtractionTask {
   status: "processing" | "completed" | "failed" | "interrupted";
   created_at: string;
   message: string | null;
-  source: { filename: string; page: number; table: string };
+  has_reviewable_result?: boolean;
+  source: { filename: string; page: number | null; table: string; mode?: "document" | "table" };
+  progress?: { page: number; page_count: number; stage: string; measurement_count: number };
   reviews?: Record<string, Review>;
   review_summary?: {
     total: number;
@@ -48,11 +55,17 @@ export interface ExtractionTask {
   };
   snapshot?: {
     evidence?: {
-      width_pt: number;
-      height_pt: number;
-      words: { id: string; text: string; bbox: number[] }[];
+      page_count?: number;
+      width_pt?: number;
+      height_pt?: number;
+      words?: { id: string; text: string; bbox: number[] }[];
+      pages?: Record<string, {width_pt: number; height_pt: number; words: {id: string; text: string; bbox: number[]}[]}>;
     };
-    result?: { measurements: Measurement[]; warnings: string[] };
+    result?: {
+      measurements: Measurement[]; warnings: string[]; coverage_complete?: boolean;
+      discovered_tables?: {page: number; table: string; reason: string; status: string; measurement_count?: number}[];
+      coverage?: {page: number; status: string; reason?: string; notes: string[]}[];
+    };
   } | null;
 }
 export const metricNames: Record<string, string> = {
@@ -70,6 +83,20 @@ export const metricNames: Record<string, string> = {
   kink_index: "扭结指数",
   coarseness: "粗度",
   fibrillation: "纤维化",
+  cooking_temperature: "蒸煮温度",
+  cooking_time: "蒸煮时间",
+  active_alkali: "有效碱用量",
+  pulp_yield: "纸浆得率",
+  beating_degree: "打浆度",
+  refining_time: "打浆时间",
+  refining_revolutions: "打浆转数",
+  basis_weight: "定量",
+  brightness: "白度",
+  kappa_number: "卡伯值",
+  klason_lignin: "Klason 木质素",
+  acid_soluble_lignin: "酸溶木质素",
+  holocellulose: "综纤维素",
+  alpha_cellulose: "α-纤维素",
 };
 export const measurementStates: Record<string, string> = {
   raw_material: "原料形态",
@@ -87,6 +114,17 @@ export const reviewStates = {
   pending: "待核对",
   confirmed: "已确认",
   rejected: "已驳回",
+};
+export const scanReasonNames: Record<string,string> = {
+  provider_error: "模型调用失败",
+  model_balance_exhausted: "模型服务余额不足",
+  model_rate_limited: "模型服务限流",
+  model_auth_failed: "模型服务认证失败",
+  validation_failed: "结果未通过原文证据校验",
+  text_unavailable: "页面没有可提取文字",
+  page_too_complex: "页面文字超过处理上限",
+  budget_exhausted: "处理时间预算已用完",
+  discovery_limit: "候选数量达到单页上限",
 };
 export function currentReview(task: ExtractionTask, r: Measurement): Review {
   return (

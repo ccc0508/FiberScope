@@ -69,7 +69,7 @@ def initial_review(original):
 
 
 def find_original(task, record_id):
-    if task['status'] != 'completed':
+    if task['status'] != 'completed' and not task.get('has_reviewable_result'):
         raise HTTPException(409, '提取完成后才能审核。')
     for r in (task.get('snapshot') or {}).get('result', {}).get('measurements', []):
         if r['record_id'] == record_id:
@@ -170,7 +170,7 @@ def router(runner, detail, check_origin):
             return Response(text,media_type='application/x-ndjson',headers=headers)
         buffer=StringIO(newline='')
         fields=['task_id','record_id',*EDIT_FIELDS,'original_raw_value','original_raw_unit','original_raw_material','original_metric','original_measurement_state','source_filename','source_pdf_sha256',
-                'source_pdf_page','source_table','source_bbox_pt','revision','reviewed_at','suitability','approved_for_training','note']
+                'source_pdf_page','source_table','source_kind','source_quote','source_value_text','value_qualifier','source_bbox_pt','revision','reviewed_at','suitability','approved_for_training','note']
         writer=csv.DictWriter(buffer,fieldnames=fields)
         writer.writeheader()
         for row in rows:
@@ -180,7 +180,10 @@ def router(runner, detail, check_origin):
                   'original_raw_material':r['raw_material'],'original_metric':r['metric'],
                   'original_measurement_state':r['measurement_state'],'source_filename':source['filename'],
                   'source_pdf_sha256':source['pdf_sha256'],'source_pdf_page':r['source_pdf_page'],
-                  'source_table':r['source_table'],'source_bbox_pt':json.dumps(r['source_bbox_pt']),
+                  'source_table':r['source_table'],'source_kind':r.get('source_kind','table'),
+                  'source_quote':r.get('source_quote',''),'source_bbox_pt':json.dumps(r['source_bbox_pt']),
+                  'source_value_text':r.get('source_value_text',r['raw_value']),
+                  'value_qualifier':r.get('value_qualifier','unspecified'),
                   'revision':review['revision'],'reviewed_at':review['updated_at'],'suitability':review['suitability'],
                   'approved_for_training':review['approved_for_training'],'note':review['note']}
             # Numeric literals (including negative values) retain their exact

@@ -4,7 +4,7 @@ FastAPI + Psycopg连接池。全部业务查询仅使用8个数据库分析视�
 接口契约见 [API_CONTRACT.md](../docs/API_CONTRACT.md)。
 
 实验数据库连接保持只读；文献问答的历史、评价写入独立SQLite记录库，见[问答记录说明](../docs/QA_HISTORY.md)。
-文献表格提取任务、原文证据、候选结果和人工审核版本保存于另一个独立SQLite记录库，接口和使用脚本见[提取与审核说明](../docs/LITERATURE_EXTRACTION.md)。
+文献整篇自动发现/提取及指定表格任务、原文证据、候选结果和人工审核版本保存于另一个独立SQLite记录库，接口和使用脚本见[提取与审核说明](../docs/LITERATURE_EXTRACTION.md)。
 
 ## 安装
 

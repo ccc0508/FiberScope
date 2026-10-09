@@ -22,6 +22,7 @@ import {
   measurementStates,
   taskStates,
   reviewStates,
+  scanReasonNames,
   type ExtractionTask,
   type Measurement,
   type Review,
@@ -32,6 +33,7 @@ import { timeLabel } from "../literature";
 const route = useRoute(),
   router = useRouter();
 const file = ref<File>(),
+  extractionMode = ref<"document" | "table">("document"),
   pdfPage = ref(1),
   tableNo = ref("3"),
   uploadOpen = ref(true),
@@ -49,6 +51,12 @@ const task = ref<ExtractionTask>(),
   selectedId = ref(""),
   groupName = ref(""),
   statusFilter = ref("all");
+const sourceFilter = ref("all");
+function sourceKey(r: Measurement) { return `${r.source_pdf_page}:${r.source_table}`; }
+const sourceOptions = computed(() => [
+  {value: "all", label: "全部来源"},
+  ...[...new Map(measurements.value.map(r => [sourceKey(r), {value: sourceKey(r), label: `第 ${r.source_pdf_page} 页 · ${r.source_table}`}])).values()],
+]);
 const saving = ref(false),
   exporting = ref(false),
   draft = ref<
@@ -73,6 +81,19 @@ const measurements = computed(
   () => task.value?.snapshot?.result?.measurements ?? [],
 );
 const grouped = computed(() => groups(measurements.value));
+const scanNotices = computed(() => {
+  const result = task.value?.snapshot?.result;
+  if (!result?.coverage) return [];
+  const notices = new Set(result.warnings ?? []);
+  for (const page of result.coverage) {
+    if (page.status !== 'scanned') notices.add(`第${page.page}页未完成扫描：${scanReasonNames[page.reason ?? ''] ?? '处理未完成'}`);
+    for (const note of page.notes) notices.add(`第${page.page}页：${note}`);
+  }
+  const covered = new Set(result.coverage.map(p => p.page));
+  for (let p = 1; p <= (task.value?.snapshot?.evidence?.page_count ?? 0); p++)
+    if (!covered.has(p)) notices.add(`第${p}页未处理：任务未完成`);
+  return [...notices];
+});
 const chosen = computed(() =>
   measurements.value.find((r) => r.record_id === selectedId.value),
 );
@@ -89,7 +110,7 @@ const visible = computed(() =>
     (r) =>
       statusFilter.value === "all" ||
       currentReview(task.value!, r).status === statusFilter.value,
-  ),
+  ).filter(r => sourceFilter.value === "all" || sourceKey(r) === sourceFilter.value),
 );
 const summary = computed(() => {
   let confirmed = 0,
@@ -113,8 +134,8 @@ const groupOptions = computed(() =>
   grouped.value.map((g) => ({
     value: g.name,
     label: g.name,
-    count: g.records.length,
-  })),
+    count: g.records.filter(r => sourceFilter.value === 'all' || sourceKey(r) === sourceFilter.value).length,
+  })).filter(g => g.count > 0),
 );
 const metricOptions = computed(() =>
   [...new Set([draft.value?.metric ?? "", ...Object.keys(metricNames)])]
@@ -139,7 +160,7 @@ let poll: number | undefined,
   disposed = false,
   selectionVersion = 0;
 let pending:
-  { file: File; page: number; table: string; requestId: string } | undefined;
+  { file: File; page: number; table: string; mode: string; requestId: string } | undefined;
 const controllers = new Set<AbortController>();
 async function request<T>(path: string, options: RequestInit = {}) {
   const controller = new AbortController();
@@ -205,6 +226,15 @@ function chooseFilter(value: string) {
   eventsOpen.value = false;
   resetDraft();
 }
+function chooseSource(value: string) {
+  if (!canSwitch()) return;
+  sourceFilter.value = value;
+  if (!groupOptions.value.some(g => g.value === groupName.value))
+    groupName.value = groupOptions.value[0]?.value ?? "";
+  selectedId.value = visible.value[0]?.record_id ?? "";
+  eventsOpen.value = false;
+  resetDraft();
+}
 async function loadList(initial = false) {
   loading.value = true;
   try {
@@ -249,13 +279,14 @@ async function openTask(id: string, polling = false) {
       groupName.value = "";
       selectedId.value = "";
       statusFilter.value = "all";
+      sourceFilter.value = "all";
       eventsOpen.value = false;
       error.value = "";
       notice.value = "";
       draft.value = undefined;
       baseline.value = "";
     }
-    if (value.status === "completed") {
+    if (value.status === "completed" || value.has_reviewable_result) {
       if (!grouped.value.some((g) => g.name === groupName.value))
         groupName.value = grouped.value[0]?.name ?? "";
       if (!chosen.value) selectedId.value = visible.value[0]?.record_id ?? "";
@@ -287,12 +318,12 @@ async function submit() {
     error.value = "PDF不能超过12MB。";
     return;
   }
-  if (
+  if (extractionMode.value === "table" && (
     !Number.isInteger(pdfPage.value) ||
     pdfPage.value < 1 ||
     pdfPage.value > 200 ||
     !/^\d+[a-z]?$/i.test(tableNo.value.trim())
-  ) {
+  )) {
     error.value = "请输入1—200的页码和有效表格编号，例如3。";
     return;
   }
@@ -302,19 +333,24 @@ async function submit() {
     pending.file !== selected ||
     pending.page !== pdfPage.value ||
     pending.table !== table
+    || pending.mode !== extractionMode.value
   )
     pending = {
       file: selected,
       page: pdfPage.value,
       table,
+      mode: extractionMode.value,
       requestId: crypto.randomUUID(),
     };
   const query = new URLSearchParams({
-    page: String(pdfPage.value),
-    table,
+    mode: extractionMode.value,
     request_id: pending.requestId,
     filename: selected.name,
   });
+  if (extractionMode.value === "table") {
+    query.set("page", String(pdfPage.value));
+    query.set("table", table);
+  }
   uploading.value = true;
   error.value = "";
   notice.value = "";
@@ -347,7 +383,8 @@ async function reextract() {
     file.value = new File([await response.blob()], source.filename, {
       type: "application/pdf",
     });
-    pdfPage.value = source.page;
+    extractionMode.value = source.mode ?? "table";
+    pdfPage.value = source.page ?? 1;
     tableNo.value = source.table.replace(/^table\s+/i, "");
     pending = undefined;
     uploadOpen.value = true;
@@ -474,33 +511,9 @@ function changes(event: { previous: Review; current: Review }) {
     }));
 }
 async function download(format: "jsonl" | "csv") {
-  if (!task.value || exporting.value) return;
-  exporting.value = true;
-  error.value = "";
-  const controller = new AbortController();
-  controllers.add(controller);
-  const timer = window.setTimeout(() => controller.abort(), 30000);
-  try {
-    const response = await fetch(
-      `/api/v1/literature/extractions/${task.value.id}/confirmed?format=${format}`,
-      { signal: controller.signal },
-    );
-    if (!response.ok) throw new Error("已确认数据导出失败，请重试。");
-    const blob = await response.blob();
-    if (disposed) return;
-    const url = URL.createObjectURL(blob),
-      link = document.createElement("a");
-    link.href = url;
-    link.download = `已确认文献数据.${format}`;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  } catch (e) {
-    if (!disposed) error.value = e instanceof Error ? e.message : "导出失败。";
-  } finally {
-    clearTimeout(timer);
-    controllers.delete(controller);
-    exporting.value = false;
-  }
+  if (!task.value || !summary.value.confirmed) return;
+  // A server attachment works in both normal browsers and the in-app browser.
+  window.location.assign(`/api/v1/literature/extractions/${task.value.id}/confirmed?format=${format}`);
 }
 function beforeUnload(event: BeforeUnloadEvent) {
   if (dirty.value) {
@@ -530,7 +543,7 @@ onBeforeUnmount(() => {
       <div>
         <div class="eyebrow">科研助手</div>
         <h1>文献数据提取与审核</h1>
-        <p>将论文表格整理为可追溯的数据，核对后再使用。</p>
+        <p>上传论文，自动发现工艺、纤维特性和纸张性能数据，核对后再使用。</p>
       </div>
       <FileSpreadsheet :size="30" />
     </div>
@@ -558,6 +571,11 @@ onBeforeUnmount(() => {
         <Upload :size="17" />新增提取<span>可复制文字的 PDF · 最大 12MB</span>
       </summary>
       <form class="upload-form" @submit.prevent="submit">
+        <fieldset class="extraction-mode" aria-label="提取方式">
+          <legend>提取方式</legend>
+          <label><input v-model="extractionMode" type="radio" value="document" />整篇自动识别</label>
+          <label><input v-model="extractionMode" type="radio" value="table" />指定表格</label>
+        </fieldset>
         <label class="file-field"
           >选择论文 PDF<input
             type="file"
@@ -566,7 +584,7 @@ onBeforeUnmount(() => {
             @change="fileChanged"
           /><small v-if="file">{{ file.name }}</small></label
         >
-        <label
+        <label v-if="extractionMode === 'table'"
           >PDF 页码<input
             v-model.number="pdfPage"
             type="number"
@@ -575,7 +593,7 @@ onBeforeUnmount(() => {
             aria-label="PDF页码"
             required
         /></label>
-        <label
+        <label v-if="extractionMode === 'table'"
           >表格编号
           <div class="table-input">
             <span>Table</span
@@ -595,8 +613,8 @@ onBeforeUnmount(() => {
         </button>
       </form>
       <p class="upload-note">
-        页码按 PDF
-        文件中的实际页序填写。提取在后台继续，刷新页面后可从任务列表恢复。
+        {{ extractionMode === 'document' ? '无需填写页码或表格编号。模型逐页寻找相关表格和正文数值，结果保留原文出处；图中读数和扫描件暂不支持。' : '页码按 PDF 文件中的实际页序填写。' }}
+        提取在后台继续，刷新页面后可从任务列表恢复。
       </p>
     </details>
     <details class="card task-panel" open>
@@ -638,7 +656,7 @@ onBeforeUnmount(() => {
           <div>
             <strong>{{ item.source.filename }}</strong
             ><span
-              >第 {{ item.source.page }} 页 · {{ item.source.table }} ·
+              >{{ item.source.mode === 'document' ? '整篇自动识别' : `第 ${item.source.page} 页 · ${item.source.table}` }} ·
               {{ timeLabel(item.created_at) }}</span
             >
           </div>
@@ -683,7 +701,8 @@ onBeforeUnmount(() => {
       >
         <RefreshCw :size="20" class="spinning" />
         <div>
-          <h2>正在提取 {{ task.source.table }}</h2>
+          <h2>{{ task.source.mode === 'document' ? '正在扫描整篇论文' : `正在提取 ${task.source.table}` }}</h2>
+          <p v-if="task.progress">第 {{ task.progress.page }} / {{ task.progress.page_count }} 页 · {{ task.progress.stage }} · 已保存 {{ task.progress.measurement_count }} 条候选</p>
           <p>完成后会自动显示候选数据。你可以离开页面，稍后从任务列表查看。</p>
         </div>
       </section>
@@ -694,12 +713,13 @@ onBeforeUnmount(() => {
         <div>
           <h2>{{ taskStates[task.status] }}</h2>
           <p>{{ task.message }}</p>
+          <p v-if="task.has_reviewable_result">下方保留了已通过原文证据校验的部分候选，可继续核对；本次整篇提取未完成。</p>
         </div>
         <button class="button" :disabled="uploading" @click="reextract">
           重新提取
         </button>
       </section>
-      <template v-else>
+      <template v-if="task.status === 'completed' || task.has_reviewable_result">
         <div class="review-heading">
           <div>
             <h2>{{ task.source.filename }}</h2>
@@ -724,14 +744,30 @@ onBeforeUnmount(() => {
             </button>
           </div>
         </div>
+        <details v-if="task.snapshot?.result?.coverage" class="card scan-report" open>
+          <summary>自动发现结果 · {{ task.snapshot.result.coverage_complete ? '逐页扫描已完成' : '部分内容未完成，请查看说明' }}</summary>
+          <p class="muted-note">扫描完成表示各页已处理，不保证发现全部数据；所有候选仍需核对，不自动认可建模适用性。</p>
+          <p v-if="!measurements.length" class="muted-note">本次没有得到通过证据校验的候选数据。可查看扫描说明，或切换指定表格模式重新提取。</p>
+          <ul class="discovered-tables">
+            <li v-for="(t, index) in task.snapshot.result.discovered_tables" :key="index">
+              <strong>第 {{ t.page }} 页 · {{ t.table }}</strong>
+              <span>{{ t.status === 'extracted' ? `已提取 ${t.measurement_count} 条` : '未提取成功' }} · {{ t.reason }}</span>
+            </li>
+          </ul>
+          <details v-if="scanNotices.length" class="scan-notes">
+            <summary>扫描说明与未提取内容（{{ scanNotices.length }}）</summary>
+            <ul><li v-for="(warning, index) in scanNotices" :key="index">{{ warning }}</li></ul>
+          </details>
+        </details>
         <div class="review-layout">
           <ExtractionOriginal :task="task" :measurement="chosen" />
           <section class="card review-panel" aria-label="候选数据审核">
             <div class="review-toolbar">
               <h2>候选数据</h2>
-              <span>{{ grouped.length }} 种原料</span>
+              <span>{{ grouped.length }} 个原料 / 处理组</span>
             </div>
             <div class="review-filters">
+              <FilterSelect id="review-source" label="筛选原文来源" :model-value="sourceFilter" :options="sourceOptions" @update:model-value="chooseSource" />
               <FilterSelect
                 id="review-material"
                 label="选择原料"
@@ -766,7 +802,7 @@ onBeforeUnmount(() => {
                     measurementStates[
                       currentReview(task, r).current.measurement_state
                     ] ?? "未说明"
-                  }}</span>
+                  }}</span><small v-if="task.source.mode === 'document'" class="record-source">第 {{ r.source_pdf_page }} 页 · {{ r.source_table }}{{ r.value_qualifier === 'approximate' ? ' · 原文约数' : '' }}</small>
                 </div>
                 <div class="measurement-value">
                   {{ currentReview(task, r).current.raw_value
@@ -1093,6 +1129,42 @@ input[type="file"]::file-selector-button {
 .upload-note {
   margin-top: 12px;
 }
+.extraction-mode {
+  grid-column: 1 / -1;
+  border: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  min-width: 0;
+}
+.extraction-mode legend {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.extraction-mode label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+}
+.extraction-mode input {
+  width: auto;
+  accent-color: var(--blue);
+}
+.scan-report {
+  padding: 18px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.scan-report summary { cursor: pointer; color: var(--text); }
+.discovered-tables { margin: 12px 0; padding-left: 20px; }
+.discovered-tables li { margin: 8px 0; }
+.discovered-tables span { display: block; color: var(--muted); }
+.scan-notes ul { padding-left: 20px; overflow-wrap: anywhere; }
+.record-source { display: block; color: var(--muted); font-size: 10px; margin-top: 3px; }
 .button {
   white-space: nowrap;
   font-size: 12px;

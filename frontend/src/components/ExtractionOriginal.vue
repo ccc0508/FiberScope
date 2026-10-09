@@ -11,7 +11,9 @@ const zoom = ref(1),
   ready = ref(false);
 const viewport = ref<HTMLElement>(),
   paper = ref<HTMLElement>();
-const evidence = computed(() => props.task.snapshot?.evidence);
+const pageNumber = computed(() => props.measurement?.source_pdf_page ?? props.task.source.page ?? 1);
+const sourceLabel = computed(() => props.measurement?.source_table ?? props.task.source.table);
+const evidence = computed(() => props.task.snapshot?.evidence?.pages?.[String(pageNumber.value)] ?? props.task.snapshot?.evidence);
 const dimensions = computed(() => [
   evidence.value?.width_pt ?? 612,
   evidence.value?.height_pt ?? 792,
@@ -24,8 +26,9 @@ const words = computed(() => {
     ...props.measurement.header_word_ids,
     ...props.measurement.unit_word_ids,
     ...props.measurement.state_word_ids,
+    ...(props.measurement.context_word_ids ?? []),
   ]);
-  return evidence.value.words.filter((w) => ids.has(w.id));
+  return evidence.value.words?.filter((w) => ids.has(w.id)) ?? [];
 });
 const url = computed(() => `/api/v1/literature/extractions/${props.task.id}`);
 async function locate() {
@@ -40,7 +43,7 @@ async function locate() {
   });
 }
 watch(
-  () => props.task.id,
+  () => `${props.task.id}:${pageNumber.value}`,
   () => {
     zoom.value = 1;
     error.value = false;
@@ -55,10 +58,10 @@ watch(zoom, locate);
     <div class="original-heading">
       <div>
         <h2>原文对照</h2>
-        <p>第 {{ task.source.page }} 页 · {{ task.source.table }}</p>
+        <p>第 {{ pageNumber }} 页 · {{ sourceLabel }}</p>
       </div>
       <a
-        :href="`${url}/pdf#page=${task.source.page}`"
+        :href="`${url}/pdf#page=${pageNumber}`"
         target="_blank"
         rel="noopener"
         class="button"
@@ -120,9 +123,9 @@ watch(zoom, locate);
         :class="{ loading: !ready }"
       >
         <img
-          :key="task.id"
-          :src="`${url}/page`"
-          :alt="`${task.source.filename} 第${task.source.page}页`"
+          :key="`${task.id}:${pageNumber}`"
+          :src="`${url}/page?page=${pageNumber}`"
+          :alt="`${task.source.filename} 第${pageNumber}页`"
           @load="
             ready = true;
             locate();
