@@ -43,6 +43,7 @@ export interface ExtractionTask {
   created_at: string;
   message: string | null;
   has_reviewable_result?: boolean;
+  can_review?: boolean;
   source: { filename: string; page: number | null; table: string; mode?: "document" | "table" };
   progress?: { page: number; page_count: number; stage: string; measurement_count: number };
   reviews?: Record<string, Review>;

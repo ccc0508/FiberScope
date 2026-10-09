@@ -9,6 +9,7 @@ from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
+from fastapi import FastAPI
 from app import literature
 from app.qa_history import HistoryStore
 from tests.test_literature_api import configured, client_for, finished, close_clients
@@ -23,7 +24,34 @@ RESULT = {'status': 'answered', 'answer': '纤维结构发生变化 [1]', 'laten
           'generation_calls': [{'attempt': 1, 'usage': {'total_tokens': 100}}]}
 
 
-def test_private_history_feedback_export_and_cookie(configured, monkeypatch):
+def test_all_owners_visible_after_cookie_clear_and_service_restart(configured, monkeypatch):
+    monkeypatch.setattr(literature, 'run_answer', lambda *a: dict(RESULT))
+    app = FastAPI()
+    app.include_router(literature.router(configured))
+    key = str(uuid4())
+    with TestClient(app) as first:
+        a = finished(first, first.post(BASE+'/ask', json={'question':'第一位访问者的问题', 'request_id':key}).json()['id'])
+        second = TestClient(app)
+        b = finished(second, second.post(BASE+'/ask', json={'question':'第二位访问者的问题', 'request_id':key}).json()['id'])
+        assert a['id'] != b['id']
+        assert first.get(BASE+'/history').json()['pagination']['total'] == 2
+        assert second.get(BASE+'/history/'+a['id']).json()['can_feedback'] is False
+        assert first.post(BASE+'/history/'+a['id']+'/feedback', json={'rating':'helpful'}).status_code == 200
+        first.cookies.clear()
+        shared = first.get(BASE+'/history/'+a['id']).json()
+        assert shared['feedback']['rating'] == 'helpful' and not shared['can_feedback']
+        assert first.post(BASE+'/history/'+a['id']+'/feedback', json={'rating':'inaccurate'}).status_code == 403
+        assert len(first.get(BASE+'/history/export').text.splitlines()) == 2
+    restarted = FastAPI()
+    restarted.include_router(literature.router(configured))
+    with TestClient(restarted) as fresh:
+        assert fresh.get(BASE+'/history').json()['pagination']['total'] == 2
+        assert fresh.get(BASE+'/history/'+a['id']).json()['result'] == a['result']
+        assert fresh.get(BASE+'/history/'+b['id']).json()['result'] == b['result']
+        assert fresh.get(BASE+'/history/missing').status_code == 404
+
+
+def test_public_history_export_with_session_owned_feedback(configured, monkeypatch):
     monkeypatch.setattr(literature, 'run_answer', lambda *a: json.loads(json.dumps(RESULT)))
     owner = client_for(configured)
     response = owner.get(BASE + '/history')
@@ -34,14 +62,16 @@ def test_private_history_feedback_export_and_cookie(configured, monkeypatch):
     record_id = record['id']
     assert record['result']['retrieved_evidence'] == RESULT['retrieved_evidence']
     assert 'owner_id' not in record and 'request_key' not in record
+    assert record['can_feedback'] is True
     app = owner.app
     with TestClient(app) as stranger:
-        assert stranger.get(BASE + '/history').json()['pagination']['total'] == 0
-        assert stranger.get(BASE + '/history/' + record_id).status_code == 404
-        assert stranger.post(BASE + '/history/' + record_id + '/feedback', json={'rating': 'helpful'}).status_code == 404
-        assert stranger.get(BASE + '/history/export').content == b''
+        assert stranger.get(BASE + '/history').json()['pagination']['total'] == 1
+        public = stranger.get(BASE + '/history/' + record_id).json()
+        assert public['result'] == record['result'] and public['can_feedback'] is False
+        assert stranger.post(BASE + '/history/' + record_id + '/feedback', json={'rating': 'helpful'}).status_code == 403
+        assert json.loads(stranger.get(BASE + '/history/export').text)['id'] == record_id
         stranger.cookies.set('fiber_qa_session', 'invented-token', path='/api/v1/literature')
-        assert stranger.get(BASE + '/history/' + record_id).status_code == 404
+        assert stranger.get(BASE + '/history/' + record_id).json()['can_feedback'] is False
     # Original owner continues to work after another browser disconnects.
     feedback = {'rating': 'inaccurate', 'tags': ['unsupported_citation'], 'note': '原文不支持该结论'}
     assert owner.post(BASE + '/history/' + record_id + '/feedback', json=feedback).status_code == 200
@@ -140,7 +170,7 @@ def test_failed_jobs_are_saved_without_raw_errors(configured, monkeypatch, failu
     assert record['latency_ms'] is not None and 'secret-key' not in json.dumps(record)
 
 
-def test_save_failure_is_explicit_and_not_visible_to_strangers(configured, monkeypatch):
+def test_save_failure_is_explicit_to_all_visitors(configured, monkeypatch):
     monkeypatch.setattr(literature, 'run_answer', lambda *a: dict(RESULT))
     attempted = Event()
     def fail_save(*a):
@@ -160,7 +190,7 @@ def test_save_failure_is_explicit_and_not_visible_to_strangers(configured, monke
         time.sleep(.01)
     assert response.status_code == 503 and 'secret' not in response.text
     stranger = TestClient(client.app)
-    assert stranger.get(BASE + '/history/' + record_id).status_code == 404
+    assert stranger.get(BASE + '/history/' + record_id).status_code == 503
 
 
 def test_recovery_pagination_literal_search_and_feedback_validation(configured):

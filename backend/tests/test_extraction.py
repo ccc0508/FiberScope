@@ -139,7 +139,7 @@ def submit(client, key=None, **params):
                        content=b'%PDF-1.4 fake', headers={'Content-Type': 'application/pdf'})
 
 
-def test_http_private_records_pdf_export_idempotency_and_refresh(configured, monkeypatch):
+def test_http_public_records_pdf_export_idempotency_and_restart(configured, monkeypatch):
     monkeypatch.setattr(extraction, 'run_worker', success)
     app = app_for(configured)
     with TestClient(app) as client:
@@ -161,13 +161,35 @@ def test_http_private_records_pdf_export_idempotency_and_refresh(configured, mon
         assert pdf.content.startswith(b'%PDF-')
         assert int(pdf.headers['content-length']) == len(pdf.content)
         stranger = TestClient(app)
-        assert stranger.get(BASE).json()['pagination']['total'] == 0
+        assert stranger.get(BASE).json()['pagination']['total'] == 1
+        assert record['can_review'] is True
         for suffix in ['', '/pdf', '/export']:
-            assert stranger.get(BASE + '/' + record['id'] + suffix).status_code == 404
+            assert stranger.get(BASE + '/' + record['id'] + suffix).status_code == 200
+        assert stranger.get(BASE + '/' + record['id']).json()['can_review'] is False
+        stranger.cookies.clear()
+        assert stranger.get(BASE + '/' + record['id']).json()['snapshot'] == record['snapshot']
         saved_cookie = client.cookies.get('fiber_extraction_session')
     with TestClient(app_for(configured)) as refreshed:
-        refreshed.cookies.set('fiber_extraction_session', saved_cookie, path=BASE)
         assert refreshed.get(BASE + '/' + record['id']).json()['snapshot'] == record['snapshot']
+        assert refreshed.get(BASE + '/' + record['id']).json()['can_review'] is False
+        refreshed.cookies.set('fiber_extraction_session', saved_cookie, path=BASE)
+        assert refreshed.get(BASE + '/' + record['id']).json()['can_review'] is True
+
+
+def test_public_list_includes_multiple_submitters_and_keys_remain_owned(configured, monkeypatch):
+    monkeypatch.setattr(extraction, 'run_worker', success)
+    app=app_for(configured)
+    with TestClient(app) as first:
+        key=uuid4()
+        a=finish(first,submit(first,key).json()['id'])
+        second=TestClient(app)
+        b=finish(second,submit(second,key).json()['id'])
+        assert a['id'] != b['id']
+        assert submit(second,key).json()['id'] == b['id']
+        shared=first.get(BASE,params={'page_size':1}).json()
+        assert shared['pagination']['total']==2 and shared['pagination']['total_pages']==2
+        assert second.get(f"{BASE}/{a['id']}").json()['can_review'] is False
+        assert second.get(f"{BASE}/{b['id']}").json()['can_review'] is True
 
 
 def test_background_concurrency_and_origin(configured, monkeypatch):

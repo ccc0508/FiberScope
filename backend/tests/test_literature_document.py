@@ -192,7 +192,7 @@ def test_balance_exhaustion_stops_further_calls_and_reports_remaining_pages(monk
     assert 'private provider details' not in json.dumps(result)
 
 
-def test_document_http_default_idempotency_private_review_and_page_routing(configured,monkeypatch):
+def test_document_http_default_idempotency_public_review_and_page_routing(configured,monkeypatch):
     def worker(config,pdf,source,artifact):
         assert source['mode']=='document' and source['page'] is None
         evidence={**PAGE,'pdf_sha256':source['pdf_sha256']}
@@ -220,7 +220,9 @@ def test_document_http_default_idempotency_private_review_and_page_routing(confi
         assert client.get(f'{base}/{task["id"]}/page').status_code==422
         assert client.get(f'{base}/{task["id"]}/page?page=3').status_code==422
         stranger = TestClient(app)
-        assert stranger.get(f'{base}/{task["id"]}/page?page=1').status_code==404
+        preview=configured.root/'extraction/jobs'/task['id']/'page-1.png'
+        preview.write_bytes(b'page-preview-fixture')
+        assert stranger.get(f'{base}/{task["id"]}/page?page=1').content==b'page-preview-fixture'
 
 
 def test_atomic_checkpoint_retries_brief_windows_reader_lock(monkeypatch,tmp_path):

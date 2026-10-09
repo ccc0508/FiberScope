@@ -1,4 +1,4 @@
-"""Private asynchronous extraction jobs, independent of experimental data and QA."""
+"""Public durable extraction jobs, with session-owned submissions and reviews."""
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
@@ -63,6 +63,7 @@ class ExtractionStore(ReviewStoreMixin, HistoryStore):
                     UNIQUE(owner_id, request_key)
                 );
                 CREATE INDEX IF NOT EXISTS extraction_owner_time ON extraction_tasks(owner_id,created_at DESC,id DESC);
+                CREATE INDEX IF NOT EXISTS extraction_time ON extraction_tasks(created_at DESC,id DESC);
                 PRAGMA user_version=1;
             ''')
             initialize_reviews(conn)
@@ -123,10 +124,11 @@ class ExtractionStore(ReviewStoreMixin, HistoryStore):
 
     def get(self, owner, record_id):
         with self.connection() as conn:
-            row = conn.execute('SELECT * FROM extraction_tasks WHERE owner_id=? AND id=?', (owner, record_id)).fetchone()
+            row = conn.execute('SELECT * FROM extraction_tasks WHERE id=?', (record_id,)).fetchone()
             if row is None:
                 return None
             result = self.public(row)
+            result['can_review'] = row['owner_id'] == owner
             if result['status'] == 'processing':
                 try:
                     progress = self.path.parent / 'jobs' / record_id / 'progress.json'
@@ -141,8 +143,8 @@ class ExtractionStore(ReviewStoreMixin, HistoryStore):
     def list(self, owner, page, page_size, q=''):
         with self.connection() as conn:
             conn.execute('BEGIN')
-            where="owner_id=? AND (instr(lower(json_extract(source_json,'$.filename')),lower(?))>0 OR instr(lower(json_extract(source_json,'$.table')),lower(?))>0)"
-            values=(owner,q,q)
+            where="(instr(lower(json_extract(source_json,'$.filename')),lower(?))>0 OR instr(lower(json_extract(source_json,'$.table')),lower(?))>0)"
+            values=(q,q)
             total = conn.execute('SELECT count(*) FROM extraction_tasks WHERE '+where,values).fetchone()[0]
             rows = conn.execute('SELECT * FROM extraction_tasks WHERE '+where+' ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?',
                                 (*values, page_size, (page - 1) * page_size)).fetchall()

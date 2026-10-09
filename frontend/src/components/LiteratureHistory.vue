@@ -6,9 +6,8 @@ import { literatureRequest, stateNames, timeLabel, type HistoryItem } from "../l
 const props = defineProps<{ selected?: string }>();
 const emit = defineEmits<{ select: [id: string]; ready: [latest?: HistoryItem] }>();
 const items = ref<HistoryItem[]>([]), search = ref(""), page = ref(1), total = ref(0), pages = ref(0);
-const loading = ref(false), error = ref(""), exporting = ref(false);
+const loading = ref(false), error = ref("");
 let controller: AbortController | undefined;
-let exportController: AbortController | undefined;
 let disposed = false;
 async function refresh(initial = false) {
   controller?.abort();
@@ -35,35 +34,24 @@ async function refresh(initial = false) {
 }
 function find() { page.value = 1; refresh(); }
 function move(offset: number) { page.value += offset; refresh(); }
-async function download() {
-  exporting.value = true;
+function download() {
   error.value = "";
-  exportController = new AbortController();
-  const timer = window.setTimeout(() => exportController?.abort(), 60000);
   try {
-    const response = await fetch("/api/v1/literature/history/export", { signal: exportController.signal });
-    if (!response.ok) throw new Error("导出失败，请稍后重试。");
-    const blob = await response.blob();
-    if (disposed) return;
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url; link.download = "literature-qa.jsonl"; link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    window.location.assign("/api/v1/literature/history/export");
   } catch (e) { if (!disposed) error.value = e instanceof Error ? e.message : "导出失败。"; }
-  finally { clearTimeout(timer); exporting.value = false; }
 }
 defineExpose({ refresh });
-onBeforeUnmount(() => { disposed = true; controller?.abort(); exportController?.abort(); });
+onBeforeUnmount(() => { disposed = true; controller?.abort(); });
 refresh(true);
 </script>
 
 <template>
   <details class="card history-panel" open>
-    <summary><History :size="17" />我的问答历史 <span>{{ total }} 条</span></summary>
-    <p class="history-note">记录保存在服务端，仅当前浏览器会话可查看。清除 Cookie、换浏览器或更换分享地址后，可能无法找回原记录。</p>
+    <summary><History :size="17" />问答历史 <span>{{ total }} 条</span></summary>
+    <p class="history-note">记录长期保存在服务器，所有访问者均可查看和导出。清除 Cookie 或更换浏览器不影响查看。</p>
     <div class="history-tools">
       <form @submit.prevent="find"><Search :size="15" /><input v-model="search" aria-label="搜索历史问题" placeholder="搜索问题" maxlength="200" /><button class="button" :disabled="loading">搜索</button></form>
-      <button class="button" :disabled="exporting || loading" @click="download"><Download :size="14" />{{ exporting ? "正在导出…" : "导出我的记录" }}</button>
+      <button class="button" :disabled="loading" @click="download"><Download :size="14" />导出全部记录</button>
     </div>
     <div v-if="error" class="history-error" role="alert">{{ error }} <button class="button" :disabled="loading" @click="refresh(true)">重试</button></div>
     <p v-else-if="loading" class="history-note" role="status">正在读取历史…</p>

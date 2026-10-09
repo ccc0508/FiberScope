@@ -29,6 +29,7 @@ export interface HistoryItem {
   reason_code: string | null;
 }
 export interface HistoryRecord extends HistoryItem {
+  can_feedback?: boolean;
   result: Answer | null;
   feedback: Feedback | null;
 }

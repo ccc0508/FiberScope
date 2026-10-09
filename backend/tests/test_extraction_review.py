@@ -79,12 +79,18 @@ def test_invalid_or_unexplained_reviews_rejected(candidate,change):
     assert client.get(review_url(task)+'/events').json()['data']==[]
 
 
-def test_review_and_exports_are_private_and_csrf_checked(candidate):
+def test_reviews_history_and_exports_are_public_but_writes_are_owned(candidate, configured):
     client,task,app=candidate
     stranger=TestClient(app)
+    assert client.post(review_url(task),json=payload(task)).status_code==200
+    page=configured.root/'extraction/jobs'/task['id']/'page-1.png'
+    page.write_bytes(b'page-preview-fixture')
     for url in [review_url(task)+'/events',f"{BASE}/{task['id']}/confirmed",f"{BASE}/{task['id']}/page"]:
-        assert stranger.get(url).status_code==404
-    assert stranger.post(review_url(task),json=payload(task)).status_code==404
+        assert stranger.get(url).status_code==200
+    assert len(stranger.get(review_url(task)+'/events').json()['data'])==1
+    assert len(stranger.get(f"{BASE}/{task['id']}/confirmed").text.splitlines())==1
+    assert stranger.post(review_url(task),json=payload(task)).status_code==403
+    assert client.get(f"{BASE}/{task['id']}").json()['reviews']==stranger.get(f"{BASE}/{task['id']}").json()['reviews']
     assert client.post(review_url(task),json=payload(task),headers={'Origin':'https://evil.example'}).status_code==403
     assert client.post(f"{BASE}/{task['id']}/reviews/invented",json=payload(task)).status_code==404
 

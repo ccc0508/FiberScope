@@ -271,6 +271,7 @@ def router(config: LiteratureSettings | None = None, allowed_origins: list[str] 
         except (sqlite3.Error, OSError):
             raise HTTPException(503, '问答保存失败，请稍后重试。') from None
         response.status_code = 202 if record['status'] == 'processing' else 200
+        record['can_feedback'] = True
         return record
 
     @routes.get('/history')
@@ -282,8 +283,8 @@ def router(config: LiteratureSettings | None = None, allowed_origins: list[str] 
     @routes.get('/history/export')
     def export(request: Request):
         response = Response()
-        owner = runner.session(request, response)
-        response = StreamingResponse(runner.store.export(owner), media_type='application/x-ndjson', headers=dict(response.headers))
+        runner.session(request, response)
+        response = StreamingResponse(runner.store.export(), media_type='application/x-ndjson', headers=dict(response.headers))
         response.headers['Content-Disposition'] = 'attachment; filename="literature-qa.jsonl"'
         if 'content-length' in response.headers:
             del response.headers['content-length']
@@ -303,7 +304,8 @@ def router(config: LiteratureSettings | None = None, allowed_origins: list[str] 
         except ValueError:
             raise HTTPException(409, '该记录尚未生成可评价的回答。') from None
         if result is None:
-            raise HTTPException(404, '没有找到这条问答记录。')
+            detail(owner, record_id)
+            raise HTTPException(403, '该记录公开可查看，评价仅限原提交浏览器修改。')
         return result
 
     from .extraction import router as extraction_router

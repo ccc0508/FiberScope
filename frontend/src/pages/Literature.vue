@@ -174,7 +174,7 @@ function reask() {
   ask(true);
 }
 async function saveFeedback(value?: Feedback["rating"]) {
-  if (!selected.value || feedbackSaving.value) return;
+  if (!selected.value || !selected.value.can_feedback || feedbackSaving.value) return;
   if (value) { rating.value = value; tags.value = []; }
   if (!rating.value) return;
   const id = selected.value.id;
@@ -268,7 +268,7 @@ load();
         />
         <div class="question-foot">
           <p id="literature-question-help">
-            每次提问独立处理，已接收的问题会自动保存。<span
+            每次提问独立处理，问题和回答长期保存，所有访问者可查看。<span
               >{{ question.length }} / 2000</span
             >
           </p>
@@ -344,7 +344,7 @@ load();
         <span>已保存 · {{ timeLabel(selected.created_at) }}<template v-if="selected.latency_ms != null"> · 用时 {{ (selected.latency_ms / 1000).toFixed(1) }} 秒</template></span>
         <button class="button" :disabled="asking || feedbackSaving" @click="reask">重新提问</button>
       </div>
-      <section v-if="selected" class="feedback-section" aria-label="用户反馈">
+      <section v-if="selected?.can_feedback" class="feedback-section" aria-label="用户反馈">
         <h3>这个回答对你有帮助吗？</h3>
         <div class="feedback-actions">
           <button :class="['button', { chosen: rating === 'helpful' }]" :disabled="feedbackSaving" @click="saveFeedback('helpful')">有帮助</button>
@@ -361,6 +361,16 @@ load();
         </form>
         <p v-if="feedbackError" class="feedback-error" role="alert">{{ feedbackError }}</p>
         <p class="answer-note">评价用于改进问答，不代表专家审核或标准答案。</p>
+      </section>
+      <section v-else-if="selected" class="feedback-section" aria-label="已保存的用户反馈">
+        <h3>用户反馈</h3>
+        <p v-if="selected.feedback" class="answer-note">
+          {{ selected.feedback.rating === 'helpful' ? '有帮助' : '不准确' }}
+          <template v-if="selected.feedback.tags.length"> · {{ selected.feedback.tags.map(t => feedbackTags.find(tag => tag.key === t)?.label ?? t).join('、') }}</template>
+          <template v-if="selected.feedback.note"> · {{ selected.feedback.note }}</template>
+        </p>
+        <p v-else class="answer-note">尚无用户反馈。</p>
+        <p class="answer-note">所有访问者可查看，评价仅限原提交浏览器修改。</p>
       </section>
     </section>
     <section
