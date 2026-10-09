@@ -23,6 +23,8 @@ morphology of the original raw material, not post-refining pulp morphology.
 header_word_ids identify the metric heading. Units must come from the heading:
 do not infer a percent sign for a ratio/coefficient, or convert values/units.
 unit_word_ids identify the printed unit; use empty unit and [] if not reported.
+If a unit is embedded in a header word like fiberlength(mm), reference that whole
+word but return only the explicitly parenthesized unit mm.
 For unrefined/refined, state_word_ids must identify the printed state heading.
 rows: [{raw_material, label_word_ids, cells}]. cells maps EVERY column key to
 the ID of its single numeric PDF word, or null if missing/unsupported.
@@ -38,9 +40,16 @@ Do not guess missing measurements, units, processing conditions or replicates.
 
 
 class ExtractionError(Exception):
-    def __init__(self, reason: str):
+    def __init__(self, reason: str, hint: str = ''):
         self.reason = reason
+        self.hint = hint
         super().__init__(reason)
+
+
+def provider_failure(error):
+    return {402: 'model_balance_exhausted', 429: 'model_rate_limited',
+            401: 'model_auth_failed', 403: 'model_auth_failed'}.get(
+                getattr(error, 'status_code', None), 'provider_error')
 
 
 class StrictModel(BaseModel):
@@ -69,7 +78,7 @@ class Payload(StrictModel):
     warnings: list[str] = Field(default_factory=list, max_length=30)
 
 
-def snapshot(path: Path, page_number: int, crop: list[float] | None):
+def snapshot(path: Path, page_number: int, crop: list[float] | None, x_tolerance=3):
     # Optional parser is loaded only inside the bounded extraction subprocess.
     import pdfplumber
     try:
@@ -87,7 +96,7 @@ def snapshot(path: Path, page_number: int, crop: list[float] | None):
                 page = page.crop(tuple(crop))
             words = [{'id': f'w{i}', 'text': w['text'],
                       'bbox': [round(float(w[k]), 3) for k in ('x0', 'top', 'x1', 'bottom')]}
-                     for i, w in enumerate(page.extract_words(), 1)]
+                     for i, w in enumerate(page.extract_words(x_tolerance=x_tolerance), 1)]
             if len(words) < 5:
                 raise ExtractionError('text_unavailable')
             if len(words) > 4000 or sum(len(w['text']) for w in words) > 40000:
@@ -122,6 +131,35 @@ def unit_text(text: str):
     return normalized(text).replace('µ', 'μ').replace('²', '2').replace('³', '3').replace('(', '').replace(')', '')
 
 
+def literal_numeric_parts(text):
+    """Split a literal scalar/unit token; never split ranges or mean±SD."""
+    pattern = r'([~≈∼]?)([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)([A-Za-zµμ°℃%][A-Za-z0-9µμ°℃%·⋅*/^²³−-]*)?'
+    match = re.fullmatch(pattern, text.replace('−', '-'))
+    if not match:
+        # Keep commas and other supported plain numeric spelling unchanged.
+        number(text)
+        return text, '', 'unspecified'
+    qualifier, raw, unit = match.groups()
+    number(raw)
+    return raw, unit or '', 'approximate' if qualifier else 'unspecified'
+
+
+def unit_supported(unit, words):
+    printed = ''.join(w['text'] for w in words)
+    if unit_text(unit) == unit_text(printed):
+        return True
+    try:
+        _, embedded, _ = literal_numeric_parts(printed)
+        if embedded and unit_text(unit) == unit_text(embedded):
+            return True
+    except ExtractionError:
+        pass
+    # PDF extraction often glues a heading and its explicitly printed unit.
+    # Match a whole parenthesized unit, never a guessed substring of a heading.
+    return any(unit_text(unit) == unit_text(a or b)
+               for a, b in re.findall(r'\(([^()]*)\)|（([^（）]*)）', printed))
+
+
 def ground(payload: Payload, evidence: dict, table: str):
     """Validate references, copy PDF numbers; semantic correctness needs review/eval."""
     words = {w['id']: w for w in evidence['words']}
@@ -139,12 +177,12 @@ def ground(payload: Payload, evidence: dict, table: str):
         header = referenced(c.header_word_ids)
         units = referenced(c.unit_word_ids)
         states = referenced(c.state_word_ids)
-        if (not c.unit and units) or (c.unit and (not units or unit_text(c.unit) != unit_text(''.join(w['text'] for w in units)))):
+        if (not c.unit and units) or (c.unit and (not units or not unit_supported(c.unit, units))):
             raise ExtractionError('unsupported_unit')
         if c.state in ('unrefined', 'refined') and c.state not in [normalized(w['text']) for w in states]:
-            raise ExtractionError('unsupported_state')
+            raise ExtractionError('unsupported_state', f'Column {c.key}: state={c.state} but referenced state words={[w["text"] for w in states]}. Reference the literal state heading, or use unspecified with empty state_word_ids.')
         if c.state not in ('unrefined', 'refined') and states:
-            raise ExtractionError('unsupported_state')
+            raise ExtractionError('unsupported_state', f'Column {c.key}: raw_material/unspecified must use empty state_word_ids.')
         columns.append({**c.model_dump(), 'raw_header': ' '.join(w['text'] for w in header)})
 
     records, warnings, used_values, labels = [], list(payload.warnings), set(), set()
@@ -192,10 +230,10 @@ def ground(payload: Payload, evidence: dict, table: str):
             'human_review_status': 'pending', 'approved_for_training': False}
 
 
-def extract(evidence: dict, table: str, settings, client=None, checkpoint=None):
+def extract(evidence: dict, table: str, settings, client=None, checkpoint=None, require_title=True):
     from openai import OpenAI
     from literature_rag.diagnostics import provider_usage
-    if normalized(table) not in normalized(''.join(w['text'] for w in evidence['words'])):
+    if require_title and normalized(table) not in normalized(''.join(w['text'] for w in evidence['words'])):
         raise ExtractionError('table_not_found')
     prompt = json.dumps({'target_table': table, 'page': evidence['page'],
                          'words': [[w['id'], w['text'], *w['bbox']] for w in evidence['words']]}, ensure_ascii=False)
@@ -210,8 +248,8 @@ def extract(evidence: dict, table: str, settings, client=None, checkpoint=None):
                 messages=[{'role': 'system', 'content': SYSTEM_PROMPT},
                           {'role': 'user', 'content': prompt + feedback}],
                 response_format={'type': 'json_object'}, temperature=0, max_tokens=16000)
-        except Exception:
-            raise ExtractionError('provider_error') from None
+        except Exception as e:
+            raise ExtractionError(provider_failure(e)) from None
         attempts.append({'attempt': attempt, 'usage': provider_usage(response)})
         if checkpoint:
             checkpoint({'generation_calls': attempts})
@@ -225,8 +263,16 @@ def extract(evidence: dict, table: str, settings, client=None, checkpoint=None):
             attempts[-1]['validation_error'] = reason
             if checkpoint:
                 checkpoint({'generation_calls': attempts, 'validation_error': reason})
-            feedback = f'\nPrevious output failed validation: {reason}. Return a corrected complete JSON object using only the same PDF words.'
+            hint = e.hint if isinstance(e, ExtractionError) else structured_error_hint(e)
+            feedback = f'\nPrevious output failed validation: {reason}. {hint} Return compact corrected complete JSON using only the same PDF words; never repeat evidence text or add extra fields.'
     raise ExtractionError('validation_failed')
+
+
+def structured_error_hint(error):
+    if hasattr(error, 'errors'):
+        return '; '.join(f'{item["loc"]}: {item["type"]}' for item in
+                         error.errors(include_input=False, include_url=False)[:8])
+    return 'Check JSON completeness and the required schema.'
 
 
 def configuration(settings):

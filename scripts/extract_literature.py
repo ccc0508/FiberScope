@@ -15,15 +15,24 @@ sys.path.insert(0, str(ROOT / 'backend'))
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--pdf', type=Path, required=True)
-    parser.add_argument('--page', type=int, required=True)
-    parser.add_argument('--table', required=True)
+    parser.add_argument('--page', type=int)
+    parser.add_argument('--table')
+    parser.add_argument('--mode', choices=('document','table'))
+    parser.add_argument('--wait-seconds', type=int)
     parser.add_argument('--crop', help='Optional x0,top,x1,bottom in PDF points.')
     parser.add_argument('--base-url', default='http://127.0.0.1:8000')
     parser.add_argument('--output-dir', type=Path, default=ROOT / 'tmp/literature-extraction')
     parser.add_argument('--benchmark', type=Path)
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    params = {'page': args.page, 'table': args.table, 'request_id': str(uuid4()), 'filename': args.pdf.name}
+    mode = args.mode or ('table' if args.page is not None or args.table else 'document')
+    if mode == 'table' and (args.page is None or not args.table):
+        parser.error('table mode requires --page and --table')
+    if mode == 'document' and (args.page is not None or args.table or args.crop):
+        parser.error('document mode does not take page, table or crop')
+    params = {'mode': mode, 'request_id': str(uuid4()), 'filename': args.pdf.name}
+    if mode == 'table':
+        params.update(page=args.page,table=args.table)
     if args.crop:
         params['crop'] = args.crop
     base = args.base_url.rstrip('/') + '/api/v1/literature/extractions'
@@ -32,7 +41,7 @@ def main():
         response.raise_for_status()
         task = response.json()
         print('Task accepted:', task['id'])
-        deadline = monotonic() + 330
+        deadline = monotonic() + (args.wait_seconds or (1860 if mode=='document' else 330))
         while task['status'] == 'processing':
             if monotonic() > deadline:
                 raise SystemExit('Client wait ended; the accepted task remains on the server.')

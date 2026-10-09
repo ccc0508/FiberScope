@@ -12,6 +12,7 @@ import subprocess
 import sys
 from threading import BoundedSemaphore, Lock
 from time import perf_counter
+from typing import Literal
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, HTTPException, Query, Request, Response
@@ -33,6 +34,9 @@ ERROR_MESSAGES = {
     'unsupported_page_size': '页面尺寸过大，请提供常规版面的PDF。',
     'source_changed': '保存的原文与提交文件指纹不一致，请重新提交。',
     'provider_error': '模型调用失败，请稍后重试。',
+    'model_balance_exhausted': '模型服务余额不足，请补充模型额度后重新提取。',
+    'model_rate_limited': '模型服务限流，请稍后重新提取。',
+    'model_auth_failed': '模型服务认证失败，请检查模型配置。',
     'missing_configuration': '文献提取的模型配置不完整。',
     'validation_failed': '模型提取结果未通过原文证据校验。',
     'timeout': '提取超时，已保存可用的证据及诊断信息。',
@@ -74,7 +78,7 @@ class ExtractionStore(ReviewStoreMixin, HistoryStore):
     @staticmethod
     def artifacts(artifact):
         saved = {}
-        for name in ('configuration', 'evidence', 'diagnostics', 'result'):
+        for name in ('configuration', 'evidence', 'diagnostics', 'result', 'progress'):
             path = artifact / (name + '.json')
             try:
                 if path.exists():
@@ -109,6 +113,12 @@ class ExtractionStore(ReviewStoreMixin, HistoryStore):
         result['message'] = ERROR_MESSAGES.get(row['reason_code'], '提取失败，请重新提交。') if row['reason_code'] else None
         if detail:
             result['snapshot'] = json.loads(row['snapshot_json']) if row['snapshot_json'] else None
+            saved = result['snapshot'] or {}
+            result['has_reviewable_result'] = result['status'] == 'completed' or (
+                result['status'] in ('failed','interrupted') and row['reason_code'] != 'source_changed'
+                and bool(result['source'].get('pdf_sha256'))
+                and saved.get('evidence',{}).get('pdf_sha256') == result['source'].get('pdf_sha256')
+                and bool(saved.get('result',{}).get('measurements')))
         return result
 
     def get(self, owner, record_id):
@@ -117,6 +127,13 @@ class ExtractionStore(ReviewStoreMixin, HistoryStore):
             if row is None:
                 return None
             result = self.public(row)
+            if result['status'] == 'processing':
+                try:
+                    progress = self.path.parent / 'jobs' / record_id / 'progress.json'
+                    if progress.is_file():
+                        result['progress'] = json.loads(progress.read_text(encoding='utf-8'))
+                except (OSError, ValueError):
+                    pass
             result['reviews'] = self.reviews(record_id)
             result['review_summary'] = review_summary(result,result['reviews'])
             return result
@@ -134,12 +151,15 @@ class ExtractionStore(ReviewStoreMixin, HistoryStore):
 
 
 def run_worker(config, path, source, artifact):
+    mode = source.get('mode', 'table')
+    timeout = config.document_extraction_timeout_seconds if mode == 'document' else config.extraction_timeout_seconds
     body = {'pdf_path': str(path), 'artifact_dir': str(artifact),
-            'page': source['page'], 'table': source['table'], 'crop': source['crop']}
+            'page': source['page'], 'table': source['table'], 'crop': source['crop'],
+            'mode': mode, 'budget_seconds': timeout - 10}
     try:
         result = subprocess.run([sys.executable, '-I', '-X', 'utf8', str(BACKEND / 'extraction_worker.py')],
             input=json.dumps(body), text=True, encoding='utf-8', capture_output=True,
-            timeout=config.extraction_timeout_seconds,
+            timeout=timeout,
             creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
         return json.loads(result.stdout) if result.returncode == 0 else {'ok': False, 'reason': 'worker_error'}
     except subprocess.TimeoutExpired:
@@ -269,13 +289,19 @@ def router(config, check_origin):
 
     @routes.post('', openapi_extra={'requestBody': {'required': True, 'content': {
         'application/pdf': {'schema': {'type': 'string', 'format': 'binary'}}}}})
-    async def submit(request: Request, response: Response, page: int = Query(ge=1, le=200),
-                     table: str = Query(min_length=1, max_length=60, pattern=r'(?i)^table\s+\d+[a-z]?$'),
+    async def submit(request: Request, response: Response, page: int | None = Query(None, ge=1, le=200),
+                     table: str | None = Query(None, min_length=1, max_length=60, pattern=r'(?i)^table\s+\d+[a-z]?$'),
+                     mode: Literal['document', 'table'] | None = Query(None),
                      request_id: UUID = Query(default_factory=uuid4),
                      filename: str = Query('paper.pdf', min_length=1, max_length=200),
                      crop: str | None = Query(None, max_length=100)):
         started = perf_counter()
         check_origin(request)
+        mode = mode or ('table' if page is not None or table is not None else 'document')
+        if mode == 'table' and (page is None or table is None):
+            raise HTTPException(422, '指定表格模式需要页码和表格编号。')
+        if mode == 'document' and (page is not None or table is not None or crop is not None):
+            raise HTTPException(422, '整篇自动模式不需要页码、表格编号或裁剪区域。')
         if request.headers.get('content-type', '').split(';')[0].strip().lower() != 'application/pdf':
             raise HTTPException(415, '请以application/pdf提交PDF文件。')
         bounds = None
@@ -297,7 +323,7 @@ def router(config, check_origin):
         owner = runner.session(request, response)
         source = {'filename': filename.replace('\\', '/').split('/')[-1],
                   'pdf_sha256': sha256(content).hexdigest(), 'page': page,
-                  'table': table.strip(), 'crop': bounds}
+                  'table': table.strip() if table else '全文自动', 'crop': bounds, 'mode': mode}
         try:
             record_id = runner.database(runner.submit, owner, str(request_id), source, bytes(content), started)
         except HTTPException:
@@ -338,16 +364,22 @@ def router(config, check_origin):
                         headers={**response_headers, 'Content-Disposition': 'attachment; filename="literature-extraction.jsonl"'})
 
     @routes.get('/{record_id}/page')
-    def page_image(record_id: UUID,request: Request):
+    def page_image(record_id: UUID,request: Request, page: int | None = Query(None,ge=1,le=200)):
         holder=Response()
         owner=runner.session(request,holder)
         item=detail(owner,str(record_id))
         source=item['source']
-        image=runner.root/'jobs'/str(record_id)/'page.png'
+        page_no = page or source.get('page')
+        if page_no is None:
+            raise HTTPException(422,'请选择一条候选数据查看对应原文页。')
+        evidence = (item.get('snapshot') or {}).get('evidence', {})
+        if evidence.get('page_count') and page_no > evidence['page_count']:
+            raise HTTPException(422,'原文页码超出范围。')
+        image=runner.root/'jobs'/str(record_id)/f'page-{page_no}.png'
         if not image.exists():
             pdf=runner.root/'pdfs'/(source['pdf_sha256']+'.pdf')
             try:
-                result=subprocess.run([sys.executable,'-I',str(BACKEND/'extraction_page_worker.py'),str(pdf),str(source['page']),str(image)],
+                result=subprocess.run([sys.executable,'-I',str(BACKEND/'extraction_page_worker.py'),str(pdf),str(page_no),str(image)],
                     capture_output=True,timeout=20,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
                 if result.returncode or not image.exists():
                     raise HTTPException(422,'该页无法预览，请查看完整PDF。')

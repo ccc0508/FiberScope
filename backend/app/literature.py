@@ -31,6 +31,7 @@ class LiteratureSettings(BaseSettings):
     data_dir: Path = BACKEND.parent / '.rag-data'
     timeout_seconds: int = Field(90, ge=5, le=90)
     extraction_timeout_seconds: int = Field(180, ge=10, le=300)
+    document_extraction_timeout_seconds: int = Field(1800, ge=60, le=3600)
 
     @property
     def root(self) -> Path:
