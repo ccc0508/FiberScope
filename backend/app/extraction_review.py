@@ -89,8 +89,6 @@ class ReviewStoreMixin:
             row = conn.execute('SELECT * FROM extraction_tasks WHERE id=?', (task_id,)).fetchone()
             if row is None:
                 raise HTTPException(404, '没有找到这条提取记录。')
-            if row['owner_id'] != owner:
-                raise HTTPException(403, '该记录公开可查看，审核仅限原提交浏览器修改。')
             task = self.public(row)
             original = find_original(task, record_id)
             stored = conn.execute('SELECT review_json FROM extraction_reviews WHERE task_id=? AND record_id=?', (task_id,record_id)).fetchone()
@@ -144,7 +142,7 @@ def router(runner, detail, check_origin):
     def review(task_id: UUID, record_id: str, body: ReviewInput, request: Request, response: Response):
         check_origin(request)
         owner = runner.session(request,response)
-        # Check save state here; enforce write ownership inside the atomic transaction.
+        # Public review still checks save state and revision inside the transaction.
         detail(owner,str(task_id))
         return runner.database(runner.store.review,owner,str(task_id),record_id,body)
 
