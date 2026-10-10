@@ -1,4 +1,4 @@
-"""Public durable extraction jobs, with session-owned submissions and reviews."""
+"""Public durable extraction jobs and reviews, with session-scoped submissions."""
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
@@ -128,7 +128,7 @@ class ExtractionStore(ReviewStoreMixin, HistoryStore):
             if row is None:
                 return None
             result = self.public(row)
-            result['can_review'] = row['owner_id'] == owner
+            result['can_review'] = True
             if result['status'] == 'processing':
                 try:
                     progress = self.path.parent / 'jobs' / record_id / 'progress.json'

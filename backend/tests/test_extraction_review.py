@@ -79,7 +79,7 @@ def test_invalid_or_unexplained_reviews_rejected(candidate,change):
     assert client.get(review_url(task)+'/events').json()['data']==[]
 
 
-def test_reviews_history_and_exports_are_public_but_writes_are_owned(candidate, configured):
+def test_review_writes_history_and_exports_are_public_and_csrf_checked(candidate, configured):
     client,task,app=candidate
     stranger=TestClient(app)
     assert client.post(review_url(task),json=payload(task)).status_code==200
@@ -89,10 +89,33 @@ def test_reviews_history_and_exports_are_public_but_writes_are_owned(candidate, 
         assert stranger.get(url).status_code==200
     assert len(stranger.get(review_url(task)+'/events').json()['data'])==1
     assert len(stranger.get(f"{BASE}/{task['id']}/confirmed").text.splitlines())==1
-    assert stranger.post(review_url(task),json=payload(task)).status_code==403
+    assert stranger.post(review_url(task),json=payload(task)).status_code==409
+    assert stranger.post(review_url(task),json=payload(task,expected_revision=1,status='rejected',note='另一访问者复核')).status_code==200
+    assert client.get(review_url(task)+'/events').json()['data'][0]['current']['note']=='另一访问者复核'
     assert client.get(f"{BASE}/{task['id']}").json()['reviews']==stranger.get(f"{BASE}/{task['id']}").json()['reviews']
     assert client.post(review_url(task),json=payload(task),headers={'Origin':'https://evil.example'}).status_code==403
     assert client.post(f"{BASE}/{task['id']}/reviews/invented",json=payload(task)).status_code==404
+
+
+def test_public_review_survives_cookie_clear_and_preserves_original_and_revisions(candidate):
+    client,task,app=candidate
+    original=copy.deepcopy(task['snapshot'])
+    visitor=TestClient(app,base_url='https://share.example')
+    url=review_url(task)
+    headers={'Origin':'https://share.example','Sec-Fetch-Site':'same-origin'}
+    assert visitor.get(f"{BASE}/{task['id']}").json()['can_review'] is True
+    edited=visitor.post(url,json=payload(task,raw_value='1.40',note='访客修订测试'),headers=headers)
+    assert edited.status_code==200 and edited.json()['revision']==1
+    visitor.cookies.clear()
+    assert visitor.get(f"{BASE}/{task['id']}").json()['can_review'] is True
+    restored=visitor.post(url,json=payload(task,expected_revision=1,note='清除Cookie后恢复原文'),headers=headers)
+    assert restored.status_code==200 and restored.json()['revision']==2
+    # A stale editor cannot silently overwrite another visitor's update.
+    assert client.post(url,json=payload(task)).status_code==409
+    saved=client.get(f"{BASE}/{task['id']}").json()
+    assert saved['snapshot']==original
+    assert saved['reviews'][task['snapshot']['result']['measurements'][0]['record_id']]['current']['raw_value']=='1.36'
+    assert len(client.get(url+'/events').json()['data'])==2
 
 
 def test_exports_only_confirmed_and_safe_csv_preserves_negative_numbers(candidate):
