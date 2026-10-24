@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "dataset_id": "pfi-qa-eval-v1",
+  "created_on": "2026-10-25",
+  "baseline_id": "qa-v1-20261024",
+  "baseline_source_commit": "d6a391ee8febcc58a4d0e1b59551d92403082f48",
+  "baseline_manifest_sha256": "a9734365d5cf47d07f6d12efebf28edbe0c2504f0d09513b3b743fa9de33e23d",
+  "source_documents": [
+    {
+      "id": "doc_0fcf2a50cfa02d21",
+      "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+      "file_hash": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4",
+      "page_count": 14,
+      "chunk_count": 44,
+      "snapshot_path": "papers/0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4.pdf"
+    }
+  ],
+  "rubric_id": "pfi-qa-rubric-v1",
+  "review_status": "source_checked_ai_draft",
+  "quality_run_status": "not_run",
+  "authoring": "AI-assisted; source text and rendered key pages checked; independent domain expert review pending.",
+  "split": "public_development_only_no_held_out_test",
+  "source_review_scope": "Complete 14-page PDF and frozen corpus manifest; external supplements and extraction-only papers excluded.",
+  "source_doi": "10.3390/polym12122912",
+  "source_license": "CC BY 4.0",
+  "source_authors": [
+    "Kunpeng Li",
+    "Lihong Zhao",
+    "Beihai He"
+  ],
+  "case_count": 30,
+  "evidence_count": 23,
+  "key_point_count": 78,
+  "counts_by_category": {
+    "factual": 3,
+    "numeric": 7,
+    "comparison": 5,
+    "method": 3,
+    "mechanism": 4,
+    "synthesis": 2,
+    "source_conflict": 1,
+    "insufficient_evidence": 4,
+    "partial_answer": 1
+  },
+  "counts_by_difficulty": {
+    "easy": 8,
+    "medium": 14,
+    "hard": 8
+  },
+  "counts_by_expected_behavior": {
+    "answer": 24,
+    "flag_conflict": 1,
+    "abstain": 4,
+    "partial": 1
+  },
+  "files": {
+    "cases.jsonl": "999f99fbe46a0aa65f29f56fe8c1f8ee9b3eb122325bb43359ba336eb87cfcc0",
+    "evidence.json": "057c1cff5a5587292db55dee3525d0d1fe008f7d57fd9107072192fcbe731d26",
+    "rubric.json": "bbeecec5f044810e12fb06d2f79d3f0ea8bd474b75cfd202c0bd77795c37b665",
+    "scorecard.template.jsonl": "e35b760e625e157d06db445b4bd283017006808a1d9da3091e3774542d276691",
+    "QUESTIONS.md": "dc85fb15bc9a980820907082606ae13a22247db22a9ee7f5d8ad5019aeab047b"
+  }
+}
