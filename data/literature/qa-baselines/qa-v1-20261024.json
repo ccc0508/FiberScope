@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "baseline_id": "qa-v1-20261024",
+  "created_at": "2026-10-24T15:10:07.841751+00:00",
+  "source_commit": "d6a391ee8febcc58a4d0e1b59551d92403082f48",
+  "configuration": {
+    "embedding_provider": "openai",
+    "embedding_model": "BAAI/bge-m3",
+    "embedding_dimensions": 1024,
+    "llm_provider": "deepseek",
+    "llm_model": "deepseek-v4-flash",
+    "top_k": 8,
+    "min_score": 0.35,
+    "pipeline_version": "literature-history-v1",
+    "prompt_pipeline_sha256": "579864ff5ff2c25acfdd8cca3b18de5fdb1dadbc39230084eb450d99a5823847",
+    "chunk_size_setting": 1200,
+    "chunk_overlap_setting": 200,
+    "chunk_settings_note": "Settings only; frozen existing chunk contents are authoritative.",
+    "qa_timeout_seconds": 90,
+    "vector_candidate_limit": 50,
+    "generation_attempt_limit": 2,
+    "generation_parameters": "Temperature, top_p and seed are not explicitly set by the frozen generator; provider defaults apply.",
+    "provider_endpoint_fingerprints": {
+      "llm_base_url": "a34e2a4708ed1c61008a151688838dcf1c44d4e7f08054633e72ba7c0b16cfc1",
+      "embedding_base_url": "dcfb966d818ddf8f4d10f7397ce546e86d3fcb8afe26371506405f6978c6f661"
+    }
+  },
+  "documents": [
+    {
+      "id": "doc_0fcf2a50cfa02d21",
+      "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+      "file_hash": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4",
+      "page_count": 14,
+      "chunk_count": 44,
+      "snapshot_path": "papers/0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4.pdf"
+    }
+  ],
+  "chunk_count": 44,
+  "index_validation": {
+    "vectors": 44,
+    "dimensions": 1024,
+    "offline_query": "passed",
+    "provider_calls": 0
+  },
+  "files": {
+    "code.zip": "c53e325d12191e652b48c44661efc57118e04efddd1b85fc26bd16dcf6fc3d1b",
+    "configuration.json": "b33df6d11b6da19d0e8fd1fdb6a22c1ec11259b7bf6cd9f17c7ccfe7f3714d0e",
+    "environment.json": "fc66194e1868a7c73aef405d7e5e0293bb4f6a812c95ba294da0336a26993615",
+    "library/chroma/2a360fbf-921d-4133-aee9-46ff63d7fffe/data_level0.bin": "24e1817ade48233aa67bea6665b3ff73e0e2557f288e1e143fdcfbd38ca38da0",
+    "library/chroma/2a360fbf-921d-4133-aee9-46ff63d7fffe/header.bin": "bf12d4486518c7addf488cb4854526902c78e91951990e1e2f4e055cec814e5d",
+    "library/chroma/2a360fbf-921d-4133-aee9-46ff63d7fffe/length.bin": "eac9e68a61670182d7ce8206e1a918b5e1ae1bf0b571f3208c808bf07bbdd449",
+    "library/chroma/2a360fbf-921d-4133-aee9-46ff63d7fffe/link_lists.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "library/chroma/chroma.sqlite3": "297715839f0bf42533ec13dbabac7cb2c585bc4a6219407ff5c1c13386659f0b",
+    "library/metadata.sqlite3": "269e833829d6fd90a06f75351dec51d03ba03393885305844ef17614f63cdb4b",
+    "library/papers/0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4.pdf": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4"
+  },
+  "limitations": [
+    "No evaluation questions or quality scores have been produced.",
+    "API keys and provider endpoint URLs are not included; reruns need private credentials.",
+    "Provider defaults, remote model updates and stochastic output cannot be frozen.",
+    "The offline probe checks stored vectors and local search, not live question answering."
+  ]
+}
