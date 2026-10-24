@@ -1,0 +1,10 @@
+{
+  "run_id": "qa-baseline-20261025-r1",
+  "review_provenance": "AI source review; independent expert review pending",
+  "files": {
+    "review-scores.jsonl": "e88c767ef4b56d03fa36aed5b117848f353222326920f2c92c4fca612ef0186a",
+    "source-integrity.json": "4282473503e979bddbf3b1d29e12ca549139536bcd3a1a6a90d16d4475d09ab5",
+    "summary.json": "f8a83822d5a24faa96d9f493c41a720b73c5daf82263400b8fdb183fee9449b3"
+  },
+  "report_sha256": "dbb74b71109b4cb38c9392b045c806b1700ad52d3b1fa2c0cd7a434647338744"
+}

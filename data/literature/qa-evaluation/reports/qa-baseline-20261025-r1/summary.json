@@ -1,0 +1,1359 @@
+{
+  "schema_version": 1,
+  "run_id": "qa-baseline-20261025-r1",
+  "review_provenance": "AI source review; independent expert review pending",
+  "source_commit": "d6a391ee8febcc58a4d0e1b59551d92403082f48",
+  "baseline_id": "qa-v1-20261024",
+  "dataset_id": "pfi-qa-eval-v1",
+  "dataset_manifest_sha256": "7d82079b6cd018c2f303ab7bfd26afacd1c17fdc0fcc99174d9a8befaf29ca69",
+  "rubric_id": "pfi-qa-rubric-v1",
+  "run_metadata_sha256": "8784ffd4fa9eb28bc0caea353bd36728dcb8c3b4b83b0c8ff956e48abaff4a2e",
+  "reviews_sha256": "bdf61bab871e8bbd17173f766b2b38cb20e97d9c09a312a8704ba6539b2625fe",
+  "response_file_hashes": {
+    "PFI-001": "e9fcc804140403a19329ac79f492c5052e586042c439a6f1beeea4b2ab40242a",
+    "PFI-002": "7ed58b589c9ee4166f705243ecd03d5f394c4fbcb181be8b1eac383119ed550f",
+    "PFI-003": "44a205a5b2670d26e6432f238f264508d39793c403960e8080b3352c0bfe237a",
+    "PFI-004": "00902d5603503936f33ebc265f92ee3c5ebe94a6ef673335e4b2875f58280b9e",
+    "PFI-005": "c9f80d4dbe681bda5eb0c8ea1f0bd9f4c45153e74ac600099765df595c537552",
+    "PFI-006": "d7e12adef0efbcc8cde38f90047a278c0aa2362a689c1a02ffb382bd75041628",
+    "PFI-007": "29527a0841703e829570dc0e4a559bf8d121f789b7fa2e91e685a27173b82556",
+    "PFI-008": "7963082084b512fb1709174cb3e268a790df38785fc4f7cf21f1c5434b1e18d0",
+    "PFI-009": "11eebdb082b53d175efcf748e83d6f322c602d12c12c3f46cadd64061a3f1dd5",
+    "PFI-010": "9df79b1071af04c80db6e6bfa3aa0e56708abb646b6cbb3e70d94b53250376b7",
+    "PFI-011": "9c082eb773b11445c81054491b621307f5f045042813d60a66a29636fd08c747",
+    "PFI-012": "1ee675a26f4b3232a5a70e21ae66e520b4c35876377a04f197ee0e90e5013c81",
+    "PFI-013": "d84d9ffa620c6f1bc5c8424e50b50bc2b215f880e91c005eeb0fbc71a7309b5e",
+    "PFI-014": "c694156f86c9f4faadf205093e7d8ffbfd914480dad68278f6f6eab38c7cbc49",
+    "PFI-015": "b8145ed89be2e858be8d1741d2d73cf4f36ddb3952486cc87325de457549b38f",
+    "PFI-016": "089233573a89d9dc48f9734c7e6c88bb111ff1a0dd2d279a649f1447477a4f56",
+    "PFI-017": "94ce5f7688ac5847a7f0b4d79ced536afb75680427c41fa08a17c0185d6fd9bf",
+    "PFI-018": "e46ba8b0e308d65422594b90cd5ee3497c0dfd8da963eaf7550e4500c92d38a0",
+    "PFI-019": "9fdfcac382b5ff5e36d9f0ded67b94eb2bf2e2c2b861426e4a76f5ae127a715c",
+    "PFI-020": "13afbdc480b124676cfc39678de348a270563e7b80b40fbe7da62586d9b80ecb",
+    "PFI-021": "8d1f5f6557f2cac75150ea4d8eb3003770a79c8a605eef201659ef4c48eb6d41",
+    "PFI-022": "da870987b73fd29055f1cb3a19a9b44cd68fee73c43e0a894a34fd4c6fdba6b5",
+    "PFI-023": "dad369b34aaea8d286948bde531d99e856ba668eb811f7dd63d3f3b03b2d1270",
+    "PFI-024": "fee3e6fa4b54f0037ac97d0a0068c1a37f91b3eeeb61e202a9dd830a3a4bf27f",
+    "PFI-025": "d39e93f31c9734945c2b006a7ce03cf95789c3b1b043dea0085019c6e7adbc8f",
+    "PFI-026": "2149a83e32b56598d9a7cb54eafbcc598bb4752b86f289ea7a1934f93423028c",
+    "PFI-027": "27e313803b8f45776cdff85a21091cdfc44255504a7c22a8b2b536413597c0e0",
+    "PFI-028": "3359aff216f735935b702d4ebbdbb9098f3b2a2b41b9c16c45b36f6f2d06edc8",
+    "PFI-029": "09bf85e896b08917dbf0b37cc4c99ab7a4f2d1148f326744fb1331e52e6d4aac",
+    "PFI-030": "91451c93fc2dbf7ba712be3459ff2609db30bf7b16a37b5dae68f5d5110f8aec"
+  },
+  "completed": 30,
+  "total": 30,
+  "runtime_status_counts": {
+    "answered": 30
+  },
+  "expected_behavior_counts": {
+    "answer": 24,
+    "flag_conflict": 1,
+    "abstain": 4,
+    "partial": 1
+  },
+  "observed_behavior_counts": {
+    "answer": 24,
+    "flag_conflict": 1,
+    "abstain": 4,
+    "partial": 1
+  },
+  "point_macro_average": 0.9416666666666667,
+  "point_micro": {
+    "numerator": 73.5,
+    "denominator": 78,
+    "value": 0.9423076923076923
+  },
+  "strict_pass": {
+    "numerator": 20,
+    "denominator": 30,
+    "value": 0.6666666666666666
+  },
+  "claim_support": {
+    "numerator": 109.5,
+    "denominator": 112,
+    "value": 0.9776785714285714
+  },
+  "claim_support_counts": {
+    "supported": 108,
+    "partially_supported": 3,
+    "contradicted": 1
+  },
+  "citation_precision": {
+    "numerator": 114,
+    "denominator": 144,
+    "value": 0.7916666666666666
+  },
+  "citation_coverage": {
+    "numerator": 103,
+    "denominator": 107,
+    "value": 0.9626168224299065
+  },
+  "retrieval_complete": {
+    "numerator": 68,
+    "denominator": 69,
+    "value": 0.9855072463768116
+  },
+  "retrieval_macro_average": 0.9629629629629629,
+  "abstention_boundary_correct": {
+    "numerator": 4,
+    "denominator": 4,
+    "value": 1.0
+  },
+  "answerable_wrong_abstention": {
+    "numerator": 0,
+    "denominator": 24,
+    "value": 0.0
+  },
+  "latency_ms": {
+    "median": 7089.0,
+    "p95_nearest_rank": 14208,
+    "total_worker_wall_ms": 245701,
+    "scope": "Runner elapsed time including isolated process startup; excludes HTTP queues and browser rendering."
+  },
+  "generation": {
+    "application_calls": 32,
+    "extra_application_attempts": 2,
+    "usage_known_calls": 32,
+    "known_usage_tokens": {
+      "prompt_tokens": 102559,
+      "completion_tokens": 28604,
+      "total_tokens": 131163
+    },
+    "network_retry_count": null
+  },
+  "embedding": {
+    "query_count": 30,
+    "usage_known_queries": 0,
+    "tokens": null
+  },
+  "rows": [
+    {
+      "case_id": "PFI-001",
+      "category": "factual",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 2,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 5689,
+      "generation_calls": 1,
+      "notes": "两类浆、漂白及kraft工艺正确，未编造树种。"
+    },
+    {
+      "case_id": "PFI-002",
+      "category": "numeric",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 4,
+      "point_count": 4,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 3
+      },
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 5611,
+      "generation_calls": 1,
+      "notes": "浆浓、间隙及两类作用力的数值、单位和对应关系均正确。"
+    },
+    {
+      "case_id": "PFI-003",
+      "category": "factual",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 2,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 6300,
+      "generation_calls": 1,
+      "notes": "五个转数水平及数量正确，未将水平数当重复次数。"
+    },
+    {
+      "case_id": "PFI-004",
+      "category": "comparison",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 0.8333333333333334,
+      "point_sum": 2.5,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 5
+      },
+      "citation_precision": {
+        "numerator": 9,
+        "denominator": 10,
+        "value": 0.9
+      },
+      "citation_coverage": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": false,
+      "end_to_end_ms": 10443,
+      "generation_calls": 1,
+      "notes": "两个12000转打浆度正确；未说明两类浆作用力不同。阔叶木57 °SR所在陈述额外引用的[2]未含该数值，只有[1]直接支持。"
+    },
+    {
+      "case_id": "PFI-005",
+      "category": "factual",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 2,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 5635,
+      "generation_calls": 1,
+      "notes": "MORFI LB及三个形态指标正确；英文术语保持原文，可接受。"
+    },
+    {
+      "case_id": "PFI-006",
+      "category": "method",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 3,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 5444,
+      "generation_calls": 1,
+      "notes": "样品质量、标准、公式与两个质量的含义正确。"
+    },
+    {
+      "case_id": "PFI-007",
+      "category": "method",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 3,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 5
+      },
+      "citation_precision": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 9696,
+      "generation_calls": 1,
+      "notes": "两种CI口径、公式及拟合面积方法正确；面积占总面积已明确口径区别，不要求机械复述“不能混用”。"
+    },
+    {
+      "case_id": "PFI-008",
+      "category": "numeric",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 2,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 5352,
+      "generation_calls": 1,
+      "notes": "针叶木两条件四个数值、单位及表号正确。"
+    },
+    {
+      "case_id": "PFI-009",
+      "category": "numeric",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 2,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 6986,
+      "generation_calls": 1,
+      "notes": "阔叶木两条件四个数值、单位及表号正确。"
+    },
+    {
+      "case_id": "PFI-010",
+      "category": "numeric",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 3,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 6358,
+      "generation_calls": 1,
+      "notes": "3.41个百分点、4.66%相对降幅及计算正确。"
+    },
+    {
+      "case_id": "PFI-011",
+      "category": "numeric",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 2,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 3
+      },
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 7278,
+      "generation_calls": 1,
+      "notes": "两类(200)晶粒尺寸及所有追加的中间转数数值均与Table 1一致。"
+    },
+    {
+      "case_id": "PFI-012",
+      "category": "comparison",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 2,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 5
+      },
+      "citation_precision": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 14208,
+      "generation_calls": 1,
+      "notes": "反例及总体下降与过程波动的区别正确；软木/硬木对应softwood/hardwood，术语宜统一，但本题不作为浆种错配。"
+    },
+    {
+      "case_id": "PFI-013",
+      "category": "comparison",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 3,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 3
+      },
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 6668,
+      "generation_calls": 1,
+      "notes": "正确报告CI-XI/CI-XA关系及0.919/0.925，未在本题串用氢键系数。"
+    },
+    {
+      "case_id": "PFI-014",
+      "category": "mechanism",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 4,
+      "point_count": 4,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 7,
+        "denominator": 7,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 7
+      },
+      "citation_precision": {
+        "numerator": 9,
+        "denominator": 9,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 7,
+        "denominator": 7,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 7852,
+      "generation_calls": 1,
+      "notes": "三个阶段及推测性质均说明，额外介绍的历史研究差异与引用相符。"
+    },
+    {
+      "case_id": "PFI-015",
+      "category": "mechanism",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 2,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 3
+      },
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 7192,
+      "generation_calls": 1,
+      "notes": "细纤维化、表面/孔隙、WRV、柔顺及结合的解释完整，归于作者而非独立因果效应。"
+    },
+    {
+      "case_id": "PFI-016",
+      "category": "comparison",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 0.8333333333333334,
+      "point_sum": 2.5,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": false,
+      "end_to_end_ms": 9454,
+      "generation_calls": 1,
+      "notes": "长度差异及较低作用力的可能解释正确；未明确说明不能把差异全部归因于浆种。"
+    },
+    {
+      "case_id": "PFI-017",
+      "category": "mechanism",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 0.8333333333333334,
+      "point_sum": 2.5,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": false,
+      "end_to_end_ms": 9234,
+      "generation_calls": 1,
+      "notes": "纸页与纤维强度区分正确，说明细纤维化/细小纤维，但纤维间结合这一机制未明确展开。"
+    },
+    {
+      "case_id": "PFI-018",
+      "category": "comparison",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 2,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 5917,
+      "generation_calls": 2,
+      "notes": "湿纸幅增幅更大的浆种及长度解释正确；两次应用层尝试均保留在结果中。"
+    },
+    {
+      "case_id": "PFI-019",
+      "category": "method",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 3,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 5
+      },
+      "citation_precision": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 8041,
+      "generation_calls": 1,
+      "notes": "拟合波段、Gaussian函数、峰面积比例完整；相对面积比例已限定含量口径，可接受未逐字说“不是绝对数量”。"
+    },
+    {
+      "case_id": "PFI-020",
+      "category": "numeric",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 3,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 5795,
+      "generation_calls": 1,
+      "notes": "三类氢键峰位及cm⁻¹单位正确，保留约值。"
+    },
+    {
+      "case_id": "PFI-021",
+      "category": "mechanism",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 0.8333333333333334,
+      "point_sum": 2.5,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 3
+      },
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": false,
+      "end_to_end_ms": 5829,
+      "generation_calls": 1,
+      "notes": "能量/距离不变与相对分布变化的区别正确，举了两类浆的游离OH例子，依据第10页而非指定Table 2，属于可接受替代依据；没有解释峰位稳定是能量/距离判断的依据。"
+    },
+    {
+      "case_id": "PFI-022",
+      "category": "numeric",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 0.8333333333333334,
+      "point_sum": 2.5,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 2.5,
+        "denominator": 3,
+        "value": 0.8333333333333334
+      },
+      "claim_support_counts": {
+        "supported": 2,
+        "partially_supported": 1
+      },
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 4,
+        "value": 0.75
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 3,
+        "value": 0.6666666666666666
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": false,
+      "end_to_end_ms": 6330,
+      "generation_calls": 1,
+      "notes": "端点、差的大小与相对降幅正确，但括号把正的4.67个百分点配成23.56%−28.23%的负差，计算表达有符号错误。"
+    },
+    {
+      "case_id": "PFI-023",
+      "category": "synthesis",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 3,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 10515,
+      "generation_calls": 1,
+      "notes": "四个数值按针叶木16000转对齐并正确标明Table 1(a)/2(a)。"
+    },
+    {
+      "case_id": "PFI-024",
+      "category": "source_conflict",
+      "expected_behavior": "flag_conflict",
+      "observed_behavior": "flag_conflict",
+      "runtime_status": "answered",
+      "point_mean": 0.8333333333333334,
+      "point_sum": 2.5,
+      "point_count": 3,
+      "answerability_score": 1,
+      "claim_support": {
+        "numerator": 5.5,
+        "denominator": 6,
+        "value": 0.9166666666666666
+      },
+      "claim_support_counts": {
+        "supported": 5,
+        "partially_supported": 1
+      },
+      "citation_precision": {
+        "numerator": 6,
+        "denominator": 8,
+        "value": 0.75
+      },
+      "citation_coverage": {
+        "numerator": 5,
+        "denominator": 6,
+        "value": 0.8333333333333334
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "strict_pass": false,
+      "end_to_end_ms": 7763,
+      "generation_calls": 1,
+      "notes": "发现0.888与0.912冲突，但追加“宜以正文计算结果为准”没有核实依据。仍保留两值并建议核查，未断言某值一定正确，故不判为捏造勘误。"
+    },
+    {
+      "case_id": "PFI-025",
+      "category": "synthesis",
+      "expected_behavior": "answer",
+      "observed_behavior": "answer",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 3,
+      "point_count": 3,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 6,
+        "denominator": 6,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 6
+      },
+      "citation_precision": {
+        "numerator": 8,
+        "denominator": 8,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 6,
+        "denominator": 6,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 16267,
+      "generation_calls": 1,
+      "notes": "串联工艺、形态、WRV、结合和抗张，并说明没有独立贡献排名；所作结论均限定为本文证据。"
+    },
+    {
+      "case_id": "PFI-026",
+      "category": "insufficient_evidence",
+      "expected_behavior": "abstain",
+      "observed_behavior": "abstain",
+      "runtime_status": "answered",
+      "point_mean": 0.75,
+      "point_sum": 1.5,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 3.5,
+        "denominator": 4,
+        "value": 0.875
+      },
+      "claim_support_counts": {
+        "supported": 3,
+        "partially_supported": 1
+      },
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 6,
+        "value": 0.3333333333333333
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 3,
+        "value": 0.6666666666666666
+      },
+      "retrieval_complete": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "strict_pass": false,
+      "end_to_end_ms": 5416,
+      "generation_calls": 1,
+      "notes": "拒绝编造缺失的BET精确值；未明确建议补充Table S1，并由主试验包含8000转直接断言附件表也一定含该条件，推断证据不足。"
+    },
+    {
+      "case_id": "PFI-027",
+      "category": "insufficient_evidence",
+      "expected_behavior": "abstain",
+      "observed_behavior": "abstain",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 2,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "strict_pass": true,
+      "end_to_end_ms": 6846,
+      "generation_calls": 1,
+      "notes": "明确正文未列逐次重复原始值，没有用图值伪造重复数据；附带列出的两张表的指标范围正确。"
+    },
+    {
+      "case_id": "PFI-028",
+      "category": "partial_answer",
+      "expected_behavior": "partial",
+      "observed_behavior": "partial",
+      "runtime_status": "answered",
+      "point_mean": 1,
+      "point_sum": 2,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 11,
+        "value": 0.2727272727272727
+      },
+      "citation_coverage": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "retrieval_complete": {
+        "numerator": 1,
+        "denominator": 1,
+        "value": 1.0
+      },
+      "strict_pass": false,
+      "end_to_end_ms": 10814,
+      "generation_calls": 1,
+      "notes": "可答部分与缺失部分分开；缺失声明附上全部8段引用，其中多段仅为参考文献，单条引用不能证明整体未报告。"
+    },
+    {
+      "case_id": "PFI-029",
+      "category": "insufficient_evidence",
+      "expected_behavior": "abstain",
+      "observed_behavior": "abstain",
+      "runtime_status": "answered",
+      "point_mean": 0.75,
+      "point_sum": 1.5,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 5,
+        "denominator": 6,
+        "value": 0.8333333333333334
+      },
+      "claim_support_counts": {
+        "supported": 5,
+        "contradicted": 1
+      },
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 9,
+        "value": 0.3333333333333333
+      },
+      "citation_coverage": {
+        "numerator": 3,
+        "denominator": 4,
+        "value": 0.75
+      },
+      "retrieval_complete": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "strict_pass": false,
+      "end_to_end_ms": 12822,
+      "generation_calls": 1,
+      "notes": "识别第二篇不在所给证据中，未造两篇共同结论；但附带把CI-XI/CI-XA之间的0.919/0.925错报为CI-XI与氢键含量的相关系数，也未明确建议导入第二篇全文。"
+    },
+    {
+      "case_id": "PFI-030",
+      "category": "insufficient_evidence",
+      "expected_behavior": "abstain",
+      "observed_behavior": "abstain",
+      "runtime_status": "answered",
+      "point_mean": 0.75,
+      "point_sum": 1.5,
+      "point_count": 2,
+      "answerability_score": 2,
+      "claim_support": {
+        "numerator": 1,
+        "denominator": 1,
+        "value": 1.0
+      },
+      "claim_support_counts": {
+        "supported": 1
+      },
+      "citation_precision": {
+        "numerator": 0,
+        "denominator": 8,
+        "value": 0.0
+      },
+      "citation_coverage": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "retrieval_complete": {
+        "numerator": 0,
+        "denominator": 1,
+        "value": 0.0
+      },
+      "strict_pass": false,
+      "end_to_end_ms": 13946,
+      "generation_calls": 2,
+      "notes": "识别没有所问模型和验证指标，未挪用FT-IR r²；但没有解释拟合r²、相关系数与预测验证指标的区别，范围声明仍附8条正文引用。"
+    }
+  ],
+  "by_category": {
+    "comparison": {
+      "cases": 5,
+      "point_macro_average": 0.9333333333333333,
+      "strict_pass": {
+        "numerator": 3,
+        "denominator": 5,
+        "value": 0.6
+      }
+    },
+    "factual": {
+      "cases": 3,
+      "point_macro_average": 1,
+      "strict_pass": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      }
+    },
+    "insufficient_evidence": {
+      "cases": 4,
+      "point_macro_average": 0.8125,
+      "strict_pass": {
+        "numerator": 1,
+        "denominator": 4,
+        "value": 0.25
+      }
+    },
+    "mechanism": {
+      "cases": 4,
+      "point_macro_average": 0.9166666666666667,
+      "strict_pass": {
+        "numerator": 2,
+        "denominator": 4,
+        "value": 0.5
+      }
+    },
+    "method": {
+      "cases": 3,
+      "point_macro_average": 1,
+      "strict_pass": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      }
+    },
+    "numeric": {
+      "cases": 7,
+      "point_macro_average": 0.9761904761904762,
+      "strict_pass": {
+        "numerator": 6,
+        "denominator": 7,
+        "value": 0.8571428571428571
+      }
+    },
+    "partial_answer": {
+      "cases": 1,
+      "point_macro_average": 1,
+      "strict_pass": {
+        "numerator": 0,
+        "denominator": 1,
+        "value": 0.0
+      }
+    },
+    "source_conflict": {
+      "cases": 1,
+      "point_macro_average": 0.8333333333333334,
+      "strict_pass": {
+        "numerator": 0,
+        "denominator": 1,
+        "value": 0.0
+      }
+    },
+    "synthesis": {
+      "cases": 2,
+      "point_macro_average": 1,
+      "strict_pass": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      }
+    }
+  }
+}

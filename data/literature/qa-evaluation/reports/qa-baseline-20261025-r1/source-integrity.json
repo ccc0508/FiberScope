@@ -1,0 +1,12 @@
+{
+  "frozen_source_after_run": {
+    "baseline_id": "qa-v1-20261024",
+    "files": 10,
+    "documents": 1,
+    "chunks": 44,
+    "checksums": "passed"
+  },
+  "result_checksum_count": 30,
+  "archived_original_harness": true,
+  "archive_excludes_runtime_credentials": true
+}
