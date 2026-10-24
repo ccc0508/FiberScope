@@ -1,0 +1,10 @@
+[Unit]
+Description=Back up FiberScope databases and document records
+After=postgresql.service
+
+[Service]
+Type=oneshot
+User=root
+UMask=0077
+ExecStart=/opt/fiberscope/venv/bin/python /opt/fiberscope/current/deploy/ubuntu/backup.py
+Nice=10

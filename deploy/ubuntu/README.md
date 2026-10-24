@@ -17,6 +17,8 @@
 
 将版本内`.rag-data`链接到持久数据目录，并将`backend/.env`、`backend/.env.literature`
 分别链接到上述私有配置。私有配置和实际业务数据不得进入代码包或Git。
+本次Linux验证使用Python 3.12；实际依赖已固定在`requirements-server-lock.txt`，包含Linux额外依赖，
+重建时优先使用该文件安装，并重新执行部署验收。
 
 ## 前端与反向代理
 
@@ -44,3 +46,11 @@ Cookie路径必须随代理改写，才能在子路径下保存提交会话、�
 
 部署后通过systemd开机启动及故障重启。当前问答、提取各只能并行处理一个任务；增加worker之前需调整任务与记录协调。
 容量以实际监测为准：2GB机器还运行其他应用时，应限制数值库线程、并发和服务内存，避免影响原服务。
+
+## 本地定时备份
+
+安装`fiberscope-backup.service`和`fiberscope-backup.timer`后，启用timer，并手动执行一次service验收。
+每天上海时间约03:30执行（允许5分钟随机偏移）；保留最近14份完整快照。
+备份位于`/var/backups/fiberscope/`，只允许root读取，包含私有配置及角色密码散列，不得放到公开网页目录。
+PostgreSQL使用逻辑备份，SQLite使用在线备份；同时保存PDF、向量文件和提取检查点。
+当前为同机备份，尚未配置异地存储。恢复时先校验manifest，再在独立目录/数据库验收，避免直接覆盖运行数据。
