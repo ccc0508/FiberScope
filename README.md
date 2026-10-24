@@ -11,6 +11,7 @@ FastAPI实验数据只读后端与自动化集成测试，以及数据总览、�
 | [后端运行说明](backend/README.md) | 安装、配置、启动与测试 |
 | [前端运行说明](frontend/README.md) | 八个页面的启动地址、功能和数据口径说明 |
 | [文献问答](docs/LITERATURE_QA.md) | 文献快照、模型配置、引用原文、接口与验收 |
+| [问答评测起点](docs/QA_BASELINE.md) | qa-v1-20261024代码、配置、文献索引快照与校验；尚未产生质量评分 |
 | [文献提取与审核](docs/LITERATURE_EXTRACTION.md) | 整篇自动发现表格与正文数据、原文对照、审核版本、导出及基准评测 |
 | [前端验收记录](docs/FRONTEND_VALIDATION.md) | 构建、真实浏览器交互和响应式检查 |
 | [全站验收记录](docs/FULL_SITE_VALIDATION.md) | 六个页面的数据核对、完整流程、异常状态和响应式回归 |
