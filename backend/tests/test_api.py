@@ -177,9 +177,10 @@ def test_app_cannot_read_base_tables_or_write(database):
             ('fiber.'+spec.view,'INSERT,UPDATE,DELETE,TRUNCATE')).fetchone()['ok'] is False
 
 
-def test_cors_and_methods(client):
-    response = client.get('/api/v1/health',headers={'Origin':'http://localhost:5173'})
-    assert response.headers['access-control-allow-origin'] == 'http://localhost:5173'
+def test_cors_and_methods(client, settings):
+    allowed_origin = settings.cors_origins[0]
+    response = client.get('/api/v1/health',headers={'Origin':allowed_origin})
+    assert response.headers['access-control-allow-origin'] == allowed_origin
     response = client.get('/api/v1/health',headers={'Origin':'https://untrusted.example'})
     assert 'access-control-allow-origin' not in response.headers
     response = client.post('/api/v1/samples',json={})
