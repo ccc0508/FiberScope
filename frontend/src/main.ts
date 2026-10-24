@@ -15,7 +15,7 @@ import "@fontsource/lato/latin-900.css";
 import "./style.css";
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: "/", component: Overview },
     { path: "/beating", component: Beating },

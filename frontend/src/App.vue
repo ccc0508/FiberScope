@@ -8,6 +8,7 @@ import {
   watch,
 } from "vue";
 import { useRoute } from "vue-router";
+import { appPath } from "./urls";
 import {
   LayoutDashboard,
   ChartNoAxesCombined,
@@ -144,7 +145,7 @@ onBeforeUnmount(() => {
   >
     <div class="brand">
       <RouterLink class="brand-link" to="/" @click="navOpen = false">
-        <img src="/favicon.svg" width="34" height="34" alt="" />
+        <img :src="appPath('favicon.svg')" width="34" height="34" alt="" />
         <strong class="platform-name"
           ><span>植物纤维</span><span>可视化分析平台</span></strong
         > </RouterLink

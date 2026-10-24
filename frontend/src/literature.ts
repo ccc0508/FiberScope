@@ -1,3 +1,5 @@
+import { apiPath } from "./urls";
+
 export interface Citation {
   ref: string;
   document_id: string;
@@ -46,7 +48,7 @@ export const feedbackTags = [
 export const timeLabel = (value: string) => new Date(value).toLocaleString("zh-CN", { hour12: false });
 
 export async function literatureRequest<T>(path: string, body?: unknown, signal?: AbortSignal): Promise<T> {
-  const response = await fetch(`/api/v1/literature/${path}`, {
+  const response = await fetch(apiPath(`literature/${path}`), {
     method: body === undefined ? "GET" : "POST",
     credentials: "same-origin",
     headers: body === undefined ? undefined : { "Content-Type": "application/json" },

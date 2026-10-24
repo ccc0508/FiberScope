@@ -2,10 +2,13 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import ts from "typescript";
+const urlsSource = ts.transpile(readFileSync(new URL("../src/urls.ts", import.meta.url), "utf8"),
+  { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 });
+const urlsModule = `data:text/javascript;base64,${Buffer.from(urlsSource).toString("base64")}`;
 const compiled = ts.transpile(
   readFileSync(new URL("../src/extraction.ts", import.meta.url), "utf8"),
   { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 },
-);
+).replace('from "./urls"', `from "${urlsModule}"`);
 const { currentReview, groups } = await import(
   `data:text/javascript;base64,${Buffer.from(compiled).toString("base64")}`
 );

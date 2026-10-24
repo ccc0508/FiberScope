@@ -8,6 +8,7 @@ import {
   ExternalLink,
 } from "lucide-vue-next";
 import { get } from "../api";
+import { apiPath } from "../urls";
 import LiteratureHistory from "../components/LiteratureHistory.vue";
 import { literatureRequest, feedbackTags, timeLabel, type Answer, type HistoryRecord, type HistoryItem, type Feedback } from "../literature";
 
@@ -53,7 +54,7 @@ const examples = [
   "这篇文献采用了哪些方法研究纤维素结构？",
 ];
 const pdf = (id: string, page = 1) =>
-  `/api/v1/literature/documents/${encodeURIComponent(id)}/pdf#page=${page}`;
+  apiPath(`literature/documents/${encodeURIComponent(id)}/pdf#page=${page}`);
 const citation = (token: string) =>
   answer.value?.citations.find((c) => c.ref === token);
 let libraryController: AbortController | undefined,
