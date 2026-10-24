@@ -2,6 +2,7 @@
 import { computed, nextTick, ref, watch } from "vue";
 import { ExternalLink, Minus, Plus, LocateFixed } from "lucide-vue-next";
 import type { ExtractionTask, Measurement } from "../extraction";
+import { apiPath } from "../urls";
 const props = defineProps<{
   task: ExtractionTask;
   measurement?: Measurement;
@@ -30,7 +31,7 @@ const words = computed(() => {
   ]);
   return evidence.value.words?.filter((w) => ids.has(w.id)) ?? [];
 });
-const url = computed(() => `/api/v1/literature/extractions/${props.task.id}`);
+const url = computed(() => apiPath(`literature/extractions/${props.task.id}`));
 async function locate() {
   await nextTick();
   if (!box.value || !viewport.value || !paper.value) return;

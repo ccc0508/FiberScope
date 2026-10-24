@@ -1,3 +1,5 @@
+import { apiPath } from "./urls";
+
 export type SampleType = "softwood" | "hardwood" | "blend";
 export interface Sample {
   sample_id: number;
@@ -76,7 +78,7 @@ export async function get<T>(
   signal?.addEventListener("abort", abort, { once: true });
   if (signal?.aborted) timeout.abort();
   try {
-    const response = await fetch(`/api/v1/${path}?${params}`, {
+    const response = await fetch(`${apiPath(path)}?${params}`, {
       signal: timeout.signal,
     });
     const body = await response.json().catch(() => null);

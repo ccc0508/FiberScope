@@ -1,3 +1,5 @@
+import { apiPath } from "./urls";
+
 export interface Measurement {
   record_id: string;
   raw_material: string;
@@ -161,7 +163,7 @@ export async function extractionRequest<T>(
   path = "",
   options: RequestInit = {},
 ): Promise<T> {
-  const response = await fetch(`/api/v1/literature/extractions${path}`, {
+  const response = await fetch(apiPath(`literature/extractions${path}`), {
     credentials: "same-origin",
     ...options,
   });

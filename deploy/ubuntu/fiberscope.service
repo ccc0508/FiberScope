@@ -1,0 +1,33 @@
+[Unit]
+Description=FiberScope plant fiber research platform
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=fiberscope
+Group=fiberscope
+WorkingDirectory=/opt/fiberscope/current
+Environment=PYTHONUNBUFFERED=1
+Environment=ANONYMIZED_TELEMETRY=False
+Environment=OMP_NUM_THREADS=1
+Environment=OPENBLAS_NUM_THREADS=1
+Environment=NUMEXPR_NUM_THREADS=1
+Environment=XDG_CACHE_HOME=/var/lib/fiberscope/cache
+ExecStart=/opt/fiberscope/venv/bin/python -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8010 --workers 1 --proxy-headers --forwarded-allow-ips=127.0.0.1
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=120
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/fiberscope
+MemoryHigh=900M
+MemoryMax=1200M
+MemorySwapMax=1024M
+Nice=5
+
+[Install]
+WantedBy=multi-user.target

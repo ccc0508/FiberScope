@@ -29,6 +29,7 @@ import {
   type ReviewData,
 } from "../extraction";
 import { timeLabel } from "../literature";
+import { apiPath } from "../urls";
 
 const route = useRoute(),
   router = useRouter();
@@ -382,7 +383,7 @@ async function reextract() {
   const source = task.value.source;
   try {
     const response = await fetch(
-      `/api/v1/literature/extractions/${task.value.id}/pdf`,
+      apiPath(`literature/extractions/${task.value.id}/pdf`),
     );
     if (!response.ok) throw new Error("原文读取失败，请重新选择PDF。");
     file.value = new File([await response.blob()], source.filename, {
@@ -518,7 +519,7 @@ function changes(event: { previous: Review; current: Review }) {
 async function download(format: "jsonl" | "csv") {
   if (!task.value || !summary.value.confirmed) return;
   // A server attachment works in both normal browsers and the in-app browser.
-  window.location.assign(`/api/v1/literature/extractions/${task.value.id}/confirmed?format=${format}`);
+  window.location.assign(apiPath(`literature/extractions/${task.value.id}/confirmed?format=${format}`));
 }
 function beforeUnload(event: BeforeUnloadEvent) {
   if (dirty.value) {

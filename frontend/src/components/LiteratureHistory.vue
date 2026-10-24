@@ -2,6 +2,7 @@
 import { onBeforeUnmount, ref } from "vue";
 import { History, Download, Search } from "lucide-vue-next";
 import { literatureRequest, stateNames, timeLabel, type HistoryItem } from "../literature";
+import { apiPath } from "../urls";
 
 const props = defineProps<{ selected?: string }>();
 const emit = defineEmits<{ select: [id: string]; ready: [latest?: HistoryItem] }>();
@@ -37,7 +38,7 @@ function move(offset: number) { page.value += offset; refresh(); }
 function download() {
   error.value = "";
   try {
-    window.location.assign("/api/v1/literature/history/export");
+    window.location.assign(apiPath("literature/history/export"));
   } catch (e) { if (!disposed) error.value = e instanceof Error ? e.message : "导出失败。"; }
 }
 defineExpose({ refresh });
