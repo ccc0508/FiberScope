@@ -33,7 +33,7 @@ def write_json(path, value):
 
 
 def clean_environment():
-    result = {k: v for k, v in os.environ.items() if not k.startswith(('RAG_', 'LITERATURE_'))}
+    result = {k: v for k, v in os.environ.items() if not k.upper().startswith(('RAG_', 'LITERATURE_'))}
     result.update(ANONYMIZED_TELEMETRY='False', OMP_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1',
                   NUMEXPR_NUM_THREADS='1', PYTHONDONTWRITEBYTECODE='1')
     return result
@@ -88,12 +88,21 @@ def source_hashes(backend):
     return {p.relative_to(backend).as_posix(): digest(p) for p in backend.rglob('*.py')}
 
 
-def prepare(baseline, pack, env_file, run_dir, reference_source=None):
+def prepare(baseline, pack, env_file, run_dir, reference_source=None, suite=None):
     baseline, pack, run_dir = (Path(v).resolve() for v in (baseline, pack, run_dir))
     require(not run_dir.exists(), 'Run directory already exists')
     validation = validate(pack, baseline)
     baseline_validation = verify(baseline)
     frozen, config = read_json(baseline / 'manifest.json'), read_json(baseline / 'configuration.json')
+    pack_manifest=read_json(pack/'manifest.json')
+    v2=pack_manifest.get('schema_version')==2
+    selected_tasks=None
+    if v2:
+        from qa_eval_v2 import task_selection
+        selected_tasks=task_selection(pack,suite or pack_manifest['default_suite'])
+        require(bool(selected_tasks),'Selected suite has no executable tasks')
+    else:
+        require(suite is None,'Suites require a v2 dataset')
     os.umask(0o077)
     run_dir.mkdir(parents=True, mode=0o700)
     (run_dir / 'results').mkdir()
@@ -131,13 +140,21 @@ def prepare(baseline, pack, env_file, run_dir, reference_source=None):
                     for p in (run_dir / 'dataset').rglob('*') if p.is_file()},
                     python=sys.version, packages={d.metadata['Name']: d.version for d in importlib.metadata.distributions()},
                     harness_files={name: digest(Path(__file__).with_name(name)) for name in
-                                   ('run_qa_baseline.py', 'validate_qa_eval.py', 'freeze_qa_baseline.py')},
+                                   ('run_qa_baseline.py', 'validate_qa_eval.py', 'freeze_qa_baseline.py','qa_eval_v2.py','qa_injection_worker.py')},
                     input_policy='Only question and isolated data_dir are sent to frozen worker; no gold labels or answers.',
                     timeout_seconds=config['qa_timeout_seconds'],
                     baseline_validation=baseline_validation, dataset_validation=validation)
+    if v2:
+        metadata.update(evaluation_schema_version=2,tasks=selected_tasks,selected_suite=suite or pack_manifest['default_suite'])
+    # Keep the fixture harness isolated and fingerprinted alongside the frozen source.
+    if v2:
+        (run_dir/'harness').mkdir()
+        for name in ('qa_injection_worker.py',):
+            shutil.copyfile(Path(__file__).with_name(name),run_dir/'harness'/name)
     write_json(run_dir / 'run.json', metadata)
-    write_json(run_dir / 'progress.json', {'status': 'prepared', 'completed': 0, 'total': validation['cases']})
-    return {'run_id': run_dir.name, 'status': 'prepared', 'cases': validation['cases'], 'provider_calls': 0}
+    total=len(selected_tasks) if v2 else validation['cases']
+    write_json(run_dir / 'progress.json', {'status': 'prepared', 'completed': 0, 'total': total})
+    return {'run_id': run_dir.name, 'status': 'prepared', 'tasks': total, 'provider_calls': 0}
 
 
 def execute_question(worker, library, question, timeout):
@@ -146,6 +163,15 @@ def execute_question(worker, library, question, timeout):
                           input=json.dumps({'question': question, 'data_dir': str(library)}, ensure_ascii=False),
                           env=clean_environment(), capture_output=True, text=True, encoding='utf-8', timeout=timeout,
                           creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
+
+
+def execute_fixture(run_dir, task, question, timeout):
+    payload={'backend_dir':str(run_dir/'backend'),'fixture_file':str(child(run_dir/'dataset',task['fixture'])),
+             'variant':task['variant'],'question':question}
+    return subprocess.run([sys.executable,'-I','-X','utf8',str(run_dir/'harness/qa_injection_worker.py')],
+                          input=json.dumps(payload,ensure_ascii=False),env=clean_environment(),
+                          capture_output=True,text=True,encoding='utf-8',timeout=timeout,
+                          creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
 
 
 def run(run_dir):
@@ -158,10 +184,16 @@ def run(run_dir):
     require({p.relative_to(run_dir / 'dataset').as_posix(): digest(p) for p in (run_dir / 'dataset').rglob('*') if p.is_file()}
             == metadata['dataset_files'], 'Run dataset was changed')
     cases = read_jsonl(run_dir / 'dataset/cases.jsonl')
+    by_case={c['id']:c for c in cases}
+    tasks=metadata.get('tasks') or [{'id':c['id'],'case_id':c['id'],'mode':'retrieval'} for c in cases]
+    if metadata.get('evaluation_schema_version')==2:
+        for name in ('qa_injection_worker.py',):
+            require(digest(run_dir/'harness'/name)==metadata['harness_files'][name],'Fixture harness was changed')
     with FileLock(str(run_dir / '.runner.lock'), timeout=0):
-        for case in cases:
-            result_path = run_dir / 'results' / (case['id'] + '.json')
-            attempt_path = run_dir / 'attempts' / (case['id'] + '.json')
+        for task in tasks:
+            case=by_case[task['case_id']]
+            result_path = run_dir / 'results' / (task['id'] + '.json')
+            attempt_path = run_dir / 'attempts' / (task['id'] + '.json')
             if result_path.exists():
                 saved = read_json(result_path)
                 require(saved['question'] == case['question'] and saved['case_id'] == case['id']
@@ -174,10 +206,15 @@ def run(run_dir):
             require(source_hashes(backend) == metadata['source_files'], 'Frozen runtime source was changed')
             started = perf_counter()
             result = dict(run_id=metadata['run_id'], case_id=case['id'], question=case['question'], started_at=now())
+            if metadata.get('evaluation_schema_version')==2:
+                result.update(task_id=task['id'],suite=task['suite'],capabilities=task['capabilities'],variant=task.get('variant'))
             write_json(attempt_path, {**result, 'status': 'started'})
             try:
-                process = execute_question(backend / 'literature_worker.py', run_dir / 'library',
-                                           case['question'], metadata['timeout_seconds'])
+                if task['mode']=='controlled_evidence':
+                    process=execute_fixture(run_dir,task,case['question'],metadata['timeout_seconds'])
+                else:
+                    process = execute_question(backend / 'literature_worker.py', run_dir / 'library',
+                                               case['question'], metadata['timeout_seconds'])
                 result['worker_stderr_sha256'] = hashlib.sha256(process.stderr.encode()).hexdigest()
                 result['worker_stderr_bytes'] = len(process.stderr.encode())
                 result['worker_returncode'] = process.returncode
@@ -201,8 +238,8 @@ def run(run_dir):
             write_json(result_path, result)
             write_json(attempt_path, {'case_id': case['id'], 'status': 'completed', 'result_sha256': digest(result_path)})
             results = [read_json(path) for path in sorted((run_dir / 'results').glob('*.json'))]
-            progress = {'status': 'completed' if len(results) == len(cases) else 'running',
-                        'completed': len(results), 'total': len(cases), 'last_case': case['id'],
+            progress = {'status': 'completed' if len(results) == len(tasks) else 'running',
+                        'completed': len(results), 'total': len(tasks), 'last_case': case['id'],
                         'outcomes': dict(Counter(r['status'] for r in results)), 'updated_at': now()}
             write_json(run_dir / 'progress.json', progress)
             print(json.dumps(progress), flush=True)
@@ -216,12 +253,13 @@ def main():
     for option in ('baseline', 'pack', 'env-file', 'run-dir'):
         preparation.add_argument('--' + option, type=Path, required=True)
     preparation.add_argument('--reference-source', type=Path)
+    preparation.add_argument('--suite',choices=['core_text','injection','figure','all_active'])
     execution = commands.add_parser('run')
     execution.add_argument('--run-dir', type=Path, required=True)
     args = parser.parse_args()
     try:
         if args.action == 'prepare':
-            result = prepare(args.baseline, args.pack, args.env_file, args.run_dir, args.reference_source)
+            result = prepare(args.baseline, args.pack, args.env_file, args.run_dir, args.reference_source,args.suite)
         else:
             result = run(args.run_dir)
         print(json.dumps(result, ensure_ascii=False))

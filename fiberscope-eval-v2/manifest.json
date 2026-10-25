@@ -1,0 +1,103 @@
+{
+  "schema_version": 2,
+  "dataset_id": "pfi-qa-eval-v2",
+  "status": "ready_for_source_grounded_development_evaluation",
+  "created_on": "2026-10-25",
+  "baseline_id": "qa-v1-20261024",
+  "baseline_source_commit": "d6a391ee8febcc58a4d0e1b59551d92403082f48",
+  "baseline_manifest_sha256": "a9734365d5cf47d07f6d12efebf28edbe0c2504f0d09513b3b743fa9de33e23d",
+  "source_documents": [
+    {
+      "id": "doc_0fcf2a50cfa02d21",
+      "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+      "file_hash": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4",
+      "page_count": 14,
+      "chunk_count": 44,
+      "snapshot_path": "papers/0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4.pdf"
+    }
+  ],
+  "review_status": "source_checked_ai_draft",
+  "quality_run_status": "not_run",
+  "rubric_id": "pfi-qa-rubric-v2",
+  "source_doi": "10.3390/polym12122912",
+  "source_license": "CC BY 4.0",
+  "source_authors": [
+    "Kunpeng Li",
+    "Lihong Zhao",
+    "Beihai He"
+  ],
+  "split": "public_development_only_no_held_out_test",
+  "case_count": 34,
+  "task_count": 35,
+  "deferred_case_count": 3,
+  "evidence_count": 28,
+  "key_point_count": 93,
+  "optional_key_point_count": 6,
+  "counts_by_suite": {
+    "core_text": 32,
+    "injection": 1,
+    "figure": 1
+  },
+  "counts_by_category": {
+    "factual": 3,
+    "numeric": 6,
+    "comparison": 5,
+    "method": 3,
+    "mechanism": 4,
+    "synthesis": 2,
+    "source_conflict": 1,
+    "insufficient_evidence": 4,
+    "partial_answer": 1,
+    "false_premise": 2,
+    "coefficient_mixup": 1,
+    "prompt_injection": 1,
+    "figure_reading": 1
+  },
+  "counts_by_difficulty": {
+    "easy": 7,
+    "medium": 16,
+    "hard": 11
+  },
+  "counts_by_expected_behavior": {
+    "answer": 24,
+    "flag_conflict": 1,
+    "abstain": 4,
+    "partial": 1,
+    "correct_premise": 3,
+    "figure_approx": 1
+  },
+  "fixture_files": [
+    "fixtures/force-injection.json"
+  ],
+  "default_suite": "core_text",
+  "auxiliary_evidence_ids": [
+    "E26",
+    "E27",
+    "E28"
+  ],
+  "limitations": [
+    "AI-authored source checks require independent expert review.",
+    "Cross-document work deferred at user request; pending templates never execute.",
+    "Injection is a controlled evidence test, not an end-to-end ingestion attack.",
+    "Text-only figure task measures boundary behavior only, not visual reading."
+  ],
+  "files": {
+    "cases-v2-draft.jsonl": "71bedeaa162d0ccfc7db449be053658e593398b45d23be3efb7146bb6937312b",
+    "cases.jsonl": "6b87cb0d6464fbd2914a718916954e2d2aee43053447828855de1d29fb6fd93e",
+    "CHANGELOG.md": "a19f2846c212660e53b0ab22a1e257e7a93c634538aa7e8098a705a0be1b229e",
+    "evidence-v2-draft.json": "5c8f3bf9599f0f1aacdcdfb18b49ce31076e71ea7985a20fb9f0f650c2a6d5c0",
+    "evidence.json": "57d5215d96671bebff9a26736392c28bba0bf995e1cfb0efc4ab79f0e5df0c12",
+    "fixtures/force-injection.json": "d2e146017a7fc85de51c1574e869369627646435a2639b7dde1eb0d79d07fc68",
+    "manifest-v2-draft.json": "0c9f3e4dfcfa3f5b56e245e7e32cf67d39cca4b1817d45028873288477adc0b7",
+    "pending/cross-document.jsonl": "febff6463e3de131e000f57ddc1547bca88d51cd6b4f796c642ea53033a4a436",
+    "QUESTIONS.md": "229ca00e525c7c34ef0bf50cb99b63df9da8554a9d14964edde05ae98ec8d09c",
+    "README.md": "87558b341bbe0a175a9131ccc008c62ad920c7bf9b3c2ea950ffecd921ea1c0c",
+    "rubric-v2-notes.md": "5e4688fbb0a08a1b813e0720d18dee43a3b40dd80f2b635c84a8aee497b57762",
+    "rubric.json": "1bfb136a15d4526af5adecd00b89cdee513514640284685620e9c61acb1ff890",
+    "scorecard.template.jsonl": "89a3aeb573197b6830e2977a1143ed57de99bd90ee0b1b196613b63c7e9bfa12",
+    "source/PMC7761889-europepmc-fulltext.txt": "84be59e0f7b3c7aa144f6db24680e1cca435b2e219d1bb89cb54719987ebfb03",
+    "source/polymers-12-02912-g002-Figure2.jpg": "e033b447c23a95869bb5c4edd102944991cdac1b5389d7b30612e7396a74528d",
+    "tasks.json": "a7107bfcc5fa4324263a91739ca5cfb024d0275436cb465b26dc2aa2332b5c80",
+    "validate_v2.py": "149101b191b881f997cdba86aaa8655b2413bcbbf97478016c7c4bf702471b84"
+  }
+}

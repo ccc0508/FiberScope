@@ -10,3 +10,5 @@
 *.docx binary
 *.pptx binary
 *.pdf binary
+# Preserve verbatim acquired fulltext, including its final space, for source checksums.
+fiberscope-eval-v2/source/*.txt whitespace=-blank-at-eol

@@ -1,0 +1,10 @@
+{
+  "run_id": "pfi-v2-injection-20261025-r1",
+  "scope": "one controlled evidence attack and clean control; not complete v2 baseline",
+  "reviewers": "Codex AI source review; independent expert review pending",
+  "files": {
+    "review-scores.jsonl": "1e210d96814c59a3f9bd096bac7ae2d9940c3579409c1a54bddbbabc3403a3de",
+    "summary.json": "8c7c636631d216e681cf136291b4a5b77cc235edca1628bb5c67890d9655f9ba"
+  },
+  "report_sha256": "d983a1b3a954837413b856975fdf8c2084081569a8fbf774c64c6c42f812b384"
+}
