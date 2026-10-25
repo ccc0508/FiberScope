@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "dataset_id": "pfi-qa-eval-v2-draft",
+  "status": "superseded_by_manifest.json",
+  "created_on": "2026-10-25",
+  "derived_from": {
+    "dataset_id": "pfi-qa-eval-v1",
+    "rubric_id": "pfi-qa-rubric-v1",
+    "baseline_id": "qa-v1-20261024"
+  },
+  "source_documents": [
+    {
+      "id": "doc_0fcf2a50cfa02d21",
+      "doi": "10.3390/polym12122912",
+      "license": "CC BY 4.0",
+      "verification_text": "Europe PMC PMC7761889 full-text XML (source/PMC7761889-europepmc-fulltext.txt); MDPI HTML cross-checked",
+      "figure_source": "PMC figure image polymers-12-02912-g002.jpg (pixel-read for PFI2-034)"
+    }
+  ],
+  "rubric_proposal": "rubric-v2-notes.md",
+  "review_status": "ai_draft; numbers verified against paper text by drafter; independent expert review pending",
+  "split": "public_development_only_no_held_out_test",
+  "case_count": 37,
+  "runnable_on_frozen_corpus": 33,
+  "requires_corpus_setup": [
+    "PFI2-033",
+    "PFI2-035",
+    "PFI2-036",
+    "PFI2-037"
+  ],
+  "template_cases": [
+    "PFI2-035",
+    "PFI2-036",
+    "PFI2-037"
+  ],
+  "evidence_count": 28,
+  "new_evidence": [
+    "E24",
+    "E25",
+    "E26",
+    "E27",
+    "E28"
+  ],
+  "key_point_count": 100,
+  "key_point_count_excluding_templates": 92,
+  "optional_key_point_count": 4,
+  "counts_by_category": {
+    "factual": 3,
+    "numeric": 6,
+    "comparison": 5,
+    "method": 3,
+    "mechanism": 4,
+    "synthesis": 2,
+    "source_conflict": 1,
+    "insufficient_evidence": 4,
+    "partial_answer": 1,
+    "false_premise": 2,
+    "coefficient_mixup": 1,
+    "prompt_injection": 1,
+    "figure_reading": 1,
+    "cross_document": 3
+  },
+  "counts_by_difficulty": {
+    "easy": 7,
+    "medium": 17,
+    "hard": 13
+  },
+  "counts_by_expected_behavior": {
+    "answer": 26,
+    "flag_conflict": 2,
+    "abstain": 4,
+    "partial": 1,
+    "correct_premise": 3,
+    "figure_approx": 1
+  },
+  "v1_disposition": {
+    "kept": 13,
+    "reworded": 11,
+    "merged": 2,
+    "replaced": 2,
+    "adjusted": 2
+  },
+  "files": {
+    "cases-v2-draft.jsonl": "71bedeaa162d0ccfc7db449be053658e593398b45d23be3efb7146bb6937312b",
+    "evidence-v2-draft.json": "5c8f3bf9599f0f1aacdcdfb18b49ce31076e71ea7985a20fb9f0f650c2a6d5c0",
+    "rubric-v2-notes.md": "5e4688fbb0a08a1b813e0720d18dee43a3b40dd80f2b635c84a8aee497b57762",
+    "validate_v2.py": "149101b191b881f997cdba86aaa8655b2413bcbbf97478016c7c4bf702471b84",
+    "CHANGELOG.md": "a19f2846c212660e53b0ab22a1e257e7a93c634538aa7e8098a705a0be1b229e"
+  },
+  "new_case_count": 8,
+  "canonical_manifest": "manifest.json"
+}

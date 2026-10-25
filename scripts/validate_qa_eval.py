@@ -10,6 +10,7 @@ import math
 from pathlib import Path, PurePosixPath
 import re
 import sqlite3
+import sys
 import unicodedata
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -107,6 +108,13 @@ def validate_sources(pack_manifest, evidence, baseline):
 def validate(pack=DEFAULT_PACK, baseline=None):
     pack = Path(pack).resolve()
     manifest = read_json(pack / 'manifest.json')
+    if manifest.get('schema_version') == 2:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        try:
+            from qa_eval_v2 import validate_pack
+            return validate_pack(pack, baseline)
+        finally:
+            sys.path.pop(0)
     require(manifest.get('schema_version') == 1, 'Unsupported pack schema')
     require(manifest.get('review_status') == 'source_checked_ai_draft', 'Review status must disclose provisional source review')
     require(manifest.get('quality_run_status') == 'not_run', 'A dataset pack cannot claim a completed quality run')

@@ -1,0 +1,321 @@
+[
+  {
+    "id": "PFI2-001",
+    "case_id": "PFI2-001",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-002",
+    "case_id": "PFI2-002",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-003",
+    "case_id": "PFI2-003",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-004",
+    "case_id": "PFI2-004",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-005",
+    "case_id": "PFI2-005",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-006",
+    "case_id": "PFI2-006",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-007",
+    "case_id": "PFI2-007",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-008",
+    "case_id": "PFI2-008",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-009",
+    "case_id": "PFI2-009",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-010",
+    "case_id": "PFI2-010",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-011",
+    "case_id": "PFI2-011",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-012",
+    "case_id": "PFI2-012",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-013",
+    "case_id": "PFI2-013",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-014",
+    "case_id": "PFI2-014",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-015",
+    "case_id": "PFI2-015",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-016",
+    "case_id": "PFI2-016",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-017",
+    "case_id": "PFI2-017",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-018",
+    "case_id": "PFI2-018",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-019",
+    "case_id": "PFI2-019",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-020",
+    "case_id": "PFI2-020",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-021",
+    "case_id": "PFI2-021",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-022",
+    "case_id": "PFI2-022",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-023",
+    "case_id": "PFI2-023",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-024",
+    "case_id": "PFI2-024",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-025",
+    "case_id": "PFI2-025",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-026",
+    "case_id": "PFI2-026",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-027",
+    "case_id": "PFI2-027",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-028",
+    "case_id": "PFI2-028",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-029",
+    "case_id": "PFI2-029",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-030",
+    "case_id": "PFI2-030",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-031",
+    "case_id": "PFI2-031",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-032",
+    "case_id": "PFI2-032",
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-033-clean",
+    "case_id": "PFI2-033",
+    "suite": "injection",
+    "mode": "controlled_evidence",
+    "variant": "clean",
+    "fixture": "fixtures/force-injection.json",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-033-attack",
+    "case_id": "PFI2-033",
+    "suite": "injection",
+    "mode": "controlled_evidence",
+    "variant": "attack",
+    "fixture": "fixtures/force-injection.json",
+    "capabilities": [
+      "text"
+    ]
+  },
+  {
+    "id": "PFI2-034-text",
+    "case_id": "PFI2-034",
+    "suite": "figure",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ]
+  }
+]

@@ -63,6 +63,9 @@ def verify_review(case, result, review, result_path):
 def summarize(run_dir, reviews_path):
     run_dir = Path(run_dir).resolve()
     metadata = read_json(run_dir / 'run.json')
+    if metadata.get('evaluation_schema_version')==2:
+        from score_qa_eval_v2 import summarize as summarize_v2
+        return summarize_v2(run_dir,reviews_path)
     cases = read_jsonl(run_dir / 'dataset/cases.jsonl') if (run_dir / 'dataset/cases.jsonl').exists() else None
     require(cases is not None, 'Run dataset missing')
     reviews = read_jsonl(reviews_path)
@@ -162,8 +165,8 @@ def main():
     args = parser.parse_args()
     result = summarize(args.run_dir, args.reviews)
     write_json(args.output, result)
-    print(json.dumps({key: result[key] for key in ('run_id', 'completed', 'point_macro_average', 'strict_pass',
-                                                  'citation_precision', 'claim_support', 'latency_ms')}, ensure_ascii=False))
+    keys=('run_id','total_tasks','by_suite') if result.get('schema_version')==2 else ('run_id','completed','point_macro_average','strict_pass','citation_precision','claim_support','latency_ms')
+    print(json.dumps({key:result[key] for key in keys},ensure_ascii=False))
 
 
 if __name__ == '__main__':
