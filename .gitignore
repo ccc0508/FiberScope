@@ -3,6 +3,7 @@
 .rag-data/
 !.env.example
 !.env.literature.example
+!.env.judge.example
 .venv/
 __pycache__/
 *.py[cod]

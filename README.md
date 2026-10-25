@@ -15,6 +15,7 @@ FastAPI实验数据只读后端与自动化集成测试，以及数据总览、�
 | [问答评测题集](docs/QA_EVALUATION.md) | 30题、78个评分要点、参考答案和原文证据，含拒答/部分可答/原文冲突 |
 | [首轮问答基线报告](docs/QA_BASELINE_REPORT_20261025.md) | 原版30题真实运行、AI来源初评和逐题依据；要点均分94.17%，严格达标20/30，待独立专家复核 |
 | [v2评测修正与注入测试](docs/QA_EVALUATION_V2.md) | 文本32题、正常/攻击对照、图像边界分组；3道跨文献题延期，含强校验与可选要点评分 |
+| [独立模型评分](docs/QA_INDEPENDENT_JUDGE.md) | 独立API裁判、原文核对、评分理由与用量；历史Codex初评保留，正式分数由新模型生成 |
 | [服务器迁移验收](docs/SERVER_DEPLOYMENT.md) | Ubuntu单机部署、数据校验、服务自启与定时备份 |
 | [文献提取与审核](docs/LITERATURE_EXTRACTION.md) | 整篇自动发现表格与正文数据、原文对照、审核版本、导出及基准评测 |
 | [前端验收记录](docs/FRONTEND_VALIDATION.md) | 构建、真实浏览器交互和响应式检查 |
