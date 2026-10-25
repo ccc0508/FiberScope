@@ -1,6 +1,6 @@
 """Versioned independent-judge instructions; no previous scores or worked scoring examples."""
 
-VERSION = 'qa-independent-judge-v1'
+VERSION = 'qa-independent-judge-v2'
 
 SYSTEM = r'''你是一名独立的植物纤维文献问答评测员。只输出一个JSON对象。
 你未参与出题。不要猜测回答系统或之前评分人的身份，不要按照篇幅或文风给分。
@@ -27,7 +27,8 @@ in_key_points表示是否对应题目要点（要点之外内容也必须核对�
 事实不在检索片段时，可用真实标准证据或完整论文核查：
 {"type":"reference_evidence","evidence_id":"E01","quote":"从对应标准证据逐字复制的短句"}，
 或{"type":"paper_text","document_id":"实际文献ID","quote":"从paper_text逐字复制的短句"}。
-不能编造quote。针对错误/无依据陈述，引用用于反驳或明确其证据边界的相关原文，说明在点注释或缺陷描述中。
+不能编造quote。quote尽量选择同一行内的连续原文短句，避免跨行；若需换行，JSON解码后必须是真换行，不能包含字面量反斜杠n。
+针对错误/无依据陈述，引用用于反驳或明确其证据边界的相关原文，说明在点注释或缺陷描述中。
 仅scope可用{"type":"frozen_manifest","document_id":"实际ID","explanation":"具体范围依据"}
 或{"type":"full_pdf_review","document_id":"实际ID","explanation":"基于提供全文的具体缺失判断"}。
 支持依据用于核对事实真伪，引用评分仍只能根据被引的实际检索片段。
@@ -40,6 +41,9 @@ fact配对score为0/1；纯scope配对score=null，单列且不进入事实引�
 retrieval_point_assessments逐点评估当时检索证据是否包含作答所需内容：
 complete/partial/missing。受控证据任务、未提供能力、kind为scope_limit/corpus_scope/test_boundary
 的点固定not_applicable。不能因回答漏写而判检索缺失，也不能因标准证据有而判已检索到。
+task.retrieval_applicability由运行器根据实验设计确定，不是让你评分的字段。
+若某点标记not_applicable，必须保留output_shape中预填的not_applicable，禁止改成complete/partial/missing。
+尤其task.mode=controlled_evidence时所有点均为not_applicable，即使固定片段包含正确答案，也没有进行检索。
 
 critical_errors是本题关键错误的具体文字数组（没有则[]）。不必重复手写contradicted自动关键错误。
 defects用D1…列出缺陷及description，一个缺陷可关联多个维度。
@@ -60,6 +64,14 @@ reference_concerns是具体标准答案问题的文字数组，无则[]；发现
 '''
 
 
+def retrieval_applicability(case, task):
+    """Applicability is fixed by the experiment, not a model's semantic judgment."""
+    return {p['id']: ('not_applicable' if task['mode'] == 'controlled_evidence'
+                     or p['capability'] not in task['capabilities']
+                     or p['kind'] in {'scope_limit', 'corpus_scope', 'test_boundary'}
+                     else 'requires_review') for p in case['key_points']}
+
+
 def output_shape(case, task, candidate):
     """Unscored shape only; every actual judgment must be authored by the API model."""
     evidence = {e['ref']: e for e in candidate.get('retrieved_evidence', [])}
@@ -67,7 +79,8 @@ def output_shape(case, task, candidate):
         'answerability_score': None, 'observed_behavior': None,
         'key_point_scores': {p['id']: None for p in case['key_points']},
         'point_notes': {p['id']: '' for p in case['key_points']},
-        'retrieval_point_assessments': {p['id']: '' for p in case['key_points']},
+        'retrieval_point_assessments': {k: ('not_applicable' if v == 'not_applicable' else '')
+                                       for k, v in retrieval_applicability(case, task).items()},
         'claim_assessments': [dict(id=f'C{i+1}', text=c['text'], claim_type=None,
                                    support=None, in_key_points=None, contains_paper_fact=None, basis=[])
                               for i, c in enumerate(candidate.get('claims', []))],

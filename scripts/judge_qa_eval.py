@@ -126,6 +126,7 @@ def packet(case, task, result, manifest, sources, rubric):
     candidate = {key: response.get(key, [] if key != 'answer' else '')
                  for key in ('answer', 'claims', 'citations', 'retrieved_evidence')}
     task_contract = {k: task[k] for k in ('suite', 'mode', 'capabilities', 'variant') if k in task}
+    task_contract['retrieval_applicability'] = prompt.retrieval_applicability(case, task)
     case_contract = {k: case[k] for k in ('id', 'category', 'question', 'expected_behavior',
                                          'reference_answer', 'key_points', 'critical_errors')}
     rules = {k: v for k, v in rubric.items() if k not in {'judge_policy', 'blind_review', 'repeat_policy', 'mode'}}
@@ -342,9 +343,9 @@ def _run(run_dir, output, config, limit, tasks, inputs, run, manifest, cases, so
         # No subset headline scores and no silent acceptance when the judge disputes a reference.
         if all_ready and {t['id'] for t in tasks} == {t['id'] for t in run['tasks']} and not concerns:
             summary = summarize(run_dir, reviews_file)
+            progress['summary_written'] = True
             summary['independent_judge'] = dict(metadata_sha256=digest(metadata_path), **progress)
             write(output / 'summary.json', summary)
-            progress['summary_written'] = True
         write(output / 'progress.json', progress)
         return progress
     finally:

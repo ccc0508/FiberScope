@@ -100,6 +100,7 @@ def test_blinded_payload_and_resume_make_no_duplicate_paid_request(run_dir, tmp_
     assert len(requests) == 1 and first['completed'] == 1 and second['api_calls_this_invocation'] == 0
     assert first['known_tokens']['total_tokens'] == 140 and first['actual_charge'] is None
     assert first['summary_written'] and json.loads((out / 'summary.json').read_text())['overall_quality_score'] is None
+    assert json.loads((out / 'summary.json').read_text())['independent_judge']['summary_written']
     assert (run_dir / 'reviews.jsonl').read_text() == 'OLD_REVIEW_SCORE_CANARY'
     assert all('TEST_SECRET_NEVER_SAVE' not in p.read_text() for p in out.rglob('*.json'))
 
@@ -239,3 +240,14 @@ def test_exact_model_and_provider_defaults_are_preserved():
     body = judge.request_body(c, {'synthetic': True})
     assert body['model'] == c.model and body['store'] is False
     assert 'temperature' not in body and 'tools' not in body
+
+
+def test_runtime_supplies_fixed_retrieval_applicability_without_assigning_semantic_scores(run_dir):
+    run, manifest, cases, sources = judge.verify_run(run_dir)
+    task = run['tasks'][0]
+    _, result = judge.read_result(run_dir, run, cases[task['case_id']], task)
+    data = judge.packet(cases[task['case_id']], task, result, manifest, sources,
+                        judge.read_json(run_dir / 'dataset/rubric.json'))
+    assert data['task']['retrieval_applicability'] == {'P1': 'not_applicable', 'P2': 'not_applicable'}
+    assert data['output_shape']['retrieval_point_assessments'] == {'P1': 'not_applicable', 'P2': 'not_applicable'}
+    assert all(v is None for v in data['output_shape']['key_point_scores'].values())
