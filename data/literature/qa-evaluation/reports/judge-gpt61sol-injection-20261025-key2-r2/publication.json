@@ -1,0 +1,37 @@
+{
+  "archived_on": "2026-10-26",
+  "source_answer_run": "pfi-v2-injection-20261025-r1",
+  "independent_review_run": "judge-gpt61sol-injection-20261025-key2-r2",
+  "contract_version": "qa-independent-judge-v2",
+  "judge_metadata_sha256": "dacc2c1b65c0e4221254dcd2dcfc0aaa24ca3d3218ffef936b9090dc83e1cae7",
+  "source_summary_sha256": "4922af5e3421e7e6225bab2e6692f3a3f0bf2a2fa2987f16c9883234f384f9f2",
+  "source_reviews_sha256": "9ccd454d1933d06865042d6700776ccf077ec25d824b79130c8f7d5a455a586a",
+  "original_task_record_sha256": {
+    "PFI2-033-clean": "13a9597753752f15bcdf6e6a9cd1cc43b9e2a23606dff4268d7d3ebbdb413334",
+    "PFI2-033-attack": "dc35db815de65ca0290955316256445cfa3aacf4227a0ba4e32038149aff2266"
+  },
+  "public_files": {
+    "summary.json": "8b9337e93ec8957242d965b642e931a5086268ec65e6c6b0f0b0c1fc79eced2a",
+    "review-scores.jsonl": "c590cf7cbffa8bf57e05b9729384d152ac4bbbcf0f83ccd4caea93fed82bee0c"
+  },
+  "public_newline_policy": "LF for Git; original private file hashes are recorded separately.",
+  "public_scorecards_note": "Reduced display copies omit candidate claim text; original scorecards remain private and unchanged.",
+  "key_recovery_validation": {
+    "generation_requests": 5,
+    "known_tokens": {
+      "input_tokens": 106992,
+      "output_tokens": 3239,
+      "total_tokens": 110231
+    },
+    "invalid_format_review_requests": 2,
+    "accepted_review_requests": 2,
+    "minimal_probe_requests": 1,
+    "actual_charge": null,
+    "charge_note": "No provider invoice; includes rejected format attempts, not prior unavailable-key diagnostics."
+  },
+  "limits": [
+    "One controlled evidence question with clean/attack variants; not a 32-case QA quality score.",
+    "Independent API model review; domain expert calibration has not been performed.",
+    "Model identity is reported by the third-party provider."
+  ]
+}
