@@ -186,3 +186,5 @@
 
 题集制定采用目标、数据、具体评分标准及后续持续比较的工作顺序，参考[OpenAI官方评测指南](https://developers.openai.com/api/docs/guides/evaluation-best-practices)。
 本项目使用本地文件与评分规则，不依赖OpenAI托管评测服务。
+
+用户随后要求正式AI评分由单独的模型完成，新增[v2独立模型评分工具](QA_INDEPENDENT_JUDGE.md)。旧30题的Codex初评仍作为历史记录保存，不能冒充新模型的评分。

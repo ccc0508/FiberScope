@@ -13,21 +13,35 @@ def fraction(n,d):
     return {'numerator':n,'denominator':d,'value':n/d if d else None}
 
 
-def source_basis(basis,result,claim_type,documents):
+def source_basis(basis,result,claim_type,documents,sources=None):
     require(isinstance(basis,list) and bool(basis),'Every claim needs concrete source rationale')
     by_ref={e['ref']:e for e in result['response'].get('retrieved_evidence',[])}
     for item in basis:
-        require(isinstance(item,dict) and item.get('type') in {'evidence','frozen_manifest','full_pdf_review','fixture_design'},'Invalid review basis')
+        require(isinstance(item,dict) and item.get('type') in {'evidence','frozen_manifest','full_pdf_review','fixture_design',
+                                                            'reference_evidence','paper_text'},'Invalid review basis')
         if item['type']=='evidence':
             require(item.get('ref') in by_ref and bool(item.get('quote')),'Evidence quote missing')
             require(normalized(item['quote']) in normalized(by_ref[item['ref']]['text']),'Review quote is not in actual evidence')
+        elif item['type'] in {'reference_evidence','paper_text'}:
+            require(isinstance(sources,dict),'Verified reference sources are required')
+            require(bool(item.get('quote')),'Reference quote missing')
+            if item['type']=='reference_evidence':
+                refs={e['id']:e for e in sources['reference_evidence']}
+                require(item.get('evidence_id') in refs,'Unknown reference evidence')
+                e=refs[item['evidence_id']]
+                text=' '.join(s['quote'] for s in [e,*e.get('continuation',[])])
+            else:
+                texts={p['document_id']:p['text'] for p in sources['paper_texts']}
+                require(item.get('document_id') in texts,'Unknown reference fulltext')
+                text=texts[item['document_id']]
+            require(normalized(item['quote']) in normalized(text),'Review quote is not in verified reference source')
         else:
             require(claim_type=='scope' and bool(item.get('explanation')),'Scope basis requires explanation')
             if item['type'] in {'frozen_manifest','full_pdf_review'}:
                 require(item.get('document_id') in documents,'Scope basis references an unknown document')
 
 
-def review_task(case,task,result,review,result_path,documents):
+def review_task(case,task,result,review,result_path,documents,sources=None):
     require(review['task_id']==task['id'] and review['case_id']==case['id'] and review['run_id']==result['run_id'],'Review identity mismatch')
     require(review['response_file_sha256']==digest(result_path),'Reviewed response changed')
     require(review['review_status'] in {'ai_source_reviewed','human_source_reviewed'},'Review provenance missing')
@@ -68,7 +82,7 @@ def review_task(case,task,result,review,result_path,documents):
         require(type(claim.get('in_key_points')) is bool,'Extra-content mapping required')
         if claim['claim_type']=='scope':
             require(claim.get('contains_paper_fact') is False,'Mixed fact/scope statement cannot claim exemption')
-        source_basis(claim['basis'],result,claim['claim_type'],documents)
+        source_basis(claim['basis'],result,claim['claim_type'],documents,sources)
         if claim['support']!='supported': issues.add('claim:'+claim['id'])
         if claim['support']=='contradicted': critical.append('contradicted:'+claim['id'])
     by_claim={c['id']:c for c in claims}
@@ -133,6 +147,19 @@ def summarize(run_dir,reviews_path):
     cases={c['id']:c for c in read_jsonl(run_dir/'dataset/cases.jsonl')}
     documents={d['id'] for d in read_json(run_dir/'dataset/manifest.json')['source_documents']}
     reviews=read_jsonl(reviews_path)
+    sources=None
+    if any(b.get('type') in {'reference_evidence','paper_text'} for r in reviews
+           for c in r.get('claim_assessments',[]) for b in c.get('basis',[])):
+        from qa_eval_v2 import validate_pack
+        pack=run_dir/'dataset'
+        validate_pack(pack)
+        require(digest(pack/'manifest.json')==metadata['dataset_manifest_sha256'],'Reference dataset changed')
+        manifest=read_json(pack/'manifest.json')
+        # The independent judge v1 explicitly supports a single-document fulltext.
+        require(len(documents)==1,'Ambiguous fulltext document mapping')
+        sources={'reference_evidence':read_json(pack/'evidence.json'),
+                 'paper_texts':[dict(document_id=next(iter(documents)),text=(pack/name).read_text(encoding='utf-8'))
+                                for name in manifest['files'] if name.startswith('source/') and name.endswith('.txt')]}
     by_task={r['task_id']:r for r in reviews}
     require(len(by_task)==len(reviews),'Duplicate review task')
     tasks=metadata['tasks']
@@ -160,7 +187,7 @@ def summarize(run_dir,reviews_path):
                              runtime_status='failed',strict_pass=False,point_mean=None,reason_code=r['reason_code']))
         else:
             require(task['id'] in by_task,'Completed response is not reviewed')
-            rows.append(review_task(cases[task['case_id']],task,r,by_task[task['id']],path,documents))
+            rows.append(review_task(cases[task['case_id']],task,r,by_task[task['id']],path,documents,sources))
     suites={}
     for suite in sorted({t['suite'] for t in tasks}):
         group=[r for r in rows if r['suite']==suite]
