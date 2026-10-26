@@ -4,6 +4,7 @@
 !.env.example
 !.env.literature.example
 !.env.judge.example
+!.env.jev.example
 .venv/
 __pycache__/
 *.py[cod]
