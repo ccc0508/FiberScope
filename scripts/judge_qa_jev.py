@@ -17,9 +17,10 @@ from dotenv import dotenv_values
 
 import judge_qa_eval as judge
 import qa_jev_prompt as prompt
+import qa_scoring_policy as policy
 from score_qa_eval_v2 import source_basis
 
-HARNESS=(*judge.HARNESS,'qa_jev_prompt.py','judge_qa_jev.py')
+HARNESS=(*judge.HARNESS,'qa_jev_prompt.py','qa_jev_prompt_v1.py','judge_qa_jev.py')
 
 
 @dataclass(frozen=True)
@@ -32,7 +33,7 @@ class Config:
     def public(self):
         return dict(base_url=self.base_url,requested_model=self.model,api='openrouter_decisions',
                     timeout_seconds=self.timeout,automatic_retries=0,previous_scores_provided=False,
-                    scope=['key_point_coverage','claim_support','citation_support'],
+                    scope=['key_point_coverage','claim_support','citation_support','citation_group_coverage'],
                     independent_requests=True,sampling='Native typed decisions; no sampling overrides or conversation identifiers.')
 
 
@@ -68,11 +69,12 @@ def validate_response(body,request,allow_auxiliary_inconsistency=False):
 
 def decode_review(body,request,targets,case,task,result,path,sources,allow_auxiliary_inconsistency=False):
     answers=validate_response(body,request,allow_auxiliary_inconsistency)
-    points={p['id']:None for p in case['key_points']};claims={};pairs=[]
+    points={p['id']:None for p in case['key_points']};claims={};pairs=[];groups=[]
     for key,target in targets.items():
         selected=answers[key]['choice'];kind=target['kind']
         if kind=='point':points[target['point_id']]=prompt.POINT_VALUES[selected]
         elif kind=='citation':pairs.append(dict(claim_id=target['claim_id'],ref=target['ref'],raw_score=int(selected=='supported')))
+        elif kind=='citation_group':groups.append(dict(claim_id=target['claim_id'],raw_coverage=selected))
         else:claims.setdefault(target['claim_id'],{})[kind]=selected
     documents={p['document_id'] for p in sources['paper_texts']}
     assessments=[]
@@ -83,6 +85,10 @@ def decode_review(body,request,targets,case,task,result,path,sources,allow_auxil
             item={k:v for k,v in entry.items() if k not in {'source_start','source_end'}}
             source_basis([item],result,row['claim_type'],documents,sources)
             basis=[item];location='verified_verbatim_passage'
+        elif locator=='ACTUAL_RETRIEVAL_SCOPE' and row['claim_type']=='scope':
+            basis=[dict(type='retrieval_scope_review',refs=[e['ref'] for e in result['response'].get('retrieved_evidence',[])],
+                        explanation='Jev selected review of actual supplied retrieval only; no free-text rationale was generated.')]
+            location='actual_retrieval_scope_selected'
         elif locator=='FULL_TEXT_SCOPE' and row['claim_type']=='scope':
             basis=[dict(type='full_pdf_review',document_id=next(iter(documents)),
                         explanation='Jev selected full-paper/corpus scope review for this pure scope statement; no free-text rationale was generated.')]
@@ -98,6 +104,15 @@ def decode_review(body,request,targets,case,task,result,path,sources,allow_auxil
                 review_status='ai_typed_shared_dimensions',key_point_scores=points,claim_assessments=assessments,
                 citation_assessments=pairs,free_text_rationale=None,
                 not_assessed=['full_strict_pass','manual_critical_error_rationale','reference_answer_expert_validation'])
+    if request['state'].get('scoring_policy', {}).get('version') == policy.VERSION:
+        originals={f'C{i+1}':c for i,c in enumerate(result['response'].get('claims',[]))}
+        for group in groups:
+            group.update(refs=list(originals[group['claim_id']]['citation_refs']),
+                         coverage=group['raw_coverage'] if by_claim[group['claim_id']]['claim_type']=='fact' else None,
+                         basis='Jev native joint-citation coverage choice; no free-text rationale was generated.')
+        review.update(scoring_policy_version=policy.VERSION,scoring_policy_sha256=policy.SHA256,
+                      citation_group_assessments=groups)
+        policy.citation_groups(review,result['response'].get('claims',[]))
     if allow_auxiliary_inconsistency:
         diagnostics=[]
         for key,item in answers.items():
@@ -110,11 +125,16 @@ def decode_review(body,request,targets,case,task,result,path,sources,allow_auxil
 
 
 def metrics(case,task,review):
+    judge.require(policy.review_version(review) in {policy.VERSION,policy.LEGACY_VERSION},'Unknown scoring policy version')
     values=[review['key_point_scores'][p['id']] for p in case['key_points']
             if not p['optional'] and p['capability'] in task['capabilities']]
     factual=[p for p in review['citation_assessments'] if p['score'] is not None]
     facts=[c for c in review['claim_assessments'] if c['claim_type']=='fact']
-    covered=sum(any(p['claim_id']==c['id'] and p['score']==1 for p in factual) for c in facts)
+    if policy.review_version(review)==policy.VERSION:
+        groups={g['claim_id']:g for g in review['citation_group_assessments']}
+        covered=sum(groups[c['id']]['coverage']=='complete' for c in facts)
+    else:
+        covered=sum(any(p['claim_id']==c['id'] and p['score']==1 for p in factual) for c in facts)
     located=all(c['evidence_location_status']!='unlocated' for c in review['claim_assessments'])
     return dict(task_id=task['id'],point_mean=statistics.mean(values),required_point_count=len(values),required_point_sum=sum(values),
                 factual_citation_count=len(factual),supported_citation_count=sum(p['score'] for p in factual),
@@ -152,6 +172,10 @@ def summarize(output,cases,tasks,records):
                 p95_valid_duration_ms=times[math.ceil(.95*len(times))-1] if times else None,
                 all_evidence_located_tasks=sum(r['evidence_locations_complete'] for r in rows),rows=rows,
                 full_strict_pass=None,summary_written=False)
+    versions=policy.require_same_policy([r['review'] for r in complete])
+    if versions==policy.VERSION:
+        result.update(scoring_policy_version=policy.VERSION,scoring_policy_sha256=policy.SHA256,
+                      citation_metric_note='Pair precision measures direct contribution; coverage requires complete cited groups.')
     if len(complete)==len(tasks) and len(models)==1:
         result.update(summary_written=True,point_macro_average=statistics.mean(r['point_mean'] for r in rows),
                       shared_dimensions_pass=sum(r['shared_dimensions_pass'] for r in rows))
@@ -174,6 +198,7 @@ def run(run_dir,output,config,*,limit=1,client=None,task_ids=None):
         request,targets=prompt.build_request(config,cases[task['case_id']],task,result,manifest,sources,rubric)
         prepared[task['id']]=(path,result,request,targets)
     contract=dict(contract_version=prompt.VERSION,source_run_id=source['run_id'],source_run_sha256=judge.digest(run_dir/'run.json'),
+                  scoring_policy_version=policy.VERSION,scoring_policy_sha256=policy.SHA256,
                   dataset_manifest_sha256=source['dataset_manifest_sha256'],judge=config.public(),task_ids=[t['id'] for t in tasks],
                   source_result_hashes={tid:judge.digest(value[0]) for tid,value in prepared.items()},
                   request_sha256={tid:judge.sha(value[2]) for tid,value in prepared.items()},

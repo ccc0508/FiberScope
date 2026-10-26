@@ -21,6 +21,7 @@ def response(request):
     body=json.loads(request.content);answers={}
     for key,question in body['questions'].items():
         if key.startswith('point_'):selected='complete'
+        elif key.startswith('group_'):selected='complete'
         elif key.startswith('kind_'):selected='fact'
         elif key.startswith('support_'):selected='supported'
         elif key.startswith('basis_'):selected='B001'

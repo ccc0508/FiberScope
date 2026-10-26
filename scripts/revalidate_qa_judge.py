@@ -14,7 +14,7 @@ def revalidate(run_dir,records,output):
     require(not output.exists() and not output.is_relative_to(run_dir),'Use a new separate revalidation directory')
     run,manifest,cases,sources=judge.verify_run(run_dir)
     tasks={t['id']:t for t in run['tasks']}
-    assembled=[];sources_by_task={};settings=None
+    assembled=[];sources_by_task={};settings=None;protocol=None
     rubric=read_json(run_dir/'dataset/rubric.json')
     for path in map(Path,records):
         original=read_json(path);tid=original['task_id']
@@ -24,7 +24,10 @@ def revalidate(run_dir,records,output):
         meta=read_json(metadata_path)['contract']
         require(meta['run_sha256']==digest(run_dir/'run.json') and meta['source_run_id']==run['run_id'],
                 'Source answer run changed')
-        require(meta['prompt_sha256']==judge.hashlib.sha256(judge.prompt.SYSTEM.encode()).hexdigest(),
+        component_protocol=judge.grading_prompt(meta['contract_version'])
+        if protocol is None:protocol=component_protocol
+        require(component_protocol.VERSION==protocol.VERSION,'Mixed scoring policy versions')
+        require(meta['prompt_sha256']==judge.hashlib.sha256(protocol.SYSTEM.encode()).hexdigest(),
                 'Source grading instructions changed')
         if settings is None:settings=meta['judge']
         require(settings==meta['judge'],'Mixed judge configurations')
@@ -33,12 +36,13 @@ def revalidate(run_dir,records,output):
         task=tasks[tid];case=cases[task['case_id']]
         result_path,result=judge.read_result(run_dir,run,case,task)
         feedback=meta.get('validation_repairs',{}).get(tid,{}).get('feedback')
-        request=judge.request_body(config,judge.packet(case,task,result,manifest,sources,rubric,feedback))
+        request=judge.request_body(config,judge.packet(case,task,result,manifest,sources,rubric,feedback,
+                                                      prompt_version=protocol.VERSION))
         require(judge.sha(request)==original['request_sha256'],'Original grader request changed')
         body=original['raw_response']
         require(judge.sha(body)==original['response_sha256'],'Original API response changed')
         raw=judge.strict_json(judge.extract(body,settings['api']))
-        provenance=dict(contract_version=judge.prompt.VERSION,requested_model=settings['requested_model'],
+        provenance=dict(contract_version=protocol.VERSION,requested_model=settings['requested_model'],
                         returned_model=body.get('model'),base_url=settings['base_url'],api=settings['api'],
                         request_sha256=original['request_sha256'],response_sha256=original['response_sha256'],
                         prompt_sha256=meta['prompt_sha256'],provider_response_id=body.get('id'),
@@ -65,12 +69,12 @@ def revalidate(run_dir,records,output):
     for name in harness:
         (output/'harness'/name).write_bytes(Path(__file__).with_name(name).read_bytes())
     judge.write(output/'judge-run.json',dict(created_at=judge.now(),contract=dict(
-        contract_version=judge.prompt.VERSION,assessment_mode='structural_revalidation_without_provider_calls',
+        contract_version=protocol.VERSION,assessment_mode='structural_revalidation_without_provider_calls',
         source_run_id=run['run_id'],run_sha256=digest(run_dir/'run.json'),
         dataset_manifest_sha256=run['dataset_manifest_sha256'],judge=settings,
         task_ids=[tid for tid,_ in assembled],
         source_result_hashes={tid:digest(run_dir/'results'/(tid+'.json')) for tid,_ in assembled},
-        prompt_sha256=judge.hashlib.sha256(judge.prompt.SYSTEM.encode()).hexdigest(),
+        prompt_sha256=judge.hashlib.sha256(protocol.SYSTEM.encode()).hexdigest(),
         harness_files={name:digest(output/'harness'/name) for name in harness},
         revalidated_sources=sources_by_task,previous_scores_in_prompt=False,provider_calls=0,
         normalization_policy='Fill missing diagnostic IDs; repair only a unique one-to-one diagnostic link; never alter scores, rationale or source quotes.')))
