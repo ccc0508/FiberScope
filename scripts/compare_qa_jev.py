@@ -18,18 +18,23 @@ import qa_jev_prompt as prompt
 import qa_scoring_policy as policy
 
 
-def accounting(records,native=True):
+def accounting(records,native=True,*,openrouter_chat=False):
     calls=[r for r in records if r.get('api_calls',0)]
     tokens={key:sum((r.get('usage') or {}).get(key) or 0 for r in calls) for key in ['input_tokens','output_tokens','total_tokens']}
     known=sum(all(type((r.get('usage') or {}).get(key)) is int for key in tokens) for r in calls)
-    reported=[(r.get('usage') or {}).get('reported_cost_usd') for r in calls] if native else []
+    if openrouter_chat:
+        reported=[((r.get('raw_response') or {}).get('usage') or {}).get('cost') for r in calls]
+        reported=[c if type(c) in (int,float) and math.isfinite(c) and c>=0 else None for c in reported]
+    else:
+        reported=[(r.get('usage') or {}).get('reported_cost_usd') for r in calls] if native else []
+    cost_available=native or openrouter_chat
     by_task=defaultdict(int)
     for r in calls:
         if type(r.get('duration_ms')) is int:by_task[r['task_id']]+=r['duration_ms']
     times=sorted(by_task.values())
     return dict(application_calls=sum(r['api_calls'] for r in calls),usage_known_calls=known,usage_unknown_calls=len(calls)-known,
-                known_tokens=tokens,reported_cost_usd=str(sum((Decimal(str(c)) for c in reported if c is not None),Decimal(0))) if native else None,
-                cost_unknown_calls=sum(c is None for c in reported) if native else len(calls),actual_invoice_cost=None,
+                known_tokens=tokens,reported_cost_usd=str(sum((Decimal(str(c)) for c in reported if c is not None),Decimal(0))) if cost_available else None,
+                cost_unknown_calls=sum(c is None for c in reported) if cost_available else len(calls),actual_invoice_cost=None,
                 summed_request_time_ms=sum(times),median_task_request_time_ms=statistics.median(times) if times else None,
                 p95_task_request_time_ms=times[math.ceil(.95*len(times))-1] if times else None)
 
@@ -122,7 +127,9 @@ def audit_gpt(source,directory):
         row=judge.deepcopy(review)
         for claim in row['claim_assessments']:claim['evidence_location_status']='verified_original_gpt_source_basis'
         projected[row['task_id']]=row
-    return dict(name=directory.name,reviews=projected,accounting=accounting(records,native=False))
+    router=(meta['judge']['base_url']=='https://openrouter.ai/api/v1'
+            and meta['judge']['api']=='chat_completions')
+    return dict(name=directory.name,reviews=projected,accounting=accounting(records,native=False,openrouter_chat=router))
 
 
 def summarize_rows(name,table,tasks,cases,common):
