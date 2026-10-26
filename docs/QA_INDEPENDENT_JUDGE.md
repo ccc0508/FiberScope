@@ -106,7 +106,7 @@ Token不等于实际费用；未取得第三方账单前不估算扣费金额。
 - 默认每题最多一次格式补评；确有需要时显式设置`--max-protocol-repairs 2`或`3`，仍有上限。网络失败默认最多两次显式补试，最后一次额外补试需显式设置`--max-transport-retries 3`；较长等待单独记录，不改变模型或请求内容，最长600秒。超时上游用量不能当0。
 - `revalidate_qa_judge.py --run-dir 原回答目录 --record 拒收JSON --output-dir 新目录`不调用模型。只补缺失编号、修正唯一确定的字段关联，或将依据模型已有分值计算出的未关联问题列为程序诊断项；不能改任何分值、理由、原文引句或有歧义的关联。
 - `aggregate_qa_judges.py --run-dir 原回答目录 --review-dir 分组目录 ... --output-dir 新目录`只读校验原API响应、输入和源码指纹，然后合并全量评分。有效初评不能被替换；缺题、多个有效评分或标准疑点会阻止发布完整汇总。所有失败及补评的已知用量一并统计。
-- 规范化记录在`structure_normalizations`/`computed_issue_links`中，与模型原始输出分开；原文不匹配或检索标签错误仍须由模型重新评阅，程序不能填成“正确”。这些校验不等于领域专家的科学判断。
+- 规范化记录在`structure_normalizations`/`computed_issue_links`中，与模型原始输出分开。明确枚举加冒号说明（如`complete：说明`）可无调用拆分，保留原选定状态和说明；含糊或缺失状态不猜测，实际检索状态错误、不适用性错误、原文不匹配仍须由模型重新评阅。这些校验不等于领域专家的科学判断。
 
 服务器使用`/opt/fiberscope/venv/bin/python`运行同一工具，并显式传入`--env-file /etc/fiberscope/judge.env`。
 这是离线评测配置，不加入网站的服务环境，网页请求不会自动触发裁判调用。现有备份脚本复制整个`/etc/fiberscope`配置目录，因此后续定时备份会包含该文件，备份仍仅root可读。

@@ -2,12 +2,34 @@
 from collections import Counter
 from datetime import datetime
 import statistics
+import re
 import qa_scoring_policy as policy
 
 from validate_qa_eval import digest,normalized,read_json,read_jsonl,require
 
 SUPPORT={'supported':1,'partially_supported':.5,'unsupported':0,'contradicted':0}
 BEHAVIORS={'answer','partial','abstain','flag_conflict','correct_premise','figure_approx'}
+
+
+def retrieval_scalar(value):
+    """Read an explicitly selected enum followed by a colon and explanation; never infer a label."""
+    if not isinstance(value,str):return None
+    labels=r'(complete|partial|missing|not_applicable)'
+    match=re.fullmatch(r'\s*'+labels+r'\s*[:：]\s*(\S[\s\S]*)',value)
+    if not match or re.match(labels+r'\s*[:：]',match[2]):return None
+    return match[1],match[2]
+
+
+def normalize_retrieval_structure(review,points):
+    for key in points:
+        before=review['retrieval_point_assessments'].get(key)
+        parsed=retrieval_scalar(before)
+        if parsed is None:continue
+        label,explanation=parsed
+        review['retrieval_point_assessments'][key]=label
+        review.setdefault('structure_normalizations',[]).append(dict(
+            path='retrieval_point_assessments.'+key,before=before,after=label,
+            explanation_preserved=explanation,kind='explicit_enum_and_explanation_split'))
 
 
 def fraction(n,d):
@@ -71,7 +93,7 @@ def normalize_defect_structure(review,issues):
         computed=sorted(issues-mapped)
         review['computed_issue_links']=computed
         notes.append({'path':'computed_issue_links','before':None,'after':computed})
-    if notes:review['structure_normalizations']=notes
+    if notes:review.setdefault('structure_normalizations',[]).extend(notes)
 
 
 def review_task(case,task,result,review,result_path,documents,sources=None,normalize_structure=False):
@@ -87,6 +109,7 @@ def review_task(case,task,result,review,result_path,documents,sources=None,norma
     require(review['observed_behavior'] in BEHAVIORS,'Invalid observed behavior')
     points={p['id']:p for p in case['key_points']}
     require(set(review['key_point_scores'])==set(points) and set(review['point_notes'])==set(points),'Incomplete point review')
+    if normalize_structure:normalize_retrieval_structure(review,points)
     required_scores,optional_scores,issues=[],[],set()
     retrieval=[]
     for key,point in points.items():

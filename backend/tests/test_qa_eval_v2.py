@@ -145,6 +145,25 @@ def test_optional_omission_does_not_reduce_required_mean_or_strict_pass(review_f
     assert row['optional_points']['value']==0
 
 
+@pytest.mark.parametrize('value,label',[('complete：明确说明','complete'),('partial: explicit explanation','partial'),
+                                        ('missing：明确说明','missing'),('not_applicable: controlled input','not_applicable')])
+def test_retrieval_enum_prefix_can_be_split_without_inventing_a_judgment(value,label):
+    assert scoring.retrieval_scalar(value)[0]==label
+
+
+@pytest.mark.parametrize('value',['maybe complete','complete or missing','complete: missing: ambiguous','unknown: text',{'status':'complete'},1])
+def test_retrieval_scalar_split_refuses_ambiguous_or_unselected_labels(value):
+    assert scoring.retrieval_scalar(value) is None
+
+
+def test_applicable_retrieval_cannot_be_changed_to_a_different_label(review_fixture):
+    case,task,result,review,path=review_fixture
+    review['retrieval_point_assessments']['P1']='not_applicable：model-selected wrong applicability'
+    with pytest.raises(ValueError,match='retrieval applicability'):
+        scoring.review_task(*review_fixture,{'doc1'},normalize_structure=True)
+    assert review['retrieval_point_assessments']['P1']=='not_applicable'
+
+
 def test_pure_scope_citations_are_excluded_but_scope_still_needs_basis(review_fixture):
     c,t,r,review,p=review_fixture
     a=review['claim_assessments'][0]

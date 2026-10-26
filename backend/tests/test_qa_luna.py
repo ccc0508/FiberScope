@@ -9,6 +9,7 @@ ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'scripts'))
 import judge_qa_eval as judge
 import judge_qa_luna as luna
 import compare_qa_jev as comparison
+from revalidate_qa_judge import revalidate
 from .test_qa_judge import run_dir,scorecard,api_response
 
 
@@ -78,3 +79,32 @@ def test_comparison_reads_router_chat_cost_only_for_an_explicitly_verified_gatew
     unknown=comparison.accounting(records,native=False)
     assert known['reported_cost_usd']=='0.003' and known['cost_unknown_calls']==1
     assert unknown['reported_cost_usd'] is None and unknown['cost_unknown_calls']==2
+
+
+def test_decorated_retrieval_enum_is_revalidated_without_calls_or_semantic_edits(run_dir,tmp_path):
+    calls=[]
+    def handler(request):
+        calls.append(request)
+        packet=judge.strict_json(judge.strict_json(request.content.decode())['messages'][1]['content'])
+        raw=scorecard(packet)
+        raw['retrieval_point_assessments']['P1']='not_applicable：受控证据任务，没有实际检索。'
+        body=api_response(raw,mode='chat_completions');body['model']=luna.MODEL
+        return httpx.Response(200,json=body)
+    initial=tmp_path/'decorated-initial';canonical=tmp_path/'canonical'
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        result=luna.run(run_dir,initial,config(),client=client)
+    assert result['completed']==0 and len(calls)==1
+    path=initial/'tasks/PFI2-033-clean.json';before=judge.digest(path)
+    record=judge.read_json(path)
+    raw=judge.strict_json(judge.extract(record['raw_response'],'chat_completions'))
+    revalidate(run_dir,[path],canonical)
+    accepted=judge.read_json(canonical/'tasks/PFI2-033-clean.json')
+    review=accepted['review']
+    assert accepted['api_calls']==0 and judge.digest(path)==before
+    assert accepted['raw_response']==record['raw_response']
+    for key in ('key_point_scores','point_notes','claim_assessments','citation_assessments','citation_group_assessments'):
+        assert review[key]==raw[key]
+    assert review['retrieval_point_assessments']['P1']=='not_applicable'
+    change=next(n for n in review['structure_normalizations'] if n['path']=='retrieval_point_assessments.P1')
+    assert change['before']==raw['retrieval_point_assessments']['P1']
+    assert change['explanation_preserved']=='受控证据任务，没有实际检索。'

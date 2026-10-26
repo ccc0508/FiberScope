@@ -6,6 +6,7 @@ from pathlib import Path
 import json
 
 import judge_qa_eval as judge
+from score_qa_eval_v2 import retrieval_scalar
 from validate_qa_eval import digest,read_json,require
 
 
@@ -54,7 +55,11 @@ def revalidate(run_dir,records,output):
         require(bool(review.get('structure_normalizations')),'No structural normalization was needed; inspect original rejection')
         review['reviewed_at']=original['finished_at']
         # The model-authored judgments, free text, and quotations are immutable.
-        require(all(review[k]==value for k,value in raw.items() if k!='defects'),'Semantic score fields changed')
+        require(all(review[k]==value for k,value in raw.items()
+                    if k not in {'defects','retrieval_point_assessments'}),'Semantic score fields changed')
+        before=raw['retrieval_point_assessments'];after=review['retrieval_point_assessments']
+        require(set(before)==set(after) and all(after[k]==v or (retrieval_scalar(v) is not None
+                and retrieval_scalar(v)[0]==after[k]) for k,v in before.items()),'Selected retrieval labels changed')
         require([d['description'] for d in review['defects']]==[d['description'] for d in raw['defects']],
                 'Defect descriptions changed')
         sources_by_task[tid]=dict(original_record_sha256=digest(path),original_metadata_sha256=digest(metadata_path),
@@ -77,7 +82,9 @@ def revalidate(run_dir,records,output):
         prompt_sha256=judge.hashlib.sha256(protocol.SYSTEM.encode()).hexdigest(),
         harness_files={name:digest(output/'harness'/name) for name in harness},
         revalidated_sources=sources_by_task,previous_scores_in_prompt=False,provider_calls=0,
-        normalization_policy='Fill missing diagnostic IDs; repair only a unique one-to-one diagnostic link; never alter scores, rationale or source quotes.')))
+        normalization_policy='Fill missing diagnostic IDs; repair only a unique one-to-one diagnostic link; '
+                             'split an explicit retrieval enum and colon-delimited explanation, preserving both; '
+                             'never infer or change selected labels, scores, rationale or source quotes.')))
     for tid,record in assembled:judge.write(output/'tasks'/(tid+'.json'),record)
     (output/'reviews.jsonl').write_text(''.join(judge.encode(record['review'])+'\n' for _,record in assembled),encoding='utf-8',newline='\n')
     progress=dict(completed=len(assembled),provider_calls=0,semantic_scores_changed=False,
