@@ -1,0 +1,1699 @@
+{
+  "scope": "Typed shared-dimension judgments; agreement with GPT is not domain accuracy.",
+  "planned_tasks": 32,
+  "canonical_valid_tasks": [
+    32,
+    32,
+    32
+  ],
+  "canonical_common_tasks": 32,
+  "canonical_missing_tasks": [],
+  "model": "typesafe/jev-1.14-20261014",
+  "study_sha256": "1b7c8f4fb6948a6d0005045a4e4b4f1d0bd58173db77072d6f4e90845f144920",
+  "independent_context": {
+    "identical_initial_payloads": 32,
+    "previous_scores_supplied": false,
+    "no_conversation_identifiers": true,
+    "returned_response_ids": 96,
+    "unique_response_ids": 96,
+    "reused_response_ids": [],
+    "new_rag_answer_calls": 0,
+    "new_embedding_queries": 0
+  },
+  "jev_rounds": [
+    {
+      "name": "jev-openrouter-core-20261026-r1",
+      "original_statuses": {
+        "completed": 30,
+        "invalid_response": 2
+      },
+      "canonical_valid": 32,
+      "diagnostics": {
+        "PFI2-001": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-003": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-007": [
+          {
+            "question": "basis_C3",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-011": [
+          {
+            "question": "basis_C1",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "support_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C3",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-013": [
+          {
+            "question": "basis_C4",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-014": [
+          {
+            "question": "basis_C4",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-015": [
+          {
+            "question": "basis_C3",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-016": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-018": [
+          {
+            "question": "basis_C1",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-019": [
+          {
+            "question": "basis_C5",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-020": [
+          {
+            "question": "basis_C4",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-024": [
+          {
+            "question": "basis_C3",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C6",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C8",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-025": [
+          {
+            "question": "basis_C1",
+            "kind": "rounded_probability_sum",
+            "sum": 0.99,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-026": [
+          {
+            "question": "basis_C4",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-028": [
+          {
+            "question": "basis_C3",
+            "kind": "rounded_probability_sum",
+            "sum": 0.99,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-031": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-032": [
+          {
+            "question": "basis_C1",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ]
+      },
+      "accounting": {
+        "application_calls": 32,
+        "usage_known_calls": 32,
+        "usage_unknown_calls": 0,
+        "known_tokens": {
+          "input_tokens": 2132226,
+          "output_tokens": 130795,
+          "total_tokens": 2263021
+        },
+        "reported_cost_usd": "0.089553492",
+        "cost_unknown_calls": 0,
+        "actual_invoice_cost": null,
+        "summed_request_time_ms": 29778,
+        "median_task_request_time_ms": 897.0,
+        "p95_task_request_time_ms": 1116
+      },
+      "source_location_complete": 32,
+      "request_bytes_range": [
+        166433,
+        256816
+      ],
+      "metrics": {
+        "name": "jev-openrouter-core-20261026-r1",
+        "task_count": 32,
+        "point_macro_average": 0.8802083333333334,
+        "shared_dimensions_pass": 21,
+        "citation_support": {
+          "numerator": 120,
+          "denominator": 124,
+          "value": 0.967741935483871
+        },
+        "citation_coverage": {
+          "numerator": 116,
+          "denominator": 117,
+          "value": 0.9914529914529915
+        }
+      }
+    },
+    {
+      "name": "jev-openrouter-core-20261026-r2",
+      "original_statuses": {
+        "completed": 28,
+        "invalid_response": 4
+      },
+      "canonical_valid": 32,
+      "diagnostics": {
+        "PFI2-002": [
+          {
+            "question": "basis_C2",
+            "kind": "auxiliary_locator_argmax_mismatch",
+            "selected": "B001",
+            "selection_changed": false
+          }
+        ],
+        "PFI2-004": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-007": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C5",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-010": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C3",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-015": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C4",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-016": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-018": [
+          {
+            "question": "basis_C4",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-020": [
+          {
+            "question": "basis_C5",
+            "kind": "rounded_probability_sum",
+            "sum": 0.99,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-021": [
+          {
+            "question": "basis_C3",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-023": [
+          {
+            "question": "basis_C1",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-024": [
+          {
+            "question": "basis_C8",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C9",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-025": [
+          {
+            "question": "basis_C1",
+            "kind": "rounded_probability_sum",
+            "sum": 0.99,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-028": [
+          {
+            "question": "basis_C1",
+            "kind": "rounded_probability_sum",
+            "sum": 0.99,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C3",
+            "kind": "rounded_probability_sum",
+            "sum": 0.99,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C4",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-029": [
+          {
+            "question": "point_P1",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-030": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-032": [
+          {
+            "question": "basis_C3",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C5",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ]
+      },
+      "accounting": {
+        "application_calls": 32,
+        "usage_known_calls": 32,
+        "usage_unknown_calls": 0,
+        "known_tokens": {
+          "input_tokens": 2132226,
+          "output_tokens": 130795,
+          "total_tokens": 2263021
+        },
+        "reported_cost_usd": "0.089553492",
+        "cost_unknown_calls": 0,
+        "actual_invoice_cost": null,
+        "summed_request_time_ms": 29011,
+        "median_task_request_time_ms": 899.0,
+        "p95_task_request_time_ms": 1125
+      },
+      "source_location_complete": 32,
+      "request_bytes_range": [
+        166433,
+        256816
+      ],
+      "metrics": {
+        "name": "jev-openrouter-core-20261026-r2",
+        "task_count": 32,
+        "point_macro_average": 0.8802083333333334,
+        "shared_dimensions_pass": 20,
+        "citation_support": {
+          "numerator": 119,
+          "denominator": 124,
+          "value": 0.9596774193548387
+        },
+        "citation_coverage": {
+          "numerator": 115,
+          "denominator": 117,
+          "value": 0.9829059829059829
+        }
+      }
+    },
+    {
+      "name": "jev-openrouter-core-20261026-r3",
+      "original_statuses": {
+        "completed": 28,
+        "invalid_response": 4
+      },
+      "canonical_valid": 32,
+      "diagnostics": {
+        "PFI2-003": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.99,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-004": [
+          {
+            "question": "basis_C1",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-007": [
+          {
+            "question": "basis_C1",
+            "kind": "rounded_probability_sum",
+            "sum": 0.99,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C5",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-009": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-011": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-018": [
+          {
+            "question": "basis_C4",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-019": [
+          {
+            "question": "basis_C5",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-020": [
+          {
+            "question": "basis_C4",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C5",
+            "kind": "rounded_probability_sum",
+            "sum": 0.99,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-023": [
+          {
+            "question": "basis_C1",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-024": [
+          {
+            "question": "basis_C9",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-025": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.99,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-026": [
+          {
+            "question": "basis_C3",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-027": [
+          {
+            "question": "basis_C1",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-028": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "support_C3",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-030": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-031": [
+          {
+            "question": "basis_C5",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C8",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C9",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ],
+        "PFI2-032": [
+          {
+            "question": "basis_C2",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          },
+          {
+            "question": "basis_C4",
+            "kind": "rounded_probability_sum",
+            "sum": 0.9900000000000001,
+            "probabilities_changed": false
+          }
+        ]
+      },
+      "accounting": {
+        "application_calls": 32,
+        "usage_known_calls": 32,
+        "usage_unknown_calls": 0,
+        "known_tokens": {
+          "input_tokens": 2132226,
+          "output_tokens": 130795,
+          "total_tokens": 2263021
+        },
+        "reported_cost_usd": "0.089553492",
+        "cost_unknown_calls": 0,
+        "actual_invoice_cost": null,
+        "summed_request_time_ms": 29509,
+        "median_task_request_time_ms": 905.0,
+        "p95_task_request_time_ms": 1151
+      },
+      "source_location_complete": 32,
+      "request_bytes_range": [
+        166433,
+        256816
+      ],
+      "metrics": {
+        "name": "jev-openrouter-core-20261026-r3",
+        "task_count": 32,
+        "point_macro_average": 0.8854166666666666,
+        "shared_dimensions_pass": 22,
+        "citation_support": {
+          "numerator": 120,
+          "denominator": 124,
+          "value": 0.967741935483871
+        },
+        "citation_coverage": {
+          "numerator": 116,
+          "denominator": 117,
+          "value": 0.9914529914529915
+        }
+      }
+    }
+  ],
+  "gpt_rounds": [
+    {
+      "name": "judge-gpt61sol-core-20261026-r1",
+      "valid_reviews": 32,
+      "accounting": {
+        "application_calls": 48,
+        "usage_known_calls": 44,
+        "usage_unknown_calls": 4,
+        "known_tokens": {
+          "input_tokens": 1996564,
+          "output_tokens": 90874,
+          "total_tokens": 2087438
+        },
+        "reported_cost_usd": null,
+        "cost_unknown_calls": 48,
+        "actual_invoice_cost": null,
+        "summed_request_time_ms": 1985530,
+        "median_task_request_time_ms": 27084.5,
+        "p95_task_request_time_ms": 257829
+      }
+    },
+    {
+      "name": "judge-gpt61sol-core-20261026-r2-complete",
+      "valid_reviews": 31,
+      "accounting": {
+        "application_calls": 54,
+        "usage_known_calls": 48,
+        "usage_unknown_calls": 6,
+        "known_tokens": {
+          "input_tokens": 1977307,
+          "output_tokens": 97205,
+          "total_tokens": 2074512
+        },
+        "reported_cost_usd": null,
+        "cost_unknown_calls": 54,
+        "actual_invoice_cost": null,
+        "summed_request_time_ms": 3690927,
+        "median_task_request_time_ms": 65375.5,
+        "p95_task_request_time_ms": 333310
+      }
+    },
+    {
+      "name": "judge-gpt61sol-core-20261026-r3-complete",
+      "valid_reviews": 32,
+      "accounting": {
+        "application_calls": 53,
+        "usage_known_calls": 47,
+        "usage_unknown_calls": 6,
+        "known_tokens": {
+          "input_tokens": 1874037,
+          "output_tokens": 105516,
+          "total_tokens": 1979553
+        },
+        "reported_cost_usd": null,
+        "cost_unknown_calls": 53,
+        "actual_invoice_cost": null,
+        "summed_request_time_ms": 3212117,
+        "median_task_request_time_ms": 63686.5,
+        "p95_task_request_time_ms": 290349
+      }
+    }
+  ],
+  "within_jev": [
+    {
+      "compared_tasks": 32,
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 82,
+          "denominator": 82,
+          "value": 1.0
+        },
+        "mean_absolute_difference": 0.0,
+        "max_absolute_difference": 0,
+        "weighted_kappa_quadratic": 1.0
+      },
+      "claim_support_agreement": {
+        "numerator": 126,
+        "denominator": 126,
+        "value": 1.0
+      },
+      "claim_type_agreement": {
+        "numerator": 126,
+        "denominator": 126,
+        "value": 1.0
+      },
+      "citation_score_agreement": {
+        "numerator": 123,
+        "denominator": 124,
+        "value": 0.9919354838709677
+      },
+      "citation_applicability_flips": 0,
+      "point_pattern_changed_tasks": [],
+      "rounds": [
+        1,
+        2
+      ]
+    },
+    {
+      "compared_tasks": 32,
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 81,
+          "denominator": 82,
+          "value": 0.9878048780487805
+        },
+        "mean_absolute_difference": 0.006097560975609756,
+        "max_absolute_difference": 0.5,
+        "weighted_kappa_quadratic": 0.9826784959864808
+      },
+      "claim_support_agreement": {
+        "numerator": 126,
+        "denominator": 126,
+        "value": 1.0
+      },
+      "claim_type_agreement": {
+        "numerator": 126,
+        "denominator": 126,
+        "value": 1.0
+      },
+      "citation_score_agreement": {
+        "numerator": 124,
+        "denominator": 124,
+        "value": 1.0
+      },
+      "citation_applicability_flips": 0,
+      "point_pattern_changed_tasks": [
+        "PFI2-007"
+      ],
+      "rounds": [
+        1,
+        3
+      ]
+    },
+    {
+      "compared_tasks": 32,
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 81,
+          "denominator": 82,
+          "value": 0.9878048780487805
+        },
+        "mean_absolute_difference": 0.006097560975609756,
+        "max_absolute_difference": 0.5,
+        "weighted_kappa_quadratic": 0.9826784959864808
+      },
+      "claim_support_agreement": {
+        "numerator": 126,
+        "denominator": 126,
+        "value": 1.0
+      },
+      "claim_type_agreement": {
+        "numerator": 126,
+        "denominator": 126,
+        "value": 1.0
+      },
+      "citation_score_agreement": {
+        "numerator": 123,
+        "denominator": 124,
+        "value": 0.9919354838709677
+      },
+      "citation_applicability_flips": 0,
+      "point_pattern_changed_tasks": [
+        "PFI2-007"
+      ],
+      "rounds": [
+        2,
+        3
+      ]
+    }
+  ],
+  "gpt_jev_pairs": [
+    {
+      "compared_tasks": 32,
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 77,
+          "denominator": 82,
+          "value": 0.9390243902439024
+        },
+        "mean_absolute_difference": 0.036585365853658534,
+        "max_absolute_difference": 1,
+        "weighted_kappa_quadratic": 0.8523852385238524
+      },
+      "claim_support_agreement": {
+        "numerator": 124,
+        "denominator": 126,
+        "value": 0.9841269841269841
+      },
+      "claim_type_agreement": {
+        "numerator": 121,
+        "denominator": 126,
+        "value": 0.9603174603174603
+      },
+      "citation_score_agreement": {
+        "numerator": 118,
+        "denominator": 124,
+        "value": 0.9516129032258065
+      },
+      "citation_applicability_flips": 5,
+      "point_pattern_changed_tasks": [
+        "PFI2-007",
+        "PFI2-015",
+        "PFI2-018",
+        "PFI2-021",
+        "PFI2-023"
+      ],
+      "gpt": "judge-gpt61sol-core-20261026-r1",
+      "jev": "jev-openrouter-core-20261026-r1"
+    },
+    {
+      "compared_tasks": 32,
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 77,
+          "denominator": 82,
+          "value": 0.9390243902439024
+        },
+        "mean_absolute_difference": 0.036585365853658534,
+        "max_absolute_difference": 1,
+        "weighted_kappa_quadratic": 0.8523852385238524
+      },
+      "claim_support_agreement": {
+        "numerator": 124,
+        "denominator": 126,
+        "value": 0.9841269841269841
+      },
+      "claim_type_agreement": {
+        "numerator": 121,
+        "denominator": 126,
+        "value": 0.9603174603174603
+      },
+      "citation_score_agreement": {
+        "numerator": 117,
+        "denominator": 124,
+        "value": 0.9435483870967742
+      },
+      "citation_applicability_flips": 5,
+      "point_pattern_changed_tasks": [
+        "PFI2-007",
+        "PFI2-015",
+        "PFI2-018",
+        "PFI2-021",
+        "PFI2-023"
+      ],
+      "gpt": "judge-gpt61sol-core-20261026-r1",
+      "jev": "jev-openrouter-core-20261026-r2"
+    },
+    {
+      "compared_tasks": 32,
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 78,
+          "denominator": 82,
+          "value": 0.9512195121951219
+        },
+        "mean_absolute_difference": 0.03048780487804878,
+        "max_absolute_difference": 1,
+        "weighted_kappa_quadratic": 0.869367319071461
+      },
+      "claim_support_agreement": {
+        "numerator": 124,
+        "denominator": 126,
+        "value": 0.9841269841269841
+      },
+      "claim_type_agreement": {
+        "numerator": 121,
+        "denominator": 126,
+        "value": 0.9603174603174603
+      },
+      "citation_score_agreement": {
+        "numerator": 118,
+        "denominator": 124,
+        "value": 0.9516129032258065
+      },
+      "citation_applicability_flips": 5,
+      "point_pattern_changed_tasks": [
+        "PFI2-015",
+        "PFI2-018",
+        "PFI2-021",
+        "PFI2-023"
+      ],
+      "gpt": "judge-gpt61sol-core-20261026-r1",
+      "jev": "jev-openrouter-core-20261026-r3"
+    },
+    {
+      "compared_tasks": 31,
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 72,
+          "denominator": 80,
+          "value": 0.9
+        },
+        "mean_absolute_difference": 0.05,
+        "max_absolute_difference": 0.5,
+        "weighted_kappa_quadratic": 0.8333333333333333
+      },
+      "claim_support_agreement": {
+        "numerator": 120,
+        "denominator": 122,
+        "value": 0.9836065573770492
+      },
+      "claim_type_agreement": {
+        "numerator": 118,
+        "denominator": 122,
+        "value": 0.9672131147540983
+      },
+      "citation_score_agreement": {
+        "numerator": 116,
+        "denominator": 121,
+        "value": 0.9586776859504132
+      },
+      "citation_applicability_flips": 4,
+      "point_pattern_changed_tasks": [
+        "PFI2-004",
+        "PFI2-007",
+        "PFI2-011",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-018",
+        "PFI2-023"
+      ],
+      "gpt": "judge-gpt61sol-core-20261026-r2-complete",
+      "jev": "jev-openrouter-core-20261026-r1"
+    },
+    {
+      "compared_tasks": 31,
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 72,
+          "denominator": 80,
+          "value": 0.9
+        },
+        "mean_absolute_difference": 0.05,
+        "max_absolute_difference": 0.5,
+        "weighted_kappa_quadratic": 0.8333333333333333
+      },
+      "claim_support_agreement": {
+        "numerator": 120,
+        "denominator": 122,
+        "value": 0.9836065573770492
+      },
+      "claim_type_agreement": {
+        "numerator": 118,
+        "denominator": 122,
+        "value": 0.9672131147540983
+      },
+      "citation_score_agreement": {
+        "numerator": 116,
+        "denominator": 121,
+        "value": 0.9586776859504132
+      },
+      "citation_applicability_flips": 4,
+      "point_pattern_changed_tasks": [
+        "PFI2-004",
+        "PFI2-007",
+        "PFI2-011",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-018",
+        "PFI2-023"
+      ],
+      "gpt": "judge-gpt61sol-core-20261026-r2-complete",
+      "jev": "jev-openrouter-core-20261026-r2"
+    },
+    {
+      "compared_tasks": 31,
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 73,
+          "denominator": 80,
+          "value": 0.9125
+        },
+        "mean_absolute_difference": 0.04375,
+        "max_absolute_difference": 0.5,
+        "weighted_kappa_quadratic": 0.8523206751054853
+      },
+      "claim_support_agreement": {
+        "numerator": 120,
+        "denominator": 122,
+        "value": 0.9836065573770492
+      },
+      "claim_type_agreement": {
+        "numerator": 118,
+        "denominator": 122,
+        "value": 0.9672131147540983
+      },
+      "citation_score_agreement": {
+        "numerator": 116,
+        "denominator": 121,
+        "value": 0.9586776859504132
+      },
+      "citation_applicability_flips": 4,
+      "point_pattern_changed_tasks": [
+        "PFI2-004",
+        "PFI2-011",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-018",
+        "PFI2-023"
+      ],
+      "gpt": "judge-gpt61sol-core-20261026-r2-complete",
+      "jev": "jev-openrouter-core-20261026-r3"
+    },
+    {
+      "compared_tasks": 32,
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 78,
+          "denominator": 82,
+          "value": 0.9512195121951219
+        },
+        "mean_absolute_difference": 0.03048780487804878,
+        "max_absolute_difference": 1,
+        "weighted_kappa_quadratic": 0.859106529209622
+      },
+      "claim_support_agreement": {
+        "numerator": 122,
+        "denominator": 126,
+        "value": 0.9682539682539683
+      },
+      "claim_type_agreement": {
+        "numerator": 121,
+        "denominator": 126,
+        "value": 0.9603174603174603
+      },
+      "citation_score_agreement": {
+        "numerator": 117,
+        "denominator": 124,
+        "value": 0.9435483870967742
+      },
+      "citation_applicability_flips": 5,
+      "point_pattern_changed_tasks": [
+        "PFI2-007",
+        "PFI2-011",
+        "PFI2-015",
+        "PFI2-018"
+      ],
+      "gpt": "judge-gpt61sol-core-20261026-r3-complete",
+      "jev": "jev-openrouter-core-20261026-r1"
+    },
+    {
+      "compared_tasks": 32,
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 78,
+          "denominator": 82,
+          "value": 0.9512195121951219
+        },
+        "mean_absolute_difference": 0.03048780487804878,
+        "max_absolute_difference": 1,
+        "weighted_kappa_quadratic": 0.859106529209622
+      },
+      "claim_support_agreement": {
+        "numerator": 122,
+        "denominator": 126,
+        "value": 0.9682539682539683
+      },
+      "claim_type_agreement": {
+        "numerator": 121,
+        "denominator": 126,
+        "value": 0.9603174603174603
+      },
+      "citation_score_agreement": {
+        "numerator": 118,
+        "denominator": 124,
+        "value": 0.9516129032258065
+      },
+      "citation_applicability_flips": 5,
+      "point_pattern_changed_tasks": [
+        "PFI2-007",
+        "PFI2-011",
+        "PFI2-015",
+        "PFI2-018"
+      ],
+      "gpt": "judge-gpt61sol-core-20261026-r3-complete",
+      "jev": "jev-openrouter-core-20261026-r2"
+    },
+    {
+      "compared_tasks": 32,
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 79,
+          "denominator": 82,
+          "value": 0.9634146341463414
+        },
+        "mean_absolute_difference": 0.024390243902439025,
+        "max_absolute_difference": 1,
+        "weighted_kappa_quadratic": 0.877672799602188
+      },
+      "claim_support_agreement": {
+        "numerator": 122,
+        "denominator": 126,
+        "value": 0.9682539682539683
+      },
+      "claim_type_agreement": {
+        "numerator": 121,
+        "denominator": 126,
+        "value": 0.9603174603174603
+      },
+      "citation_score_agreement": {
+        "numerator": 117,
+        "denominator": 124,
+        "value": 0.9435483870967742
+      },
+      "citation_applicability_flips": 5,
+      "point_pattern_changed_tasks": [
+        "PFI2-011",
+        "PFI2-015",
+        "PFI2-018"
+      ],
+      "gpt": "judge-gpt61sol-core-20261026-r3-complete",
+      "jev": "jev-openrouter-core-20261026-r3"
+    }
+  ],
+  "all_six_common_tasks": 31,
+  "all_six_excluded": [
+    "PFI2-026"
+  ],
+  "shared_dimension_comparison": [
+    {
+      "name": "judge-gpt61sol-core-20261026-r1",
+      "task_count": 31,
+      "point_macro_average": 0.8978494623655914,
+      "shared_dimensions_pass": 23,
+      "citation_support": {
+        "numerator": 121,
+        "denominator": 125,
+        "value": 0.968
+      },
+      "citation_coverage": {
+        "numerator": 114,
+        "denominator": 118,
+        "value": 0.9661016949152542
+      }
+    },
+    {
+      "name": "judge-gpt61sol-core-20261026-r2-complete",
+      "task_count": 31,
+      "point_macro_average": 0.9032258064516129,
+      "shared_dimensions_pass": 20,
+      "citation_support": {
+        "numerator": 120,
+        "denominator": 125,
+        "value": 0.96
+      },
+      "citation_coverage": {
+        "numerator": 114,
+        "denominator": 118,
+        "value": 0.9661016949152542
+      }
+    },
+    {
+      "name": "judge-gpt61sol-core-20261026-r3-complete",
+      "task_count": 31,
+      "point_macro_average": 0.9059139784946236,
+      "shared_dimensions_pass": 23,
+      "citation_support": {
+        "numerator": 123,
+        "denominator": 125,
+        "value": 0.984
+      },
+      "citation_coverage": {
+        "numerator": 117,
+        "denominator": 118,
+        "value": 0.9915254237288136
+      }
+    },
+    {
+      "name": "jev-openrouter-core-20261026-r1",
+      "task_count": 31,
+      "point_macro_average": 0.8763440860215054,
+      "shared_dimensions_pass": 20,
+      "citation_support": {
+        "numerator": 117,
+        "denominator": 121,
+        "value": 0.9669421487603306
+      },
+      "citation_coverage": {
+        "numerator": 113,
+        "denominator": 114,
+        "value": 0.9912280701754386
+      }
+    },
+    {
+      "name": "jev-openrouter-core-20261026-r2",
+      "task_count": 31,
+      "point_macro_average": 0.8763440860215054,
+      "shared_dimensions_pass": 20,
+      "citation_support": {
+        "numerator": 117,
+        "denominator": 121,
+        "value": 0.9669421487603306
+      },
+      "citation_coverage": {
+        "numerator": 113,
+        "denominator": 114,
+        "value": 0.9912280701754386
+      }
+    },
+    {
+      "name": "jev-openrouter-core-20261026-r3",
+      "task_count": 31,
+      "point_macro_average": 0.8817204301075269,
+      "shared_dimensions_pass": 21,
+      "citation_support": {
+        "numerator": 117,
+        "denominator": 121,
+        "value": 0.9669421487603306
+      },
+      "citation_coverage": {
+        "numerator": 113,
+        "denominator": 114,
+        "value": 0.9912280701754386
+      }
+    }
+  ],
+  "reported_jev_cost_usd": "0.268660476",
+  "new_analysis_api_calls": 0,
+  "compatibility_note": "Only rounded probability-sum tolerance and flagged auxiliary locator argmax differences; all model labels, selected passages, raw probabilities and confidence retained.",
+  "timing_note": "Historical workflows differ in scope, output and execution time. GPT costs are unknown; no monetary saving or pure-model speedup is established."
+}

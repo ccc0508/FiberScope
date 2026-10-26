@@ -144,3 +144,42 @@ def test_unexpected_model_is_rejected(run_dir,tmp_path):
     with httpx.Client(transport=httpx.MockTransport(wrong)) as client:
         result=jev.run(run_dir,tmp_path/'wrong-model',config(),client=client)
     assert result['statuses']=={'invalid_response':1}
+
+
+def test_two_decimal_probability_rounding_is_accepted_without_normalization(run_dir,tmp_path):
+    raw=[]
+    def rounded(request):
+        body=response(request);item=body['answers']['support_C1']
+        item['probabilities']={'supported':.8,'partially_supported':.19,'unsupported':0.,'contradicted':0.}
+        raw.append(deepcopy(body))
+        return httpx.Response(200,json=body)
+    target=tmp_path/'rounded'
+    with httpx.Client(transport=httpx.MockTransport(rounded)) as client:
+        result=jev.run(run_dir,target,config(),client=client)
+    assert result['valid_reviews']==1
+    assert judge.read_json(target/'tasks/PFI2-033-clean.json')['raw_response']==raw[0]
+
+
+def test_locator_argmax_mismatch_is_explicitly_flagged_without_replacing_selection(run_dir,tmp_path):
+    source,manifest,cases,sources=judge.verify_run(run_dir);task=source['tasks'][0]
+    path,result=judge.read_result(run_dir,source,cases[task['case_id']],task)
+    request,targets=prompt.build_request(config(),cases[task['case_id']],task,result,manifest,sources,judge.read_json(run_dir/'dataset/rubric.json'))
+    native_request=httpx.Request('POST','https://synthetic.invalid',json=request)
+    body=response(native_request);locator=body['answers']['basis_C1']
+    locator['probabilities']={key:0. for key in locator['probabilities']}
+    locator['probabilities'].update(B001=.43,B002=.44,NONE=.13)
+    with pytest.raises(ValueError,match='disagrees'):jev.validate_response(body,request)
+    before=deepcopy(body)
+    review=jev.decode_review(body,request,targets,cases[task['case_id']],task,result,path,sources,allow_auxiliary_inconsistency=True)
+    assert review['claim_assessments'][0]['source_locator']=='B001' and body==before
+    assert review['native_output_diagnostics']==[{'question':'basis_C1','kind':'auxiliary_locator_argmax_mismatch','selected':'B001','selection_changed':False}]
+
+
+def test_core_grade_argmax_mismatch_cannot_use_locator_exception(run_dir,tmp_path):
+    def bad(request):
+        body=response(request);entry=body['answers']['point_P1']
+        entry.update(choice='complete',probabilities={'missing':.5,'partial':.4,'complete':.1})
+        return httpx.Response(200,json=body)
+    with httpx.Client(transport=httpx.MockTransport(bad)) as client:
+        result=jev.run(run_dir,tmp_path/'core-mismatch',config(),client=client)
+    assert result['statuses']=={'invalid_response':1}

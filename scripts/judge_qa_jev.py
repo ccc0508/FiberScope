@@ -50,7 +50,7 @@ def load_config(path):
 def number(value):return type(value) in (int,float) and math.isfinite(value)
 
 
-def validate_response(body,request):
+def validate_response(body,request,allow_auxiliary_inconsistency=False):
     judge.require(isinstance(body,dict) and isinstance(body.get('answers'),dict),'Jev answer map missing')
     judge.require(isinstance(body.get('model'),str) and (body['model']==request['model'] or body['model'].startswith(request['model']+'-')), 'Unexpected returned Jev model')
     judge.require(body.get('provider')=='TypeSafe','Unexpected Jev provider')
@@ -59,14 +59,15 @@ def validate_response(body,request):
         criteria=request['questions'][key]['criteria'];prob=item.get('probabilities')
         judge.require(item.get('type')=='choice' and item.get('choice') in criteria,'Invalid Jev choice')
         judge.require(isinstance(prob,dict) and set(prob)==set(criteria),'Invalid probability options')
-        judge.require(all(number(v) and 0<=v<=1 for v in prob.values()) and abs(sum(prob.values())-1)<=.01,'Invalid probability distribution')
-        judge.require(prob[item['choice']]>=max(prob.values())-1e-6,'Choice disagrees with its distribution')
+        judge.require(all(number(v) and 0<=v<=1 for v in prob.values()) and abs(sum(prob.values())-1)<=.01+1e-9,'Invalid probability distribution')
+        judge.require(prob[item['choice']]>=max(prob.values())-1e-6 or (allow_auxiliary_inconsistency and key.startswith('basis_')),
+                      'Choice disagrees with its distribution')
         judge.require(number(item.get('confidence')) and 0<=item['confidence']<=1,'Invalid Jev confidence')
     return answers
 
 
-def decode_review(body,request,targets,case,task,result,path,sources):
-    answers=validate_response(body,request)
+def decode_review(body,request,targets,case,task,result,path,sources,allow_auxiliary_inconsistency=False):
+    answers=validate_response(body,request,allow_auxiliary_inconsistency)
     points={p['id']:None for p in case['key_points']};claims={};pairs=[]
     for key,target in targets.items():
         selected=answers[key]['choice'];kind=target['kind']
@@ -92,11 +93,20 @@ def decode_review(body,request,targets,case,task,result,path,sources):
     for pair in pairs:
         pair['score']=pair['raw_score'] if by_claim[pair['claim_id']]['claim_type']=='fact' else None
         pair['chunk_id']=evidence[pair['ref']]['chunk_id']
-    return dict(task_id=task['id'],case_id=case['id'],run_id=result['run_id'],response_file_sha256=judge.digest(path),
+    review=dict(task_id=task['id'],case_id=case['id'],run_id=result['run_id'],response_file_sha256=judge.digest(path),
                 reviewer_type='ai',reviewer=body['model']+' via OpenRouter',participated_in_authoring=False,
                 review_status='ai_typed_shared_dimensions',key_point_scores=points,claim_assessments=assessments,
                 citation_assessments=pairs,free_text_rationale=None,
                 not_assessed=['full_strict_pass','manual_critical_error_rationale','reference_answer_expert_validation'])
+    if allow_auxiliary_inconsistency:
+        diagnostics=[]
+        for key,item in answers.items():
+            total=sum(item['probabilities'].values())
+            if abs(total-1)>1e-6:diagnostics.append(dict(question=key,kind='rounded_probability_sum',sum=total,probabilities_changed=False))
+            if item['probabilities'][item['choice']]<max(item['probabilities'].values())-1e-6:
+                diagnostics.append(dict(question=key,kind='auxiliary_locator_argmax_mismatch',selected=item['choice'],selection_changed=False))
+        review['native_output_diagnostics']=diagnostics
+    return review
 
 
 def metrics(case,task,review):

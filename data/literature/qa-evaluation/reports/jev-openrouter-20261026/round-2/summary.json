@@ -1,0 +1,611 @@
+{
+  "name": "jev-openrouter-core-20261026-r2",
+  "original_statuses": {
+    "completed": 28,
+    "invalid_response": 4
+  },
+  "canonical_valid": 32,
+  "diagnostics": {
+    "PFI2-002": [
+      {
+        "question": "basis_C2",
+        "kind": "auxiliary_locator_argmax_mismatch",
+        "selected": "B001",
+        "selection_changed": false
+      }
+    ],
+    "PFI2-004": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-007": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C5",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-010": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-015": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C4",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-016": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-018": [
+      {
+        "question": "basis_C4",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-020": [
+      {
+        "question": "basis_C5",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-021": [
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-023": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-024": [
+      {
+        "question": "basis_C8",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C9",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-025": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-028": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C4",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-029": [
+      {
+        "question": "point_P1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-030": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-032": [
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C5",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ]
+  },
+  "accounting": {
+    "application_calls": 32,
+    "usage_known_calls": 32,
+    "usage_unknown_calls": 0,
+    "known_tokens": {
+      "input_tokens": 2132226,
+      "output_tokens": 130795,
+      "total_tokens": 2263021
+    },
+    "reported_cost_usd": "0.089553492",
+    "cost_unknown_calls": 0,
+    "actual_invoice_cost": null,
+    "summed_request_time_ms": 29011,
+    "median_task_request_time_ms": 899.0,
+    "p95_task_request_time_ms": 1125
+  },
+  "source_location_complete": 32,
+  "request_bytes_range": [
+    166433,
+    256816
+  ],
+  "metrics": {
+    "name": "jev-openrouter-core-20261026-r2",
+    "task_count": 32,
+    "point_macro_average": 0.8802083333333334,
+    "shared_dimensions_pass": 20,
+    "citation_support": {
+      "numerator": 119,
+      "denominator": 124,
+      "value": 0.9596774193548387
+    },
+    "citation_coverage": {
+      "numerator": 115,
+      "denominator": 117,
+      "value": 0.9829059829059829
+    }
+  },
+  "rows": [
+    {
+      "task_id": "PFI2-001",
+      "point_mean": 1,
+      "required_point_count": 2,
+      "required_point_sum": 2,
+      "factual_citation_count": 2,
+      "supported_citation_count": 2,
+      "factual_claim_count": 2,
+      "covered_factual_claims": 2,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-002",
+      "point_mean": 1,
+      "required_point_count": 4,
+      "required_point_sum": 4,
+      "factual_citation_count": 3,
+      "supported_citation_count": 3,
+      "factual_claim_count": 3,
+      "covered_factual_claims": 3,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-003",
+      "point_mean": 1,
+      "required_point_count": 2,
+      "required_point_sum": 2,
+      "factual_citation_count": 4,
+      "supported_citation_count": 4,
+      "factual_claim_count": 2,
+      "covered_factual_claims": 2,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-004",
+      "point_mean": 0.8333333333333334,
+      "required_point_count": 3,
+      "required_point_sum": 2.5,
+      "factual_citation_count": 5,
+      "supported_citation_count": 5,
+      "factual_claim_count": 5,
+      "covered_factual_claims": 5,
+      "shared_dimensions_pass": false,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-005",
+      "point_mean": 1,
+      "required_point_count": 2,
+      "required_point_sum": 2,
+      "factual_citation_count": 2,
+      "supported_citation_count": 2,
+      "factual_claim_count": 2,
+      "covered_factual_claims": 2,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-006",
+      "point_mean": 1,
+      "required_point_count": 3,
+      "required_point_sum": 3,
+      "factual_citation_count": 4,
+      "supported_citation_count": 4,
+      "factual_claim_count": 4,
+      "covered_factual_claims": 4,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-007",
+      "point_mean": 0.8333333333333334,
+      "required_point_count": 3,
+      "required_point_sum": 2.5,
+      "factual_citation_count": 5,
+      "supported_citation_count": 5,
+      "factual_claim_count": 5,
+      "covered_factual_claims": 5,
+      "shared_dimensions_pass": false,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-008",
+      "point_mean": 1,
+      "required_point_count": 4,
+      "required_point_sum": 4,
+      "factual_citation_count": 4,
+      "supported_citation_count": 4,
+      "factual_claim_count": 4,
+      "covered_factual_claims": 4,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-009",
+      "point_mean": 1,
+      "required_point_count": 3,
+      "required_point_sum": 3,
+      "factual_citation_count": 3,
+      "supported_citation_count": 3,
+      "factual_claim_count": 3,
+      "covered_factual_claims": 3,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-010",
+      "point_mean": 0.5,
+      "required_point_count": 2,
+      "required_point_sum": 1.0,
+      "factual_citation_count": 2,
+      "supported_citation_count": 2,
+      "factual_claim_count": 2,
+      "covered_factual_claims": 2,
+      "shared_dimensions_pass": false,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-011",
+      "point_mean": 0,
+      "required_point_count": 2,
+      "required_point_sum": 0,
+      "factual_citation_count": 3,
+      "supported_citation_count": 3,
+      "factual_claim_count": 3,
+      "covered_factual_claims": 3,
+      "shared_dimensions_pass": false,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-012",
+      "point_mean": 1,
+      "required_point_count": 3,
+      "required_point_sum": 3,
+      "factual_citation_count": 4,
+      "supported_citation_count": 4,
+      "factual_claim_count": 4,
+      "covered_factual_claims": 4,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-013",
+      "point_mean": 1,
+      "required_point_count": 4,
+      "required_point_sum": 4,
+      "factual_citation_count": 5,
+      "supported_citation_count": 5,
+      "factual_claim_count": 5,
+      "covered_factual_claims": 5,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-014",
+      "point_mean": 1,
+      "required_point_count": 2,
+      "required_point_sum": 2,
+      "factual_citation_count": 5,
+      "supported_citation_count": 5,
+      "factual_claim_count": 5,
+      "covered_factual_claims": 5,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-015",
+      "point_mean": 0.6666666666666666,
+      "required_point_count": 3,
+      "required_point_sum": 2,
+      "factual_citation_count": 4,
+      "supported_citation_count": 4,
+      "factual_claim_count": 4,
+      "covered_factual_claims": 4,
+      "shared_dimensions_pass": false,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-016",
+      "point_mean": 1,
+      "required_point_count": 3,
+      "required_point_sum": 3,
+      "factual_citation_count": 4,
+      "supported_citation_count": 4,
+      "factual_claim_count": 4,
+      "covered_factual_claims": 4,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-017",
+      "point_mean": 1,
+      "required_point_count": 2,
+      "required_point_sum": 2,
+      "factual_citation_count": 2,
+      "supported_citation_count": 2,
+      "factual_claim_count": 2,
+      "covered_factual_claims": 2,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-018",
+      "point_mean": 0.6666666666666666,
+      "required_point_count": 3,
+      "required_point_sum": 2,
+      "factual_citation_count": 5,
+      "supported_citation_count": 5,
+      "factual_claim_count": 4,
+      "covered_factual_claims": 4,
+      "shared_dimensions_pass": false,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-019",
+      "point_mean": 1,
+      "required_point_count": 3,
+      "required_point_sum": 3,
+      "factual_citation_count": 6,
+      "supported_citation_count": 6,
+      "factual_claim_count": 6,
+      "covered_factual_claims": 6,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-020",
+      "point_mean": 1,
+      "required_point_count": 3,
+      "required_point_sum": 3,
+      "factual_citation_count": 7,
+      "supported_citation_count": 6,
+      "factual_claim_count": 5,
+      "covered_factual_claims": 5,
+      "shared_dimensions_pass": false,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-021",
+      "point_mean": 0.16666666666666666,
+      "required_point_count": 3,
+      "required_point_sum": 0.5,
+      "factual_citation_count": 2,
+      "supported_citation_count": 2,
+      "factual_claim_count": 2,
+      "covered_factual_claims": 2,
+      "shared_dimensions_pass": false,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-022",
+      "point_mean": 1,
+      "required_point_count": 3,
+      "required_point_sum": 3,
+      "factual_citation_count": 4,
+      "supported_citation_count": 4,
+      "factual_claim_count": 4,
+      "covered_factual_claims": 4,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-023",
+      "point_mean": 0.8333333333333334,
+      "required_point_count": 3,
+      "required_point_sum": 2.5,
+      "factual_citation_count": 2,
+      "supported_citation_count": 2,
+      "factual_claim_count": 2,
+      "covered_factual_claims": 2,
+      "shared_dimensions_pass": false,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-024",
+      "point_mean": 0.6666666666666666,
+      "required_point_count": 3,
+      "required_point_sum": 2,
+      "factual_citation_count": 11,
+      "supported_citation_count": 9,
+      "factual_claim_count": 10,
+      "covered_factual_claims": 9,
+      "shared_dimensions_pass": false,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-025",
+      "point_mean": 1,
+      "required_point_count": 1,
+      "required_point_sum": 1,
+      "factual_citation_count": 1,
+      "supported_citation_count": 1,
+      "factual_claim_count": 1,
+      "covered_factual_claims": 1,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-026",
+      "point_mean": 1,
+      "required_point_count": 2,
+      "required_point_sum": 2,
+      "factual_citation_count": 3,
+      "supported_citation_count": 2,
+      "factual_claim_count": 3,
+      "covered_factual_claims": 2,
+      "shared_dimensions_pass": false,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-027",
+      "point_mean": 1,
+      "required_point_count": 2,
+      "required_point_sum": 2,
+      "factual_citation_count": 1,
+      "supported_citation_count": 1,
+      "factual_claim_count": 1,
+      "covered_factual_claims": 1,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-028",
+      "point_mean": 1,
+      "required_point_count": 2,
+      "required_point_sum": 2,
+      "factual_citation_count": 2,
+      "supported_citation_count": 2,
+      "factual_claim_count": 2,
+      "covered_factual_claims": 2,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-029",
+      "point_mean": 1,
+      "required_point_count": 1,
+      "required_point_sum": 1,
+      "factual_citation_count": 0,
+      "supported_citation_count": 0,
+      "factual_claim_count": 0,
+      "covered_factual_claims": 0,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-030",
+      "point_mean": 1,
+      "required_point_count": 2,
+      "required_point_sum": 2,
+      "factual_citation_count": 4,
+      "supported_citation_count": 4,
+      "factual_claim_count": 4,
+      "covered_factual_claims": 4,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-031",
+      "point_mean": 1,
+      "required_point_count": 1,
+      "required_point_sum": 1,
+      "factual_citation_count": 9,
+      "supported_citation_count": 9,
+      "factual_claim_count": 9,
+      "covered_factual_claims": 9,
+      "shared_dimensions_pass": true,
+      "evidence_locations_complete": true
+    },
+    {
+      "task_id": "PFI2-032",
+      "point_mean": 1,
+      "required_point_count": 3,
+      "required_point_sum": 3,
+      "factual_citation_count": 6,
+      "supported_citation_count": 5,
+      "factual_claim_count": 5,
+      "covered_factual_claims": 5,
+      "shared_dimensions_pass": false,
+      "evidence_locations_complete": true
+    }
+  ],
+  "canonicalization_api_calls": 0,
+  "full_strict_pass": null
+}
