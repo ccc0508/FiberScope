@@ -544,3 +544,23 @@ def test_protocol_feedback_can_follow_transport_recovery_without_exposing_old_sc
         result=judge.run_judge(run_dir,tmp_path/'flow-2',config(),client=client,
                                repair_records=[tmp_path/'flow-1/tasks/PFI2-033-clean.json'])
     assert result['complete']
+
+
+def test_transport_retry_of_protocol_repair_reuses_the_exact_failed_request(run_dir,tmp_path):
+    original=make_rejected_review(run_dir,tmp_path/'feedback-transport-0')
+    payloads=[]
+    def unavailable(request):
+        payloads.append(json.loads(request.content))
+        return httpx.Response(503,text='synthetic outage after format feedback')
+    with mock_client(unavailable) as client:
+        judge.run_judge(run_dir,tmp_path/'feedback-transport-1',config(),client=client,repair_records=[original])
+    def available(request):
+        body=json.loads(request.content)
+        assert body==payloads[0]
+        data=json.loads(body['input'][1]['content'])
+        assert data['runtime_validation_feedback']['previous_scores_provided'] is False
+        return httpx.Response(200,json=api_response(scorecard(data)))
+    with mock_client(available) as client:
+        result=judge.run_judge(run_dir,tmp_path/'feedback-transport-2',config(),client=client,
+                               repair_records=[tmp_path/'feedback-transport-1/tasks/PFI2-033-clean.json'])
+    assert result['complete']

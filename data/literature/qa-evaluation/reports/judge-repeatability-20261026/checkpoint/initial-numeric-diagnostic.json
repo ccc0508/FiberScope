@@ -1,0 +1,11 @@
+{
+  "complete_common_questions": 25,
+  "aligned_initial_numeric_means": [
+    0.9066666666666666,
+    0.9033333333333333,
+    0.91
+  ],
+  "returned_response_ids": 89,
+  "unique_returned_response_ids": 89,
+  "note": "Diagnostic only: initial numbers may not pass source/format checks."
+}

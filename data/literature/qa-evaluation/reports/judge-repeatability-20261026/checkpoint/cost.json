@@ -1,0 +1,13 @@
+{
+  "grader_application_calls": 84,
+  "usage_known_calls": 76,
+  "usage_unknown_calls": 8,
+  "known_tokens": {
+    "input_tokens": 3072161,
+    "output_tokens": 155604,
+    "total_tokens": 3227765
+  },
+  "new_rag_answer_calls": 0,
+  "new_embedding_queries": 0,
+  "actual_charge": null
+}

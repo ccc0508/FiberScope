@@ -1,0 +1,30 @@
+{
+  "source_run_id": "pfi-v2-core-20261026-r1",
+  "selected_tasks": 32,
+  "valid_reviews": 27,
+  "unresolved_tasks": [
+    "PFI2-024",
+    "PFI2-026",
+    "PFI2-027",
+    "PFI2-028",
+    "PFI2-031"
+  ],
+  "reference_concerns": {},
+  "grader_application_calls": 44,
+  "usage_known_calls": 40,
+  "usage_unknown_calls": 4,
+  "known_grader_tokens": {
+    "input_tokens": 1591296,
+    "output_tokens": 79915,
+    "total_tokens": 1671211
+  },
+  "actual_charge": null,
+  "charge_note": "Known tokens include rejected and retried requests. Timed-out upstream usage and billed amount are unknown.",
+  "initial_statuses": {
+    "completed": 18,
+    "invalid_scorecard": 12,
+    "api_failed": 2
+  },
+  "structure_normalizations": {},
+  "summary_written": false
+}
