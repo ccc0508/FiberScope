@@ -5,6 +5,7 @@
 !.env.literature.example
 !.env.judge.example
 !.env.jev.example
+!.env.luna.example
 .venv/
 __pycache__/
 *.py[cod]
