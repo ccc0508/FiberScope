@@ -251,3 +251,296 @@ def test_runtime_supplies_fixed_retrieval_applicability_without_assigning_semant
     assert data['task']['retrieval_applicability'] == {'P1': 'not_applicable', 'P2': 'not_applicable'}
     assert data['output_shape']['retrieval_point_assessments'] == {'P1': 'not_applicable', 'P2': 'not_applicable'}
     assert all(v is None for v in data['output_shape']['key_point_scores'].values())
+
+
+def make_rejected_review(run_dir, output):
+    def handle(request):
+        data=json.loads(json.loads(request.content)['input'][1]['content'])
+        raw=scorecard(data)
+        raw['point_notes']['P1']='OLD_MODEL_SCORE_NOTE_CANARY'
+        raw['claim_assessments'][0]['basis'][0]['quote']='Fabricated quote for protocol test'
+        return httpx.Response(200,json=api_response(raw))
+    with mock_client(handle) as client:
+        result=judge.run_judge(run_dir,output,config(),client=client)
+    assert result['statuses']=={'invalid_scorecard':1}
+    return output/'tasks/PFI2-033-clean.json'
+
+
+def test_explicit_repair_preserves_original_and_does_not_send_previous_scores(run_dir,tmp_path):
+    original=make_rejected_review(run_dir,tmp_path/'original-rejected')
+    before=original.read_bytes()
+    requests=[]
+    def handle(request):
+        requests.append(request)
+        data=json.loads(json.loads(request.content)['input'][1]['content'])
+        assert 'OLD_MODEL_SCORE_NOTE_CANARY' not in request.content.decode()
+        assert all(value is None for value in data['output_shape']['key_point_scores'].values())
+        feedback=data['runtime_validation_feedback']
+        assert feedback['previous_scores_provided'] is False
+        assert feedback['retrieval_allowed_values']=={'P1':['not_applicable'],'P2':['not_applicable']}
+        assert feedback['invalid_quote_locations'][0]['rejected_quote']=='Fabricated quote for protocol test'
+        return httpx.Response(200,json=api_response(scorecard(data)))
+    with mock_client(handle) as client:
+        result=judge.run_judge(run_dir,tmp_path/'repaired',config(),client=client,repair_records=[original])
+        resumed=judge.run_judge(run_dir,tmp_path/'repaired',config(),client=client,repair_records=[original])
+    assert result['complete'] and len(requests)==1 and resumed['api_calls_this_invocation']==0
+    assert original.read_bytes()==before
+    reviewed=judge.read_jsonl(tmp_path/'repaired/reviews.jsonl')[0]
+    assert reviewed['judge_provenance']['validation_repair_of_sha256']==judge.digest(original)
+
+
+def test_completed_scorecard_cannot_be_selected_for_repair(run_dir,tmp_path):
+    def handle(request):
+        data=json.loads(json.loads(request.content)['input'][1]['content'])
+        return httpx.Response(200,json=api_response(scorecard(data)))
+    with mock_client(handle) as client:
+        judge.run_judge(run_dir,tmp_path/'valid',config(),client=client)
+    with pytest.raises(ValueError,match='Only rejected'):
+        judge.run_judge(run_dir,tmp_path/'unnecessary-repair',config(),
+                        repair_records=[tmp_path/'valid/tasks/PFI2-033-clean.json'])
+
+
+def test_repair_rejects_modified_original_api_response(run_dir,tmp_path):
+    original=make_rejected_review(run_dir,tmp_path/'bad-fingerprint')
+    record=judge.read_json(original);record['raw_response']['model']='tampered';dump(original,record)
+    with pytest.raises(ValueError,match='fingerprint mismatch'):
+        judge.run_judge(run_dir,tmp_path/'blocked-repair',config(),repair_records=[original])
+
+
+def test_failed_repair_cannot_chain_further_paid_attempts(run_dir,tmp_path):
+    original=make_rejected_review(run_dir,tmp_path/'first-bad-output')
+    def handle(request):
+        data=json.loads(json.loads(request.content)['input'][1]['content'])
+        raw=scorecard(data);raw['claim_assessments'][0]['basis'][0]['quote']='Another fabricated quote'
+        return httpx.Response(200,json=api_response(raw))
+    with mock_client(handle) as client:
+        result=judge.run_judge(run_dir,tmp_path/'failed-repair',config(),client=client,repair_records=[original])
+    assert result['statuses']=={'invalid_scorecard':1}
+    with pytest.raises(ValueError,match='Only one explicit'):
+        judge.run_judge(run_dir,tmp_path/'prohibited-third-attempt',config(),
+                        repair_records=[tmp_path/'failed-repair/tasks/PFI2-033-clean.json'])
+
+
+def test_explicit_transport_retry_keeps_identical_request_and_preserves_failure(run_dir,tmp_path):
+    requests=[]
+    def unavailable(request):
+        requests.append(json.loads(request.content))
+        return httpx.Response(503,text='temporary synthetic failure')
+    with mock_client(unavailable) as client:
+        judge.run_judge(run_dir,tmp_path/'transport-failed',config(),client=client)
+    original=tmp_path/'transport-failed/tasks/PFI2-033-clean.json'
+    before=original.read_bytes()
+    def available(request):
+        payload=json.loads(request.content)
+        assert payload==requests[0]
+        return httpx.Response(200,json=api_response(scorecard(json.loads(payload['input'][1]['content']))))
+    with mock_client(available) as client:
+        result=judge.run_judge(run_dir,tmp_path/'explicit-retry',config(),client=client,repair_records=[original])
+    assert result['complete'] and original.read_bytes()==before
+
+
+def normalization_fixture(run_dir):
+    run,manifest,cases,sources=judge.verify_run(run_dir)
+    task=run['tasks'][0];case=cases[task['case_id']]
+    path,result=judge.read_result(run_dir,run,case,task)
+    data=judge.packet(case,task,result,manifest,sources,judge.read_json(run_dir/'dataset/rubric.json'))
+    return scorecard(data),case,task,result,path,{d['id'] for d in manifest['source_documents']},sources
+
+
+def test_unique_diagnostic_link_and_missing_id_are_normalized_without_changing_scores(run_dir):
+    raw,case,task,result,path,documents,sources=normalization_fixture(run_dir)
+    raw['key_point_scores']['P1']=.5
+    raw['defects']=[{'description':'Synthetic missing condition','affects':['boundary']}]
+    before=deepcopy(raw)
+    with pytest.raises((KeyError,ValueError)):
+        judge.validate_review(raw,case,task,result,path,documents,sources,config(),{})
+    checked=judge.validate_review(raw,case,task,result,path,documents,sources,config(),{},normalize_structure=True)
+    assert raw==before and checked['key_point_scores']==before['key_point_scores']
+    assert checked['point_notes']==before['point_notes'] and checked['claim_assessments']==before['claim_assessments']
+    assert checked['defects']==[{'id':'D1','description':'Synthetic missing condition','affects':['point:P1']}]
+    row=scoring.review_task(case,task,result,checked,path,documents,sources)
+    assert row['point_mean']==.75 and row['strict_pass'] is False
+
+
+def test_ambiguous_diagnostic_links_are_not_guessed(run_dir):
+    raw,case,task,result,path,documents,sources=normalization_fixture(run_dir)
+    raw['key_point_scores']={'P1':.5,'P2':.5}
+    raw['defects']=[{'id':'D1','description':'Ambiguous links','affects':['boundary','critical:manual:1']}]
+    with pytest.raises(ValueError,match='unknown or optional-only'):
+        judge.validate_review(raw,case,task,result,path,documents,sources,config(),{},normalize_structure=True)
+
+
+def test_structural_normalization_cannot_fix_an_unverifiable_source_quote(run_dir):
+    raw,case,task,result,path,documents,sources=normalization_fixture(run_dir)
+    raw['claim_assessments'][0]['basis'][0]['quote']='Not in the actual source'
+    raw['defects']=[{'description':'Missing identifier','affects':[]}]
+    with pytest.raises(ValueError,match='not in actual evidence'):
+        judge.validate_review(raw,case,task,result,path,documents,sources,config(),{},normalize_structure=True)
+
+
+def make_valid_review(run_dir,output,concerns=None):
+    def handle(request):
+        data=json.loads(json.loads(request.content)['input'][1]['content'])
+        raw=scorecard(data)
+        raw['reference_concerns']=concerns or []
+        return httpx.Response(200,json=api_response(raw))
+    with mock_client(handle) as client:judge.run_judge(run_dir,output,config(),client=client)
+
+
+def test_aggregate_complete_api_reviews_without_new_provider_calls(run_dir,tmp_path):
+    import aggregate_qa_judges as aggregation
+    component=tmp_path/'accepted-component';make_valid_review(run_dir,component)
+    progress=aggregation.aggregate(run_dir,[component],tmp_path/'aggregate')
+    assert progress['summary_written'] and progress['valid_reviews']==1 and progress['grader_application_calls']==1
+    summary=judge.read_json(tmp_path/'aggregate/summary.json')
+    assert summary['by_suite']['injection']['strict_pass']['value']==1
+
+
+def test_incomplete_grading_does_not_publish_a_partial_headline_score(run_dir,tmp_path):
+    import aggregate_qa_judges as aggregation
+    component=tmp_path/'rejected-component';make_rejected_review(run_dir,component)
+    progress=aggregation.aggregate(run_dir,[component],tmp_path/'incomplete-aggregate')
+    assert progress['unresolved_tasks']==['PFI2-033-clean'] and not progress['summary_written']
+    assert not (tmp_path/'incomplete-aggregate/summary.json').exists()
+
+
+def test_aggregate_keeps_failed_attempt_usage_and_accepts_only_its_explicit_retry(run_dir,tmp_path):
+    import aggregate_qa_judges as aggregation
+    original=make_rejected_review(run_dir,tmp_path/'initial-invalid')
+    repaired=tmp_path/'api-repair'
+    def handle(request):
+        data=json.loads(json.loads(request.content)['input'][1]['content'])
+        return httpx.Response(200,json=api_response(scorecard(data)))
+    with mock_client(handle) as client:
+        judge.run_judge(run_dir,repaired,config(),client=client,repair_records=[original])
+    progress=aggregation.aggregate(run_dir,[original.parent.parent,repaired],tmp_path/'retry-aggregate')
+    assert progress['summary_written'] and progress['valid_reviews']==1
+    assert progress['grader_application_calls']==2 and progress['known_grader_tokens']['total_tokens']==280
+
+
+def test_zero_call_structural_revalidation_preserves_raw_api_scores_in_aggregate(run_dir,tmp_path):
+    import aggregate_qa_judges as aggregation
+    import revalidate_qa_judge as revalidation
+    initial=tmp_path/'initial-structural-error'
+    def handle(request):
+        data=json.loads(json.loads(request.content)['input'][1]['content'])
+        raw=scorecard(data);raw['key_point_scores']['P1']=.5
+        raw['defects']=[{'description':'Synthetic partial condition','affects':['boundary']}]
+        return httpx.Response(200,json=api_response(raw))
+    with mock_client(handle) as client:judge.run_judge(run_dir,initial,config(),client=client)
+    record=initial/'tasks/PFI2-033-clean.json';original_bytes=record.read_bytes()
+    normalized=tmp_path/'structural-revalidation'
+    result=revalidation.revalidate(run_dir,[record],normalized)
+    assert result['provider_calls']==0 and record.read_bytes()==original_bytes
+    progress=aggregation.aggregate(run_dir,[initial,normalized],tmp_path/'normalized-aggregate')
+    assert progress['grader_application_calls']==1 and progress['summary_written']
+    summary=judge.read_json(tmp_path/'normalized-aggregate/summary.json')
+    assert summary['rows'][0]['point_mean']==.75 and summary['rows'][0]['strict_pass'] is False
+
+
+def test_duplicate_components_cannot_double_count_scores(run_dir,tmp_path):
+    import aggregate_qa_judges as aggregation
+    component=tmp_path/'duplicated';make_valid_review(run_dir,component)
+    with pytest.raises(ValueError,match='Duplicate or empty'):
+        aggregation.aggregate(run_dir,[component,component],tmp_path/'duplicate-aggregate')
+
+
+def test_aggregate_rejects_tampered_provider_response(run_dir,tmp_path):
+    import aggregate_qa_judges as aggregation
+    component=tmp_path/'changed-response';make_valid_review(run_dir,component)
+    path=component/'tasks/PFI2-033-clean.json'
+    record=judge.read_json(path);record['raw_response']['model']='changed';dump(path,record)
+    with pytest.raises(ValueError,match='response fingerprint'):
+        aggregation.aggregate(run_dir,[component],tmp_path/'tampered-aggregate')
+
+
+def test_aggregate_retains_reference_disputes_and_withholds_overall_summary(run_dir,tmp_path):
+    import aggregate_qa_judges as aggregation
+    component=tmp_path/'disputed-reference';make_valid_review(run_dir,component,['Synthetic source-standard dispute'])
+    progress=aggregation.aggregate(run_dir,[component],tmp_path/'disputed-aggregate')
+    assert progress['valid_reviews']==1 and progress['reference_concerns']
+    assert not progress['summary_written'] and not (tmp_path/'disputed-aggregate/summary.json').exists()
+
+
+def test_unmapped_diagnostic_is_computed_without_raising_any_model_score(run_dir):
+    raw,case,task,result,path,documents,sources=normalization_fixture(run_dir)
+    raw['key_point_scores']['P1']=.5
+    before=deepcopy(raw)
+    checked=judge.validate_review(raw,case,task,result,path,documents,sources,config(),{},normalize_structure=True)
+    assert raw==before and checked['key_point_scores']==before['key_point_scores']
+    assert checked['defects']==[] and checked['computed_issue_links']==['point:P1']
+    assert scoring.review_task(case,task,result,checked,path,documents,sources)['strict_pass'] is False
+
+
+def test_longer_transport_deadline_keeps_model_request_identical_and_all_attempts_visible(run_dir,tmp_path):
+    from dataclasses import replace
+    import aggregate_qa_judges as aggregation
+    payloads=[]
+    def failed(request):
+        payloads.append(json.loads(request.content))
+        return httpx.Response(503,text='synthetic unavailable')
+    with mock_client(failed) as client:
+        judge.run_judge(run_dir,tmp_path/'network-0',config(),client=client)
+        judge.run_judge(run_dir,tmp_path/'network-1',config(),client=client,
+                        repair_records=[tmp_path/'network-0/tasks/PFI2-033-clean.json'])
+    def succeeded(request):
+        payload=json.loads(request.content)
+        assert payload==payloads[0]==payloads[1]
+        return httpx.Response(200,json=api_response(scorecard(json.loads(payload['input'][1]['content']))))
+    with mock_client(succeeded) as client:
+        judge.run_judge(run_dir,tmp_path/'network-2',replace(config(),timeout=360),client=client,
+                        repair_records=[tmp_path/'network-1/tasks/PFI2-033-clean.json'])
+    progress=aggregation.aggregate(run_dir,[tmp_path/'network-0',tmp_path/'network-1',tmp_path/'network-2'],tmp_path/'network-aggregate')
+    assert progress['summary_written'] and progress['grader_application_calls']==3
+    assert progress['usage_unknown_calls']==2 and progress['known_grader_tokens']['total_tokens']==140
+
+
+def test_transport_retry_cannot_exceed_two_explicit_retries(run_dir,tmp_path):
+    def failed(request):return httpx.Response(503,text='synthetic unavailable')
+    with mock_client(failed) as client:
+        judge.run_judge(run_dir,tmp_path/'bounded-0',config(),client=client)
+        for i in [1,2]:
+            judge.run_judge(run_dir,tmp_path/('bounded-'+str(i)),config(),client=client,
+                            repair_records=[tmp_path/('bounded-'+str(i-1))/'tasks/PFI2-033-clean.json'])
+    with pytest.raises(ValueError,match='bounded at two'):
+        judge.run_judge(run_dir,tmp_path/'prohibited-retry-3',config(),
+                        repair_records=[tmp_path/'bounded-2/tasks/PFI2-033-clean.json'])
+
+
+def test_second_protocol_repair_requires_explicit_opt_in_and_remains_bounded(run_dir,tmp_path):
+    original=make_rejected_review(run_dir,tmp_path/'protocol-0')
+    def still_invalid(request):
+        data=json.loads(json.loads(request.content)['input'][1]['content'])
+        raw=scorecard(data);raw['claim_assessments'][0]['basis'][0]['quote']='Another non-source quote'
+        return httpx.Response(200,json=api_response(raw))
+    with mock_client(still_invalid) as client:
+        judge.run_judge(run_dir,tmp_path/'protocol-1',config(),client=client,repair_records=[original])
+        judge.run_judge(run_dir,tmp_path/'protocol-2',config(),client=client,max_protocol_repairs=2,
+                        repair_records=[tmp_path/'protocol-1/tasks/PFI2-033-clean.json'])
+    with pytest.raises(ValueError,match='configured limit reached'):
+        judge.run_judge(run_dir,tmp_path/'protocol-3',config(),max_protocol_repairs=2,
+                        repair_records=[tmp_path/'protocol-2/tasks/PFI2-033-clean.json'])
+
+
+def test_protocol_feedback_can_follow_transport_recovery_without_exposing_old_scores(run_dir,tmp_path):
+    def unavailable(request):return httpx.Response(503,text='synthetic temporary outage')
+    with mock_client(unavailable) as client:judge.run_judge(run_dir,tmp_path/'flow-0',config(),client=client)
+    def bad_quote(request):
+        data=json.loads(json.loads(request.content)['input'][1]['content'])
+        raw=scorecard(data)
+        raw['claim_assessments'][0]['basis']=[{'type':'paper_text','document_id':data['source_documents'][0]['id'],
+                                             'quote':'This sentence is not in the paper.'}]
+        return httpx.Response(200,json=api_response(raw))
+    with mock_client(bad_quote) as client:
+        judge.run_judge(run_dir,tmp_path/'flow-1',config(),client=client,
+                        repair_records=[tmp_path/'flow-0/tasks/PFI2-033-clean.json'])
+    def corrected(request):
+        data=json.loads(json.loads(request.content)['input'][1]['content'])
+        feedback=data['runtime_validation_feedback']
+        assert feedback['previous_scores_provided'] is False
+        assert feedback['invalid_quote_locations'][0]['source_kind']=='paper_text'
+        return httpx.Response(200,json=api_response(scorecard(data)))
+    with mock_client(corrected) as client:
+        result=judge.run_judge(run_dir,tmp_path/'flow-2',config(),client=client,
+                               repair_records=[tmp_path/'flow-1/tasks/PFI2-033-clean.json'])
+    assert result['complete']

@@ -1,0 +1,194 @@
+{
+  "archived_on": "2026-10-26",
+  "answer_run": "pfi-v2-core-20261026-r1",
+  "review_aggregate": "judge-gpt61sol-core-20261026-r1",
+  "source_commit": "d6a391ee8febcc58a4d0e1b59551d92403082f48",
+  "dataset_manifest_sha256": "463c687ad22e035a90575d16a95ee154be3eda9bbab506b0bc7b20c4e8b4d47e",
+  "baseline_manifest_sha256": "a9734365d5cf47d07f6d12efebf28edbe0c2504f0d09513b3b743fa9de33e23d",
+  "answer_metadata_sha256": "00bb3da8939c1d1a2897048436fa664c85836024d69607b9b76bd73b29f52ea5",
+  "original_answer_sha256": {
+    "PFI2-001": "507674006b19e9e7ff46ada11b19c10ad7a404a5d7d218069f031387e8029882",
+    "PFI2-002": "811659ee0baac8ae4ccb071ca9274b4cf404b3bbeb7d7d06e41797f39fd6e6fc",
+    "PFI2-003": "d8a553ab4653d648abffb2c61e8da79b90984282386904ebfc0c3f370ea1d7b5",
+    "PFI2-004": "dc72e15ffce48a3e6581efa5723b568d4bf283b7c853537daec0ec988b3bac0b",
+    "PFI2-005": "4443b1efb821f3b07a1e0607ef7fccd465118be5c065841cb4f2ac6e08883b9d",
+    "PFI2-006": "d99716b95a138a307d2b79b454c199c9007f5006b9cfcc67fb2cb557fb448c70",
+    "PFI2-007": "a7c2d065076ade4a745e5e1965595e98b49d9d6aadbb685c493134ee4efb069b",
+    "PFI2-008": "0caa0b7dd2ed7e9fc3a56f8401419cdb099e88df5d71a5ba68655c48492f0916",
+    "PFI2-009": "9838ffe03557dcf28a1470160579e453e5d0b7d2c34ff4f582ae740dc157e590",
+    "PFI2-010": "8ce6fb2f91e3a120d98ceb7dada5fa58a57e82255576dddc0410d5d236158acf",
+    "PFI2-011": "eacf348d63faad585bb09c9a093ef99f24dbc24ffb6453a0fc2acf764d465b04",
+    "PFI2-012": "18b41ea43c785ad7f930e839841583ffccec9faba89a825129ba320383e5236f",
+    "PFI2-013": "c2dc7285820af13c945d90e472072fbd0e9a76023165fc6e516fc9f730f0451d",
+    "PFI2-014": "52c40686e2715e0a7104cd2c6552333192a7f09a7bcbd79019b8af4697ef45f4",
+    "PFI2-015": "97d4689935d3d6f3fbd07d6b8a600b1cf99a44332260bd61c7673841aca5d955",
+    "PFI2-016": "3c2ca01bea0d325b0b34bc13b52af9e4bc1433d4b6b291695a702df99a8f79b4",
+    "PFI2-017": "23ba35f7ade41a9eb371715b320bd2651d6ff6396f6ee6eee1055d8d52c84328",
+    "PFI2-018": "363ac36e3c5cfadc64d59cae88a612c020a37d89e4e8b6ced11cfa25330b85aa",
+    "PFI2-019": "96d7f9ab4b0d98bde5568c90f10b4f17c53824e259dc3de97a84fe2db968a01e",
+    "PFI2-020": "3316f5c757d713bf4b617c84efb3627bcb1fc4f175979fae1c4d08ac2f3ad73f",
+    "PFI2-021": "c3a87ec521abccd6d88eafffeb92592c0b9d49730b161e62fd7857b19ad3e1a8",
+    "PFI2-022": "50fd51260d7ab05c80eb4786e8d7949f4e7a409b26e76900b8199a34a4e34d64",
+    "PFI2-023": "1ccb866f3866aee2853c092d9dd8a916017bd7e36b26083d7a9d18e2fa06ddd6",
+    "PFI2-024": "83775689b168dd3542953b3ab1a3e82245e551cecd60d8228e81c437a5bb9c68",
+    "PFI2-025": "3e7c06a9798ccb9c087cc626ae7c35dbe070168fab40432808b2f68818e2f14e",
+    "PFI2-026": "30565cf8d93d80fcdbbaf624d37ac1c950397ea3b15ab57b4765a17aa15fd9af",
+    "PFI2-027": "e72d5206d2b040cabf98fd99d34285c5214111de9cfb00c2aa2a3917ab6f4317",
+    "PFI2-028": "888da04509b602952086c28478dd0307c504dd12a48e98ecb0fde41405e37502",
+    "PFI2-029": "b01e6e6c6242bbd01f885972a872118c44ecea5f7d27ce497417fa4ddb1cf949",
+    "PFI2-030": "0871831478f4a45890e1640fc252786dee073c80e14095437e067844d99fbb6e",
+    "PFI2-031": "9cdca609e886249af7659c04142615a937db5224a7de565191e34aa2745b155c",
+    "PFI2-032": "ced7e62356e0fb1b776f1240b6b37787229ff12b07bb3dd8043d0d8aadb133f4"
+  },
+  "aggregate_metadata_sha256": "c2cf4c54f2075fc3aae432e1ca5f2f63f728f12fb17ca49b0ef557c453542c3d",
+  "original_reviews_sha256": "51a1dbd0601394d5547b388ca169c0de2325cffdc3c8008a5edfb152962c0645",
+  "components": {
+    "judge-gpt61sol-core-20261026-r1-odd": {
+      "metadata_sha256": "2dcf9b136fa9b7744d415dc788b1cf570f50043e621295c64370382ad8cce46c",
+      "task_records": {
+        "PFI2-001": "beaaf6456064128814bb9b1073614cc6b7118c8ed583628ae5601da871801c99",
+        "PFI2-003": "eca77009a849ed16d572708dce0b1abe5c9dc023ce32af71f16a11e885702708",
+        "PFI2-005": "8daa9839716892a59b82bcb223c14165395043e463e71749b498ac876f9b20d8",
+        "PFI2-007": "4417420368292e3c81666c55fb90df006547561815f8da752480998ca996fef1",
+        "PFI2-009": "fc0f1e4b6907e797de9ff1c6200eecc6016b036534d132a6bbea8fb113225e66",
+        "PFI2-011": "87f74abec7cd4398917c4af26e38509cf67e31cf5d6526d5b3c167b9d52654c2",
+        "PFI2-013": "700c14c15a0d27db1e7ac1df4c1b60460b9ee2f6ad8c517478418fd5c23bb51d",
+        "PFI2-015": "aa659f1e31a470863649483a662fb435c25ee809765871fd4a56de73e1ee90fd",
+        "PFI2-017": "d9997ecea6d81cb251a7d6add0cc4896da65cf393fed825ad377ac25de07b436",
+        "PFI2-019": "9f2da22f090c7d394934f3f9bf37d351ae0e06e4f00f581085199e16387abfc9",
+        "PFI2-021": "22ae54e8d38a42d39d58752cbc3aaec1ecf1e568c7960ae464c1a00625585c65",
+        "PFI2-023": "988587e5584ad7e5aa9ee4a713d5059d2930cbb606a1bf46e98c1fa1cb71d6b9",
+        "PFI2-025": "b6dcd99bfd91519ea090dbd6c0a84b1b64ca191801fe4efa5f7efb36bb1b09c5",
+        "PFI2-027": "5e1da648229731b7660b7baf0d5caa43114ba2cb5d5a7eb18e41597fff2c7c0b",
+        "PFI2-029": "8c3695e1535edbb7237d4a0d49633b8f11de9fcf07a5db5228b9a9fdb4bad259",
+        "PFI2-031": "1731169b96dfed3c90a8ff47790b20fd090b7010adb3404ef0e32ca1502a489d"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-even": {
+      "metadata_sha256": "258bb10bc6e804aff24aaf195db730441ca22ff789cc1f1d9c65a891813e221a",
+      "task_records": {
+        "PFI2-002": "6605447f76971796708003dbf5d1b89c25a4af2acf36b072a826dd2c6c25537a",
+        "PFI2-004": "120bec1b9c9d109b42e43d87f3f5f2002af68a34c462d09ae940d288683f8ffe",
+        "PFI2-006": "e3519d5a64eb6e9a5da48f88d276f21d6227f538c077d43c36bf28a4f63f93fd",
+        "PFI2-008": "522cfcc52f9cf477366f5fcd84dec8c678406c2860e4c12e68f31c985bbdc40d",
+        "PFI2-010": "f4911dca19d6afa97e6bdfbae789c912668b34516670b2d78950bade5b573e58",
+        "PFI2-012": "dc3f4e352a40a1661dc5099820c9e9612797b97b387b7476595dc6cbde6aca58",
+        "PFI2-014": "5d421320e024d8c117bc7aa9084497fb9d5a13b78d7a4aa80e465e78e499582f",
+        "PFI2-016": "1fc49d5c63adc891af652ee71708ef0da4332f349af9b5cba85d5e5064d2c0e3",
+        "PFI2-018": "986e8277810f6489b472391527563692bc32121dec22a4d342d6a04468fb9883",
+        "PFI2-020": "d860bca121eeb75cd3672cd1b657dfca580431780f6d1bc651e18ceffca9ec92",
+        "PFI2-022": "ccc0c9e76696f47e7f70ff78644ec723c9e695715250a09f207cec58bf821c9a",
+        "PFI2-024": "fd7dd7fcfb13e800154385500085b03f6d91b0005b9cea6e6a58022e64a8c81f",
+        "PFI2-026": "6d0c9d933d7fa27cc294fdf003a98f838e1e6735469d76ddfbc70191a402e619",
+        "PFI2-028": "d58bfc3643d3dea0fcc50fda8ac47d1a412a2c21445f80579fed7f696e90b512",
+        "PFI2-030": "95a23c2db6be6ea2d2c137900c4971f0dcc02e37363e26964bc2a8bc18f68db6",
+        "PFI2-032": "bd9bed290209a860ea3d7da7a4c3527bc67640af45daa7a11d8acd1aa4f2a34d"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-a": {
+      "metadata_sha256": "948c56f5ab5cd19f9ac9d320841b7cdfaa3150ea7738b606a8309fbaf1b7e548",
+      "task_records": {
+        "PFI2-004": "52b98f1fef53333318785792a185da8560a32aae365909784413dd37a1a1e8a2",
+        "PFI2-010": "98b95a0acf2421a9b9731ebff37c75936a6adf7f773a8d8a1ed85c4b2fcb4576",
+        "PFI2-011": "aede60670befcfc167897324800bef832fc83dea1b39329a87f6d45eb67dbb20",
+        "PFI2-013": "e85bb8ef255892b9dd1880d0dd0421d540702bf083b98885e2ea3378cd65f34e",
+        "PFI2-018": "259231d76892c6969386f34afa382293a8b129037be0c0a5a20925fb62f6c460",
+        "PFI2-022": "8a371e05b69a7033a5938c68d4251e974a17e0b2b245b2488beb59e995aab71e"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-b": {
+      "metadata_sha256": "bbc7de868587c9202a4f733917041cd224f6470e87035e2194025f2972d43556",
+      "task_records": {
+        "PFI2-021": "c6def0053ef5a0a5427d06bf5ac6ea10f5cc5d5b090342bd4122222d2b3b4aa1",
+        "PFI2-026": "d4c560d33da9b850bb10dd5727f91b4bdd499431efaf48aca710eea3478fc9d2",
+        "PFI2-027": "48558267bbce3a64ced44dd145187e4811a7f4faeacc0f396b470690789b6ae3",
+        "PFI2-031": "d4a0e544a7bbf92ff906d6fbb3467668a9ce076c29501849617daa018b93149c"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-c": {
+      "metadata_sha256": "a03653cf39c011b191726f5f65849b09e110f2961378a85b4a6424ef0ae6b83c",
+      "task_records": {
+        "PFI2-030": "486d2950161ed38e9c889a15268958eea7d75b63bf157be48119de9c493db069",
+        "PFI2-032": "15e6c4f5cbefab09ad6884bf67be7a90f455e613c2d9a9f8bda4ff9a11fb9899"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-d": {
+      "metadata_sha256": "ce1ad6596963de6720697277b177471ee24200a44490dd83b0662f12925f3447",
+      "task_records": {
+        "PFI2-026": "f7d5a5a1745fff4529dce659031db30f1d7e83fc04913cf8346a95d724ddca32"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-e": {
+      "metadata_sha256": "6aee3cea88afadd91280673bc0264dcd03f348bcee1ece1a1fcb87b885d9091d",
+      "task_records": {
+        "PFI2-031": "e3f6921ba0741ed327a452efcfe91fe7de2685e5f7defae7e864dca82cca5622"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-f": {
+      "metadata_sha256": "0f8c7e0197a424c96a4409a57178f092cc4f50c7f4787e95a8eb8269d04cc2c0",
+      "task_records": {
+        "PFI2-026": "03fa3a545f57c92f8a1cc32053f81ee119e7e3404a65c5273e9a72c60bc139c2"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-g": {
+      "metadata_sha256": "c450c552e4481d679d8a3471913c78bc086c7e2183919ac4f59f1ba9b0be364b",
+      "task_records": {
+        "PFI2-026": "07d3d638870db97316a37113d1008c2c33297e1c2006388b2c8ab404a479dfdd"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-normalized-a": {
+      "metadata_sha256": "7e278f782a5d7990d4a5b8caae19a2d2ac8aef16e3f08945b33d0b4f2a5c2e47",
+      "task_records": {
+        "PFI2-004": "3e5286a2b5c228cc8daad40babb1c0013ee05a97daf937da6282f8ab24009ba1",
+        "PFI2-011": "9e49ecf7e5c51499a6905eaed846fe6fa2e8396797083c462ac505508b88eec0"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-normalized-b": {
+      "metadata_sha256": "6c60ca1fcb47d8cb4ded2578e2d5812818d914a4c81c47989291813abbfa9996",
+      "task_records": {
+        "PFI2-021": "2ddb45609338f1daf01f0b66c21ac6eb6b1c36cab209d50a8d10bf1fe6ac1dfc"
+      }
+    }
+  },
+  "normalization_log": {
+    "PFI2-004": [
+      {
+        "path": "defects[0].affects[0]",
+        "before": "boundary",
+        "after": "point:P3"
+      }
+    ],
+    "PFI2-011": [
+      {
+        "path": "defects[0].id",
+        "before": null,
+        "after": "D1"
+      },
+      {
+        "path": "defects[1].id",
+        "before": null,
+        "after": "D2"
+      }
+    ],
+    "PFI2-021": [
+      {
+        "path": "computed_issue_links",
+        "before": null,
+        "after": [
+          "point:P2",
+          "point:P3"
+        ]
+      }
+    ]
+  },
+  "public_scorecards_note": "Reduced display copies omit candidate claim text. Original API outputs, source evidence and full reviews remain private.",
+  "previous_codex_scores_sent_to_judge": false,
+  "public_files": {
+    "summary.json": "694f440e27c87734a7360870b18bcad3b60bbae9cb44b6aa7dd768e99fc6b918",
+    "review-scores.jsonl": "07b9bcedab674d6dd97fd4c4d92df140bf916688dac495ad243d3d3492d1ca51",
+    "analysis.json": "bf022d16ef5a3a0cebd124c5d5310facf7bd607bab94611087f885fee389addb"
+  },
+  "charge_amount": null,
+  "charge_note": "No provider billing statement; four timed-out judge requests and embedding token usage remain unknown.",
+  "report_sha256": "58251acedd9538c7d3b219ddc9ca7ba92ec13f5b1b5e88e1e078120decfe60b2"
+}

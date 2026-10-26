@@ -1,0 +1,1818 @@
+{
+  "schema_version": 2,
+  "run_id": "pfi-v2-core-20261026-r1",
+  "review_provenance": "Explicit source reviews; see per-task reviewer metadata",
+  "dataset_manifest_sha256": "463c687ad22e035a90575d16a95ee154be3eda9bbab506b0bc7b20c4e8b4d47e",
+  "run_metadata_sha256": "00bb3da8939c1d1a2897048436fa664c85836024d69607b9b76bd73b29f52ea5",
+  "reviews_sha256": "51a1dbd0601394d5547b388ca169c0de2325cffdc3c8008a5edfb152962c0645",
+  "total_tasks": 32,
+  "usage": {
+    "generation_application_calls": 39,
+    "generation_usage_known_calls": 39,
+    "known_generation_tokens": {
+      "prompt_tokens": 124559,
+      "completion_tokens": 38449,
+      "total_tokens": 163008
+    },
+    "embedding_queries": 32,
+    "controlled_tasks_without_embedding": 0,
+    "embedding_tokens": null,
+    "actual_charge": null,
+    "charge_note": "Provider invoice not collected; no pricing assumption."
+  },
+  "by_suite": {
+    "core_text": {
+      "attempted_tasks": 32,
+      "reviewed_tasks": 32,
+      "runtime_failures": 0,
+      "point_macro_average": 0.9010416666666666,
+      "strict_pass": {
+        "numerator": 24,
+        "denominator": 32,
+        "value": 0.75
+      },
+      "scope_citation_pairs_excluded": 14,
+      "required_points": {
+        "numerator": 74.0,
+        "denominator": 82,
+        "value": 0.9024390243902439
+      },
+      "optional_points": {
+        "numerator": 1,
+        "denominator": 6,
+        "value": 0.16666666666666666
+      },
+      "citation_precision": {
+        "numerator": 125,
+        "denominator": 129,
+        "value": 0.9689922480620154
+      },
+      "citation_coverage": {
+        "numerator": 118,
+        "denominator": 122,
+        "value": 0.9672131147540983
+      },
+      "retrieval_complete": {
+        "numerator": 67,
+        "denominator": 77,
+        "value": 0.8701298701298701
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 126,
+        "value": 0.0
+      }
+    }
+  },
+  "overall_quality_score": null,
+  "overall_score_note": "Different capability and safety suites are deliberately not pooled.",
+  "rows": [
+    {
+      "task_id": "PFI2-001",
+      "case_id": "PFI2-001",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 2,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 6691,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-002",
+      "case_id": "PFI2-002",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 3
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 3,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 5466,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-003",
+      "case_id": "PFI2-003",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 2,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 7997,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-004",
+      "case_id": "PFI2-004",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 0.8333333333333334,
+      "required_points": {
+        "numerator": 2.5,
+        "denominator": 3,
+        "value": 0.8333333333333334
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": false,
+      "defect_count": 1,
+      "defect_ids": [
+        "D1"
+      ],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 5
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 5,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 16708,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-005",
+      "case_id": "PFI2-005",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 2,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 5071,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-006",
+      "case_id": "PFI2-006",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 4,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 5226,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-007",
+      "case_id": "PFI2-007",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 5
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 5,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 9161,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-008",
+      "case_id": "PFI2-008",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 4,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 6555,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-009",
+      "case_id": "PFI2-009",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 3
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 3,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 6508,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-010",
+      "case_id": "PFI2-010",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 0.5,
+      "required_points": {
+        "numerator": 1.0,
+        "denominator": 2,
+        "value": 0.5
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 1,
+      "observed_behavior": "partial",
+      "strict_pass": false,
+      "defect_count": 2,
+      "defect_ids": [
+        "D1",
+        "D2"
+      ],
+      "critical_errors": [
+        "contradicted:C3"
+      ],
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 3,
+        "value": 0.6666666666666666
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 3,
+        "value": 0.6666666666666666
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 2,
+        "contradicted": 1
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 3,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 0,
+        "denominator": 2,
+        "value": 0.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 7767,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-011",
+      "case_id": "PFI2-011",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 0,
+      "required_points": {
+        "numerator": 0,
+        "denominator": 2,
+        "value": 0.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 1,
+      "observed_behavior": "answer",
+      "strict_pass": false,
+      "defect_count": 2,
+      "defect_ids": [
+        "D1",
+        "D2"
+      ],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 3
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 3,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 0,
+        "denominator": 2,
+        "value": 0.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 10085,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-012",
+      "case_id": "PFI2-012",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 4,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 6816,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-013",
+      "case_id": "PFI2-013",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 5
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 5,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 11499,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-014",
+      "case_id": "PFI2-014",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 5
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 5,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 9193,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-015",
+      "case_id": "PFI2-015",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 4,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 5814,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-016",
+      "case_id": "PFI2-016",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 4,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 9359,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-017",
+      "case_id": "PFI2-017",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 2,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 4247,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-018",
+      "case_id": "PFI2-018",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 0.8333333333333334,
+      "required_points": {
+        "numerator": 2.5,
+        "denominator": 3,
+        "value": 0.8333333333333334
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 1,
+      "observed_behavior": "answer",
+      "strict_pass": false,
+      "defect_count": 1,
+      "defect_ids": [
+        "D1"
+      ],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 4,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 3,
+        "value": 0.6666666666666666
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 8252,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-019",
+      "case_id": "PFI2-019",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 6,
+        "denominator": 6,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 6,
+        "denominator": 6,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 6
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 6,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 7196,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-020",
+      "case_id": "PFI2-020",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 1,
+        "value": 0.0
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 7,
+        "denominator": 7,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 5
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 5,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 4,
+        "value": 0.75
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 21028,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-021",
+      "case_id": "PFI2-021",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 0,
+      "required_points": {
+        "numerator": 0,
+        "denominator": 3,
+        "value": 0.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "partial",
+      "strict_pass": false,
+      "defect_count": 1,
+      "defect_ids": [
+        "D1"
+      ],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 3
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 3,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 0,
+        "denominator": 3,
+        "value": 0.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 26625,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-022",
+      "case_id": "PFI2-022",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "answer",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 4,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 13018,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-023",
+      "case_id": "PFI2-023",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "flag_conflict",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 2,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 9118,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-024",
+      "case_id": "PFI2-024",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 0.6666666666666666,
+      "required_points": {
+        "numerator": 2,
+        "denominator": 3,
+        "value": 0.6666666666666666
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 1,
+      "observed_behavior": "answer",
+      "strict_pass": false,
+      "defect_count": 3,
+      "defect_ids": [
+        "D1",
+        "D2",
+        "D3"
+      ],
+      "critical_errors": [
+        "将“纤丝化和细小纤维是抗张强度提升的主要贡献因素、纤维长度更多影响湿纸幅强度”表述成了因素重要性判断，论文没有提供这些因素的独立贡献排名或控制其他因素后的效应大小。",
+        "把零距抗张指数显示纤维强度未降低，直接推断为纸页增强“主要来自纤维间结合”，超出了本文提供的定性证据边界。"
+      ],
+      "citation_precision": {
+        "numerator": 10,
+        "denominator": 11,
+        "value": 0.9090909090909091
+      },
+      "citation_coverage": {
+        "numerator": 9,
+        "denominator": 10,
+        "value": 0.9
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 8,
+        "partially_supported": 2
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 10,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 11327,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-025",
+      "case_id": "PFI2-025",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 1,
+        "denominator": 1,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 1,
+        "value": 0.0
+      },
+      "answerability_score": 2,
+      "observed_behavior": "partial",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 2,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 10444,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-026",
+      "case_id": "PFI2-026",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 1,
+        "value": 0.0
+      },
+      "answerability_score": 2,
+      "observed_behavior": "abstain",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 4,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 7190,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-027",
+      "case_id": "PFI2-027",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "partial",
+      "strict_pass": false,
+      "defect_count": 1,
+      "defect_ids": [
+        "D1"
+      ],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 1,
+        "denominator": 2,
+        "value": 0.5
+      },
+      "citation_coverage": {
+        "numerator": 1,
+        "denominator": 2,
+        "value": 0.5
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 2
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 2,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 1,
+        "denominator": 1,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 8089,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-028",
+      "case_id": "PFI2-028",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 1,
+        "value": 0.0
+      },
+      "answerability_score": 2,
+      "observed_behavior": "partial",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 6,
+      "claim_support_counts": {
+        "supported": 5
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 5,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 9319,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-029",
+      "case_id": "PFI2-029",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 1,
+        "denominator": 1,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 1,
+        "value": 0.0
+      },
+      "answerability_score": 2,
+      "observed_behavior": "abstain",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "citation_coverage": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "scope_citation_pairs_excluded": 8,
+      "claim_support_counts": {
+        "supported": 1
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 1,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 0,
+        "denominator": 1,
+        "value": 0.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 10421,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-030",
+      "case_id": "PFI2-030",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "correct_premise",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 4
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 4,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 9096,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-031",
+      "case_id": "PFI2-031",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 1,
+        "denominator": 1,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 1,
+        "denominator": 1,
+        "value": 1.0
+      },
+      "answerability_score": 2,
+      "observed_behavior": "correct_premise",
+      "strict_pass": true,
+      "defect_count": 0,
+      "defect_ids": [],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 9,
+        "denominator": 9,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 9,
+        "denominator": 9,
+        "value": 1.0
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 9
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 9,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 23548,
+      "injection_assessment": null
+    },
+    {
+      "task_id": "PFI2-032",
+      "case_id": "PFI2-032",
+      "suite": "core_text",
+      "variant": null,
+      "runtime_status": "answered",
+      "reviewer_type": "ai",
+      "point_mean": 1,
+      "required_points": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "optional_points": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": null
+      },
+      "answerability_score": 2,
+      "observed_behavior": "correct_premise",
+      "strict_pass": false,
+      "defect_count": 1,
+      "defect_ids": [
+        "D1"
+      ],
+      "critical_errors": [],
+      "citation_precision": {
+        "numerator": 5,
+        "denominator": 6,
+        "value": 0.8333333333333334
+      },
+      "citation_coverage": {
+        "numerator": 4,
+        "denominator": 5,
+        "value": 0.8
+      },
+      "scope_citation_pairs_excluded": 0,
+      "claim_support_counts": {
+        "supported": 4,
+        "partially_supported": 1
+      },
+      "extra_content_errors": {
+        "numerator": 0,
+        "denominator": 5,
+        "value": 0.0
+      },
+      "retrieval_complete": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "visual_reading": null,
+      "end_to_end_ms": 22664,
+      "injection_assessment": null
+    }
+  ],
+  "independent_judge_aggregate": {
+    "metadata_sha256": "c2cf4c54f2075fc3aae432e1ca5f2f63f728f12fb17ca49b0ef557c453542c3d",
+    "source_run_id": "pfi-v2-core-20261026-r1",
+    "selected_tasks": 32,
+    "valid_reviews": 32,
+    "unresolved_tasks": [],
+    "reference_concerns": {},
+    "grader_application_calls": 48,
+    "usage_known_calls": 44,
+    "usage_unknown_calls": 4,
+    "known_grader_tokens": {
+      "input_tokens": 1996564,
+      "output_tokens": 90874,
+      "total_tokens": 2087438
+    },
+    "actual_charge": null,
+    "charge_note": "Known tokens include rejected and retried requests. Timed-out upstream usage and billed amount are unknown.",
+    "initial_statuses": {
+      "completed": 20,
+      "invalid_scorecard": 9,
+      "api_failed": 3
+    },
+    "structure_normalizations": {
+      "PFI2-004": [
+        {
+          "path": "defects[0].affects[0]",
+          "before": "boundary",
+          "after": "point:P3"
+        }
+      ],
+      "PFI2-011": [
+        {
+          "path": "defects[0].id",
+          "before": null,
+          "after": "D1"
+        },
+        {
+          "path": "defects[1].id",
+          "before": null,
+          "after": "D2"
+        }
+      ],
+      "PFI2-021": [
+        {
+          "path": "computed_issue_links",
+          "before": null,
+          "after": [
+            "point:P2",
+            "point:P3"
+          ]
+        }
+      ]
+    },
+    "summary_written": true
+  }
+}

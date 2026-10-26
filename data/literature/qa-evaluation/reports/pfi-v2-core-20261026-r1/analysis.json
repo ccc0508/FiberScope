@@ -1,0 +1,96 @@
+{
+  "claim_support": {
+    "supported": 122,
+    "contradicted": 1,
+    "partially_supported": 3
+  },
+  "weighted_claim_support": 0.9801587301587301,
+  "observed_behaviors": {
+    "answer": 21,
+    "partial": 5,
+    "flag_conflict": 1,
+    "abstain": 2,
+    "correct_premise": 3
+  },
+  "worker_latency_ms": {
+    "median": 9107.0,
+    "p95_nearest_rank": 23548
+  },
+  "generation_retry_tasks": [
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-020",
+    "PFI2-025",
+    "PFI2-029",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "required_retrieval_labels": {
+    "complete": 66,
+    "partial": 7,
+    "missing": 1,
+    "not_applicable": 8
+  },
+  "cases_with_critical_errors": [
+    "PFI2-010",
+    "PFI2-024"
+  ],
+  "categories": {
+    "factual": {
+      "tasks": 3,
+      "point_macro_average": 1,
+      "strict_pass": 3
+    },
+    "numeric": {
+      "tasks": 6,
+      "point_macro_average": 0.75,
+      "strict_pass": 4
+    },
+    "comparison": {
+      "tasks": 5,
+      "point_macro_average": 0.7666666666666667,
+      "strict_pass": 3
+    },
+    "method": {
+      "tasks": 3,
+      "point_macro_average": 0.9444444444444444,
+      "strict_pass": 2
+    },
+    "mechanism": {
+      "tasks": 4,
+      "point_macro_average": 1,
+      "strict_pass": 4
+    },
+    "synthesis": {
+      "tasks": 2,
+      "point_macro_average": 0.8333333333333333,
+      "strict_pass": 1
+    },
+    "source_conflict": {
+      "tasks": 1,
+      "point_macro_average": 1,
+      "strict_pass": 1
+    },
+    "insufficient_evidence": {
+      "tasks": 4,
+      "point_macro_average": 1,
+      "strict_pass": 4
+    },
+    "partial_answer": {
+      "tasks": 1,
+      "point_macro_average": 1,
+      "strict_pass": 0
+    },
+    "false_premise": {
+      "tasks": 2,
+      "point_macro_average": 1,
+      "strict_pass": 2
+    },
+    "coefficient_mixup": {
+      "tasks": 1,
+      "point_macro_average": 1,
+      "strict_pass": 0
+    }
+  },
+  "source_note": "Arithmetic aggregation of independent API grades; no Codex-authored semantic scores."
+}

@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 import argparse
+from copy import deepcopy
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 import hashlib
 import json
+import difflib
 import os
 from pathlib import Path
 import re
@@ -19,7 +21,7 @@ from dotenv import dotenv_values
 import qa_judge_prompt as prompt
 from qa_eval_v2 import inventory, validate_pack
 from score_qa_eval_v2 import review_task, summarize
-from validate_qa_eval import child, digest, read_json, read_jsonl, require
+from validate_qa_eval import child, digest, normalized, read_json, read_jsonl, require
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -120,7 +122,7 @@ def read_result(run_dir, run, case, task):
     return path, result
 
 
-def packet(case, task, result, manifest, sources, rubric):
+def packet(case, task, result, manifest, sources, rubric, validation_feedback=None):
     response = result.get('response') or {}
     # Allowlist only scientific content. Never pass old reviews, answer-model identity, costs or timestamps.
     candidate = {key: response.get(key, [] if key != 'answer' else '')
@@ -130,9 +132,111 @@ def packet(case, task, result, manifest, sources, rubric):
     case_contract = {k: case[k] for k in ('id', 'category', 'question', 'expected_behavior',
                                          'reference_answer', 'key_points', 'critical_errors')}
     rules = {k: v for k, v in rubric.items() if k not in {'judge_policy', 'blind_review', 'repeat_policy', 'mode'}}
-    return dict(contract_version=prompt.VERSION, reference_case=case_contract, task=task_contract,
+    data = dict(contract_version=prompt.VERSION, reference_case=case_contract, task=task_contract,
                 rubric=rules, source_documents=manifest['source_documents'], **sources,
                 candidate=candidate, output_shape=prompt.output_shape(case, task, candidate))
+    if validation_feedback is not None:
+        data['runtime_validation_feedback'] = validation_feedback
+    return data
+
+
+def repair_sources(paths, run_dir, run, tasks, inputs, manifest, cases, sources, config,max_protocol_repairs=1):
+    """One explicit protocol repair, with mechanical feedback and no previous semantic scores."""
+    if not paths:
+        return {}
+    require(type(max_protocol_repairs) is int and max_protocol_repairs in {1,2},'Protocol repair limit must be one or two')
+    selected = {t['id']: t for t in tasks}
+    repairs = {}
+    for path in map(Path, paths):
+        original = read_json(path)
+        tid = original.get('task_id')
+        require(tid in selected and tid not in repairs, 'Repair task is unselected or duplicated')
+        require(original.get('status') in {'invalid_scorecard','api_failed'}, 'Only rejected or failed scorecards may be repaired')
+        metadata_path = path.parent.parent / 'judge-run.json'
+        contract = read_json(metadata_path)['contract']
+        prior=contract.get('validation_repairs',{}).get(tid)
+        transport_depth=0;protocol_depth=0
+        if prior:
+            if original['status']=='api_failed':
+                transport_depth=prior.get('transport_retry_depth',1 if prior.get('retry_kind')=='transport' else 0)
+                protocol_depth=prior.get('protocol_repair_depth',1 if prior.get('retry_kind','protocol')=='protocol' else 0)
+                require(transport_depth<2,
+                        'Only one explicit protocol repair is allowed by default; transport retries are bounded at two')
+            else:
+                protocol_depth=prior.get('protocol_repair_depth',1 if prior.get('retry_kind','protocol')=='protocol' else 0)
+                transport_depth=prior.get('transport_retry_depth',1 if prior.get('retry_kind')=='transport' else 0)
+                require(protocol_depth<max_protocol_repairs,
+                        'Only one explicit protocol repair is allowed by default; configured limit reached')
+        require(contract['run_sha256'] == digest(run_dir / 'run.json')
+                and contract['source_run_id'] == run['run_id']
+                and contract['dataset_manifest_sha256'] == run['dataset_manifest_sha256'], 'Repair source run mismatch')
+        same_configuration=contract['judge']==config.public()
+        if original['status']=='api_failed':
+            same_configuration=({k:v for k,v in contract['judge'].items() if k!='timeout_seconds'}
+                                =={k:v for k,v in config.public().items() if k!='timeout_seconds'}
+                                and contract['judge']['timeout_seconds']<=config.timeout<=600)
+        require(same_configuration
+                and contract['prompt_sha256'] == hashlib.sha256(prompt.SYSTEM.encode()).hexdigest(),
+                'Repair must retain the same judge configuration and scoring instructions')
+        result_path, result = inputs[tid]
+        require(contract['source_result_hashes'][tid] == digest(result_path), 'Repair source answer changed')
+        task, case = selected[tid], cases[selected[tid]['case_id']]
+        body = original.get('raw_response')
+        if original['status']=='api_failed':
+            expected=sha(request_body(config,packet(case,task,result,manifest,sources,read_json(run_dir/'dataset/rubric.json'))))
+            require(original['request_sha256']==expected,'Failed transport request fingerprint mismatch')
+            repairs[tid]=dict(original_record_sha256=digest(path),original_metadata_sha256=digest(metadata_path),
+                              original_review_run=path.parent.parent.name,retry_kind='transport',
+                              transport_retry_depth=transport_depth+1,protocol_repair_depth=protocol_depth,feedback=None)
+            continue
+        require(isinstance(body, dict) and sha(body) == original['response_sha256'], 'Rejected response fingerprint mismatch')
+        raw = None
+        try:
+            raw = strict_json(extract(body, config.api))
+            validate_review(raw, case, task, result, result_path,
+                            {d['id'] for d in manifest['source_documents']}, sources, config, {})
+        except (ValueError, KeyError, TypeError, IndexError) as error:
+            # These are local protocol failures, never a human-assigned quality diagnosis.
+            reason = str(error) if type(error) is ValueError else type(error).__name__
+        else:
+            raise ValueError('Rejected scorecard now validates; inspect it before any paid replay')
+        invalid_quotes = []
+        actual_evidence = {e['ref']: e['text'] for e in result['response'].get('retrieved_evidence', [])}
+        reference_text={e['id']:' '.join(part['quote'] for part in [e,*e.get('continuation',[])])
+                        for e in sources['reference_evidence']}
+        paper_text={p['document_id']:p['text'] for p in sources['paper_texts']}
+        for claim in (raw or {}).get('claim_assessments', []):
+            if not isinstance(claim, dict):
+                continue
+            for basis in claim.get('basis', []):
+                if not isinstance(basis, dict):
+                    continue
+                kind=basis.get('type')
+                table,ref=(actual_evidence,basis.get('ref')) if kind=='evidence' else \
+                          (reference_text,basis.get('evidence_id')) if kind=='reference_evidence' else \
+                          (paper_text,basis.get('document_id')) if kind=='paper_text' else ({},None)
+                quote=basis.get('quote')
+                if isinstance(quote,str) and isinstance(ref,str) and ref in table \
+                        and normalized(quote) not in normalized(table[ref]):
+                    fragments=[s for s in re.split(r'(?<=[.!?])\s+|\n',table[ref]) if s.strip() and len(s)<=2000]
+                    invalid_quotes.append(dict(claim_id=claim.get('id'),source_kind=kind,ref=ref,rejected_quote=quote,
+                                               exact_match_refs=[r for r,text in table.items() if normalized(quote) in normalized(text)],
+                                               verbatim_source_fragments=difflib.get_close_matches(quote,fragments,n=3,cutoff=.15)))
+        feedback = dict(kind='protocol_validation_only', error=reason, previous_scores_provided=False,
+                        note='Generate a fresh complete scorecard from the same question, rubric and sources. '
+                             'A format rejection is not evidence that the candidate answer is wrong. '
+                             'Use scalar retrieval labels, copy quotes verbatim from the named source, '
+                             'and include every applicable defect link. No prior scores or judgments are supplied.',
+                        retrieval_allowed_values={k: (['not_applicable'] if value == 'not_applicable'
+                                                       else ['complete', 'partial', 'missing'])
+                                                  for k, value in prompt.retrieval_applicability(case, task).items()},
+                        invalid_quote_locations=invalid_quotes)
+        repairs[tid] = dict(original_record_sha256=digest(path), original_metadata_sha256=digest(metadata_path),
+                            original_review_run=path.parent.parent.name,retry_kind='protocol',
+                            protocol_repair_depth=protocol_depth+1,transport_retry_depth=transport_depth,
+                            max_protocol_repairs=max_protocol_repairs,feedback=feedback)
+    require(set(repairs) == set(selected), 'Repair selection must contain exactly the rejected tasks')
+    return repairs
 
 
 def request_body(config, data):
@@ -181,16 +285,16 @@ def strict_json(text):
     return result
 
 
-def validate_review(raw, case, task, result, result_path, documents, sources, config, provenance):
+def validate_review(raw, case, task, result, result_path, documents, sources, config, provenance,normalize_structure=False):
     expected = set(prompt.output_shape(case, task, result.get('response') or {}))
     require(set(raw) == expected, 'Judge scorecard fields missing or unexpected')
     require(isinstance(raw['reference_concerns'], list)
             and all(isinstance(s, str) and s.strip() for s in raw['reference_concerns']), 'Invalid reference concerns')
-    review = dict(raw, task_id=task['id'], case_id=case['id'], run_id=result['run_id'],
+    review = dict(deepcopy(raw), task_id=task['id'], case_id=case['id'], run_id=result['run_id'],
                   response_file_sha256=digest(result_path), review_status='ai_source_reviewed',
                   reviewer=f'{config.model} via {urlsplit(config.base_url).hostname}', reviewer_type='ai',
                   reviewed_at=now(), participated_in_authoring=False, judge_provenance=provenance)
-    review_task(case, task, result, review, result_path, documents, sources)
+    review_task(case, task, result, review, result_path, documents, sources,normalize_structure)
     return review
 
 
@@ -208,7 +312,7 @@ def lock(output):
         path.unlink()
 
 
-def run_judge(run_dir, output, config, *, limit=1, task_ids=None, client=None):
+def run_judge(run_dir, output, config, *, limit=1, task_ids=None, client=None, repair_records=None,max_protocol_repairs=1):
     run_dir, output = Path(run_dir).resolve(), Path(output).resolve()
     require(type(limit) is int and 1 <= limit <= 100, 'Judge task limit must be 1..100')
     # Results live in a separate review directory. Never write inside frozen dataset/results/historical reviews.
@@ -222,13 +326,14 @@ def run_judge(run_dir, output, config, *, limit=1, task_ids=None, client=None):
     for task in selected:
         path, result = read_result(run_dir, run, cases[task['case_id']], task)
         selected_inputs[task['id']] = (path, result)
+    repairs = repair_sources(repair_records, run_dir, run, selected, selected_inputs, manifest, cases, sources, config,max_protocol_repairs)
     output.mkdir(parents=True, exist_ok=True)
     with lock(output):
         return _run(run_dir, output, config, limit, selected, selected_inputs,
-                    run, manifest, cases, sources, client)
+                    run, manifest, cases, sources, client, repairs)
 
 
-def _run(run_dir, output, config, limit, tasks, inputs, run, manifest, cases, sources, client):
+def _run(run_dir, output, config, limit, tasks, inputs, run, manifest, cases, sources, client, repairs):
     contract = dict(contract_version=prompt.VERSION, source_run_id=run['run_id'],
                     run_sha256=digest(run_dir / 'run.json'), dataset_manifest_sha256=run['dataset_manifest_sha256'],
                     task_ids=[t['id'] for t in tasks], source_result_hashes={k: digest(v[0]) for k, v in inputs.items()},
@@ -236,6 +341,9 @@ def _run(run_dir, output, config, limit, tasks, inputs, run, manifest, cases, so
                     harness_files={n: digest(Path(__file__).with_name(n)) for n in HARNESS},
                     assessment_mode='independent_api_model_reference_review', previous_scores_in_prompt=False,
                     policy_note='Versioned judge adapter; original v2 material/manual policy is preserved unchanged.')
+    if repairs:
+        contract['validation_repairs'] = repairs
+        contract['repair_policy'] = 'One explicit protocol regrade by default (two only if explicitly configured), or two explicit transport retries; same rubric/model/prompt; no previous semantic scores supplied. A longer network deadline does not change the API request.'
     metadata_path = output / 'judge-run.json'
     if metadata_path.exists():
         require(read_json(metadata_path)['contract'] == contract, 'Judge configuration, inputs or code changed; use a new output directory')
@@ -258,7 +366,8 @@ def _run(run_dir, output, config, limit, tasks, inputs, run, manifest, cases, so
             tid = task['id']
             path, result = inputs[tid]
             record_path = output / 'tasks' / (tid + '.json')
-            data = packet(cases[task['case_id']], task, result, manifest, sources, rubric)
+            data = packet(cases[task['case_id']], task, result, manifest, sources, rubric,
+                          repairs.get(tid, {}).get('feedback'))
             request = request_body(config, data)
             request_hash = sha(request)
             if record_path.exists():
@@ -308,6 +417,8 @@ def _run(run_dir, output, config, limit, tasks, inputs, run, manifest, cases, so
                                           prompt_sha256=contract['prompt_sha256'], provider_response_id=body.get('id'),
                                           provider_request_id=record['provider_request_id'],
                                           reference_concerns_unresolved=bool(body.get('reference_concerns')))
+                        if tid in repairs:
+                            provenance['validation_repair_of_sha256'] = repairs[tid]['original_record_sha256']
                         raw = strict_json(extract(body, config.api))
                         provenance['reference_concerns_unresolved'] = bool(raw.get('reference_concerns'))
                         review = validate_review(raw, cases[task['case_id']], task, result, path,
@@ -360,10 +471,15 @@ def main():
     parser.add_argument('--env-file', type=Path, default=ROOT / 'backend/.env.judge')
     parser.add_argument('--limit', type=int, default=1, help='Maximum new paid requests; completed tasks are skipped')
     parser.add_argument('--task', action='append', help='Optional exact task selection; fixed for this review directory')
+    parser.add_argument('--repair-record', action='append', type=Path,
+                        help='Explicit rejected task record to regrade once, with machine validation feedback only')
+    parser.add_argument('--max-protocol-repairs',type=int,choices=[1,2],default=1,
+                        help='Explicit upper bound per task; only rejected outputs can be retried')
     args = parser.parse_args()
     try:
         result = run_judge(args.run_dir, args.output_dir, load_config(args.env_file),
-                           limit=args.limit, task_ids=args.task)
+                           limit=args.limit, task_ids=args.task, repair_records=args.repair_record,
+                           max_protocol_repairs=args.max_protocol_repairs)
     except Exception as error:
         # Avoid echoing raw provider responses, config, or model-controlled exceptions.
         parser.exit(1, 'Independent judge operation failed: ' + type(error).__name__ + '\n')
