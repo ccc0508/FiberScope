@@ -183,11 +183,14 @@ def repair_sources(paths, run_dir, run, tasks, inputs, manifest, cases, sources,
         task, case = selected[tid], cases[selected[tid]['case_id']]
         body = original.get('raw_response')
         if original['status']=='api_failed':
-            expected=sha(request_body(config,packet(case,task,result,manifest,sources,read_json(run_dir/'dataset/rubric.json'))))
+            previous_feedback=prior.get('feedback') if prior else None
+            expected=sha(request_body(config,packet(case,task,result,manifest,sources,
+                                                   read_json(run_dir/'dataset/rubric.json'),previous_feedback)))
             require(original['request_sha256']==expected,'Failed transport request fingerprint mismatch')
             repairs[tid]=dict(original_record_sha256=digest(path),original_metadata_sha256=digest(metadata_path),
                               original_review_run=path.parent.parent.name,retry_kind='transport',
-                              transport_retry_depth=transport_depth+1,protocol_repair_depth=protocol_depth,feedback=None)
+                              transport_retry_depth=transport_depth+1,protocol_repair_depth=protocol_depth,
+                              feedback=previous_feedback)
             continue
         require(isinstance(body, dict) and sha(body) == original['response_sha256'], 'Rejected response fingerprint mismatch')
         raw = None
