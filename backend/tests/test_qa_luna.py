@@ -8,6 +8,7 @@ import pytest
 ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'scripts'))
 import judge_qa_eval as judge
 import judge_qa_luna as luna
+import compare_qa_jev as comparison
 from .test_qa_judge import run_dir,scorecard,api_response
 
 
@@ -68,3 +69,12 @@ def test_missing_fee_is_explicitly_unknown_including_network_failures(tmp_path):
     judge.write(tmp_path/'tasks/failure.json',dict(task_id='Q',status='api_failed',api_calls=1,usage=None))
     result=luna.cost_summary(tmp_path)
     assert result['cost_unknown_calls']==1 and result['cost_known_calls']==0 and result['actual_invoice_cost'] is None
+
+
+def test_comparison_reads_router_chat_cost_only_for_an_explicitly_verified_gateway():
+    records=[dict(task_id='Q1',api_calls=1,usage=None,raw_response={'usage':{'cost':.003}}),
+             dict(task_id='Q2',api_calls=1,usage=None)]
+    known=comparison.accounting(records,native=False,openrouter_chat=True)
+    unknown=comparison.accounting(records,native=False)
+    assert known['reported_cost_usd']=='0.003' and known['cost_unknown_calls']==1
+    assert unknown['reported_cost_usd'] is None and unknown['cost_unknown_calls']==2

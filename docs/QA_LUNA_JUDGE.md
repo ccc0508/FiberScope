@@ -31,7 +31,7 @@ QA_LUNA_MAX_OUTPUT_TOKENS=16000
 .\.venv\Scripts\python.exe -X utf8 scripts/judge_qa_luna.py --run-dir .rag-data/evaluations/pfi-v2-core-20261026-r1 --dry-run
 ```
 
-`--dry-run`校验冻结题集、源回答、模型标识、接口配置，构造32题请求及指纹；不调用模型、不新建评分结果目录、不修改原回答。当前已完成此离线准备，凭证为空，尚未进行付费接口验证。
+`--dry-run`校验冻结题集、源回答、模型标识、接口配置，构造32题请求及指纹；不调用模型、不新建评分结果目录、不修改原回答。32题离线准备已完成，随后在用户提供凭证后通过首题真实验证，返回模型为`openai/gpt-6-luna`；实际评分和费用另存独立目录。
 
 提供Key后，先限制一次调用验证完整评分：
 
@@ -45,6 +45,6 @@ QA_LUNA_MAX_OUTPUT_TOKENS=16000
 
 原始OpenRouter响应、Token及请求耗时继续由现有评分引擎保存。额外的`openrouter-costs.json`逐请求读取API返回的`usage.cost`，以十进制累计已知美元费用，并单列未知费用的调用数。API未返回金额、网络失败或超时均不当作免费，实际充值账单另计。
 
-当前未对新模型宣称速度、评分质量或账户可用性；这些需要Key后的实际调用验证。公开模型目录可用，不等于用户账户具备调用权限或余额。
+首题验证说明当前账户可以调用该模型，不代表全部题目质量已经通过。速度、评分质量和失败率按正式运行记录统计；公开模型目录可用不自动证明账户权限或余额。
 
 依据：[OpenRouter模型页](https://openrouter.ai/openai/gpt-6-luna)、[OpenRouter Chat接口](https://openrouter.ai/docs/api/api-reference/chat/create-a-chat-completion)、[OpenAI Docs模型说明](https://developers.openai.com/api/docs/models/gpt-6-luna)。
