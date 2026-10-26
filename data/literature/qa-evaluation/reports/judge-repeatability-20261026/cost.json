@@ -1,0 +1,18 @@
+{
+  "additional_rounds": [
+    2,
+    3
+  ],
+  "new_rag_answer_calls": 0,
+  "new_embedding_queries": 0,
+  "grader_application_calls": 107,
+  "usage_known_calls": 95,
+  "usage_unknown_calls": 12,
+  "known_grader_tokens": {
+    "input_tokens": 3851344,
+    "output_tokens": 202721,
+    "total_tokens": 4054065
+  },
+  "actual_charge": null,
+  "charge_note": "Includes all returned-usage rejected/repair calls. Timed-out upstream usage and actual bill remain unknown."
+}

@@ -1,0 +1,1548 @@
+{
+  "round_count": 3,
+  "task_count": 31,
+  "required_points": 80,
+  "round_scores": [
+    {
+      "name": "judge-gpt61sol-core-20261026-r1",
+      "point_macro_average": 0.8978494623655914,
+      "strict_pass": 23,
+      "critical_cases": 2,
+      "initial_numeric_complete_tasks": 29,
+      "reference_concerns": {}
+    },
+    {
+      "name": "judge-gpt61sol-core-20261026-r2-complete",
+      "point_macro_average": 0.9032258064516129,
+      "strict_pass": 20,
+      "critical_cases": 2,
+      "initial_numeric_complete_tasks": 28,
+      "reference_concerns": {}
+    },
+    {
+      "name": "judge-gpt61sol-core-20261026-r3-complete",
+      "point_macro_average": 0.9059139784946236,
+      "strict_pass": 23,
+      "critical_cases": 1,
+      "initial_numeric_complete_tasks": 29,
+      "reference_concerns": {}
+    }
+  ],
+  "overall": {
+    "macro_mean": 0.9023297491039426,
+    "macro_stdev_sample": 0.004106250622720283,
+    "macro_range": 0.008064516129032251,
+    "all_rounds_identical_points": {
+      "numerator": 72,
+      "denominator": 80,
+      "value": 0.9
+    },
+    "strict_pass_flip_tasks": [
+      "PFI2-004",
+      "PFI2-015",
+      "PFI2-016",
+      "PFI2-023",
+      "PFI2-027",
+      "PFI2-028"
+    ],
+    "strict_pass_flip_rate": 0.1935483870967742,
+    "critical_presence_flip_tasks": [
+      "PFI2-010"
+    ]
+  },
+  "raw_initial": {
+    "note": "Initial numeric outputs can fail source or formatting checks; never interpret missing/invalid values as zero.",
+    "common_complete_task_ids": [
+      "PFI2-001",
+      "PFI2-002",
+      "PFI2-003",
+      "PFI2-004",
+      "PFI2-005",
+      "PFI2-006",
+      "PFI2-008",
+      "PFI2-010",
+      "PFI2-011",
+      "PFI2-012",
+      "PFI2-013",
+      "PFI2-014",
+      "PFI2-015",
+      "PFI2-016",
+      "PFI2-017",
+      "PFI2-018",
+      "PFI2-019",
+      "PFI2-020",
+      "PFI2-022",
+      "PFI2-023",
+      "PFI2-024",
+      "PFI2-025",
+      "PFI2-027",
+      "PFI2-029",
+      "PFI2-030"
+    ],
+    "aligned_initial_macro_averages": [
+      0.9066666666666666,
+      0.9033333333333333,
+      0.91
+    ],
+    "scope": "Common validated task subset, not all planned tasks"
+  },
+  "pairs": [
+    {
+      "rounds": [
+        "judge-gpt61sol-core-20261026-r1",
+        "judge-gpt61sol-core-20261026-r2-complete"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 72,
+          "denominator": 80,
+          "value": 0.9
+        },
+        "mean_absolute_difference": 0.05,
+        "max_absolute_difference": 0.5,
+        "weighted_kappa_quadratic": 0.8165137614678899
+      },
+      "question_means": {
+        "exact_agreement": {
+          "numerator": 25,
+          "denominator": 31,
+          "value": 0.8064516129032258
+        },
+        "mean_absolute_difference": 0.04838709677419355,
+        "max_absolute_difference": 0.5,
+        "weighted_kappa_quadratic": null
+      },
+      "strict_pass_agreement": {
+        "numerator": 26,
+        "denominator": 31,
+        "value": 0.8387096774193549
+      },
+      "critical_presence_agreement": {
+        "numerator": 31,
+        "denominator": 31,
+        "value": 1.0
+      },
+      "boundary_score_agreement": {
+        "numerator": 29,
+        "denominator": 31,
+        "value": 0.9354838709677419
+      },
+      "initial_numeric_points": {
+        "exact_agreement": {
+          "numerator": 61,
+          "denominator": 68,
+          "value": 0.8970588235294118
+        },
+        "mean_absolute_difference": 0.051470588235294115,
+        "max_absolute_difference": 0.5,
+        "weighted_kappa_quadratic": 0.775047258979206
+      },
+      "claim_support_agreement": {
+        "numerator": 122,
+        "denominator": 122,
+        "value": 1.0
+      },
+      "fact_scope_agreement": {
+        "numerator": 122,
+        "denominator": 122,
+        "value": 1.0
+      },
+      "common_fact_citation_agreement": {
+        "numerator": 122,
+        "denominator": 125,
+        "value": 0.976
+      },
+      "citation_applicability_flips": 0
+    },
+    {
+      "rounds": [
+        "judge-gpt61sol-core-20261026-r1",
+        "judge-gpt61sol-core-20261026-r3-complete"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 77,
+          "denominator": 80,
+          "value": 0.9625
+        },
+        "mean_absolute_difference": 0.01875,
+        "max_absolute_difference": 0.5,
+        "weighted_kappa_quadratic": 0.9333333333333333
+      },
+      "question_means": {
+        "exact_agreement": {
+          "numerator": 28,
+          "denominator": 31,
+          "value": 0.9032258064516129
+        },
+        "mean_absolute_difference": 0.018817204301075266,
+        "max_absolute_difference": 0.25,
+        "weighted_kappa_quadratic": null
+      },
+      "strict_pass_agreement": {
+        "numerator": 29,
+        "denominator": 31,
+        "value": 0.9354838709677419
+      },
+      "critical_presence_agreement": {
+        "numerator": 30,
+        "denominator": 31,
+        "value": 0.967741935483871
+      },
+      "boundary_score_agreement": {
+        "numerator": 30,
+        "denominator": 31,
+        "value": 0.967741935483871
+      },
+      "initial_numeric_points": {
+        "exact_agreement": {
+          "numerator": 65,
+          "denominator": 69,
+          "value": 0.9420289855072463
+        },
+        "mean_absolute_difference": 0.028985507246376812,
+        "max_absolute_difference": 0.5,
+        "weighted_kappa_quadratic": 0.8688212927756653
+      },
+      "claim_support_agreement": {
+        "numerator": 120,
+        "denominator": 122,
+        "value": 0.9836065573770492
+      },
+      "fact_scope_agreement": {
+        "numerator": 122,
+        "denominator": 122,
+        "value": 1.0
+      },
+      "common_fact_citation_agreement": {
+        "numerator": 121,
+        "denominator": 125,
+        "value": 0.968
+      },
+      "citation_applicability_flips": 0
+    },
+    {
+      "rounds": [
+        "judge-gpt61sol-core-20261026-r2-complete",
+        "judge-gpt61sol-core-20261026-r3-complete"
+      ],
+      "required_points": {
+        "exact_agreement": {
+          "numerator": 75,
+          "denominator": 80,
+          "value": 0.9375
+        },
+        "mean_absolute_difference": 0.03125,
+        "max_absolute_difference": 0.5,
+        "weighted_kappa_quadratic": 0.8717948717948718
+      },
+      "question_means": {
+        "exact_agreement": {
+          "numerator": 26,
+          "denominator": 31,
+          "value": 0.8387096774193549
+        },
+        "mean_absolute_difference": 0.029569892473118278,
+        "max_absolute_difference": 0.25,
+        "weighted_kappa_quadratic": null
+      },
+      "strict_pass_agreement": {
+        "numerator": 26,
+        "denominator": 31,
+        "value": 0.8387096774193549
+      },
+      "critical_presence_agreement": {
+        "numerator": 30,
+        "denominator": 31,
+        "value": 0.967741935483871
+      },
+      "boundary_score_agreement": {
+        "numerator": 30,
+        "denominator": 31,
+        "value": 0.967741935483871
+      },
+      "initial_numeric_points": {
+        "exact_agreement": {
+          "numerator": 68,
+          "denominator": 71,
+          "value": 0.9577464788732394
+        },
+        "mean_absolute_difference": 0.02112676056338028,
+        "max_absolute_difference": 0.5,
+        "weighted_kappa_quadratic": 0.927427597955707
+      },
+      "claim_support_agreement": {
+        "numerator": 120,
+        "denominator": 122,
+        "value": 0.9836065573770492
+      },
+      "fact_scope_agreement": {
+        "numerator": 122,
+        "denominator": 122,
+        "value": 1.0
+      },
+      "common_fact_citation_agreement": {
+        "numerator": 120,
+        "denominator": 125,
+        "value": 0.96
+      },
+      "citation_applicability_flips": 0
+    }
+  ],
+  "questions": [
+    {
+      "task_id": "PFI2-001",
+      "case_id": "PFI2-001",
+      "question": "这篇PFI打浆论文研究的是哪两类纸浆？原料是否经过漂白，采用什么制浆方法？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-002",
+      "case_id": "PFI2-002",
+      "question": "本文PFI打浆时浆浓、磨盘间隙和单位刀长作用力分别是多少？请区分针叶木和阔叶木并给出单位。",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-003",
+      "case_id": "PFI2-003",
+      "question": "这篇研究为两类纸浆设置了哪些PFI打浆转数？每类有几个转数水平？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-004",
+      "case_id": "PFI2-004",
+      "question": "PFI打到12000转的时候，针叶木浆和阔叶木浆的打浆度各是多少？那我们以后想要63 °SR左右的浆，是不是直接打12000转就行了？",
+      "point_means": [
+        0.8333333333333334,
+        1,
+        0.8333333333333334
+      ],
+      "score_range": 0.16666666666666663,
+      "score_stdev_sample": 0.0962250448649376,
+      "point_pattern_changed": true,
+      "strict_pass": [
+        false,
+        true,
+        false
+      ],
+      "strict_pass_flip": true,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-005",
+      "case_id": "PFI2-005",
+      "question": "论文用什么仪器测量纤维形态，明确列出了哪三个形态指标？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-006",
+      "case_id": "PFI2-006",
+      "question": "WRV在本文中如何测定和计算？请解释公式中两个质量的含义。",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-007",
+      "case_id": "PFI2-007",
+      "question": "CI-XI与CI-XA有什么区别？请给出本文CI-XI的公式，并说明CI-XA依据什么计算。",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-008",
+      "case_id": "PFI2-008",
+      "question": "不打浆和打到16000转的时候，针叶木和阔叶木的CI-XI、CI-XA分别是多少？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-009",
+      "case_id": "PFI2-009",
+      "question": "阔叶木的CI-XA从不打浆到打到8000转降了多少个百分点？相对降了百分之几？把算式写出来。",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-010",
+      "case_id": "PFI2-010",
+      "question": "打浆前后，两种纤维垂直于(200)晶面的晶粒尺寸是怎么变的？从不打浆到16000转分别是多少？",
+      "point_means": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "score_range": 0.0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        false,
+        false,
+        false
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        true,
+        true,
+        false
+      ],
+      "critical_presence_flip": true,
+      "boundary_scores": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "task_id": "PFI2-011",
+      "case_id": "PFI2-011",
+      "question": "是不是打浆转数越高，纤维素结晶度就越低？",
+      "point_means": [
+        0,
+        0.5,
+        0.25
+      ],
+      "score_range": 0.5,
+      "score_stdev_sample": 0.25,
+      "point_pattern_changed": true,
+      "strict_pass": [
+        false,
+        false,
+        false
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "task_id": "PFI2-012",
+      "case_id": "PFI2-012",
+      "question": "本文CI-XI和CI-XA的大小关系如何？两种方法的结果相关吗？请分别给出两类浆的相关系数及显著性。",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-013",
+      "case_id": "PFI2-013",
+      "question": "PFI打浆过程中结晶度为什么会先降、再升、再降？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-014",
+      "case_id": "PFI2-014",
+      "question": "按照作者的解释，PFI打浆为什么会提高WRV，又如何与纤维间结合联系起来？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-015",
+      "case_id": "PFI2-015",
+      "question": "针叶木和阔叶木打浆后纤维长度的变化一样吗？为什么会有差别？",
+      "point_means": [
+        1,
+        0.8333333333333334,
+        1
+      ],
+      "score_range": 0.16666666666666663,
+      "score_stdev_sample": 0.0962250448649376,
+      "point_pattern_changed": true,
+      "strict_pass": [
+        true,
+        false,
+        true
+      ],
+      "strict_pass_flip": true,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-016",
+      "case_id": "PFI2-016",
+      "question": "为什么本文认为纸张抗张性能提高，并不意味着单根纤维本身的强度也一定提高？零距抗张在这里有什么用？",
+      "point_means": [
+        1,
+        0.8333333333333334,
+        1
+      ],
+      "score_range": 0.16666666666666663,
+      "score_stdev_sample": 0.0962250448649376,
+      "point_pattern_changed": true,
+      "strict_pass": [
+        true,
+        false,
+        true
+      ],
+      "strict_pass_flip": true,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-017",
+      "case_id": "PFI2-017",
+      "question": "本文中哪类浆的湿纸幅强度增幅更明显？作者如何解释？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-018",
+      "case_id": "PFI2-018",
+      "question": "这篇论文如何从FT-IR获得不同氢键的相对含量？请说明拟合波段、函数和含量口径。",
+      "point_means": [
+        0.8333333333333334,
+        0.8333333333333334,
+        0.8333333333333334
+      ],
+      "score_range": 0.0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        false,
+        false,
+        false
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "task_id": "PFI2-019",
+      "case_id": "PFI2-019",
+      "question": "O(6)H···O(3′)、O(3)H···O(5)、O(2)H···O(6)这三种氢键的红外峰大概在多少波数？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-020",
+      "case_id": "PFI2-020",
+      "question": "论文说打浆后氢键能量和距离基本不变，那是不是说明打浆对氢键网络基本没影响？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-021",
+      "case_id": "PFI2-021",
+      "question": "阔叶木的O(3)H···O(5)分子内氢键相对含量，从4000转到12000转变化了多少个百分点？相对变化是百分之几？",
+      "point_means": [
+        0,
+        0.16666666666666666,
+        0.16666666666666666
+      ],
+      "score_range": 0.16666666666666666,
+      "score_stdev_sample": 0.09622504486493762,
+      "point_pattern_changed": true,
+      "strict_pass": [
+        false,
+        false,
+        false
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        1,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-022",
+      "case_id": "PFI2-022",
+      "question": "请把针叶木16000转的CI-XI、CI-XA、O(6)H···O(3′)相对含量、O(3)H···O(5)相对含量整合到一起，并说明各数值来自哪张表。",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-023",
+      "case_id": "PFI2-023",
+      "question": "针叶木的O(6)H···O(3′)分子间氢键含量和CI-XI的Pearson相关系数是多少？",
+      "point_means": [
+        1,
+        0.6666666666666666,
+        0.8333333333333334
+      ],
+      "score_range": 0.33333333333333337,
+      "score_stdev_sample": 0.16666666666666669,
+      "point_pattern_changed": true,
+      "strict_pass": [
+        true,
+        false,
+        false
+      ],
+      "strict_pass_flip": true,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "task_id": "PFI2-024",
+      "case_id": "PFI2-024",
+      "question": "PFI打浆是怎么一步步让纸变结实的？纤维长度、细小纤维、WRV这几个因素里哪个贡献最大？",
+      "point_means": [
+        0.6666666666666666,
+        0.6666666666666666,
+        0.6666666666666666
+      ],
+      "score_range": 0.0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        false,
+        false,
+        false
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        true,
+        true,
+        true
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "task_id": "PFI2-025",
+      "case_id": "PFI2-025",
+      "question": "针叶木打浆到8000转的时候，BET比表面积具体是多少？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-027",
+      "case_id": "PFI2-027",
+      "question": "这篇论文对干纸抗张性能有什么结论？另外请给出同一批样品的耐破指数和撕裂指数精确数据。",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        false,
+        false,
+        true
+      ],
+      "strict_pass_flip": true,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-028",
+      "case_id": "PFI2-028",
+      "question": "请比较这篇PFI论文与《Non-Wood Fibers: Relationships of Fiber Properties with Pulp Properties》的全部实验数据，给出两篇共同结论。",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        false,
+        true
+      ],
+      "strict_pass_flip": true,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-029",
+      "case_id": "PFI2-029",
+      "question": "本文已经训练好的纸张抗张预测模型，其验证集R²和RMSE是多少？请给出最佳模型名称。",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-030",
+      "case_id": "PFI2-030",
+      "question": "为什么阔叶木打浆后湿纸幅强度涨得比针叶木还多？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-031",
+      "case_id": "PFI2-031",
+      "question": "PFI打浆把纤维素从I型变成II型以后，结晶度为什么还会下降？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        true,
+        true,
+        true
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "task_id": "PFI2-032",
+      "case_id": "PFI2-032",
+      "question": "论文里氢键含量和CI-XI的相关系数是针叶木0.919、阔叶木0.925吧？这么高是不是就能用CI-XI直接算出氢键含量了？",
+      "point_means": [
+        1,
+        1,
+        1
+      ],
+      "score_range": 0,
+      "score_stdev_sample": 0.0,
+      "point_pattern_changed": false,
+      "strict_pass": [
+        false,
+        false,
+        false
+      ],
+      "strict_pass_flip": false,
+      "critical_presence": [
+        false,
+        false,
+        false
+      ],
+      "critical_presence_flip": false,
+      "boundary_scores": [
+        2,
+        2,
+        2
+      ]
+    }
+  ],
+  "coverage": {
+    "planned_tasks": 32,
+    "common_validated_tasks": 31,
+    "common_task_ids": [
+      "PFI2-001",
+      "PFI2-002",
+      "PFI2-003",
+      "PFI2-004",
+      "PFI2-005",
+      "PFI2-006",
+      "PFI2-007",
+      "PFI2-008",
+      "PFI2-009",
+      "PFI2-010",
+      "PFI2-011",
+      "PFI2-012",
+      "PFI2-013",
+      "PFI2-014",
+      "PFI2-015",
+      "PFI2-016",
+      "PFI2-017",
+      "PFI2-018",
+      "PFI2-019",
+      "PFI2-020",
+      "PFI2-021",
+      "PFI2-022",
+      "PFI2-023",
+      "PFI2-024",
+      "PFI2-025",
+      "PFI2-027",
+      "PFI2-028",
+      "PFI2-029",
+      "PFI2-030",
+      "PFI2-031",
+      "PFI2-032"
+    ],
+    "excluded_task_ids": [
+      "PFI2-026"
+    ],
+    "validated_tasks_by_round": {
+      "judge-gpt61sol-core-20261026-r1": 32,
+      "judge-gpt61sol-core-20261026-r2-complete": 31,
+      "judge-gpt61sol-core-20261026-r3-complete": 32
+    },
+    "missing_or_disputed_by_round": {
+      "judge-gpt61sol-core-20261026-r1": [],
+      "judge-gpt61sol-core-20261026-r2-complete": [
+        "PFI2-026"
+      ],
+      "judge-gpt61sol-core-20261026-r3-complete": []
+    },
+    "full_comparison": false,
+    "note": "Subset means are conditional on common validated tasks; excluded tasks are unknown, never zero."
+  },
+  "available_pairs": [
+    {
+      "task_count": 31,
+      "required_points": 80,
+      "metrics": {
+        "rounds": [
+          "judge-gpt61sol-core-20261026-r1",
+          "judge-gpt61sol-core-20261026-r2-complete"
+        ],
+        "required_points": {
+          "exact_agreement": {
+            "numerator": 72,
+            "denominator": 80,
+            "value": 0.9
+          },
+          "mean_absolute_difference": 0.05,
+          "max_absolute_difference": 0.5,
+          "weighted_kappa_quadratic": 0.8165137614678899
+        },
+        "question_means": {
+          "exact_agreement": {
+            "numerator": 25,
+            "denominator": 31,
+            "value": 0.8064516129032258
+          },
+          "mean_absolute_difference": 0.04838709677419355,
+          "max_absolute_difference": 0.5,
+          "weighted_kappa_quadratic": null
+        },
+        "strict_pass_agreement": {
+          "numerator": 26,
+          "denominator": 31,
+          "value": 0.8387096774193549
+        },
+        "critical_presence_agreement": {
+          "numerator": 31,
+          "denominator": 31,
+          "value": 1.0
+        },
+        "boundary_score_agreement": {
+          "numerator": 29,
+          "denominator": 31,
+          "value": 0.9354838709677419
+        },
+        "initial_numeric_points": {
+          "exact_agreement": {
+            "numerator": 61,
+            "denominator": 68,
+            "value": 0.8970588235294118
+          },
+          "mean_absolute_difference": 0.051470588235294115,
+          "max_absolute_difference": 0.5,
+          "weighted_kappa_quadratic": 0.775047258979206
+        },
+        "claim_support_agreement": {
+          "numerator": 122,
+          "denominator": 122,
+          "value": 1.0
+        },
+        "fact_scope_agreement": {
+          "numerator": 122,
+          "denominator": 122,
+          "value": 1.0
+        },
+        "common_fact_citation_agreement": {
+          "numerator": 122,
+          "denominator": 125,
+          "value": 0.976
+        },
+        "citation_applicability_flips": 0
+      },
+      "strict_pass_flip_tasks": [
+        "PFI2-004",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-023",
+        "PFI2-028"
+      ],
+      "critical_presence_flip_tasks": []
+    },
+    {
+      "task_count": 32,
+      "required_points": 82,
+      "metrics": {
+        "rounds": [
+          "judge-gpt61sol-core-20261026-r1",
+          "judge-gpt61sol-core-20261026-r3-complete"
+        ],
+        "required_points": {
+          "exact_agreement": {
+            "numerator": 79,
+            "denominator": 82,
+            "value": 0.9634146341463414
+          },
+          "mean_absolute_difference": 0.018292682926829267,
+          "max_absolute_difference": 0.5,
+          "weighted_kappa_quadratic": 0.93354943273906
+        },
+        "question_means": {
+          "exact_agreement": {
+            "numerator": 29,
+            "denominator": 32,
+            "value": 0.90625
+          },
+          "mean_absolute_difference": 0.018229166666666664,
+          "max_absolute_difference": 0.25,
+          "weighted_kappa_quadratic": null
+        },
+        "strict_pass_agreement": {
+          "numerator": 29,
+          "denominator": 32,
+          "value": 0.90625
+        },
+        "critical_presence_agreement": {
+          "numerator": 31,
+          "denominator": 32,
+          "value": 0.96875
+        },
+        "boundary_score_agreement": {
+          "numerator": 31,
+          "denominator": 32,
+          "value": 0.96875
+        },
+        "initial_numeric_points": {
+          "exact_agreement": {
+            "numerator": 65,
+            "denominator": 69,
+            "value": 0.9420289855072463
+          },
+          "mean_absolute_difference": 0.028985507246376812,
+          "max_absolute_difference": 0.5,
+          "weighted_kappa_quadratic": 0.8688212927756653
+        },
+        "claim_support_agreement": {
+          "numerator": 124,
+          "denominator": 126,
+          "value": 0.9841269841269841
+        },
+        "fact_scope_agreement": {
+          "numerator": 126,
+          "denominator": 126,
+          "value": 1.0
+        },
+        "common_fact_citation_agreement": {
+          "numerator": 123,
+          "denominator": 129,
+          "value": 0.9534883720930233
+        },
+        "citation_applicability_flips": 0
+      },
+      "strict_pass_flip_tasks": [
+        "PFI2-023",
+        "PFI2-026",
+        "PFI2-027"
+      ],
+      "critical_presence_flip_tasks": [
+        "PFI2-010"
+      ]
+    },
+    {
+      "task_count": 31,
+      "required_points": 80,
+      "metrics": {
+        "rounds": [
+          "judge-gpt61sol-core-20261026-r2-complete",
+          "judge-gpt61sol-core-20261026-r3-complete"
+        ],
+        "required_points": {
+          "exact_agreement": {
+            "numerator": 75,
+            "denominator": 80,
+            "value": 0.9375
+          },
+          "mean_absolute_difference": 0.03125,
+          "max_absolute_difference": 0.5,
+          "weighted_kappa_quadratic": 0.8717948717948718
+        },
+        "question_means": {
+          "exact_agreement": {
+            "numerator": 26,
+            "denominator": 31,
+            "value": 0.8387096774193549
+          },
+          "mean_absolute_difference": 0.029569892473118278,
+          "max_absolute_difference": 0.25,
+          "weighted_kappa_quadratic": null
+        },
+        "strict_pass_agreement": {
+          "numerator": 26,
+          "denominator": 31,
+          "value": 0.8387096774193549
+        },
+        "critical_presence_agreement": {
+          "numerator": 30,
+          "denominator": 31,
+          "value": 0.967741935483871
+        },
+        "boundary_score_agreement": {
+          "numerator": 30,
+          "denominator": 31,
+          "value": 0.967741935483871
+        },
+        "initial_numeric_points": {
+          "exact_agreement": {
+            "numerator": 68,
+            "denominator": 71,
+            "value": 0.9577464788732394
+          },
+          "mean_absolute_difference": 0.02112676056338028,
+          "max_absolute_difference": 0.5,
+          "weighted_kappa_quadratic": 0.927427597955707
+        },
+        "claim_support_agreement": {
+          "numerator": 120,
+          "denominator": 122,
+          "value": 0.9836065573770492
+        },
+        "fact_scope_agreement": {
+          "numerator": 122,
+          "denominator": 122,
+          "value": 1.0
+        },
+        "common_fact_citation_agreement": {
+          "numerator": 120,
+          "denominator": 125,
+          "value": 0.96
+        },
+        "citation_applicability_flips": 0
+      },
+      "strict_pass_flip_tasks": [
+        "PFI2-004",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-027",
+        "PFI2-028"
+      ],
+      "critical_presence_flip_tasks": [
+        "PFI2-010"
+      ]
+    }
+  ],
+  "independence_audit": {
+    "fixed_answers": 32,
+    "identical_initial_payloads_per_round": 32,
+    "stateless": true,
+    "prior_grades_exposed": false,
+    "new_rag_answer_calls": 0,
+    "new_embedding_queries": 0,
+    "unique_returned_initial_response_ids": 89,
+    "reused_response_ids": [],
+    "initial_statuses": {
+      "judge-gpt61sol-core-20261026-r1": {
+        "completed": 20,
+        "invalid_scorecard": 9,
+        "api_failed": 3
+      },
+      "judge-gpt61sol-core-20261026-r2-complete": {
+        "completed": 18,
+        "invalid_scorecard": 12,
+        "api_failed": 2
+      },
+      "judge-gpt61sol-core-20261026-r3-complete": {
+        "completed": 19,
+        "api_failed": 2,
+        "invalid_scorecard": 11
+      }
+    }
+  },
+  "study_sha256": "8e94306fc97627d1d9b6e3dfcc8d9071caf8e970dec7e6f34976f69665ce2500",
+  "scope": "Independent judge repeatability on fixed RAG answers; not RAG-generation stability or scientific correctness."
+}

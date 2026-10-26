@@ -564,3 +564,47 @@ def test_transport_retry_of_protocol_repair_reuses_the_exact_failed_request(run_
         result=judge.run_judge(run_dir,tmp_path/'feedback-transport-2',config(),client=client,
                                repair_records=[tmp_path/'feedback-transport-1/tasks/PFI2-033-clean.json'])
     assert result['complete']
+
+
+def test_third_protocol_repair_requires_explicit_opt_in_and_fourth_is_rejected(run_dir,tmp_path):
+    original=make_rejected_review(run_dir,tmp_path/'explicit-three-0')
+    def invalid(request):
+        data=json.loads(json.loads(request.content)['input'][1]['content'])
+        raw=scorecard(data);raw['claim_assessments'][0]['basis'][0]['quote']='Synthetic nonexistent source quote'
+        return httpx.Response(200,json=api_response(raw))
+    with mock_client(invalid) as client:
+        previous=original
+        for depth in [1,2]:
+            target=tmp_path/f'explicit-three-{depth}'
+            judge.run_judge(run_dir,target,config(),client=client,max_protocol_repairs=2,repair_records=[previous])
+            previous=target/'tasks/PFI2-033-clean.json'
+        with pytest.raises(ValueError,match='configured limit reached'):
+            judge.run_judge(run_dir,tmp_path/'third-without-opt-in',config(),client=client,max_protocol_repairs=2,repair_records=[previous])
+        result=judge.run_judge(run_dir,tmp_path/'explicit-three-3',config(),client=client,max_protocol_repairs=3,repair_records=[previous])
+    assert result['api_calls_this_invocation']==1
+    with pytest.raises(ValueError,match='configured limit reached'):
+        judge.run_judge(run_dir,tmp_path/'prohibited-fourth',config(),max_protocol_repairs=3,
+                        repair_records=[tmp_path/'explicit-three-3/tasks/PFI2-033-clean.json'])
+    with pytest.raises(ValueError,match='one, two, or three'):
+        judge.run_judge(run_dir,tmp_path/'prohibited-limit-four',config(),max_protocol_repairs=4,repair_records=[original])
+
+
+def test_explicit_third_transport_retry_preserves_request_and_rejects_a_fourth(run_dir,tmp_path):
+    from dataclasses import replace
+    payloads=[]
+    def failed(request):
+        payloads.append(json.loads(request.content));return httpx.Response(503,text='Synthetic unavailable')
+    with mock_client(failed) as client:
+        judge.run_judge(run_dir,tmp_path/'transport-three-0',config(),client=client)
+        for depth in [1,2]:
+            judge.run_judge(run_dir,tmp_path/f'transport-three-{depth}',config(),client=client,
+                            repair_records=[tmp_path/f'transport-three-{depth-1}/tasks/PFI2-033-clean.json'])
+        previous=tmp_path/'transport-three-2/tasks/PFI2-033-clean.json'
+        with pytest.raises(ValueError,match='bounded at two'):
+            judge.run_judge(run_dir,tmp_path/'transport-three-no-opt-in',config(),client=client,repair_records=[previous])
+        judge.run_judge(run_dir,tmp_path/'transport-three-3',replace(config(),timeout=600),client=client,
+                        repair_records=[previous],max_transport_retries=3)
+    assert payloads[0]==payloads[1]==payloads[2]==payloads[3]
+    with pytest.raises(ValueError,match='bounded at three'):
+        judge.run_judge(run_dir,tmp_path/'transport-fourth-rejected',replace(config(),timeout=600),
+                        repair_records=[tmp_path/'transport-three-3/tasks/PFI2-033-clean.json'],max_transport_retries=3)

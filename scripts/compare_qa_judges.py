@@ -11,6 +11,7 @@ from tempfile import TemporaryDirectory
 
 from aggregate_qa_judges import aggregate
 import judge_qa_eval as judge
+from score_qa_eval_v2 import review_task
 from validate_qa_eval import digest,read_json,read_jsonl,require
 
 
@@ -120,7 +121,27 @@ def analyze_rounds(cases,tasks,rounds):
                 pairs=pairs,questions=questions)
 
 
-def audit_study(study,run_dir,review_dirs):
+def select_comparable_tasks(tasks,rounds,allow_incomplete=False):
+    expected={t['id'] for t in tasks}
+    available=[{r['task_id'] for r in item['reviews'] if not r.get('reference_concerns')} for item in rounds]
+    common=set.intersection(*available)
+    require(all(s<=expected for s in available),'Unknown task in grading round')
+    require(allow_incomplete or all(s==expected for s in available),'A grading round is incomplete or has reference concerns')
+    require(bool(common),'No common validated tasks are available')
+    filtered=[]
+    for item in rounds:
+        filtered.append({**item,'reviews':[r for r in item['reviews'] if r['task_id'] in common],
+                         'summary':{'rows':[r for r in item['summary']['rows'] if r['task_id'] in common]}})
+    coverage=dict(planned_tasks=len(tasks),common_validated_tasks=len(common),
+                  common_task_ids=sorted(common),excluded_task_ids=sorted(expected-common),
+                  validated_tasks_by_round={item['name']:len(available[i]) for i,item in enumerate(rounds)},
+                  missing_or_disputed_by_round={item['name']:sorted(expected-available[i]) for i,item in enumerate(rounds)},
+                  full_comparison=common==expected,
+                  note='Subset means are conditional on common validated tasks; excluded tasks are unknown, never zero.')
+    return [t for t in tasks if t['id'] in common],filtered,coverage
+
+
+def audit_study(study,run_dir,review_dirs,allow_incomplete=False):
     run,manifest,cases,sources=judge.verify_run(run_dir)
     require(digest(run_dir/'run.json')==study['source_run_sha256'],'The fixed answer run changed')
     require(study['stateless'] is True and study['previous_scores_supplied'] is False
@@ -147,7 +168,14 @@ def audit_study(study,run_dir,review_dirs):
         for review in reviews:
             require(review['response_file_sha256']==study['source_answer_sha256'][review['task_id']],
                     'A candidate answer changed between rating rounds')
-        summary=judge.summarize(run_dir,directory/'reviews.jsonl')
+        if allow_incomplete:
+            task_by_id={t['id']:t for t in run['tasks']};rows=[]
+            documents={d['id'] for d in manifest['source_documents']}
+            for review in reviews:
+                task=task_by_id[review['task_id']];path,result=judge.read_result(run_dir,run,cases[task['case_id']],task)
+                rows.append(review_task(cases[task['case_id']],task,result,review,path,documents,sources))
+            summary={'rows':rows}
+        else:summary=judge.summarize(run_dir,directory/'reviews.jsonl')
         component_dirs=[run_dir.parent/c['name'] for c in meta['component_metadata']] if 'component_metadata' in meta else [directory]
         initial={};initial_components=[]
         for component in component_dirs:
@@ -172,7 +200,7 @@ def audit_study(study,run_dir,review_dirs):
         with TemporaryDirectory(prefix='qa-judge-repeatability-') as temporary:
             checked=Path(temporary)/'verified'
             progress=aggregate(run_dir,component_dirs,checked)
-            require(progress['summary_written'],'A grading round is incomplete or has reference concerns')
+            require(allow_incomplete or progress['summary_written'],'A grading round is incomplete or has reference concerns')
             require(read_jsonl(checked/'reviews.jsonl')==reviews,'Published grades differ from verified API outputs')
             if 'component_metadata' in meta:
                 require(all(digest(component/'judge-run.json')==c['sha256']
@@ -180,7 +208,18 @@ def audit_study(study,run_dir,review_dirs):
                         'A grading component fingerprint changed')
         initial_statuses[directory.name]=dict(Counter(r['status'] for r in initial.values()))
         rounds.append(dict(name=directory.name,reviews=reviews,summary=summary,initial=initial,api=meta['judge']['api']))
-    analysis=analyze_rounds(cases,run['tasks'],rounds)
+    tasks,comparable,coverage=select_comparable_tasks(run['tasks'],rounds,allow_incomplete)
+    analysis=analyze_rounds(cases,tasks,comparable)
+    analysis['coverage']=coverage
+    analysis['available_pairs']=[]
+    for a,b in itertools.combinations(range(len(rounds)),2):
+        paired_tasks,paired,_=select_comparable_tasks(run['tasks'],[rounds[a],rounds[b]],allow_incomplete=True)
+        result=analyze_rounds(cases,paired_tasks,paired)
+        analysis['available_pairs'].append(dict(task_count=len(paired_tasks),required_points=result['required_points'],
+                                                metrics=result['pairs'][0],
+                                                strict_pass_flip_tasks=result['overall']['strict_pass_flip_tasks'],
+                                                critical_presence_flip_tasks=result['overall']['critical_presence_flip_tasks']))
+    analysis['raw_initial']['scope']='Common validated task subset, not all planned tasks' if not coverage['full_comparison'] else 'All planned tasks'
     analysis['independence_audit']=dict(fixed_answers=len(run['tasks']),identical_initial_payloads_per_round=len(run['tasks']),
                                         stateless=True,prior_grades_exposed=False,new_rag_answer_calls=0,new_embedding_queries=0,
                                         unique_returned_initial_response_ids=len(returned_ids),reused_response_ids=duplicates,
@@ -188,14 +227,14 @@ def audit_study(study,run_dir,review_dirs):
     return analysis
 
 
-def compare(study_dir,run_dir,review_dirs,output):
+def compare(study_dir,run_dir,review_dirs,output,allow_incomplete=False):
     study_dir,run_dir,output=map(Path,(study_dir,run_dir,output))
     require(len(review_dirs)==3 and len({Path(p).resolve() for p in review_dirs})==3,'Exactly three distinct rating rounds are required')
     require(not output.exists(),'Use a new comparison file')
     study=read_json(study_dir/'study.json')
     require(all(digest(study_dir/'harness'/name)==checksum for name,checksum in study.get('harness_files',{}).items()),
             'The frozen study harness changed')
-    result=audit_study(study,run_dir,review_dirs)
+    result=audit_study(study,run_dir,review_dirs,allow_incomplete)
     result['study_sha256']=digest(study_dir/'study.json')
     result['scope']='Independent judge repeatability on fixed RAG answers; not RAG-generation stability or scientific correctness.'
     output.parent.mkdir(parents=True,exist_ok=True)
@@ -209,8 +248,9 @@ def main():
     p.add_argument('--run-dir',type=Path,required=True)
     p.add_argument('--review-dir',type=Path,action='append',required=True)
     p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--allow-incomplete',action='store_true',help='Explicitly compare only common validated tasks, with missingness reported; never publish a full-run mean')
     args=p.parse_args()
-    try:result=compare(args.study_dir,args.run_dir,args.review_dir,args.output)
+    try:result=compare(args.study_dir,args.run_dir,args.review_dir,args.output,args.allow_incomplete)
     except Exception as error:p.exit(1,'Judge stability analysis failed: '+type(error).__name__+'\n')
     print(json.dumps({'round_scores':result['round_scores'],'overall':result['overall']},ensure_ascii=False))
 

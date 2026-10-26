@@ -129,10 +129,45 @@ def test_changed_initial_prompt_hash_prevents_a_stability_comparison(audited_stu
         comparison.audit_study(study,source,dirs)
 
 
-def test_changed_final_grade_cannot_disagree_with_the_original_api_output(audited_study):
+@pytest.mark.parametrize('allow_incomplete',[False,True])
+def test_changed_final_grade_cannot_disagree_with_the_original_api_output(audited_study,allow_incomplete):
     study,source,dirs=audited_study
     path=dirs[1]/'reviews.jsonl'
     rows=judge.read_jsonl(path);rows[0]['point_notes']['P1']='Tampered explanation'
     path.write_text(''.join(json.dumps(row)+'\n' for row in rows),encoding='utf-8')
     with pytest.raises(ValueError,match='Published grades differ'):
-        comparison.audit_study(study,source,dirs)
+        comparison.audit_study(study,source,dirs,allow_incomplete=allow_incomplete)
+
+
+def test_missing_grade_blocks_full_comparison_but_explicit_subset_is_paired():
+    cases,tasks,rounds=synthetic_rounds()
+    second={'id':'Q2','case_id':'Q2','capabilities':['text']};tasks.append(second)
+    for i,item in enumerate(rounds):
+        if i==1:continue
+        row=deepcopy(item['summary']['rows'][0]);row['task_id']='Q2';item['summary']['rows'].append(row)
+        review=deepcopy(item['reviews'][0]);review['task_id']='Q2';item['reviews'].append(review)
+    with pytest.raises(ValueError,match='incomplete'):
+        comparison.select_comparable_tasks(tasks,rounds)
+    selected,filtered,coverage=comparison.select_comparable_tasks(tasks,rounds,allow_incomplete=True)
+    assert [t['id'] for t in selected]==['Q1']
+    assert coverage['planned_tasks']==2 and coverage['common_validated_tasks']==1
+    assert coverage['excluded_task_ids']==['Q2'] and coverage['full_comparison'] is False
+    assert [len(item['reviews']) for item in filtered]==[1,1,1]
+    assert [len(item['summary']['rows']) for item in filtered]==[1,1,1]
+
+
+def test_disputed_reference_is_excluded_from_all_rounds_in_subset_mode():
+    cases,tasks,rounds=synthetic_rounds()
+    rounds[1]['reviews'][0]['reference_concerns']=['Synthetic disputed reference']
+    with pytest.raises(ValueError,match='incomplete'):
+        comparison.select_comparable_tasks(tasks,rounds)
+    with pytest.raises(ValueError,match='No common validated'):
+        comparison.select_comparable_tasks(tasks,rounds,allow_incomplete=True)
+
+
+def test_subset_option_keeps_full_coverage_when_all_api_outputs_validate(audited_study):
+    study,source,dirs=audited_study
+    result=comparison.audit_study(study,source,dirs,allow_incomplete=True)
+    assert result['coverage']['full_comparison'] is True
+    assert result['coverage']['common_validated_tasks']==1
+    assert result['coverage']['excluded_task_ids']==[]

@@ -1,0 +1,609 @@
+{
+  "date": "2026-10-26",
+  "scope": "Independent judge repeatability on fixed RAG answers; not RAG-generation stability or scientific correctness.",
+  "study_sha256": "8e94306fc97627d1d9b6e3dfcc8d9071caf8e970dec7e6f34976f69665ce2500",
+  "analysis_harness_sha256": {
+    "compare_qa_judges.py": "636ac74efdf5a1ee799bd5a76adea7ba7ced7cdb263cb19196dee2b1bf8b37b9",
+    "aggregate_qa_judges.py": "efc1add8322a7963d8278daf4d930d646403cfe233fc13afffac456f86b7140e",
+    "judge_qa_eval.py": "df61affdf63b85a7d9da50211d8ce68aaa012dcd971241654b6dc8a796409af4",
+    "score_qa_eval_v2.py": "549a13cb2f0e1304cd1cc185aea5859742fddda30f8a71aa1d85403a966685ee"
+  },
+  "source_run_sha256": "00bb3da8939c1d1a2897048436fa664c85836024d69607b9b76bd73b29f52ea5",
+  "aggregate_sha256": {
+    "judge-gpt61sol-core-20261026-r1": "c2cf4c54f2075fc3aae432e1ca5f2f63f728f12fb17ca49b0ef557c453542c3d",
+    "judge-gpt61sol-core-20261026-r2-complete": "aec00f979bf46457ed1167fb8b266fa4a869dcddb6ee50df7a1af66886a98e3d",
+    "judge-gpt61sol-core-20261026-r3-complete": "760ad063db05b42d6b16a6f55dbc84bae07460d9f49aa1f5601eb5607b73d8fc"
+  },
+  "components": {
+    "judge-gpt61sol-core-20261026-r1-odd": {
+      "metadata_sha256": "2dcf9b136fa9b7744d415dc788b1cf570f50043e621295c64370382ad8cce46c",
+      "task_records": {
+        "PFI2-001": "beaaf6456064128814bb9b1073614cc6b7118c8ed583628ae5601da871801c99",
+        "PFI2-003": "eca77009a849ed16d572708dce0b1abe5c9dc023ce32af71f16a11e885702708",
+        "PFI2-005": "8daa9839716892a59b82bcb223c14165395043e463e71749b498ac876f9b20d8",
+        "PFI2-007": "4417420368292e3c81666c55fb90df006547561815f8da752480998ca996fef1",
+        "PFI2-009": "fc0f1e4b6907e797de9ff1c6200eecc6016b036534d132a6bbea8fb113225e66",
+        "PFI2-011": "87f74abec7cd4398917c4af26e38509cf67e31cf5d6526d5b3c167b9d52654c2",
+        "PFI2-013": "700c14c15a0d27db1e7ac1df4c1b60460b9ee2f6ad8c517478418fd5c23bb51d",
+        "PFI2-015": "aa659f1e31a470863649483a662fb435c25ee809765871fd4a56de73e1ee90fd",
+        "PFI2-017": "d9997ecea6d81cb251a7d6add0cc4896da65cf393fed825ad377ac25de07b436",
+        "PFI2-019": "9f2da22f090c7d394934f3f9bf37d351ae0e06e4f00f581085199e16387abfc9",
+        "PFI2-021": "22ae54e8d38a42d39d58752cbc3aaec1ecf1e568c7960ae464c1a00625585c65",
+        "PFI2-023": "988587e5584ad7e5aa9ee4a713d5059d2930cbb606a1bf46e98c1fa1cb71d6b9",
+        "PFI2-025": "b6dcd99bfd91519ea090dbd6c0a84b1b64ca191801fe4efa5f7efb36bb1b09c5",
+        "PFI2-027": "5e1da648229731b7660b7baf0d5caa43114ba2cb5d5a7eb18e41597fff2c7c0b",
+        "PFI2-029": "8c3695e1535edbb7237d4a0d49633b8f11de9fcf07a5db5228b9a9fdb4bad259",
+        "PFI2-031": "1731169b96dfed3c90a8ff47790b20fd090b7010adb3404ef0e32ca1502a489d"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-even": {
+      "metadata_sha256": "258bb10bc6e804aff24aaf195db730441ca22ff789cc1f1d9c65a891813e221a",
+      "task_records": {
+        "PFI2-002": "6605447f76971796708003dbf5d1b89c25a4af2acf36b072a826dd2c6c25537a",
+        "PFI2-004": "120bec1b9c9d109b42e43d87f3f5f2002af68a34c462d09ae940d288683f8ffe",
+        "PFI2-006": "e3519d5a64eb6e9a5da48f88d276f21d6227f538c077d43c36bf28a4f63f93fd",
+        "PFI2-008": "522cfcc52f9cf477366f5fcd84dec8c678406c2860e4c12e68f31c985bbdc40d",
+        "PFI2-010": "f4911dca19d6afa97e6bdfbae789c912668b34516670b2d78950bade5b573e58",
+        "PFI2-012": "dc3f4e352a40a1661dc5099820c9e9612797b97b387b7476595dc6cbde6aca58",
+        "PFI2-014": "5d421320e024d8c117bc7aa9084497fb9d5a13b78d7a4aa80e465e78e499582f",
+        "PFI2-016": "1fc49d5c63adc891af652ee71708ef0da4332f349af9b5cba85d5e5064d2c0e3",
+        "PFI2-018": "986e8277810f6489b472391527563692bc32121dec22a4d342d6a04468fb9883",
+        "PFI2-020": "d860bca121eeb75cd3672cd1b657dfca580431780f6d1bc651e18ceffca9ec92",
+        "PFI2-022": "ccc0c9e76696f47e7f70ff78644ec723c9e695715250a09f207cec58bf821c9a",
+        "PFI2-024": "fd7dd7fcfb13e800154385500085b03f6d91b0005b9cea6e6a58022e64a8c81f",
+        "PFI2-026": "6d0c9d933d7fa27cc294fdf003a98f838e1e6735469d76ddfbc70191a402e619",
+        "PFI2-028": "d58bfc3643d3dea0fcc50fda8ac47d1a412a2c21445f80579fed7f696e90b512",
+        "PFI2-030": "95a23c2db6be6ea2d2c137900c4971f0dcc02e37363e26964bc2a8bc18f68db6",
+        "PFI2-032": "bd9bed290209a860ea3d7da7a4c3527bc67640af45daa7a11d8acd1aa4f2a34d"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-a": {
+      "metadata_sha256": "948c56f5ab5cd19f9ac9d320841b7cdfaa3150ea7738b606a8309fbaf1b7e548",
+      "task_records": {
+        "PFI2-004": "52b98f1fef53333318785792a185da8560a32aae365909784413dd37a1a1e8a2",
+        "PFI2-010": "98b95a0acf2421a9b9731ebff37c75936a6adf7f773a8d8a1ed85c4b2fcb4576",
+        "PFI2-011": "aede60670befcfc167897324800bef832fc83dea1b39329a87f6d45eb67dbb20",
+        "PFI2-013": "e85bb8ef255892b9dd1880d0dd0421d540702bf083b98885e2ea3378cd65f34e",
+        "PFI2-018": "259231d76892c6969386f34afa382293a8b129037be0c0a5a20925fb62f6c460",
+        "PFI2-022": "8a371e05b69a7033a5938c68d4251e974a17e0b2b245b2488beb59e995aab71e"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-b": {
+      "metadata_sha256": "bbc7de868587c9202a4f733917041cd224f6470e87035e2194025f2972d43556",
+      "task_records": {
+        "PFI2-021": "c6def0053ef5a0a5427d06bf5ac6ea10f5cc5d5b090342bd4122222d2b3b4aa1",
+        "PFI2-026": "d4c560d33da9b850bb10dd5727f91b4bdd499431efaf48aca710eea3478fc9d2",
+        "PFI2-027": "48558267bbce3a64ced44dd145187e4811a7f4faeacc0f396b470690789b6ae3",
+        "PFI2-031": "d4a0e544a7bbf92ff906d6fbb3467668a9ce076c29501849617daa018b93149c"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-c": {
+      "metadata_sha256": "a03653cf39c011b191726f5f65849b09e110f2961378a85b4a6424ef0ae6b83c",
+      "task_records": {
+        "PFI2-030": "486d2950161ed38e9c889a15268958eea7d75b63bf157be48119de9c493db069",
+        "PFI2-032": "15e6c4f5cbefab09ad6884bf67be7a90f455e613c2d9a9f8bda4ff9a11fb9899"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-d": {
+      "metadata_sha256": "ce1ad6596963de6720697277b177471ee24200a44490dd83b0662f12925f3447",
+      "task_records": {
+        "PFI2-026": "f7d5a5a1745fff4529dce659031db30f1d7e83fc04913cf8346a95d724ddca32"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-e": {
+      "metadata_sha256": "6aee3cea88afadd91280673bc0264dcd03f348bcee1ece1a1fcb87b885d9091d",
+      "task_records": {
+        "PFI2-031": "e3f6921ba0741ed327a452efcfe91fe7de2685e5f7defae7e864dca82cca5622"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-f": {
+      "metadata_sha256": "0f8c7e0197a424c96a4409a57178f092cc4f50c7f4787e95a8eb8269d04cc2c0",
+      "task_records": {
+        "PFI2-026": "03fa3a545f57c92f8a1cc32053f81ee119e7e3404a65c5273e9a72c60bc139c2"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-repair-g": {
+      "metadata_sha256": "c450c552e4481d679d8a3471913c78bc086c7e2183919ac4f59f1ba9b0be364b",
+      "task_records": {
+        "PFI2-026": "07d3d638870db97316a37113d1008c2c33297e1c2006388b2c8ab404a479dfdd"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-normalized-a": {
+      "metadata_sha256": "7e278f782a5d7990d4a5b8caae19a2d2ac8aef16e3f08945b33d0b4f2a5c2e47",
+      "task_records": {
+        "PFI2-004": "3e5286a2b5c228cc8daad40babb1c0013ee05a97daf937da6282f8ab24009ba1",
+        "PFI2-011": "9e49ecf7e5c51499a6905eaed846fe6fa2e8396797083c462ac505508b88eec0"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r1-normalized-b": {
+      "metadata_sha256": "6c60ca1fcb47d8cb4ded2578e2d5812818d914a4c81c47989291813abbfa9996",
+      "task_records": {
+        "PFI2-021": "2ddb45609338f1daf01f0b66c21ac6eb6b1c36cab209d50a8d10bf1fe6ac1dfc"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-initial": {
+      "metadata_sha256": "d65aa076772d450f065b2eecb14d9bc05f57b5677b92dbf721252b8abc6e4e8d",
+      "task_records": {
+        "PFI2-001": "edd50d402e537db812bec0da7e21f0c105e1eb6ecc4781b071478178261343d9",
+        "PFI2-002": "1a301c856e5c7db43032dab4d5280453d16d4c9115337ecb05da17dcffe2bac4",
+        "PFI2-003": "1a8233b83c5737d5374eb038c8e363e98bbd5cf2c7a7281c5d1194d649e9dc5c",
+        "PFI2-004": "df29a4f51b453b4f7f4ea4db4c64f8c2d4cde8e2423f1fed5fa10f5cc2ec88c4",
+        "PFI2-005": "fd4f0493cf69f581ae6cbd1459f876bd422978ef1406a9e14fc99f7e9c7030e0",
+        "PFI2-006": "ebbef225ccbbbadff423eed71bc127780b9232f90afe4bd395a29aa5386c65c6",
+        "PFI2-007": "38e63f862ba72ae85355b36cb7064ff71c109a0f4980c60bd095e7a555ac8d97",
+        "PFI2-008": "9ba59c368417f0dde0b01895bf9911c1e54c2dcc608465183e82cfeb042b6f93",
+        "PFI2-009": "ead41ed493c2f05166ffe8ce27e7529296d8e745091aee59e91b817e04764547",
+        "PFI2-010": "4b746d8d1571f5182c2711b3b1f63428d5260c2f56cda7047e19f0b8a92b2a9e",
+        "PFI2-011": "dfc6b02ace16a609af51941719b578c4cb85360779fb63804663d1ed56821617",
+        "PFI2-012": "7f5dc89a0b3e0ee1b34aa07f5b3574c82f5363a5374398d295ab6f425ef9b7cc",
+        "PFI2-013": "1c16dec02bb4c0a7699dc720e9684c3c65cf7b3efae872f427b917ed0b6fdf69",
+        "PFI2-014": "f8e409ad99867bf226fe3b8e16f035cda3056c5db78057e16b694b14b1ca2929",
+        "PFI2-015": "db29551522776b497bf25c847d712bf23cbec75b374f10781b3ac4c543806906",
+        "PFI2-016": "4ba45baa6e2aab28a3862f32d3706e48d85ee22fbed2db98e81bd93085955680",
+        "PFI2-017": "042658cbef8d5969df54a5f3768da384985afec14cb3cdfe80c6c414e803780c",
+        "PFI2-018": "d61cb8862e8d11db6b0943d6981042b8eb08698ef0e59650ad7f32231973c9f5",
+        "PFI2-019": "2e0590bee6bcff3650025f3e164ac7333f2531e481110a8a34fa33fe46202fe5",
+        "PFI2-020": "a4d8b9f48f5ab66759cbcf6c1c08c4e21c20d54aab4f97c2edf6e2b5e9c0379c",
+        "PFI2-021": "a379c1e596c1d3ddedcd687cc66071521834cec8b3115e104c80d3c5586255aa",
+        "PFI2-022": "11073002ee0d3696dd20360296b5de068bf2cd67428c3fff5814aefb68bbfabd",
+        "PFI2-023": "48b9f31a5ce757ec9420b7fb89d4de07f180e3b15f5ccbc612ac8478ca043b71",
+        "PFI2-024": "dd36257aa906b66ecc53d4336f4e91cb0c9d968027d2d1e6c537203345dfe760",
+        "PFI2-025": "b02dc94e108d48c9e200f4e707f0288e4d4803ea5869b15c5db619252db64f85",
+        "PFI2-026": "91b7159d5c0a73f32fb89114ce4a6356ddf18e4e7a693a4859dd123fc69cc0ec",
+        "PFI2-027": "6f0c989d0fbc727bff25f923499804c8468988ba4f96a5f2856881c231034c69",
+        "PFI2-028": "5ef8ef1b9ff070d80fddbb2f52ccc6c3ba197b79bff7198e4566d232d83e10b9",
+        "PFI2-029": "48b998ed010afa61217d5ec686c33d1ae11f217863def2e8221c09c2d8e2410a",
+        "PFI2-030": "3a9616909102917c2f0bd832451cd673382f57f7bcd52d62920f8f177a786f60",
+        "PFI2-031": "c3f422eec5d3dad02f56bb38c214d184d172ef69ca04ee6cddb62dac4d4232c9",
+        "PFI2-032": "aa55d6a84ee4ab3dbf01c2334aca7098019d812d001c9b34cd285081bb3938c2"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-007-p1-t0": {
+      "metadata_sha256": "a372d130c39c819c985f69b7989fc45d61e608eb741d3a3f605fcfc014388613",
+      "task_records": {
+        "PFI2-007": "c2666e8bea4798d0d26e7526b388d7d943fb9a61341dc83dec13470ac2bf2cb2"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-009-p1-t0": {
+      "metadata_sha256": "c97cfb73f6c4b33ac7dcb5736272da7a296e5e9a2d041ca75600941730c7ea57",
+      "task_records": {
+        "PFI2-009": "31fdbc87a621e935ea3b214b17d3592fc05701bef86c270c8ea029298a47a6bd"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-011-p1-t0": {
+      "metadata_sha256": "2211adb178ebaa4d2985e8f5238de17ebf672f9bd2e7974f0118ee3cffac2c07",
+      "task_records": {
+        "PFI2-011": "2a8724a9d02749be63b399cd6edf48724b673a4aca43656a6f01d342d9923891"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-012-p1-t0": {
+      "metadata_sha256": "7c0cf8f2698be661f1f7a8e0c10e8252874dba2de925f7add0da5d425b4476a1",
+      "task_records": {
+        "PFI2-012": "406860245c5789b0b25698deb933be042cfb4a87852684829e54e71d23d1e393"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-013-p1-t0": {
+      "metadata_sha256": "2b025a7e0ba40ea5f969626b9d74726f3b0bc7b029add933561d19fe0c55f561",
+      "task_records": {
+        "PFI2-013": "b467523290b822fbe9c76d70c001e021977d96c2be12b0f86021fc96d33926ab"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-015-p1-t0": {
+      "metadata_sha256": "ab75937fba2aced9bf177b450c450cd20ccf097ed0da43e6a19a154d1203f207",
+      "task_records": {
+        "PFI2-015": "9f4ee038163649abec9e292b9394c5d800d2083565d903367e257eeabbf3e1a9"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-018-p1-t0": {
+      "metadata_sha256": "15fbe43d39d5c43ebb64b9545450ca40aa779edd0e2e1bc6532f09441a354438",
+      "task_records": {
+        "PFI2-018": "5d5ff25a8e0c0d9696894012b5f204501eae0ff7f59359aac651175e675e00d1"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-018-p2-t0": {
+      "metadata_sha256": "bf913d67a758ab27c1756d1ff0c2c6923b18ef9fa68758fe8385b2ccead3651c",
+      "task_records": {
+        "PFI2-018": "609c03e8057547fdc0e33a13ed040ecf6ccf0b2b65da67de477e17cf12b47040"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-021-p1-t0": {
+      "metadata_sha256": "e8d9b163d60564685cc3c9e0bbd4758b927e6bedae77bf425dfb97f26de0fabb",
+      "task_records": {
+        "PFI2-021": "e5b060c9a2c46889db82537c4e982a597cfa8ddd8e383a87377aabc1e05fe282"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-022-p1-t0": {
+      "metadata_sha256": "b915f8b96965855e0e6006d4046f29a62a7fd23f3b16b4118673875f34bec54e",
+      "task_records": {
+        "PFI2-022": "cee04ad64712c9785b5a8c2b5083fd473f346842fbd7c4dc870e4c232939add0"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-024-p1-t0": {
+      "metadata_sha256": "4a9ae0f89f48e49c230bfb7e080b4855ef71a8ff59dbc2f4a9d81349f78c375c",
+      "task_records": {
+        "PFI2-024": "69bbe294ef7ba2d9cb179e0efa59d7a09438ca6c4de0ac14e8bd05f24402b8b2"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-024-p1-t1": {
+      "metadata_sha256": "363d2e7a8ab341d195bc6adfd3feebe5985b0521a7a3306223558407c268e4d4",
+      "task_records": {
+        "PFI2-024": "99da207a31d17bccbf9ca0a1b548369c247060e82be366c75d1c3d7ef9f0394b"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-024-p1-t2": {
+      "metadata_sha256": "0919378f8cad5934aaa012766a19762ffd43628b87408fa886a9b4f1e182209b",
+      "task_records": {
+        "PFI2-024": "c88b9588d3eafa45a0a6f833eef7e596b1d083b7af9dab2e5e5d8f067f359ed6"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-normalized-PFI2-024-p1-t2": {
+      "metadata_sha256": "37da41414174c09489ed45676fb445207595b25e87b7fcf800b9b64ad445c265",
+      "task_records": {
+        "PFI2-024": "a9c46d3cb97023677fae08e07dbcf91cb2a1808c6caa9e5fc877dbd9ca6e9ac5"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-026-p1-t0": {
+      "metadata_sha256": "b11ecd0238b7fae3e43869fc8a78e2524257ae8e747a3f2670e687bb14cdc482",
+      "task_records": {
+        "PFI2-026": "0034dfcb49f769c505f84560f339b58cf5138c30f8174115d29e3bf25e7683e7"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-026-p2-t0": {
+      "metadata_sha256": "8521080cbf19d91f912531580311d85d2913523c13ab7d6cc73881142089c3f0",
+      "task_records": {
+        "PFI2-026": "d2a7329a4ccb4f96966ca86539443361eb70c5c5589d5e388095826fe59aa8da"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-027-p1-t0": {
+      "metadata_sha256": "80616c9454fd4540b5f21f8739fa0b86ab1cc4a4503dea98470626acb87fea07",
+      "task_records": {
+        "PFI2-027": "aabdd8ec2583b4fc2531e4e9292c07ea6b72862a43e9665aede0e8719b92a574"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-normalized-PFI2-027-p1-t0": {
+      "metadata_sha256": "bcd800edf6315fde390c2c733cab9788dbb3782d6a9c4a64e1890c26da54d575",
+      "task_records": {
+        "PFI2-027": "dc248f7e4c38dbdf338ad47509206013e715fac84ec375e0a61429a9fbf293cd"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-028-p0-t1": {
+      "metadata_sha256": "73f223cbd18a8d3408dfe7c718be93481b2ce055c5f3695ab6ae1917a09c07f9",
+      "task_records": {
+        "PFI2-028": "fa3d977c02548b6f82f9bef1af858646211ab12d53382b75781fd38f945a88e2"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-028-p0-t2": {
+      "metadata_sha256": "0457114146a9e82e636c17ac45da9812685afc500dedb7a6e86a7ed46ffdf47d",
+      "task_records": {
+        "PFI2-028": "f736726961e88a693d5aaab726f4f2dbfc9a57cbc504adbb3d3bf59fd111dd5e"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-repair-PFI2-031-p0-t1": {
+      "metadata_sha256": "36b4fb84d2da1d5160d72a49697df101dc517a64095e46e0367237c48cfb89f6",
+      "task_records": {
+        "PFI2-031": "f17776b64eac84d6d91bd9f3a89033f35c18c3405605b114ea601178f8ca07be"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-closure-PFI2-026-p3-t0": {
+      "metadata_sha256": "2499a4f28b14505fbbdae41d78ecf2d3216f0f1c35e861dd1f40f7a5170b4ede",
+      "task_records": {
+        "PFI2-026": "cad4024048fd444a9a33ceb4a92e07d4e840e054be38f02006d86c3040497dc9"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-closure-PFI2-028-p0-t3": {
+      "metadata_sha256": "2be4fa6585daf07d2686bf4a89dadb5d80cb017187d171b508a60723d0be21b3",
+      "task_records": {
+        "PFI2-028": "ffddb38cf00b1c11bc69d9765bcdb473702e10db66319052f934cb91c9e49bec"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r2-closure-PFI2-028-p1-t3": {
+      "metadata_sha256": "49d04321d9c60c196215ecc7fb1c842a6aa17e683a9e7a2b385c18334c919a42",
+      "task_records": {
+        "PFI2-028": "759bb67c4af262d2c8462f83506f38489cb7118d8553168d6a5fe29dfd580e20"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-initial": {
+      "metadata_sha256": "e67f462a0efe85ab6407b352d8995e2089d8c095b3ba9a7b48853953e831bfb9",
+      "task_records": {
+        "PFI2-001": "a4a7cebeec2c027662ed4325966626ef7efc098f5ccb12c94adf8908e16daefb",
+        "PFI2-002": "66419564ad6f965423c03dfd7d6e366b2bbf45f772c0adac5ce618ab8e492a00",
+        "PFI2-003": "7b416f2ef490cb5c7c0569aaada309d73c7e3ca77adfa840f2e9db0be709415a",
+        "PFI2-004": "dbe34df4a2c35b2819eed2dff3d9d91c2cd2d9a57e0f17f65ea5048463f19499",
+        "PFI2-005": "26523bd6948f561b642bbd83c6bf261ae5a8786614cdfc3e766fe46b866d20bc",
+        "PFI2-006": "979a597313c070ec34a7389cdf8c78076d943f2be64e21fa89290be7312f0d4f",
+        "PFI2-007": "8335d65220a12c7b841d96c7937fa1733ed7c07f36c13cb14ded9555e9f59629",
+        "PFI2-008": "6cbd2f3970ce3c17be055c5c5656c7ccae7b15a59cc1db3cb6257165593ba58f",
+        "PFI2-009": "7d1283982471514d197f8c8fb9bc72df0a95b499deb3b65099b0c0178d8bd924",
+        "PFI2-010": "fe429556b56dabd3fb6446e98d747dc841646070629bc2ab9ba95165bfb5aba1",
+        "PFI2-011": "0287f7699232242e119b5af9b7e2c33a8386e8f278c34d9aaf162441732c2ee3",
+        "PFI2-012": "d9de890eadaa272f4f2101d3ac18fd138e94009b52aa298a42f8d9adbf4b2b4b",
+        "PFI2-013": "979627ce1b249be2f2357fcd3fb8c12d0bf1d5c3c6725564a2033bdac19f9083",
+        "PFI2-014": "b20620fa72fd9981ca45c4a8c0e39a7e9e095f90148793ee017c8197c4c44524",
+        "PFI2-015": "fab9b0bb749cb13d884865b68950c422757d547196270aaf7c218ac96d313c10",
+        "PFI2-016": "bb930194f183529a1b230e6608a136d47f429815155282b9efa65b885a10faee",
+        "PFI2-017": "61c64604d568c0b07691a66e5292626d61aa3f2c32156e1ed586cf000a816970",
+        "PFI2-018": "15b1adc6547827ea4e9c4259426b77ac34e565916ba6410099069af98de926ee",
+        "PFI2-019": "cd02b9901d3eaa506a73b4dcf67d29a530e3b4cdc26386563778622166c04893",
+        "PFI2-020": "e63077a90fc9adc89f7cbdc08d16e7709ca9297f67ed63127245251494998810",
+        "PFI2-021": "2cfba11c085cfe2f36108b59b130d49a62853df2db8a353cd7212657f3910ec2",
+        "PFI2-022": "7d4961c1b39b6d93f504a0207b6f50203e16824e9967350656d0cb01cc208e72",
+        "PFI2-023": "5e317ea593291a30ec05ab879552fdc53a4e3a194d431e8d5d3ef0f4d9ff316c",
+        "PFI2-024": "03a9e597365e02517dc022106b479772d4b58da2629f0aaf850853c663eb0144",
+        "PFI2-025": "4c7a4cd1a397ddf5a4a6a847d036866b4e9328db0a5f05f8dee3567163b0d59f",
+        "PFI2-026": "b5f2890aa8f0cdc3a55af2e7d35a2ef63f4ddac4213661fae23b96d62dbb61c0",
+        "PFI2-027": "57928643409913a2144433e363293936565635417feddf433025ba17c68741e2",
+        "PFI2-028": "e786b35844c7c6a1c3596d8de1454a175bd910c5e419786a83eb4371bd662b75",
+        "PFI2-029": "f978db299cebd7d8579e8a4172d23339e4d2b24b2a2134eb5db58e5463ee269f",
+        "PFI2-030": "5a44dee6b6cf30bbf159f8eca37b414e31ecdbb330edb007b2e28abdcad40006",
+        "PFI2-031": "dc065981c18f2734d9e019fa843f2aff3b0e350654d9561878dfd833fc0d4afc",
+        "PFI2-032": "619ed29d49def1d1446b454e4741027868ee636b2a45887b5ae2a095c1f7858a"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-009-p0-t1": {
+      "metadata_sha256": "1bb12ab571eec291ec3748c0beb4fff3e8bb688e8b00ef61ae6b4c4ddbd73acb",
+      "task_records": {
+        "PFI2-009": "4b36287897a1164679f9f2b37750a6aa767f55e2234c3ff0145689f7aedb8e54"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-015-p1-t0": {
+      "metadata_sha256": "02ccffb779ea7e196805da69df108e1025df856212d3bec50eb7a6907b37a7da",
+      "task_records": {
+        "PFI2-015": "4f0185fbbad74ac243c1006f471395338fe9523dde525ee939290790463e6f61"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-015-p2-t0": {
+      "metadata_sha256": "abe398a6048dc616aff1c58eec65b35cf0577068a29991e737231ef9c1c01ff9",
+      "task_records": {
+        "PFI2-015": "82598ef981ff424bca0038248f263f59c5326386f9659148db79b9d3637487ab"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-019-p1-t0": {
+      "metadata_sha256": "1ce7d7de4f0e05ee7b3fdb7562e347a1ce7e80968d3a57b3ce6c627bd53978f7",
+      "task_records": {
+        "PFI2-019": "ac765682786f958b896b7e2f091bc3ebc65a5d8da0bbcb615d571475daa6fa76"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-020-p1-t0": {
+      "metadata_sha256": "28d4853e7b525a19749a1dd58ca0bbc3cbd013ec5aa3b68709bbdafdf60537d6",
+      "task_records": {
+        "PFI2-020": "cbfdefdabe0a99b120c4a6b2ef5892291a706f9d39822bf879bb7a1d8283da25"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-023-p1-t0": {
+      "metadata_sha256": "1230d8a2e245ebb68f124fef6cc6e044534e84e2460e99e1bd4e715ba4988fb6",
+      "task_records": {
+        "PFI2-023": "5620a595c9ed2b3f6c5284367f153dc79973e3333cf520c14663defd094776ae"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-023-p1-t1": {
+      "metadata_sha256": "4db402fd44a930ec6b06511621f562d81100e74a516be7e06228a9f49877b2f7",
+      "task_records": {
+        "PFI2-023": "4c3de7c99fae531746e22d3348b16ee0885dcdf508455007341aef48ad57bd8e"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-024-p1-t0": {
+      "metadata_sha256": "09a009de4c0d2c81ba63766ee4ec2b5ce8e8b409e9c28075d6db7f96fd3d3075",
+      "task_records": {
+        "PFI2-024": "0e5aadd7e0cc9fcc9cc0de2e3902395144018b65d1f5aff694cd241714bbd4ba"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-024-p1-t1": {
+      "metadata_sha256": "57336c8f67302cf438783f1c78a9f6573e3e81d96908de01fc78d32e83a94766",
+      "task_records": {
+        "PFI2-024": "72751a5c0aa42c325aafb73cb34398c6e06f59230b63c45d92de3670cbe1ed4a"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-024-p2-t1": {
+      "metadata_sha256": "61e497325cd1f465f52f9d9406aac5e65e784e6e4dfe6daf1ff16df8da8ef6ef",
+      "task_records": {
+        "PFI2-024": "08c44e4a5e9a9e86dc56987c8c4907fabd81a68e0763a4cf5c68788850fba9fe"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-024-p2-t2": {
+      "metadata_sha256": "7feeab655cefa6f0698ffc7ecd100434031a5d891943531b1546803b5ceb8694",
+      "task_records": {
+        "PFI2-024": "4cb82346403906ea06d74fe8363798467fe2ab91f68c0beb580a1ccc843c7396"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-025-p1-t0": {
+      "metadata_sha256": "fd4d479fb3e1a707fef771e54f02cdcf69e73c4348255fcad8cf0f137ca7bdac",
+      "task_records": {
+        "PFI2-025": "94d1e18f1a4425787fae64d2acd02b834a53afd96140d3d6c84a56cde3113f93"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-026-p1-t0": {
+      "metadata_sha256": "fad4697410d1ae420927dcea3fe6f9427a87f9e1138070361779b76f34bb7462",
+      "task_records": {
+        "PFI2-026": "74deab04b54c020c7cf16017e240064313d78e1702bbff25076f316a9af2046c"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-normalized-PFI2-026-p1-t0": {
+      "metadata_sha256": "9f81371a3efcc61351e17a28dd0c400530437aae03830313870b5334a2c83f12",
+      "task_records": {
+        "PFI2-026": "d4f0ca45f60c7bbb7cfeaba4864dfe1ea2c70c4ddd57a667963b800a743e7ae4"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-027-p1-t0": {
+      "metadata_sha256": "0a9b354f8b7441a16e0d8cf9f582af4d63990112cd73ff15a064b66a59812856",
+      "task_records": {
+        "PFI2-027": "c289132ee33c72c229a2fe428d44d10743caca15ed63acc9d3c348ba119f80e3"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-027-p2-t0": {
+      "metadata_sha256": "6d6cc088790e481119fe235572b6f5392d0703b00ce595afd27b66094d56819c",
+      "task_records": {
+        "PFI2-027": "a17255c9b6310ca1a1fb8cf6002e6fac2153c7a25dde6359026a80906e55b93a"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-028-p0-t1": {
+      "metadata_sha256": "d57d332281d052c7de8ffcad448d751895364d9f19976bd3cb3bb26524317f80",
+      "task_records": {
+        "PFI2-028": "fe0cbb8cd4828e502346a2a19db80de39aac207263a62422ce5ec139fa683232"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-028-p1-t1": {
+      "metadata_sha256": "05c1a58c1bf0c30270e1a88394e2097e6ef805ba62a1a49b71da7de359d16f28",
+      "task_records": {
+        "PFI2-028": "ff436b46c2d0a0c34b6c5c17f6230192c41a06f21af7d09c60d644ce7cd631fd"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-030-p1-t0": {
+      "metadata_sha256": "3852070d6611fadb40128fbfc5ef538b3fbc85f8a604880294854a7ea9565c7c",
+      "task_records": {
+        "PFI2-030": "03ada6d78e96c055268091d03fa764a7b154fcbc60645cae07d6b4b6618d35f8"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-031-p1-t0": {
+      "metadata_sha256": "2ef8cab5cc651c92c1cac9ee2000ce165eb389b85e191e5a7938674f118c1268",
+      "task_records": {
+        "PFI2-031": "7b8d58ba03f435ece34795f7ebc1edfe2b627355fa3a7602a842fee67edb5a0f"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-repair-PFI2-032-p1-t0": {
+      "metadata_sha256": "71c20b2ea51948628cf8bb0fc0e96199ab748d87fa19376999d5f16f2b99097f",
+      "task_records": {
+        "PFI2-032": "9745fcd78478f6f661982a157cdf56985a58993ffa72678907f51497c4418df2"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-normalized-PFI2-032-p1-t0": {
+      "metadata_sha256": "f7fc4b655825af2f885d13dc8de9ef98b84531d2ffb00b3091330fffe72817ac",
+      "task_records": {
+        "PFI2-032": "c6769801c1258cc5487ffaeb9cc0e9c9b25dc9b9aefb239f2dafa629b176f050"
+      }
+    },
+    "judge-gpt61sol-core-20261026-r3-closure-PFI2-024-p2-t3": {
+      "metadata_sha256": "6d41519adb985e126d8f59ef4876c0cda907feba4452faf1ce8a75b9a305f0b9",
+      "task_records": {
+        "PFI2-024": "6c350e2f1729e71629fc2235030fe6f6dfa0db4bfb0398ff5150816728b49e2f"
+      }
+    }
+  },
+  "independent_context": {
+    "fixed_answers": 32,
+    "identical_initial_payloads_per_round": 32,
+    "stateless": true,
+    "prior_grades_exposed": false,
+    "new_rag_answer_calls": 0,
+    "new_embedding_queries": 0,
+    "unique_returned_initial_response_ids": 89,
+    "reused_response_ids": [],
+    "initial_statuses": {
+      "judge-gpt61sol-core-20261026-r1": {
+        "completed": 20,
+        "invalid_scorecard": 9,
+        "api_failed": 3
+      },
+      "judge-gpt61sol-core-20261026-r2-complete": {
+        "completed": 18,
+        "invalid_scorecard": 12,
+        "api_failed": 2
+      },
+      "judge-gpt61sol-core-20261026-r3-complete": {
+        "completed": 19,
+        "api_failed": 2,
+        "invalid_scorecard": 11
+      }
+    }
+  },
+  "normalization_logs": {
+    "judge-gpt61sol-core-20261026-r1": {
+      "PFI2-004": [
+        {
+          "path": "defects[0].affects[0]",
+          "before": "boundary",
+          "after": "point:P3"
+        }
+      ],
+      "PFI2-011": [
+        {
+          "path": "defects[0].id",
+          "before": null,
+          "after": "D1"
+        },
+        {
+          "path": "defects[1].id",
+          "before": null,
+          "after": "D2"
+        }
+      ],
+      "PFI2-021": [
+        {
+          "path": "computed_issue_links",
+          "before": null,
+          "after": [
+            "point:P2",
+            "point:P3"
+          ]
+        }
+      ]
+    },
+    "judge-gpt61sol-core-20261026-r2-complete": {
+      "PFI2-024": [
+        {
+          "path": "defects[0].id",
+          "before": null,
+          "after": "D1"
+        },
+        {
+          "path": "defects[1].id",
+          "before": null,
+          "after": "D2"
+        }
+      ],
+      "PFI2-027": [
+        {
+          "path": "computed_issue_links",
+          "before": null,
+          "after": [
+            "coverage:C2"
+          ]
+        }
+      ]
+    },
+    "judge-gpt61sol-core-20261026-r3-complete": {
+      "PFI2-026": [
+        {
+          "path": "defects[0].id",
+          "before": null,
+          "after": "D1"
+        },
+        {
+          "path": "defects[1].id",
+          "before": null,
+          "after": "D2"
+        }
+      ],
+      "PFI2-032": [
+        {
+          "path": "defects[0].id",
+          "before": null,
+          "after": "D1"
+        },
+        {
+          "path": "computed_issue_links",
+          "before": null,
+          "after": [
+            "coverage:C5"
+          ]
+        }
+      ]
+    }
+  },
+  "checkpoint_report_commit": "0b3c1754e62f9993f5c1f2290c18a979d11b06ee",
+  "public_files": {
+    "comparison.json": "24415a77ac24a3e34b7b4149fc25de860e6ad34a7d4a3fad9e1d6c3364a04ef2",
+    "cost.json": "9deb1525029766fa95e1aa52514ffc4ea8f72b626fcbbea71e1ebd97b775d4d8",
+    "checkpoint/cost.json": "0f0cbfd4d4bc54afb2c968a19c3594a3207df63ba4cd81864257133f93dc08ec",
+    "checkpoint/initial-numeric-diagnostic.json": "c602b45e88b57e6504b7558ba9c01a5ecae5ed9775dc698ac597ba749498940f",
+    "checkpoint/publication.json": "ab432e55515b9e7ccf186650d899440b2b52a858e7b4a56d8f0655317dba96d2",
+    "checkpoint/round-2-progress.json": "6689c3044a2d55927e60966ff71aa97657882c286cb400e824439f6c32a5bede",
+    "checkpoint/round-2-review-scores.jsonl": "a831616f3fd0eab84d6e941d8ed21c9d9f1eb503ef30858e83f55beb5b192c6e",
+    "checkpoint/round-3-progress.json": "2265c0e57b174a2cc41517b1fe7f0355e3d69830a71f6f9803dab05340d89ae4",
+    "checkpoint/round-3-review-scores.jsonl": "b5bba174a4f0cca465fcaea95cfb5e7bdb560701359291339db0d130639e2af1",
+    "round-2/coverage.json": "81a1830ef1b2ec672d01de542cb285d0191484c4dd91c3320198befba5910ca4",
+    "round-2/review-scores.jsonl": "563d6ad065c95ae1d5a0360c44056ea637c0982e34d4a017e59b44328ac6a3ab",
+    "round-3/review-scores.jsonl": "9d0aa866cb6c3a6f8ed78d3e963e9cf8f476875b22a67b10ba1d9c55bf7ef798",
+    "round-3/summary.json": "889d6681da1280550d551f8044a9e00d810751fa2a049588e93c37f5777396a2"
+  },
+  "report_sha256": "49bd688f231d388e763cb18c7e3b7b736574deb1583dc023966bb40f294f42fe"
+}

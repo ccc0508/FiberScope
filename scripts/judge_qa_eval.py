@@ -140,11 +140,12 @@ def packet(case, task, result, manifest, sources, rubric, validation_feedback=No
     return data
 
 
-def repair_sources(paths, run_dir, run, tasks, inputs, manifest, cases, sources, config,max_protocol_repairs=1):
+def repair_sources(paths, run_dir, run, tasks, inputs, manifest, cases, sources, config,max_protocol_repairs=1,max_transport_retries=2):
     """One explicit protocol repair, with mechanical feedback and no previous semantic scores."""
     if not paths:
         return {}
-    require(type(max_protocol_repairs) is int and max_protocol_repairs in {1,2},'Protocol repair limit must be one or two')
+    require(type(max_protocol_repairs) is int and max_protocol_repairs in {1,2,3},'Protocol repair limit must be one, two, or three')
+    require(type(max_transport_retries) is int and max_transport_retries in {2,3},'Transport retry limit must be two or three')
     selected = {t['id']: t for t in tasks}
     repairs = {}
     for path in map(Path, paths):
@@ -160,8 +161,8 @@ def repair_sources(paths, run_dir, run, tasks, inputs, manifest, cases, sources,
             if original['status']=='api_failed':
                 transport_depth=prior.get('transport_retry_depth',1 if prior.get('retry_kind')=='transport' else 0)
                 protocol_depth=prior.get('protocol_repair_depth',1 if prior.get('retry_kind','protocol')=='protocol' else 0)
-                require(transport_depth<2,
-                        'Only one explicit protocol repair is allowed by default; transport retries are bounded at two')
+                require(transport_depth<max_transport_retries,
+                        'Only one explicit protocol repair is allowed by default; transport retries are bounded at '+('two' if max_transport_retries==2 else 'three'))
             else:
                 protocol_depth=prior.get('protocol_repair_depth',1 if prior.get('retry_kind','protocol')=='protocol' else 0)
                 transport_depth=prior.get('transport_retry_depth',1 if prior.get('retry_kind')=='transport' else 0)
@@ -190,7 +191,7 @@ def repair_sources(paths, run_dir, run, tasks, inputs, manifest, cases, sources,
             repairs[tid]=dict(original_record_sha256=digest(path),original_metadata_sha256=digest(metadata_path),
                               original_review_run=path.parent.parent.name,retry_kind='transport',
                               transport_retry_depth=transport_depth+1,protocol_repair_depth=protocol_depth,
-                              feedback=previous_feedback)
+                              max_transport_retries=max_transport_retries,feedback=previous_feedback)
             continue
         require(isinstance(body, dict) and sha(body) == original['response_sha256'], 'Rejected response fingerprint mismatch')
         raw = None
@@ -315,7 +316,7 @@ def lock(output):
         path.unlink()
 
 
-def run_judge(run_dir, output, config, *, limit=1, task_ids=None, client=None, repair_records=None,max_protocol_repairs=1):
+def run_judge(run_dir, output, config, *, limit=1, task_ids=None, client=None, repair_records=None,max_protocol_repairs=1,max_transport_retries=2):
     run_dir, output = Path(run_dir).resolve(), Path(output).resolve()
     require(type(limit) is int and 1 <= limit <= 100, 'Judge task limit must be 1..100')
     # Results live in a separate review directory. Never write inside frozen dataset/results/historical reviews.
@@ -329,7 +330,7 @@ def run_judge(run_dir, output, config, *, limit=1, task_ids=None, client=None, r
     for task in selected:
         path, result = read_result(run_dir, run, cases[task['case_id']], task)
         selected_inputs[task['id']] = (path, result)
-    repairs = repair_sources(repair_records, run_dir, run, selected, selected_inputs, manifest, cases, sources, config,max_protocol_repairs)
+    repairs = repair_sources(repair_records, run_dir, run, selected, selected_inputs, manifest, cases, sources, config,max_protocol_repairs,max_transport_retries)
     output.mkdir(parents=True, exist_ok=True)
     with lock(output):
         return _run(run_dir, output, config, limit, selected, selected_inputs,
@@ -346,7 +347,7 @@ def _run(run_dir, output, config, limit, tasks, inputs, run, manifest, cases, so
                     policy_note='Versioned judge adapter; original v2 material/manual policy is preserved unchanged.')
     if repairs:
         contract['validation_repairs'] = repairs
-        contract['repair_policy'] = 'One explicit protocol regrade by default (two only if explicitly configured), or two explicit transport retries; same rubric/model/prompt; no previous semantic scores supplied. A longer network deadline does not change the API request.'
+        contract['repair_policy'] = 'One explicit protocol regrade and two transport retries by default (up to three each only if explicitly configured); same rubric/model/prompt; no previous semantic scores supplied. A longer network deadline does not change the API request.'
     metadata_path = output / 'judge-run.json'
     if metadata_path.exists():
         require(read_json(metadata_path)['contract'] == contract, 'Judge configuration, inputs or code changed; use a new output directory')
@@ -476,13 +477,15 @@ def main():
     parser.add_argument('--task', action='append', help='Optional exact task selection; fixed for this review directory')
     parser.add_argument('--repair-record', action='append', type=Path,
                         help='Explicit rejected task record to regrade once, with machine validation feedback only')
-    parser.add_argument('--max-protocol-repairs',type=int,choices=[1,2],default=1,
+    parser.add_argument('--max-protocol-repairs',type=int,choices=[1,2,3],default=1,
                         help='Explicit upper bound per task; only rejected outputs can be retried')
+    parser.add_argument('--max-transport-retries',type=int,choices=[2,3],default=2,
+                        help='Explicit upper bound for failed requests; default remains two')
     args = parser.parse_args()
     try:
         result = run_judge(args.run_dir, args.output_dir, load_config(args.env_file),
                            limit=args.limit, task_ids=args.task, repair_records=args.repair_record,
-                           max_protocol_repairs=args.max_protocol_repairs)
+                           max_protocol_repairs=args.max_protocol_repairs,max_transport_retries=args.max_transport_retries)
     except Exception as error:
         # Avoid echoing raw provider responses, config, or model-controlled exceptions.
         parser.exit(1, 'Independent judge operation failed: ' + type(error).__name__ + '\n')

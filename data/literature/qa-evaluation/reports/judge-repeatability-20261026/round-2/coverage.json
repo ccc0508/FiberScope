@@ -1,0 +1,49 @@
+{
+  "status": "incomplete_semantic_grades",
+  "source_run_id": "pfi-v2-core-20261026-r1",
+  "selected_tasks": 32,
+  "valid_reviews": 31,
+  "unresolved_tasks": [
+    "PFI2-026"
+  ],
+  "reference_concerns": {},
+  "grader_application_calls": 54,
+  "usage_known_calls": 48,
+  "usage_unknown_calls": 6,
+  "known_grader_tokens": {
+    "input_tokens": 1977307,
+    "output_tokens": 97205,
+    "total_tokens": 2074512
+  },
+  "actual_charge": null,
+  "charge_note": "Known tokens include rejected and retried requests. Timed-out upstream usage and billed amount are unknown.",
+  "initial_statuses": {
+    "completed": 18,
+    "invalid_scorecard": 12,
+    "api_failed": 2
+  },
+  "structure_normalizations": {
+    "PFI2-024": [
+      {
+        "path": "defects[0].id",
+        "before": null,
+        "after": "D1"
+      },
+      {
+        "path": "defects[1].id",
+        "before": null,
+        "after": "D2"
+      }
+    ],
+    "PFI2-027": [
+      {
+        "path": "computed_issue_links",
+        "before": null,
+        "after": [
+          "coverage:C2"
+        ]
+      }
+    ]
+  },
+  "summary_written": false
+}
