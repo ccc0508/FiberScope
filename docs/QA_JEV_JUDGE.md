@@ -1,0 +1,56 @@
+# Jev独立评分接入
+
+使用用户指定的OpenRouter账号，通过原生`POST https://openrouter.ai/api/alpha/decisions`调用`typesafe/jev-1.14`。它不是聊天补全接口，返回固定选项、概率和置信度，不生成自由文本评语。
+
+## 评分范围
+
+本版对已保存的同一份完整回答评三个共同维度，不重新运行RAG或Embedding，不把GPT历史分数、理由、模型身份、耗时或费用发给Jev：
+
+| 维度 | 原子问题与输出 |
+| --- | --- |
+| 要点覆盖 | 每个适用要点独立选遗漏、部分、完整，程序固定映射为0、0.5、1；可选点与必答点分开 |
+| 事实支持 | 每条陈述选支持、部分支持、无依据、矛盾，并另行区分科学事实与纯范围声明 |
+| 引用支持 | 每个陈述—实际检索引用配对选支持/不支持；仅根据那个被引片段，不能用全文或标准证据补救引用 |
+
+程序预先从实际检索结果、固定标准证据和完整论文生成原文片段编号；Jev选择编号，程序回填不可变原句并复核来源。找不到单条依据可以选择`NONE`，记录为证据未定位，不编造引句。纯范围声明可选择全文/文库范围核查。
+
+每个问题均独立回答，程序据事实/范围分类排除纯范围引用；原始引用判断仍保留。`shared_dimensions_pass`仅表示这三个维度的标签达标，证据定位完成率另列；它**不等于GPT完整评分中的严格达标**，也不是专家正确性认证。
+本版不补写模型未生成的理由，不把缺失的复杂边界、人工关键错误说明或标准答案专家校核字段伪装为已评。
+
+## 私有配置
+
+模板：[backend/.env.jev.example](../backend/.env.jev.example)。私有配置`backend/.env.jev`被Git忽略，不复用回答模型或GPT裁判的密钥。
+
+```dotenv
+QA_JEV_BASE_URL=https://openrouter.ai/api
+QA_JEV_MODEL=typesafe/jev-1.14
+QA_JEV_API_KEY=在私有文件填写OpenRouter密钥
+QA_JEV_TIMEOUT_SECONDS=120
+```
+
+保留OpenRouter返回的具体模型版本、供应商及请求编号；关闭供应商回退。模型别名不在本次评测中使用。不同运行若实际模型版本改变，比较工具须明确报告，不能混成同版本重复评分。
+
+## 运行与恢复
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 scripts/judge_qa_jev.py --run-dir .rag-data/evaluations/pfi-v2-core-20261026-r1 --output-dir .rag-data/evaluations/jev-new-round --limit 1
+```
+
+先限制1次真实调用检查接口；同一目录继续运行会核对源回答、请求、实际工具和已保存的有效决策，跳过已处理项。`--limit`最多100次，默认1次。正式三轮使用三个独立目录，固定模型、题集、完整原回答、同一证据和问题定义；不传会话编号或前轮评分。
+
+每次付费请求前保存`pending`和请求指纹，原始请求保存在`requests/`、原响应和决策保存在`tasks/`，每个运行另存`harness/`、`jev-run.json`、`reviews.jsonl`及`progress.json`。未知中断、HTTP失败和不合格响应不会自动重放；鉴权、余额或权限错误立即停止新增请求。
+
+只有全部选定任务均有效且实际模型版本一致，才生成该运行的`summary.json`。原有GPT评分、题集和RAG代码保持独立，失败不记作答案0分。
+
+## 用量、时间与比较口径
+
+- 记录所有响应的输入/输出Token、原生`usage.cost`（美元）、请求耗时及失败状态；无用量或费用的失败保持未知，不按0处理。API报告费用与实际充值账单分开。
+- 原生输出没有总Token时，仅在输入和输出均已知时计算二者之和。
+- 单条回答一次请求批量评其原子问题；按整个回答统计耗时，保留中位数、P95和失败数。
+- 三轮Jev互相比较同一任务的要点、事实、引用与概率波动；与GPT仅比较共有维度，分数和意见分别保存，不能把GPT一致率称作Jev正确率。
+- 历史GPT流程评维度更多、还生成文字解释，且执行时段不同。费用/时间对照只代表这些实际流程的历史参考，不是同等输出和负载下的严格模型基准。
+- GPT代理服务实际账单未知时不估算其扣费，也不宣称节省了某个百分比。
+
+当前完整论文、标准证据与原文候选一起输入，可能触发OpenRouter自动启用的长上下文模式；其影响需要在本题集实测，不沿用短请求的官网延迟作为本项目结果。中文问答与纤维术语也需要领域校准。
+
+官方资料：[Jev接入说明](https://openrouter.ai/docs/guides/community/jev)、[Decisions API](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request)、[模型及价格](https://openrouter.ai/typesafe/jev-1.14)、[Choice类型](https://docs.typesafe.ai/primitives/choice)。
