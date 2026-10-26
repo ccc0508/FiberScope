@@ -65,6 +65,8 @@ def scorecard(data):
                      basis=[{'type': 'evidence', 'ref': '[1]', 'quote': '3.33 N/mm'}])
     for pair in raw['citation_assessments']:
         pair.update(score=1, basis='Synthetic fixture contains 3.33 N/mm')
+    for group in raw.get('citation_group_assessments', []):
+        group.update(coverage='complete', basis='Synthetic cited group covers the complete test fact')
     return raw
 
 

@@ -21,6 +21,7 @@ FastAPI实验数据只读后端与自动化集成测试，以及数据总览、�
 | [Jev独立评分接入](docs/QA_JEV_JUDGE.md) | OpenRouter原生Decisions接口、逐项判断、原文编号定位、独立上下文与费用记录 |
 | [Jev三轮实测与效率对照](docs/QA_JEV_EVALUATION_20261026.md) | 96次调用，三轮均分88.02%/88.02%/88.54%；API报告费用约0.26866美元，中位请求耗时约0.9秒 |
 | [GPT与Jev评分分歧复核](docs/QA_JUDGE_DISAGREEMENT_REVIEW_20261026.md) | 对照原回答、检索片段与PDF核对16题，区分裁判误判与规则歧义；不覆盖历史分数 |
+| [统一评分标准v3](docs/QA_SCORING_V3.md) | 统一半分边界、全文与检索范围、联合引用完整性；GPT/Jev共用规则与指纹，旧评分保留 |
 | [服务器迁移验收](docs/SERVER_DEPLOYMENT.md) | Ubuntu单机部署、数据校验、服务自启与定时备份 |
 | [文献提取与审核](docs/LITERATURE_EXTRACTION.md) | 整篇自动发现表格与正文数据、原文对照、审核版本、导出及基准评测 |
 | [前端验收记录](docs/FRONTEND_VALIDATION.md) | 构建、真实浏览器交互和响应式检查 |

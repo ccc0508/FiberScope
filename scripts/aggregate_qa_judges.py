@@ -21,13 +21,16 @@ def aggregate(run_dir,review_dirs,output):
     inputs={tid:judge.read_result(run_dir,run,cases[task['case_id']],task) for tid,task in tasks.items()}
     rubric=read_json(run_dir/'dataset/rubric.json')
     documents={d['id'] for d in manifest['source_documents']}
-    components=[];records=[];by_hash={};settings=None;initial_tasks=set();initial_count=Counter()
+    components=[];records=[];by_hash={};settings=None;initial_tasks=set();initial_count=Counter();protocol=None
     for directory in dirs:
         path=directory/'judge-run.json';metadata=read_json(path)['contract']
         require(metadata['source_run_id']==run['run_id'] and metadata['run_sha256']==digest(run_dir/'run.json')
                 and metadata['dataset_manifest_sha256']==run['dataset_manifest_sha256'],'Component source mismatch')
         require(metadata['previous_scores_in_prompt'] is False,'Previous scoring judgments were exposed')
-        require(metadata['prompt_sha256']==judge.hashlib.sha256(judge.prompt.SYSTEM.encode()).hexdigest(),
+        component_protocol=judge.grading_prompt(metadata['contract_version'])
+        if protocol is None:protocol=component_protocol
+        require(component_protocol.VERSION==protocol.VERSION,'Mixed scoring policy versions')
+        require(metadata['prompt_sha256']==judge.hashlib.sha256(protocol.SYSTEM.encode()).hexdigest(),
                 'Mixed grading instructions')
         if settings is None:settings=metadata['judge']
         require({k:v for k,v in settings.items() if k!='timeout_seconds'}
@@ -73,7 +76,8 @@ def aggregate(run_dir,review_dirs,output):
         require(tid not in accepted,'Multiple valid grades for one answer; explicit adjudication is required')
         result_path,result=inputs[tid]
         feedback=predecessor.get('feedback') if predecessor else None
-        request=judge.request_body(config,judge.packet(cases[task['case_id']],task,result,manifest,sources,rubric,feedback))
+        request=judge.request_body(config,judge.packet(cases[task['case_id']],task,result,manifest,sources,rubric,feedback,
+                                                      prompt_version=protocol.VERSION))
         require(judge.sha(request)==r['request_sha256'],'Grader request fingerprint mismatch')
         require(judge.sha(r['raw_response'])==r['response_sha256'],'Grader API response fingerprint mismatch')
         raw=judge.strict_json(judge.extract(r['raw_response'],config.api))
@@ -94,7 +98,7 @@ def aggregate(run_dir,review_dirs,output):
     for name in harness:(output/'harness'/name).write_bytes(Path(__file__).with_name(name).read_bytes())
     contract=dict(kind='verified_independent_judge_aggregate',source_run_id=run['run_id'],
                   source_run_sha256=digest(run_dir/'run.json'),dataset_manifest_sha256=run['dataset_manifest_sha256'],
-                  judge=settings,prompt_sha256=judge.hashlib.sha256(judge.prompt.SYSTEM.encode()).hexdigest(),
+                  judge=settings,prompt_sha256=judge.hashlib.sha256(protocol.SYSTEM.encode()).hexdigest(),
                   network_timeouts_by_component={c['name']:c['contract']['judge']['timeout_seconds'] for c in components},
                   component_metadata=[{'name':c['name'],'sha256':c['metadata_sha256']} for c in components],
                   accepted_records=origins,harness_files={n:digest(output/'harness'/n) for n in harness},

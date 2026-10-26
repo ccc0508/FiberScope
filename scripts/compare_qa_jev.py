@@ -15,6 +15,7 @@ import compare_qa_judges as repeatability
 import judge_qa_eval as judge
 import judge_qa_jev as jev
 import qa_jev_prompt as prompt
+import qa_scoring_policy as policy
 
 
 def accounting(records,native=True):
@@ -34,6 +35,7 @@ def accounting(records,native=True):
 
 
 def compare_labels(left,right,tasks,cases):
+    grading_policy=policy.require_same_policy([*left.values(),*right.values()])
     tids=[t['id'] for t in tasks if t['id'] in left and t['id'] in right]
     vectors=[]
     for table in [left,right]:
@@ -45,12 +47,20 @@ def compare_labels(left,right,tasks,cases):
     pairs=[{(tid,c['claim_id'],c['ref']):c['score'] for tid in tids for c in table[tid]['citation_assessments']} for table in [left,right]]
     judge.require(set(pairs[0])==set(pairs[1]),'Compared citation identities differ')
     common_facts=[key for key in pairs[0] if pairs[0][key] is not None and pairs[1][key] is not None]
-    return dict(compared_tasks=len(tids),task_ids=tids,required_points=repeatability.pair_numbers(*vectors),
+    result=dict(compared_tasks=len(tids),task_ids=tids,required_points=repeatability.pair_numbers(*vectors),
                 claim_support_agreement=repeatability.fraction(sum(claims[0][k]['support']==claims[1][k]['support'] for k in claims[0]),len(claims[0])),
                 claim_type_agreement=repeatability.fraction(sum(claims[0][k]['claim_type']==claims[1][k]['claim_type'] for k in claims[0]),len(claims[0])),
                 citation_score_agreement=repeatability.fraction(sum(pairs[0][k]==pairs[1][k] for k in common_facts),len(common_facts)),
                 citation_applicability_flips=sum((pairs[0][k] is None)!=(pairs[1][k] is None) for k in pairs[0]),
                 point_pattern_changed_tasks=[tid for tid in tids if any(vectors[0][key]!=vectors[1][key] for key in vectors[0] if key[0]==tid)])
+    if grading_policy==policy.VERSION:
+        groups=[{(tid,g['claim_id']):g['coverage'] for tid in tids for g in table[tid]['citation_group_assessments']}
+                for table in [left,right]]
+        judge.require(set(groups[0])==set(groups[1]),'Compared citation group identities differ')
+        common=[k for k in groups[0] if groups[0][k] is not None and groups[1][k] is not None]
+        result.update(scoring_policy_version=policy.VERSION,
+                      citation_group_coverage_agreement=repeatability.fraction(sum(groups[0][k]==groups[1][k] for k in common),len(common)))
+    return result
 
 
 def audit_jev(source,directory,study,cases,tasks,sources,manifest):
@@ -70,7 +80,8 @@ def audit_jev(source,directory,study,cases,tasks,sources,manifest):
         judge.require(record['task_id']==tid and record['request_sha256']==study['request_sha256'][tid],'Jev task record changed')
         path,result=judge.read_result(source,run,cases[task['case_id']],task)
         judge.require(judge.digest(path)==study['source_answer_sha256'][tid],'Fixed answer changed')
-        request,targets=prompt.build_request(config,cases[task['case_id']],task,result,manifest,sources,rubric)
+        request,targets=prompt.build_request(config,cases[task['case_id']],task,result,manifest,sources,rubric,
+                                              prompt_version=contract['contract_version'])
         judge.require(judge.sha(request)==record['request_sha256'] and judge.read_json(directory/'requests'/(tid+'.json'))==request,
                       'Reconstructed Jev request differs')
         judge.require(set(request)=={'state','model','questions','provider'},'Unexpected conversational/request fields')

@@ -7,6 +7,7 @@ import itertools
 import json
 from pathlib import Path
 import statistics
+import qa_scoring_policy as policy
 from tempfile import TemporaryDirectory
 
 from aggregate_qa_judges import aggregate
@@ -41,6 +42,7 @@ def pair_numbers(left,right,ordinal=True):
 
 def analyze_rounds(cases,tasks,rounds):
     require(len(rounds)>=2,'At least two grading rounds are required')
+    policy.require_same_policy([r for item in rounds for r in item['reviews']])
     required=[(t['id'],p['id']) for t in tasks for p in cases[t['case_id']]['key_points']
               if not p['optional'] and p['capability'] in t['capabilities']]
     points=[];rows=[];reviews=[];raw_points=[];initial_complete_questions=[]

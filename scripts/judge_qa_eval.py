@@ -19,6 +19,8 @@ import httpx
 from dotenv import dotenv_values
 
 import qa_judge_prompt as prompt
+import qa_judge_prompt_v2 as legacy_prompt
+import qa_scoring_policy as policy
 from qa_eval_v2 import inventory, validate_pack
 from score_qa_eval_v2 import review_task, summarize
 from validate_qa_eval import child, digest, normalized, read_json, read_jsonl, require
@@ -26,7 +28,7 @@ from validate_qa_eval import child, digest, normalized, read_json, read_jsonl, r
 
 ROOT = Path(__file__).resolve().parents[1]
 HARNESS = ('judge_qa_eval.py', 'qa_judge_prompt.py', 'score_qa_eval_v2.py',
-           'qa_eval_v2.py', 'validate_qa_eval.py')
+           'qa_eval_v2.py', 'validate_qa_eval.py', 'qa_scoring_policy.py', 'qa_judge_prompt_v2.py')
 SAFE_ID = re.compile(r'[A-Za-z0-9][A-Za-z0-9_-]{0,99}\Z')
 
 
@@ -122,19 +124,31 @@ def read_result(run_dir, run, case, task):
     return path, result
 
 
-def packet(case, task, result, manifest, sources, rubric, validation_feedback=None):
+def grading_prompt(version=None):
+    require(version in {None, prompt.VERSION, legacy_prompt.VERSION}, 'Unknown judge prompt version')
+    return legacy_prompt if version == legacy_prompt.VERSION else prompt
+
+
+def packet(case, task, result, manifest, sources, rubric, validation_feedback=None, *, prompt_version=None):
+    protocol = grading_prompt(prompt_version)
     response = result.get('response') or {}
     # Allowlist only scientific content. Never pass old reviews, answer-model identity, costs or timestamps.
     candidate = {key: response.get(key, [] if key != 'answer' else '')
                  for key in ('answer', 'claims', 'citations', 'retrieved_evidence')}
     task_contract = {k: task[k] for k in ('suite', 'mode', 'capabilities', 'variant') if k in task}
-    task_contract['retrieval_applicability'] = prompt.retrieval_applicability(case, task)
+    task_contract['retrieval_applicability'] = protocol.retrieval_applicability(case, task)
     case_contract = {k: case[k] for k in ('id', 'category', 'question', 'expected_behavior',
                                          'reference_answer', 'key_points', 'critical_errors')}
     rules = {k: v for k, v in rubric.items() if k not in {'judge_policy', 'blind_review', 'repeat_policy', 'mode'}}
-    data = dict(contract_version=prompt.VERSION, reference_case=case_contract, task=task_contract,
+    if protocol is prompt:
+        rules = policy.effective_rubric(rubric)
+        if 'numeric_checks' in case:
+            case_contract['numeric_checks'] = deepcopy(case['numeric_checks'])
+    data = dict(contract_version=protocol.VERSION, reference_case=case_contract, task=task_contract,
                 rubric=rules, source_documents=manifest['source_documents'], **sources,
-                candidate=candidate, output_shape=prompt.output_shape(case, task, candidate))
+                candidate=candidate, output_shape=protocol.output_shape(case, task, candidate))
+    if protocol is prompt:
+        data.update(scoring_policy=deepcopy(policy.POLICY), scoring_policy_sha256=policy.SHA256)
     if validation_feedback is not None:
         data['runtime_validation_feedback'] = validation_feedback
     return data
@@ -244,7 +258,8 @@ def repair_sources(paths, run_dir, run, tasks, inputs, manifest, cases, sources,
 
 
 def request_body(config, data):
-    messages = [{'role': 'system', 'content': prompt.SYSTEM}, {'role': 'user', 'content': encode(data)}]
+    protocol = grading_prompt(data.get('contract_version'))
+    messages = [{'role': 'system', 'content': protocol.SYSTEM}, {'role': 'user', 'content': encode(data)}]
     if config.api == 'responses':
         return dict(model=config.model, input=messages, max_output_tokens=config.max_output_tokens,
                     text={'format': {'type': 'json_object'}}, store=False)
@@ -290,7 +305,8 @@ def strict_json(text):
 
 
 def validate_review(raw, case, task, result, result_path, documents, sources, config, provenance,normalize_structure=False):
-    expected = set(prompt.output_shape(case, task, result.get('response') or {}))
+    protocol = grading_prompt(provenance.get('contract_version'))
+    expected = set(protocol.output_shape(case, task, result.get('response') or {}))
     require(set(raw) == expected, 'Judge scorecard fields missing or unexpected')
     require(isinstance(raw['reference_concerns'], list)
             and all(isinstance(s, str) and s.strip() for s in raw['reference_concerns']), 'Invalid reference concerns')
@@ -298,6 +314,8 @@ def validate_review(raw, case, task, result, result_path, documents, sources, co
                   response_file_sha256=digest(result_path), review_status='ai_source_reviewed',
                   reviewer=f'{config.model} via {urlsplit(config.base_url).hostname}', reviewer_type='ai',
                   reviewed_at=now(), participated_in_authoring=False, judge_provenance=provenance)
+    if protocol is prompt:
+        review.update(scoring_policy_version=policy.VERSION, scoring_policy_sha256=policy.SHA256)
     review_task(case, task, result, review, result_path, documents, sources,normalize_structure)
     return review
 
@@ -342,6 +360,7 @@ def _run(run_dir, output, config, limit, tasks, inputs, run, manifest, cases, so
                     run_sha256=digest(run_dir / 'run.json'), dataset_manifest_sha256=run['dataset_manifest_sha256'],
                     task_ids=[t['id'] for t in tasks], source_result_hashes={k: digest(v[0]) for k, v in inputs.items()},
                     judge=config.public(), prompt_sha256=hashlib.sha256(prompt.SYSTEM.encode()).hexdigest(),
+                    scoring_policy_version=policy.VERSION, scoring_policy_sha256=policy.SHA256,
                     harness_files={n: digest(Path(__file__).with_name(n)) for n in HARNESS},
                     assessment_mode='independent_api_model_reference_review', previous_scores_in_prompt=False,
                     policy_note='Versioned judge adapter; original v2 material/manual policy is preserved unchanged.')
