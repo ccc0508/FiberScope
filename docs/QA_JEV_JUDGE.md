@@ -54,3 +54,11 @@ QA_JEV_TIMEOUT_SECONDS=120
 当前完整论文、标准证据与原文候选一起输入，可能触发OpenRouter自动启用的长上下文模式；其影响需要在本题集实测，不沿用短请求的官网延迟作为本项目结果。中文问答与纤维术语也需要领域校准。
 
 官方资料：[Jev接入说明](https://openrouter.ai/docs/guides/community/jev)、[Decisions API](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request)、[模型及价格](https://openrouter.ai/typesafe/jev-1.14)、[Choice类型](https://docs.typesafe.ai/primitives/choice)。
+
+## 首次三轮实测与兼容性复核
+
+2026-10-26已执行96次调用，三轮分别得到32条可读取评分，必答要点均分88.02%、88.02%、88.54%。OpenRouter报告费用合计0.268660476美元，各轮单题请求中位耗时约0.9秒。详见[实测报告](QA_JEV_EVALUATION_20261026.md)。
+
+原始适配器先接收30、28、28条，另外10条保留为原始`invalid_response`。离线复核只处理两种接口兼容性：概率两位小数合计0.99时的浮点容差，以及一个辅助证据选项与报告最高概率项不一致的诊断。前者不归一化原始概率，后者保留原选项并加显式标记；核心评分项的选择不享有这种例外。未新增模型调用，也未改动任何模型评分或旧输出。
+
+`compare_qa_jev.py`只读复核三个Jev目录、三个历史GPT目录及冻结研究契约；验证原始请求/响应、源回答与历史工具指纹，再重建类型化决策、统计共有维度、调用费用和累计请求耗时。新解码器及逐项诊断另存分析harness，原始评分工具仍保留在`d646e1a96da162ebc3344069f4b97c164770ef6e`版本。
