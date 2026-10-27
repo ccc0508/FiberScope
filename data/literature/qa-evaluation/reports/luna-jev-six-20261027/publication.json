@@ -1,0 +1,17 @@
+{
+  "scoring_policy_version": "qa-scoring-v3",
+  "scoring_policy_sha256": "3523241d2749a743fead147b44c06bd170acd4f9bee6ce87189bbb38bf4309c8",
+  "source_run_sha256": "00bb3da8939c1d1a2897048436fa664c85836024d69607b9b76bd73b29f52ea5",
+  "study_sha256": "7527b214f087d9bd0eafb9da462a715edbc6b38a9b3cb398ccc152a3a244c991",
+  "jev_metadata_sha256": "c2a1b377cb70fe736bf30fdc80568becdf6a7ec7a0b1854584314478edd1ba3f",
+  "independent_local_server_comparison": true,
+  "new_jev_calls": 32,
+  "new_luna_calls": 0,
+  "new_publication_api_calls": 0,
+  "public_files": {
+    "comparison.json": "d46366591480e51778616cd0782d9a65db469d301b4f91fdd1beebeb823617af",
+    "jev-scores.jsonl": "669b63cda37bb44f5ab91138cd1fa507c956180d6498b28097e644612494c7ac",
+    "luna-scores.jsonl": "dab360aca7cdf7c58740e763c39807edcc2d4c7e520f657494a0ee57e958e2f2",
+    "scoring-policy.json": "29f87085a7f5fa93ee2f4e6718f3c88da84ee44a1e9a6dd770906c362f61ebaf"
+  }
+}

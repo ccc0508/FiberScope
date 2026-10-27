@@ -1,0 +1,895 @@
+{
+  "scoring_policy_version": "qa-scoring-v3",
+  "scoring_policy_sha256": "3523241d2749a743fead147b44c06bd170acd4f9bee6ce87189bbb38bf4309c8",
+  "source_run_id": "pfi-v2-core-20261026-r1",
+  "source_run_sha256": "00bb3da8939c1d1a2897048436fa664c85836024d69607b9b76bd73b29f52ea5",
+  "dataset_manifest_sha256": "463c687ad22e035a90575d16a95ee154be3eda9bbab506b0bc7b20c4e8b4d47e",
+  "study_sha256": "7527b214f087d9bd0eafb9da462a715edbc6b38a9b3cb398ccc152a3a244c991",
+  "planned_tasks": 32,
+  "common_valid_tasks": 32,
+  "complete": true,
+  "excluded_task_ids": [],
+  "rounds_per_judge": 1,
+  "gpt": {
+    "name": "judge-luna-openrouter-scoring-v3-core-20261026-r1-verified",
+    "task_count": 32,
+    "point_macro_average": 0.890625,
+    "shared_dimensions_pass": 19,
+    "citation_support": {
+      "numerator": 123,
+      "denominator": 123,
+      "value": 1.0
+    },
+    "citation_coverage": {
+      "numerator": 109,
+      "denominator": 116,
+      "value": 0.9396551724137931
+    },
+    "answerability_mean": 1.8125,
+    "boundary_aware_pass": 19,
+    "retrieval_counts": {
+      "complete": 68,
+      "partial": 4,
+      "missing": 5
+    },
+    "retrieval_applicable_points": 77
+  },
+  "jev": {
+    "name": "jev-openrouter-six-20261027-r1",
+    "task_count": 32,
+    "point_macro_average": 0.8854166666666666,
+    "shared_dimensions_pass": 21,
+    "citation_support": {
+      "numerator": 125,
+      "denominator": 125,
+      "value": 1.0
+    },
+    "citation_coverage": {
+      "numerator": 113,
+      "denominator": 118,
+      "value": 0.9576271186440678
+    },
+    "answerability_mean": 1.6875,
+    "boundary_aware_pass": 19,
+    "retrieval_counts": {
+      "complete": 63,
+      "partial": 9,
+      "missing": 5
+    },
+    "retrieval_applicable_points": 77
+  },
+  "gpt_accounting": {
+    "application_calls": 43,
+    "usage_known_calls": 43,
+    "usage_unknown_calls": 0,
+    "known_tokens": {
+      "input_tokens": 1156974,
+      "output_tokens": 117795,
+      "total_tokens": 1274769
+    },
+    "reported_cost_usd": "0.191786810",
+    "cost_unknown_calls": 0,
+    "actual_invoice_cost": null,
+    "summed_request_time_ms": 1357418,
+    "median_task_request_time_ms": 24600.0,
+    "p95_task_request_time_ms": 139608
+  },
+  "jev_accounting": {
+    "application_calls": 32,
+    "usage_known_calls": 32,
+    "usage_unknown_calls": 0,
+    "known_tokens": {
+      "input_tokens": 2314199,
+      "output_tokens": 141243,
+      "total_tokens": 2455442
+    },
+    "reported_cost_usd": "0.097196358",
+    "cost_unknown_calls": 0,
+    "actual_invoice_cost": null,
+    "summed_request_time_ms": 29971,
+    "median_task_request_time_ms": 916.0,
+    "p95_task_request_time_ms": 1160
+  },
+  "agreements": {
+    "compared_tasks": 32,
+    "task_ids": [
+      "PFI2-001",
+      "PFI2-002",
+      "PFI2-003",
+      "PFI2-004",
+      "PFI2-005",
+      "PFI2-006",
+      "PFI2-007",
+      "PFI2-008",
+      "PFI2-009",
+      "PFI2-010",
+      "PFI2-011",
+      "PFI2-012",
+      "PFI2-013",
+      "PFI2-014",
+      "PFI2-015",
+      "PFI2-016",
+      "PFI2-017",
+      "PFI2-018",
+      "PFI2-019",
+      "PFI2-020",
+      "PFI2-021",
+      "PFI2-022",
+      "PFI2-023",
+      "PFI2-024",
+      "PFI2-025",
+      "PFI2-026",
+      "PFI2-027",
+      "PFI2-028",
+      "PFI2-029",
+      "PFI2-030",
+      "PFI2-031",
+      "PFI2-032"
+    ],
+    "required_points": {
+      "exact_agreement": {
+        "numerator": 77,
+        "denominator": 82,
+        "value": 0.9390243902439024
+      },
+      "mean_absolute_difference": 0.03048780487804878,
+      "max_absolute_difference": 0.5,
+      "weighted_kappa_quadratic": 0.9012999518536351
+    },
+    "claim_support_agreement": {
+      "numerator": 122,
+      "denominator": 126,
+      "value": 0.9682539682539683
+    },
+    "claim_type_agreement": {
+      "numerator": 124,
+      "denominator": 126,
+      "value": 0.9841269841269841
+    },
+    "citation_score_agreement": {
+      "numerator": 123,
+      "denominator": 123,
+      "value": 1.0
+    },
+    "citation_applicability_flips": 2,
+    "point_pattern_changed_tasks": [
+      "PFI2-007",
+      "PFI2-011",
+      "PFI2-016",
+      "PFI2-023",
+      "PFI2-027"
+    ],
+    "scoring_policy_version": "qa-scoring-v3",
+    "citation_group_coverage_agreement": {
+      "numerator": 108,
+      "denominator": 116,
+      "value": 0.9310344827586207
+    },
+    "assessment_scope": "six_dimensions",
+    "boundary": {
+      "exact_agreement": {
+        "numerator": 28,
+        "denominator": 32,
+        "value": 0.875
+      },
+      "mean_absolute_difference": 0.125,
+      "max_absolute_difference": 1,
+      "weighted_kappa_quadratic": null
+    },
+    "retrieval_support_agreement": {
+      "numerator": 69,
+      "denominator": 77,
+      "value": 0.8961038961038961
+    },
+    "retrieval_not_applicable_points": 11
+  },
+  "disagreement_task_ids": [
+    "PFI2-004",
+    "PFI2-007",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-015",
+    "PFI2-016",
+    "PFI2-018",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-023",
+    "PFI2-024",
+    "PFI2-026",
+    "PFI2-027",
+    "PFI2-028",
+    "PFI2-029",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "agreement_task_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-005",
+    "PFI2-006",
+    "PFI2-008",
+    "PFI2-009",
+    "PFI2-012",
+    "PFI2-013",
+    "PFI2-014",
+    "PFI2-017",
+    "PFI2-019",
+    "PFI2-025",
+    "PFI2-030"
+  ],
+  "agreement_sample": {
+    "task_ids": [
+      "PFI2-002",
+      "PFI2-005",
+      "PFI2-012",
+      "PFI2-001",
+      "PFI2-019"
+    ],
+    "selection": "Smallest SHA256(source_run_sha256:task_id) among full-agreement cases, up to five.",
+    "status": "selected_for_source_review_not_expert_gold"
+  },
+  "native_diagnostics": {
+    "PFI2-003": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-004": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C4",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C5",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-005": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-007": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-008": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C4",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-011": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-016": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-017": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-018": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-019": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C4",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-020": [
+      {
+        "question": "support_C4",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C5",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-021": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-024": [
+      {
+        "question": "boundary",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C7",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C8",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-026": [
+      {
+        "question": "basis_C4",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "group_C4",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-028": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-031": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-032": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C5",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ]
+  },
+  "native_original_statuses": {
+    "completed": 32
+  },
+  "independence": {
+    "stateless": true,
+    "prior_scores_supplied": false,
+    "one_request_context_per_answer": true,
+    "gpt_response_ids": 43,
+    "gpt_unique_response_ids": 43,
+    "jev_response_ids": 32,
+    "jev_unique_response_ids": 32
+  },
+  "new_analysis_api_calls": 0,
+  "new_rag_calls": 0,
+  "new_embedding_queries": 0,
+  "rows": [
+    {
+      "task_id": "PFI2-001",
+      "case_id": "PFI2-001",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-002",
+      "case_id": "PFI2-002",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-003",
+      "case_id": "PFI2-003",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-004",
+      "case_id": "PFI2-004",
+      "changes": [
+        {
+          "dimension": "support",
+          "claim_id": "C5",
+          "gpt": "supported",
+          "jev": "partially_supported"
+        },
+        {
+          "dimension": "citation_group",
+          "claim_id": "C5",
+          "gpt": "complete",
+          "jev": "partial"
+        },
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P3",
+          "gpt": "complete",
+          "jev": "partial"
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-005",
+      "case_id": "PFI2-005",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-006",
+      "case_id": "PFI2-006",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-007",
+      "case_id": "PFI2-007",
+      "changes": [
+        {
+          "dimension": "point",
+          "point_id": "P3",
+          "optional": false,
+          "gpt": 1,
+          "jev": 0.5
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-008",
+      "case_id": "PFI2-008",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-009",
+      "case_id": "PFI2-009",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-010",
+      "case_id": "PFI2-010",
+      "changes": [
+        {
+          "dimension": "answerability",
+          "gpt": 2,
+          "jev": 1
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-011",
+      "case_id": "PFI2-011",
+      "changes": [
+        {
+          "dimension": "point",
+          "point_id": "P1",
+          "optional": false,
+          "gpt": 0.5,
+          "jev": 0
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-012",
+      "case_id": "PFI2-012",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-013",
+      "case_id": "PFI2-013",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-014",
+      "case_id": "PFI2-014",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-015",
+      "case_id": "PFI2-015",
+      "changes": [
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P3",
+          "gpt": "complete",
+          "jev": "partial"
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-016",
+      "case_id": "PFI2-016",
+      "changes": [
+        {
+          "dimension": "point",
+          "point_id": "P1",
+          "optional": false,
+          "gpt": 0.5,
+          "jev": 1
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-017",
+      "case_id": "PFI2-017",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-018",
+      "case_id": "PFI2-018",
+      "changes": [
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P3",
+          "gpt": "complete",
+          "jev": "missing"
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-019",
+      "case_id": "PFI2-019",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-020",
+      "case_id": "PFI2-020",
+      "changes": [
+        {
+          "dimension": "support",
+          "claim_id": "C5",
+          "gpt": "partially_supported",
+          "jev": "supported"
+        },
+        {
+          "dimension": "citation_group",
+          "claim_id": "C5",
+          "gpt": "partial",
+          "jev": "complete"
+        },
+        {
+          "dimension": "answerability",
+          "gpt": 2,
+          "jev": 1
+        },
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P2",
+          "gpt": "complete",
+          "jev": "partial"
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-021",
+      "case_id": "PFI2-021",
+      "changes": [
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P2",
+          "gpt": "missing",
+          "jev": "partial"
+        },
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P3",
+          "gpt": "missing",
+          "jev": "partial"
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-022",
+      "case_id": "PFI2-022",
+      "changes": [
+        {
+          "dimension": "answerability",
+          "gpt": 2,
+          "jev": 1
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-023",
+      "case_id": "PFI2-023",
+      "changes": [
+        {
+          "dimension": "point",
+          "point_id": "P3",
+          "optional": false,
+          "gpt": 1,
+          "jev": 0.5
+        },
+        {
+          "dimension": "answerability",
+          "gpt": 2,
+          "jev": 1
+        },
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P3",
+          "gpt": "complete",
+          "jev": "partial"
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-024",
+      "case_id": "PFI2-024",
+      "changes": [
+        {
+          "dimension": "support",
+          "claim_id": "C10",
+          "gpt": "supported",
+          "jev": "partially_supported"
+        },
+        {
+          "dimension": "citation_group",
+          "claim_id": "C10",
+          "gpt": "complete",
+          "jev": "partial"
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-025",
+      "case_id": "PFI2-025",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-026",
+      "case_id": "PFI2-026",
+      "changes": [
+        {
+          "dimension": "claim_type",
+          "claim_id": "C3",
+          "gpt": "scope",
+          "jev": "fact"
+        },
+        {
+          "dimension": "claim_type",
+          "claim_id": "C4",
+          "gpt": "scope",
+          "jev": "fact"
+        },
+        {
+          "dimension": "citation",
+          "claim_id": "C3",
+          "ref": "[8]",
+          "gpt": null,
+          "jev": 1
+        },
+        {
+          "dimension": "citation",
+          "claim_id": "C4",
+          "ref": "[5]",
+          "gpt": null,
+          "jev": 1
+        },
+        {
+          "dimension": "citation_group",
+          "claim_id": "C2",
+          "gpt": "complete",
+          "jev": "partial"
+        },
+        {
+          "dimension": "citation_group",
+          "claim_id": "C3",
+          "gpt": null,
+          "jev": "complete"
+        },
+        {
+          "dimension": "citation_group",
+          "claim_id": "C4",
+          "gpt": null,
+          "jev": "complete"
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-027",
+      "case_id": "PFI2-027",
+      "changes": [
+        {
+          "dimension": "point",
+          "point_id": "P1",
+          "optional": false,
+          "gpt": 0.5,
+          "jev": 1
+        },
+        {
+          "dimension": "citation_group",
+          "claim_id": "C1",
+          "gpt": "partial",
+          "jev": "complete"
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-028",
+      "case_id": "PFI2-028",
+      "changes": [
+        {
+          "dimension": "citation_group",
+          "claim_id": "C3",
+          "gpt": "partial",
+          "jev": "complete"
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-029",
+      "case_id": "PFI2-029",
+      "changes": [
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P2",
+          "gpt": "partial",
+          "jev": "missing"
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-030",
+      "case_id": "PFI2-030",
+      "changes": [],
+      "all_common_labels_agree": true
+    },
+    {
+      "task_id": "PFI2-031",
+      "case_id": "PFI2-031",
+      "changes": [
+        {
+          "dimension": "support",
+          "claim_id": "C4",
+          "gpt": "partially_supported",
+          "jev": "supported"
+        },
+        {
+          "dimension": "citation_group",
+          "claim_id": "C4",
+          "gpt": "partial",
+          "jev": "complete"
+        }
+      ],
+      "all_common_labels_agree": false
+    },
+    {
+      "task_id": "PFI2-032",
+      "case_id": "PFI2-032",
+      "changes": [
+        {
+          "dimension": "citation_group",
+          "claim_id": "C4",
+          "gpt": "partial",
+          "jev": "complete"
+        }
+      ],
+      "all_common_labels_agree": false
+    }
+  ],
+  "limitations": [
+    "One scoring round per judge does not estimate repeatability.",
+    "Inter-judge agreement and confidence are not accuracy; no new expert gold labels.",
+    "Assessment scope is reported in agreements; GPT additionally writes reasons and critical-error diagnostics. Latency is a workflow comparison.",
+    "Historical v2 scores are not matched v3 scores; the RAG answers were not improved."
+  ]
+}
