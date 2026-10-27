@@ -128,6 +128,20 @@ def test_old_and_new_policy_reviews_cannot_be_pooled_or_compared():
         comparison.compare_labels({'T':{}},{'T':dict(scoring_policy_version=policy.VERSION)},[],{})
 
 
+def test_mixed_fact_can_supplement_verified_quote_with_retrieval_scope_proof():
+    result={'response':{'retrieved_evidence':[dict(ref='[1]',text='The documented fact is A.')]}}
+    quote=dict(type='evidence',ref='[1]',quote='The documented fact is A.')
+    scope=dict(type='retrieval_scope_review',refs=['[1]'],explanation='Only supplied evidence was inspected for missing B.')
+    scoring.source_basis([quote,scope],result,'fact',{'doc1'})
+    with pytest.raises(ValueError,match='Scope basis'):
+        scoring.source_basis([scope],result,'fact',{'doc1'})
+    with pytest.raises(ValueError,match='not in actual evidence'):
+        scoring.source_basis([dict(quote,quote='Invented factual quotation'),scope],result,'fact',{'doc1'})
+    with pytest.raises(ValueError,match='Scope basis'):
+        scoring.source_basis([quote,dict(type='full_pdf_review',document_id='doc1',explanation='Not factual proof')],
+                             result,'fact',{'doc1'})
+
+
 def test_legacy_request_reconstruction_does_not_inject_new_policy(run_dir):
     source,manifest,cases,sources=judge.verify_run(run_dir);task=source['tasks'][0]
     _,result=judge.read_result(run_dir,source,cases[task['case_id']],task)

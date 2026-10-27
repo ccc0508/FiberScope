@@ -108,3 +108,28 @@ def test_decorated_retrieval_enum_is_revalidated_without_calls_or_semantic_edits
     change=next(n for n in review['structure_normalizations'] if n['path']=='retrieval_point_assessments.P1')
     assert change['before']==raw['retrieval_point_assessments']['P1']
     assert change['explanation_preserved']=='受控证据任务，没有实际检索。'
+
+
+def test_mixed_basis_compatibility_recheck_preserves_scores_and_reaggregates(run_dir,tmp_path):
+    from aggregate_qa_judges import aggregate
+    def handler(request):
+        packet=judge.strict_json(judge.strict_json(request.content.decode())['messages'][1]['content'])
+        raw=scorecard(packet)
+        raw['claim_assessments'][0]['basis'].append(dict(type='retrieval_scope_review',refs=['[1]'],
+                                                      explanation='Synthetic verification of the supplied evidence scope'))
+        body=api_response(raw,mode='chat_completions');body['model']=luna.MODEL
+        return httpx.Response(200,json=body)
+    initial=tmp_path/'old-validator-initial';canonical=tmp_path/'basis-recheck'
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        luna.run(run_dir,initial,config(),client=client)
+    path=initial/'tasks/PFI2-033-clean.json';record=judge.read_json(path)
+    record.update(status='invalid_scorecard');record.pop('review')
+    judge.write(path,record);before=judge.digest(path)
+    raw=judge.strict_json(judge.extract(record['raw_response'],'chat_completions'))
+    revalidate(run_dir,[path],canonical)
+    accepted=judge.read_json(canonical/'tasks/PFI2-033-clean.json')
+    assert accepted['api_calls']==0 and accepted['raw_response']==record['raw_response']
+    assert all(accepted['review'][key]==value for key,value in raw.items())
+    assert judge.digest(path)==before
+    result=aggregate(run_dir,[initial,canonical],tmp_path/'aggregate')
+    assert result['valid_reviews']==1 and result['grader_application_calls']==1
