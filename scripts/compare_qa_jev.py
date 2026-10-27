@@ -76,7 +76,7 @@ def compare_labels(left,right,tasks,cases):
         judge.require(all((retrieval[0][k]=='not_applicable')==(retrieval[1][k]=='not_applicable') for k in retrieval[0]),
                       'Compared retrieval applicability differs')
         applicable=[k for k in retrieval[0] if retrieval[0][k]!='not_applicable']
-        result.update(assessment_scope='six_dimensions',boundary=repeatability.pair_numbers(*boundary),
+        result.update(assessment_scope='six_dimensions',boundary=repeatability.pair_numbers(*boundary,ordinal=False),
                       retrieval_support_agreement=repeatability.fraction(sum(retrieval[0][k]==retrieval[1][k] for k in applicable),len(applicable)),
                       retrieval_not_applicable_points=len(retrieval[0])-len(applicable))
     else:
