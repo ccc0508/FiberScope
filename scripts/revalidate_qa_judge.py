@@ -52,7 +52,13 @@ def revalidate(run_dir,records,output):
         review=judge.validate_review(raw,case,task,result,result_path,
                                      {d['id'] for d in manifest['source_documents']},sources,config,provenance,
                                      normalize_structure=True)
-        require(bool(review.get('structure_normalizations')),'No structural normalization was needed; inspect original rejection')
+        mixed_basis_compatibility=any(c['claim_type']=='fact'
+            and any(b.get('type')=='retrieval_scope_review' for b in c['basis'])
+            for c in review['claim_assessments'])
+        require(bool(review.get('structure_normalizations')) or mixed_basis_compatibility,
+                'No structural normalization was needed; inspect original rejection')
+        if not review.get('structure_normalizations'):
+            provenance['basis_validation_compatibility']='mixed_fact_with_separate_retrieval_scope_basis'
         review['reviewed_at']=original['finished_at']
         # The model-authored judgments, free text, and quotations are immutable.
         require(all(review[k]==value for k,value in raw.items()
@@ -84,11 +90,15 @@ def revalidate(run_dir,records,output):
         revalidated_sources=sources_by_task,previous_scores_in_prompt=False,provider_calls=0,
         normalization_policy='Fill missing diagnostic IDs; repair only a unique one-to-one diagnostic link; '
                              'split an explicit retrieval enum and colon-delimited explanation, preserving both; '
+                             'allow mixed facts to supplement separately verified quotations with actual-retrieval scope proof; '
                              'never infer or change selected labels, scores, rationale or source quotes.')))
     for tid,record in assembled:judge.write(output/'tasks'/(tid+'.json'),record)
     (output/'reviews.jsonl').write_text(''.join(judge.encode(record['review'])+'\n' for _,record in assembled),encoding='utf-8',newline='\n')
     progress=dict(completed=len(assembled),provider_calls=0,semantic_scores_changed=False,
-                  normalizations={tid:record['review']['structure_normalizations'] for tid,record in assembled})
+                  normalizations={tid:record['review'].get('structure_normalizations',[]) for tid,record in assembled})
+    compatibility={tid:record['review']['judge_provenance']['basis_validation_compatibility']
+                   for tid,record in assembled if record['review']['judge_provenance'].get('basis_validation_compatibility')}
+    if compatibility:progress['basis_compatibility_rechecks']=compatibility
     judge.write(output/'progress.json',progress)
     return progress
 

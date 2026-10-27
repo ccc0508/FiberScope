@@ -59,7 +59,11 @@ def source_basis(basis,result,claim_type,documents,sources=None):
                 text=texts[item['document_id']]
             require(normalized(item['quote']) in normalized(text),'Review quote is not in verified reference source')
         else:
-            require(claim_type=='scope' and bool(item.get('explanation')),'Scope basis requires explanation')
+            mixed_retrieval=(item['type']=='retrieval_scope_review' and claim_type=='fact'
+                             and any(b.get('type') in {'evidence','reference_evidence','paper_text'}
+                                     and bool(b.get('quote')) for b in basis))
+            require((claim_type=='scope' or mixed_retrieval) and bool(item.get('explanation')),
+                    'Scope basis requires explanation and either pure scope or separately quoted mixed factual content')
             if item['type']=='retrieval_scope_review':
                 require(isinstance(item.get('refs'),list) and len(item['refs'])==len(by_ref)
                         and set(item['refs'])==set(by_ref),'Retrieval scope basis must identify all actual evidence')
