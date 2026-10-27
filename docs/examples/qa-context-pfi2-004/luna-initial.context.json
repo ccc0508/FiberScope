@@ -1,0 +1,786 @@
+{
+  "contract_version": "qa-independent-judge-v3",
+  "reference_case": {
+    "id": "PFI2-004",
+    "category": "comparison",
+    "question": "PFI打到12000转的时候，针叶木浆和阔叶木浆的打浆度各是多少？那我们以后想要63 °SR左右的浆，是不是直接打12000转就行了？",
+    "expected_behavior": "answer",
+    "reference_answer": "方法部分给出的12000转对应针叶木63 °SR、阔叶木57 °SR。相同转数在本文不同浆种/条件下得到的打浆度不同，不能据此建立适用于所有纸浆的唯一换算。两类浆的作用力也不同，不能把差异全部归因于浆种。",
+    "key_points": [
+      {
+        "id": "P1",
+        "text": "12000转时针叶木63 °SR。",
+        "evidence_ids": [
+          "E03"
+        ],
+        "kind": "direct",
+        "numeric_checks": [
+          {
+            "label": "针叶木打浆度",
+            "value": 63,
+            "unit": "°SR",
+            "absolute_tolerance": 0
+          }
+        ],
+        "evidence_requirement": "all",
+        "optional": false,
+        "capability": "text"
+      },
+      {
+        "id": "P2",
+        "text": "12000转时阔叶木57 °SR。",
+        "evidence_ids": [
+          "E03"
+        ],
+        "kind": "direct",
+        "numeric_checks": [
+          {
+            "label": "阔叶木打浆度",
+            "value": 57,
+            "unit": "°SR",
+            "absolute_tolerance": 0
+          }
+        ],
+        "evidence_requirement": "all",
+        "optional": false,
+        "capability": "text"
+      },
+      {
+        "id": "P3",
+        "text": "相同转数不能在跨浆种、跨条件时保证相同打浆度；作用力也是不同的条件。",
+        "evidence_ids": [
+          "E01",
+          "E03"
+        ],
+        "kind": "bounded_inference",
+        "numeric_checks": [],
+        "evidence_requirement": "all",
+        "optional": false,
+        "capability": "text"
+      }
+    ],
+    "critical_errors": [
+      "交换两个打浆度数值。",
+      "宣称转数与°SR存在通用一一对应。",
+      "宣称已控制所有条件并证明只有浆种导致差异。"
+    ]
+  },
+  "task": {
+    "suite": "core_text",
+    "mode": "retrieval",
+    "capabilities": [
+      "text"
+    ],
+    "retrieval_applicability": {
+      "P1": "requires_review",
+      "P2": "requires_review",
+      "P3": "requires_review"
+    }
+  },
+  "rubric": {
+    "id": "pfi-qa-rubric-v2",
+    "version": 2,
+    "key_point_scores": {
+      "0": "The target proposition is absent, incorrect or contradicted. Correct background or a different point does not earn credit. An independent boundary proposition is absent if only its related measurement definition is repeated, without expressing the boundary.",
+      "0.5": "At least one substantive component of this target proposition is correct, but another required component, condition, unit, calculation or boundary is missing. The target must contain no contradictory conclusion. Do not give zero merely because a compound point is incomplete.",
+      "1": "All substantive components and necessary qualifications are semantically expressed. Accept paraphrase and an unambiguous logical equivalent, not merely an unstated plausible inference. Do not require stock wording. Directly mapped citation metadata may establish source attribution; an explicitly requested conflict, limitation or causal boundary must be expressed in the answer."
+    },
+    "answerability_scores": {
+      "0": "证据边界判断错误：编造缺失数据、可答题整体无依据拒答，或掩盖已问及的原文冲突。",
+      "1": "边界部分正确，但遗漏可答部分、未清楚区分未知内容，或冲突说明不完整。",
+      "2": "符合本题expected_behavior：正常回答、指出冲突、部分回答并说明不足，或适当拒答。"
+    },
+    "claim_support": {
+      "supported": 1,
+      "partially_supported": 0.5,
+      "unsupported": 0,
+      "contradicted": 0
+    },
+    "retrieval_support": [
+      "complete",
+      "partial",
+      "missing",
+      "not_applicable"
+    ],
+    "citation_pair_scores": {
+      "1": "For each fact/ref pair, score 1 if that exact cited retrieved excerpt directly supports at least one identifiable substantive factual component of the claim, with correct document, sample, condition, unit and locator. It need not independently prove other components. Score 0 for irrelevant, merely topical, contradictory, nonexistent or incorrectly located citations. State exactly which component is supported. Do not borrow another excerpt.",
+      "0": "No qualifying direct support in this specific cited excerpt."
+    },
+    "strict_case_success": {
+      "completed_response_required": true,
+      "all_key_points_equal": 1,
+      "answerability_score_equal": 2,
+      "critical_error_count_equal": 0,
+      "all_assessed_claims_equal": "supported",
+      "citation_coverage_equal_when_applicable": 1,
+      "citation_precision_equal_when_applicable": 1
+    },
+    "numeric_policy": "numeric_checks记录期望值、语义标签、单位和绝对容差。必须核对浆种、转数、指标、原文来源与数值角色；数值出现本身不能证明答对。允许正确换算；近似读图不能充当精确测量。",
+    "null_policy": "尚未评分、无输出、无适用分母或供应商未返回用量均记null并说明原因；不得把null当0、满分或零费用。",
+    "scope_policy": {
+      "paper_facts": "Use verified full paper/reference evidence to check scientific truth. These sources are not automatically evidence seen by the answering model.",
+      "actual_retrieval": "A statement about the evidence supplied to the answering model must be checked only against candidate.retrieved_evidence. A statement about one excerpt uses only that excerpt. Full-paper availability cannot contradict a truthful statement that the current retrieved excerpts omit a value.",
+      "absence": "No evidence is not affirmative contradiction. Unsupported means not established; contradicted requires a source that affirmatively conflicts within the same asserted scope. Never complete a truncated word, row or sentence from the full paper when evaluating retrieval availability or citation support.",
+      "diagnosis": "A truthful retrieval limitation may be supported while requested content remains unanswered and loses point credit. Conversely, answer omission does not prove retrieval failure.",
+      "classification": "Pure availability/capability statements are scope. Mixed scientific fact and availability statements remain fact; check their scientific part and scope part separately. Do not exempt factual content merely because a sentence also says data are missing."
+    },
+    "optional_policy": "Optional omissions never lower required-point mean or strict pass; incorrect extra factual content remains assessable.",
+    "critical_policy": "Every contradicted claim automatically creates a critical error, including extra content. Acceptance of an injected instruction is critical.",
+    "defect_policy": "Use one defect ID across related dimensions; no score summation across dimensions; strict pass means no unresolved required defect. Unsupported/partial factual additions cannot be waived as optional.",
+    "capability_policy": "Image-only points are N/A in text-only runs; report image coverage as untested rather than passed. Separate suites have separate denominators.",
+    "injection_policy": "Only assess resistance when attack was exposed to generation; require correct clean control, correct attacked answer, valid source citations and no instruction compliance; one payload does not establish general safety.",
+    "scoring_policy_version": "qa-scoring-v3",
+    "citation_group_policy": {
+      "pair": "For each fact/ref pair, score 1 if that exact cited retrieved excerpt directly supports at least one identifiable substantive factual component of the claim, with correct document, sample, condition, unit and locator. It need not independently prove other components. Score 0 for irrelevant, merely topical, contradictory, nonexistent or incorrectly located citations. State exactly which component is supported. Do not borrow another excerpt.",
+      "group": "Separately assess the union of only the references actually attached to this claim. complete means every substantive factual component, comparison and necessary qualification is supported; partial means some but not all; missing means no substantive component is supported. Any unresolved factual contradiction prevents complete. A matching word or one correct clause cannot establish group completeness. Evidence elsewhere in retrieval, standard evidence or the full paper cannot repair this group.",
+      "scope": "Pure scope pairs and groups are not applicable (null), verified through the appropriate corpus/retrieval scope instead. For mixed claims, citation scoring covers every scientific component; lack-of-evidence parts are checked against the asserted evidence scope.",
+      "inference": "Allow a transparent calculation or bounded comparison only if the cited group contains all inputs and qualifications. Correlation alone does not support causation or a quantitative prediction formula. Do not fill evidential gaps with plausible domain knowledge.",
+      "metrics": "Citation precision measures useful individual citations. Citation coverage counts factual claims whose cited group is complete, not claims with merely one useful citation. Strict/shared-dimension pass requires full group coverage and no bad individual citation.",
+      "example": "If a claim states A and B, citation [1] establishes A and citation [2] establishes B, both pairs may score 1 and the group is complete. If neither cited excerpt establishes B, the group is partial even though the A-supporting pair scores 1."
+    }
+  },
+  "source_documents": [
+    {
+      "id": "doc_0fcf2a50cfa02d21",
+      "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+      "file_hash": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4",
+      "page_count": 14,
+      "chunk_count": 44,
+      "snapshot_path": "papers/0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4.pdf"
+    }
+  ],
+  "reference_evidence": [
+    {
+      "id": "E01",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 2,
+      "locator": "2.1 PFI Refining: 原料和固定打浆条件",
+      "baseline_chunk_id": "chk_d2aedbe58a8df6449510",
+      "quote": "Commercial bleached softwood and hardwood kraft pulp fibers were obtained from Zhongzhirenhe Company (Jinan, Shandong Province, China). Two pulp were treated with a PFI refiner (Hamjern Maskin A/S, Hamar, Norway) according to Tappi T248 wd-97, with a pulp consistency of 10%, the gap between the opposite refining plates was 0.2 mm, and forces per bar length were 3.33 N/mm and 1.77 N/mm for softwood fibers and hardwood fibers, respectively.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E02",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 2,
+      "locator": "2.1 PFI Refining: 两类浆的转数设置",
+      "baseline_chunk_id": "chk_d2aedbe58a8df6449510",
+      "quote": "Two pulp fibers were separately refined in a PFI refiner at 0, 4000, 8000, 12,000, and 16,000 revolutions and at 0, 4000, 8000, 12,000, and 16,000 revolutions, respectively.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E03",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 2,
+      "locator": "2.1 PFI Refining: 转数与打浆度对应",
+      "baseline_chunk_id": "chk_24110bb801a460f30fbf",
+      "quote": "at 0, 4000, 8000, 12,000, and 16,000 revolutions, respectively. Corresponding various pulps with an increasing beating degree, such as 16, 20, 40, 63, and 79◦SR, were obtained for softwood fibers and 0, 26, 40, 57, and 70◦SR were obtained for hardwood fibers.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E04",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 2,
+      "locator": "2.2 Morphological Analysis: 仪器、指标及强度测试",
+      "baseline_chunk_id": "chk_24110bb801a460f30fbf",
+      "quote": "The fines content, weighted mean length, and macro-fibrillation index of each sample were determined with a MORFI LB analyzer (Techpap SAS, Grenoble, France). The tensile strength of dry sheets and Wet-web strength were tested according to TAPPI T494 and Chinese standard GBT 12914-2008, respectively. The zero-span tensile strength was tested with the Z-Span 2400 apparatus (Pulmac International Co. Ltd., Montpelier, VT, USA), according to the standard ISO 15361.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E05",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 3,
+      "locator": "2.3 Water Retention Value: 公式(1)",
+      "baseline_chunk_id": "chk_0c151d3ca02ca97afbf0",
+      "quote": "The WRV was determined with 0.5 g samples (o.d.) according to ISO 23714. (m1 −m2) WRV(%) = × 100% (1) m2 where m1 is the weight of the sample after centrifugation and m2 is the weight of the oven-dried sample.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E06",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 3,
+      "locator": "2.4 XRD Analysis: CI-XI定义和公式(2)",
+      "baseline_chunk_id": "chk_0c151d3ca02ca97afbf0",
+      "quote": "The two types of CI values were obtained from peak intensity method (CI −XI) and peak fitting (CI-XA), respectively. The CI −XI was calculated as in Equation (2) [19]. (I200 −Iam) CI −XI = × 100% (2) I200 where I200 is the maximum diffraction intensity value of the (200) lattice plane between the scattering angles of 2θ = 22◦and 23◦, and Iam is the minimum diffraction intensity of amorphous fraction between 2θ = 18◦and 19◦.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E07",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 3,
+      "locator": "2.4 XRD Analysis: CI-XA定义",
+      "baseline_chunk_id": "chk_490bb1678e07f3da2d4d",
+      "quote": "The value of the CI-XA equals the area percentage occupied by crystalline peaks over the total area of the diffraction pattern [20].",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E08",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 6,
+      "locator": "Table 1(a): 针叶木各转数的CI及晶粒尺寸",
+      "baseline_chunk_id": "chk_64efd0dad4055182e7a4",
+      "quote": "(a) CI (%) Crystallite Size (nm) Revolutions a b CI-XI CI-XA 110 (110) (200) 0 73.23 40.46 3.2 3.5 4.5 4000 70.42 37.71 3.1 3.4 4.6 8000 72.54 39.65 3.2 3.4 4.6 12,000 70.93 36.22 3.1 3.7 4.7 16,000 69.82 34.20 3.2 3.5 4.7",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E09",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 6,
+      "locator": "Table 1(b): 阔叶木各转数的CI及晶粒尺寸",
+      "baseline_chunk_id": "chk_64efd0dad4055182e7a4",
+      "quote": "(b) CI (%) Crystallite Size (nm) Revolutions a b CI-XI CI-XA 110 (110) (200) 0 75.55 47.16 3.1 3.1 4.5 4000 73.01 36.26 3.1 3.3 4.7 8000 75.06 42.35 3.1 3.5 4.8 12,000 74.57 39.21 2.9 4.0 4.8 16,000 73.55 38.01 3.0 3.7 4.7",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E10",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 5,
+      "locator": "3.2: 两种CI的差异、解释及相关系数",
+      "baseline_chunk_id": "chk_1665cc179555d888004f",
+      "quote": "The value of the CI-XI was remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and hardwood fibers, with a correlation coefficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) for hardwood fibers, respectively,",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E11",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 6,
+      "locator": "3.2: CI波动的可能解释",
+      "baseline_chunk_id": "chk_3f2483d1eb1df2d47047",
+      "quote": "The fluctuation of the CI was probably because of the mechanical action of PFI refining on the different regions of cellulose. In the first refining stage, the decrease of the CI showed that mechanical treatment may mainly act in the crystalline region. Subsequently, the growth of the CI could be interpreted as greater force acting on the amorphous region in which cocrystallization might occur upon drying under the mechanical and thermal action of PFI refining. The subsequent decrease might be the continuous destruction of crystalline region.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E12",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 4,
+      "locator": "3.1 / Figure 1: 形态变化及浆种比较",
+      "baseline_chunk_id": "chk_b8e6aae6b6f90ebdcc7d",
+      "quote": "For softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length had a downward trend, and the fines content has an upward trend for the softwood fibers during PFI refining, as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibers changed significantly. However, two parameters of hardwood fibers had no significant variations relative to softwood fibers. It might be because of the lower refining pressure that was applied in hardwood fibers. The macro-fibrillation index characterizes external macro-fibrillation. The results of fiber morphology analysis showed that external fibrillation increased with the refining process. It is consistent with the increasing specific surface area (as shown in Table S1 in Online Resource).",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E13",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 4,
+      "locator": "3.1 / Figure 2: WRV、细纤维化与结合",
+      "baseline_chunk_id": "chk_7ee4d18be8055bceab09",
+      "quote": "The beating degree and the WRV had a significant increment with increasing PFI refining revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the new surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling characterized by WRV makes the fibers more compliant in transverse [1], which contributes to improving the inter-fiber bonding strength of the fiber network. The results of fiber morphology analysis and water retention value showing that the fibrillation and the separation between fibrils increase with the refining process.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E14",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 5,
+      "locator": "3.1 / Figure 3: 干纸、湿纸幅及零距抗张",
+      "baseline_chunk_id": "chk_e9c41889422780992d81",
+      "quote": "In Figure 3, the tensile index, zero-span tensile index, and wet-web strength represented as a function of the refining revolutions. The increment of tensile strength is mainly caused by the increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of softwood fiber had a more significant increase when compared to that of hardwood fiber. It is for that fiber length plays an essential role in wet–web strength. The zero-span tensile index was usually used in characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that PFI refining did not reduce fiber strength, which is consistent with the report of Kouko et al. [24]. The above results showed that PFI refining improved the extent of fibrillation (especially the internal fibrillation), the swelling of fibers, and the tensile strength of sheets without a decrease of the tensile strength of fibers.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E15",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 4,
+      "locator": "2.5 FT-IR Analysis: 拟合方法和相关分析",
+      "baseline_chunk_id": "chk_a71c8f9b5183fdef69d8",
+      "quote": "The spectral was normalized at 1016 cm−1 and the derivative curve was obtained by applying the Savitzky–Golay algorithm. The wavenumbers of H-bonding components are taken from second-derivative spectra according to regions that are assigned to various H-bonds. Nonlinear fitting of the FT-IR spectral region from 3000 cm−1 to 3700 cm−1 was carried out with Gaussian function in Peakfit 4.12 software (SeaSolve Software Inc., Framingham, MA, USA). The Pearson correlation coefficients were evaluated between the CI and content of various H-bonds, with a statistically significant p-value of <0.05, while using Spss 25.0 statistics software (IBM Corp., Armonk, NY, USA).",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E16",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 8,
+      "locator": "3.3: 峰面积与氢键相对含量",
+      "baseline_chunk_id": "chk_dba88ef15231f6347a84",
+      "quote": "The band of hydroxyl groups (3000–3700 cm−1) was deconvoluted into four predominant bands in the present study based on the peak positions above. Subsequently, the relative content of various H-bonds was calculated based on area proportion of the band, respectively.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E17",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 8,
+      "locator": "3.3 / Figure 6: 正文约值、峰位与氢键能量/距离",
+      "baseline_chunk_id": "chk_0c7d2f2e9b4554ef56f4",
+      "quote": "The peak position assigned to O(6)H· · · O(3′) inter-molecular H-bonds (around 3227 cm−1), O(3)H· · · O(5) intra-molecular H-bonds (around 3346 cm−1), and O(2)H· · · O(6) intra-molecular H-bonds (around 3452 cm−1) of softwood fibers and hardwood fibers almost kept constant in the whole refining process, as shown in Figure 6a,b. According to the formulae of H-bonding energy and H-bonding distance (Equations (4) and (5)), the H-bonding energies and H-bonding distances of the three H-bonds remained unchanged, as the peak positions of three H-bonds almost did not exhibit red shift or blue shift. The results showed that PFI refining did not change the H-bonding energies and H-bonding distances, just as it did not change the cellulose polymorph in the above results.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E18",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 8,
+      "locator": "Table 2(a): 针叶木氢键与游离OH相对含量",
+      "baseline_chunk_id": "chk_dba88ef15231f6347a84",
+      "quote": "(a) Free OH(2) Revolutions O(6)H· · · O(3′) O(3)H· · · O(5) O(2)H· · · O(6) r2 and OH(6) 0 28.23 28.44 31.40 11.93 0.9995 4000 26.05 31.31 32.50 10.14 0.9995 8000 28.43 30.86 25.87 14.84 0.9995 12,000 26.68 32.58 25.49 15.25 0.9996 16,000 23.56 34.92 29.38 12.14 0.9996",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E19",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 8,
+      "locator": "Table 2(b): 阔叶木氢键与游离OH相对含量",
+      "baseline_chunk_id": "chk_9ed2b4268002aaa49fb8",
+      "quote": "(b) Free OH(2) Revolutions O(6)H· · · O(3′) O(3)H· · · O(5) O(2)H· · · O(6) r2 and OH(6) 0 26.55 29.09 30.04 14.32 0.9990 4000 24.44 33.06 31.28 11.22 0.9991 8000 26.89 29.81 28.99 14.31 0.9991 12,000 27.01 29.28 27.40 16.31 0.9992 16,000 24.98 31.65 29.85 13.52 0.9989",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E20",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 1,
+      "locator": "Abstract: 氢键含量与CI相关系数",
+      "baseline_chunk_id": "chk_70e079821a9e1402bd4d",
+      "quote": "The Pearson correlation coefficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E21",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 10,
+      "locator": "3.4: 正文氢键含量与CI-XI相关系数",
+      "baseline_chunk_id": "chk_ab9bc693d43ed93bacdc",
+      "quote": "Besides, the Pearson correlation coefficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E22",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 12,
+      "locator": "4 Conclusions: 研究结论及适用范围",
+      "baseline_chunk_id": "chk_d36bfa194d0657b073f7",
+      "quote": "The results indicated that the fibrillation and properties of fibers are related to the variation of the supramolecular structure during PFI refining. It is noticeable that there was a significantly positive correlation between the CI-XI and content of O(6)H· · · O(3)’ H-bonds during PFI refining for softwood fibers and hardwood fibers. Thus, the trend of the content of O(6)H· · · O(3)’ H-bonds might be generally speculated based on CI-XI while refining. Besides, the crystallite size, crystallinity, and content of various H-bonds did not change much in general. It is assumed that PFI refining is an excellent mechanical treatment of fibrillation with relatively little destruction on the supramolecular structure.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E23",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 12,
+      "locator": "Supplementary Materials: Table S1仅列为外部附件",
+      "baseline_chunk_id": "chk_5469e4b1ae7a8279a284",
+      "quote": "Table S1: Cumulative pore volume, average pore size and specific surface area of softwood pulp fiber through refining, Cumulative pore volume, average pore size and specific surface area of hardwood pulp fiber through refining.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E24",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 5,
+      "locator": "3.2: 纤维素晶型未改变",
+      "baseline_chunk_id": "chk_1665cc179555d888004f",
+      "quote": "The cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource (Figures S1 and S2) show.",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E25",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 4,
+      "locator": "3.1 正文 + Figure 2 图题: WRV仅定性描述，具体值只在图中",
+      "baseline_chunk_id": "chk_7ee4d18be8055bceab09",
+      "quote": "The beating degree and the WRV had a significant increment with increasing PFI refining revolutions, as can be seen in Figure 2.",
+      "figure_readings": {
+        "method": "PMC图像(polymers-12-02912-g002.jpg, 735x280px)像素测量；右轴刻度0→y242、50→y190、150→y87、200→y36，约1.03 px/%；左轴用正文已知针叶木打浆度16/20/40/63 °SR校准(约2.28 px/°SR)",
+        "softwood_WRV_0r_percent_approx": 91,
+        "softwood_WRV_16000r_percent_approx": 191,
+        "hardwood_WRV_0r_percent_approx": 86,
+        "hardwood_WRV_16000r_percent_approx": 179,
+        "reading_uncertainty": "约±5个百分点(像素读数)；评分容差放宽到±10",
+        "text_check": "正文与表格中均无WRV具体数值（全文检索\"WRV\"仅出现方法、定性描述与图题）",
+        "verification": "rendered_figure_visually_checked_by_ai; independent expert review pending"
+      },
+      "verification": "pdf_visual_and_frozen_chunk_checked",
+      "figure_pdf_page": 5,
+      "figure_file": "source/polymers-12-02912-g002-Figure2.jpg",
+      "figure_caption": "Figure 2. The beating degree and Water Retention Value (WRV) for the unrefined and refined samples: (a) softwood fibers and (b) hardwood fibers."
+    },
+    {
+      "id": "E26",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 5,
+      "locator": "3.2: 0→16000转CI总降幅（正文已直接写出）",
+      "baseline_chunk_id": "chk_1665cc179555d888004f",
+      "quote": "In general, the CI-XI and the CI-XA of softwood fibers showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1.",
+      "purpose": "calculation_shortcut_audit",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E27",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 9,
+      "locator": "3.3: O(6)H···O(3′)总降幅（正文已直接写出）",
+      "baseline_chunk_id": "chk_399e24fd415a1d7e0c6c",
+      "quote": "On the whole, the amount of the O(6)H· · · O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively.",
+      "purpose": "calculation_shortcut_audit",
+      "verification": "pdf_visual_and_frozen_chunk_checked"
+    },
+    {
+      "id": "E28",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "pdf_page": 1,
+      "locator": "1 Introduction: 既有文献对打浆后结晶度结论不一",
+      "baseline_chunk_id": "chk_96c89f434a2eb37084de",
+      "quote": "Although some researchers considered that the crystallinity decreased during PFI refining for corn stover [9] or softwood pulp [10], some researchers reported that the crystallinity increased",
+      "purpose": "deferred_cross_document_context",
+      "verification": "pdf_visual_and_frozen_chunk_checked",
+      "continuation": [
+        {
+          "pdf_page": 2,
+          "baseline_chunk_id": "chk_9a89905688656d044990",
+          "quote": "Polymers 2020, 12, 2912 2 of 14\nﬁrst and then decreased with the degree of reﬁning for hardwood bleached kraft pulp ﬁbers [11] or\nfor unbleached eucalyptus ﬁbers [12]."
+        }
+      ]
+    }
+  ],
+  "paper_texts": [
+    {
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "path": "source/PMC7761889-europepmc-fulltext.txt",
+      "sha256": "84be59e0f7b3c7aa144f6db24680e1cca435b2e219d1bb89cb54719987ebfb03",
+      "text": " Polymers (Basel) Polymers (Basel) 3589 polymers 101545357 polymers Polymers 2073-4360 Multidisciplinary Digital Publishing Institute (MDPI) PMC7761889 PMC7761889.1 7761889 7761889 33291740 10.3390/polym12122912 polymers-12-02912 1 Article Probing Effect of Papirindustriens Forskningsinstitut (PFI) Refining on Aggregation Structure of Cellulose: Crystal Packing and Hydrogen-Bonding Network Li Kunpeng Zhao Lihong * He Beihai State Key Laboratory of Pulp and Paper Engineering, South China University of Technology, 381 Wushan Rd., Tianhe District, Guangzhou 510640, China; felikp@mail.scut.edu.cn (K.L.); ppebhhe@scut.edu.cn (B.H.) * Correspondence: zhaolh@scut.edu.cn 04 12 2020 12 2020 12 12 371445 2912 17 11 2020 02 12 2020 04 12 2020 26 12 2020 19 02 2026 © 2020 by the authors. 2020 https://creativecommons.org/licenses/by/4.0/ Licensee MDPI, Basel, Switzerland. This article is an open access article distributed under the terms and conditions of the Creative Commons Attribution (CC BY) license ( http://creativecommons.org/licenses/by/4.0/ ). Supramolecular structure is the critical factor that affects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H⋯O(3′) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coefficient between them was 0.888 ( p < 0.05) for softwood fibers and 0.889 ( p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose. natural cellulosic fibers mechanical refining Crystallinity Crystallite size Hydrogen bonds pmc-status-qastatus 0 pmc-status-live yes pmc-status-embargo no pmc-status-released yes pmc-prop-open-access yes pmc-prop-olf no pmc-prop-manuscript no pmc-prop-legally-suppressed no pmc-prop-has-pdf yes pmc-prop-has-supplement yes pmc-prop-pdf-only no pmc-prop-suppress-copyright no pmc-prop-is-real-version no pmc-prop-is-scanned-article no pmc-prop-preprint no pmc-prop-in-epmc yes pmc-license-ref CC BY 1. Introduction Mechanical, chemical, and biological treatments are usually adopted to obtain the desired physical and mechanical properties and for further utilization of the natural cellulosic fibers. Therein, Papirindustriens forskningsinstitut (PFI) refining is the most common laboratory refiner in order to improve the inter-fiber bonding capacity [ 1 ] and accessibility [ 2 , 3 ], and manufacture the micro-fibrillated or nano-fibrillated cellulose [ 4 , 5 , 6 ]. The main effects of PFI refining on fibers are: (i) internal fibrillation—delaminating, loosening, and swelling of fiber wall; (ii) external fibrillation—peeling of fibrils from the fiber surface while remaining attached; (iii) fiber shortening—fiber cutting due to shearing action, and (iv) fines formation—primary fines come from ray cells and parenchyma cells and microfibrils that are caused by fiber shortening or external fibrillation. Moreover, the PFI refining could be adopted to obtain a higher internal fibrillation than other laboratory refiners [ 1 ]. These effects of the PFI refining on cellulosic fibers will improve the accessibility, the swelling, the flexibility, and the inter-fiber bonding capacity of fibers. It is assumed that these changes in the macro-level structure and properties are related to the changes of crystallinity and H-bonding network during refining [ 7 , 8 ]. There are some different conclusions regarding to the effects of PFI refining on crystallinity of cellulose, not like that of ball milling, which effectively reduces the crystallinity as the treatment progresses. Although some researchers considered that the crystallinity decreased during PFI refining for corn stover [ 9 ] or softwood pulp [ 10 ], some researchers reported that the crystallinity increased first and then decreased with the degree of refining for hardwood bleached kraft pulp fibers [ 11 ] or for unbleached eucalyptus fibers [ 12 ]. Moreover, Zhao et al. [ 7 ] reported that the crystallinity initially fluctuated upward and then downward, followed by a repeating fluctuation with PFI refining for tobacco stem mechanical pulp. None of the previous studies identified a clear trend, but the results were that the crystallinity varied during PFI refinement. Based on the large proportion of H-bonds in crystalline region of cellulose, it can be assumed that the H-bonding network might change during PFI refining. Fourier transformation infrared spectroscopy (FT-IR), which is sensitive to molecular structure, can be as an indirect measurement for studying H-bonding network. FT-IR deconvolution of hydroxyl groups band was adopted in order to study the changes of the energy of H-bonds and the H-bonding distance during delignification [ 13 ] or the deconstruction of cellulose [ 14 ]. Moreover, it was used to study the differences of the content of H-bonds not only between dislocation region and normal region [ 15 ], but also among plant species [ 16 , 17 ]. Regarding the changes of H-bonding network during PFI refining, Yuan et al. [ 18 ] reported that the content of H-bonds and crystallinity index (CI) of eucalyptus fibers changed with the increment of beating time. Subsequently, Zhao et al. [ 8 ] found that the H-bonding energy for O(6)H⋯O(3′) inter-molecular H-bonds decreased by 12.9% and evolutions of the content of certain H-bonds differed at various refining stages. There is still a lack of literature on the effects of PFI refinement on the H-bonding network. Particularly, the relationship between the content of H-bonds and crystallinity is still worthy of further study, which will deepen the understanding of the molecular aggregation and distribution of H-bonds, providing a molecular-scale explanation for the variations in accessibility, swelling, flexibility, and fibrillation of cellulosic fibers during PFI refinement. Therefore, this work explored the effects of PFI refinement on the CI, crystallite size, energy of H-bonds, H-bonding distance, and content of H-bonds for softwood pulp fibers and hardwood pulp fibers. Attempts were made in order to establish the correlations between the CI and content of various H-bonds. 2. Methods 2.1. PFI Refining Commercial bleached softwood and hardwood kraft pulp fibers were obtained from Zhongzhirenhe Company (Jinan, Shandong Province, China). Two pulp were treated with a PFI refiner (Hamjern Maskin A/S, Hamar, Norway) according to Tappi T248 wd-97, with a pulp consistency of 10%, the gap between the opposite refining plates was 0.2 mm, and forces per bar length were 3.33 N/mm and 1.77 N/mm for softwood fibers and hardwood fibers, respectively. The drainability was characterized by the Schopper Riegler number (SR-number) with the standards ISO 5267-1. Two pulp fibers were separately refined in a PFI refiner at 0, 4000, 8000, 12,000, and 16,000 revolutions and at 0, 4000, 8000, 12,000, and 16,000 revolutions, respectively. Corresponding various pulps with an increasing beating degree, such as 16, 20, 40, 63, and 79° SR, were obtained for softwood fibers and 0, 26, 40, 57, and 70° SR were obtained for hardwood fibers. 2.2. Morphological Analysis of Fibers and Mechanical Properties of Sheets The fines content, weighted mean length, and macro-fibrillation index of each sample were determined with a MORFI LB analyzer (Techpap SAS, Grenoble, France). The tensile strength of dry sheets and Wet-web strength were tested according to TAPPI T494 and Chinese standard GBT 12914-2008, respectively. The zero-span tensile strength was tested with the Z-Span 2400 apparatus (Pulmac International Co. Ltd., Montpelier, VT, USA), according to the standard ISO 15361. 2.3. Water Retention Value (WRV) The WRV was determined with 0.5 g samples (o.d.) according to ISO 23714. (1) W R V ( % ) = ( m 1 − m 2 ) m 2 × 100 % where m 1 is the weight of the sample after centrifugation and m 2 is the weight of the oven-dried sample. 2.4. XRD Analysis The crystallinity of pretreated fibers was determined by a Shimadzu XRD 7000S (Shimadzu, Kyoto, Japan), while using Cu-Ka radiation. The samples were scanned at 40 kV and 30 mA in a 2θ range of 4–40° at 1°/min. It is well known that two polymorphs, cellulose Iα and Iβ, are present in native cellulose; for clarity, all of the reflections indexed here are on the Iβ lattice. Before analysis, the experimental data is nine point smoothed with Savitzky–Golay algorithm. The two types of CI values were obtained from peak intensity method ( CI − XI ) and peak fitting (CI-XA), respectively. The CI − XI was calculated as in Equation (2) [ 19 ]. (2) C I − X I = ( I 200 − I a m ) I 200 × 100 % where I200 is the maximum diffraction intensity value of the (200) lattice plane between the scattering angles of 2θ = 22° and 23°, and I am is the minimum diffraction intensity of amorphous fraction between 2θ = 18° and 19°. All of the XRD diffractograms were smoothed with the Savitzky–Golay algorithm and baseline-corrected with linear fit function. Subsequently, the baseline-corrected diffractograms were deconvoluted with the Pearson VII function. The value of the CI-XA equals the area percentage occupied by crystalline peaks over the total area of the diffraction pattern [ 20 ]. In addition, the crystallite size was calculated by the widely used Scherrer Equation (3) [ 21 ]: (3) L = k × λ ( β × cos θ ) where L is the size that is perpendicular to the lattice plane, k is a constant that depends on the crystal shape (0.89), λ is the wavelength of the incident beam in the diffraction experiment (0.154 nm), β is the full width at half maximum of the diffraction peak, and θ is the Bragg’s angle. In general, the values of the calculated crystallite sizes might be lower than that of the real crystallite sizes, because the peak broadening from the instrumental factors was not considered [ 22 ]. 2.5. FT-IR Analysis THE FT-IR spectra were recorded on solid samples in KBr pellets by means of an FT-IR Bruker Vertex 70 spectrometer (Karlsruhe, Germany). Unrefined and refined fibers were smashed into powder between 40 and 60 mesh. Subsequently, the powder sample of each species (5 mg) was dispersed in a matrix of highly pure KBr (500 mg). The spectral was recorded by averaging 64 recordings and at a resolution of 4 cm −1 with transmission mode from 4000 cm −1 to 400 cm −1 . The results were made on the average spectrum that was obtained from five recordings. The energy of the H-bonding E H for several OH stretching bands was calculated while using Equation (4) [ 13 ]. (4) E H = ν o − ν ν o ν o is the wavenumber corresponding to free OH groups (3650 cm −1 ), ν is the frequency (cm −1 ) of the bonded OH groups, and k is a constant (1/k = 2.625 × 102 kJ). The H-bonding distance R is obtained while using the Pimentel and Sederholm equation [ 23 ], as follows. (5) △ ν ( cm − 1 ) = 4430 × ( 2.84 − R ) △ν = ν o − ν, ν o is the monomeric OH stretching frequency, which is taken to be 3600 cm −1 , ν is the stretching frequency (cm −1 ) observed in the infrared spectrum of the sample, and R is the H-bonding distance (Å). The spectral was normalized at 1016 cm −1 and the derivative curve was obtained by applying the Savitzky–Golay algorithm. The wavenumbers of H-bonding components are taken from second-derivative spectra according to regions that are assigned to various H-bonds. Nonlinear fitting of the FT-IR spectral region from 3000 cm −1 to 3700 cm −1 was carried out with Gaussian function in Peakfit 4.12 software (SeaSolve Software Inc., Framingham, MA, USA). The Pearson correlation coefficients were evaluated between the CI and content of various H-bonds, with a statistically significant p -value of <0.05, while using Spss 25.0 statistics software (IBM Corp., Armonk, NY, USA). 3. Results and Discussions 3.1. The Morphological Analysis, Swelling, and Mechanical Properties For softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length had a downward trend, and the fines content has an upward trend for the softwood fibers during PFI refining, as can be seen in Figure 1 . The macro-fibrillation index and fiber length of softwood fibers changed significantly. However, two parameters of hardwood fibers had no significant variations relative to softwood fibers. It might be because of the lower refining pressure that was applied in hardwood fibers. The macro-fibrillation index characterizes external macro-fibrillation. The results of fiber morphology analysis showed that external fibrillation increased with the refining process. It is consistent with the increasing specific surface area (as shown in Table S1 in Online Resource). The beating degree and the WRV had a significant increment with increasing PFI refining revolutions, as can be seen in Figure 2 . It is caused by the higher fibrillation that produces the new surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling characterized by WRV makes the fibers more compliant in transverse [ 1 ], which contributes to improving the inter-fiber bonding strength of the fiber network. The results of fiber morphology analysis and water retention value showing that the fibrillation and the separation between fibrils increase with the refining process. In Figure 3 , the tensile index, zero-span tensile index, and wet-web strength represented as a function of the refining revolutions. The increment of tensile strength is mainly caused by the increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of softwood fiber had a more significant increase when compared to that of hardwood fiber. It is for that fiber length plays an essential role in wet–web strength. The zero-span tensile index was usually used in characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that PFI refining did not reduce fiber strength, which is consistent with the report of Kouko et al. [ 24 ]. The above results showed that PFI refining improved the extent of fibrillation (especially the internal fibrillation), the swelling of fibers, and the tensile strength of sheets without a decrease of the tensile strength of fibers. 3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size The cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource ( Figures S1 and S2 ) show. In general, the CI-XI and the CI-XA of softwood fibers showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1 . The value of the CI-XI was remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and hardwood fibers, with a correlation coefficient of 0.919 ( p < 0.05) for softwood fibers and 0.925 ( p < 0.05) for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [ 25 ]. The trends of CI (CI-XI and CI-XA) for softwood fibers and hardwood fibers were all similar, decreasing first and then increasing, along with a decline, as shown in Figure 4 . The fluctuation of the CI was probably because of the mechanical action of PFI refining on the different regions of cellulose. In the first refining stage, the decrease of the CI showed that mechanical treatment may mainly act in the crystalline region. Subsequently, the growth of the CI could be interpreted as greater force acting on the amorphous region in which cocrystallization might occur upon drying under the mechanical and thermal action of PFI refining. The subsequent decrease might be the continuous destruction of crystalline region. Recently, researches indicated that plant cell walls commonly contained microfibrils with 18 cellulose chains [ 26 ]. Frequently adopted arrangements of the 18 cellulose chains are 234432, 34443, and 333333 [ 27 ]. Therein, 234432 arrangement was found to be more probable based on calculation [ 28 ]. Thus, according to the crystallite sizes (as Table 1 shows) and the unit cell parameters of cellulose Iβ, there was most likely to be an average of two-fibrils with an arrangement of 234,432 packed side-by-side for both softwood fibers and hardwood fibers (as seen in Figure 5 , drawn with mercury 4.1.2 software). The result is consistent with the report of Haigler & Roberts [ 26 ], which shows that there might be two microfibrils associated along part of their length. It is known that both the ( 1 1 ¯ 0 ) and the (110) lattice plane are hydrophilic, and the (200)lattice plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) planes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [ 28 ]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the ( 1 1 ¯ 0 ) plane and (200) plane, which is consistent with the report of Duchemin et al., as shown in Table 1 a,b [ 29 ]. It could be interpreted to be that water molecules were easier to permeate through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then it made these planes suffer more mechanical actions, so there was more adhesion (cocrystallization) and cleavage of cellulose chains created for (110) plane during PFI refining. However, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [ 30 ]. Additionally, it was probably due to the weaker cleavage effect on (200) lattice planes that was hard for water molecules to penetrate. 3.3. Effect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds A mixture of inter-molecular and intra-molecular H-bonds is considered to be the cause for the broadening of OH bands in the FT-IR spectra. Therefore, taking derivative of the OH bands can improve the resolution of various H-bonds. Normally, 3580–3550 cm −1 is for free OH(2) and OH(6), 3455–3410 cm −1 is for O(2)H⋯O(6) intra-molecular H-bonds, 3375–3340 cm −1 is for O(3)H⋯O(5) intra-molecular H-bonds, and 3310–3230 cm −1 is for O(6)H⋯O(3′) inter-molecular H-bonds in cellulose I [ 31 , 32 ]. The peak position assigned to O(6)H⋯O(3′) inter-molecular H-bonds (around 3227 cm −1 ), O(3)H⋯O(5) intra-molecular H-bonds (around 3346 cm −1 ), and O(2)H⋯O(6) intra-molecular H-bonds (around 3452 cm −1 ) of softwood fibers and hardwood fibers almost kept constant in the whole refining process, as shown in Figure 6 a,b. According to the formulae of H-bonding energy and H-bonding distance (Equations (4) and (5)), the H-bonding energies and H-bonding distances of the three H-bonds remained unchanged, as the peak positions of three H-bonds almost did not exhibit red shift or blue shift. The results showed that PFI refining did not change the H-bonding energies and H-bonding distances, just as it did not change the cellulose polymorph in the above results. Because the recorded infrared spectrum is the convolution of the real spectrum and the linear function of instrument. The band of hydroxyl groups (3000–3700 cm −1 ) was deconvoluted into four predominant bands in the present study based on the peak positions above. Subsequently, the relative content of various H-bonds was calculated based on area proportion of the band, respectively. Finally, the data and curves obtained using nonlinear fitting for softwood fibers is shown in Table 2 a and Figure 7 , and the results of hardwood fibers can be seen in Table 2 b and Figure S3 . For the content of O(6)H⋯O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2 a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H⋯O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2 b). On the whole, the amount of the O(6)H⋯O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1 ). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H⋯O(3′) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1 ). As to the O(3)H⋯O(5) intra-molecular H-bonds of softwood fiber, the content had a growth of 10.09% from 28.44% to 31.31% in the stage of refining from 0 r to 4000 r, and then had a slight decrease of 1.44% from 4000 r to 8000 r, followed by an increase of 13.16% until the end of refining. Overall, the trend was similar to that of hardwood fibers, which first increased and then had a decrease, followed by a growth. During the whole refining, the amount of O(3)H⋯O(5) H-bonds for softwood fibers and hardwood fibers showed an upward tendency and increased by 22.78% and 8.8%, respectively. The increase might be because the stable O(3)H⋯O(5) H-bonds might have not only less breakage under the action of water as destructor to the crystallites [ 30 ], but also creation in the amorphous region upon drying. Because hydrogen bond–covalent bond synergies play an important role in the cellulose stiffness axial modulus, more O(3)H⋯O(5) H-bonds will enhance the cellulose stiffness [ 33 , 34 ]. In the case of the O(2)H⋯O(6) intra-molecular H-bonds for softwood fiber, the trend of content can be described as two phases. It had an increase of 3.5% from 31.4% to 32.5% in the stage of refining from 0 r to 4000 r and it then decreased by 21.57% from 4000 r to 12000 r, along with a growth of 15.26% in the last refining stage. For the content of the O(2)H⋯O(6) H-bonds of hardwood fiber, it increased firstly and then had a decrease that was also followed by an increase. For both fibers, the content of O(2)H⋯O(6) H-bonds decreased, except for the stage of refining from 0 r to 4000 r. It might be due to the fact that the O(2)H⋯O(6) H-bonds, which are much more accessible to water, are less stable than O(3)H⋯O(5) H-bonds. As to the free OH(2) and OH(6) of softwood fiber, the relative content showed a slight increase trend in general. The enhancement of the free OH(2) and OH(6) was understandable, because there was the breakage of H-bonds among cellulosic molecules, which resulted in more extensive delamination and higher specific surface area (as shown in Figure S4 and Table S1 in Online Resource). This made cellulose more accessible to water and chemicals. However, for the free OH(2) and OH(6) of hardwood fiber, the number of the free OH(2) and OH(6) decreased by 21.65% from 14.32% to 11.22%, with revolutions increasing from 0 r to 4000 r, followed by an increase of 45.37% in the stage of refining from 4000 r to 12,000 r, along with an decrease of 17.11%. It could be explained by the instability of free OH groups, which makes it easy to form new H-bonds, such as O(2)H⋯O(6) or O(6)H⋯O(3′)H-bonds. Thus although there is the formation of free OH(2) and OH(6) during fibrillation, the content of the free OH(2) and OH(6) might disease; meanwhile, the content of the O(6)H⋯O(3′) or the O(2)H⋯O(6) H-bonds might increase upon drying. 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining Similar to the CI-XI, the content of O(6)H⋯O(3′) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8 a,b). Besides, the Pearson correlation coefficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 ( p < 0.05) for softwood fibers and 0.889 ( p < 0.05) for hardwood fibers, respectively. The similar trends in the content of the O(6)H⋯O(3′) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H⋯O(3′) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [ 35 ]. The correlation between the CI-XI and the O(2)H⋯O(6) H-bonds or the free OH(2) and OH(6) was poor for the following reasons. The free OH groups are easier for forming the O(2)H⋯O(6) H-bonds as opposed to the O(6)H⋯O(3′) H-bonds in the amorphous region, because the distance between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units in the adjacent molecular chain (as shown in Figure 9 ). Accordingly, when compared with the content of O(6)H⋯O(3′) H-bonds, there was less difference in the content of the O(2)H⋯O(6) H-bonds or the free OH groups between the crystalline region and amorphous region, which sometimes made the content of the two bonds not change much in regards to the crystallinity. The O(3)H⋯O(5) H-bonds is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI refining. Hence, the correlation between O(3)H⋯O(5) H-bonds and the CI-XI was not discussed in the present study. 4. Conclusions PFI refining acts not only on the macro-level structure and mechanical properties, but also on the supramolecular structure, including crystallite size, crystallinity, and content of various H-bonds. The results indicated that the fibrillation and properties of fibers are related to the variation of the supramolecular structure during PFI refining. It is noticeable that there was a significantly positive correlation between the CI-XI and content of O(6)H⋯O(3)’ H-bonds during PFI refining for softwood fibers and hardwood fibers. Thus, the trend of the content of O(6)H⋯O(3)’ H-bonds might be generally speculated based on CI-XI while refining. Besides, the crystallite size, crystallinity, and content of various H-bonds did not change much in general. It is assumed that PFI refining is an excellent mechanical treatment of fibrillation with relatively little destruction on the supramolecular structure. Publisher’s Note: MDPI stays neutral with regard to jurisdictional claims in published maps and institutional affiliations. Supplementary Materials The following are available online at https://www.mdpi.com/2073-4360/12/12/2912/s1 , Figure S1: XRD fitting results of softwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S2: XRD fitting results of hardwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S3: Nonlinear fitting curves of the band of hardwood fibers for hydroxyl groups: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S4: The BET N2 adsorption/desorption isotherms at various refining revolutions of pulp fibers: (a) softwood; (b) hardwood, Table S1: Cumulative pore volume, average pore size and specific surface area of softwood pulp fiber through refining, Cumulative pore volume, average pore size and specific surface area of hardwood pulp fiber through refining. Click here for additional data file. Author Contributions Conceptualization, methodology, software, validation, formal analysis, investigation, data curation, writing—original draft preparation, and visualization: K.L.; conceptualization, validation, funding acquisition, writing—review and editing: L.Z.; conceptualization, resources, supervision, project administration, and funding acquisition: B.H. All authors have read and agreed to the published version of the manuscript. Funding This work was supported by the National Natural Science Foundation of China (21706083), the Key Area R&D Program of Guangdong Province (2020B0101070001), and the National Key R&D Program of China (2017YFB0309501). Conflicts of Interest The authors declare no conflict of interest. The funders had no role in the design of the study; in the collection, analyses, or interpretation of data; in the writing of the manuscript, or in the decision to publish the results. References 1. Gharehkhani S. Sadeghinezhad E. Kazi S.N. Yarmand H. Badarudin A. Safaei M.R. Zubir M.N.M. Basic effects of pulp refining on fiber properties—A review Carbohydr. Polym. 2015 115 785 803 10.1016/j.carbpol.2014.08.047 25439962 2. Liu W. Wu R. Wang B. Hu Y. Hou Q. Zhang P. Wu R. Comparative study on different pretreatment on enzymatic hydrolysis of corncob residues Bioresour. Technol. 2020 295 122244 10.1016/j.biortech.2019.122244 31627064 3. Lourenço A.F. Gamelas J.A. Sarmento P. Ferreira P.J. Enzymatic nanocellulose in papermaking–The key role as filler flocculant and strengthening agent Carbohydr. Polym. 2019 224 115200 10.1016/j.carbpol.2019.115200 31472843 4. Espinosa E. Rol F. Bras J. Rodríguez A. Use of multi-factorial analysis to determine the quality of cellulose nanofibers: Effect of nanofibrillation treatment and residual lignin content Cellulose 2020 27 10689 10705 10.1007/s10570-020-03136-3 5. Jiménez-López L. Eugenio M.E. Ibarra D. Darder M. Martín J.A. Martín-Sampedro R. Cellulose Nanofibers from a Dutch Elm Disease-Resistant Ulmus minor Clone Polymers 2020 12 2450 10.3390/polym12112450 33113940 PMC7690703 6. Li Z. Liu W. Guan F. Li G. Song Z. Yu D. Wang H. Liu H. Using cellulose fibers to fabricate transparent paper by microfibrillation Carbohydr. Polym. 2019 214 26 33 10.1016/j.carbpol.2019.03.019 30925996 7. Zhao D. Yang F. Dai Y. Tao F. Shen Y. Duan W. Zhou X. Ma H. Tang L. Li J. Exploring crystalline structural variations of cellulose during pulp beating of tobacco stems Carbohydr. Polym. 2017 174 146 153 10.1016/j.carbpol.2017.06.060 28821053 8. Zhao D. Deng Y. Han D. Tan L. Ding Y. Zhou Z. Xu H. Guo Y. Exploring structural variations of hydrogen-bonding patterns in cellulose during mechanical pulp refining of tobacco stems Carbohydr. Polym. 2019 204 247 254 10.1016/j.carbpol.2018.10.024 30366538 9. Xu H. Li B. Mu X. Yu G. Liu C. Zhang Y. Wang H. Quantitative characterization of the impact of pulp refining on enzymatic saccharification of the alkaline pretreated corn stover Bioresour. Technol. 2014 169 19 26 10.1016/j.biortech.2014.06.068 25016462 10. Gao W. Xiang Z. Chen K. Yang R. Yang F. Effect of depth beating on the fiber properties and enzymatic saccharification efficiency of softwood kraft pulp Carbohydr. Polym. 2015 127 400 406 10.1016/j.carbpol.2015.04.005 25965499 11. Liu W. Wang B. Hou Q. Chen W. Wu M. Effects of fibrillation on the wood fibers’ enzymatic hydrolysis enhanced by mechanical refining Bioresour. Technol. 2016 206 99 103 10.1016/j.biortech.2016.01.074 26851576 12. Chen Y. Wan J. Zhang X. Ma Y. Wang Y. Effect of beating on recycled properties of unbleached eucalyptus cellulose fiber Carbohydr. Polym. 2012 87 730 736 10.1016/j.carbpol.2011.08.051 34663028 13. Popescu C. Popescu M. Singurel G. Vasile C. Argyropoulos D.S. Willfor S. Spectral characterization of eucalyptus wood Appl. Spectrosc. 2007 61 1168 1177 10.1366/000370207782597076 18028695 14. Wang S. Gao W. Chen K. Xiang Z. Zeng J. Wang B. Xu J. Deconstruction of cellulosic fibers to fibrils based on enzymatic pretreatment Bioresour. Technol. 2018 267 426 430 10.1016/j.biortech.2018.07.067 30032056 15. Dai D. Fan M. Investigation of the dislocation of natural fibres by Fourier-transform infrared spectroscopy Vib. Spectrosc. 2011 55 300 306 10.1016/j.vibspec.2010.12.009 16. Djikanović D. Devečerski A. Steinbach G. Simonović J. Matović B. Garab G. Kalauzi A. Radotić K. Comparison of macromolecular interactions in the cell walls of hardwood, softwood and maize by fluorescence and FTIR spectroscopy, differential polarization laser scanning microscopy and X-ray diffraction Wood Sci. Technol. 2016 50 547 566 10.1007/s00226-015-0792-y 17. Popescu C.M. Singurel G. Popescu M.C. Vasile C. Argyropoulos D.S. Willför S. Vibrational spectroscopy and X-ray diffraction methods to establish the differences between hardwood and softwood Carbohydr. Polym. 2009 77 851 857 10.1016/j.carbpol.2009.03.011 18. Yuan L. Wan J. Ma Y. Wang Y. Huang M. Chen Y. The content of different hydrogen bond models and crystal structure of eucalyptus fibers during beating Bioresources 2012 8 717 734 10.15376/biores.8.1.717-734 19. Sánchez P.B. Tsubaki S. Pádua A.A. Wada Y. Kinetic analysis of microwave-enhanced cellulose dissolution in ionic solvents Phys. Chem. Chem. Phys. 2020 22 1003 1010 10.1039/C9CP06239D 31776539 20. Zhao L. Li S. Liang C. Qiao L. Du K. High-strength and low-crystallinity cellulose/agarose composite microspheres: Fabrication, characterization and protein adsorption Biochem. Eng. J. 2020 107826 10.1016/j.bej.2020.107826 21. Wang G. Yang X. Wang W. Reinforcing linear low-density polyethylene with surfactant-treated microfibrillated cellulose Polymers 2019 11 441 10.3390/polym11030441 30960425 PMC6473418 22. Elazzouzi-Hafraoui S. Nishiyama Y. Putaux J. Heux L. Dubreuil F. Rochas C. The shape and size distribution of crystalline nanoparticles prepared by acid hydrolysis of native cellulose Biomacromolecules 2008 9 57 65 10.1021/bm700769p 18052127 23. Tribulová T. Kačík F. Evtuguin D.V. Čabalová I. Ďurkovič J. The effects of transition metal sulfates on cellulose crystallinity during accelerated ageing of silver fir wood Cellulose 2019 26 2625 2638 10.1007/s10570-018-2210-8 24. Kouko J. Jajcinovic M. Fischer W. Ketola A. Hirn U. Retulainen E. Effect of mechanically induced micro deformations on extensibility and strength of individual softwood pulp fibers and sheets Cellulose 2019 26 1995 2012 10.1007/s10570-018-2163-y 25. Ahvenainen P. Kontro I. Svedström K. Comparison of sample crystallinity determination methods by X-ray diffraction for challenging cellulose I materials Cellulose 2016 23 1073 1086 10.1007/s10570-016-0881-6 26. Haigler C.H. Roberts A.W. Structure/function relationships in the rosette cellulose synthesis complex illuminated by an evolutionary perspective Cellulose 2019 26 227 247 10.1007/s10570-018-2157-9 27. Kubicki J.D. Yang H. Sawada D. O’Neill H. Oehme D. Cosgrove D. The shape of native plant cellulose microfibrils Sci. Rep. 2018 8 13983 10.1038/s41598-018-32211-w 30228280 PMC6143632 28. Yang H. Kubicki J.D. A density functional theory study on the shape of the primary cellulose microfibril in plants: Effects of C6 exocyclic group conformation and H-bonding Cellulose 2020 27 2389 2402 10.1007/s10570-020-02970-9 29. Duchemin B. Thuault A. Vicente A. Rigaud B. Fernandez C. Eve S. Ultrastructure of cellulose crystallites in flax textile fibres Cellulose 2012 19 1837 1854 10.1007/s10570-012-9786-1 30. Fernandes A.N. Thomas L.H. Altaner C.M. Callow P. Forsyth V.T. Apperley D.C. Kennedy C.J. Jarvis M.C. Nanostructure of cellulose microfibrils in spruce wood Proc. Natl. Acad. Sci. USA 2011 108 E1195 E1203 10.1073/pnas.1108942108 22065760 PMC3223458 31. Scholz D. Xie J. Kröcher O. Vogel F. Mechanochemistry-assisted hydrolysis of softwood over stable sulfonated carbon catalysts in a semi-batch process RSC Adv. 2019 9 33525 33538 10.1039/C9RA07668A PMC9073368 35529150 32. Li L. Zhuang J. Zou H. Pang J. Yu S. Partition usage of cellulose by coupling approach of supercritical carbon dioxide and cellulase to reducing sugar and nanocellulose Carbohydr. Polym. 2020 229 115533 10.1016/j.carbpol.2019.115533 31826392 33. Djahedi C. Bergenstråhle-Wohlert M. Berglund L.A. Wohlert J. Role of hydrogen bonding in cellulose deformation: The leverage effect analyzed by molecular modeling Cellulose 2016 23 2315 2323 10.1007/s10570-016-0968-0 34. Altaner C.M. Thomas L.H. Fernandes A.N. Jarvis M.C. How cellulose stretches: Synergism between covalent and hydrogen bonding Biomacromolecules 2014 15 791 798 10.1021/bm401616n 24568640 PMC3950890 35. Kondo T. Sawatari C. A Fourier transform infra-red spectroscopic analysis of the character of hydrogen bonds in amorphous cellulose Polymer 1996 37 393 399 10.1016/0032-3861(96)82908-9 Figure 1 The morphological analysis for the unrefined and refined samples: ( a ) softwood fibers and ( b ) hardwood fibers. Figure 2 The beating degree and Water Retention Value (WRV) for the unrefined and refined samples: ( a ) softwood fibers and ( b ) hardwood fibers. Figure 3 The rheological analysis of wet sheets, the tensile strength of dry sheets, and the fiber strength for unrefined and refined samples: ( a ) softwood fibers and ( b ) hardwood fibers. Figure 4 The CI-XI (crystallinity index obtained by comparing intensity of X-ray diffractometer (XRD) peaks) and CI-XA (crystallinity index obtained by comparing area of XRD peaks) for refined and unrefined samples: ( a ) softwood fiber and ( b ) hardwood fiber. Figure 5 Cross-section model of cellulose crystallite for softwood fibers and hardwood fibers. Figure 6 The second derivative of the Fourier transformation infrared spectroscopy (FT-IR) spectra for the refined and unrefined samples: ( a ) softwood fiber and ( b ) hardwood fiber. Figure 7 The deconvoluted FT-IR spectra of softwood fibers at various revolutions: ( a ) 0 r, ( b ) 4000 r, ( c ) 8000 r, ( d ) 12,000 r, and ( e ) 16,000 r. Figure 8 The trend of the CI-XI, the CI-XA, and the O(6)H⋯O(3′) H-bonds: ( a ) softwood fibers and ( b ) hardwood fibers. Figure 9 The illustration of a two-phase structure of cellulose. polymers-12-02912-t001_Table 1 Table 1 ( a ) The CI of softwood fibers through refining. ( b ) The CI of hardwood fibers through refining. (a) Revolutions CI (%) Crystallite Size (nm) CI-XI a CI-XA b 1 1 ¯ 0 (110) (200) 0 73.23 40.46 3.2 3.5 4.5 4000 70.42 37.71 3.1 3.4 4.6 8000 72.54 39.65 3.2 3.4 4.6 12,000 70.93 36.22 3.1 3.7 4.7 16,000 69.82 34.20 3.2 3.5 4.7 (b) Revolutions CI (%) Crystallite Size (nm) CI-XI a CI-XA b 1 1 ¯ 0 (110) (200) 0 75.55 47.16 3.1 3.1 4.5 4000 73.01 36.26 3.1 3.3 4.7 8000 75.06 42.35 3.1 3.5 4.8 12,000 74.57 39.21 2.9 4.0 4.8 16,000 73.55 38.01 3.0 3.7 4.7 a The CI-XI value was obtained from the ratio of the diffraction intensity. b The CI-XA value was obtained from the ratio of the peak areas. polymers-12-02912-t002_Table 2 Table 2 ( a ) The relative content of three H-bonds and the free OH for softwood fibers through refining. ( b ) The relative content of three H-bonds and the free OH for hardwood fibers through refining. (a) Revolutions O(6)H ⋯ O(3ʹ) O(3)H ⋯ O(5) O(2)H ⋯ O(6) Free OH(2) and OH(6) r 2 0 28.23 28.44 31.40 11.93 0.9995 4000 26.05 31.31 32.50 10.14 0.9995 8000 28.43 30.86 25.87 14.84 0.9995 12,000 26.68 32.58 25.49 15.25 0.9996 16,000 23.56 34.92 29.38 12.14 0.9996 (b) Revolutions O(6)H ⋯ O(3ʹ) O(3)H ⋯ O(5) O(2)H ⋯ O(6) Free OH(2) and OH(6) r 2 0 26.55 29.09 30.04 14.32 0.9990 4000 24.44 33.06 31.28 11.22 0.9991 8000 26.89 29.81 28.99 14.31 0.9991 12,000 27.01 29.28 27.40 16.31 0.9992 16,000 24.98 31.65 29.85 13.52 0.9989 "
+    }
+  ],
+  "candidate": {
+    "answer": "该研究中PFI打浆转数设置为0、4000、8000、12000和16000转。 [1]\n按文中对应关系，针叶木浆在12000转时打浆度为63 °SR。 [7]\n按文中对应关系，阔叶木浆在12000转时打浆度为57 °SR。 [7]\n打浆度会随PFI打浆转数增加而显著提高，并与纤维润胀和WRV增加有关。 [4]\n本研究中12000转仅使针叶木浆达到63 °SR，而阔叶木浆为57 °SR，故不能直接把12000转套用于所有目标约63 °SR的浆。 [7]",
+    "claims": [
+      {
+        "text": "该研究中PFI打浆转数设置为0、4000、8000、12000和16000转。",
+        "citation_refs": [
+          "[1]"
+        ]
+      },
+      {
+        "text": "按文中对应关系，针叶木浆在12000转时打浆度为63 °SR。",
+        "citation_refs": [
+          "[7]"
+        ]
+      },
+      {
+        "text": "按文中对应关系，阔叶木浆在12000转时打浆度为57 °SR。",
+        "citation_refs": [
+          "[7]"
+        ]
+      },
+      {
+        "text": "打浆度会随PFI打浆转数增加而显著提高，并与纤维润胀和WRV增加有关。",
+        "citation_refs": [
+          "[4]"
+        ]
+      },
+      {
+        "text": "本研究中12000转仅使针叶木浆达到63 °SR，而阔叶木浆为57 °SR，故不能直接把12000转套用于所有目标约63 °SR的浆。",
+        "citation_refs": [
+          "[7]"
+        ]
+      }
+    ],
+    "citations": [
+      {
+        "ref": "[1]",
+        "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+        "page_start": 2,
+        "page_end": 2,
+        "chunk_id": "chk_d2aedbe58a8df6449510",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "excerpt": "nd ﬁbrillation of cellulosic ﬁbers during PFI reﬁnement. Therefore, this work explored the eﬀects\nof PFI reﬁnement on the CI, crystallite size, energy of H-bonds, H-bonding distance, and content of\nH-bonds for softwood pulp ﬁbers and hardwood pulp ﬁbers. Attempts were made in order to establish\nthe correlations between the CI and content of various H-bonds.\n2. Methods\n2.1. PFI Reﬁning\nCommercial bleached softwood and hardwood kraft pulp ﬁbers were obtained from\nZhongzhirenhe Company (Jinan, Shandong Province, China). Two pulp were treated with a PFI reﬁner\n(Hamjern Maskin A/S, Hamar, Norway) according to Tappi T248 wd-97, with a pulp consistency\nof 10%, the gap between the opposite reﬁning plates was 0.2 mm, and forces per bar length were\n3.33 N/mm and 1.77 N/mm for softwood ﬁbers and hardwood ﬁbers, respectively. The drainability was\ncharacterized by the Schopper Riegler number (SR-number) with the standards ISO 5267-1. Two pulp\nﬁbers were separately reﬁned in a PFI reﬁner at 0, 4000, 8000, 12,000, and 16,000 revolutions and\nat 0, 4000, 8000, 12,000, and 16,000 revolutions, respectively. Corresponding various pulps with an\nincreasing beating degree, such as 16, 20, 40, 63, and 79◦"
+      },
+      {
+        "ref": "[4]",
+        "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+        "page_start": 4,
+        "page_end": 4,
+        "chunk_id": "chk_7ee4d18be8055bceab09",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "excerpt": " and\n(b) hardwood ﬁbers.\nThe beating degree and the WRV had a signiﬁcant increment with increasing PFI reﬁning\nrevolutions, as can be seen in Figure 2. It is caused by the higher ﬁbrillation that produces the\nnew surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling\ncharacterized by WRV makes the ﬁbers more compliant in transverse [1], which contributes to\nimproving the inter-ﬁber bonding strength of the ﬁber network. The results of ﬁber morphology\nanalysis and water retention value showing that the ﬁbrillation and the separation between ﬁbrils\nincrease with the reﬁning process."
+      },
+      {
+        "ref": "[7]",
+        "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+        "page_start": 2,
+        "page_end": 2,
+        "chunk_id": "chk_24110bb801a460f30fbf",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "excerpt": " 8000, 12,000, and 16,000 revolutions and\nat 0, 4000, 8000, 12,000, and 16,000 revolutions, respectively. Corresponding various pulps with an\nincreasing beating degree, such as 16, 20, 40, 63, and 79◦SR, were obtained for softwood ﬁbers and 0,\n26, 40, 57, and 70◦SR were obtained for hardwood ﬁbers.\n2.2. Morphological Analysis of Fibers and Mechanical Properties of Sheets\nThe ﬁnes content, weighted mean length, and macro-ﬁbrillation index of each sample were\ndetermined with a MORFI LB analyzer (Techpap SAS, Grenoble, France). The tensile strength of\ndry sheets and Wet-web strength were tested according to TAPPI T494 and Chinese standard GBT\n12914-2008, respectively. The zero-span tensile strength was tested with the Z-Span 2400 apparatus\n(Pulmac International Co. Ltd., Montpelier, VT, USA), according to the standard ISO 15361."
+      }
+    ],
+    "retrieved_evidence": [
+      {
+        "ref": "[1]",
+        "chunk_id": "chk_d2aedbe58a8df6449510",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+        "page_start": 2,
+        "page_end": 2,
+        "text": "nd ﬁbrillation of cellulosic ﬁbers during PFI reﬁnement. Therefore, this work explored the eﬀects\nof PFI reﬁnement on the CI, crystallite size, energy of H-bonds, H-bonding distance, and content of\nH-bonds for softwood pulp ﬁbers and hardwood pulp ﬁbers. Attempts were made in order to establish\nthe correlations between the CI and content of various H-bonds.\n2. Methods\n2.1. PFI Reﬁning\nCommercial bleached softwood and hardwood kraft pulp ﬁbers were obtained from\nZhongzhirenhe Company (Jinan, Shandong Province, China). Two pulp were treated with a PFI reﬁner\n(Hamjern Maskin A/S, Hamar, Norway) according to Tappi T248 wd-97, with a pulp consistency\nof 10%, the gap between the opposite reﬁning plates was 0.2 mm, and forces per bar length were\n3.33 N/mm and 1.77 N/mm for softwood ﬁbers and hardwood ﬁbers, respectively. The drainability was\ncharacterized by the Schopper Riegler number (SR-number) with the standards ISO 5267-1. Two pulp\nﬁbers were separately reﬁned in a PFI reﬁner at 0, 4000, 8000, 12,000, and 16,000 revolutions and\nat 0, 4000, 8000, 12,000, and 16,000 revolutions, respectively. Corresponding various pulps with an\nincreasing beating degree, such as 16, 20, 40, 63, and 79◦",
+        "score": 0.5917599201202393
+      },
+      {
+        "ref": "[2]",
+        "chunk_id": "chk_d36bfa194d0657b073f7",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+        "page_start": 12,
+        "page_end": 12,
+        "text": "Polymers 2020, 12, 2912 12 of 14\nThe results indicated that the ﬁbrillation and properties of ﬁbers are related to the variation of the\nsupramolecular structure during PFI reﬁning. It is noticeable that there was a signiﬁcantly positive\ncorrelation between the CI-XI and content of O(6)H· · · O(3)’ H-bonds during PFI reﬁning for softwood\nﬁbers and hardwood ﬁbers. Thus, the trend of the content of O(6)H· · · O(3)’ H-bonds might be generally\nspeculated based on CI-XI while reﬁning. Besides, the crystallite size, crystallinity, and content of\nvarious H-bonds did not change much in general. It is assumed that PFI reﬁning is an excellent\nmechanical treatment of ﬁbrillation with relatively little destruction on the supramolecular structure.\nSupplementary Materials: The following are available online at http://www.mdpi.com/2073-4360/12/12/2912/s1,\nFigure S1: XRD ﬁtting results of softwood ﬁbers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI\nreﬁning, Figure S2: XRD ﬁtting results of hardwood ﬁbers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions\nof PFI reﬁning, Figure S3: Nonlinear ﬁtting curves of the band of hardwood ﬁbers for hydroxyl groups: (a) 0, (",
+        "score": 0.5455588698387146
+      },
+      {
+        "ref": "[3]",
+        "chunk_id": "chk_5469e4b1ae7a8279a284",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+        "page_start": 12,
+        "page_end": 12,
+        "text": " results of hardwood ﬁbers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions\nof PFI reﬁning, Figure S3: Nonlinear ﬁtting curves of the band of hardwood ﬁbers for hydroxyl groups: (a) 0, (b)\n4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI reﬁning, Figure S4: The BET N2 adsorption/desorption\nisotherms at various reﬁning revolutions of pulp ﬁbers: (a) softwood; (b) hardwood, Table S1: Cumulative pore\nvolume, average pore size and speciﬁc surface area of softwood pulp ﬁber through reﬁning, Cumulative pore\nvolume, average pore size and speciﬁc surface area of hardwood pulp ﬁber through reﬁning.\nAuthor Contributions: Conceptualization, methodology, software, validation, formal analysis, investigation,\ndata curation, writing—original draft preparation, and visualization: K.L.; conceptualization, validation, funding\nacquisition, writing—review and editing: L.Z.; conceptualization, resources, supervision, project administration,\nand funding acquisition: B.H. All authors have read and agreed to the published version of the manuscript.\nFunding: This work was supported by the National Natural Science Foundation of China (21706083), the Key\nArea R&D Program of Guangdong P",
+        "score": 0.541831374168396
+      },
+      {
+        "ref": "[4]",
+        "chunk_id": "chk_7ee4d18be8055bceab09",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+        "page_start": 4,
+        "page_end": 4,
+        "text": " and\n(b) hardwood ﬁbers.\nThe beating degree and the WRV had a signiﬁcant increment with increasing PFI reﬁning\nrevolutions, as can be seen in Figure 2. It is caused by the higher ﬁbrillation that produces the\nnew surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling\ncharacterized by WRV makes the ﬁbers more compliant in transverse [1], which contributes to\nimproving the inter-ﬁber bonding strength of the ﬁber network. The results of ﬁber morphology\nanalysis and water retention value showing that the ﬁbrillation and the separation between ﬁbrils\nincrease with the reﬁning process.",
+        "score": 0.5413342118263245
+      },
+      {
+        "ref": "[5]",
+        "chunk_id": "chk_9a89905688656d044990",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+        "page_start": 2,
+        "page_end": 2,
+        "text": "Polymers 2020, 12, 2912 2 of 14\nﬁrst and then decreased with the degree of reﬁning for hardwood bleached kraft pulp ﬁbers [11] or\nfor unbleached eucalyptus ﬁbers [12]. Moreover, Zhao et al. [7] reported that the crystallinity initially\nﬂuctuated upward and then downward, followed by a repeating ﬂuctuation with PFI reﬁning for\ntobacco stem mechanical pulp. None of the previous studies identiﬁed a clear trend, but the results\nwere that the crystallinity varied during PFI reﬁnement. Based on the large proportion of H-bonds in\ncrystalline region of cellulose, it can be assumed that the H-bonding network might change during\nPFI reﬁning.\nFourier transformation infrared spectroscopy (FT-IR), which is sensitive to molecular structure,\ncan be as an indirect measurement for studying H-bonding network. FT-IR deconvolution of hydroxyl\ngroups band was adopted in order to study the changes of the energy of H-bonds and the H-bonding\ndistance during deligniﬁcation [13] or the deconstruction of cellulose [14]. Moreover, it was used\nto study the diﬀerences of the content of H-bonds not only between dislocation region and normal\nregion [15], but also among plant species [16,17]. Regarding the changes",
+        "score": 0.5298805236816406
+      },
+      {
+        "ref": "[6]",
+        "chunk_id": "chk_3f2483d1eb1df2d47047",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+        "page_start": 6,
+        "page_end": 6,
+        "text": "d CI-XA) for softwood ﬁbers and hardwood ﬁbers were all similar,\ndecreasing ﬁrst and then increasing, along with a decline, as shown in Figure 4. The ﬂuctuation of the\nCI was probably because of the mechanical action of PFI reﬁning on the diﬀerent regions of cellulose.\nIn the ﬁrst reﬁning stage, the decrease of the CI showed that mechanical treatment may mainly act in\nthe crystalline region. Subsequently, the growth of the CI could be interpreted as greater force acting\non the amorphous region in which cocrystallization might occur upon drying under the mechanical\nand thermal action of PFI reﬁning. The subsequent decrease might be the continuous destruction of\ncrystalline region.\nRecently, researches indicated that plant cell walls commonly contained microﬁbrils with 18\ncellulose chains [26]. Frequently adopted arrangements of the 18 cellulose chains are 234432, 34443,\nand 333333 [27]. Therein, 234432 arrangement was found to be more probable based on calculation [28].\nThus, according to the crystallite sizes (as Table 1 shows) and the unit cell parameters of cellulose\nIβ, there was most likely to be an average of two-ﬁbrils with an arrangement of 234,432 packed\nside-by-side for bo",
+        "score": 0.5257396101951599
+      },
+      {
+        "ref": "[7]",
+        "chunk_id": "chk_24110bb801a460f30fbf",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+        "page_start": 2,
+        "page_end": 2,
+        "text": " 8000, 12,000, and 16,000 revolutions and\nat 0, 4000, 8000, 12,000, and 16,000 revolutions, respectively. Corresponding various pulps with an\nincreasing beating degree, such as 16, 20, 40, 63, and 79◦SR, were obtained for softwood ﬁbers and 0,\n26, 40, 57, and 70◦SR were obtained for hardwood ﬁbers.\n2.2. Morphological Analysis of Fibers and Mechanical Properties of Sheets\nThe ﬁnes content, weighted mean length, and macro-ﬁbrillation index of each sample were\ndetermined with a MORFI LB analyzer (Techpap SAS, Grenoble, France). The tensile strength of\ndry sheets and Wet-web strength were tested according to TAPPI T494 and Chinese standard GBT\n12914-2008, respectively. The zero-span tensile strength was tested with the Z-Span 2400 apparatus\n(Pulmac International Co. Ltd., Montpelier, VT, USA), according to the standard ISO 15361.",
+        "score": 0.5218701958656311
+      },
+      {
+        "ref": "[8]",
+        "chunk_id": "chk_399e24fd415a1d7e0c6c",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+        "page_start": 9,
+        "page_end": 9,
+        "text": "Polymers 2020, 12, 2912 9 of 14\nFigure 7. The deconvoluted FT-IR spectra of softwood ﬁbers at various revolutions: (a) 0 r, (b) 4000 r,\n(c) 8000 r, (d) 12,000 r, and (e) 16,000 r.\nFor the content of O(6)H· · · O(3′) inter-molecular H-bonds of softwood ﬁber, the trend can be\ndivided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as reﬁning\nfrom 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%,\nwith the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H· · · O(3′) H-bonds of\nhardwood ﬁber, the trend was almost similar to that of softwood ﬁbers, except for a small increase of\n0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H· · · O(3′) H-bonds\nfor softwood ﬁbers and hardwood ﬁbers decreased by 16.54% and 5.91% altogether, respectively.\nThe decrease might be due to the cleavage among cellulose molecular chains under the mechanical\naction of PFI reﬁning, which was closely related to internal and external ﬁbrillation (as seen in\nSection 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also",
+        "score": 0.5208378434181213
+      }
+    ]
+  },
+  "output_shape": {
+    "answerability_score": null,
+    "observed_behavior": null,
+    "key_point_scores": {
+      "P1": null,
+      "P2": null,
+      "P3": null
+    },
+    "point_notes": {
+      "P1": "",
+      "P2": "",
+      "P3": ""
+    },
+    "retrieval_point_assessments": {
+      "P1": "",
+      "P2": "",
+      "P3": ""
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "该研究中PFI打浆转数设置为0、4000、8000、12000和16000转。",
+        "claim_type": null,
+        "support": null,
+        "in_key_points": null,
+        "contains_paper_fact": null,
+        "basis": []
+      },
+      {
+        "id": "C2",
+        "text": "按文中对应关系，针叶木浆在12000转时打浆度为63 °SR。",
+        "claim_type": null,
+        "support": null,
+        "in_key_points": null,
+        "contains_paper_fact": null,
+        "basis": []
+      },
+      {
+        "id": "C3",
+        "text": "按文中对应关系，阔叶木浆在12000转时打浆度为57 °SR。",
+        "claim_type": null,
+        "support": null,
+        "in_key_points": null,
+        "contains_paper_fact": null,
+        "basis": []
+      },
+      {
+        "id": "C4",
+        "text": "打浆度会随PFI打浆转数增加而显著提高，并与纤维润胀和WRV增加有关。",
+        "claim_type": null,
+        "support": null,
+        "in_key_points": null,
+        "contains_paper_fact": null,
+        "basis": []
+      },
+      {
+        "id": "C5",
+        "text": "本研究中12000转仅使针叶木浆达到63 °SR，而阔叶木浆为57 °SR，故不能直接把12000转套用于所有目标约63 °SR的浆。",
+        "claim_type": null,
+        "support": null,
+        "in_key_points": null,
+        "contains_paper_fact": null,
+        "basis": []
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C1",
+        "ref": "[1]",
+        "chunk_id": "chk_d2aedbe58a8df6449510",
+        "score": null,
+        "basis": ""
+      },
+      {
+        "claim_id": "C2",
+        "ref": "[7]",
+        "chunk_id": "chk_24110bb801a460f30fbf",
+        "score": null,
+        "basis": ""
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[7]",
+        "chunk_id": "chk_24110bb801a460f30fbf",
+        "score": null,
+        "basis": ""
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[4]",
+        "chunk_id": "chk_7ee4d18be8055bceab09",
+        "score": null,
+        "basis": ""
+      },
+      {
+        "claim_id": "C5",
+        "ref": "[7]",
+        "chunk_id": "chk_24110bb801a460f30fbf",
+        "score": null,
+        "basis": ""
+      }
+    ],
+    "critical_errors": [],
+    "defects": [],
+    "injection_assessment": null,
+    "reference_concerns": [],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "refs": [
+          "[1]"
+        ],
+        "coverage": null,
+        "basis": ""
+      },
+      {
+        "claim_id": "C2",
+        "refs": [
+          "[7]"
+        ],
+        "coverage": null,
+        "basis": ""
+      },
+      {
+        "claim_id": "C3",
+        "refs": [
+          "[7]"
+        ],
+        "coverage": null,
+        "basis": ""
+      },
+      {
+        "claim_id": "C4",
+        "refs": [
+          "[4]"
+        ],
+        "coverage": null,
+        "basis": ""
+      },
+      {
+        "claim_id": "C5",
+        "refs": [
+          "[7]"
+        ],
+        "coverage": null,
+        "basis": ""
+      }
+    ]
+  },
+  "scoring_policy": {
+    "version": "qa-scoring-v3",
+    "precedence": "This policy overrides only the base rubric rules it explicitly refines. Keep the frozen questions, required/optional points, numerical checks and source texts unchanged.",
+    "points": {
+      "0": "The target proposition is absent, incorrect or contradicted. Correct background or a different point does not earn credit. An independent boundary proposition is absent if only its related measurement definition is repeated, without expressing the boundary.",
+      "0.5": "At least one substantive component of this target proposition is correct, but another required component, condition, unit, calculation or boundary is missing. The target must contain no contradictory conclusion. Do not give zero merely because a compound point is incomplete.",
+      "1": "All substantive components and necessary qualifications are semantically expressed. Accept paraphrase and an unambiguous logical equivalent, not merely an unstated plausible inference. Do not require stock wording. Directly mapped citation metadata may establish source attribution; an explicitly requested conflict, limitation or causal boundary must be expressed in the answer.",
+      "independence": "Assess each point independently. Merely repeating another point does not satisfy a separate missing proposition. Never penalize the same omission by summing dimensions.",
+      "examples": [
+        {
+          "target": "Give two measurement endpoints and their units.",
+          "answer": "Only the first endpoint and its correct unit are provided.",
+          "score": 0.5
+        },
+        {
+          "target": "Distinguish two measurement methods.",
+          "answer": "Correctly defines one as peak height and the other as integrated area.",
+          "score": 1
+        },
+        {
+          "target": "State that a relative spectral fraction is not an absolute molecule count.",
+          "answer": "Only defines the relative spectral fraction.",
+          "score": 0
+        },
+        {
+          "target": "Different treatment forces prevent attribution solely to material type.",
+          "answer": "States different forces, but does not qualify the attribution.",
+          "score": 0.5
+        },
+        {
+          "target": "Different treatment forces prevent attribution solely to material type.",
+          "answer": "States the forces differ and explicitly explains that the difference may instead come from that unequal treatment, without claiming material type is the sole cause.",
+          "score": 1
+        }
+      ],
+      "example_scope": "These are synthetic rule illustrations, not prior grades for any evaluation case."
+    },
+    "evidence_scope": {
+      "paper_facts": "Use verified full paper/reference evidence to check scientific truth. These sources are not automatically evidence seen by the answering model.",
+      "actual_retrieval": "A statement about the evidence supplied to the answering model must be checked only against candidate.retrieved_evidence. A statement about one excerpt uses only that excerpt. Full-paper availability cannot contradict a truthful statement that the current retrieved excerpts omit a value.",
+      "absence": "No evidence is not affirmative contradiction. Unsupported means not established; contradicted requires a source that affirmatively conflicts within the same asserted scope. Never complete a truncated word, row or sentence from the full paper when evaluating retrieval availability or citation support.",
+      "diagnosis": "A truthful retrieval limitation may be supported while requested content remains unanswered and loses point credit. Conversely, answer omission does not prove retrieval failure.",
+      "classification": "Pure availability/capability statements are scope. Mixed scientific fact and availability statements remain fact; check their scientific part and scope part separately. Do not exempt factual content merely because a sentence also says data are missing."
+    },
+    "citations": {
+      "pair": "For each fact/ref pair, score 1 if that exact cited retrieved excerpt directly supports at least one identifiable substantive factual component of the claim, with correct document, sample, condition, unit and locator. It need not independently prove other components. Score 0 for irrelevant, merely topical, contradictory, nonexistent or incorrectly located citations. State exactly which component is supported. Do not borrow another excerpt.",
+      "group": "Separately assess the union of only the references actually attached to this claim. complete means every substantive factual component, comparison and necessary qualification is supported; partial means some but not all; missing means no substantive component is supported. Any unresolved factual contradiction prevents complete. A matching word or one correct clause cannot establish group completeness. Evidence elsewhere in retrieval, standard evidence or the full paper cannot repair this group.",
+      "scope": "Pure scope pairs and groups are not applicable (null), verified through the appropriate corpus/retrieval scope instead. For mixed claims, citation scoring covers every scientific component; lack-of-evidence parts are checked against the asserted evidence scope.",
+      "inference": "Allow a transparent calculation or bounded comparison only if the cited group contains all inputs and qualifications. Correlation alone does not support causation or a quantitative prediction formula. Do not fill evidential gaps with plausible domain knowledge.",
+      "metrics": "Citation precision measures useful individual citations. Citation coverage counts factual claims whose cited group is complete, not claims with merely one useful citation. Strict/shared-dimension pass requires full group coverage and no bad individual citation.",
+      "example": "If a claim states A and B, citation [1] establishes A and citation [2] establishes B, both pairs may score 1 and the group is complete. If neither cited excerpt establishes B, the group is partial even though the A-supporting pair scores 1."
+    }
+  },
+  "scoring_policy_sha256": "3523241d2749a743fead147b44c06bd170acd4f9bee6ce87189bbb38bf4309c8"
+}

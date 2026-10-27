@@ -1,0 +1,25 @@
+{
+  "task_id": "PFI2-004",
+  "model_calls": 0,
+  "hash_definition": "SHA256(json.dumps(body, ensure_ascii=False, sort_keys=True, allow_nan=False).encode(utf-8)); not pretty-file byte hash",
+  "requests": [
+    {
+      "file": "luna-initial.request.json",
+      "source_run": "judge-luna-openrouter-scoring-v3-core-20261026-r1-initial",
+      "origin": "Reconstructed from frozen input and configuration; canonical request SHA256 matches saved task.",
+      "request_sha256": "f7e891660bdc956485295c4c713c96d1de0568b155b9f3950307faecf6f1d7e8"
+    },
+    {
+      "file": "luna-final-repair.request.json",
+      "source_run": "judge-luna-openrouter-scoring-v3-core-20261026-r1-repair-PFI2-004-p2-t0",
+      "origin": "Reconstructed from frozen input and configuration; canonical request SHA256 matches saved task.",
+      "request_sha256": "62495146ec59d7762a400a8177dbabfe5d928a2db9517c6c901283f02e723d3d"
+    },
+    {
+      "file": "jev.request.json",
+      "source_run": "jev-openrouter-scoring-v3-core-20261026-r1-initial",
+      "origin": "Saved request body; reformatted JSON only.",
+      "request_sha256": "eed4824ab9cf36350d2863350b13abc089bbb75c134b5e1692704c9430f3a4f9"
+    }
+  ]
+}
