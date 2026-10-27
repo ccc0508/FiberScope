@@ -65,6 +65,23 @@ def compare_labels(left,right,tasks,cases):
         common=[k for k in groups[0] if groups[0][k] is not None and groups[1][k] is not None]
         result.update(scoring_policy_version=policy.VERSION,
                       citation_group_coverage_agreement=repeatability.fraction(sum(groups[0][k]==groups[1][k] for k in common),len(common)))
+    extended=[tid for tid in tids if all('answerability_score' in table[tid]
+              and 'retrieval_point_assessments' in table[tid] for table in (left,right))]
+    if extended:
+        judge.require(len(extended)==len(tids),'Mixed assessment scopes in comparison')
+        boundary=[{tid:table[tid]['answerability_score'] for tid in extended} for table in (left,right)]
+        retrieval=[{(tid,pid):value for tid in extended for pid,value in table[tid]['retrieval_point_assessments'].items()}
+                   for table in (left,right)]
+        judge.require(set(retrieval[0])==set(retrieval[1]),'Compared retrieval point identities differ')
+        judge.require(all((retrieval[0][k]=='not_applicable')==(retrieval[1][k]=='not_applicable') for k in retrieval[0]),
+                      'Compared retrieval applicability differs')
+        applicable=[k for k in retrieval[0] if retrieval[0][k]!='not_applicable']
+        result.update(assessment_scope='six_dimensions',boundary=repeatability.pair_numbers(*boundary),
+                      retrieval_support_agreement=repeatability.fraction(sum(retrieval[0][k]==retrieval[1][k] for k in applicable),len(applicable)),
+                      retrieval_not_applicable_points=len(retrieval[0])-len(applicable))
+    else:
+        result.update(assessment_scope='four_shared_dimensions',
+                      unavailable_comparison_dimensions=['answerability','retrieval_support'])
     return result
 
 
@@ -134,10 +151,18 @@ def audit_gpt(source,directory):
 
 def summarize_rows(name,table,tasks,cases,common):
     rows=[jev.metrics(cases[t['case_id']],t,table[t['id']]) for t in tasks if t['id'] in common]
-    return dict(name=name,task_count=len(rows),point_macro_average=statistics.mean(r['point_mean'] for r in rows) if rows else None,
+    summary=dict(name=name,task_count=len(rows),point_macro_average=statistics.mean(r['point_mean'] for r in rows) if rows else None,
                 shared_dimensions_pass=sum(r['shared_dimensions_pass'] for r in rows),
                 citation_support=repeatability.fraction(sum(r['supported_citation_count'] for r in rows),sum(r['factual_citation_count'] for r in rows)),
                 citation_coverage=repeatability.fraction(sum(r['covered_factual_claims'] for r in rows),sum(r['factual_claim_count'] for r in rows)))
+    extended=[r for r in rows if 'answerability_score' in r]
+    judge.require(not extended or len(extended)==len(rows),'Mixed assessment scopes in summary')
+    if extended:
+        summary.update(answerability_mean=statistics.mean(r['answerability_score'] for r in extended),
+                       boundary_aware_pass=sum(r['boundary_aware_pass'] for r in extended),
+                       retrieval_counts={k:sum(r['retrieval_counts'][k] for r in extended) for k in prompt.RETRIEVAL_LABELS},
+                       retrieval_applicable_points=sum(r['retrieval_applicable_points'] for r in extended))
+    return summary
 
 
 def analyze(source,study_dir,jev_dirs,gpt_dirs,output):

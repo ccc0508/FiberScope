@@ -34,6 +34,14 @@ def differences(left, right, case):
     for key in groups[0]:
         a=groups[0][key];b=groups[1][key]
         if a!=b:changes.append(dict(dimension='citation_group',claim_id=key,gpt=a,jev=b))
+    if 'answerability_score' in left and 'answerability_score' in right:
+        a=left['answerability_score'];b=right['answerability_score']
+        if a!=b:changes.append(dict(dimension='answerability',gpt=a,jev=b))
+    if 'retrieval_point_assessments' in left and 'retrieval_point_assessments' in right:
+        a=left['retrieval_point_assessments'];b=right['retrieval_point_assessments']
+        judge.require(set(a)==set(b),'Compared retrieval point identities differ')
+        for pid in a:
+            if a[pid]!=b[pid]:changes.append(dict(dimension='retrieval_support',point_id=pid,gpt=a[pid],jev=b[pid]))
     return changes
 
 
@@ -119,7 +127,7 @@ def analyze(source, study_dir, gpt_dir, jev_dir, output, *, allow_incomplete=Fal
                 new_analysis_api_calls=0,new_rag_calls=0,new_embedding_queries=0,rows=rows,
                 limitations=['One scoring round per judge does not estimate repeatability.',
                              'Inter-judge agreement and confidence are not accuracy; no new expert gold labels.',
-                             'GPT assesses more fields and writes reasons; latency is a workflow comparison.',
+                             'Assessment scope is reported in agreements; GPT additionally writes reasons and critical-error diagnostics. Latency is a workflow comparison.',
                              'Historical v2 scores are not matched v3 scores; the RAG answers were not improved.'])
     output.mkdir(parents=True)
     judge.write(output/'comparison.json',result)

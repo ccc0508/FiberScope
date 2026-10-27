@@ -20,7 +20,7 @@ import qa_jev_prompt as prompt
 import qa_scoring_policy as policy
 from score_qa_eval_v2 import source_basis
 
-HARNESS=(*judge.HARNESS,'qa_jev_prompt.py','qa_jev_prompt_v1.py','judge_qa_jev.py')
+HARNESS=(*judge.HARNESS,'qa_jev_prompt.py','qa_jev_prompt_v1.py','qa_jev_prompt_v2.py','judge_qa_jev.py')
 
 
 @dataclass(frozen=True)
@@ -33,7 +33,8 @@ class Config:
     def public(self):
         return dict(base_url=self.base_url,requested_model=self.model,api='openrouter_decisions',
                     timeout_seconds=self.timeout,automatic_retries=0,previous_scores_provided=False,
-                    scope=['key_point_coverage','claim_support','citation_support','citation_group_coverage'],
+                    scope=['key_point_coverage','claim_support','citation_support','citation_group_coverage',
+                           'answerability','retrieval_support'],
                     independent_requests=True,sampling='Native typed decisions; no sampling overrides or conversation identifiers.')
 
 
@@ -70,9 +71,15 @@ def validate_response(body,request,allow_auxiliary_inconsistency=False):
 def decode_review(body,request,targets,case,task,result,path,sources,allow_auxiliary_inconsistency=False):
     answers=validate_response(body,request,allow_auxiliary_inconsistency)
     points={p['id']:None for p in case['key_points']};claims={};pairs=[];groups=[]
+    extended=request['state']['contract_version']==prompt.VERSION
+    boundary=None
+    retrieval={pid:'not_applicable' for pid,value in request['state']['task']['retrieval_applicability'].items()
+               if value=='not_applicable'} if extended else {}
     for key,target in targets.items():
         selected=answers[key]['choice'];kind=target['kind']
         if kind=='point':points[target['point_id']]=prompt.POINT_VALUES[selected]
+        elif kind=='boundary':boundary=prompt.BOUNDARY_VALUES[selected]
+        elif kind=='retrieval':retrieval[target['point_id']]=selected
         elif kind=='citation':pairs.append(dict(claim_id=target['claim_id'],ref=target['ref'],raw_score=int(selected=='supported')))
         elif kind=='citation_group':groups.append(dict(claim_id=target['claim_id'],raw_coverage=selected))
         else:claims.setdefault(target['claim_id'],{})[kind]=selected
@@ -104,6 +111,14 @@ def decode_review(body,request,targets,case,task,result,path,sources,allow_auxil
                 review_status='ai_typed_shared_dimensions',key_point_scores=points,claim_assessments=assessments,
                 citation_assessments=pairs,free_text_rationale=None,
                 not_assessed=['full_strict_pass','manual_critical_error_rationale','reference_answer_expert_validation'])
+    if extended:
+        judge.require(type(boundary) is int and boundary in (0,1,2),'Missing boundary decision')
+        judge.require(set(retrieval)==set(points),'Incomplete retrieval decisions')
+        for pid,applicability in request['state']['task']['retrieval_applicability'].items():
+            allowed={'not_applicable'} if applicability=='not_applicable' else set(prompt.RETRIEVAL_LABELS)
+            judge.require(retrieval[pid] in allowed,'Invalid retrieval applicability')
+        review.update(judge_contract_version=prompt.VERSION,answerability_score=boundary,
+                      retrieval_point_assessments=retrieval)
     if request['state'].get('scoring_policy', {}).get('version') == policy.VERSION:
         originals={f'C{i+1}':c for i,c in enumerate(result['response'].get('claims',[]))}
         for group in groups:
@@ -136,12 +151,19 @@ def metrics(case,task,review):
     else:
         covered=sum(any(p['claim_id']==c['id'] and p['score']==1 for p in factual) for c in facts)
     located=all(c['evidence_location_status']!='unlocated' for c in review['claim_assessments'])
-    return dict(task_id=task['id'],point_mean=statistics.mean(values),required_point_count=len(values),required_point_sum=sum(values),
+    row=dict(task_id=task['id'],point_mean=statistics.mean(values),required_point_count=len(values),required_point_sum=sum(values),
                 factual_citation_count=len(factual),supported_citation_count=sum(p['score'] for p in factual),
                 factual_claim_count=len(facts),covered_factual_claims=covered,
                 shared_dimensions_pass=all(v==1 for v in values) and all(c['support']=='supported' for c in review['claim_assessments'])
                     and all(p['score']==1 for p in factual) and covered==len(facts),
                 evidence_locations_complete=located)
+    if 'answerability_score' in review and 'retrieval_point_assessments' in review:
+        applicable=[v for v in review['retrieval_point_assessments'].values() if v!='not_applicable']
+        row.update(answerability_score=review['answerability_score'],
+                   boundary_aware_pass=row['shared_dimensions_pass'] and review['answerability_score']==2,
+                   retrieval_counts={label:applicable.count(label) for label in prompt.RETRIEVAL_LABELS},
+                   retrieval_applicable_points=len(applicable))
+    return row
 
 
 def usage(body):
@@ -179,6 +201,14 @@ def summarize(output,cases,tasks,records):
     if len(complete)==len(tasks) and len(models)==1:
         result.update(summary_written=True,point_macro_average=statistics.mean(r['point_mean'] for r in rows),
                       shared_dimensions_pass=sum(r['shared_dimensions_pass'] for r in rows))
+    extended=[r for r in rows if 'answerability_score' in r]
+    judge.require(not extended or len(extended)==len(rows),'Mixed Jev assessment scopes')
+    if extended:
+        result.update(assessment_scope='six_dimensions',
+                      answerability_mean=statistics.mean(r['answerability_score'] for r in extended),
+                      boundary_aware_pass=sum(r['boundary_aware_pass'] for r in extended),
+                      retrieval_counts={k:sum(r['retrieval_counts'][k] for r in extended) for k in prompt.RETRIEVAL_LABELS},
+                      retrieval_applicable_points=sum(r['retrieval_applicable_points'] for r in extended))
     judge.write(output/'progress.json',result)
     if result['summary_written']:judge.write(output/'summary.json',result)
     return result

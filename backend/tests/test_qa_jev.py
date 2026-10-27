@@ -17,10 +17,67 @@ from .test_qa_judge import run_dir
 def config():return jev.Config('https://openrouter.ai/api','typesafe/jev-1.14','SYNTHETIC_JEV_KEY')
 
 
+def prepared(run_dir, *, applicable=False, version=None):
+    source,manifest,cases,sources=judge.verify_run(run_dir);task=deepcopy(source['tasks'][0])
+    case=deepcopy(cases[task['case_id']])
+    path,result=judge.read_result(run_dir,source,case,task)
+    if applicable:
+        task['mode']='snapshot'
+        for point in case['key_points']:point.update(kind='direct',capability='text')
+    request,targets=prompt.build_request(config(),case,task,result,manifest,sources,
+                                       judge.read_json(run_dir/'dataset/rubric.json'),prompt_version=version)
+    return request,targets,case,task,result,path,sources
+
+
+def test_boundary_and_retrieval_are_independent_model_decisions(run_dir):
+    request,targets,case,task,result,path,sources=prepared(run_dir,applicable=True)
+    body=response(httpx.Request('POST','https://synthetic.invalid',json=request))
+    pid=case['key_points'][0]['id']
+    for key,selected in [('boundary','partial'),('point_'+pid,'missing')]:
+        entry=body['answers'][key]
+        entry.update(choice=selected,probabilities={k:float(k==selected) for k in entry['probabilities']})
+    review=jev.decode_review(body,request,targets,case,task,result,path,sources)
+    assert review['answerability_score']==1
+    assert review['key_point_scores'][pid]==0
+    assert review['retrieval_point_assessments'][pid]=='complete'
+    assert 'candidate.retrieved_evidence' in request['questions']['retrieval_'+pid]['instructions']
+    assert 'cannot supply missing retrieved content' in request['questions']['retrieval_'+pid]['instructions']
+    assert jev.metrics(case,task,review)['boundary_aware_pass'] is False
+
+
+def test_inapplicable_retrieval_is_not_sent_or_counted_as_complete(run_dir):
+    request,targets,case,task,result,path,sources=prepared(run_dir)
+    assert not any(k.startswith('retrieval_') for k in request['questions'])
+    body=response(httpx.Request('POST','https://synthetic.invalid',json=request))
+    review=jev.decode_review(body,request,targets,case,task,result,path,sources)
+    assert set(review['retrieval_point_assessments'].values())=={'not_applicable'}
+    assert jev.metrics(case,task,review)['retrieval_applicable_points']==0
+
+
+def test_missing_new_decision_is_rejected(run_dir):
+    request,targets,case,task,result,path,sources=prepared(run_dir,applicable=True)
+    body=response(httpx.Request('POST','https://synthetic.invalid',json=request))
+    body['answers'].pop('boundary')
+    with pytest.raises(ValueError,match='coverage mismatch'):
+        jev.decode_review(body,request,targets,case,task,result,path,sources)
+
+
+def test_v2_replay_does_not_invent_new_dimensions(run_dir):
+    request,targets,case,task,result,path,sources=prepared(run_dir,version='qa-jev-openrouter-v2')
+    assert request['state']['contract_version']=='qa-jev-openrouter-v2'
+    assert 'boundary' not in request['questions']
+    body=response(httpx.Request('POST','https://synthetic.invalid',json=request))
+    review=jev.decode_review(body,request,targets,case,task,result,path,sources)
+    assert 'answerability_score' not in review
+    assert 'retrieval_point_assessments' not in review
+
+
 def response(request):
     body=json.loads(request.content);answers={}
     for key,question in body['questions'].items():
-        if key.startswith('point_'):selected='complete'
+        if key=='boundary':selected='appropriate'
+        elif key.startswith('retrieval_'):selected='complete'
+        elif key.startswith('point_'):selected='complete'
         elif key.startswith('group_'):selected='complete'
         elif key.startswith('kind_'):selected='fact'
         elif key.startswith('support_'):selected='supported'
