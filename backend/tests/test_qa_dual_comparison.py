@@ -11,6 +11,8 @@ import judge_qa_eval as judge
 import qa_scoring_policy as policy
 from .test_qa_jev_comparison import saved_rounds
 from .test_qa_judge import run_dir
+from copy import deepcopy
+import compare_qa_jev as comparison
 
 
 @pytest.fixture
@@ -59,3 +61,22 @@ def test_agreement_sampling_is_deterministic_and_not_input_order_dependent():
     ids=['Q1','Q2','Q3','Q4','Q5','Q6']
     assert dual.agreement_sample(ids,'frozen-seed')==dual.agreement_sample(list(reversed(ids)),'frozen-seed')
     assert len(dual.agreement_sample(ids,'frozen-seed'))==5
+
+
+def test_new_dimension_disagreements_are_not_hidden(one_round):
+    source,_,_,native=one_round
+    run,_,cases,_=judge.verify_run(source);task=run['tasks'][0];tid=task['id']
+    left=judge.read_json(native/'tasks'/f'{tid}.json')['review'];right=deepcopy(left)
+    pid=next(iter(left['retrieval_point_assessments']))
+    left['retrieval_point_assessments'][pid]='complete'
+    right['retrieval_point_assessments'][pid]='partial'
+    right['answerability_score']=1
+    changes=dual.differences(left,right,cases[task['case_id']])
+    assert {c['dimension'] for c in changes}=={'answerability','retrieval_support'}
+    report=comparison.compare_labels({tid:left},{tid:right},[task],cases)
+    assert report['assessment_scope']=='six_dimensions'
+    assert report['retrieval_support_agreement']['value']==0
+    right.pop('answerability_score');right.pop('retrieval_point_assessments')
+    legacy=comparison.compare_labels({tid:left},{tid:right},[task],cases)
+    assert legacy['assessment_scope']=='four_shared_dimensions'
+    assert 'retrieval_support_agreement' not in legacy
