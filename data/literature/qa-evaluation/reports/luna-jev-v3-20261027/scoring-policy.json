@@ -1,0 +1,53 @@
+{
+  "version": "qa-scoring-v3",
+  "precedence": "This policy overrides only the base rubric rules it explicitly refines. Keep the frozen questions, required/optional points, numerical checks and source texts unchanged.",
+  "points": {
+    "0": "The target proposition is absent, incorrect or contradicted. Correct background or a different point does not earn credit. An independent boundary proposition is absent if only its related measurement definition is repeated, without expressing the boundary.",
+    "0.5": "At least one substantive component of this target proposition is correct, but another required component, condition, unit, calculation or boundary is missing. The target must contain no contradictory conclusion. Do not give zero merely because a compound point is incomplete.",
+    "1": "All substantive components and necessary qualifications are semantically expressed. Accept paraphrase and an unambiguous logical equivalent, not merely an unstated plausible inference. Do not require stock wording. Directly mapped citation metadata may establish source attribution; an explicitly requested conflict, limitation or causal boundary must be expressed in the answer.",
+    "independence": "Assess each point independently. Merely repeating another point does not satisfy a separate missing proposition. Never penalize the same omission by summing dimensions.",
+    "examples": [
+      {
+        "target": "Give two measurement endpoints and their units.",
+        "answer": "Only the first endpoint and its correct unit are provided.",
+        "score": 0.5
+      },
+      {
+        "target": "Distinguish two measurement methods.",
+        "answer": "Correctly defines one as peak height and the other as integrated area.",
+        "score": 1
+      },
+      {
+        "target": "State that a relative spectral fraction is not an absolute molecule count.",
+        "answer": "Only defines the relative spectral fraction.",
+        "score": 0
+      },
+      {
+        "target": "Different treatment forces prevent attribution solely to material type.",
+        "answer": "States different forces, but does not qualify the attribution.",
+        "score": 0.5
+      },
+      {
+        "target": "Different treatment forces prevent attribution solely to material type.",
+        "answer": "States the forces differ and explicitly explains that the difference may instead come from that unequal treatment, without claiming material type is the sole cause.",
+        "score": 1
+      }
+    ],
+    "example_scope": "These are synthetic rule illustrations, not prior grades for any evaluation case."
+  },
+  "evidence_scope": {
+    "paper_facts": "Use verified full paper/reference evidence to check scientific truth. These sources are not automatically evidence seen by the answering model.",
+    "actual_retrieval": "A statement about the evidence supplied to the answering model must be checked only against candidate.retrieved_evidence. A statement about one excerpt uses only that excerpt. Full-paper availability cannot contradict a truthful statement that the current retrieved excerpts omit a value.",
+    "absence": "No evidence is not affirmative contradiction. Unsupported means not established; contradicted requires a source that affirmatively conflicts within the same asserted scope. Never complete a truncated word, row or sentence from the full paper when evaluating retrieval availability or citation support.",
+    "diagnosis": "A truthful retrieval limitation may be supported while requested content remains unanswered and loses point credit. Conversely, answer omission does not prove retrieval failure.",
+    "classification": "Pure availability/capability statements are scope. Mixed scientific fact and availability statements remain fact; check their scientific part and scope part separately. Do not exempt factual content merely because a sentence also says data are missing."
+  },
+  "citations": {
+    "pair": "For each fact/ref pair, score 1 if that exact cited retrieved excerpt directly supports at least one identifiable substantive factual component of the claim, with correct document, sample, condition, unit and locator. It need not independently prove other components. Score 0 for irrelevant, merely topical, contradictory, nonexistent or incorrectly located citations. State exactly which component is supported. Do not borrow another excerpt.",
+    "group": "Separately assess the union of only the references actually attached to this claim. complete means every substantive factual component, comparison and necessary qualification is supported; partial means some but not all; missing means no substantive component is supported. Any unresolved factual contradiction prevents complete. A matching word or one correct clause cannot establish group completeness. Evidence elsewhere in retrieval, standard evidence or the full paper cannot repair this group.",
+    "scope": "Pure scope pairs and groups are not applicable (null), verified through the appropriate corpus/retrieval scope instead. For mixed claims, citation scoring covers every scientific component; lack-of-evidence parts are checked against the asserted evidence scope.",
+    "inference": "Allow a transparent calculation or bounded comparison only if the cited group contains all inputs and qualifications. Correlation alone does not support causation or a quantitative prediction formula. Do not fill evidential gaps with plausible domain knowledge.",
+    "metrics": "Citation precision measures useful individual citations. Citation coverage counts factual claims whose cited group is complete, not claims with merely one useful citation. Strict/shared-dimension pass requires full group coverage and no bad individual citation.",
+    "example": "If a claim states A and B, citation [1] establishes A and citation [2] establishes B, both pairs may score 1 and the group is complete. If neither cited excerpt establishes B, the group is partial even though the A-supporting pair scores 1."
+  }
+}
