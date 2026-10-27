@@ -43,6 +43,12 @@ def test_boundary_and_retrieval_are_independent_model_decisions(run_dir):
     assert 'candidate.retrieved_evidence' in request['questions']['retrieval_'+pid]['instructions']
     assert 'cannot supply missing retrieved content' in request['questions']['retrieval_'+pid]['instructions']
     assert jev.metrics(case,task,review)['boundary_aware_pass'] is False
+    for key in review['key_point_scores']:review['key_point_scores'][key]=1
+    assert jev.metrics(case,task,review)['shared_dimensions_pass'] is True
+    assert jev.metrics(case,task,review)['boundary_aware_pass'] is False
+    review['answerability_score']=2
+    review['retrieval_point_assessments'][pid]='missing'
+    assert jev.metrics(case,task,review)['boundary_aware_pass'] is True
 
 
 def test_inapplicable_retrieval_is_not_sent_or_counted_as_complete(run_dir):
