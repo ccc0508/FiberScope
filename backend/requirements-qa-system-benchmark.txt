@@ -1,0 +1,3 @@
+# Analysis-only PDF readers; not required by the production application.
+pypdf==6.21.3
+pdfplumber==0.11.9
