@@ -62,7 +62,13 @@ def revalidate(run_dir,records,output):
         review['reviewed_at']=original['finished_at']
         # The model-authored judgments, free text, and quotations are immutable.
         require(all(review[k]==value for k,value in raw.items()
-                    if k not in {'defects','retrieval_point_assessments'}),'Semantic score fields changed')
+                    if k not in {'defects','retrieval_point_assessments','claim_assessments'}),'Semantic score fields changed')
+        require(len(review['claim_assessments'])==len(raw['claim_assessments']),'Claim count changed')
+        for index,(before_claim,after_claim) in enumerate(zip(raw['claim_assessments'],review['claim_assessments'])):
+            require(all(after_claim.get(k)==v for k,v in before_claim.items()),'Model-authored claim judgment changed')
+            added=set(after_claim)-set(before_claim)
+            require(not added or added=={'text'} and after_claim['text']==result['response']['claims'][index]['text'],
+                    'Only missing immutable claim text may be restored')
         before=raw['retrieval_point_assessments'];after=review['retrieval_point_assessments']
         require(set(before)==set(after) and all(after[k]==v or (retrieval_scalar(v) is not None
                 and retrieval_scalar(v)[0]==after[k]) for k,v in before.items()),'Selected retrieval labels changed')
@@ -90,6 +96,7 @@ def revalidate(run_dir,records,output):
         revalidated_sources=sources_by_task,previous_scores_in_prompt=False,provider_calls=0,
         normalization_policy='Fill missing diagnostic IDs; repair only a unique one-to-one diagnostic link; '
                              'split an explicit retrieval enum and colon-delimited explanation, preserving both; '
+                             'restore omitted immutable claim text from its exact ordered source identity; '
                              'allow mixed facts to supplement separately verified quotations with actual-retrieval scope proof; '
                              'never infer or change selected labels, scores, rationale or source quotes.')))
     for tid,record in assembled:judge.write(output/'tasks'/(tid+'.json'),record)

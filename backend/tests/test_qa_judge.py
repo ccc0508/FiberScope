@@ -364,6 +364,25 @@ def test_unique_diagnostic_link_and_missing_id_are_normalized_without_changing_s
     assert row['point_mean']==.75 and row['strict_pass'] is False
 
 
+def test_missing_claim_identity_can_be_copied_but_judgments_stay_immutable(run_dir):
+    raw,case,task,result,path,documents,sources=normalization_fixture(run_dir)
+    original=deepcopy(raw['claim_assessments'][0]);del raw['claim_assessments'][0]['text']
+    before=deepcopy(raw)
+    with pytest.raises(ValueError,match='Claim text mismatch'):
+        judge.validate_review(raw,case,task,result,path,documents,sources,config(),{})
+    checked=judge.validate_review(raw,case,task,result,path,documents,sources,config(),{},normalize_structure=True)
+    assert checked['claim_assessments'][0]==original and raw==before
+    assert checked['key_point_scores']==before['key_point_scores']
+    assert checked['structure_normalizations'][0]['kind']=='missing_claim_text_restored_from_source'
+
+
+def test_provided_wrong_claim_text_cannot_be_replaced_by_normalization(run_dir):
+    raw,case,task,result,path,documents,sources=normalization_fixture(run_dir)
+    raw['claim_assessments'][0]['text']='Another statement'
+    with pytest.raises(ValueError,match='Claim text mismatch'):
+        judge.validate_review(raw,case,task,result,path,documents,sources,config(),{},normalize_structure=True)
+
+
 def test_ambiguous_diagnostic_links_are_not_guessed(run_dir):
     raw,case,task,result,path,documents,sources=normalization_fixture(run_dir)
     raw['key_point_scores']={'P1':.5,'P2':.5}
@@ -438,6 +457,28 @@ def test_zero_call_structural_revalidation_preserves_raw_api_scores_in_aggregate
     assert progress['grader_application_calls']==1 and progress['summary_written']
     summary=judge.read_json(tmp_path/'normalized-aggregate/summary.json')
     assert summary['rows'][0]['point_mean']==.75 and summary['rows'][0]['strict_pass'] is False
+
+
+def test_zero_call_identity_revalidation_preserves_model_judgments(run_dir,tmp_path):
+    import aggregate_qa_judges as aggregation
+    import revalidate_qa_judge as revalidation
+    initial=tmp_path/'missing-identity'
+    def handle(request):
+        data=json.loads(json.loads(request.content)['input'][1]['content'])
+        raw=scorecard(data)
+        del raw['claim_assessments'][0]['text']
+        return httpx.Response(200,json=api_response(raw))
+    with mock_client(handle) as client:judge.run_judge(run_dir,initial,config(),client=client)
+    path=initial/'tasks/PFI2-033-clean.json';original_bytes=path.read_bytes()
+    original=judge.read_json(path)
+    assert original['status']=='invalid_scorecard'
+    view=tmp_path/'identity-view'
+    result=revalidation.revalidate(run_dir,[path],view)
+    checked=judge.read_json(view/'tasks/PFI2-033-clean.json')
+    assert result['provider_calls']==0 and checked['raw_response']==original['raw_response']
+    assert path.read_bytes()==original_bytes
+    progress=aggregation.aggregate(run_dir,[initial,view],tmp_path/'identity-aggregate')
+    assert progress['summary_written'] and progress['grader_application_calls']==1
 
 
 def test_duplicate_components_cannot_double_count_scores(run_dir,tmp_path):

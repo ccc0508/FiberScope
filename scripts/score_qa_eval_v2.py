@@ -138,7 +138,13 @@ def review_task(case,task,result,review,result_path,documents,sources=None,norma
     require(all(isinstance(c,str) and c for c in critical),'Invalid critical errors')
     issues.update('critical:manual:'+str(i+1) for i in range(len(critical)))
     for original,claim in zip(generated,claims):
-        require(claim['text']==original['text'],'Claim text mismatch')
+        identity_fields={'id','claim_type','contains_paper_fact','in_key_points','support','basis'}
+        if normalize_structure and set(claim)==identity_fields:
+            # Restore only the omitted immutable identity, never any model judgment.
+            claim['text']=original['text']
+            review.setdefault('structure_normalizations',[]).append(dict(
+                kind='missing_claim_text_restored_from_source',claim_id=claim['id'],scores_changed=False))
+        require(claim.get('text')==original['text'],'Claim text mismatch')
         require(claim['claim_type'] in {'fact','scope'} and claim['support'] in SUPPORT,'Invalid claim classification')
         require(type(claim.get('in_key_points')) is bool,'Extra-content mapping required')
         if claim['claim_type']=='scope':
