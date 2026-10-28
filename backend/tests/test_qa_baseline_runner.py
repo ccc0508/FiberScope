@@ -105,6 +105,14 @@ def test_invalid_run_limit_prevents_provider_call(prepared, monkeypatch):
     with pytest.raises(ValueError, match='positive integer'):runner.run(prepared, limit=0)
 
 
+def test_longer_execution_budget_is_recorded_without_rewriting_contract(prepared, monkeypatch):
+    calls=[];original=runner.digest(prepared/'run.json')
+    monkeypatch.setattr(runner,'execute_question',lambda *a:calls.append(a) or response(prepared))
+    runner.run(prepared,execution_timeout=300)
+    assert calls[0][-1]==300 and runner.digest(prepared/'run.json')==original
+    assert runner.read_json(prepared/'results/PFI-001.json')['execution_timeout_seconds']==300
+
+
 def test_limited_pilot_can_resume_without_replaying_result(prepared, monkeypatch):
     metadata=runner.read_json(prepared/'run.json')
     metadata['tasks']=[{'id':'PFI-001','case_id':'PFI-001','mode':'retrieval'},
