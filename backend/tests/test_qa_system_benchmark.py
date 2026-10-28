@@ -151,3 +151,17 @@ def test_failed_request_cost_is_unknown_and_not_assumed_free():
     result=reporting.accounting(rows,'luna')
     assert result['calls']==2 and result['usage_unknown_calls']==result['cost_unknown_calls']==1
     assert result['reported_cost_usd']=='0.001' and result['invoice_cost_usd'] is None
+
+
+def test_public_json_bytes_and_hostile_answer_rendering_are_safe(tmp_path):
+    reporting.save(tmp_path/'public.json',dict(value='科研数据'))
+    assert b'\r\n' not in (tmp_path/'public.json').read_bytes()
+    state,questions,targets=fixture();config=judge.Config('https://openrouter.ai/api/v1','openai/gpt-6-luna','SYNTHETIC')
+    review=grading.decode('luna',luna_response(questions),grading.request_for('luna',config,state,questions),questions,targets,state)
+    row=reporting.metrics(review,state['reference_case'],state['capabilities']);summary=reporting.summarize([row])
+    result=dict(valid_grades=4,matched_tasks=1,scores={k:{s:summary for s in ['rag','dsh']} for k in ['luna','jev']})
+    candidate=deepcopy(state['candidate']);candidate['answer']='<script>alert(1)</script>'
+    sample=dict(task_id='PFI2-001',question='Test',reference_answer='Reference',key_points=state['reference_case']['key_points'],
+                systems={s:dict(candidate=candidate,judges={k:dict(metrics=row,review=review) for k in ['luna','jev']}) for s in ['rag','dsh']})
+    path=tmp_path/'report.html';reporting.render_html(path,result,[sample]);text=path.read_text(encoding='utf-8')
+    assert '<script>' not in text and '&lt;script&gt;' in text and '事实完全支持' in text

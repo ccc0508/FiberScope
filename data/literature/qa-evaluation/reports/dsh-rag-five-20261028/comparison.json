@@ -1,0 +1,529 @@
+{
+  "version": "qa-system-five-v1",
+  "policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+  "study_sha256": "80982e28cf4861f10717ae43b74fbd13ca0e7fc490b8f3d7fa59a6b964d6c1b6",
+  "import_sha256": "fd90529359cd5ed27cc43e9d3f9f8c964b5efbfddb6660c8a9f10018313f776f",
+  "question_count": 32,
+  "planned_grades": 128,
+  "valid_grades": 124,
+  "matched_tasks": 28,
+  "matched_task_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-005",
+    "PFI2-006",
+    "PFI2-007",
+    "PFI2-008",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-012",
+    "PFI2-013",
+    "PFI2-014",
+    "PFI2-016",
+    "PFI2-017",
+    "PFI2-018",
+    "PFI2-019",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-024",
+    "PFI2-025",
+    "PFI2-027",
+    "PFI2-028",
+    "PFI2-029",
+    "PFI2-030",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "excluded_tasks": [
+    {
+      "task_id": "PFI2-009",
+      "missing": [
+        "jev_dsh"
+      ],
+      "reference_flags": []
+    },
+    {
+      "task_id": "PFI2-015",
+      "missing": [
+        "jev_dsh"
+      ],
+      "reference_flags": []
+    },
+    {
+      "task_id": "PFI2-023",
+      "missing": [
+        "jev_rag"
+      ],
+      "reference_flags": []
+    },
+    {
+      "task_id": "PFI2-026",
+      "missing": [
+        "jev_dsh"
+      ],
+      "reference_flags": []
+    }
+  ],
+  "all_grades_valid": false,
+  "scores": {
+    "luna": {
+      "rag": {
+        "tasks": 28,
+        "point_macro_average": 0.8601190476190477,
+        "support_counts": {
+          "supported": 98,
+          "partially_supported": 3,
+          "contradicted": 3
+        },
+        "citation_precision": {
+          "numerator": 114,
+          "denominator": 116,
+          "value": 0.9827586206896551
+        },
+        "citation_coverage": {
+          "numerator": 92,
+          "denominator": 104,
+          "value": 0.8846153846153846
+        },
+        "boundary_mean": 1.6428571428571428,
+        "all_five_pass": 14
+      },
+      "dsh": {
+        "tasks": 28,
+        "point_macro_average": 1,
+        "support_counts": {
+          "supported": 191,
+          "partially_supported": 16
+        },
+        "citation_precision": {
+          "numerator": 326,
+          "denominator": 338,
+          "value": 0.9644970414201184
+        },
+        "citation_coverage": {
+          "numerator": 143,
+          "denominator": 207,
+          "value": 0.6908212560386473
+        },
+        "boundary_mean": 2,
+        "all_five_pass": 7
+      }
+    },
+    "jev": {
+      "rag": {
+        "tasks": 28,
+        "point_macro_average": 0.8690476190476191,
+        "support_counts": {
+          "supported": 101,
+          "contradicted": 2
+        },
+        "citation_precision": {
+          "numerator": 112,
+          "denominator": 115,
+          "value": 0.9739130434782609
+        },
+        "citation_coverage": {
+          "numerator": 97,
+          "denominator": 103,
+          "value": 0.941747572815534
+        },
+        "boundary_mean": 1.7142857142857142,
+        "all_five_pass": 17
+      },
+      "dsh": {
+        "tasks": 28,
+        "point_macro_average": 1,
+        "support_counts": {
+          "supported": 188,
+          "partially_supported": 17,
+          "unsupported": 2
+        },
+        "citation_precision": {
+          "numerator": 307,
+          "denominator": 335,
+          "value": 0.9164179104477612
+        },
+        "citation_coverage": {
+          "numerator": 154,
+          "denominator": 207,
+          "value": 0.7439613526570048
+        },
+        "boundary_mean": 2,
+        "all_five_pass": 8
+      }
+    }
+  },
+  "individual_unflagged_scores": {
+    "luna_rag": {
+      "tasks": 32,
+      "point_macro_average": 0.8723958333333334,
+      "support_counts": {
+        "supported": 109,
+        "partially_supported": 3,
+        "contradicted": 3
+      },
+      "citation_precision": {
+        "numerator": 127,
+        "denominator": 129,
+        "value": 0.9844961240310077
+      },
+      "citation_coverage": {
+        "numerator": 103,
+        "denominator": 115,
+        "value": 0.8956521739130435
+      },
+      "boundary_mean": 1.65625,
+      "all_five_pass": 17
+    },
+    "luna_dsh": {
+      "tasks": 32,
+      "point_macro_average": 1,
+      "support_counts": {
+        "supported": 220,
+        "unsupported": 2,
+        "partially_supported": 19
+      },
+      "citation_precision": {
+        "numerator": 364,
+        "denominator": 383,
+        "value": 0.9503916449086162
+      },
+      "citation_coverage": {
+        "numerator": 163,
+        "denominator": 241,
+        "value": 0.6763485477178424
+      },
+      "boundary_mean": 1.96875,
+      "all_five_pass": 7
+    },
+    "jev_rag": {
+      "tasks": 31,
+      "point_macro_average": 0.8682795698924731,
+      "support_counts": {
+        "supported": 109,
+        "contradicted": 2
+      },
+      "citation_precision": {
+        "numerator": 121,
+        "denominator": 124,
+        "value": 0.9758064516129032
+      },
+      "citation_coverage": {
+        "numerator": 104,
+        "denominator": 111,
+        "value": 0.9369369369369369
+      },
+      "boundary_mean": 1.7419354838709677,
+      "all_five_pass": 18
+    },
+    "jev_dsh": {
+      "tasks": 29,
+      "point_macro_average": 1,
+      "support_counts": {
+        "supported": 193,
+        "partially_supported": 17,
+        "unsupported": 2
+      },
+      "citation_precision": {
+        "numerator": 312,
+        "denominator": 341,
+        "value": 0.9149560117302052
+      },
+      "citation_coverage": {
+        "numerator": 156,
+        "denominator": 212,
+        "value": 0.7358490566037735
+      },
+      "boundary_mean": 2,
+      "all_five_pass": 8
+    }
+  },
+  "paired_within_each_judge": {
+    "luna": {
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "tasks": 32,
+      "scores": {
+        "rag": {
+          "tasks": 32,
+          "point_macro_average": 0.8723958333333334,
+          "support_counts": {
+            "supported": 109,
+            "partially_supported": 3,
+            "contradicted": 3
+          },
+          "citation_precision": {
+            "numerator": 127,
+            "denominator": 129,
+            "value": 0.9844961240310077
+          },
+          "citation_coverage": {
+            "numerator": 103,
+            "denominator": 115,
+            "value": 0.8956521739130435
+          },
+          "boundary_mean": 1.65625,
+          "all_five_pass": 17
+        },
+        "dsh": {
+          "tasks": 32,
+          "point_macro_average": 1,
+          "support_counts": {
+            "supported": 220,
+            "partially_supported": 19,
+            "unsupported": 2
+          },
+          "citation_precision": {
+            "numerator": 364,
+            "denominator": 383,
+            "value": 0.9503916449086162
+          },
+          "citation_coverage": {
+            "numerator": 163,
+            "denominator": 241,
+            "value": 0.6763485477178424
+          },
+          "boundary_mean": 1.96875,
+          "all_five_pass": 7
+        }
+      }
+    },
+    "jev": {
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "tasks": 28,
+      "scores": {
+        "rag": {
+          "tasks": 28,
+          "point_macro_average": 0.8690476190476191,
+          "support_counts": {
+            "supported": 101,
+            "contradicted": 2
+          },
+          "citation_precision": {
+            "numerator": 112,
+            "denominator": 115,
+            "value": 0.9739130434782609
+          },
+          "citation_coverage": {
+            "numerator": 97,
+            "denominator": 103,
+            "value": 0.941747572815534
+          },
+          "boundary_mean": 1.7142857142857142,
+          "all_five_pass": 17
+        },
+        "dsh": {
+          "tasks": 28,
+          "point_macro_average": 1,
+          "support_counts": {
+            "supported": 188,
+            "partially_supported": 17,
+            "unsupported": 2
+          },
+          "citation_precision": {
+            "numerator": 307,
+            "denominator": 335,
+            "value": 0.9164179104477612
+          },
+          "citation_coverage": {
+            "numerator": 154,
+            "denominator": 207,
+            "value": 0.7439613526570048
+          },
+          "boundary_mean": 2,
+          "all_five_pass": 8
+        }
+      }
+    }
+  },
+  "point_win_tie_loss": {
+    "luna": {
+      "dsh_higher": 10,
+      "tie": 18,
+      "rag_higher": 0
+    },
+    "jev": {
+      "dsh_higher": 9,
+      "tie": 19,
+      "rag_higher": 0
+    }
+  },
+  "accounting": {
+    "luna": {
+      "calls": 86,
+      "known_tokens": {
+        "input_tokens": 4366062,
+        "output_tokens": 254893,
+        "total_tokens": 4620955
+      },
+      "usage_unknown_calls": 8,
+      "reported_cost_usd": "0.622839900",
+      "cost_unknown_calls": 8,
+      "invoice_cost_usd": null,
+      "request_time_ms": 4503529
+    },
+    "jev": {
+      "calls": 77,
+      "known_tokens": {
+        "input_tokens": 5136926,
+        "output_tokens": 413764,
+        "total_tokens": 5550690
+      },
+      "usage_unknown_calls": 2,
+      "reported_cost_usd": "0.215750892",
+      "cost_unknown_calls": 2,
+      "invoice_cost_usd": null,
+      "request_time_ms": 480104
+    }
+  },
+  "dsh_runtime": {
+    "platform": "DSH",
+    "total_tokens": 65281766,
+    "statistical_scope": "all_32_questions_combined",
+    "source": "user_confirmation_after_initial_import",
+    "provider_logs_verified": false,
+    "input_tokens": null,
+    "output_tokens": null,
+    "total_duration_seconds": null,
+    "actual_cost_usd": null,
+    "changes_grader_input": false
+  },
+  "text_counts": {
+    "rag": {
+      "claims": 120,
+      "citations": 72,
+      "mean_answer_characters": 190.21875
+    },
+    "dsh": {
+      "claims": 252,
+      "citations": 289,
+      "mean_answer_characters": 734.3125
+    }
+  },
+  "user_declared_execution": {
+    "platform": "DSH",
+    "requested_model": "DeepSeek-V4.1-Flash-1017",
+    "requested_reasoning": "high",
+    "actual_returned_model": null,
+    "identity_source": "user_confirmed_platform_selection_not_API_verified",
+    "independent_context_per_question": true,
+    "used_only_same_paper_and_corresponding_question": true,
+    "execution_conditions_source": "user_confirmation",
+    "total_duration_seconds": null,
+    "reported_cost_usd": null,
+    "input_tokens": null,
+    "output_tokens": null,
+    "attributable_total_tokens": null,
+    "unverified_user_reported_token_number": 65281766,
+    "token_statistical_scope": "pending_confirmation_not_attributed_to_this_32_question_run",
+    "attempts_per_question": null
+  },
+  "quote_verification": {
+    "normalized_exact": 276,
+    "typography_only": 4,
+    "needs_source_review": 9
+  },
+  "runtime_confirmation_supersedes_import_metadata": true,
+  "grading_coverage": {
+    "luna": {
+      "rag": {
+        "completed": 32
+      },
+      "dsh": {
+        "completed": 32
+      }
+    },
+    "jev": {
+      "rag": {
+        "completed": 31,
+        "invalid_scorecard": 1
+      },
+      "dsh": {
+        "completed": 29,
+        "invalid_scorecard": 3
+      }
+    }
+  },
+  "initial_attempt_statuses": {
+    "luna": {
+      "api_failed": 8,
+      "invalid_scorecard": 10,
+      "completed": 46
+    },
+    "jev": {
+      "api_failed": 2,
+      "invalid_scorecard": 6,
+      "completed": 56
+    }
+  },
+  "raw_input_sha256": "5faa9c70860f1b951170af8e5deb9d8930476f3187f93bbd583e42145eb69b00",
+  "new_answer_generation_calls": 0,
+  "new_analysis_model_calls": 0,
+  "rounds_per_judge": 1,
+  "expert_gold_accuracy_measured": false,
+  "caveat": "Single paper, 32 development questions, one generation set and one valid grade per judge/system; model/platform internals differ. No causal architecture attribution, significance or new-paper generalization claim."
+}
