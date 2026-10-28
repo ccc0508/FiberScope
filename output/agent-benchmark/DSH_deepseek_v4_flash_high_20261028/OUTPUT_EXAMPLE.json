@@ -1,0 +1,32 @@
+{
+  "task_id": "PFI2-001",
+  "answer": "<陈述一> [1]\n<陈述二> [2]",
+  "claims": [
+    {
+      "text": "<陈述一>",
+      "citation_refs": [
+        "[1]"
+      ]
+    },
+    {
+      "text": "<陈述二>",
+      "citation_refs": [
+        "[2]"
+      ]
+    }
+  ],
+  "citations": [
+    {
+      "ref": "[1]",
+      "page_start": 1,
+      "page_end": 1,
+      "quote": "<第一个对应原文短引>"
+    },
+    {
+      "ref": "[2]",
+      "page_start": 2,
+      "page_end": 2,
+      "quote": "<第二个对应原文短引>"
+    }
+  ]
+}

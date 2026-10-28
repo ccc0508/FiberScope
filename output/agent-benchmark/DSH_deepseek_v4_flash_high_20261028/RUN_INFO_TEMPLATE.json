@@ -1,0 +1,23 @@
+{
+  "run_id": null,
+  "platform": "DSH",
+  "requested_model": "DeepSeek-v4-flash",
+  "requested_reasoning": "high",
+  "model_shown_by_platform": null,
+  "actual_returned_model": null,
+  "model_identity_source": "user_selected_not_API_verified",
+  "independent_context_per_question": null,
+  "used_only_attached_paper": null,
+  "network_disabled": null,
+  "history_or_memory_disabled": null,
+  "used_page_images": null,
+  "extra_tools_used": [],
+  "attempts_per_question": null,
+  "started_at": null,
+  "finished_at": null,
+  "total_duration_seconds": null,
+  "input_tokens": null,
+  "output_tokens": null,
+  "reported_cost_usd": null,
+  "metadata_note": "由操作者或平台日志填写；不能观测的项目保留null，不猜测模型调用数、Token或费用。"
+}
