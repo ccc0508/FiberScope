@@ -29,7 +29,7 @@ class LiteratureSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=BACKEND / '.env.literature', env_prefix='LITERATURE_', extra='ignore')
     enabled: bool = False
     data_dir: Path = BACKEND.parent / '.rag-data'
-    timeout_seconds: int = Field(90, ge=5, le=90)
+    timeout_seconds: int = Field(90, ge=5, le=300)
     extraction_timeout_seconds: int = Field(180, ge=10, le=300)
     document_extraction_timeout_seconds: int = Field(1800, ge=60, le=3600)
 

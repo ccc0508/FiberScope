@@ -174,11 +174,14 @@ def execute_fixture(run_dir, task, question, timeout):
                           creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
 
 
-def run(run_dir, limit=None):
+def run(run_dir, limit=None, execution_timeout=None):
     from filelock import FileLock
     require(limit is None or type(limit) is int and limit > 0, 'Run limit must be a positive integer')
+    require(execution_timeout is None or type(execution_timeout) is int and 5 <= execution_timeout <= 600,
+            'Execution timeout must be an integer from 5 to 600 seconds')
     run_dir = Path(run_dir).resolve()
     metadata = read_json(run_dir / 'run.json')
+    timeout = execution_timeout if execution_timeout is not None else metadata['timeout_seconds']
     backend = run_dir / 'backend'
     require(source_hashes(backend) == metadata['source_files'], 'Frozen runtime source was changed')
     require(configuration_probe(backend) == metadata['configuration_probe'], 'Private runtime configuration was changed')
@@ -210,16 +213,17 @@ def run(run_dir, limit=None):
             require(source_hashes(backend) == metadata['source_files'], 'Frozen runtime source was changed')
             started = perf_counter()
             result = dict(run_id=metadata['run_id'], case_id=case['id'], question=case['question'], started_at=now())
+            result.update(execution_timeout_seconds=timeout, runner_sha256=digest(Path(__file__)))
             if metadata.get('evaluation_schema_version')==2:
                 result.update(task_id=task['id'],suite=task['suite'],capabilities=task['capabilities'],variant=task.get('variant'))
             write_json(attempt_path, {**result, 'status': 'started'})
             calls += 1
             try:
                 if task['mode']=='controlled_evidence':
-                    process=execute_fixture(run_dir,task,case['question'],metadata['timeout_seconds'])
+                    process=execute_fixture(run_dir,task,case['question'],timeout)
                 else:
                     process = execute_question(backend / 'literature_worker.py', run_dir / 'library',
-                                               case['question'], metadata['timeout_seconds'])
+                                               case['question'], timeout)
                 result['worker_stderr_sha256'] = hashlib.sha256(process.stderr.encode()).hexdigest()
                 result['worker_stderr_bytes'] = len(process.stderr.encode())
                 result['worker_returncode'] = process.returncode
@@ -262,12 +266,13 @@ def main():
     execution = commands.add_parser('run')
     execution.add_argument('--run-dir', type=Path, required=True)
     execution.add_argument('--limit', type=int)
+    execution.add_argument('--execution-timeout', type=int)
     args = parser.parse_args()
     try:
         if args.action == 'prepare':
             result = prepare(args.baseline, args.pack, args.env_file, args.run_dir, args.reference_source,args.suite)
         else:
-            result = run(args.run_dir, args.limit)
+            result = run(args.run_dir, args.limit, args.execution_timeout)
         print(json.dumps(result, ensure_ascii=False))
     except Exception as error:
         # Never echo private configuration, provider responses, or raw subprocess stderr.
