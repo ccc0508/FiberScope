@@ -272,13 +272,15 @@ def render_html(path,result,rows):
         pieces.append(f"<details><summary>{e(row['task_id'])} · {e(row['question'])}</summary><h3>参考答案与评分要点</h3><pre>{e(row['reference_answer'])}</pre><ul>")
         for p in row['key_points']:pieces.append(f"<li>{e(p['id'])} {'（可选）' if p['optional'] else '（必答）'}：{e(p['text'])}</li>")
         pieces.append('</ul><div class="systems">')
-        for system,cell in row['systems'].items():
+        for system in ['rag','dsh']:
+            cell=row['systems'][system]
             pieces.append(f"<section><h2>{e(system.upper())}</h2><pre>{e(cell['candidate']['answer'])}</pre>")
             pieces.append('<details><summary>逐条陈述与对应引用</summary><ol>')
             for claim in cell['candidate']['claims']:
                 pieces.append(f"<li>{e(claim['id'])}：{e(claim['text'])} {e(' '.join(claim['citation_refs']))}</li>")
             pieces.append('</ol></details>')
-            for kind,card in cell['judges'].items():
+            for kind in ['luna','jev']:
+                card=cell['judges'][kind]
                 if card['review'] is None:pieces.append(f'<p>{e(kind)}：无有效评分。</p>');continue
                 s=card['metrics'];pieces.append(f"<details><summary>{e(kind)} · 要点 {percent(s['point_mean'])} · 边界 {s['boundary']}/2</summary>")
                 if s['reference_concern']:pieces.append('<p>本裁判标记参考标准疑点，未纳入共同汇总。</p>')
