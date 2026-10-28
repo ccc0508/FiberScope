@@ -100,6 +100,25 @@ def test_completed_question_is_never_replayed(prepared, monkeypatch):
     assert len(calls) == 1
 
 
+def test_invalid_run_limit_prevents_provider_call(prepared, monkeypatch):
+    monkeypatch.setattr(runner, 'execute_question', lambda *a: pytest.fail('must not call provider'))
+    with pytest.raises(ValueError, match='positive integer'):runner.run(prepared, limit=0)
+
+
+def test_limited_pilot_can_resume_without_replaying_result(prepared, monkeypatch):
+    metadata=runner.read_json(prepared/'run.json')
+    metadata['tasks']=[{'id':'PFI-001','case_id':'PFI-001','mode':'retrieval'},
+                       {'id':'PFI-002','case_id':'PFI-002','mode':'retrieval'}]
+    path=prepared/'dataset/cases.jsonl'
+    path.write_text('\n'.join(json.dumps({'id':f'PFI-{i:03}','question':f'question {i}'}) for i in (1,2))+'\n',encoding='utf-8')
+    metadata['dataset_files']['cases.jsonl']=runner.digest(path);runner.write_json(prepared/'run.json',metadata)
+    calls=[]
+    monkeypatch.setattr(runner,'execute_question',lambda *a:calls.append(a) or response(prepared))
+    assert runner.run(prepared,limit=1)['completed']==1 and len(calls)==1
+    assert runner.run(prepared,limit=1)['completed']==2 and len(calls)==2
+    assert runner.run(prepared,limit=1)['completed']==2 and len(calls)==2
+
+
 def test_unknown_interrupted_attempt_requires_inspection(prepared, monkeypatch):
     runner.write_json(prepared / 'attempts/PFI-001.json', {'status': 'started'})
     monkeypatch.setattr(runner, 'execute_question', lambda *a: pytest.fail('must not replay'))

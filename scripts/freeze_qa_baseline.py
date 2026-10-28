@@ -94,6 +94,10 @@ def configuration(env_file=None):
                    'provider_endpoint_fingerprints': {
                        key: hashlib.sha256((getattr(settings, key) or '<sdk-default>').encode()).hexdigest()
                        for key in ['llm_base_url', 'embedding_base_url']}})
+    if settings.llm_thinking_enabled is not None or settings.llm_reasoning_effort is not None:
+        result['generation_parameters'] = (
+            f'Thinking enabled={settings.llm_thinking_enabled}; reasoning_effort={settings.llm_reasoning_effort}; '
+            'temperature, top_p and seed are not explicitly set; provider defaults apply.')
     return web.root, result
 
 
