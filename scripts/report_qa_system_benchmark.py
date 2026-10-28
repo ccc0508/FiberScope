@@ -22,6 +22,23 @@ def save(path,value):
     path.write_text(json.dumps(value,ensure_ascii=False,indent=2,allow_nan=False)+'\n',encoding='utf-8',newline='\n')
 
 
+def runtime_metadata(import_dir,fallback):
+    for name in ['runtime-billing-clarification.json','runtime-confirmation.json']:
+        path=Path(import_dir)/name
+        if path.exists():return path,judge.read_json(path)
+    return None,fallback
+
+
+def runtime_cost_lines(runtime):
+    charge=runtime.get('reported_platform_charge')
+    if charge:
+        return [f"DSH本轮32题平台总费用：{charge['amount']:,} {charge['unit']}（用户确认的扣费总额，单位按平台原样记录）。",
+                '该数值记录为平台费用；模型输入/输出Token用量、货币折算金额和总耗时尚未提供。']
+    tokens=runtime.get('total_tokens')
+    display=f'{tokens:,}' if type(tokens) is int else '未知'
+    return [f'DSH本轮32题模型Token用量：{display}。平台费用与总耗时尚未提供。']
+
+
 def metrics(review,case,capabilities):
     values=[review['key_point_scores'][p['id']] for p in case['key_points'] if not p['optional'] and p['capability'] in capabilities]
     facts=[c for c in review['claim_assessments'] if c['claim_type']=='fact']
@@ -134,8 +151,7 @@ def publish(import_dir,study_dir,output,document,allow_incomplete=False):
                                reference_flags=[kind+'_'+system for kind in ['luna','jev'] for system in ['rag','dsh']
                                                 if (kind,system,tid) in reviews and reviews[(kind,system,tid)]['reference_concern']]))
     costs={kind:accounting(records[kind],kind) for kind in ['luna','jev']}
-    runtime_path=import_dir/'runtime-confirmation.json'
-    runtime=judge.read_json(runtime_path) if runtime_path.exists() else meta['metadata']
+    runtime_path,runtime=runtime_metadata(import_dir,meta['metadata'])
     text_counts={system:dict(claims=sum(len(j['candidate']['claims']) for j in jobs if j['system']==system),
                              citations=sum(len(j['candidate']['citations']) for j in jobs if j['system']==system),
                              mean_answer_characters=statistics.mean(len(j['candidate']['answer']) for j in jobs if j['system']==system))
@@ -151,7 +167,7 @@ def publish(import_dir,study_dir,output,document,allow_incomplete=False):
                 paired_within_each_judge=within_judge,
                 point_win_tie_loss=win_loss,accounting=costs,dsh_runtime=runtime,text_counts=text_counts,
                 user_declared_execution=meta['metadata'],quote_verification=meta['quote_verification'],
-                runtime_confirmation_supersedes_import_metadata=runtime_path.exists(),
+                runtime_confirmation_supersedes_import_metadata=runtime_path is not None,
                 grading_coverage={kind:{system:{status:count for (k,s,status),count in statuses.items() if k==kind and s==system}
                                         for system in ['rag','dsh']} for kind in ['luna','jev']},
                 initial_attempt_statuses={kind:dict(Counter(r['status'] for r in records[kind] if r['attempt']==1)) for kind in ['luna','jev']},
@@ -173,7 +189,8 @@ def publish(import_dir,study_dir,output,document,allow_incomplete=False):
         public_rows.append(sample)
     (output/'questions-answers-reviews.jsonl').write_text(''.join(judge.encode(r)+'\n' for r in public_rows),encoding='utf-8',newline='\n')
     save(output/'audit.json',dict(valid_records=proofs,source_import_sha256=judge.digest(import_dir/'import.json'),
-        runtime_confirmation_sha256=judge.digest(runtime_path) if runtime_path.exists() else None,
+        runtime_confirmation_sha256=judge.digest(runtime_path) if runtime_path is not None else None,
+        runtime_metadata_file=runtime_path.name if runtime_path is not None else None,
         grading_harness=study['harness_files'],original_inputs_unchanged=True,no_grades_assigned_by_exporter=True))
     render_html(output/'comparison.html',result,public_rows)
     write_document(document,result,output)
@@ -221,7 +238,7 @@ def write_document(path,result,output):
         '接口失败、格式无效和参考标准疑点均不记为答案零分；无效或未结束评分不填充。原始请求、全部尝试、费用与来源指纹保留在本地忽略目录。先取得有效评分即停止该份答案，不择优重评。','',
         '若存在排除题，共同子集不等于完整32题结果；评分异常可能集中在复杂或较长回答上，不能假定缺失随机，也不能据此直接宣称系统整体胜出。','',
         '## 用量、耗时与费用','',
-        f"DSH本轮32题合计Token：{result['dsh_runtime'].get('total_tokens','未知'):,}（用户确认，未核验平台日志）。输入/输出分项、总耗时、实际费用未知。不能由Token数量直接虚构实际费用。",
+        *runtime_cost_lines(result['dsh_runtime']),
         'RAG答题用量沿用上轮归档：成功记录已知160,637 Token，另4次原90秒超时用量未知；成功回答端到端中位65.375秒，混合串行/并发调度。DSH缺少对应时间记录，当前不能作严格速度或完整成本对比。','',
         '| 裁判 | 本轮评分请求数（含失败/补评） | API报告费用 | 费用未知请求 |',
         '| --- | ---: | ---: | ---: |',
@@ -247,6 +264,10 @@ def render_html(path,result,rows):
             support=s['support_counts'];fact_ratio=f"{support.get('supported',0)}/{sum(support.values())}"
             pieces.append(f"<tr><td>{e(kind)} / {e(system.upper())}</td><td>{percent(s['point_macro_average'])}</td><td>{fact_ratio}</td><td>{ratio(s['citation_precision'])}</td><td>{ratio(s['citation_coverage'])}</td><td>{s['boundary_mean']:.3f}</td></tr>")
     pieces.append('</table><p>裁判之间独立；参考论文相同。一次单篇开发集运行，不能证明统计显著性或跨论文泛化。</p></article>')
+    if result.get('dsh_runtime'):
+        pieces.append('<article><h2>DSH答题费用</h2>')
+        pieces.extend('<p>'+e(line)+'</p>' for line in runtime_cost_lines(result['dsh_runtime']))
+        pieces.append('</article>')
     for row in rows:
         pieces.append(f"<details><summary>{e(row['task_id'])} · {e(row['question'])}</summary><h3>参考答案与评分要点</h3><pre>{e(row['reference_answer'])}</pre><ul>")
         for p in row['key_points']:pieces.append(f"<li>{e(p['id'])} {'（可选）' if p['optional'] else '（必答）'}：{e(p['text'])}</li>")

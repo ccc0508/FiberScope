@@ -622,7 +622,7 @@
     }
   ],
   "source_import_sha256": "fd90529359cd5ed27cc43e9d3f9f8c964b5efbfddb6660c8a9f10018313f776f",
-  "runtime_confirmation_sha256": "7b099b5fd288df903d1521ddd2f738806e73d21632038aedba1a298fdb311956",
+  "runtime_confirmation_sha256": "74db16a7c60efde60dcc18721a95b6d6448e0e2a9430f08ac34b55493ba50a6b",
   "grading_harness": {
     "qa_system_judge.py": "5e24eba5182c1d1d9212fe47559b49d1dcea8bd2ab79d50a9f017f08c9faf31b",
     "import_qa_system_answers.py": "77712040fbead8e6682c2d1689ac62e4f2827cb1b7d14263cd64654bb466d033",
@@ -633,5 +633,6 @@
     "validate_qa_eval.py": "50baab3fe8abe03fbbd7cb20c083c70aca9c09ee5188859da0ac2e5cd47f621e"
   },
   "original_inputs_unchanged": true,
-  "no_grades_assigned_by_exporter": true
+  "no_grades_assigned_by_exporter": true,
+  "runtime_metadata_file": "runtime-billing-clarification.json"
 }

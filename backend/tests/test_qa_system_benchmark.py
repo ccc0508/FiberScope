@@ -165,3 +165,16 @@ def test_public_json_bytes_and_hostile_answer_rendering_are_safe(tmp_path):
                 systems={s:dict(candidate=candidate,judges={k:dict(metrics=row,review=review) for k in ['luna','jev']}) for s in ['rag','dsh']})
     path=tmp_path/'report.html';reporting.render_html(path,result,[sample]);text=path.read_text(encoding='utf-8')
     assert '<script>' not in text and '&lt;script&gt;' in text and '事实完全支持' in text
+
+
+def test_platform_token_charge_is_separate_from_model_usage(tmp_path):
+    old=dict(total_tokens=65281766)
+    clarified=dict(total_tokens=None,reported_platform_charge=dict(amount=65281766,unit='Token'))
+    reporting.save(tmp_path/'runtime-confirmation.json',old)
+    reporting.save(tmp_path/'runtime-billing-clarification.json',clarified)
+    path,metadata=reporting.runtime_metadata(tmp_path,{})
+    text=''.join(reporting.runtime_cost_lines(metadata))
+    assert path.name=='runtime-billing-clarification.json' and metadata['total_tokens'] is None
+    assert '平台总费用：65,281,766 Token' in text and '平台费用' in text
+    assert '模型Token用量：65,281,766' not in text
+    assert judge.read_json(tmp_path/'runtime-confirmation.json')==old

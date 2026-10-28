@@ -442,14 +442,20 @@
   },
   "dsh_runtime": {
     "platform": "DSH",
-    "total_tokens": 65281766,
-    "statistical_scope": "all_32_questions_combined",
-    "source": "user_confirmation_after_initial_import",
-    "provider_logs_verified": false,
+    "reported_platform_charge": {
+      "amount": 65281766,
+      "unit": "Token",
+      "statistical_scope": "all_32_questions_combined",
+      "source": "user_confirmed_total_charge"
+    },
+    "total_tokens": null,
     "input_tokens": null,
     "output_tokens": null,
-    "total_duration_seconds": null,
     "actual_cost_usd": null,
+    "total_duration_seconds": null,
+    "source": "user_billing_clarification",
+    "provider_logs_verified": false,
+    "supersedes": "runtime-confirmation.json",
     "changes_grader_input": false
   },
   "text_counts": {
