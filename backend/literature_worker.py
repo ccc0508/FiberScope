@@ -45,7 +45,11 @@ def main():
     vectors = ChromaVectorStore(root / 'chroma', settings.embedding_provider,
                                 settings.embedding_model, settings.embedding_dimensions)
     generator_type = DeepSeekGenerator if settings.llm_provider == 'deepseek' else OpenAIGenerator
-    generator = generator_type(settings.llm_model, settings.llm_api_key.get_secret_value(), settings.llm_base_url)
+    generation_options = ({'thinking_enabled': settings.llm_thinking_enabled,
+                           'reasoning_effort': settings.llm_reasoning_effort}
+                          if settings.llm_provider == 'deepseek' else {})
+    generator = generator_type(settings.llm_model, settings.llm_api_key.get_secret_value(), settings.llm_base_url,
+                               **generation_options)
     evidence_by_chunk = {}
     generation_calls = []
     generated_answers = []
@@ -68,6 +72,7 @@ def main():
                 return result
             finally:
                 call['usage'] = getattr(generator, 'last_usage', None)
+                call['model_info'] = getattr(generator, 'last_model_info', None)
 
     class CapturedRetriever(RetrievalService):
         def retrieve(self, *args):

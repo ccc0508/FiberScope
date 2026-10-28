@@ -174,8 +174,9 @@ def execute_fixture(run_dir, task, question, timeout):
                           creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
 
 
-def run(run_dir):
+def run(run_dir, limit=None):
     from filelock import FileLock
+    require(limit is None or type(limit) is int and limit > 0, 'Run limit must be a positive integer')
     run_dir = Path(run_dir).resolve()
     metadata = read_json(run_dir / 'run.json')
     backend = run_dir / 'backend'
@@ -190,6 +191,7 @@ def run(run_dir):
         for name in ('qa_injection_worker.py',):
             require(digest(run_dir/'harness'/name)==metadata['harness_files'][name],'Fixture harness was changed')
     with FileLock(str(run_dir / '.runner.lock'), timeout=0):
+        calls = 0
         for task in tasks:
             case=by_case[task['case_id']]
             result_path = run_dir / 'results' / (task['id'] + '.json')
@@ -201,6 +203,8 @@ def run(run_dir):
                 require(attempt_path.exists() and read_json(attempt_path).get('result_sha256') == digest(result_path),
                         'Completed result checksum mismatch')
                 continue
+            if limit is not None and calls >= limit:
+                break
             require(not attempt_path.exists(), 'Interrupted attempt requires inspection; automatic paid replay refused')
             # Check the code again before each paid operation.
             require(source_hashes(backend) == metadata['source_files'], 'Frozen runtime source was changed')
@@ -209,6 +213,7 @@ def run(run_dir):
             if metadata.get('evaluation_schema_version')==2:
                 result.update(task_id=task['id'],suite=task['suite'],capabilities=task['capabilities'],variant=task.get('variant'))
             write_json(attempt_path, {**result, 'status': 'started'})
+            calls += 1
             try:
                 if task['mode']=='controlled_evidence':
                     process=execute_fixture(run_dir,task,case['question'],metadata['timeout_seconds'])
@@ -256,12 +261,13 @@ def main():
     preparation.add_argument('--suite',choices=['core_text','injection','figure','all_active'])
     execution = commands.add_parser('run')
     execution.add_argument('--run-dir', type=Path, required=True)
+    execution.add_argument('--limit', type=int)
     args = parser.parse_args()
     try:
         if args.action == 'prepare':
             result = prepare(args.baseline, args.pack, args.env_file, args.run_dir, args.reference_source,args.suite)
         else:
-            result = run(args.run_dir)
+            result = run(args.run_dir, args.limit)
         print(json.dumps(result, ensure_ascii=False))
     except Exception as error:
         # Never echo private configuration, provider responses, or raw subprocess stderr.

@@ -5,6 +5,7 @@ import re
 import unicodedata
 from pathlib import Path
 from typing import Self
+from typing import Literal
 from urllib.parse import urlsplit
 
 from pydantic import Field, SecretStr, field_validator, model_validator
@@ -36,6 +37,8 @@ class Settings(BaseSettings):
 
     llm_provider: str = "openai"
     llm_model: str | None = None
+    llm_thinking_enabled: bool | None = None
+    llm_reasoning_effort: Literal['low', 'high', 'max'] | None = None
     llm_api_key: SecretStr | None = None
     llm_base_url: str | None = None
 

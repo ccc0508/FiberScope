@@ -63,8 +63,19 @@ class DeepSeekGenerator:
         api_key: str,
         base_url: str | None = None,
         client: OpenAI | None = None,
+        *,
+        thinking_enabled: bool | None = None,
+        reasoning_effort: str | None = None,
     ) -> None:
+        if thinking_enabled is not None and type(thinking_enabled) is not bool:
+            raise ValueError('thinking_enabled must be boolean or None')
+        if reasoning_effort not in {None, 'low', 'high', 'max'}:
+            raise ValueError('unsupported reasoning effort')
+        if thinking_enabled is False and reasoning_effort is not None:
+            raise ValueError('reasoning effort requires thinking mode')
         self._model = model
+        self.thinking_enabled = thinking_enabled
+        self.reasoning_effort = reasoning_effort
         self.client = client if client is not None else _client(api_key, base_url)
 
     @property
@@ -78,6 +89,7 @@ class DeepSeekGenerator:
         retry_feedback: str | None = None,
     ) -> GeneratedAnswer:
         self.last_usage = None
+        self.last_model_info = None
         messages = [
             {
                 "role": "system",
@@ -91,12 +103,25 @@ class DeepSeekGenerator:
         error_type: str | None = None
         response_failure = False
         try:
+            parameters = {}
+            if self.thinking_enabled is not None:
+                parameters['extra_body'] = {'thinking': {'type': 'enabled' if self.thinking_enabled else 'disabled'}}
+            if self.reasoning_effort is not None:
+                parameters['reasoning_effort'] = self.reasoning_effort
             response = self.client.chat.completions.create(
                 model=self._model,
                 messages=messages,
                 response_format={"type": "json_object"},
+                **parameters,
             )
             self.last_usage = provider_usage(response)
+            self.last_model_info = {
+                'requested_model': self._model,
+                'returned_model': getattr(response, 'model', None),
+                'system_fingerprint': getattr(response, 'system_fingerprint', None),
+                'thinking_enabled': self.thinking_enabled,
+                'reasoning_effort': self.reasoning_effort,
+            }
         except ValidationError as error:
             error_type = type(error).__name__
             response_failure = True
