@@ -1,0 +1,952 @@
+{
+  "source_run": "pfi-v41flash1017-high-20261028-r1",
+  "source_run_sha256": "b286b04e1bec12af37af4d58f7916ba758ddedb4e0a9cc14dfdb1d1553731d0d",
+  "scoring_policy_version": "qa-scoring-v3",
+  "scoring_policy_sha256": "3523241d2749a743fead147b44c06bd170acd4f9bee6ce87189bbb38bf4309c8",
+  "common_valid_tasks": 29,
+  "complete": false,
+  "excluded_task_ids": [
+    "PFI2-020",
+    "PFI2-024",
+    "PFI2-029"
+  ],
+  "generation": {
+    "completed": 32,
+    "statuses": {
+      "answered": 32
+    },
+    "logical_generation_attempts": 38,
+    "usage_known_attempts": 38,
+    "known_tokens": {
+      "prompt_tokens": 122171,
+      "completion_tokens": 38466,
+      "total_tokens": 160637,
+      "reasoning_tokens": 28512,
+      "cached_tokens": 114940
+    },
+    "returned_models": [
+      "deepseek-flash"
+    ],
+    "system_fingerprints": [
+      "bc19ba97cbe016479903222bb1578db6"
+    ],
+    "reported_cost_usd": null,
+    "invoice_cost_usd": null,
+    "median_end_to_end_ms": 65375.0,
+    "same_ordered_evidence_tasks": 32,
+    "changed_evidence_tasks": [],
+    "original_90_second_timeouts": 4,
+    "timeout_recovery_task_ids": [
+      "PFI2-007",
+      "PFI2-008",
+      "PFI2-009",
+      "PFI2-010"
+    ],
+    "primary_deadline_seconds": 90,
+    "recovery_and_continuation_deadline_seconds": 300,
+    "unknown_usage_timeout_attempts": 4,
+    "parallel_generation_workers": 3,
+    "timing_note": "Mixed sequential and isolated parallel dispatch; not a controlled pure-model timing comparison.",
+    "first_90_second_window": {
+      "attempted": 10,
+      "answered": 6,
+      "timeouts": 4
+    },
+    "total_question_attempts_including_timeouts": 36
+  },
+  "luna": {
+    "name": "judge-luna-flash1017-20261028-r1-verified3",
+    "task_count": 29,
+    "point_macro_average": 0.8908045977011494,
+    "shared_dimensions_pass": 19,
+    "citation_support": {
+      "numerator": 106,
+      "denominator": 108,
+      "value": 0.9814814814814815
+    },
+    "citation_coverage": {
+      "numerator": 92,
+      "denominator": 99,
+      "value": 0.9292929292929293
+    },
+    "answerability_mean": 1.8620689655172413,
+    "boundary_aware_pass": 19,
+    "retrieval_counts": {
+      "complete": 63,
+      "partial": 6,
+      "missing": 1
+    },
+    "retrieval_applicable_points": 70,
+    "claim_support_counts": {
+      "supported": 99,
+      "partially_supported": 3,
+      "contradicted": 2
+    }
+  },
+  "jev": {
+    "name": "per-task-flash1017-20261028-r1",
+    "task_count": 29,
+    "point_macro_average": 0.8936781609195402,
+    "shared_dimensions_pass": 19,
+    "citation_support": {
+      "numerator": 107,
+      "denominator": 107,
+      "value": 1.0
+    },
+    "citation_coverage": {
+      "numerator": 93,
+      "denominator": 98,
+      "value": 0.9489795918367347
+    },
+    "answerability_mean": 1.6896551724137931,
+    "boundary_aware_pass": 18,
+    "retrieval_counts": {
+      "complete": 57,
+      "partial": 8,
+      "missing": 5
+    },
+    "retrieval_applicable_points": 70,
+    "claim_support_counts": {
+      "supported": 102,
+      "partially_supported": 2
+    }
+  },
+  "agreements": {
+    "compared_tasks": 29,
+    "task_ids": [
+      "PFI2-001",
+      "PFI2-002",
+      "PFI2-003",
+      "PFI2-004",
+      "PFI2-005",
+      "PFI2-006",
+      "PFI2-007",
+      "PFI2-008",
+      "PFI2-009",
+      "PFI2-010",
+      "PFI2-011",
+      "PFI2-012",
+      "PFI2-013",
+      "PFI2-014",
+      "PFI2-015",
+      "PFI2-016",
+      "PFI2-017",
+      "PFI2-018",
+      "PFI2-019",
+      "PFI2-021",
+      "PFI2-022",
+      "PFI2-023",
+      "PFI2-025",
+      "PFI2-026",
+      "PFI2-027",
+      "PFI2-028",
+      "PFI2-030",
+      "PFI2-031",
+      "PFI2-032"
+    ],
+    "required_points": {
+      "exact_agreement": {
+        "numerator": 72,
+        "denominator": 75,
+        "value": 0.96
+      },
+      "mean_absolute_difference": 0.02,
+      "max_absolute_difference": 0.5,
+      "weighted_kappa_quadratic": 0.9281379750878314
+    },
+    "claim_support_agreement": {
+      "numerator": 101,
+      "denominator": 104,
+      "value": 0.9711538461538461
+    },
+    "claim_type_agreement": {
+      "numerator": 103,
+      "denominator": 104,
+      "value": 0.9903846153846154
+    },
+    "citation_score_agreement": {
+      "numerator": 105,
+      "denominator": 107,
+      "value": 0.9813084112149533
+    },
+    "citation_applicability_flips": 1,
+    "point_pattern_changed_tasks": [
+      "PFI2-007",
+      "PFI2-013"
+    ],
+    "scoring_policy_version": "qa-scoring-v3",
+    "citation_group_coverage_agreement": {
+      "numerator": 92,
+      "denominator": 98,
+      "value": 0.9387755102040817
+    },
+    "assessment_scope": "six_dimensions",
+    "boundary": {
+      "exact_agreement": {
+        "numerator": 25,
+        "denominator": 29,
+        "value": 0.8620689655172413
+      },
+      "mean_absolute_difference": 0.1724137931034483,
+      "max_absolute_difference": 2,
+      "weighted_kappa_quadratic": null
+    },
+    "retrieval_support_agreement": {
+      "numerator": 62,
+      "denominator": 70,
+      "value": 0.8857142857142857
+    },
+    "retrieval_not_applicable_points": 9
+  },
+  "accounting": {
+    "luna": {
+      "application_calls": 41,
+      "usage_known_calls": 41,
+      "usage_unknown_calls": 0,
+      "known_tokens": {
+        "input_tokens": 1105469,
+        "output_tokens": 119143,
+        "total_tokens": 1224612
+      },
+      "reported_cost_usd": "0.192149250",
+      "cost_unknown_calls": 0,
+      "actual_invoice_cost": null,
+      "summed_request_time_ms": 1426182,
+      "median_task_request_time_ms": 31171.0,
+      "p95_task_request_time_ms": 147869
+    },
+    "jev": {
+      "application_calls": 32,
+      "usage_known_calls": 32,
+      "usage_unknown_calls": 0,
+      "known_tokens": {
+        "input_tokens": 2287441,
+        "output_tokens": 134886,
+        "total_tokens": 2422327
+      },
+      "reported_cost_usd": "0.096072522",
+      "cost_unknown_calls": 0,
+      "actual_invoice_cost": null,
+      "summed_request_time_ms": 107523,
+      "median_task_request_time_ms": 3083.5,
+      "p95_task_request_time_ms": 3907
+    }
+  },
+  "native_diagnostics": {
+    "PFI2-001": [
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-003": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-004": [
+      {
+        "question": "group_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-005": [
+      {
+        "question": "retrieval_P2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-006": [
+      {
+        "question": "basis_C4",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-008": [
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-009": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-011": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C6",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-012": [
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-014": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C4",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C5",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-015": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-017": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-018": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-021": [
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-022": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-023": [
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-026": [
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-027": [
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-028": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-029": [
+      {
+        "question": "point_P2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-030": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C3",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-031": [
+      {
+        "question": "basis_C2",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      },
+      {
+        "question": "basis_C4",
+        "kind": "rounded_probability_sum",
+        "sum": 0.99,
+        "probabilities_changed": false
+      }
+    ],
+    "PFI2-032": [
+      {
+        "question": "basis_C1",
+        "kind": "rounded_probability_sum",
+        "sum": 0.9900000000000001,
+        "probabilities_changed": false
+      }
+    ]
+  },
+  "rows": [
+    {
+      "task_id": "PFI2-001",
+      "question": "这篇PFI打浆论文研究的是哪两类纸浆？原料是否经过漂白，采用什么制浆方法？",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-002",
+      "question": "本文PFI打浆时浆浓、磨盘间隙和单位刀长作用力分别是多少？请区分针叶木和阔叶木并给出单位。",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-003",
+      "question": "这篇研究为两类纸浆设置了哪些PFI打浆转数？每类有几个转数水平？",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-004",
+      "question": "PFI打到12000转的时候，针叶木浆和阔叶木浆的打浆度各是多少？那我们以后想要63 °SR左右的浆，是不是直接打12000转就行了？",
+      "changes": [
+        {
+          "dimension": "citation",
+          "claim_id": "C4",
+          "ref": "[4]",
+          "gpt": 0,
+          "jev": 1
+        },
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P3",
+          "gpt": "complete",
+          "jev": "partial"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-005",
+      "question": "论文用什么仪器测量纤维形态，明确列出了哪三个形态指标？",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-006",
+      "question": "WRV在本文中如何测定和计算？请解释公式中两个质量的含义。",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-007",
+      "question": "CI-XI与CI-XA有什么区别？请给出本文CI-XI的公式，并说明CI-XA依据什么计算。",
+      "changes": [
+        {
+          "dimension": "point",
+          "point_id": "P3",
+          "optional": false,
+          "gpt": 1,
+          "jev": 0.5
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-008",
+      "question": "不打浆和打到16000转的时候，针叶木和阔叶木的CI-XI、CI-XA分别是多少？",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-009",
+      "question": "阔叶木的CI-XA从不打浆到打到8000转降了多少个百分点？相对降了百分之几？把算式写出来。",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-010",
+      "question": "打浆前后，两种纤维垂直于(200)晶面的晶粒尺寸是怎么变的？从不打浆到16000转分别是多少？",
+      "changes": [
+        {
+          "dimension": "answerability",
+          "gpt": 2,
+          "jev": 1
+        },
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P1",
+          "gpt": "partial",
+          "jev": "missing"
+        },
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P2",
+          "gpt": "partial",
+          "jev": "missing"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-011",
+      "question": "是不是打浆转数越高，纤维素结晶度就越低？",
+      "changes": [
+        {
+          "dimension": "answerability",
+          "gpt": 2,
+          "jev": 1
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-012",
+      "question": "本文CI-XI和CI-XA的大小关系如何？两种方法的结果相关吗？请分别给出两类浆的相关系数及显著性。",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-013",
+      "question": "PFI打浆过程中结晶度为什么会先降、再升、再降？",
+      "changes": [
+        {
+          "dimension": "point",
+          "point_id": "P1",
+          "optional": false,
+          "gpt": 0.5,
+          "jev": 1
+        },
+        {
+          "dimension": "point",
+          "point_id": "P4",
+          "optional": false,
+          "gpt": 0.5,
+          "jev": 1
+        },
+        {
+          "dimension": "support",
+          "claim_id": "C1",
+          "gpt": "partially_supported",
+          "jev": "supported"
+        },
+        {
+          "dimension": "citation_group",
+          "claim_id": "C1",
+          "gpt": "partial",
+          "jev": "complete"
+        },
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P2",
+          "gpt": "complete",
+          "jev": "missing"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-014",
+      "question": "按照作者的解释，PFI打浆为什么会提高WRV，又如何与纤维间结合联系起来？",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-015",
+      "question": "针叶木和阔叶木打浆后纤维长度的变化一样吗？为什么会有差别？",
+      "changes": [
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P3",
+          "gpt": "complete",
+          "jev": "partial"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-016",
+      "question": "为什么本文认为纸张抗张性能提高，并不意味着单根纤维本身的强度也一定提高？零距抗张在这里有什么用？",
+      "changes": [
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P3",
+          "gpt": "complete",
+          "jev": "partial"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-017",
+      "question": "本文中哪类浆的湿纸幅强度增幅更明显？作者如何解释？",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-018",
+      "question": "这篇论文如何从FT-IR获得不同氢键的相对含量？请说明拟合波段、函数和含量口径。",
+      "changes": [
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P3",
+          "gpt": "complete",
+          "jev": "missing"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-019",
+      "question": "O(6)H···O(3′)、O(3)H···O(5)、O(2)H···O(6)这三种氢键的红外峰大概在多少波数？",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-021",
+      "question": "阔叶木的O(3)H···O(5)分子内氢键相对含量，从4000转到12000转变化了多少个百分点？相对变化是百分之几？",
+      "changes": [
+        {
+          "dimension": "support",
+          "claim_id": "C3",
+          "gpt": "contradicted",
+          "jev": "supported"
+        },
+        {
+          "dimension": "answerability",
+          "gpt": 2,
+          "jev": 0
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-022",
+      "question": "请把针叶木16000转的CI-XI、CI-XA、O(6)H···O(3′)相对含量、O(3)H···O(5)相对含量整合到一起，并说明各数值来自哪张表。",
+      "changes": [
+        {
+          "dimension": "answerability",
+          "gpt": 2,
+          "jev": 1
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-023",
+      "question": "针叶木的O(6)H···O(3′)分子间氢键含量和CI-XI的Pearson相关系数是多少？",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-025",
+      "question": "针叶木打浆到8000转的时候，BET比表面积具体是多少？",
+      "changes": [
+        {
+          "dimension": "citation_group",
+          "claim_id": "C1",
+          "gpt": "partial",
+          "jev": "complete"
+        },
+        {
+          "dimension": "citation_group",
+          "claim_id": "C4",
+          "gpt": "partial",
+          "jev": "complete"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-026",
+      "question": "针叶木8000转那组的干纸抗张指数，每次平行实验的原始数据能给我列一下吗？",
+      "changes": [
+        {
+          "dimension": "citation_group",
+          "claim_id": "C2",
+          "gpt": "complete",
+          "jev": "partial"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-027",
+      "question": "这篇论文对干纸抗张性能有什么结论？另外请给出同一批样品的耐破指数和撕裂指数精确数据。",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-028",
+      "question": "请比较这篇PFI论文与《Non-Wood Fibers: Relationships of Fiber Properties with Pulp Properties》的全部实验数据，给出两篇共同结论。",
+      "changes": [
+        {
+          "dimension": "claim_type",
+          "claim_id": "C1",
+          "gpt": "fact",
+          "jev": "scope"
+        },
+        {
+          "dimension": "support",
+          "claim_id": "C4",
+          "gpt": "contradicted",
+          "jev": "supported"
+        },
+        {
+          "dimension": "citation",
+          "claim_id": "C1",
+          "ref": "[7]",
+          "gpt": 1,
+          "jev": null
+        },
+        {
+          "dimension": "citation",
+          "claim_id": "C4",
+          "ref": "[8]",
+          "gpt": 0,
+          "jev": 1
+        },
+        {
+          "dimension": "citation_group",
+          "claim_id": "C1",
+          "gpt": "complete",
+          "jev": null
+        },
+        {
+          "dimension": "citation_group",
+          "claim_id": "C4",
+          "gpt": "missing",
+          "jev": "complete"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-030",
+      "question": "为什么阔叶木打浆后湿纸幅强度涨得比针叶木还多？",
+      "changes": []
+    },
+    {
+      "task_id": "PFI2-031",
+      "question": "PFI打浆把纤维素从I型变成II型以后，结晶度为什么还会下降？",
+      "changes": [
+        {
+          "dimension": "retrieval_support",
+          "point_id": "P2",
+          "gpt": "complete",
+          "jev": "partial"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-032",
+      "question": "论文里氢键含量和CI-XI的相关系数是针叶木0.919、阔叶木0.925吧？这么高是不是就能用CI-XI直接算出氢键含量了？",
+      "changes": [
+        {
+          "dimension": "citation_group",
+          "claim_id": "C5",
+          "gpt": "complete",
+          "jev": "partial"
+        }
+      ]
+    }
+  ],
+  "common_quality_dimensions": 5,
+  "retrieval_assessment": "RAG-only internal diagnostic; not a DSH shared metric",
+  "old_name_alias_caveat": "The historical deepseek-v4-flash request name is not proof of old checkpoint weights.",
+  "rounds_per_judge": 1,
+  "expert_accuracy_measured": false,
+  "new_analysis_model_calls": 0,
+  "individual_valid_summaries": {
+    "luna": {
+      "name": "luna",
+      "task_count": 29,
+      "point_macro_average": 0.8908045977011494,
+      "shared_dimensions_pass": 19,
+      "citation_support": {
+        "numerator": 106,
+        "denominator": 108,
+        "value": 0.9814814814814815
+      },
+      "citation_coverage": {
+        "numerator": 92,
+        "denominator": 99,
+        "value": 0.9292929292929293
+      },
+      "answerability_mean": 1.8620689655172413,
+      "boundary_aware_pass": 19,
+      "retrieval_counts": {
+        "complete": 63,
+        "partial": 6,
+        "missing": 1
+      },
+      "retrieval_applicable_points": 70
+    },
+    "jev": {
+      "name": "jev",
+      "task_count": 32,
+      "point_macro_average": 0.8880208333333334,
+      "shared_dimensions_pass": 19,
+      "citation_support": {
+        "numerator": 125,
+        "denominator": 127,
+        "value": 0.984251968503937
+      },
+      "citation_coverage": {
+        "numerator": 105,
+        "denominator": 113,
+        "value": 0.9292035398230089
+      },
+      "answerability_mean": 1.65625,
+      "boundary_aware_pass": 18,
+      "retrieval_counts": {
+        "complete": 60,
+        "partial": 11,
+        "missing": 6
+      },
+      "retrieval_applicable_points": 77
+    }
+  },
+  "historical_same_task_summaries": {
+    "luna": {
+      "name": "luna",
+      "task_count": 29,
+      "point_macro_average": 0.8908045977011494,
+      "shared_dimensions_pass": 18,
+      "citation_support": {
+        "numerator": 105,
+        "denominator": 105,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 96,
+        "denominator": 101,
+        "value": 0.9504950495049505
+      },
+      "answerability_mean": 1.8275862068965518,
+      "boundary_aware_pass": 18,
+      "retrieval_counts": {
+        "complete": 63,
+        "partial": 3,
+        "missing": 4
+      },
+      "retrieval_applicable_points": 70
+    },
+    "jev": {
+      "name": "jev",
+      "task_count": 29,
+      "point_macro_average": 0.8850574712643678,
+      "shared_dimensions_pass": 19,
+      "citation_support": {
+        "numerator": 107,
+        "denominator": 107,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 100,
+        "denominator": 103,
+        "value": 0.970873786407767
+      },
+      "answerability_mean": 1.7241379310344827,
+      "boundary_aware_pass": 18,
+      "retrieval_counts": {
+        "complete": 59,
+        "partial": 8,
+        "missing": 3
+      },
+      "retrieval_applicable_points": 70
+    }
+  },
+  "luna_valid_scorecards": 31,
+  "luna_unusable_scorecards": [
+    "PFI2-029"
+  ],
+  "luna_reference_concerns": {
+    "PFI2-020": [
+      "论文摘要报告软木纤维相关系数为0.888，但正文3.4节报告为0.912；硬木数值均为0.889。候选回答引用摘要中的0.888有检索片段依据，但论文内部存在该数值不一致。"
+    ],
+    "PFI2-024": [
+      "论文3.1节同时报告针叶木宏观纤维化指数下降，并称外部纤维化随打浆增加；由于同节又说明宏观纤维化指数表征外部宏观纤维化，这两种表述之间存在潜在张力。候选回答复述了论文两项陈述，评分按其原文支持处理。"
+    ]
+  },
+  "exclusion_policy": "Exclude invalid scorecards and unresolved reference concerns from quality aggregates; never score them as zero.",
+  "recovery_source_run": "pfi-v41flash1017-high-20261028-recovery300",
+  "recovery_source_run_sha256": "fd48d28f1bef9b6eec6496c2edb78d1b4308524b6bab6bb2a6dbe1018dafe55d"
+}

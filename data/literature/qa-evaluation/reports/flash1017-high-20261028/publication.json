@@ -1,0 +1,11 @@
+{
+  "source_run_sha256": "b286b04e1bec12af37af4d58f7916ba758ddedb4e0a9cc14dfdb1d1553731d0d",
+  "study_sha256": "893fca82d6d9838339c98839314cfd1e94cf75ae209e11be223f11c1d2f7957e",
+  "public_files": {
+    "answers.jsonl": "0d853b94d7775e635555739d38c78d02ba9dfe5e9549929d53a67d384f0c042c",
+    "comparison.json": "65f667535ac81dc53cf7d9b434e8710d7fce2ccc9f9e16d38f9731ddf5b3ba9e",
+    "jev-scores.jsonl": "ce07c1dd2dcfce3838cc0a90e7ea7a23862efa3508af7efefbfbaf77ac9fdf74",
+    "luna-scores.jsonl": "6ae47e855de85802a6a3370b1278db3f578f6cf11d93c8723772754eef97bc0d"
+  },
+  "new_analysis_model_calls": 0
+}
