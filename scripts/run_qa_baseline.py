@@ -89,12 +89,21 @@ def source_hashes(backend):
     return {p.relative_to(backend).as_posix(): digest(p) for p in backend.rglob('*.py')}
 
 
-def prepare(baseline, pack, env_file, run_dir, reference_source=None, suite=None):
+def require_same_reference_documents(runtime_documents,reference_documents):
+    identity=lambda rows:sorted((d['id'],d['file_hash'],d['page_count']) for d in rows)
+    require(identity(runtime_documents)==identity(reference_documents),
+            'Runtime and reference baselines must contain the same original PDF corpus')
+
+
+def prepare(baseline, pack, env_file, run_dir, reference_source=None, suite=None, reference_baseline=None):
     baseline, pack, run_dir = (Path(v).resolve() for v in (baseline, pack, run_dir))
     require(not run_dir.exists(), 'Run directory already exists')
-    validation = validate(pack, baseline)
+    reference_baseline=Path(reference_baseline).resolve() if reference_baseline is not None else baseline
+    validation = validate(pack, reference_baseline)
     baseline_validation = verify(baseline)
     frozen, config = read_json(baseline / 'manifest.json'), read_json(baseline / 'configuration.json')
+    reference_validation=verify(reference_baseline)
+    require_same_reference_documents(frozen['documents'],read_json(reference_baseline/'manifest.json')['documents'])
     pack_manifest=read_json(pack/'manifest.json')
     v2=pack_manifest.get('schema_version')==2
     selected_tasks=None
@@ -145,6 +154,11 @@ def prepare(baseline, pack, env_file, run_dir, reference_source=None, suite=None
                     input_policy='Only question and isolated data_dir are sent to frozen worker; no gold labels or answers.',
                     timeout_seconds=config['qa_timeout_seconds'],
                     baseline_validation=baseline_validation, dataset_validation=validation)
+    if reference_baseline!=baseline:
+        metadata.update(reference_baseline_id=read_json(reference_baseline/'manifest.json')['baseline_id'],
+                        reference_baseline_manifest_sha256=digest(reference_baseline/'manifest.json'),
+                        reference_baseline_validation=reference_validation,
+                        reference_policy='Frozen reference evidence retains its original baseline; runtime chunks may change only for the identical PDF corpus.')
     if v2:
         metadata.update(evaluation_schema_version=2,tasks=selected_tasks,selected_suite=suite or pack_manifest['default_suite'])
     # Keep the fixture harness isolated and fingerprinted alongside the frozen source.
@@ -263,6 +277,7 @@ def main():
     for option in ('baseline', 'pack', 'env-file', 'run-dir'):
         preparation.add_argument('--' + option, type=Path, required=True)
     preparation.add_argument('--reference-source', type=Path)
+    preparation.add_argument('--reference-baseline', type=Path, help='Original source-checked corpus used by the frozen question/evidence pack.')
     preparation.add_argument('--suite',choices=['core_text','injection','figure','all_active'])
     execution = commands.add_parser('run')
     execution.add_argument('--run-dir', type=Path, required=True)
@@ -271,7 +286,7 @@ def main():
     args = parser.parse_args()
     try:
         if args.action == 'prepare':
-            result = prepare(args.baseline, args.pack, args.env_file, args.run_dir, args.reference_source,args.suite)
+            result = prepare(args.baseline, args.pack, args.env_file, args.run_dir, args.reference_source,args.suite,args.reference_baseline)
         else:
             result = run(args.run_dir, args.limit, args.execution_timeout)
         print(json.dumps(result, ensure_ascii=False))

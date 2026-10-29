@@ -62,5 +62,21 @@
     }
   ],
   "scope": "development_smoke_not_dual_judge_evaluation",
-  "server_deployed": false
+  "server_deployed": false,
+  "frozen_baseline": {
+    "id": "qa-context-v1-20261029",
+    "manifest_sha256": "d5345efcb08847f8d1bd7fa3065da8204a11986669bfc88ded8fc53133b43d32",
+    "index_validation": {
+      "vectors": 81,
+      "dimensions": 1024,
+      "offline_query": "passed",
+      "provider_calls": 0
+    }
+  },
+  "prepared_regression": {
+    "run_id": "pfi-context-v1-20261029-r1",
+    "tasks": 32,
+    "provider_calls": 0,
+    "run_sha256": "694081cd2c5f96da7de27c59adac091e37ed7d02e25ee78ec0c940b7c30b3428"
+  }
 }
