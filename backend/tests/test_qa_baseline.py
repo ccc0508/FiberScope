@@ -110,3 +110,20 @@ def test_structure_sources_are_copied_with_checksums(tmp_path):
     (source/'source-pages.json').write_text('["changed"]',encoding='utf-8')
     with pytest.raises(ValueError,match='fingerprint'):
         baseline.copy_structure_files(source,target,expected)
+
+
+def test_snapshot_uses_explicit_experiment_configuration_without_editing_default(tmp_path,monkeypatch):
+    monkeypatch.setattr(baseline,'ROOT',tmp_path)
+    monkeypatch.setattr(baseline,'git',lambda *args:'')
+    default=tmp_path/'backend/.env.literature';default.parent.mkdir()
+    default.write_text('LITERATURE_LIBRARY_DIR=live-library\n',encoding='utf-8')
+    selected=tmp_path/'private-experiment.env';selected.write_text('experiment',encoding='utf-8')
+    called=[]
+    def config(path=None):
+        called.append(path)
+        raise RuntimeError('stop before library access')
+    monkeypatch.setattr(baseline,'configuration',config)
+    with pytest.raises(RuntimeError,match='before library'):
+        baseline.snapshot(tmp_path/'.rag-data/baselines/experiment',selected)
+    assert called==[selected]
+    assert default.read_text(encoding='utf-8')=='LITERATURE_LIBRARY_DIR=live-library\n'

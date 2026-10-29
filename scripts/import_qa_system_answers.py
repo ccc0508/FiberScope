@@ -95,7 +95,13 @@ def verify_quote(citation,page_variants):
                 note='A text extraction mismatch is not automatically a false citation or a zero quality score.')
 
 
-def prepare(input_file,extra_files,pdf,rag_run,recovery_run,output,metadata=None):
+def rag_citation(evidence,page_variants=None):
+    citation=dict(ref=evidence['ref'],page_start=evidence['page_start'],page_end=evidence['page_end'],text=evidence['text'])
+    citation['verification']=verify_quote(citation,page_variants) if page_variants is not None else dict(status='frozen_chunk_metadata_verified')
+    return citation
+
+
+def prepare(input_file,extra_files,pdf,rag_run,recovery_run,output,metadata=None,verify_rag_quotes=False):
     input_file,pdf,rag_run,recovery_run,output=map(lambda p:Path(p).resolve(),
                                                 (input_file,pdf,rag_run,recovery_run,output))
     require(not output.exists(),'Use a new immutable import directory')
@@ -135,8 +141,7 @@ def prepare(input_file,extra_files,pdf,rag_run,recovery_run,output,metadata=None
         r=result['response'];evidence={e['ref']:e for e in r['retrieved_evidence']}
         claims=[dict(id=f'C{i+1}',text=c['text'],citation_refs=c['citation_refs']) for i,c in enumerate(r['claims'])]
         cited={ref for c in claims for ref in c['citation_refs']}
-        citations=[dict(ref=e['ref'],page_start=e['page_start'],page_end=e['page_end'],text=e['text'],
-                        verification=dict(status='frozen_chunk_metadata_verified')) for e in evidence.values() if e['ref'] in cited]
+        citations=[rag_citation(e,variants if verify_rag_quotes else None) for e in evidence.values() if e['ref'] in cited]
         require({c['ref'] for c in citations}==cited,'Frozen RAG citation is missing')
         rag[tid]=dict(task_id=tid,answer=r['answer'],claims=claims,citations=citations,
                       available_context=dict(kind='supplied_excerpts',texts=[e['text'] for e in evidence.values()]))
@@ -163,6 +168,8 @@ def prepare(input_file,extra_files,pdf,rag_run,recovery_run,output,metadata=None
         question_count=32,answer_count=64,external_claims=sum(len(r['claims']) for r in external.values()),
         external_citations=sum(len(r['citations']) for r in external.values()),
         quote_verification=dict(Counter(c['verification']['status'] for r in external.values() for c in r['citations'])),
+        rag_quote_validation='original_pdf_extractors' if verify_rag_quotes else 'frozen_chunk_metadata',
+        rag_quote_verification=dict(Counter(c['verification']['status'] for r in rag.values() for c in r['citations'])),
         metadata=metadata or {},paper_reader_versions=reader_versions(),new_answer_generation_calls=0,
         files={str(p.relative_to(output)).replace('\\','/'):judge.digest(p) for p in sorted(output.rglob('*')) if p.is_file()})
     judge.write(output/'import.json',details)
@@ -179,9 +186,10 @@ def main():
     for name in ['input','pdf','rag-run','recovery-run','output']:parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--extra',type=Path,action='append',default=[])
     parser.add_argument('--metadata',type=Path)
+    parser.add_argument('--verify-rag-quotes',action='store_true',help='Compare parser-produced citations to original PDF extracts; mismatches receive original-page review context.')
     args=parser.parse_args()
     result=prepare(args.input,args.extra,args.pdf,args.rag_run,args.recovery_run,args.output,
-                   judge.read_json(args.metadata) if args.metadata else None)
+                   judge.read_json(args.metadata) if args.metadata else None,args.verify_rag_quotes)
     print(judge.encode({k:result[k] for k in ['question_count','answer_count','external_claims','external_citations','quote_verification']}))
 
 

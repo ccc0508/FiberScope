@@ -185,7 +185,7 @@ def verify(root, with_index=False):
     return result
 
 
-def snapshot(output):
+def snapshot(output, env_file=None):
     output = Path(output).resolve()
     allowed = (ROOT / '.rag-data/baselines').resolve()
     if not output.is_relative_to(allowed) or output == allowed:
@@ -195,7 +195,8 @@ def snapshot(output):
         raise ValueError('Commit or resolve product source changes before freezing')
     if output.exists():
         raise ValueError('Destination already exists; refusing to overwrite the baseline')
-    library, config = configuration()
+    selected_configuration = lambda: configuration(env_file) if env_file is not None else configuration()
+    library, config = selected_configuration()
     commit = git('rev-parse', 'HEAD')
     with FileLock(str(library / '.import.lock'), timeout=10):
         before = library_fingerprint(library)
@@ -239,7 +240,7 @@ def snapshot(output):
                     connection.execute('UPDATE documents SET file_path=? WHERE id=?', (relative, document['id']))
                     summaries.append({k: document[k] for k in ['id', 'filename', 'file_hash', 'page_count', 'chunk_count']})
                     summaries[-1]['snapshot_path'] = relative
-        if before != library_fingerprint(library) or configuration()[1] != config:
+        if before != library_fingerprint(library) or selected_configuration()[1] != config:
             raise ValueError('Library or configuration changed during snapshot; do not use this incomplete directory')
     archive = output / 'code.zip'
     git('archive', '--format=zip', '--output=' + str(archive), commit, '--',
@@ -269,9 +270,10 @@ def main():
     parser.add_argument('action', choices=['snapshot', 'verify', '_check-index'])
     parser.add_argument('path', type=Path)
     parser.add_argument('--check-index', action='store_true')
+    parser.add_argument('--env-file', type=Path, help='Private snapshot configuration; does not change the application configuration.')
     args = parser.parse_args()
     if args.action == 'snapshot':
-        result = snapshot(args.path)
+        result = snapshot(args.path, args.env_file)
     elif args.action == '_check-index':
         result = check_index(args.path)
     else:
