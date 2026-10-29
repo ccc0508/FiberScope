@@ -161,6 +161,12 @@ class InMemoryMetadataStore:
     def get_chunks(self, chunk_ids: Sequence[str]) -> list[Chunk]:
         return [self.chunks[chunk_id] for chunk_id in chunk_ids if chunk_id in self.chunks]
 
+    def get_context_chunks(self, chunk_ids: Sequence[str], radius: int) -> list[Chunk]:
+        seeds=self.get_chunks(chunk_ids)
+        return sorted([c for c in self.chunks.values() if any(
+            c.document_id==s.document_id and c.page_start==s.page_start and c.page_end==s.page_end
+            and abs(c.chunk_index-s.chunk_index)<=radius for s in seeds)],key=lambda c:(c.document_id,c.chunk_index))
+
     def list_documents(self) -> list[Document]:
         return list(self.documents.values())
 

@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS chunks (
     token_count INTEGER NOT NULL,
     embedding_model TEXT NOT NULL,
     created_at TEXT NOT NULL,
+    kind TEXT NOT NULL DEFAULT 'text',
     UNIQUE (document_id, chunk_index)
 );
 """
@@ -92,6 +93,9 @@ class SqliteMetadataStore:
             include_detail=True,
         ) as connection:
             connection.executescript(_SCHEMA)
+            # Existing libraries remain readable; writers migrate only on explicit initialize.
+            if 'kind' not in {row['name'] for row in connection.execute('PRAGMA table_info(chunks)')}:
+                connection.execute("ALTER TABLE chunks ADD COLUMN kind TEXT NOT NULL DEFAULT 'text'")
 
     def upsert_document(self, document: Document) -> None:
         values = (
@@ -168,6 +172,7 @@ class SqliteMetadataStore:
                 chunk.token_count,
                 chunk.embedding_model,
                 chunk.created_at.isoformat(),
+                chunk.kind,
             )
             for chunk in chunks
         ]
@@ -177,8 +182,8 @@ class SqliteMetadataStore:
                 """
                 INSERT INTO chunks (
                     id, document_id, filename, page_start, page_end,
-                    chunk_index, text, token_count, embedding_model, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    chunk_index, text, token_count, embedding_model, created_at, kind
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 rows,
             )
@@ -247,6 +252,22 @@ class SqliteMetadataStore:
             ).fetchall()
         return [self._to_document(row) for row in rows]
 
+    def get_context_chunks(self, chunk_ids: Sequence[str], radius: int) -> list[Chunk]:
+        if type(radius) is not int or not 0 <= radius <= 2 or len(chunk_ids) > 50:
+            raise ValueError('context lookup exceeds its bounds')
+        if not chunk_ids:
+            return []
+        marks=', '.join('?' for _ in chunk_ids)
+        with self._database('cannot read neighboring source chunks') as connection:
+            rows=connection.execute(
+                f'''SELECT DISTINCT c.* FROM chunks c JOIN chunks s
+                    ON c.document_id=s.document_id AND c.page_start=s.page_start AND c.page_end=s.page_end
+                    AND c.chunk_index BETWEEN s.chunk_index-? AND s.chunk_index+?
+                    WHERE s.id IN ({marks}) ORDER BY c.document_id,c.chunk_index''',
+                (radius,radius,*chunk_ids),
+            ).fetchall()
+        return [self._to_chunk(row) for row in rows]
+
     @staticmethod
     def _to_document(row: sqlite3.Row) -> Document:
         return Document(
@@ -276,4 +297,5 @@ class SqliteMetadataStore:
             token_count=row["token_count"],
             embedding_model=row["embedding_model"],
             created_at=datetime.fromisoformat(row["created_at"]),
+            kind=row['kind'] if 'kind' in row.keys() else 'text',
         )

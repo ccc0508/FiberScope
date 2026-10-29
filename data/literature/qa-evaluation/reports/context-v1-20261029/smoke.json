@@ -1,0 +1,66 @@
+{
+  "offline_replay_tasks": 32,
+  "real_http_questions": 2,
+  "results": [
+    {
+      "task": "PFI2-021",
+      "status": "answered",
+      "answer": "阔叶木的O(3)H···O(5)相对含量在4000转为33.06%，在12000转为29.28%。 [3]\n从4000转到12000转，阔叶木O(3)H···O(5)相对含量下降了3.78个百分点。 [3]\n按(29.28-33.06)/33.06×100%计算，相对变化约为-11.43%，即相对下降约11.43%。 [3]",
+      "context_chars": 11646,
+      "generation_calls": 1,
+      "embedding_usage": {
+        "prompt_tokens": 38,
+        "completion_tokens": 0,
+        "total_tokens": 38
+      },
+      "expected_numeric_outputs_present": true
+    },
+    {
+      "task": "PFI2-010",
+      "status": "answered",
+      "answer": "软木纤维垂直于(200)晶面的晶粒尺寸在0、4000、8000、12000、16000转时分别为4.5、4.6、4.6、4.7、4.7 nm。 [2]\n硬木纤维垂直于(200)晶面的晶粒尺寸在0、4000、8000、12000、16000转时分别为4.5、4.7、4.8、4.8、4.7 nm。 [2]\n两种纤维垂直于(200)晶面的晶粒尺寸在PFI打浆过程中呈上升趋势。 [6]",
+      "context_chars": 12735,
+      "generation_calls": 1,
+      "embedding_usage": {
+        "prompt_tokens": 37,
+        "completion_tokens": 0,
+        "total_tokens": 37
+      },
+      "expected_numeric_outputs_present": true
+    }
+  ],
+  "source_library_unchanged": {
+    "metadata.sqlite3": "a2cb2f708357af13782f53e709801c6cba41c4662fe93cf644ce2ab2ee4d2b69",
+    "chroma/chroma.sqlite3": "33b2c512269ba04179f8c64e916fe884eb2572943ee17c75f6227b40ea2742c0"
+  },
+  "original_qa_history_not_used": true,
+  "notes": "Development smoke checks only; no new dual-judge quality scores.",
+  "source_chunks": 44,
+  "new_chunks": 81,
+  "chunk_kinds": {
+    "paragraph": 79,
+    "table": 2
+  },
+  "index_embedding_calls": [
+    {
+      "chunk_count": 64,
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 10371,
+        "completion_tokens": 0,
+        "total_tokens": 10371
+      }
+    },
+    {
+      "chunk_count": 17,
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 1345,
+        "completion_tokens": 0,
+        "total_tokens": 1345
+      }
+    }
+  ],
+  "scope": "development_smoke_not_dual_judge_evaluation",
+  "server_deployed": false
+}

@@ -18,6 +18,7 @@ def main():
     from literature_rag.adapters.providers.openai import OpenAIEmbedder, OpenAIGenerator
     from literature_rag.adapters.providers.deepseek import DeepSeekGenerator
     from literature_rag.application.retrieve import RetrievalService
+    from literature_rag.application.context import ContextOptions
     from literature_rag.application.answer_question import AnswerService
     from literature_rag.application.citations import CitationValidator
     from literature_rag.diagnostics import configuration_snapshot
@@ -58,6 +59,11 @@ def main():
         {'document_id': doc.id, 'filename': doc.filename, 'file_hash': doc.file_hash}
         for doc in metadata.list_documents() if doc.status.value == 'completed'
     ]
+    if (root/'structure.json').is_file():
+        from hashlib import sha256
+        configuration['library_structure_sha256']=sha256((root/'structure.json').read_bytes()).hexdigest()
+    seed_evidence=[]
+    context_diagnostics={}
 
     class CapturedGenerator:
         model_name = generator.model_name
@@ -77,17 +83,22 @@ def main():
     class CapturedRetriever(RetrievalService):
         def retrieve(self, *args):
             evidences = super().retrieve(*args)
+            seed_evidence.extend(asdict(e) for e in self.last_seed_evidences)
+            context_diagnostics.update(self.last_context_diagnostics)
             evidence_by_chunk.update({e.chunk_id: e for e in evidences})
             return evidences
 
     try:
-        answer = AnswerService(CapturedRetriever(metadata, vectors, embedder), CapturedGenerator(), CitationValidator()).answer(
+        context_options=ContextOptions(settings.context_expansion_enabled,settings.context_neighbor_radius,
+                                      settings.context_max_evidence_chars,settings.context_max_total_chars)
+        answer = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options), CapturedGenerator(), CitationValidator()).answer(
             body['question'], settings.top_k, settings.min_score)
     except (ProviderError, InfrastructureError) as error:
         print(json.dumps({'status': 'failed', 'answer': '', 'citations': [],
                           'reason_code': 'provider_error' if isinstance(error, ProviderError) else 'retrieval_error',
                           'error_status': 503, 'configuration': configuration,
                           'retrieved_evidence': [asdict(e) for e in evidence_by_chunk.values()],
+                          'retrieval_seed_evidence': seed_evidence, 'context_assembly': context_diagnostics,
                           'embedding_usage': getattr(embedder, 'last_usage', None),
                           'generation_calls': generation_calls, 'claims': [], 'latency_ms': 0}, ensure_ascii=False))
         return
@@ -100,6 +111,7 @@ def main():
                       'configuration': configuration, 'generation_calls': generation_calls,
                       'embedding_usage': getattr(embedder, 'last_usage', None),
                       'claims': [asdict(claim) for claim in generated_answers[-1].claims] if answer.status.value == 'answered' else [],
+                      'retrieval_seed_evidence': seed_evidence, 'context_assembly': context_diagnostics,
                       'retrieved_evidence': [asdict(e) for e in evidence_by_chunk.values()]}, ensure_ascii=False))
 
 

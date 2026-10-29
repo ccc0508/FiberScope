@@ -408,12 +408,22 @@ load();
           /></a>
         </div>
         <blockquote>{{ c.excerpt }}</blockquote>
+        <details v-if="(c.source_chunks?.length ?? 0) > 1" class="source-parts">
+          <summary>查看引用的原文组成（{{ c.source_chunks?.length }} 段）</summary>
+          <div v-for="part in c.source_chunks" :key="part.chunk_id">
+            <small>PDF 第 {{ part.page_start }}{{ part.page_end !== part.page_start ? `–${part.page_end}` : "" }} 页</small>
+            <blockquote>{{ part.text }}</blockquote>
+          </div>
+        </details>
       </article>
     </section>
   </div>
 </template>
 
 <style scoped>
+.source-parts { margin-top: 12px; color: #62758a; font-size: 13px; }
+.source-parts summary { cursor: pointer; }
+.source-parts > div { margin-top: 12px; }
 .record-info, .feedback-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 18px; font-size: 12px; color: #8191a4; }
 .record-info { justify-content: space-between; }
 .feedback-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid #edf1f5; }

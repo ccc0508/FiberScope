@@ -92,6 +92,7 @@ class OpenAIEmbedder:
                 model=self._model,
                 input=requested_texts,
             )
+            self.last_usage = provider_usage(response)
         except ValidationError as error:
             error_type = type(error).__name__
             response_failure = True

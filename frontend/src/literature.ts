@@ -8,6 +8,14 @@ export interface Citation {
   page_end: number;
   chunk_id: string;
   excerpt: string;
+  source_chunks?: {
+    chunk_id: string;
+    chunk_index: number;
+    page_start: number;
+    page_end: number;
+    text: string;
+    kind?: string;
+  }[];
 }
 export interface Answer {
   status: "answered" | "refused";

@@ -4,6 +4,7 @@ from time import perf_counter
 
 from literature_rag.domain.errors import InfrastructureError, InputError
 from literature_rag.domain.models import Evidence
+from literature_rag.application.context import ContextOptions, assemble
 from literature_rag.ports.protocols import Embedder, MetadataStore, VectorStore
 
 logger = logging.getLogger(__name__)
@@ -25,10 +26,14 @@ class RetrievalService:
         metadata: MetadataStore,
         vectors: VectorStore,
         embedder: Embedder,
+        context_options: ContextOptions | None = None,
     ) -> None:
         self.metadata = metadata
         self.vectors = vectors
         self.embedder = embedder
+        self.context_options = context_options or ContextOptions()
+        self.last_seed_evidences: list[Evidence] = []
+        self.last_context_diagnostics: dict = {}
 
     def retrieve(
         self,
@@ -86,6 +91,8 @@ class RetrievalService:
             )
 
         evidences = evidences[:top_k]
+        self.last_seed_evidences = list(evidences)
+        evidences,self.last_context_diagnostics=assemble(evidences,self.metadata,self.context_options)
         logger.info(
             "retrieval_complete",
             extra={

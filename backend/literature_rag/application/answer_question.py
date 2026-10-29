@@ -64,7 +64,9 @@ class AnswerService:
             return self._refusal((), None, latency_ms)
 
         feedback: str | None = None
-        retrieved_chunk_ids = tuple(evidence.chunk_id for evidence in evidences)
+        retrieved_chunk_ids = tuple(dict.fromkeys(
+            source.chunk_id for evidence in evidences for source in evidence.source_chunks
+        )) if any(e.source_chunks for e in evidences) else tuple(e.chunk_id for e in evidences)
         model = self.generator.model_name
         refusal_stage = "invalid_citations"
         reason_code = "citation_validation_failed"

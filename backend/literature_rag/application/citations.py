@@ -99,6 +99,7 @@ class CitationValidator:
                 page_start=evidence.page_start,
                 page_end=evidence.page_end,
                 chunk_id=evidence.chunk_id,
+                source_chunks=evidence.source_chunks,
             )
             for evidence in evidences
             if evidence.ref in used
