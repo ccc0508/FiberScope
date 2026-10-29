@@ -31,6 +31,16 @@ def test_worker_payload_contains_no_gold_answers(monkeypatch, tmp_path):
     assert '-I' in captured['command']
 
 
+def test_reference_corpus_allows_rechunking_but_rejects_changed_papers():
+    original=[dict(id='doc',file_hash='same-pdf',page_count=14,chunk_count=44)]
+    runtime=[dict(id='doc',file_hash='same-pdf',page_count=14,chunk_count=81)]
+    runner.require_same_reference_documents(runtime,original)
+    with pytest.raises(ValueError,match='same original PDF'):
+        runner.require_same_reference_documents([dict(runtime[0],file_hash='different-pdf')],original)
+    with pytest.raises(ValueError,match='same original PDF'):
+        runner.require_same_reference_documents(runtime+[{**runtime[0],'id':'extra-document'}],original)
+
+
 def test_environment_cannot_override_frozen_settings(monkeypatch):
     monkeypatch.setenv('RAG_TOP_K', '1')
     monkeypatch.setenv('LITERATURE_TIMEOUT_SECONDS', '5')
