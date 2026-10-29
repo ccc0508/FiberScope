@@ -29,6 +29,7 @@ class LiteratureSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=BACKEND / '.env.literature', env_prefix='LITERATURE_', extra='ignore')
     enabled: bool = False
     data_dir: Path = BACKEND.parent / '.rag-data'
+    library_dir: Path | None = None
     timeout_seconds: int = Field(90, ge=5, le=300)
     extraction_timeout_seconds: int = Field(180, ge=10, le=300)
     document_extraction_timeout_seconds: int = Field(1800, ge=60, le=3600)
@@ -36,6 +37,10 @@ class LiteratureSettings(BaseSettings):
     @property
     def root(self) -> Path:
         return (BACKEND / self.data_dir).resolve()
+
+    @property
+    def library_root(self) -> Path:
+        return (BACKEND / self.library_dir).resolve() if self.library_dir is not None else self.root
 
 
 class Question(BaseModel):
@@ -59,7 +64,7 @@ class Feedback(BaseModel):
 
 @contextmanager
 def connect(config: LiteratureSettings):
-    path = config.root / 'metadata.sqlite3'
+    path = config.library_root / 'metadata.sqlite3'
     if not path.is_file():
         raise HTTPException(503, '文献库尚未配置，请联系管理员导入文献。')
     connection = sqlite3.connect(path.as_uri() + '?mode=ro', uri=True)
@@ -83,9 +88,9 @@ def pdf_path(config: LiteratureSettings, document_id: str):
         raise HTTPException(404, '没有找到这篇文献。')
     path = Path(row['file_path'])
     if not path.is_absolute():
-        path = config.root / path
+        path = config.library_root / path
     path = path.resolve()
-    if not path.is_relative_to((config.root / 'papers').resolve()) or path.suffix.lower() != '.pdf' or not path.is_file():
+    if not path.is_relative_to((config.library_root / 'papers').resolve()) or path.suffix.lower() != '.pdf' or not path.is_file():
         raise HTTPException(404, '文献原文件暂不可用。')
     return path, row['filename']
 
@@ -94,7 +99,7 @@ def run_answer(config: LiteratureSettings, question: str):
     try:
         result = subprocess.run(
             [sys.executable, '-I', '-X', 'utf8', str(BACKEND / 'literature_worker.py')],
-            input=json.dumps({'question': question, 'data_dir': str(config.root)}, ensure_ascii=False),
+            input=json.dumps({'question': question, 'data_dir': str(config.library_root)}, ensure_ascii=False),
             capture_output=True, text=True, encoding='utf-8', timeout=config.timeout_seconds,
             creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0),
         )

@@ -62,6 +62,7 @@ class Chunk:
     token_count: int
     embedding_model: str
     created_at: datetime = field(default_factory=utc_now)
+    kind: str = 'text'
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,6 +82,16 @@ class VectorMatch:
 
 
 @dataclass(frozen=True, slots=True)
+class EvidenceSource:
+    chunk_id: str
+    chunk_index: int
+    page_start: int
+    page_end: int
+    text: str
+    kind: str = 'text'
+
+
+@dataclass(frozen=True, slots=True)
 class Evidence:
     ref: str
     chunk_id: str
@@ -90,6 +101,9 @@ class Evidence:
     page_end: int
     text: str
     score: float
+    source_chunks: tuple[EvidenceSource, ...] = ()
+    seed_chunk_ids: tuple[str, ...] = ()
+    context_status: str = 'original'
 
 
 @dataclass(frozen=True, slots=True)
@@ -111,6 +125,7 @@ class Citation:
     page_start: int
     page_end: int
     chunk_id: str
+    source_chunks: tuple[EvidenceSource, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

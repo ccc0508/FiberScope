@@ -39,19 +39,20 @@ def clean_environment():
     return result
 
 
-def restore_source_bytes(backend, reference, expected_hash):
+def restore_source_bytes(backend, reference, expected_hash, pipeline_files=None):
     """Git normalizes CRLF; restore original bytes only after proving identical source text."""
     target = backend / 'literature_rag'
-    before = {name: (target / name).read_bytes() for name in PIPELINE_FILES}
+    pipeline_files=pipeline_files or PIPELINE_FILES
+    before = {name: child(target,name).read_bytes() for name in pipeline_files}
     archived_hash = hashlib.sha256(b'\n'.join(before.values())).hexdigest()
     if archived_hash == expected_hash:
         return {'mode': 'archive_bytes_already_match', 'archive_pipeline_sha256': archived_hash}
     require(reference is not None, 'Snapshot fingerprint needs original newline reference source')
-    originals = {name: child(Path(reference).resolve(), name).read_bytes() for name in PIPELINE_FILES}
+    originals = {name: child(Path(reference).resolve(), name).read_bytes() for name in pipeline_files}
     require(hashlib.sha256(b'\n'.join(originals.values())).hexdigest() == expected_hash,
             'Reference source does not match frozen pipeline fingerprint')
     require(all(before[name].replace(b'\r\n', b'\n') == originals[name].replace(b'\r\n', b'\n')
-                for name in PIPELINE_FILES), 'Reference source differs beyond newline encoding')
+                for name in pipeline_files), 'Reference source differs beyond newline encoding')
     for name, content in originals.items():
         (target / name).write_bytes(content)
     return {'mode': 'original_newlines_restored_no_source_text_change',
@@ -119,7 +120,7 @@ def prepare(baseline, pack, env_file, run_dir, reference_source=None, suite=None
                 destination.write_bytes(archive.read(entry))
     backend = run_dir / 'backend'
     require((backend / 'literature_worker.py').is_file(), 'Frozen worker missing')
-    restoration = restore_source_bytes(backend, reference_source, config['prompt_pipeline_sha256'])
+    restoration = restore_source_bytes(backend, reference_source, config['prompt_pipeline_sha256'],config.get('pipeline_source_files'))
     shutil.copytree(baseline / 'library', run_dir / 'library')
     shutil.copytree(pack, run_dir / 'dataset')
     shutil.copyfile(env_file, backend / '.env.literature')

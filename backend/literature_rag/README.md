@@ -21,3 +21,11 @@ The history integration extends this snapshot with explicit refusal reason codes
 allowlisted configuration fingerprints, and provider-reported token usage. It does
 not change the single retrieval pass or citation validation rules. Stored feedback
 is user feedback, not a ground-truth label or a semantic correctness evaluation.
+
+The first context improvement adds optional same-page neighbor expansion, exact legacy
+overlap removal, complete table units, character budgets and source-chunk snapshots.
+`scripts/reindex_literature_structure.py` builds a separate version from existing extracted
+text; it does not overwrite the old index. `LITERATURE_LIBRARY_DIR` selects that library
+while history and extraction records keep their existing data root. Core defaults leave
+expansion disabled for legacy runs; the example configuration opts in. See
+`docs/QA_CONTEXT_V1_20261029.md` for validation and scope limits.

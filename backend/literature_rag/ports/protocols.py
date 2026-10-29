@@ -41,6 +41,9 @@ class MetadataStore(Protocol):
     def get_chunks(self, chunk_ids: Sequence[str]) -> list[Chunk]:
         raise NotImplementedError
 
+    def get_context_chunks(self, chunk_ids: Sequence[str], radius: int) -> list[Chunk]:
+        raise NotImplementedError
+
     def list_documents(self) -> list[Document]:
         raise NotImplementedError
 

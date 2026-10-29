@@ -98,3 +98,15 @@ def test_configuration_never_exports_credentials_or_endpoint_urls(tmp_path, monk
     assert 'fixture-embedding-secret' not in encoded
     assert 'private-provider.example' not in encoded
     assert len(config['provider_endpoint_fingerprints']['llm_base_url']) == 64
+
+
+def test_structure_sources_are_copied_with_checksums(tmp_path):
+    source=tmp_path/'source';target=tmp_path/'target';source.mkdir();target.mkdir()
+    (source/'structure.json').write_text('{"version":"fixture"}',encoding='utf-8')
+    (source/'source-pages.json').write_text('[]',encoding='utf-8')
+    expected={name:baseline.digest(source/name) for name in ['structure.json','source-pages.json']}
+    baseline.copy_structure_files(source,target,expected)
+    assert all(baseline.digest(target/name)==checksum for name,checksum in expected.items())
+    (source/'source-pages.json').write_text('["changed"]',encoding='utf-8')
+    with pytest.raises(ValueError,match='fingerprint'):
+        baseline.copy_structure_files(source,target,expected)

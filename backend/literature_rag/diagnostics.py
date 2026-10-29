@@ -10,6 +10,8 @@ def configuration_snapshot(env_file: Path):
     root = Path(__file__).resolve().parent
     sources = ['application/prompts.py', 'application/citations.py', 'application/answer_question.py',
                'application/retrieve.py', 'adapters/providers/deepseek.py', 'adapters/providers/openai.py']
+    if settings.context_expansion_enabled:
+        sources += ['application/context.py','domain/models.py','adapters/sqlite/metadata_store.py']
     fingerprint = sha256(b'\n'.join((root / source).read_bytes() for source in sources)).hexdigest()
     result = {**{key: getattr(settings, key) for key in (
         'embedding_provider', 'embedding_model', 'embedding_dimensions', 'llm_provider', 'llm_model', 'top_k', 'min_score')},
@@ -17,6 +19,10 @@ def configuration_snapshot(env_file: Path):
     for key in ('llm_thinking_enabled', 'llm_reasoning_effort'):
         if getattr(settings, key) is not None:
             result[key] = getattr(settings, key)
+    if settings.context_expansion_enabled:
+        result.update(pipeline_version='literature-context-v1',pipeline_source_files=sources,
+                      context_expansion={key:getattr(settings,key) for key in (
+                          'context_expansion_enabled','context_neighbor_radius','context_max_evidence_chars','context_max_total_chars')})
     return result
 
 

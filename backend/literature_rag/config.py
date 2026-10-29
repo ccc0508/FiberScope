@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     embedding_batch_size: int = Field(default=64, gt=0, le=2048)
     top_k: int = Field(default=8, ge=1, le=50)
     min_score: float = Field(default=0.35, ge=0, le=1, allow_inf_nan=False)
+    context_expansion_enabled: bool = False
+    context_neighbor_radius: int = Field(default=1,ge=0,le=2)
+    context_max_evidence_chars: int = Field(default=8000,ge=256,le=100000)
+    context_max_total_chars: int = Field(default=24000,ge=256,le=100000)
 
     embedding_provider: str = "openai"
     embedding_model: str | None = None
