@@ -6,6 +6,7 @@
 !.env.judge.example
 !.env.jev.example
 !.env.luna.example
+!.env.mineru.example
 .venv/
 __pycache__/
 *.py[cod]

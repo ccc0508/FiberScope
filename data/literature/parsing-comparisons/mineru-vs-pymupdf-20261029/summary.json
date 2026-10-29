@@ -1,0 +1,283 @@
+{
+  "experiment": "mineru-vs-pymupdf-20261029",
+  "source_pdf_sha256": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4",
+  "pdf_pages": 14,
+  "original_fixed_chunks": 44,
+  "fresh_fixed_chunks": 44,
+  "fresh_matches_archived_texts": true,
+  "current_structural_chunks": 81,
+  "mineru_native_blocks": 161,
+  "mineru_type_counts": {
+    "text": 66,
+    "image": 4,
+    "header": 16,
+    "footer": 2,
+    "page_number": 12,
+    "equation": 5,
+    "chart": 17,
+    "table": 2,
+    "ref_text": 37
+  },
+  "mineru_heading_candidates": 16,
+  "reported_heading_levels": {
+    "1": 1,
+    "2": 15
+  },
+  "mineru_image_asset_files": 28,
+  "blocks_with_page_and_bbox": 161,
+  "numeric_table_cells": 120,
+  "matching_numeric_table_cells": 120,
+  "repeat_checks": [
+    {
+      "pdf_page": 4,
+      "phrase": "3. Results and Discussions",
+      "pymupdf_occurrences": 1,
+      "mineru_occurrences": 2
+    },
+    {
+      "pdf_page": 4,
+      "phrase": "3.1. The Morphological Analysis",
+      "pymupdf_occurrences": 1,
+      "mineru_occurrences": 2
+    },
+    {
+      "pdf_page": 5,
+      "phrase": "The value of the CI-XI",
+      "pymupdf_occurrences": 1,
+      "mineru_occurrences": 3
+    }
+  ],
+  "pymupdf_version": "1.28.0",
+  "requested_mineru_model": "vlm",
+  "reported_mineru_backend": "hybrid",
+  "reported_mineru_version": "3.4.4",
+  "reported_ocr_enabled": false,
+  "local_text_extraction_and_chunk_seconds": 0.48194919992238283,
+  "cloud_submission_through_download_seconds": 24.414073,
+  "api_billed_cost": null,
+  "embedding_calls": 0,
+  "answer_generation_calls": 0,
+  "active_library_changed": false,
+  "parser_or_api_schema": "Observed cloud result; do not assume current local 4.x schemas.",
+  "numeric_scope": "Both tables: 20 data rows x 6 numeric columns including revolutions. Compared to frozen table text; not whole-paper semantic accuracy.",
+  "headings": [
+    {
+      "block_index": 1,
+      "pdf_page": 1,
+      "reported_level": 1,
+      "raw_text": "Probing Efect of Papirindustriens Forskningsinstitut (PFI) Refining on Aggregation Structure of Cellulose: Crystal Packing and Hydrogen-Bonding Network",
+      "visible_text": "Probing Efect of Papirindustriens Forskningsinstitut (PFI) Refining on Aggregation Structure of Cellulose: Crystal Packing and Hydrogen-Bonding Network",
+      "bbox": [
+        122,
+        131,
+        862,
+        206
+      ]
+    },
+    {
+      "block_index": 8,
+      "pdf_page": 1,
+      "reported_level": 2,
+      "raw_text": "1. Introduction",
+      "visible_text": "1. Introduction",
+      "bbox": [
+        122,
+        615,
+        245,
+        629
+      ]
+    },
+    {
+      "block_index": 18,
+      "pdf_page": 2,
+      "reported_level": 2,
+      "raw_text": "2. Methods",
+      "visible_text": "2. Methods",
+      "bbox": [
+        122,
+        517,
+        218,
+        531
+      ]
+    },
+    {
+      "block_index": 19,
+      "pdf_page": 2,
+      "reported_level": 2,
+      "raw_text": "2.1. PFI Refining",
+      "visible_text": "2.1. PFI Refining",
+      "bbox": [
+        122,
+        544,
+        250,
+        561
+      ]
+    },
+    {
+      "block_index": 21,
+      "pdf_page": 2,
+      "reported_level": 2,
+      "raw_text": "2.2. Morphological Analysis of Fibers and Mechanical Properties of Sheets",
+      "visible_text": "2.2. Morphological Analysis of Fibers and Mechanical Properties of Sheets",
+      "bbox": [
+        122,
+        739,
+        633,
+        755
+      ]
+    },
+    {
+      "block_index": 25,
+      "pdf_page": 3,
+      "reported_level": 2,
+      "raw_text": "2.3. Water Retention Value (WRV)",
+      "visible_text": "2.3. Water Retention Value (WRV)",
+      "bbox": [
+        122,
+        103,
+        369,
+        118
+      ]
+    },
+    {
+      "block_index": 29,
+      "pdf_page": 3,
+      "reported_level": 2,
+      "raw_text": "2.4. XRD Analysis",
+      "visible_text": "2.4. XRD Analysis",
+      "bbox": [
+        122,
+        223,
+        263,
+        239
+      ]
+    },
+    {
+      "block_index": 36,
+      "pdf_page": 3,
+      "reported_level": 2,
+      "raw_text": "2.5. FT-IR Analysis",
+      "visible_text": "2.5. FT-IR Analysis",
+      "bbox": [
+        122,
+        686,
+        268,
+        701
+      ]
+    },
+    {
+      "block_index": 47,
+      "pdf_page": 4,
+      "reported_level": 2,
+      "raw_text": "<sub>3. Results and Discussions</sub><sup>3.</sup> <sup>Results</sup> <sup>and</sup> <sup>Discussions</sup>",
+      "visible_text": "3. Results and Discussions3. Results and Discussions",
+      "bbox": [
+        122,
+        332,
+        336,
+        349
+      ]
+    },
+    {
+      "block_index": 48,
+      "pdf_page": 4,
+      "reported_level": 2,
+      "raw_text": "3.1. The Morphological Analysis, Swelling, and Mechanical Properties3.1. The Morphological Analysis, Swelling, and Mechanical Properties",
+      "visible_text": "3.1. The Morphological Analysis, Swelling, and Mechanical Properties3.1. The Morphological Analysis, Swelling, and Mechanical Properties",
+      "bbox": [
+        122,
+        361,
+        610,
+        376
+      ]
+    },
+    {
+      "block_index": 60,
+      "pdf_page": 5,
+      "reported_level": 2,
+      "raw_text": "strength for unrefined and refined samples: (a) softwood fibers3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size",
+      "visible_text": "strength for unrefined and refined samples: (a) softwood fibers3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size",
+      "bbox": [
+        122,
+        733,
+        589,
+        750
+      ]
+    },
+    {
+      "block_index": 72,
+      "pdf_page": 7,
+      "reported_level": 2,
+      "raw_text": "4.1 nm",
+      "visible_text": "4.1 nm",
+      "bbox": [
+        475,
+        152,
+        571,
+        172
+      ]
+    },
+    {
+      "block_index": 76,
+      "pdf_page": 7,
+      "reported_level": 2,
+      "raw_text": "3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds",
+      "visible_text": "3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds",
+      "bbox": [
+        122,
+        795,
+        800,
+        810
+      ]
+    },
+    {
+      "block_index": 99,
+      "pdf_page": 10,
+      "reported_level": 2,
+      "raw_text": "3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining",
+      "visible_text": "3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining",
+      "bbox": [
+        122,
+        661,
+        742,
+        677
+      ]
+    },
+    {
+      "block_index": 107,
+      "pdf_page": 11,
+      "reported_level": 2,
+      "raw_text": "as mentioned<sub>4. Conclusions</sub>",
+      "visible_text": "as mentioned4. Conclusions",
+      "bbox": [
+        122,
+        862,
+        245,
+        878
+      ]
+    },
+    {
+      "block_index": 116,
+      "pdf_page": 12,
+      "reported_level": 2,
+      "raw_text": "References",
+      "visible_text": "References",
+      "bbox": [
+        122,
+        483,
+        215,
+        498
+      ]
+    }
+  ],
+  "cautions": [
+    "161 native blocks are not final RAG retrieval chunks; counts include headers, footers and references.",
+    "All chapter and subsection candidates share level 2; a reliable section tree needs normalization and verification.",
+    "The image label 4.1 nm was returned as a title; several titles contain duplicated or unrelated text.",
+    "Some body text repeats; the abstract renders a chemical prime as superscript 0.",
+    "Table 1 first plane overbar is not preserved as such in the parsed HTML; numeric agreement does not validate headers.",
+    "Image assets include table/equation crops, logos and subfigures; 28 files do not mean 28 scientific figures.",
+    "Charts have empty content fields in this response; no validated curve data or image understanding is demonstrated.",
+    "The service-returned origin.pdf differs in bytes; retain the uploaded original as the source of truth."
+  ]
+}

@@ -1,0 +1,273 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>MinerU与PyMuPDF实际对照</title>
+<style>body{margin:0;background:#f3f6fa;color:#203247;font:15px/1.75 system-ui,"Microsoft YaHei",sans-serif}main{max-width:1480px;margin:32px auto;padding:0 24px}h1{font-size:28px}h2{font-size:21px}article,details,.card{background:white;border:1px solid #dce5ef;border-radius:10px;padding:18px;margin:16px 0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7fb;padding:12px;font:13px/1.65 ui-monospace,monospace;max-height:500px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}td,th{border:1px solid #dce5ef;padding:6px;text-align:left;overflow-wrap:anywhere}.scroll{overflow:auto}img{max-width:100%;height:auto}summary{cursor:pointer;font-weight:650}small{color:#63768b}.warn{background:#fff5de;border-color:#ead79f}a{color:#2166ac}.badge{display:inline-block;background:#e8f1ff;padding:4px 10px;border-radius:6px;margin:4px}@media(max-width:1050px){.grid{display:block}}</style><main>
+<h1>同一篇论文：MinerU与PyMuPDF解析对照</h1>
+<p>14页PFI论文 · 原PDF SHA256 0fcf2a50cfa02d21… · 官方精准API实测</p>
+<div class="card warn"><strong>表格结构与来源坐标有明显新增价值，正文与标题也存在实际错误。</strong><p>本次尚未切换RAG索引。161个MinerU结构块与44/81个检索块不是同一概念，不能据数量判断质量。</p></div>
+<p><span class="badge">原固定切块：44</span><span class="badge">当前规则切块：81</span><span class="badge">MinerU原始结构块：161</span><span class="badge">表格数据行数值：120/120一致</span></p>
+<p>请求vlm；实际云端结果报告hybrid / 3.4.4。数值检查含转数列，不覆盖表头、公式和整篇语义。</p>
+<p><a href="mineru-full.md">MinerU原始Markdown</a> · <a href="mineru-content-list.json">原始结构JSON</a> · <a href="mineru-content-list-v2.json">按页JSON V2</a> · <a href="pymupdf-full.txt">PyMuPDF原始文字</a> · <a href="old-fixed-chunks.jsonl">原44块</a> · <a href="current-structural-chunks.jsonl">当前81块</a></p>
+<h2>解析与切块分别做什么</h2><div class="grid"><article><h3>原项目实际实现</h3><pre>PyMuPDF: page.get_text("text", sort=True)
+→ 按页获得文字
+→ PageChunker(1200, 200)
+→ 44个检索块
+
+当前优化：重建页面文本
+→ 标点/标题规则 + 单页表格分组
+→ 81个检索块</pre></article>
+<article><h3>本次MinerU实际结果</h3><pre>官方精准解析API
+→ 文本/标题、表格、图表、图片、公式等结构块
+→ Markdown + JSON + 图片
+→ 161个原始结构块
+
+尚需我们实现：
+标题清理与层级校验 → 章节树
+按段落、表格等组织检索块 → 长度控制
+保存页码/坐标 → 精准引用</pre></article></div>
+<h2>两张表：原文、切块与MinerU行列结构</h2>
+<article><h3>表1 · PDF第6页</h3>
+<p>旧固定切块涉及1块；其中完整容纳表格的块数：1。当前规则版本为1个表格块。MinerU数据行数值核对：60/60。</p>
+<div class="grid"><section><h4>上传PDF的表格区域</h4><p>按返回坐标直接裁剪原PDF，未改写数值。</p><img loading="lazy" src="pdf-table-1.png" alt="原PDF表格区域">
+<details><summary>查看原PDF整页</summary><img loading="lazy" src="pdf-page-6.png" alt="原PDF表格所在页面"></details></section><section><h4>MinerU实际HTML表格</h4>
+<p>Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining. &lt;sup&gt;a&lt;/sup&gt; The CI-XI value was obtained from the ratio of the difraction intensity. &lt;sup&gt;b&lt;/sup&gt; The CI-XA value was obtained from the ratio of the peak areas.</p><div class="scroll"><table><tr><td colspan="6">(a)</td></tr><tr><td rowspan="2">Revolutions</td><td colspan="2">CI (%)</td><td colspan="3">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan="5">(b)</td></tr><tr><td rowspan="2">Revolutions</td><td colspan="2">CI (%)</td><td colspan="3">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table></div>
+<p>JSON来源定位：page_idx=5（对应第6页），bbox=[184, 370, 811, 629]。</p>
+<details><summary>当前规则版本保留的表格纯文本</summary><pre>Table 1. (a) The CI of softwood ﬁbers through reﬁning. (b) The CI of hardwood ﬁbers through reﬁning.
+(a)
+CI (%) Crystallite Size (nm)
+Revolutions a b CI-XI CI-XA 110 (110) (200)
+0 73.23 40.46 3.2 3.5 4.5
+4000 70.42 37.71 3.1 3.4 4.6
+8000 72.54 39.65 3.2 3.4 4.6
+12,000 70.93 36.22 3.1 3.7 4.7
+16,000 69.82 34.20 3.2 3.5 4.7
+(b)
+CI (%) Crystallite Size (nm)
+Revolutions a b CI-XI CI-XA 110 (110) (200)
+0 75.55 47.16 3.1 3.1 4.5
+4000 73.01 36.26 3.1 3.3 4.7
+8000 75.06 42.35 3.1 3.5 4.8
+12,000 74.57 39.21 2.9 4.0 4.8
+16,000 73.55 38.01 3.0 3.7 4.7
+a The CI-XI value was obtained from the ratio of the diﬀraction intensity. b The CI-XA value was obtained from the
+ratio of the peak areas.</pre></details>
+<details><summary>原固定长度块：查看表格是否在边界被切断</summary><p>chunk_index=17</p><pre>Polymers 2020, 12, 2912 6 of 14
+Figure 4. The CI-XI (crystallinity index obtained by comparing intensity of X-ray diﬀractometer (XRD)
+peaks) and CI-XA (crystallinity index obtained by comparing area of XRD peaks) for reﬁned and
+unreﬁned samples: (a) softwood ﬁber and (b) hardwood ﬁber.
+Table 1. (a) The CI of softwood ﬁbers through reﬁning. (b) The CI of hardwood ﬁbers through reﬁning.
+(a)
+CI (%) Crystallite Size (nm)
+Revolutions a b CI-XI CI-XA 110 (110) (200)
+0 73.23 40.46 3.2 3.5 4.5
+4000 70.42 37.71 3.1 3.4 4.6
+8000 72.54 39.65 3.2 3.4 4.6
+12,000 70.93 36.22 3.1 3.7 4.7
+16,000 69.82 34.20 3.2 3.5 4.7
+(b)
+CI (%) Crystallite Size (nm)
+Revolutions a b CI-XI CI-XA 110 (110) (200)
+0 75.55 47.16 3.1 3.1 4.5
+4000 73.01 36.26 3.1 3.3 4.7
+8000 75.06 42.35 3.1 3.5 4.8
+12,000 74.57 39.21 2.9 4.0 4.8
+16,000 73.55 38.01 3.0 3.7 4.7
+a The CI-XI value was obtained from the ratio of the diﬀraction intensity. b The CI-XA value was obtained from the
+ratio of the peak areas.
+The trends of CI (CI-XI and CI-XA) for softwood ﬁbers and hardwood ﬁbers were all similar,
+decreasing ﬁrst and then increasing, along with a decline, as shown in Figure 4. The ﬂuctuation of the
+CI was probably because of the m</pre></details></section></div></article>
+<article><h3>表2 · PDF第8页</h3>
+<p>旧固定切块涉及2块；其中完整容纳表格的块数：0。当前规则版本为1个表格块。MinerU数据行数值核对：60/60。</p>
+<div class="grid"><section><h4>上传PDF的表格区域</h4><p>按返回坐标直接裁剪原PDF，未改写数值。</p><img loading="lazy" src="pdf-table-2.png" alt="原PDF表格区域">
+<details><summary>查看原PDF整页</summary><img loading="lazy" src="pdf-page-8.png" alt="原PDF表格所在页面"></details></section><section><h4>MinerU实际HTML表格</h4>
+<p>Table 2. (a) The relative content of three H-bonds and the free OH for softwood fibers through refining. (b) The relative content of three H-bonds and the free OH for hardwood fibers through refining.</p><div class="scroll"><table><tr><td colspan="6">(a)</td></tr><tr><td>Revolutions</td><td>O(6)H···O(3&#x27;)</td><td>O(3)H···O(5)</td><td>O(2)H···O(6)</td><td>Free OH(2) and OH(6)</td><td> $r^2$ </td></tr><tr><td>0</td><td>28.23</td><td>28.44</td><td>31.40</td><td>11.93</td><td>0.9995</td></tr><tr><td>4000</td><td>26.05</td><td>31.31</td><td>32.50</td><td>10.14</td><td>0.9995</td></tr><tr><td>8000</td><td>28.43</td><td>30.86</td><td>25.87</td><td>14.84</td><td>0.9995</td></tr><tr><td>12,000</td><td>26.68</td><td>32.58</td><td>25.49</td><td>15.25</td><td>0.9996</td></tr><tr><td>16,000</td><td>23.56</td><td>34.92</td><td>29.38</td><td>12.14</td><td>0.9996</td></tr><tr><td colspan="6">(b)</td></tr><tr><td>Revolutions</td><td>O(6)H···O(3&#x27;)</td><td>O(3)H···O(5)</td><td>O(2)H···O(6)</td><td>Free OH(2) and OH(6)</td><td> $r^2$ </td></tr><tr><td>0</td><td>26.55</td><td>29.09</td><td>30.04</td><td>14.32</td><td>0.9990</td></tr><tr><td>4000</td><td>24.44</td><td>33.06</td><td>31.28</td><td>11.22</td><td>0.9991</td></tr><tr><td>8000</td><td>26.89</td><td>29.81</td><td>28.99</td><td>14.31</td><td>0.9991</td></tr><tr><td>12,000</td><td>27.01</td><td>29.28</td><td>27.40</td><td>16.31</td><td>0.9992</td></tr><tr><td>16,000</td><td>24.98</td><td>31.65</td><td>29.85</td><td>13.52</td><td>0.9989</td></tr></table></div>
+<p>JSON来源定位：page_idx=7（对应第8页），bbox=[166, 640, 830, 889]。</p>
+<details><summary>当前规则版本保留的表格纯文本</summary><pre>Table 2. (a) The relative content of three H-bonds and the free OH for softwood ﬁbers through reﬁning.
+(b) The relative content of three H-bonds and the free OH for hardwood ﬁbers through reﬁning.
+(a)
+Free OH(2) Revolutions O(6)H· · · O(3′) O(3)H· · · O(5) O(2)H· · · O(6) r2
+and OH(6)
+0 28.23 28.44 31.40 11.93 0.9995
+4000 26.05 31.31 32.50 10.14 0.9995
+8000 28.43 30.86 25.87 14.84 0.9995
+12,000 26.68 32.58 25.49 15.25 0.9996
+16,000 23.56 34.92 29.38 12.14 0.9996
+(b)
+Free OH(2) Revolutions O(6)H· · · O(3′) O(3)H· · · O(5) O(2)H· · · O(6) r2
+and OH(6)
+0 26.55 29.09 30.04 14.32 0.9990
+4000 24.44 33.06 31.28 11.22 0.9991
+8000 26.89 29.81 28.99 14.31 0.9991
+12,000 27.01 29.28 27.40 16.31 0.9992
+16,000 24.98 31.65 29.85 13.52 0.9989</pre></details>
+<details><summary>原固定长度块：查看表格是否在边界被切断</summary><p>chunk_index=24</p><pre>frared spectrum is the convolution of the real spectrum and the linear
+function of instrument. The band of hydroxyl groups (3000–3700 cm−1) was deconvoluted into four
+predominant bands in the present study based on the peak positions above. Subsequently, the relative
+content of various H-bonds was calculated based on area proportion of the band, respectively. Finally,
+the data and curves obtained using nonlinear ﬁtting for softwood ﬁbers is shown in Table 2a and
+Figure 7, and the results of hardwood ﬁbers can be seen in Table 2b and Figure S3.
+Table 2. (a) The relative content of three H-bonds and the free OH for softwood ﬁbers through reﬁning.
+(b) The relative content of three H-bonds and the free OH for hardwood ﬁbers through reﬁning.
+(a)
+Free OH(2) Revolutions O(6)H· · · O(3′) O(3)H· · · O(5) O(2)H· · · O(6) r2
+and OH(6)
+0 28.23 28.44 31.40 11.93 0.9995
+4000 26.05 31.31 32.50 10.14 0.9995
+8000 28.43 30.86 25.87 14.84 0.9995
+12,000 26.68 32.58 25.49 15.25 0.9996
+16,000 23.56 34.92 29.38 12.14 0.9996
+(b)
+Free OH(2) Revolutions O(6)H· · · O(3′) O(3)H· · · O(5) O(2)H· · · O(6) r2
+and OH(6)
+0 26.55 29.09 30.04 14.32 0.9990
+4000 24.44 33.06 31.28 11.22 0.9991
+8000 26.89 29.81 28.99 14</pre><p>chunk_index=25</p><pre>.38 12.14 0.9996
+(b)
+Free OH(2) Revolutions O(6)H· · · O(3′) O(3)H· · · O(5) O(2)H· · · O(6) r2
+and OH(6)
+0 26.55 29.09 30.04 14.32 0.9990
+4000 24.44 33.06 31.28 11.22 0.9991
+8000 26.89 29.81 28.99 14.31 0.9991
+12,000 27.01 29.28 27.40 16.31 0.9992
+16,000 24.98 31.65 29.85 13.52 0.9989</pre></details></section></div></article>
+<h2>标题：识别出来不等于层级已经正确</h2>
+<p>16个标题候选，文档题名为level 1，其余15个全是level 2。章与小节仍需根据编号和版面校验；“4.1 nm”是图片标注，不是章节标题。</p>
+<div class="scroll"><table><tr><th>PDF页</th><th>返回层级</th><th>实际返回的标题文字（保留错误）</th></tr>
+<tr><td>1</td><td>1</td><td>Probing Efect of Papirindustriens Forskningsinstitut (PFI) Refining on Aggregation Structure of Cellulose: Crystal Packing and Hydrogen-Bonding Network</td></tr>
+<tr><td>1</td><td>2</td><td>1. Introduction</td></tr>
+<tr><td>2</td><td>2</td><td>2. Methods</td></tr>
+<tr><td>2</td><td>2</td><td>2.1. PFI Refining</td></tr>
+<tr><td>2</td><td>2</td><td>2.2. Morphological Analysis of Fibers and Mechanical Properties of Sheets</td></tr>
+<tr><td>3</td><td>2</td><td>2.3. Water Retention Value (WRV)</td></tr>
+<tr><td>3</td><td>2</td><td>2.4. XRD Analysis</td></tr>
+<tr><td>3</td><td>2</td><td>2.5. FT-IR Analysis</td></tr>
+<tr><td>4</td><td>2</td><td>3. Results and Discussions3. Results and Discussions</td></tr>
+<tr><td>4</td><td>2</td><td>3.1. The Morphological Analysis, Swelling, and Mechanical Properties3.1. The Morphological Analysis, Swelling, and Mechanical Properties</td></tr>
+<tr><td>5</td><td>2</td><td>strength for unrefined and refined samples: (a) softwood fibers3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size</td></tr>
+<tr><td>7</td><td>2</td><td>4.1 nm</td></tr>
+<tr><td>7</td><td>2</td><td>3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds</td></tr>
+<tr><td>10</td><td>2</td><td>3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining</td></tr>
+<tr><td>11</td><td>2</td><td>as mentioned4. Conclusions</td></tr>
+<tr><td>12</td><td>2</td><td>References</td></tr>
+</table></div><h2>正文：原样对比第5页</h2>
+<p>“The value of the CI-XI”在原PyMuPDF结果出现1次，在本次MinerU对应页的正文出现3次。右侧保留原输出中的HTML标记和重复，不做人工修正。</p><div class="grid"><article><h3>PyMuPDF</h3><pre>Polymers 2020, 12, 2912                                                                                     5 of 14
+
+
+
+
+
+     Figure 2. The beating degree and Water Retention Value (WRV) for the unreﬁned and reﬁned samples:
+      (a) softwood ﬁbers and (b) hardwood ﬁbers.
+
+     In Figure 3, the tensile index, zero-span tensile index, and wet-web strength represented as a
+function of the reﬁning revolutions. The increment of tensile strength is mainly caused by the increasing
+ﬁbrillation and ﬁnes during PFI reﬁning, as mentioned above. The wet–web strength of softwood
+ﬁber had a more signiﬁcant increase when compared to that of hardwood ﬁber. It is for that ﬁber
+length plays an essential role in wet–web strength. The zero-span tensile index was usually used in
+characterizing the tensile strength of ﬁbers. The results of the zero-span tensile index showed that
+PFI reﬁning did not reduce ﬁber strength, which is consistent with the report of Kouko et al. [24].
+The above results showed that PFI reﬁning improved the extent of ﬁbrillation (especially the internal
+ﬁbrillation), the swelling of ﬁbers, and the tensile strength of sheets without a decrease of the tensile
+strength of ﬁbers.
+
+
+
+
+
+     Figure 3. The rheological analysis of wet sheets, the tensile strength of dry sheets, and the ﬁber strength
+      for unreﬁned and reﬁned samples: (a) softwood ﬁbers and (b) hardwood ﬁbers.
+
+3.2. Eﬀect of PFI Reﬁning on Crystalline Index and Crystallite Size
+
+    The cellulose polymorph of these two ﬁbers had no change during PFI treatment, which illustrates
+that the PFI reﬁning is a relatively mild mechanical treatment, as the results of XRD in Online Resource
+(Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood ﬁbers showed a reduction
+of 4.66% and 15.47%, respectively, and those of hardwood ﬁbers decreased by 2.65% and 19.4%,
+respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was remarkably higher than
+the CI-XA, which might be caused by the over-ﬁtting of amorphous contribution in the analysis of
+CI-XA. However, the CI-XI and the CI-XA were correlated signiﬁcantly for both softwood ﬁbers and
+hardwood ﬁbers, with a correlation coeﬃcient of 0.919 (p &lt; 0.05) for softwood ﬁbers and 0.925 (p &lt; 0.05)
+for hardwood ﬁbers, respectively, which is consistent with the report of Ahvenainen et al. [25].</pre></article>
+<article><h3>MinerU</h3><pre>&lt;sub&gt;In Figure 3, the tensile index, zero-span tensile index, and wet-web strength represented as a&lt;/sub&gt;&lt;sup&gt;In&lt;/sup&gt; &lt;sup&gt;Figure&lt;/sup&gt; &lt;sup&gt;3,&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;tensile&lt;/sup&gt; &lt;sup&gt;index,&lt;/sup&gt; &lt;sup&gt;zero-span&lt;/sup&gt; &lt;sup&gt;tensile&lt;/sup&gt; &lt;sup&gt;index,&lt;/sup&gt; &lt;sup&gt;and&lt;/sup&gt; &lt;sup&gt;wet-web&lt;/sup&gt; &lt;sup&gt;strength&lt;/sup&gt; &lt;sup&gt;represented&lt;/sup&gt; &lt;sup&gt;as&lt;/sup&gt; &lt;sup&gt;a&lt;/sup&gt; &lt;sup&gt;In&lt;/sup&gt; &lt;sup&gt;Figure&lt;/sup&gt; &lt;sup&gt;3,&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;tensile&lt;/sup&gt; &lt;sup&gt;index,&lt;/sup&gt; &lt;sup&gt;zero-span&lt;/sup&gt; &lt;sup&gt;tensile&lt;/sup&gt; &lt;sup&gt;index,&lt;/sup&gt; &lt;sup&gt;and&lt;/sup&gt; &lt;sup&gt;wet-web&lt;/sup&gt; &lt;sup&gt;strength&lt;/sup&gt; &lt;sup&gt;represented&lt;/sup&gt; &lt;sup&gt;as&lt;/sup&gt; &lt;sup&gt;a&lt;/sup&gt;function of the refining revolutions. The increment of tensile strength is mainly caused by the increasing function of the refining revolutions. The increment of tensile strength is mainly caused by the&lt;sub&gt;fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of softwood&lt;/sub&gt;&lt;sup&gt;increasing&lt;/sup&gt; &lt;sup&gt;fibrillation&lt;/sup&gt; &lt;sup&gt;and&lt;/sup&gt; &lt;sup&gt;fines&lt;/sup&gt; &lt;sup&gt;during&lt;/sup&gt; &lt;sup&gt;PFI&lt;/sup&gt; &lt;sup&gt;refining,&lt;/sup&gt; &lt;sup&gt;as&lt;/sup&gt; &lt;sup&gt;mentioned&lt;/sup&gt; &lt;sup&gt;above.&lt;/sup&gt; &lt;sup&gt;The&lt;/sup&gt; &lt;sup&gt;wet–web&lt;/sup&gt; &lt;sup&gt;strength&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of&lt;sub&gt;fiber&lt;/sub&gt; &lt;sub&gt;had&lt;/sub&gt; &lt;sub&gt;a&lt;/sub&gt; &lt;sub&gt;more&lt;/sub&gt; &lt;sub&gt;significant&lt;/sub&gt; &lt;sub&gt;increase&lt;/sub&gt; &lt;sub&gt;when&lt;/sub&gt; &lt;sub&gt;compared&lt;/sub&gt; &lt;sub&gt;to&lt;/sub&gt; &lt;sub&gt;that&lt;/sub&gt; &lt;sub&gt;of&lt;/sub&gt; &lt;sub&gt;hardwood&lt;/sub&gt; &lt;sub&gt;fiber.&lt;/sub&gt; &lt;sub&gt;It&lt;/sub&gt; &lt;sub&gt;is&lt;/sub&gt; &lt;sub&gt;for&lt;/sub&gt; &lt;sub&gt;that&lt;/sub&gt; &lt;sub&gt;fiber&lt;/sub&gt; &lt;sup&gt;softwood&lt;/sup&gt; &lt;sup&gt;fiber&lt;/sup&gt; &lt;sup&gt;had&lt;/sup&gt; &lt;sup&gt;a&lt;/sup&gt; &lt;sup&gt;more&lt;/sup&gt; &lt;sup&gt;significant&lt;/sup&gt; &lt;sup&gt;increase&lt;/sup&gt; &lt;sup&gt;when&lt;/sup&gt; &lt;sup&gt;compared&lt;/sup&gt; &lt;sup&gt;to&lt;/sup&gt; &lt;sup&gt;that&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;hardwood&lt;/sup&gt; &lt;sup&gt;fiber.&lt;/sup&gt; &lt;sup&gt;It&lt;/sup&gt; &lt;sup&gt;is&lt;/sup&gt; &lt;sup&gt;for&lt;/sup&gt;length plays an essential role in wet–web strength. The zero-span tensile index was usually used in &lt;sup&gt;that&lt;/sup&gt; &lt;sup&gt;fiber&lt;/sup&gt; &lt;sup&gt;length&lt;/sup&gt; &lt;sup&gt;plays&lt;/sup&gt; &lt;sup&gt;an&lt;/sup&gt; &lt;sup&gt;essential&lt;/sup&gt; &lt;sup&gt;role&lt;/sup&gt; &lt;sup&gt;in&lt;/sup&gt; &lt;sup&gt;wet–web&lt;/sup&gt; &lt;sup&gt;strength.&lt;/sup&gt; &lt;sup&gt;The&lt;/sup&gt; &lt;sup&gt;zero-span&lt;/sup&gt; &lt;sup&gt;tensile&lt;/sup&gt; &lt;sup&gt;index&lt;/sup&gt; &lt;sup&gt;was&lt;/sup&gt; &lt;sup&gt;usually&lt;/sup&gt;&lt;sub&gt;characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that&lt;/sub&gt; used in characterizing the tensile strength of fibers. The results of the zero-span tensile index showed &lt;sub&gt;PFI&lt;/sub&gt; &lt;sub&gt;refining&lt;/sub&gt; &lt;sub&gt;did&lt;/sub&gt; &lt;sub&gt;not&lt;/sub&gt; &lt;sub&gt;reduce&lt;/sub&gt; &lt;sub&gt;fiber&lt;/sub&gt; &lt;sub&gt;strength,&lt;/sub&gt; &lt;sub&gt;which&lt;/sub&gt; &lt;sub&gt;is&lt;/sub&gt; &lt;sub&gt;consistent&lt;/sub&gt; &lt;sub&gt;with&lt;/sub&gt; &lt;sub&gt;the&lt;/sub&gt; &lt;sub&gt;report&lt;/sub&gt; &lt;sub&gt;of&lt;/sub&gt; &lt;sub&gt;Kouko&lt;/sub&gt; &lt;sub&gt;et&lt;/sub&gt; &lt;sub&gt;al.&lt;/sub&gt; &lt;sub&gt;[24].&lt;/sub&gt; that PFI refining did not reduce fiber strength, which is consistent with the report of Kouko et al. [24].&lt;sub&gt;The&lt;/sub&gt; &lt;sub&gt;above&lt;/sub&gt; &lt;sub&gt;results&lt;/sub&gt; &lt;sub&gt;showed&lt;/sub&gt; &lt;sub&gt;that&lt;/sub&gt; &lt;sub&gt;PFI&lt;/sub&gt; &lt;sub&gt;refining&lt;/sub&gt; &lt;sub&gt;improved&lt;/sub&gt; &lt;sub&gt;the&lt;/sub&gt; &lt;sub&gt;extent&lt;/sub&gt; &lt;sub&gt;of&lt;/sub&gt; &lt;sub&gt;fibrillation&lt;/sub&gt; &lt;sub&gt;(especially&lt;/sub&gt; &lt;sub&gt;the&lt;/sub&gt; &lt;sub&gt;internal&lt;/sub&gt;&lt;sup&gt;The&lt;/sup&gt; &lt;sup&gt;above&lt;/sup&gt; &lt;sup&gt;results&lt;/sup&gt; &lt;sup&gt;showed&lt;/sup&gt; &lt;sup&gt;that&lt;/sup&gt; &lt;sup&gt;PFI&lt;/sup&gt; &lt;sup&gt;refining&lt;/sup&gt; &lt;sup&gt;improved&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;extent&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;fibrillation&lt;/sup&gt; &lt;sup&gt;(especially&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;internal&lt;/sup&gt; The above results showed that PFI refining improved the extent of fibrillation (especially the internal&lt;sub&gt;fibrillation), the swelling of fibers, and the tensile strength of sheets without a decrease of the tensile&lt;/sub&gt;&lt;sup&gt;fibrillation),&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;swelling&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;fibers,&lt;/sup&gt; &lt;sup&gt;and&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;tensile&lt;/sup&gt; &lt;sup&gt;strength&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;sheets&lt;/sup&gt; &lt;sup&gt;without&lt;/sup&gt; &lt;sup&gt;a&lt;/sup&gt; &lt;sup&gt;decrease&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;tensile&lt;/sup&gt; fibrillation), the s&lt;sub&gt;strength of fibers.&lt;/sub&gt;&lt;sup&gt;strength&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;fibers.&lt;/sup&gt;
+
+strength for unrefined and refined samples: (a) softwood fibers3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size
+
+The cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates &lt;sup&gt;The&lt;/sup&gt; &lt;sup&gt;cellulose&lt;/sup&gt; &lt;sup&gt;polymorph&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;these&lt;/sup&gt; &lt;sup&gt;two&lt;/sup&gt; &lt;sup&gt;fibers&lt;/sup&gt; &lt;sup&gt;had&lt;/sup&gt; &lt;sup&gt;no&lt;/sup&gt; &lt;sup&gt;change&lt;/sup&gt; &lt;sup&gt;during&lt;/sup&gt; &lt;sup&gt;PFI&lt;/sup&gt; &lt;sup&gt;treatment,&lt;/sup&gt; &lt;sup&gt;which&lt;/sup&gt;that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource The cellulose polymorph of these two fibers had no change during PFI treatment, which&lt;sup&gt;illustrates&lt;/sup&gt; &lt;sup&gt;that&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;PFI&lt;/sup&gt; &lt;sup&gt;refining&lt;/sup&gt; &lt;sup&gt;is&lt;/sup&gt; &lt;sup&gt;a&lt;/sup&gt; &lt;sup&gt;relatively&lt;/sup&gt; &lt;sup&gt;mild&lt;/sup&gt; &lt;sup&gt;mechanical&lt;/sup&gt; &lt;sup&gt;treatment,&lt;/sup&gt; &lt;sup&gt;as&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;results&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;XRD&lt;/sup&gt; &lt;sup&gt;in&lt;/sup&gt;(Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers showed a reduction illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in &lt;sup&gt;Online&lt;/sup&gt; &lt;sup&gt;Resource&lt;/sup&gt; &lt;sup&gt;(Figures&lt;/sup&gt; &lt;sup&gt;S1&lt;/sup&gt; &lt;sup&gt;and&lt;/sup&gt; &lt;sup&gt;S2)&lt;/sup&gt; &lt;sup&gt;show.&lt;/sup&gt; &lt;sup&gt;In&lt;/sup&gt; &lt;sup&gt;general,&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;CI-XI&lt;/sup&gt; &lt;sup&gt;and&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;CI-XA&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;softwood&lt;/sup&gt; &lt;sup&gt;fibers&lt;/sup&gt; of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers&lt;sup&gt;showed&lt;/sup&gt; &lt;sup&gt;a&lt;/sup&gt; &lt;sup&gt;reduction&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;4.66%&lt;/sup&gt; &lt;sup&gt;and&lt;/sup&gt; &lt;sup&gt;15.47%,&lt;/sup&gt; &lt;sup&gt;respectively,&lt;/sup&gt; &lt;sup&gt;and&lt;/sup&gt; &lt;sup&gt;those&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;hardwood&lt;/sup&gt; &lt;sup&gt;fibers&lt;/sup&gt; &lt;sup&gt;decreased&lt;/sup&gt; &lt;sup&gt;by&lt;/sup&gt;respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was remarkably higher than showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by&lt;sup&gt;2.65%&lt;/sup&gt; &lt;sup&gt;and&lt;/sup&gt; &lt;sup&gt;19.4%,&lt;/sup&gt; &lt;sup&gt;respectively,&lt;/sup&gt; &lt;sup&gt;as&lt;/sup&gt; &lt;sup&gt;can&lt;/sup&gt; &lt;sup&gt;be&lt;/sup&gt; &lt;sup&gt;seen&lt;/sup&gt; &lt;sup&gt;in&lt;/sup&gt; &lt;sup&gt;Figure&lt;/sup&gt; &lt;sup&gt;4&lt;/sup&gt; &lt;sup&gt;and&lt;/sup&gt; &lt;sup&gt;Table&lt;/sup&gt; &lt;sup&gt;1.&lt;/sup&gt; &lt;sup&gt;The&lt;/sup&gt; &lt;sup&gt;value&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;CI-XI&lt;/sup&gt; &lt;sup&gt;was&lt;/sup&gt;the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was&lt;sup&gt;remarkably&lt;/sup&gt; &lt;sup&gt;higher&lt;/sup&gt; &lt;sup&gt;than&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;CI-XA,&lt;/sup&gt; &lt;sup&gt;which&lt;/sup&gt; &lt;sup&gt;might&lt;/sup&gt; &lt;sup&gt;be&lt;/sup&gt; &lt;sup&gt;caused&lt;/sup&gt; &lt;sup&gt;by&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;over-fitting&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;amorphous&lt;/sup&gt;CI-XA. However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous&lt;sup&gt;contribution&lt;/sup&gt; &lt;sup&gt;in&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;analysis&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;CI-XA.&lt;/sup&gt; &lt;sup&gt;However,&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;CI-XI&lt;/sup&gt; &lt;sup&gt;and&lt;/sup&gt; &lt;sup&gt;the&lt;/sup&gt; &lt;sup&gt;CI-XA&lt;/sup&gt; &lt;sup&gt;were&lt;/sup&gt; &lt;sup&gt;correlated&lt;/sup&gt; &lt;sup&gt;significantly&lt;/sup&gt;hardwood fibers, with a correlation coeficient of 0.919 (p &lt; 0.05) for softwood fibers and 0.925 (p &lt; 0.05) contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated signif&lt;sup&gt;for&lt;/sup&gt; &lt;sup&gt;both&lt;/sup&gt; &lt;sup&gt;softwood&lt;/sup&gt; &lt;sup&gt;fibers&lt;/sup&gt; &lt;sup&gt;and&lt;/sup&gt; &lt;sup&gt;hardwood&lt;/sup&gt; &lt;sup&gt;fibers,&lt;/sup&gt; &lt;sup&gt;with&lt;/sup&gt; &lt;sup&gt;a&lt;/sup&gt; &lt;sup&gt;correlation&lt;/sup&gt; &lt;sup&gt;coefficient&lt;/sup&gt; &lt;sup&gt;of&lt;/sup&gt; &lt;sup&gt;0.919&lt;/sup&gt; &lt;sup&gt;(p&lt;/sup&gt; &lt;sup&gt;&lt;&lt;/sup&gt; &lt;sup&gt;0.&lt;/sup&gt;for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].</pre></article></div>
+<h2>图片与图表：已提取资源，尚未证明能读出科学结论</h2>
+<p>17个chart块、4个image块；28个图像文件还包含表格、公式裁剪和标志。下面两张是同一幅图的子图，第一张caption为空，第二张携带整幅图注；不能据文件数当作独立科学图片数。</p><div class="grid">
+<article><img loading="lazy" src="images/d3831f5ffdddef73e355abb763d6a988ca7a598a80f64349d3531fd9246faaaa.jpg" alt="MinerU提取的图表区域"><p>第4页；content=&#x27;&#x27;；caption=[]</p></article>
+<article><img loading="lazy" src="images/3a32788223b7f1bf1c812c833cc568a25548de0e6271610fe76891b3bd7b7098.jpg" alt="MinerU提取的图表区域"><p>第4页；content=&#x27;&#x27;；caption=[&#x27;Figure 1. The morphological analysis for the unrefined and refined samples: (a) softwood fibers and (b) hardwood fibers.&#x27;]</p></article>
+</div><h2>输出统计与已知限制</h2><pre>{
+  &quot;experiment&quot;: &quot;mineru-vs-pymupdf-20261029&quot;,
+  &quot;source_pdf_sha256&quot;: &quot;0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4&quot;,
+  &quot;pdf_pages&quot;: 14,
+  &quot;original_fixed_chunks&quot;: 44,
+  &quot;fresh_fixed_chunks&quot;: 44,
+  &quot;fresh_matches_archived_texts&quot;: true,
+  &quot;current_structural_chunks&quot;: 81,
+  &quot;mineru_native_blocks&quot;: 161,
+  &quot;mineru_type_counts&quot;: {
+    &quot;text&quot;: 66,
+    &quot;image&quot;: 4,
+    &quot;header&quot;: 16,
+    &quot;footer&quot;: 2,
+    &quot;page_number&quot;: 12,
+    &quot;equation&quot;: 5,
+    &quot;chart&quot;: 17,
+    &quot;table&quot;: 2,
+    &quot;ref_text&quot;: 37
+  },
+  &quot;mineru_heading_candidates&quot;: 16,
+  &quot;reported_heading_levels&quot;: {
+    &quot;1&quot;: 1,
+    &quot;2&quot;: 15
+  },
+  &quot;mineru_image_asset_files&quot;: 28,
+  &quot;blocks_with_page_and_bbox&quot;: 161,
+  &quot;numeric_table_cells&quot;: 120,
+  &quot;matching_numeric_table_cells&quot;: 120,
+  &quot;repeat_checks&quot;: [
+    {
+      &quot;pdf_page&quot;: 4,
+      &quot;phrase&quot;: &quot;3. Results and Discussions&quot;,
+      &quot;pymupdf_occurrences&quot;: 1,
+      &quot;mineru_occurrences&quot;: 2
+    },
+    {
+      &quot;pdf_page&quot;: 4,
+      &quot;phrase&quot;: &quot;3.1. The Morphological Analysis&quot;,
+      &quot;pymupdf_occurrences&quot;: 1,
+      &quot;mineru_occurrences&quot;: 2
+    },
+    {
+      &quot;pdf_page&quot;: 5,
+      &quot;phrase&quot;: &quot;The value of the CI-XI&quot;,
+      &quot;pymupdf_occurrences&quot;: 1,
+      &quot;mineru_occurrences&quot;: 3
+    }
+  ],
+  &quot;pymupdf_version&quot;: &quot;1.28.0&quot;,
+  &quot;requested_mineru_model&quot;: &quot;vlm&quot;,
+  &quot;reported_mineru_backend&quot;: &quot;hybrid&quot;,
+  &quot;reported_mineru_version&quot;: &quot;3.4.4&quot;,
+  &quot;reported_ocr_enabled&quot;: false,
+  &quot;local_text_extraction_and_chunk_seconds&quot;: 0.48194919992238283,
+  &quot;cloud_submission_through_download_seconds&quot;: 24.414073,
+  &quot;api_billed_cost&quot;: null,
+  &quot;embedding_calls&quot;: 0,
+  &quot;answer_generation_calls&quot;: 0,
+  &quot;active_library_changed&quot;: false,
+  &quot;parser_or_api_schema&quot;: &quot;Observed cloud result; do not assume current local 4.x schemas.&quot;,
+  &quot;numeric_scope&quot;: &quot;Both tables: 20 data rows x 6 numeric columns including revolutions. Compared to frozen table text; not whole-paper semantic accuracy.&quot;,
+  &quot;cautions&quot;: [
+    &quot;161 native blocks are not final RAG retrieval chunks; counts include headers, footers and references.&quot;,
+    &quot;All chapter and subsection candidates share level 2; a reliable section tree needs normalization and verification.&quot;,
+    &quot;The image label 4.1 nm was returned as a title; several titles contain duplicated or unrelated text.&quot;,
+    &quot;Some body text repeats; the abstract renders a chemical prime as superscript 0.&quot;,
+    &quot;Table 1 first plane overbar is not preserved as such in the parsed HTML; numeric agreement does not validate headers.&quot;,
+    &quot;Image assets include table/equation crops, logos and subfigures; 28 files do not mean 28 scientific figures.&quot;,
+    &quot;Charts have empty content fields in this response; no validated curve data or image understanding is demonstrated.&quot;,
+    &quot;The service-returned origin.pdf differs in bytes; retain the uploaded original as the source of truth.&quot;
+  ]
+}</pre>
+<h2>免费API在哪里获取</h2><p>登录<a href="https://mineru.net/apiManage/token">官方Token管理</a>创建Token，使用<a href="https://mineru.net/apiManage/docs">官方API文档</a>中的精准解析入口。本次已成功调用。免费条件、配额和限流以账号控制台为准；轻量免Token接口不等同于本次精准结构解析。</p>
+<p>Token和带签名的上传/下载链接不在报告中。源PDF、原始结果包与运行状态保留在本机私有实验目录；报告未触发Embedding、答题或评委调用。</p></main></html>
