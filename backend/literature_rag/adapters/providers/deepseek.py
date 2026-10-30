@@ -6,7 +6,7 @@ from typing import Annotated
 from openai import OpenAI
 from pydantic import BaseModel, Field, StringConstraints, ValidationError
 
-from literature_rag.application.prompts import SYSTEM_PROMPT, evidence_prompt
+from literature_rag.application.prompts import system_prompt, evidence_prompt
 from literature_rag.domain.errors import ProviderError, ProviderResponseError
 from literature_rag.domain.models import Evidence, GeneratedAnswer, GeneratedClaim
 from literature_rag.diagnostics import provider_usage
@@ -66,6 +66,7 @@ class DeepSeekGenerator:
         *,
         thinking_enabled: bool | None = None,
         reasoning_effort: str | None = None,
+        answer_guidance_enabled: bool = False,
     ) -> None:
         if thinking_enabled is not None and type(thinking_enabled) is not bool:
             raise ValueError('thinking_enabled must be boolean or None')
@@ -76,6 +77,7 @@ class DeepSeekGenerator:
         self._model = model
         self.thinking_enabled = thinking_enabled
         self.reasoning_effort = reasoning_effort
+        self.system_prompt = system_prompt(answer_guidance_enabled)
         self.client = client if client is not None else _client(api_key, base_url)
 
     @property
@@ -93,7 +95,7 @@ class DeepSeekGenerator:
         messages = [
             {
                 "role": "system",
-                "content": f"{SYSTEM_PROMPT}\n\n{_JSON_OUTPUT_INSTRUCTION}",
+                "content": f"{self.system_prompt}\n\n{_JSON_OUTPUT_INSTRUCTION}",
             },
             {
                 "role": "user",

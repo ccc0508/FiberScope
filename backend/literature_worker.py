@@ -56,7 +56,7 @@ def main():
                            'reasoning_effort': settings.llm_reasoning_effort}
                           if settings.llm_provider == 'deepseek' else {})
     generator = generator_type(settings.llm_model, settings.llm_api_key.get_secret_value(), settings.llm_base_url,
-                               **generation_options)
+                               answer_guidance_enabled=settings.answer_guidance_enabled,**generation_options)
     reranker=None
     rerank_calls=[]
     if settings.rerank_enabled:
