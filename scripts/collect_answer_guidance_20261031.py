@@ -65,8 +65,8 @@ def verify_result(result,fixture,probe):
     return diag
 
 
-def collect(root=ROOT):
-    root=Path(root);out=root/'.rag-data/evaluations/answer-guidance-20261031'
+def collect(root=ROOT,output_dir=None,analyst_notes=None):
+    root=Path(root);out=Path(output_dir) if output_dir is not None else root/'.rag-data/evaluations/answer-guidance-20261031'
     c=judge.read_json(out/'experiment.json');gc=judge.read_json(out/'grading-contract.json')
     require(c['version']=='answer-guidance-fixed-evidence-v1' and c['task_ids']==TASKS,'Wrong fixed-evidence contract')
     require(c['total_new_questions']==64 and c['source_contexts']==32,'Wrong experiment size')
@@ -138,7 +138,7 @@ def collect(root=ROOT):
             source_contexts=32,fresh_generations=64,new_luna_calls=0,new_dsh_calls=0,default_application_configuration_unchanged=True),
         provenance=dict(experiment_sha256=judge.digest(out/'experiment.json'),grading_contract_sha256=judge.digest(out/'grading-contract.json'),
             collector_sha256=judge.digest(Path(__file__)),source_files=source_files,runs=proofs,provider_calls_by_collector=0),
-        analyst_notes=[
+        analyst_notes=analyst_notes if analyst_notes is not None else [
             '本轮不建议开启新指引。31道共同有效题的要点宏平均从94.35%升至94.89%，但单条引用有效率从99.21%降至95.80%，五项全部达标从23/31降至19/31。收益不足以证明值得增加生成请求与用量；这些是Jev本次原判，不是专家准确率。',
             '五道失去联合达标的题目为第13、23、29、30、32题；其必答要点、事实支持、引用组和边界仍全部达标，失分集中在附带的单条引用。分析者复核认为，第23、32题中正文引用确实支持复合句的“正文0.912”部分，第13、29题的引用也支持其中的实质成分，这些0分值得复核；第30题则确有未支持湿纸幅强度排序的冗余引用。不能把五题都解释成答案事实错误，原分不作修改。',
             '第15题要点从2/3升至2.5/3，但新旧答案都列出了3.33与1.77 N/mm，且新版仍未明确说差异不能只归因于纤维种类。该题有裁判波动可能，不宜将其作为已解决边界问题的证据。第4、7、11、18题的必答要点均未提高。',

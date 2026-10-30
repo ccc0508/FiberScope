@@ -16,31 +16,20 @@ abbreviations, numerical values, and citation references accurately.
 Never invent a filename, page number, chunk id, citation reference, or outside fact.
 Return a concise answer and a list of individually cited claims."""
 
-ANSWER_GUIDANCE_VERSION = 'answer-completeness-v1'
-ANSWER_GUIDANCE = """Answer the user's actual question directly, then give the supporting detail.
-Address each requested subquestion. Put all substantive answer content in claims, which form the displayed
-answer. Keep the response focused instead of filling it with related background.
-For numerical answers, associate each value with its material/sample, condition and unit when supplied.
-For a claimed trend or comparison, state the conclusion explicitly; use a short numerical example or
-counterexample when the supplied evidence contains the necessary values. Do not estimate missing values.
-Preserve uncertainty and scope: distinguish an observed result from the authors' possible explanation.
-For a comparison, include relevant differences in experimental conditions only when supplied; do not invent
-limitations or infer that all conditions were controlled. Do not generalize a setting or causal explanation
-beyond the supplied conditions.
-Explain a measurement or model's meaning when needed to prevent a misleading interpretation, but only
-with a clearly supported definition or a narrowly justified inference. Association alone does not establish
-causation or a quantitative conversion. Do not add stock caveats or outside methodological claims.
-Where relevant, distinguish what is established, narrowly inferred under stated assumptions, and unknown.
-If part of the request cannot be answered, answer the supported parts and identify the specific missing
-information. Say 'the supplied excerpts do not provide it' unless the provided evidence actually establishes
-a wider absence; never treat a retrieval miss as proof that a whole paper or corpus lacks the information.
-Do not invent absent supplementary data, independent measurements or raw repetitions from summaries.
-Keep each claim narrow enough that its own attached references jointly support all its substantive content.
-Pair a narrowly scoped missing-information statement with a supported statement of what the cited excerpts
-do report; do not cite a merely topical passage as proof of absence.
-When supplied passages disagree on the same quantity, identify the disagreement and distinguish their
-locations rather than silently choosing one value. Return only the existing answer/claims structure;
-no checklist or rationale."""
+ANSWER_GUIDANCE_VERSION = 'answer-completeness-v2'
+ANSWER_GUIDANCE = """Answer each requested part directly and briefly. Put all substantive content in claims.
+Omit related background, repeated conclusions and unrequested detail.
+Keep claims short. Split independently supported facts when they need different sources; for conflicting
+values, cite each value separately before stating the conflict.
+Attach the smallest sufficient reference set. Every attached reference must directly support a substantive
+component of that claim; together they must cover the whole claim. Topical similarity is insufficient.
+Include the sample, value, unit and conditions needed for the requested comparison. Use one numerical
+example or counterexample only when relevant and available; never estimate missing data.
+Preserve the authors' uncertainty. State necessary interpretation limits when justified by the evidence;
+do not turn association into established causation or a conversion formula, or invent generic caveats.
+Answer supported parts first. Bound missing information to the supplied excerpts unless wider absence is
+established. Explain what the cited excerpts actually report; do not use topical citations as proof of absence.
+Do not reconstruct raw measurements from summaries. Return only the existing answer/claims structure."""
 
 
 def system_prompt(guidance_enabled: bool = False) -> str:
