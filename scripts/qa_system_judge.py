@@ -187,17 +187,25 @@ def decode(kind,body,request,questions,targets,state):
                 decisions=selected,reasons=reasons)
 
 
-def configs():return dict(luna=luna.load_config(judge.ROOT/'backend/.env.luna'),jev=jev.load_config(judge.ROOT/'backend/.env.jev'))
+def configs(kinds=None):
+    kinds=list(kinds) if kinds is not None else ['luna','jev']
+    require(kinds and len(kinds)==len(set(kinds)) and set(kinds)<={'luna','jev'},'Invalid judge selection')
+    loaders={'luna':luna.load_config,'jev':jev.load_config}
+    return {kind:loaders[kind](judge.ROOT/('backend/.env.'+kind)) for kind in kinds}
 
 
 def public_settings(settings):
     return {kind:dict(config.public(),scope=POLICY['dimensions']) for kind,config in settings.items()}
 
 
-def prepare(import_dir,output,settings):
+def prepare(import_dir,output,settings,systems=None):
     import_dir,output=Path(import_dir).resolve(),Path(output).resolve()
     require(not output.exists(),'Use a new frozen scoring directory')
     meta,jobs,sources,pages=load_import(import_dir)
+    if systems is not None:
+        require(bool(systems) and len(systems)==len(set(systems)) and set(systems)<={'rag','dsh'},'Invalid answer-system selection')
+        jobs=[job for job in jobs if job['system'] in systems]
+        require(bool(jobs),'No selected answer jobs')
     output.mkdir(parents=True,mode=0o700);(output/'inputs').mkdir();(output/'records').mkdir();(output/'harness').mkdir()
     index=[]
     for job in jobs:
@@ -215,6 +223,7 @@ def prepare(import_dir,output,settings):
         first_valid_grade_only=True,rounds_per_judge=1,max_explicit_retries=2,
         retry_policy='Only incomplete/invalid/API-failed requests may be retried, retaining all attempts and all charges. Never retry a valid grade.',
         harness_files={n:judge.digest(output/'harness'/n) for n in HARNESS})
+    if systems is not None:contract['selected_systems']=list(systems)
     judge.write(output/'study.json',contract)
     return dict(prepared=len(index),model_calls=0,policy_sha256=POLICY_SHA)
 
@@ -296,8 +305,16 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('action',choices=['prepare','run'])
     parser.add_argument('--import-dir',type=Path);parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--workers',type=int,default=4);parser.add_argument('--max-attempts',type=int,default=1);parser.add_argument('--limit',type=int)
-    args=parser.parse_args();settings=configs()
-    result=prepare(args.import_dir,args.output,settings) if args.action=='prepare' else run(args.output,settings,args.workers,args.max_attempts,args.limit)
+    parser.add_argument('--judge',choices=['luna','jev'],action='append',help='Judge(s) to freeze; run defaults to the frozen selection.')
+    parser.add_argument('--system',choices=['rag','dsh'],action='append',help='Answer systems to freeze; prepare only.')
+    args=parser.parse_args()
+    if args.action=='prepare':
+        result=prepare(args.import_dir,args.output,configs(args.judge),args.system)
+    else:
+        require(args.system is None,'Answer-system selection is fixed during prepare')
+        kinds=list(judge.read_json(args.output/'study.json')['requested_judges'])
+        require(args.judge is None or set(args.judge)==set(kinds),'Judge selection differs from the frozen study')
+        result=run(args.output,configs(kinds),args.workers,args.max_attempts,args.limit)
     print(judge.encode(result))
 
 

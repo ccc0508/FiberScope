@@ -112,6 +112,16 @@ def test_structure_sources_are_copied_with_checksums(tmp_path):
         baseline.copy_structure_files(source,target,expected)
 
 
+def test_quality_corrections_and_native_snapshot_are_frozen_with_structure(tmp_path):
+    source=tmp_path/'source';target=tmp_path/'target';source.mkdir();target.mkdir()
+    names=['structure.json','quality-ledger.json','native-source.json']
+    for name in names:(source/name).write_text('{"source":"immutable"}',encoding='utf-8')
+    checksums={name:baseline.digest(source/name) for name in names}
+    baseline.copy_structure_files(source,target,checksums)
+    assert {p.name for p in target.iterdir()}==set(names)
+    assert all(baseline.digest(target/name)==checksum for name,checksum in checksums.items())
+
+
 def test_snapshot_uses_explicit_experiment_configuration_without_editing_default(tmp_path,monkeypatch):
     monkeypatch.setattr(baseline,'ROOT',tmp_path)
     monkeypatch.setattr(baseline,'git',lambda *args:'')
