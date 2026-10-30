@@ -82,6 +82,12 @@ class Embedder(Protocol):
         raise NotImplementedError
 
 
+class Reranker(Protocol):
+    def rerank(self, question: str, texts: Sequence[str]) -> list[float]:
+        """Return one finite relevance score per input, in original input order."""
+        raise NotImplementedError
+
+
 class Generator(Protocol):
     @property
     def model_name(self) -> str:

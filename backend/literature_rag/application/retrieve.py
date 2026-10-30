@@ -5,7 +5,7 @@ from time import perf_counter
 from literature_rag.domain.errors import InfrastructureError, InputError
 from literature_rag.domain.models import Evidence
 from literature_rag.application.context import ContextOptions, assemble
-from literature_rag.ports.protocols import Embedder, MetadataStore, VectorStore
+from literature_rag.ports.protocols import Embedder, MetadataStore, VectorStore, Reranker
 
 logger = logging.getLogger(__name__)
 VECTOR_CANDIDATE_LIMIT = 50
@@ -28,12 +28,15 @@ class RetrievalService:
         embedder: Embedder,
         context_options: ContextOptions | None = None,
         table_relations=None,
+        reranker: Reranker | None = None,
     ) -> None:
         self.metadata = metadata
         self.vectors = vectors
         self.embedder = embedder
         self.context_options = context_options or ContextOptions()
         self.table_relations = table_relations
+        self.reranker = reranker
+        self.last_rerank_diagnostics: dict = {}
         self.last_seed_evidences: list[Evidence] = []
         self.last_context_diagnostics: dict = {}
 
@@ -44,6 +47,9 @@ class RetrievalService:
         min_score: float,
     ) -> list[Evidence]:
         started = perf_counter()
+        self.last_seed_evidences=[]
+        self.last_context_diagnostics={}
+        self.last_rerank_diagnostics={}
         if not isinstance(question, str):
             raise InputError("question must be a string")
         question = question.strip()
@@ -92,6 +98,10 @@ class RetrievalService:
                 )
             )
 
+        if self.reranker is not None:
+            from literature_rag.application.rerank import rank_candidates
+            self.last_rerank_diagnostics={'enabled':True,'status':'started','candidate_count':len(evidences)}
+            evidences,self.last_rerank_diagnostics=rank_candidates(question,evidences,self.reranker,top_k)
         evidences = evidences[:top_k]
         self.last_seed_evidences = list(evidences)
         evidences,self.last_context_diagnostics=assemble(evidences,self.metadata,self.context_options)
@@ -99,6 +109,8 @@ class RetrievalService:
             from literature_rag.application.table_evidence import append_related_tables
             evidences,self.last_context_diagnostics=append_related_tables(evidences,self.table_relations,self.context_options,self.last_context_diagnostics)
             self.last_context_diagnostics['table_retrieval']=self.vectors.last_diagnostics
+        if self.reranker is not None:
+            self.last_context_diagnostics['rerank']=self.last_rerank_diagnostics
         logger.info(
             "retrieval_complete",
             extra={

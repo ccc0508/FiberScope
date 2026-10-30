@@ -14,6 +14,8 @@ def configuration_snapshot(env_file: Path):
         sources += ['application/context.py','domain/models.py','adapters/sqlite/metadata_store.py']
     if settings.table_retrieval_enabled:
         sources += ['application/table_evidence.py']
+    if settings.rerank_enabled:
+        sources += ['application/rerank.py','adapters/providers/rerank.py']
     fingerprint = sha256(b'\n'.join((root / source).read_bytes() for source in sources)).hexdigest()
     result = {**{key: getattr(settings, key) for key in (
         'embedding_provider', 'embedding_model', 'embedding_dimensions', 'llm_provider', 'llm_model', 'top_k', 'min_score')},
@@ -30,6 +32,14 @@ def configuration_snapshot(env_file: Path):
             table_retrieval=dict(enabled=True,version='table-evidence-v1',row_cosine='exact',
                 parent_fusion='maximum_cosine',max_parent_candidates=50,
                 linked_sources_per_context=2,max_linked_sources=8,normal_region_sampling=False))
+    if settings.rerank_enabled:
+        result.update(pipeline_version='literature-candidate-rerank-v1',pipeline_source_files=sources,
+            rerank=dict(enabled=True,version='candidate-rerank-v1',provider=settings.rerank_provider,
+                model=settings.rerank_model,timeout_seconds=settings.rerank_timeout_seconds,
+                endpoint_sha256=sha256(settings.rerank_base_url.encode()).hexdigest(),
+                max_candidates=50,max_chunks_per_doc=1024,overlap_tokens=80,
+                input='full_parent_source_text',application_truncation=False,
+                retry_count=0,error_policy='fail_without_vector_fallback',score_threshold=None))
     return result
 
 
