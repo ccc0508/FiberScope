@@ -1,0 +1,13 @@
+{
+  "version": "mineru-content-units-v1",
+  "builder_sha256": "f0ce6a777b02f635a6223de366d413587a1e7202d5f643c97050d86993d086f7",
+  "rules_sha256": "d78a3dffe27d14add1a0e8ec1f682648ac30ef418d620b74a4ce731d2d77805e",
+  "files": {
+    "chunks.jsonl": "d52d6cae4c971eeb91cc838af3cd2e41a22b3c1d4107592d5e03c87f47723e60",
+    "comparison.html": "a3ed0194e0fd2e905d12d9ce00ecd51c5c3bd9d7d106f844c3bff72b2cfae1bb",
+    "document-metadata.json": "a8adc608d52832bd58a52d43abed33eac74984893d230d75d678d1b46c20fd23",
+    "events.json": "d2d3ce075053c691df44c3c7d20d32aa90a9464095708c24be62da1ca93de506",
+    "summary.json": "db18aab845fe4e6d4c669e69424c87018c84d2444fa5a6b3ef82d28451376c13"
+  },
+  "builder_reseal_note": "Local build-manifest field fix; all preview content reproduced unchanged, without API calls."
+}

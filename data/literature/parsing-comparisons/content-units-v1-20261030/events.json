@@ -1,0 +1,79 @@
+[
+  {
+    "kind": "metadata_separated",
+    "source_id": "mineru_block_0000",
+    "role": "publication_type"
+  },
+  {
+    "kind": "metadata_separated",
+    "source_id": "mineru_block_0007",
+    "role": "keywords"
+  },
+  {
+    "kind": "figure_annotation_classified",
+    "source_id": "mineru_block_0072",
+    "visual_source_id": "mineru_block_0073",
+    "basis": "same page, horizontal overlap and close layout gap; no new image interpretation"
+  },
+  {
+    "kind": "formula_bundle_created",
+    "equation_source_id": "mineru_block_0027",
+    "source_ids": [
+      "mineru_block_0026",
+      "mineru_block_0027",
+      "mineru_block_0028"
+    ]
+  },
+  {
+    "kind": "formula_bundle_created",
+    "equation_source_id": "mineru_block_0031",
+    "source_ids": [
+      "mineru_block_0030",
+      "mineru_block_0031",
+      "mineru_block_0032"
+    ]
+  },
+  {
+    "kind": "formula_bundle_created",
+    "equation_source_id": "mineru_block_0034",
+    "source_ids": [
+      "mineru_block_0033",
+      "mineru_block_0034",
+      "mineru_block_0035"
+    ]
+  },
+  {
+    "kind": "formula_bundle_created",
+    "equation_source_id": "mineru_block_0039",
+    "source_ids": [
+      "mineru_block_0038",
+      "mineru_block_0039",
+      "mineru_block_0040"
+    ]
+  },
+  {
+    "kind": "formula_bundle_created",
+    "equation_source_id": "mineru_block_0044",
+    "source_ids": [
+      "mineru_block_0043",
+      "mineru_block_0044",
+      "mineru_block_0045"
+    ]
+  },
+  {
+    "kind": "annotation_attached_to_figure_caption",
+    "source_id": "mineru_block_0072",
+    "visual_source_id": "mineru_block_0073"
+  },
+  {
+    "kind": "page_continuation_joined",
+    "source_ids": [
+      "mineru_block_0068",
+      "mineru_block_0071"
+    ],
+    "pages": [
+      6,
+      7
+    ]
+  }
+]

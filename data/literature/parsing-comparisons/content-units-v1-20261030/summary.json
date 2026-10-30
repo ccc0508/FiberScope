@@ -1,0 +1,124 @@
+{
+  "version": "mineru-content-units-v1",
+  "source_structure_sha256": "91c8cac29e4ef0c554358727468a5d2d602facf8df875941499a542c0a03df33",
+  "previous_chunks": 95,
+  "chunks": 85,
+  "chunk_kinds": {
+    "paragraph": 32,
+    "equation_bundle": 5,
+    "figure_caption": 9,
+    "table": 2,
+    "reference": 37
+  },
+  "reused_vectors": 76,
+  "new_vectors": 9,
+  "removed_primary_ids": [
+    "chk_182c0b23db1cfd519f90",
+    "chk_24b0e4f4e0768300fa4f",
+    "chk_3e41952e28147fe44d64",
+    "chk_4c53c165c4555bf14010",
+    "chk_526a05837ef5129baea9",
+    "chk_5a9eba6c5c7c886945c6",
+    "chk_5ba418c156ad430b61a3",
+    "chk_93e777bee0213e9dbd04",
+    "chk_a564193c5c7aa183fd5f",
+    "chk_b06c61b7937a6d30aac1",
+    "chk_b1bd76207877c3241680",
+    "chk_bfa6aebf16bbe00aee8c",
+    "chk_c32b99776fea66084ff9",
+    "chk_cf589c7e2fa0ee4e1f46",
+    "chk_e382c229cdd0ac5177ee",
+    "chk_e3ffa51e2aadc2ee4562",
+    "chk_eeb537a089dd7d63e6ba",
+    "chk_f611c9766b7bce3e4bf7",
+    "chk_f8dba2f5fcef5ef93bb0"
+  ],
+  "document_metadata": 2,
+  "events": [
+    {
+      "kind": "metadata_separated",
+      "source_id": "mineru_block_0000",
+      "role": "publication_type"
+    },
+    {
+      "kind": "metadata_separated",
+      "source_id": "mineru_block_0007",
+      "role": "keywords"
+    },
+    {
+      "kind": "figure_annotation_classified",
+      "source_id": "mineru_block_0072",
+      "visual_source_id": "mineru_block_0073",
+      "basis": "same page, horizontal overlap and close layout gap; no new image interpretation"
+    },
+    {
+      "kind": "formula_bundle_created",
+      "equation_source_id": "mineru_block_0027",
+      "source_ids": [
+        "mineru_block_0026",
+        "mineru_block_0027",
+        "mineru_block_0028"
+      ]
+    },
+    {
+      "kind": "formula_bundle_created",
+      "equation_source_id": "mineru_block_0031",
+      "source_ids": [
+        "mineru_block_0030",
+        "mineru_block_0031",
+        "mineru_block_0032"
+      ]
+    },
+    {
+      "kind": "formula_bundle_created",
+      "equation_source_id": "mineru_block_0034",
+      "source_ids": [
+        "mineru_block_0033",
+        "mineru_block_0034",
+        "mineru_block_0035"
+      ]
+    },
+    {
+      "kind": "formula_bundle_created",
+      "equation_source_id": "mineru_block_0039",
+      "source_ids": [
+        "mineru_block_0038",
+        "mineru_block_0039",
+        "mineru_block_0040"
+      ]
+    },
+    {
+      "kind": "formula_bundle_created",
+      "equation_source_id": "mineru_block_0044",
+      "source_ids": [
+        "mineru_block_0043",
+        "mineru_block_0044",
+        "mineru_block_0045"
+      ]
+    },
+    {
+      "kind": "annotation_attached_to_figure_caption",
+      "source_id": "mineru_block_0072",
+      "visual_source_id": "mineru_block_0073"
+    },
+    {
+      "kind": "page_continuation_joined",
+      "source_ids": [
+        "mineru_block_0068",
+        "mineru_block_0071"
+      ],
+      "pages": [
+        6,
+        7
+      ]
+    }
+  ],
+  "source_coverage": {
+    "native_units": 117,
+    "characters": 42315,
+    "exact_once": true
+  },
+  "paragraph_target_chars": 1200,
+  "max_evidence_chars": 8000,
+  "policy": "Reorganize source text only. No LLM calls, scientific rewriting, new semantic interpretation, reference filtering or reranker."
+}

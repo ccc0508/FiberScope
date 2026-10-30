@@ -1,0 +1,54 @@
+[
+  {
+    "kind": "document_metadata",
+    "section_id": null,
+    "section_path": [],
+    "section_status": "unassigned",
+    "page_start": 1,
+    "page_end": 1,
+    "source_spans": [
+      {
+        "source_id": "mineru_block_0000",
+        "start": 0,
+        "end": 7,
+        "page": 1,
+        "bbox": [
+          124,
+          116,
+          176,
+          130
+        ],
+        "text": "Article"
+      }
+    ],
+    "body_text": "Article",
+    "text": "[章节标签（程序整理，非原文）] 未确定\n[原文]\nArticle",
+    "role": "publication_type"
+  },
+  {
+    "kind": "document_metadata",
+    "section_id": null,
+    "section_path": [],
+    "section_status": "unassigned",
+    "page_start": 1,
+    "page_end": 1,
+    "source_spans": [
+      {
+        "source_id": "mineru_block_0007",
+        "start": 0,
+        "end": 105,
+        "page": 1,
+        "bbox": [
+          132,
+          537,
+          875,
+          570
+        ],
+        "text": "Keywords: natural cellulosic fibers; mechanical refining; Crystallinity; Crystallite size; Hydrogen bonds"
+      }
+    ],
+    "body_text": "Keywords: natural cellulosic fibers; mechanical refining; Crystallinity; Crystallite size; Hydrogen bonds",
+    "text": "[章节标签（程序整理，非原文）] 未确定\n[原文]\nKeywords: natural cellulosic fibers; mechanical refining; Crystallinity; Crystallite size; Hydrogen bonds",
+    "role": "keywords"
+  }
+]
