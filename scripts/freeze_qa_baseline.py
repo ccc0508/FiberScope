@@ -74,7 +74,7 @@ def library_fingerprint(root):
             'index_files': {p.relative_to(root).as_posix(): digest(p)
                             for p in sorted((root / 'chroma').rglob('*'))
                             if p.is_file() and not p.name.startswith('chroma.sqlite3')}}
-    structured={name:digest(root/name) for name in ['structure.json','source-pages.json','quality-ledger.json','native-source.json','table-retrieval.json','table-row-vectors.json'] if (root/name).is_file()}
+    structured={name:digest(root/name) for name in ['structure.json','source-pages.json','quality-ledger.json','native-source.json','table-retrieval.json','table-row-vectors.json','chunk-organization.json'] if (root/name).is_file()}
     if structured:result['structure_files']=structured
     return result
 
@@ -82,7 +82,7 @@ def library_fingerprint(root):
 def copy_structure_files(library,frozen,expected):
     for name,checksum in expected.items():
         source=library/name
-        if name not in {'structure.json','source-pages.json','quality-ledger.json','native-source.json','table-retrieval.json','table-row-vectors.json'} or source.is_symlink() or digest(source)!=checksum:
+        if name not in {'structure.json','source-pages.json','quality-ledger.json','native-source.json','table-retrieval.json','table-row-vectors.json','chunk-organization.json'} or source.is_symlink() or digest(source)!=checksum:
             raise ValueError('Structure source fingerprint mismatch')
         shutil.copy2(source,frozen/name)
         if digest(frozen/name)!=checksum:raise ValueError('Copied structure fingerprint mismatch')
