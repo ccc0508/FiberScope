@@ -1,0 +1,718 @@
+{
+  "controls": {
+    "quality": {
+      "configuration_equal_except_explicit_retrieval_feature": true,
+      "changed_source_files": [
+        "literature_rag/application/retrieve.py",
+        "literature_rag/application/table_evidence.py",
+        "literature_rag/config.py",
+        "literature_rag/diagnostics.py",
+        "literature_worker.py"
+      ],
+      "unchanged_source_files": [
+        "literature_rag/__init__.py",
+        "literature_rag/adapters/__init__.py",
+        "literature_rag/adapters/chroma/__init__.py",
+        "literature_rag/adapters/chroma/vector_store.py",
+        "literature_rag/adapters/providers/__init__.py",
+        "literature_rag/adapters/providers/deepseek.py",
+        "literature_rag/adapters/providers/openai.py",
+        "literature_rag/adapters/sqlite/__init__.py",
+        "literature_rag/adapters/sqlite/metadata_store.py",
+        "literature_rag/application/__init__.py",
+        "literature_rag/application/answer_question.py",
+        "literature_rag/application/citations.py",
+        "literature_rag/application/context.py",
+        "literature_rag/application/prompts.py",
+        "literature_rag/application/structure.py",
+        "literature_rag/domain/__init__.py",
+        "literature_rag/domain/errors.py",
+        "literature_rag/domain/models.py",
+        "literature_rag/ports/__init__.py",
+        "literature_rag/ports/protocols.py"
+      ],
+      "same_questions": true,
+      "same_answer_prompt_generator_and_citation_validator": true,
+      "source_comparison": "Byte comparison after CRLF/LF normalization; original file fingerprints also verified."
+    },
+    "pymupdf": {
+      "configuration_equal_except_explicit_retrieval_feature": true,
+      "changed_source_files": [
+        "literature_rag/application/retrieve.py",
+        "literature_rag/application/table_evidence.py",
+        "literature_rag/config.py",
+        "literature_rag/diagnostics.py",
+        "literature_worker.py"
+      ],
+      "unchanged_source_files": [
+        "literature_rag/__init__.py",
+        "literature_rag/adapters/__init__.py",
+        "literature_rag/adapters/chroma/__init__.py",
+        "literature_rag/adapters/chroma/vector_store.py",
+        "literature_rag/adapters/providers/__init__.py",
+        "literature_rag/adapters/providers/deepseek.py",
+        "literature_rag/adapters/providers/openai.py",
+        "literature_rag/adapters/sqlite/__init__.py",
+        "literature_rag/adapters/sqlite/metadata_store.py",
+        "literature_rag/application/__init__.py",
+        "literature_rag/application/answer_question.py",
+        "literature_rag/application/citations.py",
+        "literature_rag/application/context.py",
+        "literature_rag/application/prompts.py",
+        "literature_rag/application/structure.py",
+        "literature_rag/domain/__init__.py",
+        "literature_rag/domain/errors.py",
+        "literature_rag/domain/models.py",
+        "literature_rag/ports/__init__.py",
+        "literature_rag/ports/protocols.py"
+      ],
+      "same_questions": true,
+      "same_answer_prompt_generator_and_citation_validator": true,
+      "source_comparison": "Byte comparison after CRLF/LF normalization; original file fingerprints also verified."
+    }
+  },
+  "policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+  "studies": {
+    "tables": {
+      "import_sha256": "088693698b2305f10774c6b8cf311c42a5cab61f39151a301441e5ace12059e2",
+      "study_sha256": "5b280279378a832f2ac5dfa20f662ab447f2decadab9a785c954a81b4d7d6362",
+      "grade_proofs": [
+        {
+          "name": "jev-e4bbb65228efce3f9625",
+          "record_sha256": "bf900ba989d389514d628df2663a12844b9916526d37c00dd157e2b902d26a91",
+          "request_sha256": "4e1f1e3f36f1835e771d33e995b82439ff66e92383866928f4d89b3039d67994"
+        },
+        {
+          "name": "jev-c73e981241f338825861",
+          "record_sha256": "95235b516f24bae96d10d26f3dcb335aa1cbe8520b8fc9ed3cde0c57c6c03a8c",
+          "request_sha256": "d66598fd3059802013710d094e235e8d20bde0137fda93107a45c24e13c9da1e"
+        },
+        {
+          "name": "jev-3b79ac6d7cc243f9fd17",
+          "record_sha256": "19ea357b9f3a5d8ed6294a66c5966a42e3485552045fa4817edf6b2696b9046f",
+          "request_sha256": "e1b4a19ac1e494d0c11ef2d03fefded7414b294b2ca949064613da6569d12546"
+        },
+        {
+          "name": "jev-f0159be14e8e6101c5c6",
+          "record_sha256": "8d9131b1e503711174a4fbce7ea43a2b3525c373f7af52071323ab9e040d129b",
+          "request_sha256": "54e83cc28c0ed36f8866708df3f57e3ac713e5da5ba49ce727519a6279bf73b4"
+        },
+        {
+          "name": "jev-b1810866b1d0f74a218b",
+          "record_sha256": "e46f9eab89ded92aafb537098c1fbb2b358cdd6fac4b6cb76c09337e89125764",
+          "request_sha256": "cc534096428d8d14b99ee5b63bee702395019f5e831ca23ad7ec5b54e67f91b3"
+        },
+        {
+          "name": "jev-e2097025d99b910708e9",
+          "record_sha256": "16c71b712e6bc349c26c96ec2856dc1dccc4ff4b62fe1c5ff23e3494647a79c4",
+          "request_sha256": "85812d8c8e6946a10f94cae1682e75ed4bf6b7c69a8cb39de25a12092f225b03"
+        },
+        {
+          "name": "jev-a0c68f9b1e35a7443deb",
+          "record_sha256": "499e827d45f22dd45b75f0669dace2101c1018269d59289ea215dab8b7629f47",
+          "request_sha256": "5ec9e405b27e42069ba28045342032a2b4ec71a5d1fb9c0949358bfce7663621"
+        },
+        {
+          "name": "jev-771ff87304e1a1ead1b0",
+          "record_sha256": "8ad3e0b015c6dfc90dfde2f0248a946e008f0437fefb6dab3c08a0a58134a908",
+          "request_sha256": "c0ab3932737ba232d9764ba697165fc4b3a37c47a78722ea40a417aaafb9058e"
+        },
+        {
+          "name": "jev-e5d9470df28a66d4c428",
+          "record_sha256": "2d8aefc4f7b061f1483cdb7156a805415ef9673bde2c9e62fe393b96ed2209ad",
+          "request_sha256": "3bd91446deaf1cc5e033791aa6b2030643a142d46a0da5bd557959dcce41b965"
+        },
+        {
+          "name": "jev-fd65f386c8037328d772",
+          "record_sha256": "96209c100d7785470068376bffa97f4ff9d8c5b43d5e5508fccf942e5daa4e21",
+          "request_sha256": "49e424dafcc53e33430cd79577cb6e20e390ac51a6ea153db4d3fa58dcfafb69"
+        },
+        {
+          "name": "jev-a7db082a512ae54a8ab0",
+          "record_sha256": "07ede0d591029d307649b11a7d14d5e59fc2f2647018084bb6b1e9f5b11339a9",
+          "request_sha256": "e7772144dc71c89942cbc1eaee27ca06146304a57d06e1256228aeec4e9da680"
+        },
+        {
+          "name": "jev-50fd9a6289e4a649b613",
+          "record_sha256": "680276664b93ae22e04d6531286cfc649bffdda3f5fa7ddebdd9ca5efdd1b31d",
+          "request_sha256": "cbe9f9d7941dcbb2a24fb43127cc9930f5878da42d28377eda310b612cf69d58"
+        },
+        {
+          "name": "jev-bdaf70c6778c0a0afc66",
+          "record_sha256": "6521a055e021e22ac5139af5859514717ecb5693f6ac97a11e6c871866eed129",
+          "request_sha256": "647728e9e365a676d87564d586a7d7c2d79c5b5a9e54de4c297cdfc1c9d4824b"
+        },
+        {
+          "name": "jev-8e3739b122034fd71ef9",
+          "record_sha256": "851bb2da781ad6e696a0a4d2c399a0de550d778f3400f945646378d5b0747ee0",
+          "request_sha256": "aa0257a76befdf00ebf505b34dea29efb0433644e2f202977dc910edb3eb9e56"
+        },
+        {
+          "name": "jev-627f44d831fed5af4dc5",
+          "record_sha256": "93fa33042470af5c33ad0d4f07b4b5da7fae1989a4fa93750c30795b72dba985",
+          "request_sha256": "f170dd97fd32970ed9fd3cc4f610473f66d0ae4252a0149678a2fa6d94f7239f"
+        },
+        {
+          "name": "jev-e97d01e035cede6a41b1",
+          "record_sha256": "3907ac21a9c1df070c7a0b55201cb7c4c73fc3e263cf1987d4c0f8ecec5a71b1",
+          "request_sha256": "ff120792ba11ebf98ff27975921b835c6a242703e0c977b35a3346c9b4a0fbc4"
+        },
+        {
+          "name": "jev-9484412e1076b60318f1",
+          "record_sha256": "fa1bf5d12bce979f72868f4fc07b08d6f498a117eaa4ed3e3888b8150faf2b76",
+          "request_sha256": "bfa5325586f337467552554e46e809fb9f3240e3787de39c34d5c0fbb0179877"
+        },
+        {
+          "name": "jev-86387fc196d0c6bbdb9b",
+          "record_sha256": "5f48930fc7ef644e8586b17f60295331094e6238389691cf8f15e6b83f199b54",
+          "request_sha256": "d29597105964d806cb600b597f4f577dd405e1e84d41a1b8a336bc4ea763ab0e"
+        },
+        {
+          "name": "jev-e03fc8bca79804cfb925",
+          "record_sha256": "f0993efa7161bd8f946d9577bca1d005c9db8b7222bf1714918b299a44bc1f48",
+          "request_sha256": "aa1f0cc874f1fdfb56a43635db91d62e11273147453da09285839588b0391570"
+        },
+        {
+          "name": "jev-c5a6199f08219a8a3eef",
+          "record_sha256": "4b61d374d071c20fefd96a14c5171a156a384daca542c54d349e38ea8c4805c5",
+          "request_sha256": "51bfff2f722e5ca7f766778a83efebd0ff27741116da9fae2d5e7eea689fc446"
+        },
+        {
+          "name": "jev-43a58a5090ec522a8406",
+          "record_sha256": "2a1ebf662b23a88fa250ac160528c30fc5415ebae0b5efb7a53da518a8d15ff8",
+          "request_sha256": "accb2e1d48e129fb52a33ae7dade3f351773420e6552c510e32604a986420c02"
+        },
+        {
+          "name": "jev-22c52e36825bd4feecd7",
+          "record_sha256": "bf265311771c35c34f30965a696e2b7ad5b72193d4ea073c514a1df01509f506",
+          "request_sha256": "a6298331483a9960985147ca97b471ff6f12f18c582aef0224220d7b0222d1bf"
+        },
+        {
+          "name": "jev-2bed490593174adc4ee0",
+          "record_sha256": "acd73f6ec5fd60ee91f85d22e2f1395487e7f0e28663bda5a8abbeed22b91b6d",
+          "request_sha256": "76b45e03b0641ca5720966f90d86fe8d312d6a02482c631e87ea1aa3addc168f"
+        },
+        {
+          "name": "jev-6a5dc53e0a4b468b69c3",
+          "record_sha256": "32e32f6fc3961fb02779285ed6386e023d89781a8dfce454b53655bae79ca10c",
+          "request_sha256": "e8869f89a8d75818dc6d976a7c2dc6c9a59316f7c3edbe79aeaf69efcea7eb7d"
+        },
+        {
+          "name": "jev-dd51848b04309f669afc",
+          "record_sha256": "5090b701003a0f849185e871131a6d2463d2c6b99f290584ec3063513bc5cdb4",
+          "request_sha256": "96589505d5386b51500ea1a7c0ceda2b37e20ca4884775ac1888fc54da75db97"
+        },
+        {
+          "name": "jev-fcf03530c53401306ea0",
+          "record_sha256": "784c44865760334bf5cd748eba8f861fcda79ce319eb169ff4b6e862fbaca5e9",
+          "request_sha256": "1ec78910d915b8efae9af34c3f34db0232ce762259d700c133dba1a27a41665a"
+        },
+        {
+          "name": "jev-45ad81069aff5ad70849",
+          "record_sha256": "f115135ed29305fbd44f0daeedf4a87fce44f769fd3c2d54db5ba3b9742d81a5",
+          "request_sha256": "0ebb2c325f67f52ca27fc34149d11487c605bca67122e67e47d665f8380b3ab0"
+        },
+        {
+          "name": "jev-594baeb96d73448019f2",
+          "record_sha256": "f7c28e473450e228df731ddef4caf5368b360840bf6d023b2574eb6b7c6707b0",
+          "request_sha256": "5b924b5235b64589419b57f3ed26ea538e67676a4a1761837705be049175e296"
+        },
+        {
+          "name": "jev-b4075d9244e7abfabafa",
+          "record_sha256": "2501250ff866b28b32ba25e67659e7ed069465e6f4b3df7474b644a6c84d45e7",
+          "request_sha256": "0eb239e3cd5c67d7dc7a903808aaaea14d28fda7f9d0c871bc79265021a15ef7"
+        },
+        {
+          "name": "jev-f4ecff51fe7de3bcb44b",
+          "record_sha256": "d87b9e763a6c11a1ef0c2385e786a899a25a24cece24f0ddcb758af9c1a84f28",
+          "request_sha256": "3048a6b82516ec6caf6e0b8dd595f6f931577bff12f4139c7ded57283130e12b"
+        },
+        {
+          "name": "jev-3bd08924e764b51d1761",
+          "record_sha256": "a071ba7e7101bc724af54e6b29e6240c38cea5a19d4d19fc82de7f34c4067091",
+          "request_sha256": "3e6ada652fc77a986a20984e5c74bf5e7835b4620931dfbaeff477b53f674314"
+        },
+        {
+          "name": "jev-ddb05edb280744aa9b33",
+          "record_sha256": "4d79bac3af7500622c6e2e80cd3d8b3d46187957d31df2179dbc1497041909b8",
+          "request_sha256": "9dbfc8e0865b3ccd3884f5fba3ea44512ae312cd81e2e2d6247cf717ea642323"
+        }
+      ]
+    },
+    "quality": {
+      "import_sha256": "8d59408c5ccf3bf0c70a9dc78d44a948030000df8f85bd9d0e108255c5a908a8",
+      "study_sha256": "bf4a094b9ab5fba281b253a562bfacad4183ac41fe9833f76cd51783e1629781",
+      "grade_proofs": [
+        {
+          "name": "jev-e4bbb65228efce3f9625",
+          "record_sha256": "91412b952df6e5317e42dbae5d0194d9ae95f8f2aaef883e147f6b99e34f2c06",
+          "request_sha256": "b4f6a6cbcfc6a1eab331278aef74b5b263df20974c5462ba1e078707a42776ee"
+        },
+        {
+          "name": "jev-c73e981241f338825861",
+          "record_sha256": "3e90def1458262cd46fa68618a35d0e295143cc2b69277fd87ae4643286eda5f",
+          "request_sha256": "17da57b864cf9df0869adc167c5902365b40519a833464e6b9e089b5cdaf3b9c"
+        },
+        {
+          "name": "jev-3b79ac6d7cc243f9fd17",
+          "record_sha256": "9ea1eb3be62866deabeb396213d0042465024a954f9c9282d9c71a9d3938b2af",
+          "request_sha256": "664e16eec0b795058f980ad62fcabc654ce5832086b11b713a22f6e682e3a2f7"
+        },
+        {
+          "name": "jev-f0159be14e8e6101c5c6",
+          "record_sha256": "6807a8b0a8ea25235bf60cebcf61f4406e2ff41243315baa324a225aa0edc294",
+          "request_sha256": "5ff0f147ae4669a4e08e6dd7610a5e688abe619bd4c730dc1f1bf6e0a2ffa294"
+        },
+        {
+          "name": "jev-b1810866b1d0f74a218b",
+          "record_sha256": "c3728bd57517d8421db69ef9f70291c7277035dccfc08d1d780601df5d51bacb",
+          "request_sha256": "6c09741cec2bba3e3f5361200bf4810fe25b3d77cb92e9071a8dcb841b890fdd"
+        },
+        {
+          "name": "jev-e2097025d99b910708e9",
+          "record_sha256": "223549009c47150829d92d132bab0d44f45c9a60760e5f791f6acd1a23d7619f",
+          "request_sha256": "5c724cc69a5deb73af9e1f157f93d833fe003500ca3b05829d52820ac9c9a623"
+        },
+        {
+          "name": "jev-a0c68f9b1e35a7443deb",
+          "record_sha256": "ac7d0829c2a65836e955c78ad71a4dd8319190544a46726611e0da2164580273",
+          "request_sha256": "2cb4d98b68c07d154f7eeceb65240b0f2a7432c93d833037eb350c161fe19521"
+        },
+        {
+          "name": "jev-771ff87304e1a1ead1b0",
+          "record_sha256": "e7b6a5ddc68ad31cf529d2e4c76d36539e097047ed9018d25ea924cd567bc8e4",
+          "request_sha256": "61b7264d35e6637d7f3d435748b0f9fb49f31885d770fe5bf8a2d842a981cc42"
+        },
+        {
+          "name": "jev-e5d9470df28a66d4c428",
+          "record_sha256": "fa0f1616ed6ca35bbbb8ec82641bb8c73358a99a0db9b22cc5c21d6e7bd7d7e8",
+          "request_sha256": "0157e35c36f7181c796f4f809893e8f926b2b502d5ec59c34aa05fe41636df6a"
+        },
+        {
+          "name": "jev-fd65f386c8037328d772",
+          "record_sha256": "b98c1f04ee2c10ca414cb17bd21e2378f67b471614103807f6f8d327986fcf7f",
+          "request_sha256": "d9881bee73d378cf41824ac5d4416dddb9e1692ab88ea50968ec781efb8c7cbf"
+        },
+        {
+          "name": "jev-a7db082a512ae54a8ab0",
+          "record_sha256": "34f1d14bf476ee1ca089947bca72df7ab0c477ff0af571f04aa61cfc0a03ecf8",
+          "request_sha256": "7dd52f71c8f8701a7f23216e4b88dbf73c5aea33fb581940568d004af92d375c"
+        },
+        {
+          "name": "jev-50fd9a6289e4a649b613",
+          "record_sha256": "d62f7812bad6ca7647d516aa0e0af8c7addb9991b815ea138d74b2cf30cc75c2",
+          "request_sha256": "dc0a4426379a0bae50b189ce30c579c8c4f32487f74f858e2e5fce6a95af52b2"
+        },
+        {
+          "name": "jev-bdaf70c6778c0a0afc66",
+          "record_sha256": "d28214f27d8bc45d7f4f10bec02b08ac6fa83a7d985a7931d82c2b97b188d10c",
+          "request_sha256": "86463c4d93754ba315e4afb1ee062da10bfb707920be0377a7afd14db3276c7d"
+        },
+        {
+          "name": "jev-8e3739b122034fd71ef9",
+          "record_sha256": "882b1307958b17585e43e9902a893357386e73c2e769066675fd47bd4965392b",
+          "request_sha256": "01262a6a19cd5a81ebab96ad7151a544e8207e2288d1861d6ca1560572571cb6"
+        },
+        {
+          "name": "jev-627f44d831fed5af4dc5",
+          "record_sha256": "9871295dc1c2ef84d47535924dcaaa43000eace21084c5f94a4cdec7c2fdcd3f",
+          "request_sha256": "14e0a26454206168c64627c9782ccbedca1a288007cf3d22e322561f9658b3b1"
+        },
+        {
+          "name": "jev-e97d01e035cede6a41b1",
+          "record_sha256": "9f78c9ed9497baa734b3c6a95489ea6d3a1fdabb0eea989efcf654b1e09cd778",
+          "request_sha256": "c298e53ec6f4a42c86cca697497b101d3312e245af8b930185b09e76a39437ca"
+        },
+        {
+          "name": "jev-9484412e1076b60318f1",
+          "record_sha256": "23186422d7d1ddf91c21073592d72e7993f1a323192f0164c30288e8de3a434c",
+          "request_sha256": "0122fc8e81d5694f946d2b26b50275f358c3f2cff88af09788b55acab9661f02"
+        },
+        {
+          "name": "jev-86387fc196d0c6bbdb9b",
+          "record_sha256": "e83eca81b8f016e99289bf9f9d0c943800a44303cdf16d61dfd682aa106b906e",
+          "request_sha256": "0872cd27d8b2c07b652ae415e3f402cc2386b7af8657b9b8a82548e47ce63f2a"
+        },
+        {
+          "name": "jev-e03fc8bca79804cfb925",
+          "record_sha256": "3119b50fc8c68709cf7cde273e1180370238af403e9958cae188e7f881e79737",
+          "request_sha256": "4ea3f6e15c91d98ee530ea1ad270200ab3e33db2c0d63c2edeae168bdcd0ee5b"
+        },
+        {
+          "name": "jev-c5a6199f08219a8a3eef",
+          "record_sha256": "cb880c8d1a60621969a59a29d53ed3e75cad3ee5c0501fd90955d6337922da46",
+          "request_sha256": "2b28d67bd81bd2d77ebd690d6f99aedd3bcf7e28cdd14f97cc1c12d84c7a8f70"
+        },
+        {
+          "name": "jev-43a58a5090ec522a8406",
+          "record_sha256": "b6f6a5fbf3baeb4fac9b914e9c9529d0d08c8c894273656fdbb2b446a17b563f",
+          "request_sha256": "2778455a9248d722b898329214fa6d1c3165bc3d9f6798c9aa9eff1197817d26"
+        },
+        {
+          "name": "jev-22c52e36825bd4feecd7",
+          "record_sha256": "18d2b8b6bf32e99de3faf927f800ab93514327e1be550029f1823678323fd527",
+          "request_sha256": "ee718b1128fc4c5f259ecd95804e6dbbcc9120a9484035cb63355fd1388a5393"
+        },
+        {
+          "name": "jev-2bed490593174adc4ee0",
+          "record_sha256": "f75c6830ccdcfcac980671943581883fbee2c215b5f26fa5304479d96edfbaaa",
+          "request_sha256": "06cad9bc28281ec40f3c44671dbea5c5e6ad1e25a704069a7ea98a81e7030061"
+        },
+        {
+          "name": "jev-6a5dc53e0a4b468b69c3",
+          "record_sha256": "2e57f0c1c57ed225e566c53c151b387bb1b228f1024e0cfd00929d861345cbdb",
+          "request_sha256": "fc5ca53a040537562291b197522821da0461aae41139735a779ea24a4f26aae5"
+        },
+        {
+          "name": "jev-dd51848b04309f669afc",
+          "record_sha256": "c21fb41eb87cc043c64137a8d24d772737de265431adc3e6a7c4aa0da4f21106",
+          "request_sha256": "c64dcf3f4dd904ecbe6fb5d015bfc38bd3b57193afcae96553ba7e3bef477551"
+        },
+        {
+          "name": "jev-fcf03530c53401306ea0",
+          "record_sha256": "3224de2f5a4915e93ad8ce8e3c0186e6bdd1d34a8622a357f2594fc04fb11b39",
+          "request_sha256": "6a17280281215687ae96126529d8e7180b53925f7d7a9cb3345b59d526064416"
+        },
+        {
+          "name": "jev-45ad81069aff5ad70849",
+          "record_sha256": "0ebf982f13bda03a76a5cdf3c13392c08269d3ab7465a5d8af4a3acffcd8dbbf",
+          "request_sha256": "91ba3d6b87fc3d34acd1588d382d9bd83234c04f56e65170642334a9a595a09c"
+        },
+        {
+          "name": "jev-594baeb96d73448019f2",
+          "record_sha256": "da7eaf265061a9ba07d495df084a683e2e287d2c7885dbe28e0d9f01854f879d",
+          "request_sha256": "5c925f0a5ac894899040445f16d56e430431114649935cd68fa4500d31a6bf4d"
+        },
+        {
+          "name": "jev-b4075d9244e7abfabafa",
+          "record_sha256": "bedc02233881119427ccef504ec11b6ff6de44c1229d7020febcd3e9b0dce5fb",
+          "request_sha256": "4472fb2675637a2cd8bd359fb26b37a09e0e7b2b1ada834d8c648c249239c0df"
+        },
+        {
+          "name": "jev-f4ecff51fe7de3bcb44b",
+          "record_sha256": "d1b69233bfdb13bfd450e62f0de7d39814b3896a1cd31b0927faba7e6633cc66",
+          "request_sha256": "8968dbedd7ad51cc401bfa7734ab1864f55dc796925694a777fe7f645e64e110"
+        },
+        {
+          "name": "jev-3bd08924e764b51d1761",
+          "record_sha256": "4a8f7cd8449cbd4b7dd2a97b42f32dab92efa915bb2c084d2882466af8eda580",
+          "request_sha256": "a2f0e1be869569647db9d087980f3f67af82eb05033e458b5cdae1add6a7e52b"
+        },
+        {
+          "name": "jev-ddb05edb280744aa9b33",
+          "record_sha256": "d127bea7ba461c59749a689d874ba5ca9d9f23386db0eec447512d03336860e9",
+          "request_sha256": "fbc45783b253af9920530e89af6df0ee989e77a28b14bdd645a4a5ad77ceff41"
+        }
+      ]
+    },
+    "pymupdf": {
+      "import_sha256": "1807be773e4438886315ee3e746b6f413a253d45ddacdf31da04d2bacfc81ac4",
+      "study_sha256": "dbc84ab0dad575c16ae06a7643ab2c1e19bad5985f7b30a07da93f966c4924fb",
+      "grade_proofs": [
+        {
+          "name": "jev-e4bbb65228efce3f9625",
+          "record_sha256": "8bd910e5a5de49b679032d0441ddc3e5000075c4b965a9d2d8d42fbd46433d72",
+          "request_sha256": "216885353f83260ba7f3f1679535cad688991ee24a3c8a498c30c791becaefc9"
+        },
+        {
+          "name": "jev-c83fed61d0ccc6162f36",
+          "record_sha256": "7c5d29975be856fe29a219d806deb5a2a28b903c41879f248c73921ada7d6ca9",
+          "request_sha256": "de741a39e174299d7448682fe3a07fdc9abeb365cae5961c72ee757b5851acb8"
+        },
+        {
+          "name": "jev-9ce51f7c8c953942d980",
+          "record_sha256": "7d091b76c704164e4ca3e7d9282263971dede62d5f40af5e8448caa89ce2dcb5",
+          "request_sha256": "fc2a4dfa81714b0fb7ec91dfe25055d46777776a7be5325a80eac4cffd344a2c"
+        },
+        {
+          "name": "jev-9677ac91dc0b40b208c3",
+          "record_sha256": "5360d28c4b5e6be703310ba4295328b3edb51112590f63fe51552f21fba7477c",
+          "request_sha256": "1306d140351f5432b15e9443e6218c09a8b9da728a4424e1a566136438655ad6"
+        },
+        {
+          "name": "jev-c73e981241f338825861",
+          "record_sha256": "6e5a90605236d4bc24cdc3da575e131359c64ff7bf76e1f7cc4d3b6a0c90161d",
+          "request_sha256": "31f95008befd840c2e0f623fd06c06fda09e0d0430bb703a04c306bdaf4c0379"
+        },
+        {
+          "name": "jev-6b4fa24a694734b9acc3",
+          "record_sha256": "529a155b5f4b81414e2f2615520b83bd906a8ee99beaaeaa5de3ebc30e64cbc1",
+          "request_sha256": "31aef14bafca7f32a922fe46b994b677cbf2f072050327a588a6b791d31cd7a8"
+        },
+        {
+          "name": "jev-3b79ac6d7cc243f9fd17",
+          "record_sha256": "e9e78b9ab5b2615ca700992797e642a59f507da177f7a206e5fd248302683e63",
+          "request_sha256": "a592742e9250aebeaa47ad2fb54dbf5a651be35737c439393d275a3f8c06d1c5"
+        },
+        {
+          "name": "jev-f0159be14e8e6101c5c6",
+          "record_sha256": "6371b96a81a006466d7e963bd069d7027b990fe636c9bfe49d95f6ce2eed4c80",
+          "request_sha256": "bb31a391a1770497fd30b8f842c181e0d4922e1702a683d2aafffe78a1097318"
+        },
+        {
+          "name": "jev-b1810866b1d0f74a218b",
+          "record_sha256": "39aa7e5fe8adc8235e120a3d9d1df44faa5b174582514d884611da72cd297620",
+          "request_sha256": "71e56390e72259530e3595166dbca2e19fff1488dc42d01e86967827d349d62e"
+        },
+        {
+          "name": "jev-e2097025d99b910708e9",
+          "record_sha256": "1115819914273d84e6a592515e17a76d549fd5fc7c9cb96be4e613f011cc3859",
+          "request_sha256": "38ed4c8caf06e39f9cc9221b362cd84c38c786ce472f37fdd0f49b906cff43d9"
+        },
+        {
+          "name": "jev-a0c68f9b1e35a7443deb",
+          "record_sha256": "4898c64d7ed0709f3a0bf7e621f0ea53ba5f188441fa75a0239aefc25fecb3da",
+          "request_sha256": "c429f0a9a3325252f71fbea3e4e40036c9594a4d1540727043f6744b96f819d3"
+        },
+        {
+          "name": "jev-abab224607f1d5c5c2c0",
+          "record_sha256": "58eb6cd2f2bc025e740a826b9ce44f5c5697679203b190ff6f2f20c83bfc424c",
+          "request_sha256": "429e27450bca74e67c7220b4a7d197aabf562f899bab2073fab884291fbae806"
+        },
+        {
+          "name": "jev-60cc938e5878c73ba507",
+          "record_sha256": "4110335924f70d8f859645f74be702309cc4576370ae464538be691e5c2ac0ac",
+          "request_sha256": "8a7ad6b9896c7282c880c7bdca0b0b0864692cacfda18158e617bee10d104111"
+        },
+        {
+          "name": "jev-3ca301528ae0f4948986",
+          "record_sha256": "ed48781f4a2cbac18d85258aa83bb1f177c3f7bbbb370cab3759abeef4cc3e53",
+          "request_sha256": "2b0e3085bd01b71e9789b0cb29bb3581639f1819e001db5b5b5423da4bc33f19"
+        },
+        {
+          "name": "jev-771ff87304e1a1ead1b0",
+          "record_sha256": "17ba2ca9302252f21dadb78465fb99e70ff20f7c47bf055c1a4d6fb61f0ccbf9",
+          "request_sha256": "aab2aa1a516e231a21f73d0a92e67ad676c24c6c62d59f839df9828a055ec775"
+        },
+        {
+          "name": "jev-e5d9470df28a66d4c428",
+          "record_sha256": "313b0312a14844c5219229ab4bc8b822991bc5c1ea3126377aa9f6a75fe90212",
+          "request_sha256": "2ef6479f549be07914afce428dfa9b75ab51f61215cc6ba59bf59db7cef47c3f"
+        },
+        {
+          "name": "jev-fd65f386c8037328d772",
+          "record_sha256": "ddb094c5fe50afaa8b3d2623417d78310ac59a5218883f6fd6fc8aef0acd9b67",
+          "request_sha256": "35d9f0ded0f7d19ef942de150613c2b01ca8fe05b4d92bf2f767694ffee8f676"
+        },
+        {
+          "name": "jev-a7db082a512ae54a8ab0",
+          "record_sha256": "97cbc27fcf1c4c89822f319c4976e6f9b94165be844645ec0e7edc8ae2cf893a",
+          "request_sha256": "daec3d48c5964d35935596631dfdb3dbb0d3167c6de75e7087f089ea40ab2783"
+        },
+        {
+          "name": "jev-c82bb9c3ea700fe43e3a",
+          "record_sha256": "ee58205c2811da1337a1b582e9dd74104aeedf7e8843aa8d7b683cc4474b03c4",
+          "request_sha256": "483c95f3359130dd41f440dc7c6f2b872aa0466755c187d11a2ea90661de3ebc"
+        },
+        {
+          "name": "jev-b6db784e0e3580fb2a71",
+          "record_sha256": "6221435f27e73fa89b1203130e8980d30296ab979c97e9a89c49397da1be8614",
+          "request_sha256": "a130a72c113325417adc97950b5d16ef7e4efa45d78aa56b138c1857128750d2"
+        },
+        {
+          "name": "jev-a3ce37e5368c9d31e761",
+          "record_sha256": "1faabebf9b36a46514715ca5c7e18ab9de337f84d75094ddf5cdf19c06a7edf1",
+          "request_sha256": "08f6cbd021f085157f4128937a8c639454cb6b45ed8025da83581ea69349a850"
+        },
+        {
+          "name": "jev-cf7fa4df2717c5efebe2",
+          "record_sha256": "d44fd16b5b6635c2439e6b6637cd7051ac810ed1215f970b382eedb662bce325",
+          "request_sha256": "2825c121a3c5a9144f23650a86505d247cba73be3ec0fad8449095eb29dd48f9"
+        },
+        {
+          "name": "jev-50fd9a6289e4a649b613",
+          "record_sha256": "ef793863ca4fe9cd8e2d817b13384da94bed9f4b0564b83bb7e3031b3298c587",
+          "request_sha256": "23454f3ee00008cd55727f9006167fa04447082cc748ad3f2180a71e06c00ba9"
+        },
+        {
+          "name": "jev-facaacbe429a89dfa987",
+          "record_sha256": "67543c2086f1f89a40acc1214fad7fbf312081c67a36009d03e79e5eb21aace6",
+          "request_sha256": "18f3da35823880d32a5b10655830ed891a06d1c2758f4822a575844dbfd0e3de"
+        },
+        {
+          "name": "jev-9a0cfe3d7cff7ceb49ff",
+          "record_sha256": "8e3775031cfbe59a2e071aeef42bc47e02096a280a1ef02c0585e21f265b1f55",
+          "request_sha256": "2271c03fce92b49abf827a8378fb47189ff2a10b14e19d86463695f1399699a3"
+        },
+        {
+          "name": "jev-bdaf70c6778c0a0afc66",
+          "record_sha256": "f684aaa16337b3e2afa26db19311dbf106cfc7012f3d423b04b797812444d9c2",
+          "request_sha256": "87fa8bd338351f726384abec6a1d7bc2cd4c35ba30e138c84b9809499f581708"
+        },
+        {
+          "name": "jev-8e3739b122034fd71ef9",
+          "record_sha256": "33120c9c8ecbe4a8b7a12952f147036391b4ee68d21b431837b8c5e7967c6793",
+          "request_sha256": "b47a5a1039307d2419045fc5519b72d78a71b45f5eaee94f14e4b786ad3362ef"
+        },
+        {
+          "name": "jev-45fec97289871d3621c3",
+          "record_sha256": "0e3d368e12f905c7f10e1f5fe9d097cc9ccec3cf3ab55a8512f8323ec6e9a81c",
+          "request_sha256": "212392c08acd64e36573f2b46d5f9505937516827c528138c47a4e8405639e19"
+        },
+        {
+          "name": "jev-9b6a67d7767a859764d3",
+          "record_sha256": "e2b9410df240964238bf082cdfe983dc9347633294d33452c6c219df476f2743",
+          "request_sha256": "166fae7b6166c8d59fd6b3890bf99ada569dc3f94be66a2bf101885ceeeab683"
+        },
+        {
+          "name": "jev-a83581247114308af509",
+          "record_sha256": "fbaccd895d68031379e9e8670ced1b459756e4530782376954fd4c6535b6ea14",
+          "request_sha256": "ade250f1848dd7e2cbd3d21c713c18dccd07a5c7e91f72ea669768b39a8b5f98"
+        },
+        {
+          "name": "jev-627f44d831fed5af4dc5",
+          "record_sha256": "3726e68181bc2e34448a18a91c8cf9e713738a6f525b788b04353d00ffe587bc",
+          "request_sha256": "cc0f4c7c2dbb783ede176b29704bb535c3d2bb16b2d53d689507dd9c07fb251b"
+        },
+        {
+          "name": "jev-e97d01e035cede6a41b1",
+          "record_sha256": "118738ab1663130d2f4408e79d4534237482c91c8eec9c601e3a8266ac4fa564",
+          "request_sha256": "0fe9a299985b67a601dc3a37eac855f3f5606811f8d357136db88e812444df87"
+        },
+        {
+          "name": "jev-9484412e1076b60318f1",
+          "record_sha256": "042c66b3427383c7dfe731f5764177e6afb5e526d0cacc3dc0394b5f55b8b38c",
+          "request_sha256": "19c14cf3a8b24db198bccc6848c4539e8cce78415bcba118d1fc387c6f417490"
+        },
+        {
+          "name": "jev-50aa5ccdda86ca3dd8de",
+          "record_sha256": "6e1ab7d1e8292c5b4c44368542255628405830d15735bf456cdfd7706a0f6816",
+          "request_sha256": "56fdf5964da1ad187a87319aca5d9c30c8c643d8b8d1d5837f4a7f6556e03759"
+        },
+        {
+          "name": "jev-86387fc196d0c6bbdb9b",
+          "record_sha256": "89249d5c312ce240ef9156ad5ca801ce7c6e87b6fc8b693e7fe5f650f28b2add",
+          "request_sha256": "301cc3fcd56f035e7c3be011de516b76e231d06ec465809c3e473754c3becd93"
+        },
+        {
+          "name": "jev-e03fc8bca79804cfb925",
+          "record_sha256": "4db9ab14a1a057c27dead070df29c36c78c8860b6dfdb78461cd5416dc48fffc",
+          "request_sha256": "d7ac6cc396fd756607ed33c36993ded436f2fccc29c5782f3d6f244af6503f9c"
+        },
+        {
+          "name": "jev-f0c70bc663deebc79d44",
+          "record_sha256": "0d3bbb894de32b8035f488492413a533520a0ab4214ca8a24deb9b9d08e99fab",
+          "request_sha256": "53d5a200752b20b0416fd26233c48a19f67d80677688e96643878afbe709f9af"
+        },
+        {
+          "name": "jev-c5a6199f08219a8a3eef",
+          "record_sha256": "b9fef312ad89a5d1f9ea4551c24f6241a5a592dddb305aa5ed75af8108f21a4a",
+          "request_sha256": "89b4d111f54cdcd2286bfc3c2211f187451e8798170eeec2a96f91c8e38a403a"
+        },
+        {
+          "name": "jev-43a58a5090ec522a8406",
+          "record_sha256": "4ebec4baaf68081d75f8bedf67f3c6196269f078b95bd1307185af13d0c04352",
+          "request_sha256": "197617e9f541d559ee00a8f211ea82c40c5a0b085a6a39fb1882d15d7300590e"
+        },
+        {
+          "name": "jev-22c52e36825bd4feecd7",
+          "record_sha256": "38f6dfdd3c4cc5d9578a70b2c1871ed429ba7deef149a96d88dc5aa66def9f6c",
+          "request_sha256": "ba125bcc57aaac806e6cb30b6f921476da4b28a84b10c80ab2bea5196bb00ef4"
+        },
+        {
+          "name": "jev-f209381bd6092d416a3f",
+          "record_sha256": "1e3b8cc6c754baf1958a5d9e5c79c1d078cd179402714b7b64e7c77adec37cbc",
+          "request_sha256": "55c02dd1f5a41d85ac8338de9c8be0645782ff6b803ab273e1cf80864156859d"
+        },
+        {
+          "name": "jev-1d0d1abfbe7bb6f4b975",
+          "record_sha256": "eab09ca2dde5ea957ed5df9ce5add1c6395f4e0df2d1a7f66006b834c4338c80",
+          "request_sha256": "ab4f616ae47808a50fc260d0dcef199d2781d6a65b32e0bec09fed5e41cae9c4"
+        },
+        {
+          "name": "jev-2bed490593174adc4ee0",
+          "record_sha256": "39167d28239d333d9344d32dadef52e56daff864d5f30b130e96b50ebf753d19",
+          "request_sha256": "7a050cb6f40ced9c4664cb8ef65adcb734ca4f973c1e2a531b1b7681a1d3c4f6"
+        },
+        {
+          "name": "jev-6a5dc53e0a4b468b69c3",
+          "record_sha256": "01f8fed742418f363f702add9fcab8dfe6938b12564007124c1b2f5c85d80101",
+          "request_sha256": "7f104d6c72164101c1ac23a13f90af25d6a253f83a35c3aa0ec5693f252afe9c"
+        },
+        {
+          "name": "jev-dd51848b04309f669afc",
+          "record_sha256": "42a2a0fcb7330832564cc345bde8e94d0c4fa39f1904a345362e67e6947b17cc",
+          "request_sha256": "fda00ea6aacc9e9f76546fc528edd6bc1bd20af328419a6fc7df92aab823225a"
+        },
+        {
+          "name": "jev-2a176c4c14044ced82e7",
+          "record_sha256": "0173441067ca3e4a196a083e4d8ac46e0e7998205415085463f7618788d9204a",
+          "request_sha256": "9280d4c9b08879109601c0b63e21b411f9d6883bd4dfbdd1755a952a8a38f4c1"
+        },
+        {
+          "name": "jev-fcf03530c53401306ea0",
+          "record_sha256": "0a3f79f5e5a816b9f39c5c8223469b5d4f905a2a87869d95cef43dfcc6eda85e",
+          "request_sha256": "9ac883ac74ecc869b1e58119dfd146c8cb95a32ba9d4294e93e9c132624f227e"
+        },
+        {
+          "name": "jev-45ad81069aff5ad70849",
+          "record_sha256": "0a68821c4fcfb2e4e899b3459d38b0c9faf44508d98886729e80cc160a3774fe",
+          "request_sha256": "aeb085b0f58d1933b1fc2051f3b94166cbc8c243b336a1bc644fcf7fc2afc784"
+        },
+        {
+          "name": "jev-b4075d9244e7abfabafa",
+          "record_sha256": "57da07edc2b74b859dd929855f2717246c4a72e781f844f177de042760ae22db",
+          "request_sha256": "a8c5693185044157b7a2b6c8b62e6cc954519ec6dc92f13e2509e8e78c28670b"
+        },
+        {
+          "name": "jev-f4ecff51fe7de3bcb44b",
+          "record_sha256": "814e96be39f5113932e7015ad49ef46555255d882231a934638300bc7ab10a54",
+          "request_sha256": "a19b1717cd17f368ef1e1ac2e2e83349754a58aa10c02ac7f10f6011150f7f65"
+        },
+        {
+          "name": "jev-3bd08924e764b51d1761",
+          "record_sha256": "0c3dcdede1f0a507184e5b4ca99b94b0da2de08a3f9294a21d3066ed0948f2a6",
+          "request_sha256": "be4e6b22b30385b5fafef4e54090efb4950bd5ab72f2e061926d3947e497d0f3"
+        },
+        {
+          "name": "jev-c5b70556ff16dabf25a5",
+          "record_sha256": "3629b82e603b7d13795c479bf472d0aef197e4237d2dc91f249032ce1f51b8a3",
+          "request_sha256": "9694145f52561fa035aa9baf5551579a303829c373efe5c03144233aecc60445"
+        },
+        {
+          "name": "jev-ddb05edb280744aa9b33",
+          "record_sha256": "ce85782deac59f1862094f3fe3be057f4a06d3c343e6e3d60e85a444141ed5d6",
+          "request_sha256": "cead5eab67724a6760acb71317b0f9b166d214d94403a7a9a7a4b24151657eca"
+        },
+        {
+          "name": "jev-3fc2005dc7d54699f1c8",
+          "record_sha256": "10e762ea975670f5f05f857695672e2c608d218b6010bafb0f8a9d64053fcd21",
+          "request_sha256": "84dcb0dac730bf6b1a14e1ff1caaf22a22909d77edc4ac3e084c749126a14b4c"
+        },
+        {
+          "name": "jev-7f8f308276a3b751b242",
+          "record_sha256": "65c27fe2d22587d240cafa06a763a41d013a8241d3bd22f6e4341c127c98b46d",
+          "request_sha256": "80887b4e3075a0def810d4f1e4d8110bcc251584ab194c29e7c4cac1417c030a"
+        },
+        {
+          "name": "jev-9577d286be809cdd7d03",
+          "record_sha256": "d678f4d78b7afd57ca3a50691d84727719abefc3d7f02a393a455bb16dfbac3f",
+          "request_sha256": "c7e1d72084beb32a31d553c287b34ec2101923052d68b967809d7227c63a00cf"
+        },
+        {
+          "name": "jev-c1b042d1627bb3fbbf05",
+          "record_sha256": "715d77b199ccb5c9daee43c22cb25c0dca8e7d6ee9f642ae0256c9a25bbe2e27",
+          "request_sha256": "9806efa879a5cf828de323b6d6f599d62e9712b8029979fcb8949119b92c162d"
+        },
+        {
+          "name": "jev-5e9df5a26f8652791b80",
+          "record_sha256": "adb8fe3b201ee82b9e7a28efb4fd29052cfb7ee1bfb0db402fcfc81a4b9dd1c6",
+          "request_sha256": "0b36db8fea7b54cd278c9983f79df0dd74c7dc2c91748768acdd8e5935bd5552"
+        },
+        {
+          "name": "jev-acb2c18452ec91862b90",
+          "record_sha256": "915b6b2cddfce23e872ea971e212c67b9d4dcc65dd4391f1ae4face14a44837c",
+          "request_sha256": "8b2096a8f6e9c25dea6f7dfd5977b1c1972a1512841364947f8fb4c2afaebb7d"
+        },
+        {
+          "name": "jev-a4f223d85dc226ef996c",
+          "record_sha256": "b657bd748f713c94d76008050de306d335cc9742a1f190c63568050511742c77",
+          "request_sha256": "6e20284c5e5fcc85398c5c671ee0abec54f5191b6b7afc57bcf5713b320d6b03"
+        }
+      ]
+    }
+  },
+  "new_luna_calls": 0,
+  "new_control_grading_calls": 0,
+  "all_parent_chunks_equal": true
+}

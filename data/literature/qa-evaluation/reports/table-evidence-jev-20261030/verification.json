@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "questions": 32,
+  "parent_chunks_unchanged": 95,
+  "row_representations": 20,
+  "numeric_cells_verified": 120,
+  "relationships_same_document": 9,
+  "source_offsets_and_citations_verified": true,
+  "budgets_and_top8_top50_verified": true,
+  "generated_rows_never_used_as_source_quotes": true,
+  "independent_score_arithmetic_verified": true,
+  "maximum_paired_subsets_verified": true,
+  "missing_grades_not_zero_filled": true,
+  "judge": "jev",
+  "new_luna_calls": 0,
+  "all_calls_counted": 32,
+  "application_configuration_unchanged": true
+}
