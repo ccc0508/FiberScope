@@ -1,0 +1,59 @@
+{
+  "recorded_at": "2026-10-30T16:16:50.046950+00:00",
+  "reason": "Direct large POSTs failed with ReadError/WriteTimeout; existing local HTTP proxy passed transmission test. Owned direct grader process stopped before recovery.",
+  "interrupted_calls": [
+    {
+      "path": "records/jev-50fd9a6289e4a649b613/2.json",
+      "pending_record": {
+        "status": "pending",
+        "attempt": 2,
+        "api_calls": 1,
+        "started_at": "2026-10-30T16:16:32.317145+00:00",
+        "request_sha256": "7b1fcb5aa2a6ab934517feb0b24f91d94191219f0b735d453ce08918332514e2",
+        "prior_record_sha256": "d2c38bb850c77b8ac4a9bb56f5aa21d50332a8974c740b0b6a7204976d00281a"
+      },
+      "before_sha256": "afea0e142fded6ad6ebb4f4d54ca23f80ccc6e5b485a5843f45ffb67073d5b12",
+      "after_sha256": "c1698e937d1e268d62bfed9eb1544f5de300f737db74dd5cd6ec7f8f56bf8f00"
+    },
+    {
+      "path": "records/jev-a7db082a512ae54a8ab0/2.json",
+      "pending_record": {
+        "status": "pending",
+        "attempt": 2,
+        "api_calls": 1,
+        "started_at": "2026-10-30T16:16:32.584313+00:00",
+        "request_sha256": "138235a70e1739eb4aaf39ce35e3d71998420bda9174115d2268b67395b9eb42",
+        "prior_record_sha256": "dd8c9011e390e62da66cc19ba309283d2435340183088d609bf96cfec2c1f047"
+      },
+      "before_sha256": "fba1ca286e1459e9608e816499c5bd0c6d2d46c57abe879585b84832ef3feed3",
+      "after_sha256": "170d63a0d662dfea81a89cc827c62ae8a2be2f20838911d6a537efcf3d118d76"
+    },
+    {
+      "path": "records/jev-e2097025d99b910708e9/3.json",
+      "pending_record": {
+        "status": "pending",
+        "attempt": 3,
+        "api_calls": 1,
+        "started_at": "2026-10-30T16:16:23.261831+00:00",
+        "request_sha256": "84c0547d70f7949fae0973322ad1ba09493844f85c941129af6a57d5fb83a4d5",
+        "prior_record_sha256": "53ce4d94d5ae51c3707163c79ffedd9364f79017549e592a6d7a567b62312bd7"
+      },
+      "before_sha256": "a077a6fb14a1192d800bc7b8a9ca4cad144263efe994f256a39e60f4078ccf55",
+      "after_sha256": "9fa4212c8384e0202f6f18f11d658190df150a3ab76e5026e9b15834bd7cbdb4"
+    },
+    {
+      "path": "records/jev-fd65f386c8037328d772/2.json",
+      "pending_record": {
+        "status": "pending",
+        "attempt": 2,
+        "api_calls": 1,
+        "started_at": "2026-10-30T16:16:30.237459+00:00",
+        "request_sha256": "3965324c82a89e686e66b981358337c5e80f82c89bc5177d0600e4cfd6a2c924",
+        "prior_record_sha256": "08e279967b730094dfc63f79c200b99712c9270dbbbb5722dc1e6f338fa5ca19"
+      },
+      "before_sha256": "b3331aaab61871bd73a4f61d2d68cdb40ed1a533417b6985506c093d1522e704",
+      "after_sha256": "8cd298b2b91cc2d9687d502cbbca6d84f177b7710ffc3086f5ea05f40b0cc8db"
+    }
+  ],
+  "no_received_score_modified": true
+}

@@ -1,0 +1,1175 @@
+{
+  "E01": {
+    "evidence_id": "E01",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 2,
+        "spans": [
+          {
+            "source_id": "mineru_block_0020",
+            "start": 0,
+            "end": 442
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0020",
+        "start": 0,
+        "end": 442
+      }
+    ]
+  },
+  "E02": {
+    "evidence_id": "E02",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 2,
+        "spans": [
+          {
+            "source_id": "mineru_block_0020",
+            "start": 552,
+            "end": 725
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0020",
+        "start": 552,
+        "end": 725
+      }
+    ]
+  },
+  "E03": {
+    "evidence_id": "E03",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 2,
+        "spans": [
+          {
+            "source_id": "mineru_block_0020",
+            "start": 662,
+            "end": 945
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0020",
+        "start": 662,
+        "end": 945
+      }
+    ]
+  },
+  "E04": {
+    "evidence_id": "E04",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 2,
+        "spans": [
+          {
+            "source_id": "mineru_block_0022",
+            "start": 0,
+            "end": 465
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0022",
+        "start": 0,
+        "end": 465
+      }
+    ]
+  },
+  "E05": {
+    "evidence_id": "E05",
+    "status": "review_required",
+    "segments": [
+      {
+        "status": "review_required",
+        "method": "near_text_anchor",
+        "pdf_page": 3,
+        "spans": [
+          {
+            "source_id": "mineru_block_0026",
+            "start": 0,
+            "end": 72
+          },
+          {
+            "source_id": "mineru_block_0027",
+            "start": 0,
+            "end": 69
+          },
+          {
+            "source_id": "mineru_block_0028",
+            "start": 0,
+            "end": 122
+          }
+        ],
+        "coverage": 0.9294117647058824,
+        "scientific_numeric_difference": true,
+        "edits": [
+          {
+            "operation": "replace",
+            "reference": "(m1-m2)",
+            "parsed": "$$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "\\"
+          },
+          {
+            "operation": "replace",
+            "reference": "×",
+            "parsed": "\\frac{(m_{1}-m_{2})}{m_{2}}\\times"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "\\"
+          },
+          {
+            "operation": "replace",
+            "reference": "(",
+            "parsed": "\\tag{"
+          },
+          {
+            "operation": "replace",
+            "reference": ")m2",
+            "parsed": "}$$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "_{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "_{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}$"
+          }
+        ],
+        "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0026",
+        "start": 0,
+        "end": 72
+      },
+      {
+        "source_id": "mineru_block_0027",
+        "start": 0,
+        "end": 69
+      },
+      {
+        "source_id": "mineru_block_0028",
+        "start": 0,
+        "end": 122
+      }
+    ]
+  },
+  "E06": {
+    "evidence_id": "E06",
+    "status": "review_required",
+    "segments": [
+      {
+        "status": "review_required",
+        "method": "near_text_anchor",
+        "pdf_page": 3,
+        "spans": [
+          {
+            "source_id": "mineru_block_0030",
+            "start": 499,
+            "end": 668
+          },
+          {
+            "source_id": "mineru_block_0031",
+            "start": 0,
+            "end": 98
+          },
+          {
+            "source_id": "mineru_block_0032",
+            "start": 0,
+            "end": 287
+          }
+        ],
+        "coverage": 0.9263456090651558,
+        "scientific_numeric_difference": true,
+        "edits": [
+          {
+            "operation": "replace",
+            "reference": "(I200-Iam)",
+            "parsed": "$$"
+          },
+          {
+            "operation": "replace",
+            "reference": "×",
+            "parsed": "\\frac{\\left(I_{200}-I_{am}\\right)}{I_{200}}\\times"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "\\"
+          },
+          {
+            "operation": "replace",
+            "reference": "(",
+            "parsed": "\\tag{"
+          },
+          {
+            "operation": "replace",
+            "reference": ")I200",
+            "parsed": "}$$"
+          },
+          {
+            "operation": "delete",
+            "reference": "f",
+            "parsed": ""
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$"
+          },
+          {
+            "operation": "replace",
+            "reference": "θ",
+            "parsed": "\\Theta"
+          },
+          {
+            "operation": "replace",
+            "reference": "°",
+            "parsed": "^{\\circ}$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$"
+          },
+          {
+            "operation": "replace",
+            "reference": "°",
+            "parsed": "^{\\circ}$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "_{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}$"
+          },
+          {
+            "operation": "delete",
+            "reference": "f",
+            "parsed": ""
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$"
+          },
+          {
+            "operation": "replace",
+            "reference": "θ",
+            "parsed": "\\Theta"
+          },
+          {
+            "operation": "replace",
+            "reference": "°",
+            "parsed": "^{\\circ}$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$"
+          },
+          {
+            "operation": "delete",
+            "reference": "°.",
+            "parsed": ""
+          }
+        ],
+        "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0030",
+        "start": 499,
+        "end": 668
+      },
+      {
+        "source_id": "mineru_block_0031",
+        "start": 0,
+        "end": 98
+      },
+      {
+        "source_id": "mineru_block_0032",
+        "start": 0,
+        "end": 287
+      }
+    ]
+  },
+  "E07": {
+    "evidence_id": "E07",
+    "status": "review_required",
+    "segments": [
+      {
+        "status": "review_required",
+        "method": "near_text_anchor",
+        "pdf_page": 3,
+        "spans": [
+          {
+            "source_id": "mineru_block_0033",
+            "start": 226,
+            "end": 357
+          }
+        ],
+        "coverage": 0.990990990990991,
+        "scientific_numeric_difference": false,
+        "edits": [
+          {
+            "operation": "delete",
+            "reference": "f",
+            "parsed": ""
+          }
+        ],
+        "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0033",
+        "start": 226,
+        "end": 357
+      }
+    ]
+  },
+  "E08": {
+    "evidence_id": "E08",
+    "status": "located",
+    "segments": [
+      {
+        "method": "verified_table_rows",
+        "status": "located",
+        "pdf_page": 6,
+        "spans": [
+          {
+            "source_id": "mineru_block_0066",
+            "start": 0,
+            "end": 1631
+          }
+        ],
+        "numeric_rows": 5,
+        "numeric_cells": 30,
+        "table_number": "1",
+        "row_start": 0,
+        "note": "Atomic table object located by caption/page and every annotated numeric cell; not a judgment of answer sufficiency."
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0066",
+        "start": 0,
+        "end": 1631
+      }
+    ]
+  },
+  "E09": {
+    "evidence_id": "E09",
+    "status": "located",
+    "segments": [
+      {
+        "method": "verified_table_rows",
+        "status": "located",
+        "pdf_page": 6,
+        "spans": [
+          {
+            "source_id": "mineru_block_0066",
+            "start": 0,
+            "end": 1631
+          }
+        ],
+        "numeric_rows": 5,
+        "numeric_cells": 30,
+        "table_number": "1",
+        "row_start": 5,
+        "note": "Atomic table object located by caption/page and every annotated numeric cell; not a judgment of answer sufficiency."
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0066",
+        "start": 0,
+        "end": 1631
+      }
+    ]
+  },
+  "E10": {
+    "evidence_id": "E10",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 5,
+        "spans": [
+          {
+            "source_id": "mineru_block_0061",
+            "start": 452,
+            "end": 842
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0061",
+        "start": 452,
+        "end": 842
+      }
+    ]
+  },
+  "E11": {
+    "evidence_id": "E11",
+    "status": "review_required",
+    "segments": [
+      {
+        "status": "review_required",
+        "method": "near_text_anchor",
+        "pdf_page": 6,
+        "spans": [
+          {
+            "source_id": "mineru_block_0067",
+            "start": 175,
+            "end": 722
+          }
+        ],
+        "coverage": 0.9978401727861771,
+        "scientific_numeric_difference": false,
+        "edits": [
+          {
+            "operation": "delete",
+            "reference": "f",
+            "parsed": ""
+          }
+        ],
+        "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0067",
+        "start": 175,
+        "end": 722
+      }
+    ]
+  },
+  "E12": {
+    "evidence_id": "E12",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 4,
+        "spans": [
+          {
+            "source_id": "mineru_block_0049",
+            "start": 0,
+            "end": 791
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0049",
+        "start": 0,
+        "end": 791
+      }
+    ]
+  },
+  "E13": {
+    "evidence_id": "E13",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 4,
+        "spans": [
+          {
+            "source_id": "mineru_block_0052",
+            "start": 0,
+            "end": 607
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0052",
+        "start": 0,
+        "end": 607
+      }
+    ]
+  },
+  "E14": {
+    "evidence_id": "E14",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 5,
+        "spans": [
+          {
+            "source_id": "mineru_block_0057",
+            "start": 0,
+            "end": 934
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0057",
+        "start": 0,
+        "end": 934
+      }
+    ]
+  },
+  "E15": {
+    "evidence_id": "E15",
+    "status": "review_required",
+    "segments": [
+      {
+        "status": "review_required",
+        "method": "near_text_anchor",
+        "pdf_page": 4,
+        "spans": [
+          {
+            "source_id": "mineru_block_0046",
+            "start": 0,
+            "end": 771
+          }
+        ],
+        "coverage": 0.9982486865148862,
+        "scientific_numeric_difference": false,
+        "edits": [
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$\\mathsf{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "~"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "^{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}}$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$\\bar{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "\\mathrm{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}^{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "~\\mathrm{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}^{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "\\mathrm{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}}$"
+          },
+          {
+            "operation": "delete",
+            "reference": "f",
+            "parsed": ""
+          }
+        ],
+        "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0046",
+        "start": 0,
+        "end": 771
+      }
+    ]
+  },
+  "E16": {
+    "evidence_id": "E16",
+    "status": "review_required",
+    "segments": [
+      {
+        "status": "review_required",
+        "method": "near_text_anchor",
+        "pdf_page": 8,
+        "spans": [
+          {
+            "source_id": "mineru_block_0083",
+            "start": 118,
+            "end": 421
+          }
+        ],
+        "coverage": 1.0,
+        "scientific_numeric_difference": false,
+        "edits": [
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "\\mathrm{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}^{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$"
+          }
+        ],
+        "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0083",
+        "start": 118,
+        "end": 421
+      }
+    ]
+  },
+  "E17": {
+    "evidence_id": "E17",
+    "status": "review_required",
+    "segments": [
+      {
+        "status": "review_required",
+        "method": "near_text_anchor",
+        "pdf_page": 8,
+        "spans": [
+          {
+            "source_id": "mineru_block_0080",
+            "start": 0,
+            "end": 878
+          },
+          {
+            "source_id": "mineru_block_0082",
+            "start": 0,
+            "end": 9
+          }
+        ],
+        "coverage": 0.9922958397534669,
+        "scientific_numeric_difference": true,
+        "edits": [
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$\\mathrm{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "\\mathrm{"
+          },
+          {
+            "operation": "replace",
+            "reference": "···",
+            "parsed": "}\\cdots\\mathrm{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}"
+          },
+          {
+            "operation": "replace",
+            "reference": "'",
+            "parsed": "^{\\prime}"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "~\\mathrm{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}^{"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "}"
+          },
+          {
+            "operation": "replace",
+            "reference": ",",
+            "parsed": "$"
+          },
+          {
+            "operation": "insert",
+            "reference": "",
+            "parsed": "Figure6"
+          }
+        ],
+        "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0080",
+        "start": 0,
+        "end": 878
+      },
+      {
+        "source_id": "mineru_block_0082",
+        "start": 0,
+        "end": 9
+      }
+    ]
+  },
+  "E18": {
+    "evidence_id": "E18",
+    "status": "located",
+    "segments": [
+      {
+        "method": "verified_table_rows",
+        "status": "located",
+        "pdf_page": 8,
+        "spans": [
+          {
+            "source_id": "mineru_block_0084",
+            "start": 0,
+            "end": 1501
+          }
+        ],
+        "numeric_rows": 5,
+        "numeric_cells": 30,
+        "table_number": "2",
+        "row_start": 0,
+        "note": "Atomic table object located by caption/page and every annotated numeric cell; not a judgment of answer sufficiency."
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0084",
+        "start": 0,
+        "end": 1501
+      }
+    ]
+  },
+  "E19": {
+    "evidence_id": "E19",
+    "status": "located",
+    "segments": [
+      {
+        "method": "verified_table_rows",
+        "status": "located",
+        "pdf_page": 8,
+        "spans": [
+          {
+            "source_id": "mineru_block_0084",
+            "start": 0,
+            "end": 1501
+          }
+        ],
+        "numeric_rows": 5,
+        "numeric_cells": 30,
+        "table_number": "2",
+        "row_start": 5,
+        "note": "Atomic table object located by caption/page and every annotated numeric cell; not a judgment of answer sufficiency."
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0084",
+        "start": 0,
+        "end": 1501
+      }
+    ]
+  },
+  "E20": {
+    "evidence_id": "E20",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 1,
+        "spans": [
+          {
+            "source_id": "mineru_block_0006",
+            "start": 770,
+            "end": 915
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0006",
+        "start": 770,
+        "end": 915
+      }
+    ]
+  },
+  "E21": {
+    "evidence_id": "E21",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 10,
+        "spans": [
+          {
+            "source_id": "mineru_block_0100",
+            "start": 169,
+            "end": 376
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0100",
+        "start": 169,
+        "end": 376
+      }
+    ]
+  },
+  "E22": {
+    "evidence_id": "E22",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 12,
+        "spans": [
+          {
+            "source_id": "mineru_block_0111",
+            "start": 0,
+            "end": 720
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0111",
+        "start": 0,
+        "end": 720
+      }
+    ]
+  },
+  "E23": {
+    "evidence_id": "E23",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 12,
+        "spans": [
+          {
+            "source_id": "mineru_block_0112",
+            "start": 665,
+            "end": 892
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0112",
+        "start": 665,
+        "end": 892
+      }
+    ]
+  },
+  "E24": {
+    "evidence_id": "E24",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 5,
+        "spans": [
+          {
+            "source_id": "mineru_block_0061",
+            "start": 0,
+            "end": 229
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0061",
+        "start": 0,
+        "end": 229
+      }
+    ]
+  },
+  "E25": {
+    "evidence_id": "E25",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 4,
+        "spans": [
+          {
+            "source_id": "mineru_block_0052",
+            "start": 0,
+            "end": 128
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0052",
+        "start": 0,
+        "end": 128
+      }
+    ]
+  },
+  "E26": {
+    "evidence_id": "E26",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 5,
+        "spans": [
+          {
+            "source_id": "mineru_block_0061",
+            "start": 230,
+            "end": 451
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0061",
+        "start": 230,
+        "end": 451
+      }
+    ]
+  },
+  "E27": {
+    "evidence_id": "E27",
+    "status": "located",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 9,
+        "spans": [
+          {
+            "source_id": "mineru_block_0092",
+            "start": 544,
+            "end": 693
+          }
+        ],
+        "coverage": 1.0
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0092",
+        "start": 544,
+        "end": 693
+      }
+    ]
+  },
+  "E28": {
+    "evidence_id": "E28",
+    "status": "unresolved",
+    "segments": [
+      {
+        "status": "located",
+        "method": "exact_typography",
+        "pdf_page": 1,
+        "spans": [
+          {
+            "source_id": "mineru_block_0010",
+            "start": 210,
+            "end": 401
+          }
+        ],
+        "coverage": 1.0
+      },
+      {
+        "status": "unresolved",
+        "method": "no_long_text_anchor",
+        "pdf_page": 2,
+        "spans": []
+      }
+    ],
+    "spans": [
+      {
+        "source_id": "mineru_block_0010",
+        "start": 210,
+        "end": 401
+      }
+    ]
+  }
+}

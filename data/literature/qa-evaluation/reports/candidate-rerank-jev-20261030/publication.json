@@ -1,0 +1,18 @@
+{
+  "version": "candidate-rerank-jev-v1",
+  "document_sha256": "1a420cb6b3828f2547cea4ef2d8d42e06d7b324afeb6a631059117adfed12018",
+  "exporter_sha256": "b646fc744a2f0e1ae83ae97f603f3a8b30bef6924883785d712febdaf5334c72",
+  "files": {
+    "audit.json": "01be1775edcccb5ac6833e5a9e78bdfc3497f1c38dbbc485461d029536841bf8",
+    "comparison.html": "cfdbe69f71b9373c41eb7e37c89afc0bdff8a505bec002ca37927ecde7e7041c",
+    "comparison.json": "c5f2e69fefe79796463ab361aac2a5082c3e3eb16617f848a1c43fb30792524b",
+    "independent-probe.json": "667e74eda24ea8a42abc9d9020a36bfdfc02e52dc4135cf3e366bbe728b309d1",
+    "invalid-grading-records.json": "e5e1b7035d3c765211461b485894695509f9bfbd0d70a12cec777660e8443ae1",
+    "questions-answers-reviews.jsonl": "f33ddc3abc47e96cabd60c1684edbc156d86ffb8b83e49ac2cf667f096f958b4",
+    "reference-alignment.json": "baba0d100ee159337eed4d73d9a98e70053c560c30c7d4e4fc2220e9128a0e11",
+    "retrieval-diagnostics.json": "13e31c7c2faf2f9964b4da7717924161731a4f1d553cdfc34f96c7ec3df60801",
+    "transport-interruption.json": "0ba013cd6c7c0fce1a7c97a4b8f17655848148f9dd9e17e3cb37fe63c15a0ad8",
+    "transport-recovery.json": "46bc171d7391c30610a1bae9b6f2a582097ed2d146df4468b628e6e342efb502",
+    "verification.json": "2b6f2626002d5f132f95e750d983b00146e7e9e6ddfa9e2ca1a418ae558b03f7"
+  }
+}

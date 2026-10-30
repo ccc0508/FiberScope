@@ -1,0 +1,837 @@
+{
+  "version": "candidate-rerank-jev-v1",
+  "published_on": "2026-10-31",
+  "experiment_started_on": "2026-10-30",
+  "question_count": 32,
+  "policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+  "valid_grades": 31,
+  "grading_accounting": {
+    "calls": 60,
+    "known_tokens": {
+      "input_tokens": 2310317,
+      "output_tokens": 116940,
+      "total_tokens": 2427257
+    },
+    "usage_unknown_calls": 26,
+    "reported_cost_usd": "0.097033314",
+    "cost_unknown_calls": 26,
+    "invoice_cost_usd": null,
+    "request_time_ms": 1602821
+  },
+  "grading_attempts_by_task": {
+    "PFI2-029": 3,
+    "PFI2-002": 4,
+    "PFI2-026": 4,
+    "PFI2-032": 4,
+    "PFI2-020": 1,
+    "PFI2-024": 4,
+    "PFI2-008": 3,
+    "PFI2-031": 4,
+    "PFI2-011": 2,
+    "PFI2-027": 3,
+    "PFI2-010": 3,
+    "PFI2-017": 3,
+    "PFI2-001": 1,
+    "PFI2-006": 1,
+    "PFI2-025": 1,
+    "PFI2-003": 1,
+    "PFI2-016": 1,
+    "PFI2-009": 1,
+    "PFI2-030": 1,
+    "PFI2-015": 1,
+    "PFI2-013": 1,
+    "PFI2-019": 1,
+    "PFI2-022": 1,
+    "PFI2-005": 1,
+    "PFI2-018": 1,
+    "PFI2-012": 1,
+    "PFI2-007": 1,
+    "PFI2-023": 3,
+    "PFI2-028": 1,
+    "PFI2-004": 1,
+    "PFI2-021": 1,
+    "PFI2-014": 1
+  },
+  "invalid_grading_records": [
+    {
+      "task_id": "PFI2-023",
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "invalid_scorecard",
+          "validation_failure": "ValueError: Group and citation decisions disagree",
+          "request_sha256": "b1939008dcad9f4f9e49a973bd98752e5f7a1eb0f56a4281546c0af469d57a7d",
+          "response_sha256": "62e7f820e9ec418dfce3fa043b51c840d26b4126a606813e0c2d54f8db539840",
+          "record_sha256": "7df34b57148ce3e9b3d45f4881aece65589db5e06eb706451d22253157b021e3",
+          "duration_ms": 3696,
+          "usage": {
+            "input_tokens": 64822,
+            "output_tokens": 2741,
+            "total_tokens": 67563,
+            "reported_cost_usd": 0.002722524
+          },
+          "original_choices": {
+            "boundary": "appropriate",
+            "reference_check": "sound",
+            "point_P1": "complete",
+            "point_P2": "complete",
+            "point_P3": "complete",
+            "kind_C1": "fact",
+            "support_C1": "supported",
+            "basis_C1": "E21",
+            "group_C1": "complete",
+            "citation_C1_1": "supported",
+            "kind_C2": "fact",
+            "support_C2": "supported",
+            "basis_C2": "E20",
+            "group_C2": "complete",
+            "citation_C2_1": "supported",
+            "kind_C3": "fact",
+            "support_C3": "supported",
+            "basis_C3": "NONE",
+            "group_C3": "complete",
+            "citation_C3_1": "unsupported",
+            "citation_C3_2": "unsupported"
+          }
+        },
+        {
+          "attempt": 2,
+          "status": "invalid_scorecard",
+          "validation_failure": "ValueError: Group and citation decisions disagree",
+          "request_sha256": "b1939008dcad9f4f9e49a973bd98752e5f7a1eb0f56a4281546c0af469d57a7d",
+          "response_sha256": "89c70b9409d35ff7b5b5636167f8b982deb6eb0a57a643d6de6045cb464dc2dd",
+          "record_sha256": "635d38f1e434c0e542de5f5b8da34be6131f7ce713a57481c80750fa3ded90b5",
+          "duration_ms": 3689,
+          "usage": {
+            "input_tokens": 64822,
+            "output_tokens": 2741,
+            "total_tokens": 67563,
+            "reported_cost_usd": 0.002722524
+          },
+          "original_choices": {
+            "boundary": "appropriate",
+            "reference_check": "sound",
+            "point_P1": "complete",
+            "point_P2": "complete",
+            "point_P3": "complete",
+            "kind_C1": "fact",
+            "support_C1": "supported",
+            "basis_C1": "E21",
+            "group_C1": "complete",
+            "citation_C1_1": "supported",
+            "kind_C2": "fact",
+            "support_C2": "supported",
+            "basis_C2": "E20",
+            "group_C2": "complete",
+            "citation_C2_1": "supported",
+            "kind_C3": "fact",
+            "support_C3": "supported",
+            "basis_C3": "NONE",
+            "group_C3": "complete",
+            "citation_C3_1": "unsupported",
+            "citation_C3_2": "unsupported"
+          }
+        },
+        {
+          "attempt": 3,
+          "status": "invalid_scorecard",
+          "validation_failure": "ValueError: Group and citation decisions disagree",
+          "request_sha256": "b1939008dcad9f4f9e49a973bd98752e5f7a1eb0f56a4281546c0af469d57a7d",
+          "response_sha256": "211bfd0b64f4a9fbdf9abaf5674f6ad4de5a72c6a9d802a8f2ef5704fc7cdfee",
+          "record_sha256": "862758bc6966ab82feee72b13de1674bc930b8964dafd5133b68c3ffe32c0f3d",
+          "duration_ms": 3427,
+          "usage": {
+            "input_tokens": 64822,
+            "output_tokens": 2741,
+            "total_tokens": 67563,
+            "reported_cost_usd": 0.002722524
+          },
+          "original_choices": {
+            "boundary": "appropriate",
+            "reference_check": "sound",
+            "point_P1": "complete",
+            "point_P2": "complete",
+            "point_P3": "complete",
+            "kind_C1": "fact",
+            "support_C1": "supported",
+            "basis_C1": "E21",
+            "group_C1": "complete",
+            "citation_C1_1": "supported",
+            "kind_C2": "fact",
+            "support_C2": "supported",
+            "basis_C2": "E20",
+            "group_C2": "complete",
+            "citation_C2_1": "supported",
+            "kind_C3": "fact",
+            "support_C3": "supported",
+            "basis_C3": "NONE",
+            "group_C3": "complete",
+            "citation_C3_1": "unsupported",
+            "citation_C3_2": "unsupported"
+          }
+        }
+      ],
+      "missing_not_zero": true,
+      "execution_phase": "proxy_recovery"
+    }
+  ],
+  "new_luna_calls": 0,
+  "new_control_grading_calls": 0,
+  "transport_recovery": {
+    "manifest": {
+      "version": "transport-recovery-v1",
+      "original_study_sha256": "5a61c9c90f2fa67e7d991f3137d46566ac11f0ce3e99324b2bf8707db55eacfb",
+      "recovery_study_sha256": "a1576c340a5263d7c4407870ab667a8d7175afc1f94027502429418342a330a5",
+      "same_judge_request_bytes": true,
+      "original_valid_tasks": [
+        "PFI2-029",
+        "PFI2-020",
+        "PFI2-008",
+        "PFI2-011"
+      ],
+      "recovery_tasks": [
+        "PFI2-002",
+        "PFI2-026",
+        "PFI2-032",
+        "PFI2-024",
+        "PFI2-031",
+        "PFI2-027",
+        "PFI2-010",
+        "PFI2-017",
+        "PFI2-001",
+        "PFI2-006",
+        "PFI2-025",
+        "PFI2-003",
+        "PFI2-016",
+        "PFI2-009",
+        "PFI2-030",
+        "PFI2-015",
+        "PFI2-013",
+        "PFI2-019",
+        "PFI2-022",
+        "PFI2-005",
+        "PFI2-018",
+        "PFI2-012",
+        "PFI2-007",
+        "PFI2-023",
+        "PFI2-028",
+        "PFI2-004",
+        "PFI2-021",
+        "PFI2-014"
+      ],
+      "new_attempt_limit": 3,
+      "route": "Existing local HTTP proxy at 127.0.0.1:10808",
+      "policy": "Never rescore an original valid response; retain and account for all original failures and interruptions."
+    },
+    "direct_record_statuses": {
+      "api_failed": 26,
+      "completed": 4
+    },
+    "original_valid_grades": 4,
+    "new_recovery_valid_grades": 27,
+    "request_bytes_identical": true,
+    "interruption_sha256": "c226c6fa445272f99507d2d22d405372d9b55d9ef4f10f00b117ff609c689f5d"
+  },
+  "comparisons": {
+    "content": {
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "tasks": 30,
+      "scores": {
+        "content": {
+          "tasks": 30,
+          "point_macro_average": 0.9305555555555556,
+          "support_counts": {
+            "supported": 112,
+            "partially_supported": 2
+          },
+          "citation_precision": {
+            "numerator": 120,
+            "denominator": 122,
+            "value": 0.9836065573770492
+          },
+          "citation_coverage": {
+            "numerator": 109,
+            "denominator": 114,
+            "value": 0.956140350877193
+          },
+          "boundary_mean": 1.8333333333333333,
+          "all_five_pass": 20
+        },
+        "rerank": {
+          "tasks": 30,
+          "point_macro_average": 0.9777777777777777,
+          "support_counts": {
+            "supported": 110,
+            "partially_supported": 2
+          },
+          "citation_precision": {
+            "numerator": 121,
+            "denominator": 123,
+            "value": 0.983739837398374
+          },
+          "citation_coverage": {
+            "numerator": 107,
+            "denominator": 112,
+            "value": 0.9553571428571429
+          },
+          "boundary_mean": 1.9666666666666666,
+          "all_five_pass": 23
+        }
+      },
+      "point_delta": 0.047222222222222165,
+      "point_wins": [
+        "PFI2-011",
+        "PFI2-013",
+        "PFI2-018"
+      ],
+      "point_losses": [
+        "PFI2-032"
+      ],
+      "all_five_wins": [
+        "PFI2-011",
+        "PFI2-013",
+        "PFI2-027",
+        "PFI2-029"
+      ],
+      "all_five_losses": [
+        "PFI2-032"
+      ],
+      "exclusions": [
+        {
+          "task_id": "PFI2-023",
+          "missing_or_flagged": [
+            "rerank"
+          ]
+        },
+        {
+          "task_id": "PFI2-024",
+          "missing_or_flagged": [
+            "content"
+          ]
+        }
+      ]
+    },
+    "tables": {
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "tasks": 31,
+      "scores": {
+        "tables": {
+          "tasks": 31,
+          "point_macro_average": 0.9408602150537635,
+          "support_counts": {
+            "supported": 107,
+            "partially_supported": 3
+          },
+          "citation_precision": {
+            "numerator": 118,
+            "denominator": 120,
+            "value": 0.9833333333333333
+          },
+          "citation_coverage": {
+            "numerator": 107,
+            "denominator": 110,
+            "value": 0.9727272727272728
+          },
+          "boundary_mean": 1.8387096774193548,
+          "all_five_pass": 23
+        },
+        "rerank": {
+          "tasks": 31,
+          "point_macro_average": 0.978494623655914,
+          "support_counts": {
+            "supported": 117,
+            "partially_supported": 2
+          },
+          "citation_precision": {
+            "numerator": 129,
+            "denominator": 131,
+            "value": 0.9847328244274809
+          },
+          "citation_coverage": {
+            "numerator": 114,
+            "denominator": 119,
+            "value": 0.957983193277311
+          },
+          "boundary_mean": 1.967741935483871,
+          "all_five_pass": 24
+        }
+      },
+      "point_delta": 0.037634408602150504,
+      "point_wins": [
+        "PFI2-011",
+        "PFI2-013",
+        "PFI2-018"
+      ],
+      "point_losses": [
+        "PFI2-032"
+      ],
+      "all_five_wins": [
+        "PFI2-011",
+        "PFI2-013",
+        "PFI2-020"
+      ],
+      "all_five_losses": [
+        "PFI2-028",
+        "PFI2-032"
+      ],
+      "exclusions": [
+        {
+          "task_id": "PFI2-023",
+          "missing_or_flagged": [
+            "rerank"
+          ]
+        }
+      ]
+    },
+    "pymupdf": {
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "tasks": 31,
+      "scores": {
+        "pymupdf": {
+          "tasks": 31,
+          "point_macro_average": 0.9596774193548387,
+          "support_counts": {
+            "supported": 123
+          },
+          "citation_precision": {
+            "numerator": 127,
+            "denominator": 130,
+            "value": 0.9769230769230769
+          },
+          "citation_coverage": {
+            "numerator": 119,
+            "denominator": 123,
+            "value": 0.967479674796748
+          },
+          "boundary_mean": 1.935483870967742,
+          "all_five_pass": 22
+        },
+        "rerank": {
+          "tasks": 31,
+          "point_macro_average": 0.978494623655914,
+          "support_counts": {
+            "supported": 117,
+            "partially_supported": 2
+          },
+          "citation_precision": {
+            "numerator": 129,
+            "denominator": 131,
+            "value": 0.9847328244274809
+          },
+          "citation_coverage": {
+            "numerator": 114,
+            "denominator": 119,
+            "value": 0.957983193277311
+          },
+          "boundary_mean": 1.967741935483871,
+          "all_five_pass": 24
+        }
+      },
+      "point_delta": 0.018817204301075252,
+      "point_wins": [
+        "PFI2-011",
+        "PFI2-015",
+        "PFI2-018"
+      ],
+      "point_losses": [
+        "PFI2-032"
+      ],
+      "all_five_wins": [
+        "PFI2-011",
+        "PFI2-020",
+        "PFI2-024"
+      ],
+      "all_five_losses": [
+        "PFI2-032"
+      ],
+      "exclusions": [
+        {
+          "task_id": "PFI2-023",
+          "missing_or_flagged": [
+            "pymupdf",
+            "rerank"
+          ]
+        }
+      ]
+    }
+  },
+  "controls": {
+    "question_dataset_equal": true,
+    "configuration_equal_except_explicit_rerank": true,
+    "changed_runtime_files": [
+      "literature_rag/adapters/providers/rerank.py",
+      "literature_rag/application/rerank.py",
+      "literature_rag/application/retrieve.py",
+      "literature_rag/config.py",
+      "literature_rag/diagnostics.py",
+      "literature_rag/ports/protocols.py",
+      "literature_worker.py"
+    ],
+    "unchanged_runtime_files": [
+      "literature_rag/__init__.py",
+      "literature_rag/adapters/__init__.py",
+      "literature_rag/adapters/chroma/__init__.py",
+      "literature_rag/adapters/chroma/vector_store.py",
+      "literature_rag/adapters/providers/__init__.py",
+      "literature_rag/adapters/providers/deepseek.py",
+      "literature_rag/adapters/providers/openai.py",
+      "literature_rag/adapters/sqlite/__init__.py",
+      "literature_rag/adapters/sqlite/metadata_store.py",
+      "literature_rag/application/__init__.py",
+      "literature_rag/application/answer_question.py",
+      "literature_rag/application/citations.py",
+      "literature_rag/application/context.py",
+      "literature_rag/application/prompts.py",
+      "literature_rag/application/structure.py",
+      "literature_rag/application/table_evidence.py",
+      "literature_rag/domain/__init__.py",
+      "literature_rag/domain/errors.py",
+      "literature_rag/domain/models.py",
+      "literature_rag/ports/__init__.py"
+    ],
+    "comparison": "Original fingerprints verified; CRLF/LF normalized only for source comparison."
+  },
+  "corpus_proof": {
+    "identical_evidence_chunks": 85,
+    "identical_primary_vectors": 85,
+    "identical_sidecars": {
+      "structure.json": "112d7ab10cc4458b281ed9877b149f45bbcb48d5a9ada1b6586d2c987a424a2f",
+      "native-source.json": "69af8f19c6a666b50d115df306795382fcc70d15eacbc6a7ac908125d0b4aa3d",
+      "quality-ledger.json": "46ecdcb2fe2551a593f84b5747c4d296fd902d62441e58b83faa93217e0c126c",
+      "chunk-organization.json": "9121955468b27880766e019dd0dc3630cf8301cdf0b88f548f6983702833bc62",
+      "table-retrieval.json": "cae02b3a95a7ceab9a46172842f09a92e5e74fc8060a2e94ed6ee9a9431063ae",
+      "table-row-vectors.json": "4f36810cac09ba3fa40286a8068d9f93fea7f8721c484a3f0ddf642916c212f9"
+    },
+    "new_document_embedding_calls": 0
+  },
+  "rerank_accounting": {
+    "answering_calls": 32,
+    "known_tokens": {
+      "input_tokens": 395668,
+      "output_tokens": 0
+    },
+    "usage_unknown_calls": 0,
+    "median_call_seconds": 1.238,
+    "actual_billing": null,
+    "independent_probe_calls": 1,
+    "probe": {
+      "version": "candidate-rerank-v1",
+      "model": "BAAI/bge-reranker-v2-m3",
+      "status": "completed",
+      "api_calls": 1,
+      "candidate_count": 50,
+      "request_sha256": "178e80eca2476626d8c8cfb24c15d35f7b360633e117e21b74e57f6e2ae96738",
+      "usage": {
+        "input_tokens": 12627,
+        "output_tokens": 0
+      },
+      "monetary_cost": null,
+      "max_chunks_per_doc": 1024,
+      "overlap_tokens": 80,
+      "application_truncation": false,
+      "http_status": 200,
+      "response_sha256": "afd3ed2bbf883391fa4c194c7bbebd43af0606ae3a0dd527bd4e913f308242d2",
+      "scores": [
+        0.27127960324287415,
+        0.752815306186676,
+        0.005012338515371084,
+        0.0557788610458374,
+        0.003675647545605898,
+        0.07619722932577133,
+        0.03065868653357029,
+        0.02945512719452381,
+        0.05913831293582916,
+        0.005322166718542576,
+        0.007541012018918991,
+        0.02570745348930359,
+        0.004131499212235212,
+        0.051470715552568436,
+        0.17375849187374115,
+        0.02614077925682068,
+        0.0322834737598896,
+        0.017507031559944153,
+        0.09405864030122757,
+        0.08440538495779037,
+        0.012227053754031658,
+        0.1002860888838768,
+        0.025631781667470932,
+        0.1304924488067627,
+        0.07646495848894119,
+        0.005975705571472645,
+        0.019405638799071312,
+        0.14398720860481262,
+        0.006292982026934624,
+        0.004437681287527084,
+        0.05360639467835426,
+        0.031025521457195282,
+        0.006086316891014576,
+        0.020405316725373268,
+        0.008922997862100601,
+        0.00113593356218189,
+        0.009220171719789505,
+        0.026522371917963028,
+        0.004522987641394138,
+        0.0010787402279675007,
+        0.0002074547955999151,
+        0.04019712656736374,
+        0.0012976403813809156,
+        0.0013230035547167063,
+        0.013056767173111439,
+        0.020586419850587845,
+        0.010785127058625221,
+        0.003801551414653659,
+        0.004756811540573835,
+        0.007686534430831671
+      ],
+      "latency_ms": 1319
+    },
+    "probe_included_in_answer_runtime": false,
+    "total_new_rerank_calls": 33
+  },
+  "answer_runtime": {
+    "rerank": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 32
+      },
+      "generation_calls": 34,
+      "generation_known_tokens": {
+        "prompt_tokens": 182622,
+        "completion_tokens": 32991,
+        "total_tokens": 215613,
+        "reasoning_tokens": 23534,
+        "cached_tokens": 26880
+      },
+      "generation_usage_unknown_calls": 0,
+      "embedding_known_tokens": 1011,
+      "embedding_usage_unknown_questions": 0,
+      "median_end_to_end_seconds": 19.9215,
+      "total_sequential_seconds": 647.12,
+      "median_context_chars": 14600.5,
+      "budget_limited_questions": [],
+      "actual_billing_usd": null,
+      "notes": "Reasoning tokens are a subset of completion tokens, not additional tokens."
+    },
+    "content": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 32
+      },
+      "generation_calls": 33,
+      "generation_known_tokens": {
+        "prompt_tokens": 156163,
+        "completion_tokens": 31662,
+        "total_tokens": 187825,
+        "reasoning_tokens": 22650,
+        "cached_tokens": 59264
+      },
+      "generation_usage_unknown_calls": 0,
+      "embedding_known_tokens": 1011,
+      "embedding_usage_unknown_questions": 0,
+      "median_end_to_end_seconds": 13.2305,
+      "total_sequential_seconds": 443.537,
+      "median_context_chars": 13382.5,
+      "budget_limited_questions": [],
+      "actual_billing_usd": null,
+      "notes": "Reasoning tokens are a subset of completion tokens, not additional tokens."
+    },
+    "tables": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 32
+      },
+      "generation_calls": 39,
+      "generation_known_tokens": {
+        "prompt_tokens": 181009,
+        "completion_tokens": 36049,
+        "total_tokens": 217058,
+        "reasoning_tokens": 25601,
+        "cached_tokens": 140672
+      },
+      "generation_usage_unknown_calls": 0,
+      "embedding_known_tokens": 1011,
+      "embedding_usage_unknown_questions": 0,
+      "median_end_to_end_seconds": 13.127,
+      "total_sequential_seconds": 444.707,
+      "median_context_chars": 13284.0,
+      "budget_limited_questions": [],
+      "actual_billing_usd": null,
+      "notes": "Reasoning tokens are a subset of completion tokens, not additional tokens."
+    },
+    "pymupdf": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 32
+      },
+      "generation_calls": 33,
+      "generation_known_tokens": {
+        "prompt_tokens": 126937,
+        "completion_tokens": 33562,
+        "total_tokens": 160499,
+        "reasoning_tokens": 24894,
+        "cached_tokens": 14592
+      },
+      "generation_usage_unknown_calls": 0,
+      "embedding_known_tokens": 1011,
+      "embedding_usage_unknown_questions": 0,
+      "median_end_to_end_seconds": 12.389,
+      "total_sequential_seconds": 428.883,
+      "median_context_chars": 11440.5,
+      "budget_limited_questions": [],
+      "actual_billing_usd": null,
+      "notes": "Reasoning tokens are a subset of completion tokens, not additional tokens."
+    }
+  },
+  "retrieval_summary": {
+    "reference_span_counts": {
+      "rerank": {
+        "top8": {
+          "complete": 37,
+          "alignment_unknown_or_review_required": 8,
+          "missing": 2
+        },
+        "context": {
+          "complete": 37,
+          "alignment_unknown_or_review_required": 8,
+          "missing": 2
+        }
+      },
+      "content": {
+        "top8": {
+          "complete": 34,
+          "alignment_unknown_or_review_required": 8,
+          "missing": 5
+        },
+        "context": {
+          "complete": 37,
+          "alignment_unknown_or_review_required": 8,
+          "missing": 2
+        }
+      },
+      "vector_same_pool": {
+        "top8": {
+          "complete": 34,
+          "alignment_unknown_or_review_required": 8,
+          "missing": 5
+        }
+      }
+    },
+    "questions_with_identical_original_candidate_order": 26,
+    "questions_with_identical_candidate_set": 32,
+    "maximum_shared_candidate_cosine_difference": 0.002088785171508789,
+    "alignment_statuses": {
+      "located": 20,
+      "review_required": 7,
+      "unresolved": 1
+    }
+  },
+  "default_configuration_unchanged": true,
+  "analyst_notes": [
+    "共同30题，要点93.06%→97.78%，五项全部达标20→23；单条引用有效率基本持平，事实支持率98.25%→98.21%、引用组完整率95.61%→95.54%略降，没有全面提高。",
+    "第11题Table 1从本轮向量第15位升至重排第3位，关键数据进入模型。Jev将两项判为满分，但实际回答没有明确写出4000→8000转的数值反例；第二要点存在可能高估，需另行复核。本报告保留原判，不将其称为已完整满足要求。",
+    "第18题明确区分相对峰面积与绝对含量；第13题的要点与限定条件判定改善。第32题正文相关系数进入上下文，但摘要0.888未进入，回答遗漏摘要与正文冲突，第二要点降为0.5。",
+    "主命中的参考原文区间覆盖提高，但经过原有上下文补全后，两版总覆盖相同；第11题补足了关键表，同时其他题仍有未覆盖区间。位置覆盖不是语义充分性的证明。",
+    "这是单轮开发集结果，生成表达、裁判边界和远端模型计算差异仍会影响得分；未证明稳定提升或新论文泛化。"
+  ],
+  "limitations": [
+    "One generation run and first-valid Jev grades; development set, no stability or holdout claim.",
+    "Raw source-span coverage does not prove semantic evidence sufficiency; uncertain alignments are excluded from confirmed coverage.",
+    "Remote model aliases/settings do not guarantee identical provider weights.",
+    "Money unknown for answer and rerank calls; judge API-reported costs are not invoices."
+  ]
+}

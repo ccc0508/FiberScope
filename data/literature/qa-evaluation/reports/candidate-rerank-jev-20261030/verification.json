@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "questions": 32,
+  "valid_jev_grades": 31,
+  "invalid_jev_task": "PFI2-023",
+  "primary_paired_questions": 30,
+  "other_comparisons_paired_questions": 31,
+  "source_chunks_identical": 85,
+  "source_text_pages_and_rerank_hashes_verified": true,
+  "independent_arithmetic_verified": true,
+  "original_candidate_sets_equal": 32,
+  "original_candidate_orders_equal": 26,
+  "all_grading_attempts_counted": 60,
+  "failed_or_interrupted_cost_unknown": 26,
+  "original_valid_grades_preserved": 4,
+  "proxy_recovery_valid_grades": 27,
+  "recovery_inputs_byte_identical": true,
+  "no_valid_answer_rescored": true,
+  "missing_not_zero": true,
+  "new_luna_calls": 0,
+  "default_configuration_unchanged": true,
+  "reviewer_caveat": "PFI2-011 required numeric counterexample may have been overcredited by Jev; original grade retained and flagged."
+}

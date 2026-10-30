@@ -1,0 +1,123 @@
+[
+  {
+    "task_id": "PFI2-023",
+    "attempts": [
+      {
+        "attempt": 1,
+        "status": "invalid_scorecard",
+        "validation_failure": "ValueError: Group and citation decisions disagree",
+        "request_sha256": "b1939008dcad9f4f9e49a973bd98752e5f7a1eb0f56a4281546c0af469d57a7d",
+        "response_sha256": "62e7f820e9ec418dfce3fa043b51c840d26b4126a606813e0c2d54f8db539840",
+        "record_sha256": "7df34b57148ce3e9b3d45f4881aece65589db5e06eb706451d22253157b021e3",
+        "duration_ms": 3696,
+        "usage": {
+          "input_tokens": 64822,
+          "output_tokens": 2741,
+          "total_tokens": 67563,
+          "reported_cost_usd": 0.002722524
+        },
+        "original_choices": {
+          "boundary": "appropriate",
+          "reference_check": "sound",
+          "point_P1": "complete",
+          "point_P2": "complete",
+          "point_P3": "complete",
+          "kind_C1": "fact",
+          "support_C1": "supported",
+          "basis_C1": "E21",
+          "group_C1": "complete",
+          "citation_C1_1": "supported",
+          "kind_C2": "fact",
+          "support_C2": "supported",
+          "basis_C2": "E20",
+          "group_C2": "complete",
+          "citation_C2_1": "supported",
+          "kind_C3": "fact",
+          "support_C3": "supported",
+          "basis_C3": "NONE",
+          "group_C3": "complete",
+          "citation_C3_1": "unsupported",
+          "citation_C3_2": "unsupported"
+        }
+      },
+      {
+        "attempt": 2,
+        "status": "invalid_scorecard",
+        "validation_failure": "ValueError: Group and citation decisions disagree",
+        "request_sha256": "b1939008dcad9f4f9e49a973bd98752e5f7a1eb0f56a4281546c0af469d57a7d",
+        "response_sha256": "89c70b9409d35ff7b5b5636167f8b982deb6eb0a57a643d6de6045cb464dc2dd",
+        "record_sha256": "635d38f1e434c0e542de5f5b8da34be6131f7ce713a57481c80750fa3ded90b5",
+        "duration_ms": 3689,
+        "usage": {
+          "input_tokens": 64822,
+          "output_tokens": 2741,
+          "total_tokens": 67563,
+          "reported_cost_usd": 0.002722524
+        },
+        "original_choices": {
+          "boundary": "appropriate",
+          "reference_check": "sound",
+          "point_P1": "complete",
+          "point_P2": "complete",
+          "point_P3": "complete",
+          "kind_C1": "fact",
+          "support_C1": "supported",
+          "basis_C1": "E21",
+          "group_C1": "complete",
+          "citation_C1_1": "supported",
+          "kind_C2": "fact",
+          "support_C2": "supported",
+          "basis_C2": "E20",
+          "group_C2": "complete",
+          "citation_C2_1": "supported",
+          "kind_C3": "fact",
+          "support_C3": "supported",
+          "basis_C3": "NONE",
+          "group_C3": "complete",
+          "citation_C3_1": "unsupported",
+          "citation_C3_2": "unsupported"
+        }
+      },
+      {
+        "attempt": 3,
+        "status": "invalid_scorecard",
+        "validation_failure": "ValueError: Group and citation decisions disagree",
+        "request_sha256": "b1939008dcad9f4f9e49a973bd98752e5f7a1eb0f56a4281546c0af469d57a7d",
+        "response_sha256": "211bfd0b64f4a9fbdf9abaf5674f6ad4de5a72c6a9d802a8f2ef5704fc7cdfee",
+        "record_sha256": "862758bc6966ab82feee72b13de1674bc930b8964dafd5133b68c3ffe32c0f3d",
+        "duration_ms": 3427,
+        "usage": {
+          "input_tokens": 64822,
+          "output_tokens": 2741,
+          "total_tokens": 67563,
+          "reported_cost_usd": 0.002722524
+        },
+        "original_choices": {
+          "boundary": "appropriate",
+          "reference_check": "sound",
+          "point_P1": "complete",
+          "point_P2": "complete",
+          "point_P3": "complete",
+          "kind_C1": "fact",
+          "support_C1": "supported",
+          "basis_C1": "E21",
+          "group_C1": "complete",
+          "citation_C1_1": "supported",
+          "kind_C2": "fact",
+          "support_C2": "supported",
+          "basis_C2": "E20",
+          "group_C2": "complete",
+          "citation_C2_1": "supported",
+          "kind_C3": "fact",
+          "support_C3": "supported",
+          "basis_C3": "NONE",
+          "group_C3": "complete",
+          "citation_C3_1": "unsupported",
+          "citation_C3_2": "unsupported"
+        }
+      }
+    ],
+    "missing_not_zero": true,
+    "execution_phase": "proxy_recovery"
+  }
+]
