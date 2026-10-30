@@ -112,3 +112,14 @@ def test_bottleneck_distinguishes_ranking_threshold_and_neighbor_recovery():
     assert diag.bottleneck(stages)=='neighbor_recovered'
     stages['passing50']['status']='missing'
     assert diag.bottleneck(stages)=='threshold_or_missing_metadata'
+
+
+def test_reordering_is_distinguished_from_changed_source_membership():
+    a=dict(chunk_id='a',ref='[1]',text='Text A',source_chunks=[dict(chunk_id='a')])
+    b=dict(chunk_id='b',ref='[2]',text='Text B',source_chunks=[dict(chunk_id='b')])
+    old=dict(retrieval_seed_evidence=[a,b],retrieved_evidence=[a,b])
+    same=diag.replay_agreement(dict(seeds=[a,b],final=[a,b]),old)
+    assert all(same.values())
+    moved=diag.replay_agreement(dict(seeds=[b,a],final=[b,a]),old)
+    assert moved['top8_equal_history'] is False and moved['context_equal_history'] is False
+    assert moved['top8_members_equal_history'] is True and moved['context_sources_equal_history'] is True

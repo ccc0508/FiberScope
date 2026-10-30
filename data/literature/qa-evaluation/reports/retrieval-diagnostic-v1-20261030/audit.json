@@ -1,0 +1,33 @@
+{
+  "study_sha256": "1564aae5a7dcfb62c33ccb9fa5e67a2eeb3cfb688468b69e3e9f93c39a7e6ab0",
+  "query_vectors_sha256": "f9f0e47408656954da7c28b29b32319b8e2d5ef8aadd6d909881a8575668a62f",
+  "replay_seals": {
+    "pymupdf": {
+      "result_sha256": "b0ebdeb0eac2c6163da12dd11ba683476d96f1839e0de6178b3bb6e826adc2f3",
+      "payload_sha256": "6f4120d5cf4379ef41aa5a411224ad138e569befc4692aba829d17fb01b49f8d",
+      "queries_sha256": "f9f0e47408656954da7c28b29b32319b8e2d5ef8aadd6d909881a8575668a62f",
+      "worker_sha256": "f00850353b26e1040e44f9b4b17cf026064cac49f755b2feee4a3ac171f16cd6"
+    },
+    "native": {
+      "result_sha256": "19e9a3046820454e16bbd82b85c62e887c9a18c02cf570f5d8d3f592099f57e8",
+      "payload_sha256": "575954ca3c3b8c75aeaf78254e69c35ad6a2c1aade883a3dbaadf4495833d646",
+      "queries_sha256": "f9f0e47408656954da7c28b29b32319b8e2d5ef8aadd6d909881a8575668a62f",
+      "worker_sha256": "f00850353b26e1040e44f9b4b17cf026064cac49f755b2feee4a3ac171f16cd6"
+    },
+    "sections": {
+      "result_sha256": "adeeade48f59059b519156851cf3d1933a042db38d971cfc853f4ff58a3d8b08",
+      "payload_sha256": "9130aee3c61fb24be7cf923ab6bd15935efc298672ef9a0d4bfe51964636ca6e",
+      "queries_sha256": "f9f0e47408656954da7c28b29b32319b8e2d5ef8aadd6d909881a8575668a62f",
+      "worker_sha256": "f00850353b26e1040e44f9b4b17cf026064cac49f755b2feee4a3ac171f16cd6"
+    }
+  },
+  "original_run_sha256": {
+    "pymupdf": "694081cd2c5f96da7de27c59adac091e37ed7d02e25ee78ec0c940b7c30b3428",
+    "native": "9efd62860ff0c317d48002b52378c5f9c99af5aa4bd9ea0de93ca060c160fdcc",
+    "sections": "646e59094aab622711e81004c877178c4eedf9b0c01640201bbc1a4145478baf"
+  },
+  "rules_sha256": "434502365e0f58c5f5109c1f92a97b62562b58966d84facfd7fcdd79831790ed",
+  "worker_sha256": "f00850353b26e1040e44f9b4b17cf026064cac49f755b2feee4a3ac171f16cd6",
+  "original_libraries_unchanged": true,
+  "no_scientific_scores_assigned": true
+}

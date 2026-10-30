@@ -1,0 +1,120 @@
+{
+  "version": "retrieval-diagnostic-v1-20261030",
+  "question_count": 32,
+  "indexes": 3,
+  "summary": {
+    "pymupdf": {
+      "queries": 32,
+      "top8_equal_history": 24,
+      "top8_members_equal_history": 30,
+      "context_equal_history": 24,
+      "context_sources_equal_history": 30,
+      "strict_requests": 20,
+      "strict_counts": {
+        "library": 20,
+        "top50": 20,
+        "passing50": 20,
+        "top8": 16,
+        "final": 18,
+        "historical_top8": 16,
+        "historical_final": 18
+      },
+      "strict_bottlenecks": {
+        "context_present": 16,
+        "neighbor_recovered": 2,
+        "outside_top8_or_partial": 2
+      },
+      "alignment_counts": {
+        "located": 28
+      }
+    },
+    "native": {
+      "queries": 32,
+      "top8_equal_history": 25,
+      "top8_members_equal_history": 30,
+      "context_equal_history": 25,
+      "context_sources_equal_history": 30,
+      "strict_requests": 20,
+      "strict_counts": {
+        "library": 20,
+        "top50": 20,
+        "passing50": 20,
+        "top8": 18,
+        "final": 18,
+        "historical_top8": 18,
+        "historical_final": 18
+      },
+      "strict_bottlenecks": {
+        "context_present": 18,
+        "outside_top8_or_partial": 2
+      },
+      "alignment_counts": {
+        "located": 11,
+        "review_required": 15,
+        "unresolved": 2
+      }
+    },
+    "sections": {
+      "queries": 32,
+      "top8_equal_history": 25,
+      "top8_members_equal_history": 32,
+      "context_equal_history": 28,
+      "context_sources_equal_history": 32,
+      "strict_requests": 20,
+      "strict_counts": {
+        "library": 20,
+        "top50": 20,
+        "passing50": 20,
+        "top8": 18,
+        "final": 18,
+        "historical_top8": 18,
+        "historical_final": 18
+      },
+      "strict_bottlenecks": {
+        "context_present": 18,
+        "outside_top8_or_partial": 2
+      },
+      "alignment_counts": {
+        "located": 11,
+        "review_required": 15,
+        "unresolved": 2
+      }
+    }
+  },
+  "common_strict_evidence_ids": [
+    "E01",
+    "E02",
+    "E03",
+    "E04",
+    "E08",
+    "E09",
+    "E18",
+    "E19",
+    "E22",
+    "E23",
+    "E25"
+  ],
+  "embedding": {
+    "logical_api_calls": 1,
+    "usage": {
+      "prompt_tokens": 1011,
+      "completion_tokens": 0,
+      "total_tokens": 1011
+    },
+    "actual_billing_usd": null,
+    "dimensions": 1024,
+    "requested_model": "BAAI/bge-m3",
+    "batching": "One batch of unchanged stripped questions; same vectors reused across all three indexes."
+  },
+  "generation_calls": 0,
+  "judge_calls": 0,
+  "reference_evidence_count": 28,
+  "policy": "Reported coverage measures identified raw source spans. Near alignment is provisional; scope points are not graded. No page-only, keyword-only, answer-quality or semantic-sufficiency score is assigned.",
+  "limitations": [
+    "Top50 are newly replayed, not retroactively observed historical candidates.",
+    "Raw source-interval coverage is a diagnostic proxy, not semantic evidence sufficiency or an answer score.",
+    "Near text alignment is provisional; scientific-number or formula differences require source review.",
+    "Only one PDF and 32 development questions; no new-paper generalization claim."
+  ],
+  "application_default_unchanged": true
+}

@@ -185,6 +185,14 @@ def context_signature(evidences):
     return [(e['ref'],e['text'],tuple(s['chunk_id'] for s in e.get('source_chunks',[]))) for e in evidences]
 
 
+def replay_agreement(probe,historical):
+    new_ids=[e['chunk_id'] for e in probe['seeds']]
+    old_ids=[e['chunk_id'] for e in historical['retrieval_seed_evidence']]
+    return dict(top8_equal_history=new_ids==old_ids,top8_members_equal_history=set(new_ids)==set(old_ids),
+        context_equal_history=context_signature(probe['final'])==context_signature(historical['retrieved_evidence']),
+        context_sources_equal_history=set(final_ids(probe['final']))==set(final_ids(historical['retrieved_evidence'])))
+
+
 def bottleneck(stages):
     if stages['library']['status']!='complete':return 'source_not_fully_indexed'
     if stages['top50']['status']!='complete':return 'outside_top50_or_partial'
@@ -238,9 +246,12 @@ def report(refresh=False):
         require(libraries[system]['alignment']==judge.read_json(PRIVATE/(system+'-alignment.json')),'Alignment no longer reproduces')
         original=ROOT/'.rag-data/baselines'/source['baseline_id']/'library'
         require({p.relative_to(original).as_posix():judge.digest(p) for p in original.rglob('*') if p.is_file()}==source['original_library_files'],'Original library changed')
+        for tid,entry in history[system].items():
+            require(judge.digest(ROOT/'.rag-data/evaluations'/source['run_id']/'results'/(tid+'.json'))==entry['result_sha256'],'Original historical answer changed')
         probes[system]={r['task_id']:r for r in judge.read_json(path)['records']}
     common_strict=[e['id'] for e in evidence if all(libraries[s]['alignment'][e['id']]['status']=='located' for s in SOURCES)]
-    rows=[];summary={s:dict(queries=32,top8_equal_history=0,context_equal_history=0,strict_requests=0,
+    rows=[];summary={s:dict(queries=32,top8_equal_history=0,top8_members_equal_history=0,
+        context_equal_history=0,context_sources_equal_history=0,strict_requests=0,
         strict_counts=Counter(),strict_bottlenecks=Counter(),alignment_counts=dict(Counter(a['status'] for a in libraries[s]['alignment'].values()))) for s in SOURCES}
     for task in study['tasks']:
         tid=task['task_id'];case=references['cases'][task['case_id']]
@@ -250,9 +261,8 @@ def report(refresh=False):
             reference_answer=case['reference_answer'],required_points=required_points,requested_evidence_ids=wanted,systems={})
         for system in SOURCES:
             probe=probes[system][tid];old=history[system][tid]['response'];lib=libraries[system]
-            equal=[e['chunk_id'] for e in probe['seeds']]==[e['chunk_id'] for e in old['retrieval_seed_evidence']]
-            context_equal=context_signature(probe['final'])==context_signature(old['retrieved_evidence'])
-            summary[system]['top8_equal_history']+=equal;summary[system]['context_equal_history']+=context_equal
+            agreement=replay_agreement(probe,old)
+            for name,value in agreement.items():summary[system][name]+=value
             traces={eid:evidence_trace(lib['alignment'][eid],probe,old,lib) for eid in wanted}
             for eid,trace in traces.items():
                 if eid not in common_strict:
@@ -260,7 +270,7 @@ def report(refresh=False):
                 summary[system]['strict_requests']+=1;summary[system]['strict_bottlenecks'][trace['positional_bottleneck']]+=1
                 for name,status in trace['stages'].items():
                     summary[system]['strict_counts'][name]+=status['status']=='complete'
-            row['systems'][system]=dict(top8_equal_history=equal,context_equal_history=context_equal,evidence=traces,
+            row['systems'][system]=dict(**agreement,evidence=traces,
                 probe=probe,historical_answer=old['answer'],historical_final=old['retrieved_evidence'],
                 historical_result_sha256=history[system][tid]['result_sha256'])
         rows.append(row)
@@ -303,11 +313,22 @@ def render(result,rows,evidence,libraries):
     stage_order=['top50','passing50','top8','final','historical_final']
     stage_names=['重放50候选','通过阈值','重放前8','重放上下文','历史上下文']
     fraction=lambda n,d:f'{n}/{d} ({n/d*100:.2f}%)' if d else '不适用'
+    focused={r['task_id']:r for r in rows if r['task_id'] in {'PFI2-011','PFI2-032'}}
+    findings=[]
+    for tid,eid,name in [('PFI2-011','E08','Table 1关键数值表'),('PFI2-032','E20','摘要相关系数段')]:
+        trace=focused[tid]['systems']['sections']['evidence'][eid]
+        first=trace['first_intersection'];agreement=focused[tid]['systems']['sections']
+        findings.append(f"{tid}：章节107块版的{name}在本次重放中排第{first['rank'] if first else '未定位'}，"
+            f"分数{first['score']:.6f}，通过0.35阈值；前8{labels[trace['stages']['top8']['status']]}、最终上下文{labels[trace['stages']['final']['status']]}。"
+            f"这两阶段与历史记录{'一致' if agreement['top8_equal_history'] and agreement['context_equal_history'] else '存在差异，需分开解释'}。")
+    findings+=['这两个重点案例支持优先诊断50候选到前8的排序与证据覆盖，而不是直接降低相似度阈值。摘要段存在近似文字对齐，仍保留差异记录，不混入严格覆盖汇总。',
+        '共同严格定位的20个关联引文请求均进入50候选并通过阈值，但最终只有18个齐全；这只是限定引文集合，不能推断其余问题也都属于排序问题。']
     md=['# 32题检索诊断：候选、排序与原文覆盖','',
         '2026-10-30。本次只重放检索，不重新答题、不调用Jev或Luna、不修改旧答案与评分。三套封存索引共用同一批BGE-M3问题向量。','',
         '**50个候选属于本次诊断重放；历史运行没有保存50候选。** 历史前8和上下文来自原始答题记录，另行核对是否与本次重放一致。','',
+        '## 本轮主要发现','',*['- '+line for line in findings],'',
         '## 统计口径','',
-        f"三套索引共同可严格定位的标注引文为{len(result['common_strict_evidence_ids'])}/{len(evidence)}条："+', '.join(result['common_strict_evidence_ids'])+'。汇总按“题目×所需引文”去重计数，三个版本使用相同分母，不是32题的答案正确率。',
+        f"三套索引共同可严格定位的标注引文为{len(result['common_strict_evidence_ids'])}/{len(evidence)}条："+', '.join(result['common_strict_evidence_ids'])+'。汇总按“题目×关联引文”去重计数，三个版本使用相同分母，不是32题的答案正确率。同一表格可能支撑多条标注，这些请求不视为独立实验。',
         '引文跨块时检查全部原文范围是否覆盖；表格通过表号、页码与全部标注数据行定位。相同页码或相同关键词不算齐全。近似对齐和未定位单列，不记为漏召回，也不进入共同严格统计。',
         '部分引文比某个要点实际需要的内容更长，也可能存在未标注的替代证据。因此这里诊断的是标注原文的位置覆盖，不是语义充分性、标准答案得分或正式第六项评分。','',
         '## 共同严格定位引文的覆盖','',
@@ -320,12 +341,18 @@ def render(result,rows,evidence,libraries):
         '<p><strong>重放与历史分开：</strong>50候选由本次重放采集；历史仅有前8与最终上下文。下面逐题检查两者是否一致，不把新采集的排名冒充历史观测。</p>',
         '<p><strong>覆盖定义：</strong>按原文范围或验证后的完整表格定位。标注引文覆盖不是语义充分性；可能遗漏其他有效证据。近似文字对齐单列待核查，范围声明类要点不参与位置覆盖统计。</p>',
         f'<p>共同严格定位引文{len(result["common_strict_evidence_ids"])}/{len(evidence)}条；汇总采用相同“题目×引文”分母。近似映射结果仍在每题明细展示。</p>',
+        '<h2>本轮主要发现</h2><ul>'+''.join('<li>'+e(line)+'</li>' for line in findings)+'</ul>',
         '<h2>共同严格定位引文：相同请求集合</h2><div class="scroll"><table><tr><th>版本</th><th>引文请求</th><th>50候选齐全</th><th>阈值后齐全</th><th>前8齐全</th><th>最终上下文齐全</th><th>历史前8一致</th><th>历史上下文一致</th></tr>']
     for system,s in result['summary'].items():
         values=[names[system],str(s['strict_requests']),*[fraction(s['strict_counts'].get(stage,0),s['strict_requests']) for stage in stage_order[:-1]],
             f"{s['top8_equal_history']}/32",f"{s['context_equal_history']}/32"]
         md.append('| '+' | '.join(values)+' |');h.append('<tr>'+''.join('<td>'+e(v)+'</td>' for v in values)+'</tr>')
-    h.append('</table></div><h2>重点题：第11、32题</h2>')
+    h.append('</table></div><p>上表“一致”要求顺序及文字严格相同。下方另列来源集合是否相同；排序变化不等于换了一套证据。部分重放成员发生变化，具体历史50候选仍不可回溯，不能据本次排名断言其历史精确排名。</p>')
+    md+=['','上表复现计数要求顺序及文字严格一致；成员集合另列如下。部分重放存在成员变化，其原因未被本次实验识别，不把本次排名当作历史精确排名。','']
+    for system,s in result['summary'].items():
+        line=f"{names[system]}：前8成员集合与历史相同{s['top8_members_equal_history']}/32，最终上下文来源集合相同{s['context_sources_equal_history']}/32。"
+        md.append('- '+line);h.append('<p>'+e(line)+'</p>')
+    h.append('<h2>重点题：第11、32题</h2>')
     md+=['','## 重点题定位','']
     for row in rows:
         if row['task_id'] not in {'PFI2-011','PFI2-032'}:continue
@@ -346,7 +373,9 @@ def render(result,rows,evidence,libraries):
         if not row['requested_evidence_ids']:
             h.append('<p class="warn">本题所需要点属于范围或语料库边界声明，位置覆盖不适用。仍保留完整检索轨迹和历史回答供核查。</p>')
         for system,item in row['systems'].items():
-            h.append('<h3>'+e(names[system])+'</h3><p>前8与历史'+('一致' if item['top8_equal_history'] else '<strong class="warn">不同</strong>')+'；最终上下文与历史'+('一致' if item['context_equal_history'] else '<strong class="warn">不同</strong>')+'。</p>')
+            order_note='一致' if item['top8_equal_history'] else ('成员相同，顺序不同' if item['top8_members_equal_history'] else '成员不同')
+            context_note='一致' if item['context_equal_history'] else ('来源集合相同，分组/顺序/引用编号不同' if item['context_sources_equal_history'] else '来源集合不同')
+            h.append('<h3>'+e(names[system])+'</h3><p>前8与历史：'+e(order_note)+'；最终上下文与历史：'+e(context_note)+'。</p>')
             h.append('<div class="scroll"><table><tr><th>标注引文</th><th>来源对齐</th><th>首次交集 / 齐全排名</th>'+''.join('<th>'+e(n)+'</th>' for n in stage_names)+'<th>定位瓶颈</th></tr>')
             for eid,t in item['evidence'].items():
                 first=t['first_intersection'];rank=f"{first['rank']} / {t['completion_rank']}" if first else '无/待定位'
@@ -357,14 +386,15 @@ def render(result,rows,evidence,libraries):
             h.append('</table></div><p class="tiny">“首次交集”只表示某个候选包含引文的一部分；“齐全排名”才表示累计覆盖全部定位范围。近似映射各列仅表示暂定位置，需看解析差异。</p>')
             for eid,t in item['evidence'].items():
                 h.append('<details><summary>'+e(eid)+' 原文、定位与解析差异</summary><pre>'+e(by_eid[eid]['quote'])+'</pre><pre>'+e(json.dumps(libraries[system]['alignment'][eid],ensure_ascii=False,indent=2))+'</pre><pre>'+e(json.dumps(t,ensure_ascii=False,indent=2))+'</pre></details>')
-            h.append('<details><summary>全部50个候选：排名、分数、阈值、类型和原文</summary><div class="scroll"><table><tr><th>排名</th><th>分数</th><th>过阈值</th><th>主命中</th><th>类型 / 页码</th><th>标注位置交集</th><th>原文</th></tr>')
+            h.append('<details><summary>全部50个候选：排名、分数、阈值、类型和原文</summary><div class="scroll"><table><tr><th>排名</th><th>分数</th><th>过阈值</th><th>主命中</th><th>类型 / 页码</th><th>章节</th><th>标注位置交集</th><th>原文</th></tr>')
             selected={x['chunk_id'] for x in item['probe']['seeds']}
             for c in item['probe']['candidates']:
                 cid=c['chunk_id'];intersections=[]
                 if c['metadata_present']:
                     intersections=[eid for eid in row['requested_evidence_ids'] if span_coverage(libraries[system]['alignment'][eid],[cid],libraries[system]['chunk_spans'])['covered']]
                 cells=[str(c['rank']),f"{c['score']:.6f}",'是' if c['passes_threshold'] else '否','是' if cid in selected else '否',
-                    str(c['kind'])+' / '+str(c['page_start'])+'–'+str(c['page_end']),', '.join(intersections)]
+                    str(c['kind'])+' / '+str(c['page_start'])+'–'+str(c['page_end']),
+                    ' > '.join(libraries[system]['manifest']['mapping'].get(cid,{}).get('section_path',[])) or '未记录',', '.join(intersections)]
                 h.append('<tr>'+''.join('<td>'+e(x)+'</td>' for x in cells)+'<td><a href="#source-'+e(system+'-'+cid)+'">'+e(cid)+'</a></td></tr>')
             h.append('</table></div></details><details><summary>最终上下文、原文块和预算记录</summary><pre>'+e(json.dumps(dict(context=item['probe']['context'],evidence=item['probe']['final']),ensure_ascii=False,indent=2))+'</pre></details>')
             h.append('<details><summary>历史回答（本次未重新生成）</summary><pre>'+e(item['historical_answer'])+'</pre></details>')
@@ -382,7 +412,7 @@ def render(result,rows,evidence,libraries):
         '', '离线重新导出：`python scripts/diagnose_qa_retrieval.py refresh`；需要保留本机私有诊断缓存，不会调用模型。']
     DOC.write_text('\n'.join(md)+'\n',encoding='utf-8',newline='\n')
     h+=['<details><summary>调用记录和汇总JSON</summary><pre>'+e(json.dumps(result,ensure_ascii=False,indent=2))+'</pre></details>',
-        '<script>function reveal(){const t=document.getElementById(location.hash.slice(1));if(t){for(let n=t;n;n=n.parentElement){if(n.tagName==="DETAILS")n.open=true;}t.scrollIntoView();}}addEventListener("hashchange",reveal);reveal();document.getElementById("search").addEventListener("input",e=>{const q=e.target.value.toLowerCase();let n=0;for(const c of document.querySelectorAll(".case")){c.hidden=!c.dataset.search.toLowerCase().includes(q);if(!c.hidden)n++;}document.getElementById("count").textContent=n+"题";});</script></main></html>']
+        '<script>function reveal(){const t=document.getElementById(location.hash.slice(1));if(t){if(t.classList.contains("case")&&t.hidden){document.getElementById("search").value="";for(const c of document.querySelectorAll(".case"))c.hidden=false;document.getElementById("count").textContent="32题";}for(let n=t;n;n=n.parentElement){if(n.tagName==="DETAILS")n.open=true;}t.scrollIntoView();}}addEventListener("hashchange",reveal);reveal();document.getElementById("search").addEventListener("input",e=>{const q=e.target.value.toLowerCase();let n=0;for(const c of document.querySelectorAll(".case")){c.hidden=!c.dataset.search.toLowerCase().includes(q);if(!c.hidden)n++;}document.getElementById("count").textContent=n+"题";});</script></main></html>']
     (OUTPUT/'comparison.html').write_text('\n'.join(h),encoding='utf-8',newline='\n')
 
 

@@ -1,0 +1,13 @@
+{
+  "files": {
+    "alignment.json": "78c1358dfb6f60fb4d48fdca880dc87f3d0027a8ba6d5b9b6f3b53467e4972e4",
+    "audit.json": "911b6e381a031dd4be86fe46617561b0e71ca4abc07b268f3b571cd6e4d4332b",
+    "chunks.json": "bc9e3786526b35816f983735f14b53adc49c655bf2aa3b817f26d747a2ee1adb",
+    "comparison.html": "afefe9d4968e3c10d2b478feed224b81ff1e592af5d47f407de2ddf88add6d05",
+    "questions.jsonl": "88f17cb7d0e544f4d49acaba27887916412f58d05b1e3c9a66aff1cbc62bf550",
+    "summary.json": "1426b66b47a35c9aa81a16818bfefd681afc2df1abcc22eebcd4d8a05b53f200"
+  },
+  "document_sha256": "80f6f24637d113f091f6d8cf08996c354e6525e938240922c7786253b66bb40a",
+  "exporter_sha256": "1645ffc6dcf73998174e3864781bde1fdb99d542cc25af39a0e853d29ad57c0a",
+  "model_calls": 0
+}
