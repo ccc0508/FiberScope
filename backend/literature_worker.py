@@ -45,6 +45,12 @@ def main():
                              settings.embedding_api_key.get_secret_value(), settings.embedding_base_url)
     vectors = ChromaVectorStore(root / 'chroma', settings.embedding_provider,
                                 settings.embedding_model, settings.embedding_dimensions)
+    table_relations = None
+    if settings.table_retrieval_enabled:
+        from literature_rag.application.table_evidence import TableRelations, TableVectorSearch
+        table_relations = TableRelations.load(root, metadata, settings.embedding_provider,
+                                             settings.embedding_model, settings.embedding_dimensions)
+        vectors = TableVectorSearch(vectors, table_relations)
     generator_type = DeepSeekGenerator if settings.llm_provider == 'deepseek' else OpenAIGenerator
     generation_options = ({'thinking_enabled': settings.llm_thinking_enabled,
                            'reasoning_effort': settings.llm_reasoning_effort}
@@ -91,7 +97,7 @@ def main():
     try:
         context_options=ContextOptions(settings.context_expansion_enabled,settings.context_neighbor_radius,
                                       settings.context_max_evidence_chars,settings.context_max_total_chars)
-        answer = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options), CapturedGenerator(), CitationValidator()).answer(
+        answer = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options,table_relations), CapturedGenerator(), CitationValidator()).answer(
             body['question'], settings.top_k, settings.min_score)
     except (ProviderError, InfrastructureError) as error:
         print(json.dumps({'status': 'failed', 'answer': '', 'citations': [],

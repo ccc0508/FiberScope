@@ -27,11 +27,13 @@ class RetrievalService:
         vectors: VectorStore,
         embedder: Embedder,
         context_options: ContextOptions | None = None,
+        table_relations=None,
     ) -> None:
         self.metadata = metadata
         self.vectors = vectors
         self.embedder = embedder
         self.context_options = context_options or ContextOptions()
+        self.table_relations = table_relations
         self.last_seed_evidences: list[Evidence] = []
         self.last_context_diagnostics: dict = {}
 
@@ -93,6 +95,10 @@ class RetrievalService:
         evidences = evidences[:top_k]
         self.last_seed_evidences = list(evidences)
         evidences,self.last_context_diagnostics=assemble(evidences,self.metadata,self.context_options)
+        if self.table_relations is not None:
+            from literature_rag.application.table_evidence import append_related_tables
+            evidences,self.last_context_diagnostics=append_related_tables(evidences,self.table_relations,self.context_options,self.last_context_diagnostics)
+            self.last_context_diagnostics['table_retrieval']=self.vectors.last_diagnostics
         logger.info(
             "retrieval_complete",
             extra={
