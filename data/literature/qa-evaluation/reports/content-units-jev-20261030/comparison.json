@@ -1,0 +1,722 @@
+{
+  "version": "content-units-jev-v1",
+  "published_on": "2026-10-30",
+  "question_count": 32,
+  "policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+  "valid_grades": 31,
+  "grading_statuses": {
+    "completed": 31,
+    "invalid_scorecard": 1
+  },
+  "grading_accounting": {
+    "calls": 34,
+    "known_tokens": {
+      "input_tokens": 2309124,
+      "output_tokens": 121003,
+      "total_tokens": 2430127
+    },
+    "usage_unknown_calls": 0,
+    "reported_cost_usd": "0.096983208",
+    "cost_unknown_calls": 0,
+    "invoice_cost_usd": null,
+    "request_time_ms": 108448
+  },
+  "grading_attempts_by_task": {
+    "PFI2-029": 1,
+    "PFI2-002": 1,
+    "PFI2-026": 1,
+    "PFI2-032": 1,
+    "PFI2-020": 1,
+    "PFI2-024": 3,
+    "PFI2-008": 1,
+    "PFI2-031": 1,
+    "PFI2-011": 1,
+    "PFI2-027": 1,
+    "PFI2-010": 1,
+    "PFI2-017": 1,
+    "PFI2-001": 1,
+    "PFI2-006": 1,
+    "PFI2-025": 1,
+    "PFI2-003": 1,
+    "PFI2-016": 1,
+    "PFI2-009": 1,
+    "PFI2-030": 1,
+    "PFI2-015": 1,
+    "PFI2-013": 1,
+    "PFI2-019": 1,
+    "PFI2-022": 1,
+    "PFI2-005": 1,
+    "PFI2-018": 1,
+    "PFI2-012": 1,
+    "PFI2-007": 1,
+    "PFI2-023": 1,
+    "PFI2-028": 1,
+    "PFI2-004": 1,
+    "PFI2-021": 1,
+    "PFI2-014": 1
+  },
+  "invalid_grading_records": [
+    {
+      "task_id": "PFI2-024",
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "invalid_scorecard",
+          "validation_failure": "ValueError: Group and citation decisions disagree",
+          "request_sha256": "5f1c73c7405f19fde5e5707adf1005cefb00a655550af4a509a209574e4e8406",
+          "response_sha256": "4a8bc09b619fa264917676160eb8b3d7f4809ef557c0d6036295ba4bbb206619",
+          "record_sha256": "addffe2d4fe68c2387e6c4e702a3f60a9cf34c9a83eaa150bc805745d02471cb",
+          "duration_ms": 3313,
+          "usage": {
+            "input_tokens": 77887,
+            "output_tokens": 5275,
+            "total_tokens": 83162,
+            "reported_cost_usd": 0.003271254
+          },
+          "original_choices": {
+            "boundary": "appropriate",
+            "reference_check": "sound",
+            "point_P1": "complete",
+            "point_P2": "complete",
+            "point_P3": "complete",
+            "kind_C1": "fact",
+            "support_C1": "supported",
+            "basis_C1": "B032",
+            "group_C1": "complete",
+            "citation_C1_1": "supported",
+            "kind_C2": "fact",
+            "support_C2": "supported",
+            "basis_C2": "B032",
+            "group_C2": "complete",
+            "citation_C2_1": "supported",
+            "kind_C3": "fact",
+            "support_C3": "supported",
+            "basis_C3": "E12",
+            "group_C3": "complete",
+            "citation_C3_1": "supported",
+            "kind_C4": "fact",
+            "support_C4": "supported",
+            "basis_C4": "E13",
+            "group_C4": "complete",
+            "citation_C4_1": "supported",
+            "kind_C5": "fact",
+            "support_C5": "supported",
+            "basis_C5": "E14",
+            "group_C5": "complete",
+            "citation_C5_1": "supported",
+            "kind_C6": "fact",
+            "support_C6": "supported",
+            "basis_C6": "NONE",
+            "group_C6": "complete",
+            "citation_C6_1": "unsupported",
+            "citation_C6_2": "unsupported"
+          }
+        },
+        {
+          "attempt": 2,
+          "status": "invalid_scorecard",
+          "validation_failure": "ValueError: Group and citation decisions disagree",
+          "request_sha256": "5f1c73c7405f19fde5e5707adf1005cefb00a655550af4a509a209574e4e8406",
+          "response_sha256": "dadfd84f1db5335ef4774c6be8382868931dfe17c3958eeb542cbb0c9a835dc2",
+          "record_sha256": "9ef03abcd6f9b8a0fc10507eb954c5d5db764402d084674d1b96c9a50c95413f",
+          "duration_ms": 3330,
+          "usage": {
+            "input_tokens": 77887,
+            "output_tokens": 5275,
+            "total_tokens": 83162,
+            "reported_cost_usd": 0.003271254
+          },
+          "original_choices": {
+            "boundary": "appropriate",
+            "reference_check": "sound",
+            "point_P1": "complete",
+            "point_P2": "complete",
+            "point_P3": "complete",
+            "kind_C1": "fact",
+            "support_C1": "supported",
+            "basis_C1": "B032",
+            "group_C1": "complete",
+            "citation_C1_1": "supported",
+            "kind_C2": "fact",
+            "support_C2": "supported",
+            "basis_C2": "B032",
+            "group_C2": "complete",
+            "citation_C2_1": "supported",
+            "kind_C3": "fact",
+            "support_C3": "supported",
+            "basis_C3": "E12",
+            "group_C3": "complete",
+            "citation_C3_1": "supported",
+            "kind_C4": "fact",
+            "support_C4": "supported",
+            "basis_C4": "E13",
+            "group_C4": "complete",
+            "citation_C4_1": "supported",
+            "kind_C5": "fact",
+            "support_C5": "supported",
+            "basis_C5": "E14",
+            "group_C5": "complete",
+            "citation_C5_1": "supported",
+            "kind_C6": "fact",
+            "support_C6": "supported",
+            "basis_C6": "NONE",
+            "group_C6": "complete",
+            "citation_C6_1": "unsupported",
+            "citation_C6_2": "unsupported"
+          }
+        },
+        {
+          "attempt": 3,
+          "status": "invalid_scorecard",
+          "validation_failure": "ValueError: Group and citation decisions disagree",
+          "request_sha256": "5f1c73c7405f19fde5e5707adf1005cefb00a655550af4a509a209574e4e8406",
+          "response_sha256": "323e00bbe13d0d2fc7fbfb5264ffd7c288b577d6eac714b07b8ad361402d8e56",
+          "record_sha256": "42fa2e42ee0cde165d026e06dc53102034340c968a80bf212146efa90e875081",
+          "duration_ms": 3250,
+          "usage": {
+            "input_tokens": 77887,
+            "output_tokens": 5275,
+            "total_tokens": 83162,
+            "reported_cost_usd": 0.003271254
+          },
+          "original_choices": {
+            "boundary": "appropriate",
+            "reference_check": "sound",
+            "point_P1": "complete",
+            "point_P2": "complete",
+            "point_P3": "complete",
+            "kind_C1": "fact",
+            "support_C1": "supported",
+            "basis_C1": "B032",
+            "group_C1": "complete",
+            "citation_C1_1": "supported",
+            "kind_C2": "fact",
+            "support_C2": "supported",
+            "basis_C2": "B032",
+            "group_C2": "complete",
+            "citation_C2_1": "supported",
+            "kind_C3": "fact",
+            "support_C3": "supported",
+            "basis_C3": "E12",
+            "group_C3": "complete",
+            "citation_C3_1": "supported",
+            "kind_C4": "fact",
+            "support_C4": "supported",
+            "basis_C4": "E13",
+            "group_C4": "complete",
+            "citation_C4_1": "supported",
+            "kind_C5": "fact",
+            "support_C5": "supported",
+            "basis_C5": "E14",
+            "group_C5": "complete",
+            "citation_C5_1": "supported",
+            "kind_C6": "fact",
+            "support_C6": "supported",
+            "basis_C6": "NONE",
+            "group_C6": "complete",
+            "citation_C6_1": "unsupported",
+            "citation_C6_2": "unsupported"
+          }
+        }
+      ],
+      "missing_not_zero": true
+    }
+  ],
+  "all_grades_valid_on_first_attempt": false,
+  "new_luna_calls": 0,
+  "new_control_grading_calls": 0,
+  "controls": {
+    "tables": {
+      "same_questions": true,
+      "same_dataset": true,
+      "configuration_byte_values_equal": true,
+      "runtime_files_byte_identical": [
+        "literature_rag/__init__.py",
+        "literature_rag/adapters/__init__.py",
+        "literature_rag/adapters/chroma/__init__.py",
+        "literature_rag/adapters/chroma/vector_store.py",
+        "literature_rag/adapters/providers/__init__.py",
+        "literature_rag/adapters/providers/deepseek.py",
+        "literature_rag/adapters/providers/openai.py",
+        "literature_rag/adapters/sqlite/__init__.py",
+        "literature_rag/adapters/sqlite/metadata_store.py",
+        "literature_rag/application/__init__.py",
+        "literature_rag/application/answer_question.py",
+        "literature_rag/application/citations.py",
+        "literature_rag/application/context.py",
+        "literature_rag/application/prompts.py",
+        "literature_rag/application/retrieve.py",
+        "literature_rag/application/structure.py",
+        "literature_rag/application/table_evidence.py",
+        "literature_rag/config.py",
+        "literature_rag/diagnostics.py",
+        "literature_rag/domain/__init__.py",
+        "literature_rag/domain/errors.py",
+        "literature_rag/domain/models.py",
+        "literature_rag/ports/__init__.py",
+        "literature_rag/ports/protocols.py",
+        "literature_worker.py"
+      ],
+      "only_corpus_organization_changed": true
+    },
+    "pymupdf": {
+      "configuration_equal_except_explicit_retrieval_feature": true,
+      "changed_source_files": [
+        "literature_rag/application/retrieve.py",
+        "literature_rag/application/table_evidence.py",
+        "literature_rag/config.py",
+        "literature_rag/diagnostics.py",
+        "literature_worker.py"
+      ],
+      "unchanged_source_files": [
+        "literature_rag/__init__.py",
+        "literature_rag/adapters/__init__.py",
+        "literature_rag/adapters/chroma/__init__.py",
+        "literature_rag/adapters/chroma/vector_store.py",
+        "literature_rag/adapters/providers/__init__.py",
+        "literature_rag/adapters/providers/deepseek.py",
+        "literature_rag/adapters/providers/openai.py",
+        "literature_rag/adapters/sqlite/__init__.py",
+        "literature_rag/adapters/sqlite/metadata_store.py",
+        "literature_rag/application/__init__.py",
+        "literature_rag/application/answer_question.py",
+        "literature_rag/application/citations.py",
+        "literature_rag/application/context.py",
+        "literature_rag/application/prompts.py",
+        "literature_rag/application/structure.py",
+        "literature_rag/domain/__init__.py",
+        "literature_rag/domain/errors.py",
+        "literature_rag/domain/models.py",
+        "literature_rag/ports/__init__.py",
+        "literature_rag/ports/protocols.py"
+      ],
+      "same_questions": true,
+      "same_answer_prompt_generator_and_citation_validator": true,
+      "source_comparison": "Byte comparison after CRLF/LF normalization; original file fingerprints also verified."
+    }
+  },
+  "corpus_proof": {
+    "previous_chunks": 95,
+    "chunks": 85,
+    "chunk_kinds": {
+      "paragraph": 32,
+      "equation_bundle": 5,
+      "figure_caption": 9,
+      "table": 2,
+      "reference": 37
+    },
+    "source_coverage": {
+      "native_units": 117,
+      "characters": 42315,
+      "exact_once": true
+    },
+    "metadata_records": 2,
+    "events": [
+      {
+        "kind": "metadata_separated",
+        "source_id": "mineru_block_0000",
+        "role": "publication_type"
+      },
+      {
+        "kind": "metadata_separated",
+        "source_id": "mineru_block_0007",
+        "role": "keywords"
+      },
+      {
+        "kind": "figure_annotation_classified",
+        "source_id": "mineru_block_0072",
+        "visual_source_id": "mineru_block_0073",
+        "basis": "same page, horizontal overlap and close layout gap; no new image interpretation"
+      },
+      {
+        "kind": "formula_bundle_created",
+        "equation_source_id": "mineru_block_0027",
+        "source_ids": [
+          "mineru_block_0026",
+          "mineru_block_0027",
+          "mineru_block_0028"
+        ]
+      },
+      {
+        "kind": "formula_bundle_created",
+        "equation_source_id": "mineru_block_0031",
+        "source_ids": [
+          "mineru_block_0030",
+          "mineru_block_0031",
+          "mineru_block_0032"
+        ]
+      },
+      {
+        "kind": "formula_bundle_created",
+        "equation_source_id": "mineru_block_0034",
+        "source_ids": [
+          "mineru_block_0033",
+          "mineru_block_0034",
+          "mineru_block_0035"
+        ]
+      },
+      {
+        "kind": "formula_bundle_created",
+        "equation_source_id": "mineru_block_0039",
+        "source_ids": [
+          "mineru_block_0038",
+          "mineru_block_0039",
+          "mineru_block_0040"
+        ]
+      },
+      {
+        "kind": "formula_bundle_created",
+        "equation_source_id": "mineru_block_0044",
+        "source_ids": [
+          "mineru_block_0043",
+          "mineru_block_0044",
+          "mineru_block_0045"
+        ]
+      },
+      {
+        "kind": "annotation_attached_to_figure_caption",
+        "source_id": "mineru_block_0072",
+        "visual_source_id": "mineru_block_0073"
+      },
+      {
+        "kind": "page_continuation_joined",
+        "source_ids": [
+          "mineru_block_0068",
+          "mineru_block_0071"
+        ],
+        "pages": [
+          6,
+          7
+        ]
+      }
+    ],
+    "reused_vectors_verified": 76,
+    "new_vectors": 9,
+    "embedding_calls": [
+      {
+        "status": "completed",
+        "chunk_count": 9,
+        "usage": {
+          "prompt_tokens": 2121,
+          "completion_tokens": 0,
+          "total_tokens": 2121
+        }
+      }
+    ],
+    "table_rows_reused": 20,
+    "table_cells_verified": 120,
+    "table_links": 9,
+    "table_row_vectors_identical": true,
+    "source_pdf_sha256": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4",
+    "source_organization_reproduced": true,
+    "historical_quality_summary": "Prior parsing-review statistics, not the current chunk count."
+  },
+  "comparisons": {
+    "tables": {
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "tasks": 31,
+      "scores": {
+        "tables": {
+          "tasks": 31,
+          "point_macro_average": 0.935483870967742,
+          "support_counts": {
+            "supported": 101,
+            "partially_supported": 3
+          },
+          "citation_precision": {
+            "numerator": 112,
+            "denominator": 114,
+            "value": 0.9824561403508771
+          },
+          "citation_coverage": {
+            "numerator": 101,
+            "denominator": 104,
+            "value": 0.9711538461538461
+          },
+          "boundary_mean": 1.8064516129032258,
+          "all_five_pass": 22
+        },
+        "content": {
+          "tasks": 31,
+          "point_macro_average": 0.9327956989247311,
+          "support_counts": {
+            "supported": 114,
+            "partially_supported": 2
+          },
+          "citation_precision": {
+            "numerator": 122,
+            "denominator": 124,
+            "value": 0.9838709677419355
+          },
+          "citation_coverage": {
+            "numerator": 111,
+            "denominator": 116,
+            "value": 0.9568965517241379
+          },
+          "boundary_mean": 1.8387096774193548,
+          "all_five_pass": 21
+        }
+      },
+      "point_delta": -0.0026881720430108613,
+      "point_wins": [
+        "PFI2-023"
+      ],
+      "point_losses": [
+        "PFI2-011"
+      ],
+      "all_five_wins": [
+        "PFI2-020",
+        "PFI2-023"
+      ],
+      "all_five_losses": [
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029"
+      ],
+      "exclusions": [
+        {
+          "task_id": "PFI2-024",
+          "missing_or_flagged": [
+            "content"
+          ]
+        }
+      ]
+    },
+    "pymupdf": {
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "tasks": 30,
+      "scores": {
+        "pymupdf": {
+          "tasks": 30,
+          "point_macro_average": 0.9583333333333334,
+          "support_counts": {
+            "supported": 115
+          },
+          "citation_precision": {
+            "numerator": 119,
+            "denominator": 121,
+            "value": 0.9834710743801653
+          },
+          "citation_coverage": {
+            "numerator": 112,
+            "denominator": 115,
+            "value": 0.9739130434782609
+          },
+          "boundary_mean": 1.9333333333333333,
+          "all_five_pass": 22
+        },
+        "content": {
+          "tasks": 30,
+          "point_macro_average": 0.9305555555555556,
+          "support_counts": {
+            "supported": 112,
+            "partially_supported": 2
+          },
+          "citation_precision": {
+            "numerator": 120,
+            "denominator": 122,
+            "value": 0.9836065573770492
+          },
+          "citation_coverage": {
+            "numerator": 109,
+            "denominator": 114,
+            "value": 0.956140350877193
+          },
+          "boundary_mean": 1.8333333333333333,
+          "all_five_pass": 20
+        }
+      },
+      "point_delta": -0.02777777777777779,
+      "point_wins": [
+        "PFI2-015"
+      ],
+      "point_losses": [
+        "PFI2-011",
+        "PFI2-013"
+      ],
+      "all_five_wins": [
+        "PFI2-020"
+      ],
+      "all_five_losses": [
+        "PFI2-013",
+        "PFI2-027",
+        "PFI2-029"
+      ],
+      "exclusions": [
+        {
+          "task_id": "PFI2-023",
+          "missing_or_flagged": [
+            "pymupdf"
+          ]
+        },
+        {
+          "task_id": "PFI2-024",
+          "missing_or_flagged": [
+            "content"
+          ]
+        }
+      ]
+    }
+  },
+  "new_valid_summary": {
+    "tasks": 31,
+    "point_macro_average": 0.9327956989247311,
+    "support_counts": {
+      "supported": 114,
+      "partially_supported": 2
+    },
+    "citation_precision": {
+      "numerator": 122,
+      "denominator": 124,
+      "value": 0.9838709677419355
+    },
+    "citation_coverage": {
+      "numerator": 111,
+      "denominator": 116,
+      "value": 0.9568965517241379
+    },
+    "boundary_mean": 1.8387096774193548,
+    "all_five_pass": 21
+  },
+  "answer_runtime": {
+    "content": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 32
+      },
+      "generation_calls": 33,
+      "generation_known_tokens": {
+        "prompt_tokens": 156163,
+        "completion_tokens": 31662,
+        "total_tokens": 187825,
+        "reasoning_tokens": 22650,
+        "cached_tokens": 59264
+      },
+      "generation_usage_unknown_calls": 0,
+      "embedding_known_tokens": 1011,
+      "embedding_usage_unknown_questions": 0,
+      "median_end_to_end_seconds": 13.2305,
+      "total_sequential_seconds": 443.537,
+      "median_context_chars": 13382.5,
+      "budget_limited_questions": [],
+      "actual_billing_usd": null,
+      "notes": "Reasoning tokens are a subset of completion tokens, not additional tokens."
+    },
+    "tables": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 32
+      },
+      "generation_calls": 39,
+      "generation_known_tokens": {
+        "prompt_tokens": 181009,
+        "completion_tokens": 36049,
+        "total_tokens": 217058,
+        "reasoning_tokens": 25601,
+        "cached_tokens": 140672
+      },
+      "generation_usage_unknown_calls": 0,
+      "embedding_known_tokens": 1011,
+      "embedding_usage_unknown_questions": 0,
+      "median_end_to_end_seconds": 13.127,
+      "total_sequential_seconds": 444.707,
+      "median_context_chars": 13284.0,
+      "budget_limited_questions": [],
+      "actual_billing_usd": null,
+      "notes": "Reasoning tokens are a subset of completion tokens, not additional tokens."
+    },
+    "pymupdf": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 32
+      },
+      "generation_calls": 33,
+      "generation_known_tokens": {
+        "prompt_tokens": 126937,
+        "completion_tokens": 33562,
+        "total_tokens": 160499,
+        "reasoning_tokens": 24894,
+        "cached_tokens": 14592
+      },
+      "generation_usage_unknown_calls": 0,
+      "embedding_known_tokens": 1011,
+      "embedding_usage_unknown_questions": 0,
+      "median_end_to_end_seconds": 12.389,
+      "total_sequential_seconds": 428.883,
+      "median_context_chars": 11440.5,
+      "budget_limited_questions": [],
+      "actual_billing_usd": null,
+      "notes": "Reasoning tokens are a subset of completion tokens, not additional tokens."
+    }
+  },
+  "default_configuration_unchanged": true,
+  "limitations": [
+    "One generation run and first-valid Jev grade; development set, no stability or holdout claim.",
+    "Three organization changes together; individual causal effects are not separated.",
+    "Same remote model aliases/settings do not guarantee unchanged provider weights.",
+    "No new scientific facts or semantic grades authored by this report."
+  ]
+}

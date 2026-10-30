@@ -1,0 +1,14 @@
+{
+  "version": "content-units-jev-v1",
+  "document_sha256": "c381813692b75bc1f5c966838d14063797752d2849bcff70f857a9473a1b34aa",
+  "exporter_sha256": "f0ff137e3884ebb41302c1a8da9b54d6886f7ee17e934a1d6c339f8c9d5a1622",
+  "files": {
+    "audit.json": "3373e721874ced2592689d444345ded31065cd19ffce33f809eb2f2bfc2c9168",
+    "comparison.html": "3ae6d0b9b16cbf5735511b97573e2f12a49a98eff4c1901875346f96d677700b",
+    "comparison.json": "d6d6f624ac996341986f707a38679f8f50eb5e2791072428146b3f70029545f9",
+    "invalid-grading-records.json": "a0fd0d91187021bd07fa45b7636154239ca43ad25900af92dafdeef51c3a56d9",
+    "questions-answers-reviews.jsonl": "10b77fcf9c932170fd00173a4cc6efb4ad628dd91e6f39ad772471295ef639c1",
+    "retrieval-diagnostics.json": "ddf38264ea0955f4c5003ad25ea9ff2e3fcc1262c2371db4f9859a1471d0e46e",
+    "verification.json": "c1b4ba2c49d58d9ea15e7a227542257d300961c481586087bd542798ffbf87bc"
+  }
+}

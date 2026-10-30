@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "answers": 32,
+  "valid_jev_grades": 31,
+  "invalid_grade_task": "PFI2-024",
+  "missing_not_zero": true,
+  "all_grading_attempts_counted": 34,
+  "independent_arithmetic_verified": true,
+  "primary_paired_questions": 31,
+  "pymupdf_paired_questions": 30,
+  "source_text_and_pages_verified": true,
+  "corpus_chunks": 85,
+  "corrected_characters_conserved": 42315,
+  "actual_reused_vectors_verified": 76,
+  "formula_bundles": 5,
+  "metadata_records": 2,
+  "table_row_vectors_unchanged": true,
+  "budgets_and_top8_top50_verified": true,
+  "answer_configuration_and_runtime_unchanged": true,
+  "new_luna_calls": 0,
+  "default_configuration_unchanged": true
+}
