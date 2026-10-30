@@ -1,6 +1,6 @@
 # MinerU章节识别与正文组块实验
 
-2026-10-30。复用上一轮同一PDF的MinerU精准解析结果，不新增PDF解析请求。
+2026-10-30。复用上一轮同一PDF的MinerU精准解析结果，不新增PDF解析请求。已完成32题答题和Jev/Luna双评，见[完整评测报告](QA_MINERU_SECTIONS_V2_REPORT_20261030.md)。
 
 ## 本轮改动
 
