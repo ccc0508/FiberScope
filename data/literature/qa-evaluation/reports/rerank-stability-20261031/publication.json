@@ -1,0 +1,13 @@
+{
+  "version": "rerank-stability-report-v1",
+  "input_sha256": "f22e3dbecb29d5f27724711204fa2dabbcc9f3d5e13c5c338658f8542b243958",
+  "exporter_sha256": "469f29d8036a509035a646ae9c4c07db4aa891058de952afc0b26ce0ce57e1ed",
+  "document_sha256": "fea9266303e317c39300f4444500eec01f53cacd122c6ecbf3e290dc48d4c49a",
+  "files": {
+    "comparison.html": "539c6f45fff37139e978bb1bd6b7a3e2e09ca2c5ba02fe36c7119a7afb91b062",
+    "comparison.json": "4ca650cbdee522be8fede59766e66abc223af6a509468b32552de4d56b19545a",
+    "questions-answers-reviews.jsonl": "ccebd0d54de92a59fded1915ce4497301031b48dbe8e4ed62d439fb7a0a2cdb0",
+    "verification.json": "517b9eb2eaf915453da5a2d2d12e1731f4dd2bcc724ffb487346a25379194dfc"
+  },
+  "model_calls": 0
+}

@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "questions": 32,
+  "explicit_answer_records": 192,
+  "new_answers": 128,
+  "new_jev_valid_grades": 128,
+  "new_jev_attempts": 129,
+  "original_missing_grades_preserved": 2,
+  "full_fixed_common": 30,
+  "sensitivity_fixed_common": 29,
+  "per_round_maximum_pairs": [
+    30,
+    32,
+    32
+  ],
+  "original_grades_unchanged": true,
+  "missing_not_zero": true,
+  "independent_metrics_means_sample_sd_and_denominators_verified": true,
+  "refusal_retained_and_graded": true,
+  "new_judge_cost_all_attempts_usd": "0.370381284",
+  "new_luna_calls": 0,
+  "website_default_configuration_unchanged": true
+}
