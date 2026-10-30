@@ -1,0 +1,907 @@
+{
+  "version": "table-evidence-v1",
+  "source_structure_sha256": "fe27069480f2bc1985261bd87875252763b158e4c3996207a795c11e8f6b4786",
+  "rows": [
+    {
+      "id": "row_fdc16e1381fe99f769ac",
+      "parent_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 6,
+      "page_end": 6,
+      "table_number": 1,
+      "group": "a",
+      "row_index": 3,
+      "data_index": 1,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "0"
+        },
+        {
+          "header": "CI (%) > $CI-XI^a$",
+          "value": "73.23"
+        },
+        {
+          "header": "CI (%) > $CI-XA^b$",
+          "value": "40.46"
+        },
+        {
+          "header": "Crystallite Size (nm) > 1\\bar{1}0",
+          "value": "3.2"
+        },
+        {
+          "header": "Crystallite Size (nm) > (110)",
+          "value": "3.5"
+        },
+        {
+          "header": "Crystallite Size (nm) > (200)",
+          "value": "4.5"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size [原文] Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n分组 (a)：The CI of softwood fibers through refining.\n数据行：Revolutions = 0；CI (%) > $CI-XI^a$ = 73.23；CI (%) > $CI-XA^b$ = 40.46；Crystallite Size (nm) > 1\\bar{1}0 = 3.2；Crystallite Size (nm) > (110) = 3.5；Crystallite Size (nm) > (200) = 4.5",
+      "parent_text_start": 635,
+      "parent_text_end": 718,
+      "parent_raw_row": "<tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_f8f0f5f4134db3549b75",
+      "parent_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 6,
+      "page_end": 6,
+      "table_number": 1,
+      "group": "a",
+      "row_index": 4,
+      "data_index": 2,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "4000"
+        },
+        {
+          "header": "CI (%) > $CI-XI^a$",
+          "value": "70.42"
+        },
+        {
+          "header": "CI (%) > $CI-XA^b$",
+          "value": "37.71"
+        },
+        {
+          "header": "Crystallite Size (nm) > 1\\bar{1}0",
+          "value": "3.1"
+        },
+        {
+          "header": "Crystallite Size (nm) > (110)",
+          "value": "3.4"
+        },
+        {
+          "header": "Crystallite Size (nm) > (200)",
+          "value": "4.6"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size [原文] Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n分组 (a)：The CI of softwood fibers through refining.\n数据行：Revolutions = 4000；CI (%) > $CI-XI^a$ = 70.42；CI (%) > $CI-XA^b$ = 37.71；Crystallite Size (nm) > 1\\bar{1}0 = 3.1；Crystallite Size (nm) > (110) = 3.4；Crystallite Size (nm) > (200) = 4.6",
+      "parent_text_start": 718,
+      "parent_text_end": 804,
+      "parent_raw_row": "<tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_4bad6cfff16dd91e8f31",
+      "parent_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 6,
+      "page_end": 6,
+      "table_number": 1,
+      "group": "a",
+      "row_index": 5,
+      "data_index": 3,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "8000"
+        },
+        {
+          "header": "CI (%) > $CI-XI^a$",
+          "value": "72.54"
+        },
+        {
+          "header": "CI (%) > $CI-XA^b$",
+          "value": "39.65"
+        },
+        {
+          "header": "Crystallite Size (nm) > 1\\bar{1}0",
+          "value": "3.2"
+        },
+        {
+          "header": "Crystallite Size (nm) > (110)",
+          "value": "3.4"
+        },
+        {
+          "header": "Crystallite Size (nm) > (200)",
+          "value": "4.6"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size [原文] Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n分组 (a)：The CI of softwood fibers through refining.\n数据行：Revolutions = 8000；CI (%) > $CI-XI^a$ = 72.54；CI (%) > $CI-XA^b$ = 39.65；Crystallite Size (nm) > 1\\bar{1}0 = 3.2；Crystallite Size (nm) > (110) = 3.4；Crystallite Size (nm) > (200) = 4.6",
+      "parent_text_start": 804,
+      "parent_text_end": 890,
+      "parent_raw_row": "<tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_d00866ce126926b3cfb0",
+      "parent_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 6,
+      "page_end": 6,
+      "table_number": 1,
+      "group": "a",
+      "row_index": 6,
+      "data_index": 4,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "12,000"
+        },
+        {
+          "header": "CI (%) > $CI-XI^a$",
+          "value": "70.93"
+        },
+        {
+          "header": "CI (%) > $CI-XA^b$",
+          "value": "36.22"
+        },
+        {
+          "header": "Crystallite Size (nm) > 1\\bar{1}0",
+          "value": "3.1"
+        },
+        {
+          "header": "Crystallite Size (nm) > (110)",
+          "value": "3.7"
+        },
+        {
+          "header": "Crystallite Size (nm) > (200)",
+          "value": "4.7"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size [原文] Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n分组 (a)：The CI of softwood fibers through refining.\n数据行：Revolutions = 12,000；CI (%) > $CI-XI^a$ = 70.93；CI (%) > $CI-XA^b$ = 36.22；Crystallite Size (nm) > 1\\bar{1}0 = 3.1；Crystallite Size (nm) > (110) = 3.7；Crystallite Size (nm) > (200) = 4.7",
+      "parent_text_start": 890,
+      "parent_text_end": 978,
+      "parent_raw_row": "<tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_5055475d18f85e63fcff",
+      "parent_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 6,
+      "page_end": 6,
+      "table_number": 1,
+      "group": "a",
+      "row_index": 7,
+      "data_index": 5,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "16,000"
+        },
+        {
+          "header": "CI (%) > $CI-XI^a$",
+          "value": "69.82"
+        },
+        {
+          "header": "CI (%) > $CI-XA^b$",
+          "value": "34.20"
+        },
+        {
+          "header": "Crystallite Size (nm) > 1\\bar{1}0",
+          "value": "3.2"
+        },
+        {
+          "header": "Crystallite Size (nm) > (110)",
+          "value": "3.5"
+        },
+        {
+          "header": "Crystallite Size (nm) > (200)",
+          "value": "4.7"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size [原文] Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n分组 (a)：The CI of softwood fibers through refining.\n数据行：Revolutions = 16,000；CI (%) > $CI-XI^a$ = 69.82；CI (%) > $CI-XA^b$ = 34.20；Crystallite Size (nm) > 1\\bar{1}0 = 3.2；Crystallite Size (nm) > (110) = 3.5；Crystallite Size (nm) > (200) = 4.7",
+      "parent_text_start": 978,
+      "parent_text_end": 1066,
+      "parent_raw_row": "<tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_9c147419872b8a57d732",
+      "parent_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 6,
+      "page_end": 6,
+      "table_number": 1,
+      "group": "b",
+      "row_index": 11,
+      "data_index": 6,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "0"
+        },
+        {
+          "header": "CI (%) > $CI-XI^a$",
+          "value": "75.55"
+        },
+        {
+          "header": "CI (%) > $CI-XA^b$",
+          "value": "47.16"
+        },
+        {
+          "header": "Crystallite Size (nm) > 1\\bar{1}0",
+          "value": "3.1"
+        },
+        {
+          "header": "Crystallite Size (nm) > (110)",
+          "value": "3.1"
+        },
+        {
+          "header": "Crystallite Size (nm) > (200)",
+          "value": "4.5"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size [原文] Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n分组 (b)：The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n数据行：Revolutions = 0；CI (%) > $CI-XI^a$ = 75.55；CI (%) > $CI-XA^b$ = 47.16；Crystallite Size (nm) > 1\\bar{1}0 = 3.1；Crystallite Size (nm) > (110) = 3.1；Crystallite Size (nm) > (200) = 4.5",
+      "parent_text_start": 1313,
+      "parent_text_end": 1396,
+      "parent_raw_row": "<tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_d3e762b802cde5c11e23",
+      "parent_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 6,
+      "page_end": 6,
+      "table_number": 1,
+      "group": "b",
+      "row_index": 12,
+      "data_index": 7,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "4000"
+        },
+        {
+          "header": "CI (%) > $CI-XI^a$",
+          "value": "73.01"
+        },
+        {
+          "header": "CI (%) > $CI-XA^b$",
+          "value": "36.26"
+        },
+        {
+          "header": "Crystallite Size (nm) > 1\\bar{1}0",
+          "value": "3.1"
+        },
+        {
+          "header": "Crystallite Size (nm) > (110)",
+          "value": "3.3"
+        },
+        {
+          "header": "Crystallite Size (nm) > (200)",
+          "value": "4.7"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size [原文] Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n分组 (b)：The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n数据行：Revolutions = 4000；CI (%) > $CI-XI^a$ = 73.01；CI (%) > $CI-XA^b$ = 36.26；Crystallite Size (nm) > 1\\bar{1}0 = 3.1；Crystallite Size (nm) > (110) = 3.3；Crystallite Size (nm) > (200) = 4.7",
+      "parent_text_start": 1396,
+      "parent_text_end": 1482,
+      "parent_raw_row": "<tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_56b8dc26dcbde83dd2df",
+      "parent_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 6,
+      "page_end": 6,
+      "table_number": 1,
+      "group": "b",
+      "row_index": 13,
+      "data_index": 8,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "8000"
+        },
+        {
+          "header": "CI (%) > $CI-XI^a$",
+          "value": "75.06"
+        },
+        {
+          "header": "CI (%) > $CI-XA^b$",
+          "value": "42.35"
+        },
+        {
+          "header": "Crystallite Size (nm) > 1\\bar{1}0",
+          "value": "3.1"
+        },
+        {
+          "header": "Crystallite Size (nm) > (110)",
+          "value": "3.5"
+        },
+        {
+          "header": "Crystallite Size (nm) > (200)",
+          "value": "4.8"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size [原文] Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n分组 (b)：The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n数据行：Revolutions = 8000；CI (%) > $CI-XI^a$ = 75.06；CI (%) > $CI-XA^b$ = 42.35；Crystallite Size (nm) > 1\\bar{1}0 = 3.1；Crystallite Size (nm) > (110) = 3.5；Crystallite Size (nm) > (200) = 4.8",
+      "parent_text_start": 1482,
+      "parent_text_end": 1568,
+      "parent_raw_row": "<tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_52de1b740a417125c083",
+      "parent_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 6,
+      "page_end": 6,
+      "table_number": 1,
+      "group": "b",
+      "row_index": 14,
+      "data_index": 9,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "12,000"
+        },
+        {
+          "header": "CI (%) > $CI-XI^a$",
+          "value": "74.57"
+        },
+        {
+          "header": "CI (%) > $CI-XA^b$",
+          "value": "39.21"
+        },
+        {
+          "header": "Crystallite Size (nm) > 1\\bar{1}0",
+          "value": "2.9"
+        },
+        {
+          "header": "Crystallite Size (nm) > (110)",
+          "value": "4.0"
+        },
+        {
+          "header": "Crystallite Size (nm) > (200)",
+          "value": "4.8"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size [原文] Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n分组 (b)：The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n数据行：Revolutions = 12,000；CI (%) > $CI-XI^a$ = 74.57；CI (%) > $CI-XA^b$ = 39.21；Crystallite Size (nm) > 1\\bar{1}0 = 2.9；Crystallite Size (nm) > (110) = 4.0；Crystallite Size (nm) > (200) = 4.8",
+      "parent_text_start": 1568,
+      "parent_text_end": 1656,
+      "parent_raw_row": "<tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_b4b0378f1c105ef7a054",
+      "parent_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 6,
+      "page_end": 6,
+      "table_number": 1,
+      "group": "b",
+      "row_index": 15,
+      "data_index": 10,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "16,000"
+        },
+        {
+          "header": "CI (%) > $CI-XI^a$",
+          "value": "73.55"
+        },
+        {
+          "header": "CI (%) > $CI-XA^b$",
+          "value": "38.01"
+        },
+        {
+          "header": "Crystallite Size (nm) > 1\\bar{1}0",
+          "value": "3.0"
+        },
+        {
+          "header": "Crystallite Size (nm) > (110)",
+          "value": "3.7"
+        },
+        {
+          "header": "Crystallite Size (nm) > (200)",
+          "value": "4.7"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size [原文] Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n分组 (b)：The CI of hardwood fibers through refining. a The CI-XI value was obtained from the ratio of the difraction intensity. b The CI-XA value was obtained from the ratio of the peak areas.\n数据行：Revolutions = 16,000；CI (%) > $CI-XI^a$ = 73.55；CI (%) > $CI-XA^b$ = 38.01；Crystallite Size (nm) > 1\\bar{1}0 = 3.0；Crystallite Size (nm) > (110) = 3.7；Crystallite Size (nm) > (200) = 4.7",
+      "parent_text_start": 1656,
+      "parent_text_end": 1744,
+      "parent_raw_row": "<tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_e85ed605bbd263633b60",
+      "parent_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 8,
+      "page_end": 8,
+      "table_number": 2,
+      "group": "a",
+      "row_index": 2,
+      "data_index": 1,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "0"
+        },
+        {
+          "header": "O(6)H···O(3')",
+          "value": "28.23"
+        },
+        {
+          "header": "O(3)H···O(5)",
+          "value": "28.44"
+        },
+        {
+          "header": "O(2)H···O(6)",
+          "value": "31.40"
+        },
+        {
+          "header": "Free OH(2) and OH(6)",
+          "value": "11.93"
+        },
+        {
+          "header": "$r^2$",
+          "value": "0.9995"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds [原文] Table 2. (a) The relative content of three H-bonds and the free OH for softwood fibers through refining. (b) The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n分组 (a)：The relative content of three H-bonds and the free OH for softwood fibers through refining.\n数据行：Revolutions = 0；O(6)H···O(3') = 28.23；O(3)H···O(5) = 28.44；O(2)H···O(6) = 31.40；Free OH(2) and OH(6) = 11.93；$r^2$ = 0.9995",
+      "parent_text_start": 530,
+      "parent_text_end": 620,
+      "parent_raw_row": "<tr><td>0</td><td>28.23</td><td>28.44</td><td>31.40</td><td>11.93</td><td>0.9995</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_6e24a5027c73b3a4e48f",
+      "parent_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 8,
+      "page_end": 8,
+      "table_number": 2,
+      "group": "a",
+      "row_index": 3,
+      "data_index": 2,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "4000"
+        },
+        {
+          "header": "O(6)H···O(3')",
+          "value": "26.05"
+        },
+        {
+          "header": "O(3)H···O(5)",
+          "value": "31.31"
+        },
+        {
+          "header": "O(2)H···O(6)",
+          "value": "32.50"
+        },
+        {
+          "header": "Free OH(2) and OH(6)",
+          "value": "10.14"
+        },
+        {
+          "header": "$r^2$",
+          "value": "0.9995"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds [原文] Table 2. (a) The relative content of three H-bonds and the free OH for softwood fibers through refining. (b) The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n分组 (a)：The relative content of three H-bonds and the free OH for softwood fibers through refining.\n数据行：Revolutions = 4000；O(6)H···O(3') = 26.05；O(3)H···O(5) = 31.31；O(2)H···O(6) = 32.50；Free OH(2) and OH(6) = 10.14；$r^2$ = 0.9995",
+      "parent_text_start": 620,
+      "parent_text_end": 713,
+      "parent_raw_row": "<tr><td>4000</td><td>26.05</td><td>31.31</td><td>32.50</td><td>10.14</td><td>0.9995</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_f76a0e17ebfdaec4f9f1",
+      "parent_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 8,
+      "page_end": 8,
+      "table_number": 2,
+      "group": "a",
+      "row_index": 4,
+      "data_index": 3,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "8000"
+        },
+        {
+          "header": "O(6)H···O(3')",
+          "value": "28.43"
+        },
+        {
+          "header": "O(3)H···O(5)",
+          "value": "30.86"
+        },
+        {
+          "header": "O(2)H···O(6)",
+          "value": "25.87"
+        },
+        {
+          "header": "Free OH(2) and OH(6)",
+          "value": "14.84"
+        },
+        {
+          "header": "$r^2$",
+          "value": "0.9995"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds [原文] Table 2. (a) The relative content of three H-bonds and the free OH for softwood fibers through refining. (b) The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n分组 (a)：The relative content of three H-bonds and the free OH for softwood fibers through refining.\n数据行：Revolutions = 8000；O(6)H···O(3') = 28.43；O(3)H···O(5) = 30.86；O(2)H···O(6) = 25.87；Free OH(2) and OH(6) = 14.84；$r^2$ = 0.9995",
+      "parent_text_start": 713,
+      "parent_text_end": 806,
+      "parent_raw_row": "<tr><td>8000</td><td>28.43</td><td>30.86</td><td>25.87</td><td>14.84</td><td>0.9995</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_216ea790d11386cdcf72",
+      "parent_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 8,
+      "page_end": 8,
+      "table_number": 2,
+      "group": "a",
+      "row_index": 5,
+      "data_index": 4,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "12,000"
+        },
+        {
+          "header": "O(6)H···O(3')",
+          "value": "26.68"
+        },
+        {
+          "header": "O(3)H···O(5)",
+          "value": "32.58"
+        },
+        {
+          "header": "O(2)H···O(6)",
+          "value": "25.49"
+        },
+        {
+          "header": "Free OH(2) and OH(6)",
+          "value": "15.25"
+        },
+        {
+          "header": "$r^2$",
+          "value": "0.9996"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds [原文] Table 2. (a) The relative content of three H-bonds and the free OH for softwood fibers through refining. (b) The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n分组 (a)：The relative content of three H-bonds and the free OH for softwood fibers through refining.\n数据行：Revolutions = 12,000；O(6)H···O(3') = 26.68；O(3)H···O(5) = 32.58；O(2)H···O(6) = 25.49；Free OH(2) and OH(6) = 15.25；$r^2$ = 0.9996",
+      "parent_text_start": 806,
+      "parent_text_end": 901,
+      "parent_raw_row": "<tr><td>12,000</td><td>26.68</td><td>32.58</td><td>25.49</td><td>15.25</td><td>0.9996</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_5d42fc968f02abd0fc3d",
+      "parent_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 8,
+      "page_end": 8,
+      "table_number": 2,
+      "group": "a",
+      "row_index": 6,
+      "data_index": 5,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "16,000"
+        },
+        {
+          "header": "O(6)H···O(3')",
+          "value": "23.56"
+        },
+        {
+          "header": "O(3)H···O(5)",
+          "value": "34.92"
+        },
+        {
+          "header": "O(2)H···O(6)",
+          "value": "29.38"
+        },
+        {
+          "header": "Free OH(2) and OH(6)",
+          "value": "12.14"
+        },
+        {
+          "header": "$r^2$",
+          "value": "0.9996"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds [原文] Table 2. (a) The relative content of three H-bonds and the free OH for softwood fibers through refining. (b) The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n分组 (a)：The relative content of three H-bonds and the free OH for softwood fibers through refining.\n数据行：Revolutions = 16,000；O(6)H···O(3') = 23.56；O(3)H···O(5) = 34.92；O(2)H···O(6) = 29.38；Free OH(2) and OH(6) = 12.14；$r^2$ = 0.9996",
+      "parent_text_start": 901,
+      "parent_text_end": 996,
+      "parent_raw_row": "<tr><td>16,000</td><td>23.56</td><td>34.92</td><td>29.38</td><td>12.14</td><td>0.9996</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_63d7acc925103ef8ad73",
+      "parent_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 8,
+      "page_end": 8,
+      "table_number": 2,
+      "group": "b",
+      "row_index": 9,
+      "data_index": 6,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "0"
+        },
+        {
+          "header": "O(6)H···O(3')",
+          "value": "26.55"
+        },
+        {
+          "header": "O(3)H···O(5)",
+          "value": "29.09"
+        },
+        {
+          "header": "O(2)H···O(6)",
+          "value": "30.04"
+        },
+        {
+          "header": "Free OH(2) and OH(6)",
+          "value": "14.32"
+        },
+        {
+          "header": "$r^2$",
+          "value": "0.9990"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds [原文] Table 2. (a) The relative content of three H-bonds and the free OH for softwood fibers through refining. (b) The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n分组 (b)：The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n数据行：Revolutions = 0；O(6)H···O(3') = 26.55；O(3)H···O(5) = 29.09；O(2)H···O(6) = 30.04；Free OH(2) and OH(6) = 14.32；$r^2$ = 0.9990",
+      "parent_text_start": 1172,
+      "parent_text_end": 1262,
+      "parent_raw_row": "<tr><td>0</td><td>26.55</td><td>29.09</td><td>30.04</td><td>14.32</td><td>0.9990</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_130fe083df2d431ca28c",
+      "parent_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 8,
+      "page_end": 8,
+      "table_number": 2,
+      "group": "b",
+      "row_index": 10,
+      "data_index": 7,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "4000"
+        },
+        {
+          "header": "O(6)H···O(3')",
+          "value": "24.44"
+        },
+        {
+          "header": "O(3)H···O(5)",
+          "value": "33.06"
+        },
+        {
+          "header": "O(2)H···O(6)",
+          "value": "31.28"
+        },
+        {
+          "header": "Free OH(2) and OH(6)",
+          "value": "11.22"
+        },
+        {
+          "header": "$r^2$",
+          "value": "0.9991"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds [原文] Table 2. (a) The relative content of three H-bonds and the free OH for softwood fibers through refining. (b) The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n分组 (b)：The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n数据行：Revolutions = 4000；O(6)H···O(3') = 24.44；O(3)H···O(5) = 33.06；O(2)H···O(6) = 31.28；Free OH(2) and OH(6) = 11.22；$r^2$ = 0.9991",
+      "parent_text_start": 1262,
+      "parent_text_end": 1355,
+      "parent_raw_row": "<tr><td>4000</td><td>24.44</td><td>33.06</td><td>31.28</td><td>11.22</td><td>0.9991</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_3a305f444a77a9114bc2",
+      "parent_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 8,
+      "page_end": 8,
+      "table_number": 2,
+      "group": "b",
+      "row_index": 11,
+      "data_index": 8,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "8000"
+        },
+        {
+          "header": "O(6)H···O(3')",
+          "value": "26.89"
+        },
+        {
+          "header": "O(3)H···O(5)",
+          "value": "29.81"
+        },
+        {
+          "header": "O(2)H···O(6)",
+          "value": "28.99"
+        },
+        {
+          "header": "Free OH(2) and OH(6)",
+          "value": "14.31"
+        },
+        {
+          "header": "$r^2$",
+          "value": "0.9991"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds [原文] Table 2. (a) The relative content of three H-bonds and the free OH for softwood fibers through refining. (b) The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n分组 (b)：The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n数据行：Revolutions = 8000；O(6)H···O(3') = 26.89；O(3)H···O(5) = 29.81；O(2)H···O(6) = 28.99；Free OH(2) and OH(6) = 14.31；$r^2$ = 0.9991",
+      "parent_text_start": 1355,
+      "parent_text_end": 1448,
+      "parent_raw_row": "<tr><td>8000</td><td>26.89</td><td>29.81</td><td>28.99</td><td>14.31</td><td>0.9991</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_d64411824d05e03cf600",
+      "parent_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 8,
+      "page_end": 8,
+      "table_number": 2,
+      "group": "b",
+      "row_index": 12,
+      "data_index": 9,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "12,000"
+        },
+        {
+          "header": "O(6)H···O(3')",
+          "value": "27.01"
+        },
+        {
+          "header": "O(3)H···O(5)",
+          "value": "29.28"
+        },
+        {
+          "header": "O(2)H···O(6)",
+          "value": "27.40"
+        },
+        {
+          "header": "Free OH(2) and OH(6)",
+          "value": "16.31"
+        },
+        {
+          "header": "$r^2$",
+          "value": "0.9992"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds [原文] Table 2. (a) The relative content of three H-bonds and the free OH for softwood fibers through refining. (b) The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n分组 (b)：The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n数据行：Revolutions = 12,000；O(6)H···O(3') = 27.01；O(3)H···O(5) = 29.28；O(2)H···O(6) = 27.40；Free OH(2) and OH(6) = 16.31；$r^2$ = 0.9992",
+      "parent_text_start": 1448,
+      "parent_text_end": 1543,
+      "parent_raw_row": "<tr><td>12,000</td><td>27.01</td><td>29.28</td><td>27.40</td><td>16.31</td><td>0.9992</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    },
+    {
+      "id": "row_d1a02e0a1c4657447c40",
+      "parent_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "document_id": "doc_0fcf2a50cfa02d21",
+      "page_start": 8,
+      "page_end": 8,
+      "table_number": 2,
+      "group": "b",
+      "row_index": 13,
+      "data_index": 10,
+      "assignments": [
+        {
+          "header": "Revolutions",
+          "value": "16,000"
+        },
+        {
+          "header": "O(6)H···O(3')",
+          "value": "24.98"
+        },
+        {
+          "header": "O(3)H···O(5)",
+          "value": "31.65"
+        },
+        {
+          "header": "O(2)H···O(6)",
+          "value": "29.85"
+        },
+        {
+          "header": "Free OH(2) and OH(6)",
+          "value": "13.52"
+        },
+        {
+          "header": "$r^2$",
+          "value": "0.9989"
+        }
+      ],
+      "text": "[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds [原文] Table 2. (a) The relative content of three H-bonds and the free OH for softwood fibers through refining. (b) The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n分组 (b)：The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n数据行：Revolutions = 16,000；O(6)H···O(3') = 24.98；O(3)H···O(5) = 31.65；O(2)H···O(6) = 29.85；Free OH(2) and OH(6) = 13.52；$r^2$ = 0.9989",
+      "parent_text_start": 1543,
+      "parent_text_end": 1638,
+      "parent_raw_row": "<tr><td>16,000</td><td>24.98</td><td>31.65</td><td>29.85</td><td>13.52</td><td>0.9989</td></tr>",
+      "provenance": "Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance."
+    }
+  ],
+  "links": [
+    {
+      "source_chunk_id": "chk_af3ae9d5c89c0c84b952",
+      "target_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "kind": "explicit_body_table_reference",
+      "table_number": 1
+    },
+    {
+      "source_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "target_chunk_id": "chk_af3ae9d5c89c0c84b952",
+      "kind": "table_explicitly_discussed_by_body",
+      "table_number": 1
+    },
+    {
+      "source_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "target_chunk_id": "chk_bfa6aebf16bbe00aee8c",
+      "kind": "table_explicitly_discussed_by_body",
+      "table_number": 1
+    },
+    {
+      "source_chunk_id": "chk_bfa6aebf16bbe00aee8c",
+      "target_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "kind": "explicit_body_table_reference",
+      "table_number": 1
+    },
+    {
+      "source_chunk_id": "chk_c4ccd083da275497125c",
+      "target_chunk_id": "chk_4a9d108c14852ea3ef4e",
+      "kind": "explicit_body_table_reference",
+      "table_number": 1
+    },
+    {
+      "source_chunk_id": "chk_d49edab2db458aa92dcf",
+      "target_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "kind": "explicit_body_table_reference",
+      "table_number": 2
+    },
+    {
+      "source_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "target_chunk_id": "chk_d49edab2db458aa92dcf",
+      "kind": "table_explicitly_discussed_by_body",
+      "table_number": 2
+    },
+    {
+      "source_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "target_chunk_id": "chk_31ab980a5ea079e08d38",
+      "kind": "table_explicitly_discussed_by_body",
+      "table_number": 2
+    },
+    {
+      "source_chunk_id": "chk_31ab980a5ea079e08d38",
+      "target_chunk_id": "chk_ac09f9797fb4597e0acb",
+      "kind": "explicit_body_table_reference",
+      "table_number": 2
+    }
+  ],
+  "parent_text_sha256": {
+    "chk_4a9d108c14852ea3ef4e": "d2a83f76ec75f50ea059688fb9b8a5c6d3afcdab433dba562f067ace0d6ec0ef",
+    "chk_ac09f9797fb4597e0acb": "3a1e9d5c4ead16a0f0d897de208929f23038c964cfbf496936edfb5007cc2c1c"
+  },
+  "policy": "Row text is retrieval-only; evidence is the complete existing source table. Explicit body table references only, same document. No QA question input or manual scientific values."
+}

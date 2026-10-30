@@ -74,7 +74,7 @@ def library_fingerprint(root):
             'index_files': {p.relative_to(root).as_posix(): digest(p)
                             for p in sorted((root / 'chroma').rglob('*'))
                             if p.is_file() and not p.name.startswith('chroma.sqlite3')}}
-    structured={name:digest(root/name) for name in ['structure.json','source-pages.json','quality-ledger.json','native-source.json'] if (root/name).is_file()}
+    structured={name:digest(root/name) for name in ['structure.json','source-pages.json','quality-ledger.json','native-source.json','table-retrieval.json','table-row-vectors.json'] if (root/name).is_file()}
     if structured:result['structure_files']=structured
     return result
 
@@ -82,7 +82,7 @@ def library_fingerprint(root):
 def copy_structure_files(library,frozen,expected):
     for name,checksum in expected.items():
         source=library/name
-        if name not in {'structure.json','source-pages.json','quality-ledger.json','native-source.json'} or source.is_symlink() or digest(source)!=checksum:
+        if name not in {'structure.json','source-pages.json','quality-ledger.json','native-source.json','table-retrieval.json','table-row-vectors.json'} or source.is_symlink() or digest(source)!=checksum:
             raise ValueError('Structure source fingerprint mismatch')
         shutil.copy2(source,frozen/name)
         if digest(frozen/name)!=checksum:raise ValueError('Copied structure fingerprint mismatch')
@@ -138,8 +138,16 @@ def check_index(root):
                              n_results=1, include=['distances'])
     if not probe['ids'][0] or probe['ids'][0][0] not in expected:
         raise ValueError('Offline nearest-neighbor probe failed')
-    return {'vectors': len(expected), 'dimensions': config['embedding_dimensions'],
+    result={'vectors': len(expected), 'dimensions': config['embedding_dimensions'],
             'offline_query': 'passed', 'provider_calls': 0}
+    if config.get('table_retrieval',{}).get('enabled'):
+        from literature_rag.application.table_evidence import TableRelations
+        from literature_rag.adapters.sqlite.metadata_store import SqliteMetadataStore
+        relations=TableRelations.load(library,SqliteMetadataStore(library/'metadata.sqlite3'),
+            config['embedding_provider'],config['embedding_model'],config['embedding_dimensions'])
+        result['table_rows']=len(relations.rows)
+        result['table_links']=len(relations.links)
+    return result
 
 
 def verify_index_on_copy(root):

@@ -12,6 +12,8 @@ def configuration_snapshot(env_file: Path):
                'application/retrieve.py', 'adapters/providers/deepseek.py', 'adapters/providers/openai.py']
     if settings.context_expansion_enabled:
         sources += ['application/context.py','domain/models.py','adapters/sqlite/metadata_store.py']
+    if settings.table_retrieval_enabled:
+        sources += ['application/table_evidence.py']
     fingerprint = sha256(b'\n'.join((root / source).read_bytes() for source in sources)).hexdigest()
     result = {**{key: getattr(settings, key) for key in (
         'embedding_provider', 'embedding_model', 'embedding_dimensions', 'llm_provider', 'llm_model', 'top_k', 'min_score')},
@@ -23,6 +25,11 @@ def configuration_snapshot(env_file: Path):
         result.update(pipeline_version='literature-context-v1',pipeline_source_files=sources,
                       context_expansion={key:getattr(settings,key) for key in (
                           'context_expansion_enabled','context_neighbor_radius','context_max_evidence_chars','context_max_total_chars')})
+    if settings.table_retrieval_enabled:
+        result.update(pipeline_version='literature-table-evidence-v1',pipeline_source_files=sources,
+            table_retrieval=dict(enabled=True,version='table-evidence-v1',row_cosine='exact',
+                parent_fusion='maximum_cosine',max_parent_candidates=50,
+                linked_sources_per_context=2,max_linked_sources=8,normal_region_sampling=False))
     return result
 
 

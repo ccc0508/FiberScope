@@ -1,0 +1,8 @@
+{
+  "version": "table-evidence-v1",
+  "builder_sha256": "3aa80ac06e33dfef400cb3e07f82317a67308ab573f137734c1b62b0f7e256ed",
+  "files": {
+    "comparison.html": "64544e254cc3ccf0997876f34178c582c35a66588767eb475d18fec9f5393e47",
+    "table-retrieval.json": "30259d8483bc06033d53e87e250328567606289e69d491b0f30f0aaa3f35765a"
+  }
+}

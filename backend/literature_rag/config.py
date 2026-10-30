@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     context_neighbor_radius: int = Field(default=1,ge=0,le=2)
     context_max_evidence_chars: int = Field(default=8000,ge=256,le=100000)
     context_max_total_chars: int = Field(default=24000,ge=256,le=100000)
+    table_retrieval_enabled: bool = False
 
     embedding_provider: str = "openai"
     embedding_model: str | None = None
@@ -105,4 +106,6 @@ class Settings(BaseSettings):
         """Ensure adjacent chunks do not completely overlap."""
         if self.chunk_overlap >= self.chunk_size:
             raise ValueError("chunk_overlap must be smaller than chunk_size")
+        if self.table_retrieval_enabled and not self.context_expansion_enabled:
+            raise ValueError('table retrieval requires bounded context expansion')
         return self
