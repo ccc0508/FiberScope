@@ -57,6 +57,19 @@ def main():
                           if settings.llm_provider == 'deepseek' else {})
     generator = generator_type(settings.llm_model, settings.llm_api_key.get_secret_value(), settings.llm_base_url,
                                **generation_options)
+    reranker=None
+    rerank_calls=[]
+    if settings.rerank_enabled:
+        from literature_rag.adapters.providers.rerank import SiliconFlowReranker
+        provider_reranker=SiliconFlowReranker(settings.rerank_model,settings.rerank_api_key.get_secret_value(),
+            settings.rerank_base_url,settings.rerank_timeout_seconds)
+
+        class CapturedReranker:
+            def rerank(self,*args):
+                try:return provider_reranker.rerank(*args)
+                finally:
+                    if provider_reranker.last_call is not None:rerank_calls.append(provider_reranker.last_call)
+        reranker=CapturedReranker()
     evidence_by_chunk = {}
     generation_calls = []
     generated_answers = []
@@ -88,16 +101,18 @@ def main():
 
     class CapturedRetriever(RetrievalService):
         def retrieve(self, *args):
-            evidences = super().retrieve(*args)
-            seed_evidence.extend(asdict(e) for e in self.last_seed_evidences)
-            context_diagnostics.update(self.last_context_diagnostics)
+            try:evidences = super().retrieve(*args)
+            finally:
+                seed_evidence.extend(asdict(e) for e in self.last_seed_evidences)
+                context_diagnostics.update(self.last_context_diagnostics)
+                if settings.rerank_enabled:context_diagnostics['rerank']=self.last_rerank_diagnostics
             evidence_by_chunk.update({e.chunk_id: e for e in evidences})
             return evidences
 
     try:
         context_options=ContextOptions(settings.context_expansion_enabled,settings.context_neighbor_radius,
                                       settings.context_max_evidence_chars,settings.context_max_total_chars)
-        answer = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options,table_relations), CapturedGenerator(), CitationValidator()).answer(
+        answer = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options,table_relations,reranker), CapturedGenerator(), CitationValidator()).answer(
             body['question'], settings.top_k, settings.min_score)
     except (ProviderError, InfrastructureError) as error:
         print(json.dumps({'status': 'failed', 'answer': '', 'citations': [],
@@ -106,6 +121,7 @@ def main():
                           'retrieved_evidence': [asdict(e) for e in evidence_by_chunk.values()],
                           'retrieval_seed_evidence': seed_evidence, 'context_assembly': context_diagnostics,
                           'embedding_usage': getattr(embedder, 'last_usage', None),
+                          **({'rerank_calls':rerank_calls} if settings.rerank_enabled else {}),
                           'generation_calls': generation_calls, 'claims': [], 'latency_ms': 0}, ensure_ascii=False))
         return
     citations = []
@@ -116,6 +132,7 @@ def main():
                       'latency_ms': answer.latency_ms, 'reason_code': answer.reason_code,
                       'configuration': configuration, 'generation_calls': generation_calls,
                       'embedding_usage': getattr(embedder, 'last_usage', None),
+                      **({'rerank_calls':rerank_calls} if settings.rerank_enabled else {}),
                       'claims': [asdict(claim) for claim in generated_answers[-1].claims] if answer.status.value == 'answered' else [],
                       'retrieval_seed_evidence': seed_evidence, 'context_assembly': context_diagnostics,
                       'retrieved_evidence': [asdict(e) for e in evidence_by_chunk.values()]}, ensure_ascii=False))

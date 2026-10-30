@@ -33,6 +33,12 @@ class Settings(BaseSettings):
     context_max_evidence_chars: int = Field(default=8000,ge=256,le=100000)
     context_max_total_chars: int = Field(default=24000,ge=256,le=100000)
     table_retrieval_enabled: bool = False
+    rerank_enabled: bool = False
+    rerank_provider: Literal['siliconflow'] = 'siliconflow'
+    rerank_model: str = 'BAAI/bge-reranker-v2-m3'
+    rerank_base_url: str | None = None
+    rerank_api_key: SecretStr | None = None
+    rerank_timeout_seconds: float = Field(default=60,gt=0,le=120,allow_inf_nan=False)
 
     embedding_provider: str = "openai"
     embedding_model: str | None = None
@@ -47,7 +53,7 @@ class Settings(BaseSettings):
     llm_api_key: SecretStr | None = None
     llm_base_url: str | None = None
 
-    @field_validator("embedding_base_url", "llm_base_url", mode="before")
+    @field_validator("embedding_base_url", "llm_base_url", "rerank_base_url", mode="before")
     @classmethod
     def validate_base_url(cls, value: object) -> object:
         if not isinstance(value, str):
@@ -108,4 +114,7 @@ class Settings(BaseSettings):
             raise ValueError("chunk_overlap must be smaller than chunk_size")
         if self.table_retrieval_enabled and not self.context_expansion_enabled:
             raise ValueError('table retrieval requires bounded context expansion')
+        if self.rerank_enabled:
+            if not self.rerank_model.strip() or not self.rerank_base_url or not self.rerank_api_key or not self.rerank_api_key.get_secret_value().strip():
+                raise ValueError('enabled reranking requires model, base URL and API key')
         return self
