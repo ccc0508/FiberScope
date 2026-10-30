@@ -178,3 +178,35 @@ def test_platform_token_charge_is_separate_from_model_usage(tmp_path):
     assert '平台总费用：65,281,766 Token' in text and '平台费用' in text
     assert '模型Token用量：65,281,766' not in text
     assert judge.read_json(tmp_path/'runtime-confirmation.json')==old
+
+
+def test_jev_only_configuration_never_loads_luna_credentials(monkeypatch):
+    calls=[]
+    config=jev.Config('https://openrouter.ai/api','typesafe/jev-1.14','SYNTHETIC')
+    monkeypatch.setattr(jev,'load_config',lambda path:(calls.append(path.name) or config))
+    monkeypatch.setattr(grading.luna,'load_config',lambda path:pytest.fail('Luna config must not be read'))
+    assert grading.configs(['jev'])=={'jev':config}
+    assert calls==['.env.jev']
+
+
+def test_single_judge_system_filter_preserves_the_scientific_packet(tmp_path,monkeypatch):
+    state,questions,targets=fixture()
+    candidate=deepcopy(state['candidate'])
+    case=state['reference_case']
+    jobs=[dict(system=s,blind_id=s+'-blind',task_id='PFI2-001',task=dict(capabilities=['text']),
+               reference_case=case,candidate=candidate) for s in ['rag','dsh']]
+    sources={k:state[k] for k in ['reference_evidence','paper_texts']}
+    meta=dict(source_documents=state['source_documents'])
+    source=tmp_path/'import';source.mkdir();(source/'import.json').write_text('{}')
+    monkeypatch.setattr(grading,'load_import',lambda directory:(meta,jobs,sources,dict(pdfplumber=['Test source 10%.']*14)))
+    config=jev.Config('https://openrouter.ai/api','typesafe/jev-1.14','SYNTHETIC')
+    output=tmp_path/'study'
+    before=grading.packet(jobs[0],meta,sources,dict(pdfplumber=['Test source 10%.']*14))
+    result=grading.prepare(source,output,{'jev':config},['rag'])
+    frozen=judge.read_json(output/'study.json')
+    assert result['prepared']==1 and result['model_calls']==0
+    assert set(frozen['requested_judges'])=={'jev'} and frozen['selected_systems']==['rag']
+    assert frozen['policy_sha256']==grading.POLICY_SHA
+    assert {e['system'] for e in frozen['jobs']}=={'rag'}
+    saved=judge.read_json(next((output/'inputs').iterdir()))
+    assert (saved['state'],saved['questions'],saved['targets'])==before
