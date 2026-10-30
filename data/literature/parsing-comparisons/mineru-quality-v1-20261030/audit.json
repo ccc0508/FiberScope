@@ -1,0 +1,44 @@
+{
+  "status": "passed",
+  "original_units_unchanged_or_reversibly_overlaid": true,
+  "flagged_units": 19,
+  "normal_samples": 0,
+  "numeric_table_cells_unchanged": 120,
+  "corrected_offsets_and_cross_page_locators": true,
+  "old_source_metadata_unchanged": true,
+  "application_configuration_unchanged": true,
+  "isolated_index_chunks": 95,
+  "all_review_calls_counted": 24,
+  "review_usage": {
+    "prompt_tokens": 42703,
+    "completion_tokens": 48134,
+    "total_tokens": 90837,
+    "reasoning_tokens": 37067,
+    "cached_tokens": 8576
+  },
+  "returned_models": [
+    "deepseek-flash"
+  ],
+  "embedding_calls": [
+    {
+      "status": "completed",
+      "chunk_count": 64,
+      "usage": {
+        "prompt_tokens": 13297,
+        "completion_tokens": 0,
+        "total_tokens": 13297
+      }
+    },
+    {
+      "status": "completed",
+      "chunk_count": 31,
+      "usage": {
+        "prompt_tokens": 3069,
+        "completion_tokens": 0,
+        "total_tokens": 3069
+      }
+    }
+  ],
+  "public_file_hashes_verified": true,
+  "audit_script_sha256": "d3a80c4c1f80411c60b744a1f183559baee154359782a6fd1a8498e66b5606d3"
+}

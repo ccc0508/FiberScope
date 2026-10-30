@@ -1,0 +1,3521 @@
+[
+  {
+    "source_id": "mineru_block_0006",
+    "page": 1,
+    "bbox": [
+      131,
+      330,
+      875,
+      525
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0006",
+        "page": 1,
+        "bbox": [
+          131,
+          330,
+          875,
+          525
+        ],
+        "code": "ambiguous_superscript",
+        "detail": {
+          "interpretation": "zero/letter/prime requires source-image verification"
+        },
+        "status": "flagged",
+        "id": "finding_93a5ab78ea692a00d58a"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "Abstract: Supramolecular structure is the critical factor that afects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H· · · O(3<sup>0</sup>) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coeficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.",
+    "corrected_text": "Abstract: Supramolecular structure is the critical factor that affects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H···O(3′) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coefficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "insert",
+        "original_start": 64,
+        "original_end": 64,
+        "corrected_start": 64,
+        "corrected_end": 65,
+        "before": "",
+        "after": "f"
+      },
+      {
+        "operation": "delete",
+        "original_start": 646,
+        "original_end": 647,
+        "corrected_start": 647,
+        "corrected_end": 647,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 648,
+        "original_end": 649,
+        "corrected_start": 648,
+        "corrected_end": 648,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 650,
+        "original_end": 651,
+        "corrected_start": 649,
+        "corrected_end": 649,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 654,
+        "original_end": 666,
+        "corrected_start": 652,
+        "corrected_end": 653,
+        "before": "<sup>0</sup>",
+        "after": "′"
+      },
+      {
+        "operation": "insert",
+        "original_start": 810,
+        "original_end": 810,
+        "corrected_start": 797,
+        "corrected_end": 798,
+        "before": "",
+        "after": "f"
+      }
+    ],
+    "image_sha256": "d4577b8aa294858ff7471dde4ec61eeb5ff7adf13607b99ddb4e76b305e6c75c",
+    "request_sha256": "4f0b83dd1d86aee25e6ef8b97a19a47d3b2a00ad9d1641cd4380f831501e3b5d",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "图像中摘要明确显示“affects”“coefficient”，且氢键符号为O(6)H···O(3′)，不是O(3<sup>0</sup>)，故原生文本存在字符错误。",
+      "visible_text": "Abstract: Supramolecular structure is the critical factor that affects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H···O(3′) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coefficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.",
+      "corrected_text": "Abstract: Supramolecular structure is the critical factor that affects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H···O(3′) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coefficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1460,
+      "completion_tokens": 1326,
+      "total_tokens": 2786,
+      "reasoning_tokens": 771,
+      "cached_tokens": 0
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 1,
+        "bbox": [
+          131,
+          330,
+          875,
+          525
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_1e006865d2bf7ecd2cad"
+  },
+  {
+    "source_id": "mineru_block_0016",
+    "page": 2,
+    "bbox": [
+      121,
+      216,
+      875,
+      376
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0016",
+        "page": 2,
+        "bbox": [
+          121,
+          216,
+          875,
+          376
+        ],
+        "code": "ambiguous_superscript",
+        "detail": {
+          "interpretation": "zero/letter/prime requires source-image verification"
+        },
+        "status": "flagged",
+        "id": "finding_1165774fc1c7ac239981"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "Fourier transformation infrared spectroscopy (FT-IR), which is sensitive to molecular structure, can be as an indirect measurement for studying H-bonding network. FT-IR deconvolution of hydroxyl groups band was adopted in order to study the changes of the energy of H-bonds and the H-bonding distance during delignification [13] or the deconstruction of cellulose [14]. Moreover, it was used to study the diferences of the content of H-bonds not only between dislocation region and normal region [15], but also among plant species [16,17]. Regarding the changes of H-bonding network during PFI refining, Yuan et al. [18] reported that the content of H-bonds and crystallinity index (CI) of eucalyptus fibers changed with the increment of beating time. Subsequently, Zhao et al. [8] found that the H-bonding energy for O(6)H· · · O(3<sup>0</sup>) inter-molecular H-bonds decreased by 12.9% and evolutions of the content of certain H-bonds difered at various refining stages.",
+    "corrected_text": "Fourier transformation infrared spectroscopy (FT-IR), which is sensitive to molecular structure, can be as an indirect measurement for studying H-bonding network. FT-IR deconvolution of hydroxyl groups band was adopted in order to study the changes of the energy of H-bonds and the H-bonding distance during delignification [13] or the deconstruction of cellulose [14]. Moreover, it was used to study the differences of the content of H-bonds not only between dislocation region and normal region [15], but also among plant species [16,17]. Regarding the changes of H-bonding network during PFI refining, Yuan et al. [18] reported that the content of H-bonds and crystallinity index (CI) of eucalyptus fibers changed with the increment of beating time. Subsequently, Zhao et al. [8] found that the H-bonding energy for O(6)H···O(3′) inter-molecular H-bonds decreased by 12.9% and evolutions of the content of certain H-bonds differed at various refining stages.",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "insert",
+        "original_start": 407,
+        "original_end": 407,
+        "corrected_start": 407,
+        "corrected_end": 408,
+        "before": "",
+        "after": "f"
+      },
+      {
+        "operation": "delete",
+        "original_start": 824,
+        "original_end": 825,
+        "corrected_start": 825,
+        "corrected_end": 825,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 826,
+        "original_end": 827,
+        "corrected_start": 826,
+        "corrected_end": 826,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 828,
+        "original_end": 829,
+        "corrected_start": 827,
+        "corrected_end": 827,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 832,
+        "original_end": 844,
+        "corrected_start": 830,
+        "corrected_end": 831,
+        "before": "<sup>0</sup>",
+        "after": "′"
+      },
+      {
+        "operation": "insert",
+        "original_start": 941,
+        "original_end": 941,
+        "corrected_start": 928,
+        "corrected_end": 929,
+        "before": "",
+        "after": "f"
+      }
+    ],
+    "image_sha256": "0bb5d99cba1c78733d5bfdc61ce90e8285ff08c20721392a8483b260801deca9",
+    "request_sha256": "5bf2e14465c730f86b238153480d1368d2f764b9bbee7bc8641d4fc4db8288c7",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "目标区域内可见文本中，氢键能量句写作“O(6)H···O(3′)”（3 右上角为撇号），而原始提取写成“O(3<sup>0</sup>)”（上标零），符号错误；另外可见文本为“differences”与“differed”，原始提取分别误作“diferences”“difered”，属拼写/OCR 错误。其余文字与图像一致。",
+      "visible_text": "Fourier transformation infrared spectroscopy (FT-IR), which is sensitive to molecular structure, can be as an indirect measurement for studying H-bonding network. FT-IR deconvolution of hydroxyl groups band was adopted in order to study the changes of the energy of H-bonds and the H-bonding distance during delignification [13] or the deconstruction of cellulose [14]. Moreover, it was used to study the differences of the content of H-bonds not only between dislocation region and normal region [15], but also among plant species [16,17]. Regarding the changes of H-bonding network during PFI refining, Yuan et al. [18] reported that the content of H-bonds and crystallinity index (CI) of eucalyptus fibers changed with the increment of beating time. Subsequently, Zhao et al. [8] found that the H-bonding energy for O(6)H···O(3′) inter-molecular H-bonds decreased by 12.9% and evolutions of the content of certain H-bonds differed at various refining stages.",
+      "corrected_text": "Fourier transformation infrared spectroscopy (FT-IR), which is sensitive to molecular structure, can be as an indirect measurement for studying H-bonding network. FT-IR deconvolution of hydroxyl groups band was adopted in order to study the changes of the energy of H-bonds and the H-bonding distance during delignification [13] or the deconstruction of cellulose [14]. Moreover, it was used to study the differences of the content of H-bonds not only between dislocation region and normal region [15], but also among plant species [16,17]. Regarding the changes of H-bonding network during PFI refining, Yuan et al. [18] reported that the content of H-bonds and crystallinity index (CI) of eucalyptus fibers changed with the increment of beating time. Subsequently, Zhao et al. [8] found that the H-bonding energy for O(6)H···O(3′) inter-molecular H-bonds decreased by 12.9% and evolutions of the content of certain H-bonds differed at various refining stages.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1381,
+      "completion_tokens": 1052,
+      "total_tokens": 2433,
+      "reasoning_tokens": 493,
+      "cached_tokens": 0
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 2,
+        "bbox": [
+          121,
+          216,
+          875,
+          376
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_8ccc8eb86fac4e3a8809"
+  },
+  {
+    "source_id": "mineru_block_0047",
+    "page": 4,
+    "bbox": [
+      122,
+      332,
+      336,
+      349
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0047",
+        "page": 4,
+        "bbox": [
+          122,
+          332,
+          336,
+          349
+        ],
+        "code": "repeated_title_label_collapsed_raw_preserved",
+        "detail": {},
+        "status": "flagged",
+        "id": "finding_d107d06eff4803056ac3"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "<sub>3. Results and Discussions</sub><sup>3.</sup> <sup>Results</sup> <sup>and</sup> <sup>Discussions</sup>",
+    "corrected_text": "3. Results and Discussions",
+    "original_kind": "heading",
+    "corrected_kind": "heading",
+    "original_text_level": 2,
+    "corrected_text_level": 2,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 0,
+        "original_end": 5,
+        "corrected_start": 0,
+        "corrected_end": 0,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 31,
+        "original_end": 107,
+        "corrected_start": 26,
+        "corrected_end": 26,
+        "before": "</sub><sup>3.</sup> <sup>Results</sup> <sup>and</sup> <sup>Discussions</sup>",
+        "after": ""
+      }
+    ],
+    "image_sha256": "1447dd16a66e4893fbb364bd6f9a2cddb427a7ef50169a490e2243f31abd48eb",
+    "request_sha256": "989e1eebfdecfc2022649955fa9bd1fdc8513602962f35b1b00bc05cd64fe441",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色目标框内仅显示加粗章节标题“3. Results and Discussions”；原生文本混入了重复的 sub/sup 标记和重复标题片段，与图像可见内容不符。",
+      "visible_text": "3. Results and Discussions",
+      "corrected_text": "3. Results and Discussions",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 836,
+      "completion_tokens": 409,
+      "total_tokens": 1245,
+      "reasoning_tokens": 327,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 4,
+        "bbox": [
+          122,
+          332,
+          336,
+          349
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_306ec216104c303f7d8b"
+  },
+  {
+    "source_id": "mineru_block_0048",
+    "page": 4,
+    "bbox": [
+      122,
+      361,
+      610,
+      376
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0048",
+        "page": 4,
+        "bbox": [
+          122,
+          361,
+          610,
+          376
+        ],
+        "code": "repeated_title_label_collapsed_raw_preserved",
+        "detail": {},
+        "status": "flagged",
+        "id": "finding_7f348f5ec1a7e0dfda30"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "3.1. The Morphological Analysis, Swelling, and Mechanical Properties3.1. The Morphological Analysis, Swelling, and Mechanical Properties",
+    "corrected_text": "3.1. The Morphological Analysis, Swelling, and Mechanical Properties",
+    "original_kind": "heading",
+    "corrected_kind": "heading",
+    "original_text_level": 2,
+    "corrected_text_level": 2,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 68,
+        "original_end": 136,
+        "corrected_start": 68,
+        "corrected_end": 68,
+        "before": "3.1. The Morphological Analysis, Swelling, and Mechanical Properties",
+        "after": ""
+      }
+    ],
+    "image_sha256": "e0de745acec614ddd85bf918824276ed6a9d928f3d2fb3ad01c9c6fbcd43d49f",
+    "request_sha256": "652f10780c0b041960b867ee7ea241d730e00351573ce59d58bd9ab41256298c",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色框内实际只出现一次斜体小节标题“3.1. The Morphological Analysis, Swelling, and Mechanical Properties”，而原提取文本将该标题重复拼接了两遍（“...Properties3.1. The Morphological...”），属重复折叠错误，需以可见的单次标题替换。",
+      "visible_text": "3.1. The Morphological Analysis, Swelling, and Mechanical Properties",
+      "corrected_text": "3.1. The Morphological Analysis, Swelling, and Mechanical Properties",
+      "heading_action": "keep",
+      "heading_level": 2
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 883,
+      "completion_tokens": 227,
+      "total_tokens": 1110,
+      "reasoning_tokens": 100,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 4,
+        "bbox": [
+          122,
+          361,
+          610,
+          376
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_63cd7b41754e54ab00c9"
+  },
+  {
+    "source_id": "mineru_block_0049",
+    "page": 4,
+    "bbox": [
+      119,
+      384,
+      875,
+      514
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0049",
+        "page": 4,
+        "bbox": [
+          119,
+          384,
+          875,
+          514
+        ],
+        "code": "repeated_long_phrase",
+        "detail": {
+          "ngram_words": 12,
+          "interpretation": "suspected, not proven duplicate"
+        },
+        "status": "flagged",
+        "id": "finding_0422517e3cc8951df3e9"
+      },
+      {
+        "source_id": "mineru_block_0049",
+        "page": 4,
+        "bbox": [
+          119,
+          384,
+          875,
+          514
+        ],
+        "code": "suspicious_inline_markup",
+        "detail": {
+          "interpretation": "sentence fragments in superscripts/subscripts"
+        },
+        "status": "flagged",
+        "id": "finding_da6bcad809d410f65003"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "For softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length hadFor softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length had a downward trend, and the fines content has an upward trend for the softwood fibers during PFIa downward trend, and the fines content has an upward trend for the softwood fibers during PFI refining, as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibersrefining, as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibers <sub>c</sub>h<sub>ange</sub>d <sub>signi</sub>fi<sub>cant</sub>l<sub>y. However, two parameters o</sub>f h<sub>ar</sub>d<sub>woo</sub>d fib<sub>ers</sub> h<sub>a</sub>d <sub>no signi</sub>fi<sub>cant variations</sub>changed significantly. However, two parameters of hardwood fibers had no significant variations <sub>re</sub>l<sub>ative to so</sub>f<sub>twoo</sub>d fib<sub>ers. It mig</sub>h<sub>t</sub> b<sub>e</sub> b<sub>ecause o</sub>f <sub>t</sub>h<sub>e</sub> l<sub>ower re</sub>fi<sub>ning pressure t</sub>h<sub>at was app</sub>l<sub>ie</sub>d <sub>in</sub>relative to softwood fibers. It might be because of the lower refining pressure that was applied in hardwood fibers. The macro-fibrillation index characterizes external macro-fibrillation. The results of<sup>hardwood</sup> <sup>fibers.</sup> <sup>The</sup> <sup>macro-fibrillation</sup> <sup>index</sup> <sup>characterizes</sup> <sup>external</sup> <sup>macro-fibrillation.</sup> <sup>The</sup> <sup>results</sup> fib<sub>er</sub> <sub>morp</sub>h<sub>o</sub>l<sub>ogy</sub> <sub>ana</sub>l<sub>ysis</sub> <sub>s</sub>h<sub>owe</sub>d <sub>t</sub>h<sub>at</sub> <sub>externa</sub>l fib<sub>ri</sub>ll<sub>ation</sub> <sub>increase</sub>d <sub>wit</sub>h <sub>t</sub>h<sub>e</sub> <sub>re</sub>fi<sub>ning</sub> <sub>process.</sub> <sub>It</sub> <sub>is</sub>of fiber morphology analysis showed that external fibrillation increased with the refining process. It consistent with the increasing specific surface area (as shown in Table S1 in Online Resource).<sup>is</sup> <sup>consistent</sup> <sup>with</sup> <sup>the</sup> <sup>increasing</sup> <sup>specific</sup> <sup>surface</sup> <sup>area</sup> <sup>(as</sup> <sup>shown</sup> <sup>in</sup> <sup>Table</sup> <sup>S1</sup> <sup>in</sup> <sup>Online</sup> <sup>Resourc</sup>",
+    "corrected_text": "For softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length had a downward trend, and the fines content has an upward trend for the softwood fibers during PFI refining, as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibers changed significantly. However, two parameters of hardwood fibers had no significant variations relative to softwood fibers. It might be because of the lower refining pressure that was applied in hardwood fibers. The macro-fibrillation index characterizes external macro-fibrillation. The results of fiber morphology analysis showed that external fibrillation increased with the refining process. It is consistent with the increasing specific surface area (as shown in Table S1 in Online Resource).",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 0,
+        "original_end": 94,
+        "corrected_start": 0,
+        "corrected_end": 0,
+        "before": "For softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length had",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 189,
+        "original_end": 283,
+        "corrected_start": 95,
+        "corrected_end": 95,
+        "before": "a downward trend, and the fines content has an upward trend for the softwood fibers during PFI",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 480,
+        "original_end": 489,
+        "corrected_start": 292,
+        "corrected_end": 292,
+        "before": "refining,",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 490,
+        "original_end": 799,
+        "corrected_start": 293,
+        "corrected_end": 293,
+        "before": "as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibers <sub>c</sub>h<sub>ange</sub>d <sub>signi</sub>fi<sub>cant</sub>l<sub>y. However, two parameters o</sub>f h<sub>ar</sub>d<sub>woo</sub>d fib<sub>ers</sub> h<sub>a</sub>d <sub>no signi</sub>fi<sub>cant variations</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 895,
+        "original_end": 1148,
+        "corrected_start": 389,
+        "corrected_end": 389,
+        "before": "<sub>re</sub>l<sub>ative to so</sub>f<sub>twoo</sub>d fib<sub>ers. It mig</sub>h<sub>t</sub> b<sub>e</sub> b<sub>ecause o</sub>f <sub>t</sub>h<sub>e</sub> l<sub>ower re</sub>fi<sub>ning pressure t</sub>h<sub>at was app</sub>l<sub>ie</sub>d <sub>in</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1351,
+        "original_end": 1908,
+        "corrected_start": 592,
+        "corrected_end": 592,
+        "before": "<sup>hardwood</sup> <sup>fibers.</sup> <sup>The</sup> <sup>macro-fibrillation</sup> <sup>index</sup> <sup>characterizes</sup> <sup>external</sup> <sup>macro-fibrillation.</sup> <sup>The</sup> <sup>results</sup> fib<sub>er</sub> <sub>morp</sub>h<sub>o</sub>l<sub>ogy</sub> <sub>ana</sub>l<sub>ysis</sub> <sub>s</sub>h<sub>owe</sub>d <sub>t</sub>h<sub>at</sub> <sub>externa</sub>l fib<sub>ri</sub>ll<sub>ation</sub> <sub>increase</sub>d <sub>wit</sub>h <sub>t</sub>h<sub>e</sub> <sub>re</sub>fi<sub>ning</sub> <sub>process.</sub> <sub>It</sub> <sub>is</sub>of",
+        "after": ""
+      },
+      {
+        "operation": "insert",
+        "original_start": 2009,
+        "original_end": 2009,
+        "corrected_start": 693,
+        "corrected_end": 696,
+        "before": "",
+        "after": "is "
+      },
+      {
+        "operation": "delete",
+        "original_start": 2104,
+        "original_end": 2375,
+        "corrected_start": 791,
+        "corrected_end": 791,
+        "before": "<sup>is</sup> <sup>consistent</sup> <sup>with</sup> <sup>the</sup> <sup>increasing</sup> <sup>specific</sup> <sup>surface</sup> <sup>area</sup> <sup>(as</sup> <sup>shown</sup> <sup>in</sup> <sup>Table</sup> <sup>S1</sup> <sup>in</sup> <sup>Online</sup> <sup>Resourc</sup>",
+        "after": ""
+      }
+    ],
+    "image_sha256": "0eb9bd3b9457b0bd5a77e26d8509b33e09fa4f45eecdcdc0986d944ebf980d5f",
+    "request_sha256": "718f73c83b616d27f43c0a28efb14454434008ac9fc2f80ab67954226f70d5d9",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "目标矩形内的可见文字为一整段连续正文（无上标/下标碎片），而PDF原生文本出现了整段重复、句子片段被拆成上下标等错误；按图像逐行可读出完整且唯一的段落。",
+      "visible_text": "For softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length had a downward trend, and the fines content has an upward trend for the softwood fibers during PFI refining, as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibers changed significantly. However, two parameters of hardwood fibers had no significant variations relative to softwood fibers. It might be because of the lower refining pressure that was applied in hardwood fibers. The macro-fibrillation index characterizes external macro-fibrillation. The results of fiber morphology analysis showed that external fibrillation increased with the refining process. It is consistent with the increasing specific surface area (as shown in Table S1 in Online Resource).",
+      "corrected_text": "For softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length had a downward trend, and the fines content has an upward trend for the softwood fibers during PFI refining, as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibers changed significantly. However, two parameters of hardwood fibers had no significant variations relative to softwood fibers. It might be because of the lower refining pressure that was applied in hardwood fibers. The macro-fibrillation index characterizes external macro-fibrillation. The results of fiber morphology analysis showed that external fibrillation increased with the refining process. It is consistent with the increasing specific surface area (as shown in Table S1 in Online Resource).",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 2332,
+      "completion_tokens": 572,
+      "total_tokens": 2904,
+      "reasoning_tokens": 195,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 4,
+        "bbox": [
+          119,
+          384,
+          875,
+          514
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_08e78a8ce93efb809cf3"
+  },
+  {
+    "source_id": "mineru_block_0052",
+    "page": 4,
+    "bbox": [
+      121,
+      758,
+      875,
+      871
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0052",
+        "page": 4,
+        "bbox": [
+          121,
+          758,
+          875,
+          871
+        ],
+        "code": "repeated_long_phrase",
+        "detail": {
+          "ngram_words": 12,
+          "interpretation": "suspected, not proven duplicate"
+        },
+        "status": "flagged",
+        "id": "finding_3ae33a969d7e8830d5a0"
+      },
+      {
+        "source_id": "mineru_block_0052",
+        "page": 4,
+        "bbox": [
+          121,
+          758,
+          875,
+          871
+        ],
+        "code": "suspicious_inline_markup",
+        "detail": {
+          "interpretation": "sentence fragments in superscripts/subscripts"
+        },
+        "status": "flagged",
+        "id": "finding_90b08c33a9b4a8daa45d"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "The beating degree and the WRV had a significant increment with increasing PFI refining <sup>The</sup> <sup>beating</sup> <sup>degree</sup> <sup>and</sup> <sup>the</sup> <sup>WRV</sup> <sup>had</sup> <sup>a</sup> <sup>significant</sup> <sup>increment</sup> <sup>with</sup> <sup>increasing</sup> <sup>PFI</sup> <sup>refining</sup>revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the new<sub>new surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling</sub> <sup>surface</sup> <sup>and</sup> <sup>more</sup> <sup>pores</sup> <sup>(as</sup> <sup>shown</sup> <sup>in</sup> <sup>Table</sup> <sup>S1</sup> <sup>in</sup> <sup>Online</sup> <sup>Resource).</sup> <sup>The</sup> <sup>increase</sup> <sup>in</sup> <sup>swelling</sup>characterized by WRV makes the fibers more compliant in transverse [1], which contributes to <sup>characterized</sup> <sup>by</sup> <sup>WRV</sup> <sup>makes</sup> <sup>the</sup> <sup>fibers</sup> <sup>more</sup> <sup>compliant</sup> <sup>in</sup> <sup>transverse</sup> <sup>[1],</sup> <sup>which</sup> <sup>contributes</sup> <sup>to</sup>improving the inter-fiber bonding strength of the fiber network. The results of fiber morphology <sup>improving</sup> <sup>the</sup> <sup>inter-fiber</sup> <sup>bonding</sup> <sup>strength</sup> <sup>of</sup> <sup>the</sup> <sup>fiber</sup> <sup>network.</sup> <sup>The</sup> <sup>results</sup> <sup>of</sup> <sup>fiber</sup> <sup>morphology</sup>analysis and water retention value showing that the fibrillation and the separation between fibrils <sup>analysis</sup> <sup>and</sup> <sup>water</sup> <sup>retention</sup> <sup>valu</sup>increase with the refining process.",
+    "corrected_text": "The beating degree and the WRV had a significant increment with increasing PFI refining revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the new surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling characterized by WRV makes the fibers more compliant in transverse [1], which contributes to improving the inter-fiber bonding strength of the fiber network. The results of fiber morphology analysis and water retention value showing that the fibrillation and the separation between fibrils increase with the refining process.",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 87,
+        "original_end": 427,
+        "corrected_start": 87,
+        "corrected_end": 87,
+        "before": " <sup>The</sup> <sup>beating</sup> <sup>degree</sup> <sup>and</sup> <sup>the</sup> <sup>WRV</sup> <sup>had</sup> <sup>a</sup> <sup>significant</sup> <sup>increment</sup> <sup>with</sup> <sup>increasing</sup> <sup>PFI</sup> <sup>refining</sup>revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 530,
+        "original_end": 538,
+        "corrected_start": 190,
+        "corrected_end": 190,
+        "before": "<sub>new",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 629,
+        "original_end": 635,
+        "corrected_start": 281,
+        "corrected_end": 281,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 636,
+        "original_end": 902,
+        "corrected_start": 282,
+        "corrected_end": 282,
+        "before": "<sup>surface</sup> <sup>and</sup> <sup>more</sup> <sup>pores</sup> <sup>(as</sup> <sup>shown</sup> <sup>in</sup> <sup>Table</sup> <sup>S1</sup> <sup>in</sup> <sup>Online</sup> <sup>Resource).</sup> <sup>The</sup> <sup>increase</sup> <sup>in</sup> <sup>swelling</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 995,
+        "original_end": 1241,
+        "corrected_start": 375,
+        "corrected_end": 375,
+        "before": "<sup>characterized</sup> <sup>by</sup> <sup>WRV</sup> <sup>makes</sup> <sup>the</sup> <sup>fibers</sup> <sup>more</sup> <sup>compliant</sup> <sup>in</sup> <sup>transverse</sup> <sup>[1],</sup> <sup>which</sup> <sup>contributes</sup> <sup>to</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1338,
+        "original_end": 1588,
+        "corrected_start": 472,
+        "corrected_end": 472,
+        "before": "<sup>improving</sup> <sup>the</sup> <sup>inter-fiber</sup> <sup>bonding</sup> <sup>strength</sup> <sup>of</sup> <sup>the</sup> <sup>fiber</sup> <sup>network.</sup> <sup>The</sup> <sup>results</sup> <sup>of</sup> <sup>fiber</sup> <sup>morphology</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1688,
+        "original_end": 1776,
+        "corrected_start": 572,
+        "corrected_end": 572,
+        "before": "<sup>analysis</sup> <sup>and</sup> <sup>water</sup> <sup>retention</sup> <sup>valu</sup>",
+        "after": ""
+      }
+    ],
+    "image_sha256": "1affbf8bbb0805b1103ec343d0b05000795666efd8537830942ac4c2016d39f9",
+    "request_sha256": "825e3970f138bde3b55955e57027f61f8293d6c5998914e9546f48cd5e968b91",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "目标框内是完整连续的正文段落，可见文本为清晰单份印刷体；而原生文本混杂大量重复句子片段（如“The beating degree and the WRV had a significant increment with increasing PFI refining”及“revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the”重复两次）并将正常词句错误地标记为上下标（如“<sup>surface</sup> <sup>and</sup> <sup>more</sup>…”与“<sub>new surface and more pores…</sub>”错位）。图像中仅有一次段落文字，句子连续、无重复、无上下标碎裂，故需按可见内容整体替换。",
+      "visible_text": "The beating degree and the WRV had a significant increment with increasing PFI refining revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the new surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling characterized by WRV makes the fibers more compliant in transverse [1], which contributes to improving the inter-fiber bonding strength of the fiber network. The results of fiber morphology analysis and water retention value showing that the fibrillation and the separation between fibrils increase with the refining process.",
+      "corrected_text": "The beating degree and the WRV had a significant increment with increasing PFI refining revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the new surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling characterized by WRV makes the fibers more compliant in transverse [1], which contributes to improving the inter-fiber bonding strength of the fiber network. The results of fiber morphology analysis and water retention value showing that the fibrillation and the separation between fibrils increase with the refining process.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1722,
+      "completion_tokens": 783,
+      "total_tokens": 2505,
+      "reasoning_tokens": 372,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 4,
+        "bbox": [
+          121,
+          758,
+          875,
+          871
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_b369c291102dc821e94d"
+  },
+  {
+    "source_id": "mineru_block_0057",
+    "page": 5,
+    "bbox": [
+      121,
+      332,
+      875,
+      494
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0057",
+        "page": 5,
+        "bbox": [
+          121,
+          332,
+          875,
+          494
+        ],
+        "code": "repeated_long_phrase",
+        "detail": {
+          "ngram_words": 12,
+          "interpretation": "suspected, not proven duplicate"
+        },
+        "status": "flagged",
+        "id": "finding_b913aea8a66da701e718"
+      },
+      {
+        "source_id": "mineru_block_0057",
+        "page": 5,
+        "bbox": [
+          121,
+          332,
+          875,
+          494
+        ],
+        "code": "suspicious_inline_markup",
+        "detail": {
+          "interpretation": "sentence fragments in superscripts/subscripts"
+        },
+        "status": "flagged",
+        "id": "finding_92aef27b6d9aba9ea522"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "<sub>In Figure 3, the tensile index, zero-span tensile index, and wet-web strength represented as a</sub><sup>In</sup> <sup>Figure</sup> <sup>3,</sup> <sup>the</sup> <sup>tensile</sup> <sup>index,</sup> <sup>zero-span</sup> <sup>tensile</sup> <sup>index,</sup> <sup>and</sup> <sup>wet-web</sup> <sup>strength</sup> <sup>represented</sup> <sup>as</sup> <sup>a</sup> <sup>In</sup> <sup>Figure</sup> <sup>3,</sup> <sup>the</sup> <sup>tensile</sup> <sup>index,</sup> <sup>zero-span</sup> <sup>tensile</sup> <sup>index,</sup> <sup>and</sup> <sup>wet-web</sup> <sup>strength</sup> <sup>represented</sup> <sup>as</sup> <sup>a</sup>function of the refining revolutions. The increment of tensile strength is mainly caused by the increasing function of the refining revolutions. The increment of tensile strength is mainly caused by the<sub>fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of softwood</sub><sup>increasing</sup> <sup>fibrillation</sup> <sup>and</sup> <sup>fines</sup> <sup>during</sup> <sup>PFI</sup> <sup>refining,</sup> <sup>as</sup> <sup>mentioned</sup> <sup>above.</sup> <sup>The</sup> <sup>wet–web</sup> <sup>strength</sup> <sup>of</sup> increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of<sub>fiber</sub> <sub>had</sub> <sub>a</sub> <sub>more</sub> <sub>significant</sub> <sub>increase</sub> <sub>when</sub> <sub>compared</sub> <sub>to</sub> <sub>that</sub> <sub>of</sub> <sub>hardwood</sub> <sub>fiber.</sub> <sub>It</sub> <sub>is</sub> <sub>for</sub> <sub>that</sub> <sub>fiber</sub> <sup>softwood</sup> <sup>fiber</sup> <sup>had</sup> <sup>a</sup> <sup>more</sup> <sup>significant</sup> <sup>increase</sup> <sup>when</sup> <sup>compared</sup> <sup>to</sup> <sup>that</sup> <sup>of</sup> <sup>hardwood</sup> <sup>fiber.</sup> <sup>It</sup> <sup>is</sup> <sup>for</sup>length plays an essential role in wet–web strength. The zero-span tensile index was usually used in <sup>that</sup> <sup>fiber</sup> <sup>length</sup> <sup>plays</sup> <sup>an</sup> <sup>essential</sup> <sup>role</sup> <sup>in</sup> <sup>wet–web</sup> <sup>strength.</sup> <sup>The</sup> <sup>zero-span</sup> <sup>tensile</sup> <sup>index</sup> <sup>was</sup> <sup>usually</sup><sub>characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that</sub> used in characterizing the tensile strength of fibers. The results of the zero-span tensile index showed <sub>PFI</sub> <sub>refining</sub> <sub>did</sub> <sub>not</sub> <sub>reduce</sub> <sub>fiber</sub> <sub>strength,</sub> <sub>which</sub> <sub>is</sub> <sub>consistent</sub> <sub>with</sub> <sub>the</sub> <sub>report</sub> <sub>of</sub> <sub>Kouko</sub> <sub>et</sub> <sub>al.</sub> <sub>[24].</sub> that PFI refining did not reduce fiber strength, which is consistent with the report of Kouko et al. [24].<sub>The</sub> <sub>above</sub> <sub>results</sub> <sub>showed</sub> <sub>that</sub> <sub>PFI</sub> <sub>refining</sub> <sub>improved</sub> <sub>the</sub> <sub>extent</sub> <sub>of</sub> <sub>fibrillation</sub> <sub>(especially</sub> <sub>the</sub> <sub>internal</sub><sup>The</sup> <sup>above</sup> <sup>results</sup> <sup>showed</sup> <sup>that</sup> <sup>PFI</sup> <sup>refining</sup> <sup>improved</sup> <sup>the</sup> <sup>extent</sup> <sup>of</sup> <sup>fibrillation</sup> <sup>(especially</sup> <sup>the</sup> <sup>internal</sup> The above results showed that PFI refining improved the extent of fibrillation (especially the internal<sub>fibrillation), the swelling of fibers, and the tensile strength of sheets without a decrease of the tensile</sub><sup>fibrillation),</sup> <sup>the</sup> <sup>swelling</sup> <sup>of</sup> <sup>fibers,</sup> <sup>and</sup> <sup>the</sup> <sup>tensile</sup> <sup>strength</sup> <sup>of</sup> <sup>sheets</sup> <sup>without</sup> <sup>a</sup> <sup>decrease</sup> <sup>of</sup> <sup>the</sup> <sup>tensile</sup> fibrillation), the s<sub>strength of fibers.</sub><sup>strength</sup> <sup>of</sup> <sup>fibers.</sup>",
+    "corrected_text": "In Figure 3, the tensile index, zero-span tensile index, and wet-web strength represented as a function of the refining revolutions. The increment of tensile strength is mainly caused by the increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of softwood fiber had a more significant increase when compared to that of hardwood fiber. It is for that fiber length plays an essential role in wet–web strength. The zero-span tensile index was usually used in characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that PFI refining did not reduce fiber strength, which is consistent with the report of Kouko et al. [24]. The above results showed that PFI refining improved the extent of fibrillation (especially the internal fibrillation), the swelling of fibers, and the tensile strength of sheets without a decrease of the tensile strength of fibers.",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 0,
+        "original_end": 5,
+        "corrected_start": 0,
+        "corrected_end": 0,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 99,
+        "original_end": 118,
+        "corrected_start": 94,
+        "corrected_end": 94,
+        "before": "</sub><sup>In</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 119,
+        "original_end": 624,
+        "corrected_start": 95,
+        "corrected_end": 95,
+        "before": "<sup>Figure</sup> <sup>3,</sup> <sup>the</sup> <sup>tensile</sup> <sup>index,</sup> <sup>zero-span</sup> <sup>tensile</sup> <sup>index,</sup> <sup>and</sup> <sup>wet-web</sup> <sup>strength</sup> <sup>represented</sup> <sup>as</sup> <sup>a</sup> <sup>In</sup> <sup>Figure</sup> <sup>3,</sup> <sup>the</sup> <sup>tensile</sup> <sup>index,</sup> <sup>zero-span</sup> <sup>tensile</sup> <sup>index,</sup> <sup>and</sup> <sup>wet-web</sup> <sup>strength</sup> <sup>represented</sup> <sup>as</sup> <sup>a</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 732,
+        "original_end": 832,
+        "corrected_start": 203,
+        "corrected_end": 203,
+        "before": "unction of the refining revolutions. The increment of tensile strength is mainly caused by the<sub>f",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 927,
+        "original_end": 954,
+        "corrected_start": 298,
+        "corrected_end": 298,
+        "before": "</sub><sup>increasing</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 955,
+        "original_end": 1289,
+        "corrected_start": 299,
+        "corrected_end": 299,
+        "before": "<sup>fibrillation</sup> <sup>and</sup> <sup>fines</sup> <sup>during</sup> <sup>PFI</sup> <sup>refining,</sup> <sup>as</sup> <sup>mentioned</sup> <sup>above.</sup> <sup>The</sup> <sup>wet–web</sup> <sup>strength</sup> <sup>of</sup> increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1294,
+        "original_end": 1300,
+        "corrected_start": 304,
+        "corrected_end": 304,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1301,
+        "original_end": 1306,
+        "corrected_start": 305,
+        "corrected_end": 305,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1309,
+        "original_end": 1315,
+        "corrected_start": 308,
+        "corrected_end": 308,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1316,
+        "original_end": 1321,
+        "corrected_start": 309,
+        "corrected_end": 309,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1322,
+        "original_end": 1328,
+        "corrected_start": 310,
+        "corrected_end": 310,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1329,
+        "original_end": 1334,
+        "corrected_start": 311,
+        "corrected_end": 311,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1338,
+        "original_end": 1344,
+        "corrected_start": 315,
+        "corrected_end": 315,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1345,
+        "original_end": 1350,
+        "corrected_start": 316,
+        "corrected_end": 316,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1361,
+        "original_end": 1367,
+        "corrected_start": 327,
+        "corrected_end": 327,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1368,
+        "original_end": 1373,
+        "corrected_start": 328,
+        "corrected_end": 328,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1381,
+        "original_end": 1387,
+        "corrected_start": 336,
+        "corrected_end": 336,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1388,
+        "original_end": 1393,
+        "corrected_start": 337,
+        "corrected_end": 337,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1397,
+        "original_end": 1403,
+        "corrected_start": 341,
+        "corrected_end": 341,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1404,
+        "original_end": 1409,
+        "corrected_start": 342,
+        "corrected_end": 342,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1417,
+        "original_end": 1423,
+        "corrected_start": 350,
+        "corrected_end": 350,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1424,
+        "original_end": 1429,
+        "corrected_start": 351,
+        "corrected_end": 351,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1431,
+        "original_end": 1437,
+        "corrected_start": 353,
+        "corrected_end": 353,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1438,
+        "original_end": 1443,
+        "corrected_start": 354,
+        "corrected_end": 354,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1447,
+        "original_end": 1453,
+        "corrected_start": 358,
+        "corrected_end": 358,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1454,
+        "original_end": 1459,
+        "corrected_start": 359,
+        "corrected_end": 359,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1461,
+        "original_end": 1467,
+        "corrected_start": 361,
+        "corrected_end": 361,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1468,
+        "original_end": 1473,
+        "corrected_start": 362,
+        "corrected_end": 362,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1481,
+        "original_end": 1487,
+        "corrected_start": 370,
+        "corrected_end": 370,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1488,
+        "original_end": 1493,
+        "corrected_start": 371,
+        "corrected_end": 371,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1499,
+        "original_end": 1505,
+        "corrected_start": 377,
+        "corrected_end": 377,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1506,
+        "original_end": 1511,
+        "corrected_start": 378,
+        "corrected_end": 378,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1513,
+        "original_end": 1519,
+        "corrected_start": 380,
+        "corrected_end": 380,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1520,
+        "original_end": 1525,
+        "corrected_start": 381,
+        "corrected_end": 381,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1527,
+        "original_end": 1533,
+        "corrected_start": 383,
+        "corrected_end": 383,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1534,
+        "original_end": 1539,
+        "corrected_start": 384,
+        "corrected_end": 384,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1542,
+        "original_end": 1548,
+        "corrected_start": 387,
+        "corrected_end": 387,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1549,
+        "original_end": 1554,
+        "corrected_start": 388,
+        "corrected_end": 388,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1558,
+        "original_end": 1564,
+        "corrected_start": 392,
+        "corrected_end": 392,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1565,
+        "original_end": 1570,
+        "corrected_start": 393,
+        "corrected_end": 393,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1575,
+        "original_end": 1581,
+        "corrected_start": 398,
+        "corrected_end": 398,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1582,
+        "original_end": 1866,
+        "corrected_start": 399,
+        "corrected_end": 399,
+        "before": "<sup>softwood</sup> <sup>fiber</sup> <sup>had</sup> <sup>a</sup> <sup>more</sup> <sup>significant</sup> <sup>increase</sup> <sup>when</sup> <sup>compared</sup> <sup>to</sup> <sup>that</sup> <sup>of</sup> <sup>hardwood</sup> <sup>fiber.</sup> <sup>It</sup> <sup>is</sup> <sup>for</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1957,
+        "original_end": 2356,
+        "corrected_start": 490,
+        "corrected_end": 490,
+        "before": " used in <sup>that</sup> <sup>fiber</sup> <sup>length</sup> <sup>plays</sup> <sup>an</sup> <sup>essential</sup> <sup>role</sup> <sup>in</sup> <sup>wet–web</sup> <sup>strength.</sup> <sup>The</sup> <sup>zero-span</sup> <sup>tensile</sup> <sup>index</sup> <sup>was</sup> <sup>usually</sup><sub>characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 2461,
+        "original_end": 2761,
+        "corrected_start": 595,
+        "corrected_end": 595,
+        "before": " <sub>PFI</sub> <sub>refining</sub> <sub>did</sub> <sub>not</sub> <sub>reduce</sub> <sub>fiber</sub> <sub>strength,</sub> <sub>which</sub> <sub>is</sub> <sub>consistent</sub> <sub>with</sub> <sub>the</sub> <sub>report</sub> <sub>of</sub> <sub>Kouko</sub> <sub>et</sub> <sub>al.</sub> <sub>[24].</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 2868,
+        "original_end": 3404,
+        "corrected_start": 702,
+        "corrected_end": 702,
+        "before": "<sub>The</sub> <sub>above</sub> <sub>results</sub> <sub>showed</sub> <sub>that</sub> <sub>PFI</sub> <sub>refining</sub> <sub>improved</sub> <sub>the</sub> <sub>extent</sub> <sub>of</sub> <sub>fibrillation</sub> <sub>(especially</sub> <sub>the</sub> <sub>internal</sub><sup>The</sup> <sup>above</sup> <sup>results</sup> <sup>showed</sup> <sup>that</sup> <sup>PFI</sup> <sup>refining</sup> <sup>improved</sup> <sup>the</sup> <sup>extent</sup> <sup>of</sup> <sup>fibrillation</sup> <sup>(especially</sup> <sup>the</sup> <sup>internal</sup>",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 3508,
+        "original_end": 3513,
+        "corrected_start": 806,
+        "corrected_end": 807,
+        "before": "<sub>",
+        "after": " "
+      },
+      {
+        "operation": "delete",
+        "original_start": 3620,
+        "original_end": 3651,
+        "corrected_start": 914,
+        "corrected_end": 914,
+        "before": "</sub><sup>fibrillation),</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 3652,
+        "original_end": 3946,
+        "corrected_start": 915,
+        "corrected_end": 915,
+        "before": "<sup>the</sup> <sup>swelling</sup> <sup>of</sup> <sup>fibers,</sup> <sup>and</sup> <sup>the</sup> <sup>tensile</sup> <sup>strength</sup> <sup>of</sup> <sup>sheets</sup> <sup>without</sup> <sup>a</sup> <sup>decrease</sup> <sup>of</sup> <sup>the</sup> <sup>tensile</sup> fibrillation), the s<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 3965,
+        "original_end": 4023,
+        "corrected_start": 934,
+        "corrected_end": 934,
+        "before": "</sub><sup>strength</sup> <sup>of</sup> <sup>fibers.</sup>",
+        "after": ""
+      }
+    ],
+    "image_sha256": "2f2b6b9df78459291c8b17afe4558bebba0b89348344d9f0ebef579a14c51f3d",
+    "request_sha256": "19c8833ad9f8b8bf681a2fdbce7d63786b1f8776b9417e5b79435ef5ded5b4a6",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "目标矩形内是一段完整正文，原生文本把同一段落整段重复并混入大量错误的上下标碎片（如“In Figure 3…”反复出现、短句被拆成 superscript/subscript），与图中可见的通顺段落不符；图中段落自上而下连续，无重复文字，且“…Kouko et al. [24]”等引用与数字均清晰可读。",
+      "visible_text": "In Figure 3, the tensile index, zero-span tensile index, and wet-web strength represented as a function of the refining revolutions. The increment of tensile strength is mainly caused by the increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of softwood fiber had a more significant increase when compared to that of hardwood fiber. It is for that fiber length plays an essential role in wet–web strength. The zero-span tensile index was usually used in characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that PFI refining did not reduce fiber strength, which is consistent with the report of Kouko et al. [24]. The above results showed that PFI refining improved the extent of fibrillation (especially the internal fibrillation), the swelling of fibers, and the tensile strength of sheets without a decrease of the tensile strength of fibers.",
+      "corrected_text": "In Figure 3, the tensile index, zero-span tensile index, and wet-web strength represented as a function of the refining revolutions. The increment of tensile strength is mainly caused by the increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of softwood fiber had a more significant increase when compared to that of hardwood fiber. It is for that fiber length plays an essential role in wet–web strength. The zero-span tensile index was usually used in characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that PFI refining did not reduce fiber strength, which is consistent with the report of Kouko et al. [24]. The above results showed that PFI refining improved the extent of fibrillation (especially the internal fibrillation), the swelling of fibers, and the tensile strength of sheets without a decrease of the tensile strength of fibers.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 3418,
+      "completion_tokens": 781,
+      "total_tokens": 4199,
+      "reasoning_tokens": 308,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 5,
+        "bbox": [
+          121,
+          332,
+          875,
+          494
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_fddbf84fcfa5721a97ef"
+  },
+  {
+    "source_id": "mineru_block_0060",
+    "page": 5,
+    "bbox": [
+      122,
+      733,
+      589,
+      750
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0060",
+        "page": 5,
+        "bbox": [
+          122,
+          733,
+          589,
+          750
+        ],
+        "code": "mixed_heading_prefix_preserved",
+        "detail": {
+          "prefix": "strength for unrefined and refined samples: (a) softwood fibers"
+        },
+        "status": "flagged",
+        "id": "finding_b19d23463bc7c8dd6d19"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "strength for unrefined and refined samples: (a) softwood fibers3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size",
+    "corrected_text": "3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size",
+    "original_kind": "heading",
+    "corrected_kind": "heading",
+    "original_text_level": 2,
+    "corrected_text_level": 2,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 0,
+        "original_end": 63,
+        "corrected_start": 0,
+        "corrected_end": 0,
+        "before": "strength for unrefined and refined samples: (a) softwood fibers",
+        "after": ""
+      },
+      {
+        "operation": "insert",
+        "original_start": 69,
+        "original_end": 69,
+        "corrected_start": 6,
+        "corrected_end": 7,
+        "before": "",
+        "after": "f"
+      }
+    ],
+    "image_sha256": "e96dbcf5dffa5ca82f2f769b892b49bf0b052c536bc1b9dbbe9f71291d6f6dab",
+    "request_sha256": "3661c09f5e27aabea187f4d6e51088fbd5aa66100b4e6c6ba6ac80641f3ec50d",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色目标框内仅有一行斜体小节标题“3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size”；上方正文行（“for unrefined and refined samples: (a) softwood fibers and (b) hardw...”）位于框外，属于页边上下文。native_text 误将上一行的片段“strength for unrefined and refined samples: (a) softwood fibers”并入标题，且原文字“Efect”实为“Effect”。应仅保留框内标题文字。",
+      "visible_text": "3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size",
+      "corrected_text": "3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size",
+      "heading_action": "keep",
+      "heading_level": 2
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 979,
+      "completion_tokens": 307,
+      "total_tokens": 1286,
+      "reasoning_tokens": 119,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 5,
+        "bbox": [
+          122,
+          733,
+          589,
+          750
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_76076c52091da7204b39"
+  },
+  {
+    "source_id": "mineru_block_0061",
+    "page": 5,
+    "bbox": [
+      121,
+      757,
+      877,
+      902
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0061",
+        "page": 5,
+        "bbox": [
+          121,
+          757,
+          877,
+          902
+        ],
+        "code": "repeated_long_phrase",
+        "detail": {
+          "ngram_words": 12,
+          "interpretation": "suspected, not proven duplicate"
+        },
+        "status": "flagged",
+        "id": "finding_ebe74c1cefc7dd98ca9a"
+      },
+      {
+        "source_id": "mineru_block_0061",
+        "page": 5,
+        "bbox": [
+          121,
+          757,
+          877,
+          902
+        ],
+        "code": "suspicious_inline_markup",
+        "detail": {
+          "interpretation": "sentence fragments in superscripts/subscripts"
+        },
+        "status": "flagged",
+        "id": "finding_30f7f4e5e0f0adf2fbbe"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "The cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates <sup>The</sup> <sup>cellulose</sup> <sup>polymorph</sup> <sup>of</sup> <sup>these</sup> <sup>two</sup> <sup>fibers</sup> <sup>had</sup> <sup>no</sup> <sup>change</sup> <sup>during</sup> <sup>PFI</sup> <sup>treatment,</sup> <sup>which</sup>that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource The cellulose polymorph of these two fibers had no change during PFI treatment, which<sup>illustrates</sup> <sup>that</sup> <sup>the</sup> <sup>PFI</sup> <sup>refining</sup> <sup>is</sup> <sup>a</sup> <sup>relatively</sup> <sup>mild</sup> <sup>mechanical</sup> <sup>treatment,</sup> <sup>as</sup> <sup>the</sup> <sup>results</sup> <sup>of</sup> <sup>XRD</sup> <sup>in</sup>(Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers showed a reduction illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in <sup>Online</sup> <sup>Resource</sup> <sup>(Figures</sup> <sup>S1</sup> <sup>and</sup> <sup>S2)</sup> <sup>show.</sup> <sup>In</sup> <sup>general,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>of</sup> <sup>softwood</sup> <sup>fibers</sup> of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers<sup>showed</sup> <sup>a</sup> <sup>reduction</sup> <sup>of</sup> <sup>4.66%</sup> <sup>and</sup> <sup>15.47%,</sup> <sup>respectively,</sup> <sup>and</sup> <sup>those</sup> <sup>of</sup> <sup>hardwood</sup> <sup>fibers</sup> <sup>decreased</sup> <sup>by</sup>respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was remarkably higher than showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by<sup>2.65%</sup> <sup>and</sup> <sup>19.4%,</sup> <sup>respectively,</sup> <sup>as</sup> <sup>can</sup> <sup>be</sup> <sup>seen</sup> <sup>in</sup> <sup>Figure</sup> <sup>4</sup> <sup>and</sup> <sup>Table</sup> <sup>1.</sup> <sup>The</sup> <sup>value</sup> <sup>of</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>was</sup>the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was<sup>remarkably</sup> <sup>higher</sup> <sup>than</sup> <sup>the</sup> <sup>CI-XA,</sup> <sup>which</sup> <sup>might</sup> <sup>be</sup> <sup>caused</sup> <sup>by</sup> <sup>the</sup> <sup>over-fitting</sup> <sup>of</sup> <sup>amorphous</sup>CI-XA. However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous<sup>contribution</sup> <sup>in</sup> <sup>the</sup> <sup>analysis</sup> <sup>of</sup> <sup>CI-XA.</sup> <sup>However,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>were</sup> <sup>correlated</sup> <sup>significantly</sup>hardwood fibers, with a correlation coeficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated signif<sup>for</sup> <sup>both</sup> <sup>softwood</sup> <sup>fibers</sup> <sup>and</sup> <sup>hardwood</sup> <sup>fibers,</sup> <sup>with</sup> <sup>a</sup> <sup>correlation</sup> <sup>coefficient</sup> <sup>of</sup> <sup>0.919</sup> <sup>(p</sup> <sup><</sup> <sup>0.</sup>for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].",
+    "corrected_text": "The cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and hardwood fibers, with a correlation coefficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 98,
+        "original_end": 337,
+        "corrected_start": 98,
+        "corrected_end": 98,
+        "before": "<sup>The</sup> <sup>cellulose</sup> <sup>polymorph</sup> <sup>of</sup> <sup>these</sup> <sup>two</sup> <sup>fibers</sup> <sup>had</sup> <sup>no</sup> <sup>change</sup> <sup>during</sup> <sup>PFI</sup> <sup>treatment,</sup> <sup>which</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 443,
+        "original_end": 816,
+        "corrected_start": 204,
+        "corrected_end": 204,
+        "before": "The cellulose polymorph of these two fibers had no change during PFI treatment, which<sup>illustrates</sup> <sup>that</sup> <sup>the</sup> <sup>PFI</sup> <sup>refining</sup> <sup>is</sup> <sup>a</sup> <sup>relatively</sup> <sup>mild</sup> <sup>mechanical</sup> <sup>treatment,</sup> <sup>as</sup> <sup>the</sup> <sup>results</sup> <sup>of</sup> <sup>XRD</sup> <sup>in</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 916,
+        "original_end": 1302,
+        "corrected_start": 304,
+        "corrected_end": 304,
+        "before": "illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in <sup>Online</sup> <sup>Resource</sup> <sup>(Figures</sup> <sup>S1</sup> <sup>and</sup> <sup>S2)</sup> <sup>show.</sup> <sup>In</sup> <sup>general,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>of</sup> <sup>softwood</sup> <sup>fibers</sup> ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1396,
+        "original_end": 1752,
+        "corrected_start": 398,
+        "corrected_end": 398,
+        "before": "Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers<sup>showed</sup> <sup>a</sup> <sup>reduction</sup> <sup>of</sup> <sup>4.66%</sup> <sup>and</sup> <sup>15.47%,</sup> <sup>respectively,</sup> <sup>and</sup> <sup>those</sup> <sup>of</sup> <sup>hardwood</sup> <sup>fibers</sup> <sup>decreased</sup> <sup>by</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1856,
+        "original_end": 2268,
+        "corrected_start": 502,
+        "corrected_end": 502,
+        "before": "showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by<sup>2.65%</sup> <sup>and</sup> <sup>19.4%,</sup> <sup>respectively,</sup> <sup>as</sup> <sup>can</sup> <sup>be</sup> <sup>seen</sup> <sup>in</sup> <sup>Figure</sup> <sup>4</sup> <sup>and</sup> <sup>Table</sup> <sup>1.</sup> <sup>The</sup> <sup>value</sup> <sup>of</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>was</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 2366,
+        "original_end": 2705,
+        "corrected_start": 600,
+        "corrected_end": 600,
+        "before": "2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was<sup>remarkably</sup> <sup>higher</sup> <sup>than</sup> <sup>the</sup> <sup>CI-XA,</sup> <sup>which</sup> <sup>might</sup> <sup>be</sup> <sup>caused</sup> <sup>by</sup> <sup>the</sup> <sup>over-fitting</sup> <sup>of</sup> <sup>amorphous</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 2804,
+        "original_end": 3158,
+        "corrected_start": 699,
+        "corrected_end": 699,
+        "before": "remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous<sup>contribution</sup> <sup>in</sup> <sup>the</sup> <sup>analysis</sup> <sup>of</sup> <sup>CI-XA.</sup> <sup>However,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>were</sup> <sup>correlated</sup> <sup>significantly</sup>",
+        "after": ""
+      },
+      {
+        "operation": "insert",
+        "original_start": 3197,
+        "original_end": 3197,
+        "corrected_start": 738,
+        "corrected_end": 739,
+        "before": "",
+        "after": "f"
+      },
+      {
+        "operation": "delete",
+        "original_start": 3266,
+        "original_end": 3629,
+        "corrected_start": 808,
+        "corrected_end": 808,
+        "before": "contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated signif<sup>for</sup> <sup>both</sup> <sup>softwood</sup> <sup>fibers</sup> <sup>and</sup> <sup>hardwood</sup> <sup>fibers,</sup> <sup>with</sup> <sup>a</sup> <sup>correlation</sup> <sup>coefficient</sup> <sup>of</sup> <sup>0.919</sup> <sup>(p</sup> <sup><</sup> <sup>0.</sup>",
+        "after": ""
+      }
+    ],
+    "image_sha256": "f4f95707c6c508f2b7efe5d79a34ced550f9e3117dcefc6abd5e472f390339fb",
+    "request_sha256": "6265ef123a364aff75bd8b7ab76ea856cbff1fad622cfb9ee3ca11a3c43b27d5",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色框内是一段连续正文，而原提取文本出现大量重复句式、被拆成上标的片段及断裂词语，与图像中完整段落明显不符。",
+      "visible_text": "The cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and hardwood fibers, with a correlation coefficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].",
+      "corrected_text": "The cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and hardwood fibers, with a correlation coefficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 3459,
+      "completion_tokens": 1171,
+      "total_tokens": 4630,
+      "reasoning_tokens": 649,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 5,
+        "bbox": [
+          121,
+          757,
+          877,
+          902
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_a903935ffd980a19a2bc"
+  },
+  {
+    "source_id": "mineru_block_0066",
+    "page": 6,
+    "bbox": [
+      184,
+      370,
+      811,
+      629
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0066",
+        "page": 6,
+        "bbox": [
+          184,
+          370,
+          811,
+          629
+        ],
+        "code": "ambiguous_numeric_table_header",
+        "detail": {
+          "interpretation": "bare and parenthesized three-digit labels; inspect signs/overbars, do not infer them"
+        },
+        "status": "flagged",
+        "id": "finding_d5f755d5308e695ca152"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+    "corrected_text": "Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>1\\bar{1}0</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>1\\bar{1}0</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+    "original_kind": "table",
+    "corrected_kind": "table",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "insert",
+        "original_start": 468,
+        "original_end": 468,
+        "corrected_start": 468,
+        "corrected_end": 473,
+        "before": "",
+        "after": "\\bar{"
+      },
+      {
+        "operation": "insert",
+        "original_start": 469,
+        "original_end": 469,
+        "corrected_start": 474,
+        "corrected_end": 475,
+        "before": "",
+        "after": "}"
+      },
+      {
+        "operation": "insert",
+        "original_start": 1140,
+        "original_end": 1140,
+        "corrected_start": 1146,
+        "corrected_end": 1151,
+        "before": "",
+        "after": "\\bar{"
+      },
+      {
+        "operation": "insert",
+        "original_start": 1141,
+        "original_end": 1141,
+        "corrected_start": 1152,
+        "corrected_end": 1153,
+        "before": "",
+        "after": "}"
+      }
+    ],
+    "image_sha256": "d94c4c14e1c40ee8da2ff671a170d96ea1ebfdca0cc0b5ee4574b0da1751ea3c",
+    "request_sha256": "cf6a9a07f39cb3bf606ee856bbf9d57f20953ce693c18b79749058dc926ee429",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "两处晶粒尺寸列标题中的“110”第二个“1”上方有可见短横线；矢量横线的 x 范围 332.247–336.730 与第二个字符的边界重合，原记录遗漏该上划线，应为 1\\bar{1}0，仅第二个 1 带横线，不扩展到整个指数。",
+      "visible_text": "Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>1\\bar{1}0</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>1\\bar{1}0</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+      "corrected_text": "Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>1\\bar{1}0</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>1\\bar{1}0</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1257,
+      "completion_tokens": 2661,
+      "total_tokens": 3918,
+      "reasoning_tokens": 2548,
+      "cached_tokens": 0
+    },
+    "review_scope": "flagged_header_cells_only; unchanged data/caption/footnotes copied from native source",
+    "header_geometry": [
+      {
+        "text": "110",
+        "bbox": [
+          327.7629699707031,
+          352.1303405761719,
+          341.21343994140625,
+          361.09674072265625
+        ],
+        "characters": [
+          {
+            "character": "1",
+            "bbox": [
+              327.7629699707031,
+              352.1303405761719,
+              332.24615478515625,
+              361.09674072265625
+            ]
+          },
+          {
+            "character": "1",
+            "bbox": [
+              332.24700927734375,
+              352.1303405761719,
+              336.730224609375,
+              361.09674072265625
+            ]
+          },
+          {
+            "character": "0",
+            "bbox": [
+              336.730224609375,
+              352.1303405761719,
+              341.21343994140625,
+              361.09674072265625
+            ]
+          }
+        ],
+        "bar_digit_indices": [
+          1
+        ],
+        "horizontal_lines": [
+          [
+            332.24700927734375,
+            349.5140075683594,
+            336.7300109863281,
+            349.5140075683594
+          ]
+        ],
+        "index_convention": "zero-based character positions; null means no reliable vector-line determination"
+      },
+      {
+        "text": "110",
+        "bbox": [
+          327.7629699707031,
+          458.6953125,
+          341.21343994140625,
+          467.6617431640625
+        ],
+        "characters": [
+          {
+            "character": "1",
+            "bbox": [
+              327.7629699707031,
+              458.6953125,
+              332.24615478515625,
+              467.6617126464844
+            ]
+          },
+          {
+            "character": "1",
+            "bbox": [
+              332.24700927734375,
+              458.6953430175781,
+              336.730224609375,
+              467.6617431640625
+            ]
+          },
+          {
+            "character": "0",
+            "bbox": [
+              336.730224609375,
+              458.6953430175781,
+              341.21343994140625,
+              467.6617431640625
+            ]
+          }
+        ],
+        "bar_digit_indices": [
+          1
+        ],
+        "horizontal_lines": [
+          [
+            332.24700927734375,
+            456.0780029296875,
+            336.7300109863281,
+            456.0780029296875
+          ]
+        ],
+        "index_convention": "zero-based character positions; null means no reliable vector-line determination"
+      }
+    ],
+    "verified_regions": [
+      {
+        "page": 6,
+        "bbox": [
+          184,
+          388.5666000122086,
+          811,
+          433.6632272270339
+        ]
+      },
+      {
+        "page": 6,
+        "bbox": [
+          184,
+          515.1448585372586,
+          811,
+          560.2415220009735
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_2899a13908b2631cc433"
+  },
+  {
+    "source_id": "mineru_block_0072",
+    "page": 7,
+    "bbox": [
+      475,
+      152,
+      571,
+      172
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0072",
+        "page": 7,
+        "bbox": [
+          475,
+          152,
+          571,
+          172
+        ],
+        "code": "measurement_annotation",
+        "detail": {},
+        "status": "flagged",
+        "id": "finding_179db61db79e5ca109f4"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "4.1 nm",
+    "corrected_text": "4.1 nm",
+    "original_kind": "heading",
+    "corrected_kind": "paragraph",
+    "original_text_level": 2,
+    "corrected_text_level": null,
+    "edits": [],
+    "image_sha256": "9a343b1a796b0742c7cf0f24a905400c5c404e01d59fbea433074b718a031251",
+    "request_sha256": "2e5c6b87b90b6b2233032217b6ba4e497ee5e158c3ac76eb59e918f837b03115",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色框内可见粗体字样仅为测量标注“4.1 nm”，属于图中的尺寸/数值标注，并非章节标题；原文却将其标为二级标题，分类错误，应降级为非标题文本。文字本身与图像一致。",
+      "visible_text": "4.1 nm",
+      "corrected_text": "4.1 nm",
+      "heading_action": "demote",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 773,
+      "completion_tokens": 416,
+      "total_tokens": 1189,
+      "reasoning_tokens": 323,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 7,
+        "bbox": [
+          475,
+          152,
+          571,
+          172
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_d459e78c0502d6ad5eec"
+  },
+  {
+    "source_id": "mineru_block_0074",
+    "page": 7,
+    "bbox": [
+      121,
+      558,
+      875,
+      703
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0074",
+        "page": 7,
+        "bbox": [
+          121,
+          558,
+          875,
+          703
+        ],
+        "code": "suspicious_inline_markup",
+        "detail": {
+          "interpretation": "sentence fragments in superscripts/subscripts"
+        },
+        "status": "flagged",
+        "id": "finding_184d0ee0c2586e3406db"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "It is known that both the $( 1 \\overline { { 1 } } 0 )$ and the (110) lattice plane are hydrophilic, and the (200)lattice \\_plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) n that both the (110) and the (110) lattice plane are hydrophilic, and tplanes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (110) plane and (200) plane, which is consistent with the report of Duchemin et al., the highest theoretical roughness and accessibility to the hydrophi<sub>as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate</sub> ]. Throughout the refining of two pulp fibers, the sizes perpendicular through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then \\_it made these planes sufer more mechanical actions, so there was more adhesion (cocrystallization) latile than the (110) plane and (200) plane, which iand cleavage of cellulose chains created for (110) plane during PFI refining.",
+    "corrected_text": "It is known that both the (1\\overline{1}0) and the (110) lattice plane are hydrophilic, and the (200)lattice plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) planes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (1\\overline{1}0) plane and (200) plane, which is consistent with the report of Duchemin et al., as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then it made these planes suffer more mechanical actions, so there was more adhesion (cocrystallization) and cleavage of cellulose chains created for (110) plane during PFI refining.",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 26,
+        "original_end": 27,
+        "corrected_start": 26,
+        "corrected_end": 26,
+        "before": "$",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 28,
+        "original_end": 29,
+        "corrected_start": 27,
+        "corrected_end": 27,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 30,
+        "original_end": 31,
+        "corrected_start": 28,
+        "corrected_end": 28,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 40,
+        "original_end": 41,
+        "corrected_start": 37,
+        "corrected_end": 37,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 42,
+        "original_end": 45,
+        "corrected_start": 38,
+        "corrected_end": 38,
+        "before": " { ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 46,
+        "original_end": 47,
+        "corrected_start": 39,
+        "corrected_end": 39,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 48,
+        "original_end": 51,
+        "corrected_start": 40,
+        "corrected_end": 40,
+        "before": " } ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 52,
+        "original_end": 53,
+        "corrected_start": 41,
+        "corrected_end": 41,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 54,
+        "original_end": 55,
+        "corrected_start": 42,
+        "corrected_end": 42,
+        "before": "$",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 122,
+        "original_end": 124,
+        "corrected_start": 109,
+        "corrected_end": 109,
+        "before": "\\_",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 227,
+        "original_end": 299,
+        "corrected_start": 212,
+        "corrected_end": 212,
+        "before": "n that both the (110) and the (110) lattice plane are hydrophilic, and t",
+        "after": ""
+      },
+      {
+        "operation": "insert",
+        "original_start": 527,
+        "original_end": 527,
+        "corrected_start": 440,
+        "corrected_end": 450,
+        "before": "",
+        "after": "\\overline{"
+      },
+      {
+        "operation": "insert",
+        "original_start": 528,
+        "original_end": 528,
+        "corrected_start": 451,
+        "corrected_end": 452,
+        "before": "",
+        "after": "}"
+      },
+      {
+        "operation": "delete",
+        "original_start": 610,
+        "original_end": 682,
+        "corrected_start": 534,
+        "corrected_end": 534,
+        "before": "the highest theoretical roughness and accessibility to the hydrophi<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 785,
+        "original_end": 862,
+        "corrected_start": 637,
+        "corrected_end": 637,
+        "before": "</sub> ]. Throughout the refining of two pulp fibers, the sizes perpendicular",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 967,
+        "original_end": 969,
+        "corrected_start": 742,
+        "corrected_end": 742,
+        "before": "\\_",
+        "after": ""
+      },
+      {
+        "operation": "insert",
+        "original_start": 992,
+        "original_end": 992,
+        "corrected_start": 765,
+        "corrected_end": 766,
+        "before": "",
+        "after": "f"
+      },
+      {
+        "operation": "delete",
+        "original_start": 1068,
+        "original_end": 1120,
+        "corrected_start": 842,
+        "corrected_end": 842,
+        "before": "latile than the (110) plane and (200) plane, which i",
+        "after": ""
+      }
+    ],
+    "image_sha256": "48ffbbfdb0d348a74df0d73939ebfd5887edf79663e8b9ad8eda36ac4473b5c9",
+    "request_sha256": "a97d89b102f238219292f1b8efe8cf9db237b22d4b28fe74431cd1e1238a4d1a",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色框内是完整连续段落；图中文字没有 native_text 中重复的句子片段，也没有错位的上下标，且段落内容完整可读。",
+      "visible_text": "It is known that both the (1\\overline{1}0) and the (110) lattice plane are hydrophilic, and the (200)lattice plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) planes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (1\\overline{1}0) plane and (200) plane, which is consistent with the report of Duchemin et al., as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then it made these planes suffer more mechanical actions, so there was more adhesion (cocrystallization) and cleavage of cellulose chains created for (110) plane during PFI refining.",
+      "corrected_text": "It is known that both the (1\\overline{1}0) and the (110) lattice plane are hydrophilic, and the (200)lattice plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) planes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (1\\overline{1}0) plane and (200) plane, which is consistent with the report of Duchemin et al., as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then it made these planes suffer more mechanical actions, so there was more adhesion (cocrystallization) and cleavage of cellulose chains created for (110) plane during PFI refining.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1567,
+      "completion_tokens": 1793,
+      "total_tokens": 3360,
+      "reasoning_tokens": 1313,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 7,
+        "bbox": [
+          121,
+          558,
+          875,
+          703
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_3309fcfdfcb136e6ad82"
+  },
+  {
+    "source_id": "mineru_block_0075",
+    "page": 7,
+    "bbox": [
+      121,
+      703,
+      875,
+      784
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0075",
+        "page": 7,
+        "bbox": [
+          121,
+          703,
+          875,
+          784
+        ],
+        "code": "suspicious_inline_markup",
+        "detail": {
+          "interpretation": "sentence fragments in superscripts/subscripts"
+        },
+        "status": "flagged",
+        "id": "finding_af190632145fc64d6bf7"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "However, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some ate through the spaces between the hydrophilic (110) planes in paracrys<sub>crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30].</sub> nd then it made these planes suffer more mechanical actions, so theAdditionally, it was probably due to the weaker cleavage efect on (200) lattice planes that was hard for water molecules to penetrate.",
+    "corrected_text": "However, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30]. Additionally, it was probably due to the weaker cleavage effect on (200) lattice planes that was hard for water molecules to penetrate.",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 195,
+        "original_end": 271,
+        "corrected_start": 195,
+        "corrected_end": 195,
+        "before": "ate through the spaces between the hydrophilic (110) planes in paracrys<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 376,
+        "original_end": 382,
+        "corrected_start": 300,
+        "corrected_end": 300,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 383,
+        "original_end": 450,
+        "corrected_start": 301,
+        "corrected_end": 301,
+        "before": "nd then it made these planes suffer more mechanical actions, so the",
+        "after": ""
+      },
+      {
+        "operation": "insert",
+        "original_start": 508,
+        "original_end": 508,
+        "corrected_start": 359,
+        "corrected_end": 360,
+        "before": "",
+        "after": "f"
+      }
+    ],
+    "image_sha256": "340d6bc9e396203d4685f27b6b4af5f7dc8d6a0ce7cf599f792f3850ec6f35fb",
+    "request_sha256": "2aa343e34c91ec2f13344254a0a1c5d4582f5e3549d9b3c915934526660be7e6",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色框内为一段连续正文，实际阅读顺序为“However, ... It could be explained in terms of coalescence of chains or some crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30]. Additionally, ... hard for water molecules to penetrate.”；原生文本插入了不存在的“paracrys”及“ate through the spaces between the hydrophilic (110) planes in para...”片段，并错误地把“crystallographic stacking...”和结尾句设为下标/上标，均为可见的抽取错误。",
+      "visible_text": "However, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30]. Additionally, it was probably due to the weaker cleavage effect on (200) lattice planes that was hard for water molecules to penetrate.",
+      "corrected_text": "However, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30]. Additionally, it was probably due to the weaker cleavage effect on (200) lattice planes that was hard for water molecules to penetrate.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1229,
+      "completion_tokens": 828,
+      "total_tokens": 2057,
+      "reasoning_tokens": 504,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 7,
+        "bbox": [
+          121,
+          703,
+          875,
+          784
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_bb5954693af1b8941950"
+  },
+  {
+    "source_id": "mineru_block_0092",
+    "page": 9,
+    "bbox": [
+      119,
+      747,
+      877,
+      908
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0092",
+        "page": 9,
+        "bbox": [
+          119,
+          747,
+          877,
+          908
+        ],
+        "code": "repeated_long_phrase",
+        "detail": {
+          "ngram_words": 12,
+          "interpretation": "suspected, not proven duplicate"
+        },
+        "status": "flagged",
+        "id": "finding_f71f058757111b0f1dc5"
+      },
+      {
+        "source_id": "mineru_block_0092",
+        "page": 9,
+        "bbox": [
+          119,
+          747,
+          877,
+          908
+        ],
+        "code": "suspicious_inline_markup",
+        "detail": {
+          "interpretation": "sentence fragments in superscripts/subscripts"
+        },
+        "status": "flagged",
+        "id": "finding_f9d30559a61bd94d2569"
+      },
+      {
+        "source_id": "mineru_block_0092",
+        "page": 9,
+        "bbox": [
+          119,
+          747,
+          877,
+          908
+        ],
+        "code": "ambiguous_superscript",
+        "detail": {
+          "interpretation": "zero/letter/prime requires source-image verification"
+        },
+        "status": "flagged",
+        "id": "finding_9be7c43039b74bcd705b"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "For the content of O(6)H· · · O(3<sup>0</sup>) inter-molecular H-bonds of softwood fiber, the trend can be <sup>For</sup> <sup>the</sup> <sup>content</sup> <sup>of</sup> <sup>O(6)H O(3′)</sup> <sup>inter-molecular</sup> <sup>H-bonds</sup> <sup>of</sup> <sup>softwood</sup> <sup>fiber,</sup> <sup>the</sup> <sup>trend</sup> <sup>can</sup> <sup>be</sup>divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H· · · O(3<sup>0</sup>) H-bonds of <sup>with</sup> <sup>the</sup> <sup>revolutions</sup> <sup>increasing</sup> <sup>from</sup> <sup>8000</sup> <sup>r</sup> <sup>to</sup> <sup>16,000</sup> <sup>r.</sup> <sup>Regarding</sup> <sup>the</sup> <sup>O(6)H O(3′)</sup> <sup>H-bonds</sup> <sup>of</sup>hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H· · · O(3<sup>0</sup>) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H· · · O(3<sup>0</sup>) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).",
+    "corrected_text": "For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 25,
+        "original_end": 26,
+        "corrected_start": 25,
+        "corrected_end": 25,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 27,
+        "original_end": 28,
+        "corrected_start": 26,
+        "corrected_end": 26,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 29,
+        "original_end": 30,
+        "corrected_start": 27,
+        "corrected_end": 27,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 33,
+        "original_end": 45,
+        "corrected_start": 30,
+        "corrected_end": 31,
+        "before": "<sup>0</sup>",
+        "after": "′"
+      },
+      {
+        "operation": "delete",
+        "original_start": 107,
+        "original_end": 351,
+        "corrected_start": 93,
+        "corrected_end": 93,
+        "before": "<sup>For</sup> <sup>the</sup> <sup>content</sup> <sup>of</sup> <sup>O(6)H O(3′)</sup> <sup>inter-molecular</sup> <sup>H-bonds</sup> <sup>of</sup> <sup>softwood</sup> <sup>fiber,</sup> <sup>the</sup> <sup>trend</sup> <sup>can</sup> <sup>be</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 634,
+        "original_end": 635,
+        "corrected_start": 376,
+        "corrected_end": 376,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 636,
+        "original_end": 637,
+        "corrected_start": 377,
+        "corrected_end": 377,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 638,
+        "original_end": 639,
+        "corrected_start": 378,
+        "corrected_end": 378,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 642,
+        "original_end": 654,
+        "corrected_start": 381,
+        "corrected_end": 382,
+        "before": "<sup>0</sup>",
+        "after": "′"
+      },
+      {
+        "operation": "delete",
+        "original_start": 667,
+        "original_end": 925,
+        "corrected_start": 395,
+        "corrected_end": 395,
+        "before": "<sup>with</sup> <sup>the</sup> <sup>revolutions</sup> <sup>increasing</sup> <sup>from</sup> <sup>8000</sup> <sup>r</sup> <sup>to</sup> <sup>16,000</sup> <sup>r.</sup> <sup>Regarding</sup> <sup>the</sup> <sup>O(6)H O(3′)</sup> <sup>H-bonds</sup> <sup>of</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1112,
+        "original_end": 1113,
+        "corrected_start": 582,
+        "corrected_end": 582,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1114,
+        "original_end": 1115,
+        "corrected_start": 583,
+        "corrected_end": 583,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1116,
+        "original_end": 1117,
+        "corrected_start": 584,
+        "corrected_end": 584,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 1120,
+        "original_end": 1132,
+        "corrected_start": 587,
+        "corrected_end": 588,
+        "before": "<sup>0</sup>",
+        "after": "′"
+      },
+      {
+        "operation": "delete",
+        "original_start": 1562,
+        "original_end": 1563,
+        "corrected_start": 1018,
+        "corrected_end": 1018,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1564,
+        "original_end": 1565,
+        "corrected_start": 1019,
+        "corrected_end": 1019,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1566,
+        "original_end": 1567,
+        "corrected_start": 1020,
+        "corrected_end": 1020,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 1570,
+        "original_end": 1582,
+        "corrected_start": 1023,
+        "corrected_end": 1024,
+        "before": "<sup>0</sup>",
+        "after": "′"
+      }
+    ],
+    "image_sha256": "1b1804c004a45dd59ab75514b7cabc944910fcd33e5b12a3713e177f1b1a1e74",
+    "request_sha256": "9065677a0dc36b0209f28e03e4d069bab3a5a6e1eac4f79a30e87443677f4a09",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色框内两页连续段落清晰可读；原生文本把可见的 O(3′) 误作 O(3⁰)，并夹带重复的上标句段（如“For the content of...”和“with the revolutions...”）。跨页处“but also”应与下一页“the formation”直接衔接，且目标段落不含后续“As to the O(3)H···O(5)...”段。",
+      "visible_text": "For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).",
+      "corrected_text": "For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 2286,
+      "completion_tokens": 3075,
+      "total_tokens": 5361,
+      "reasoning_tokens": 2239,
+      "cached_tokens": 2048
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 9,
+        "bbox": [
+          119,
+          747,
+          877,
+          908
+        ]
+      },
+      {
+        "page": 10,
+        "bbox": [
+          128.01960873175256,
+          102.94796993894093,
+          872.0723116841358,
+          151.66460156743096
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_625ccd67199899501321"
+  },
+  {
+    "source_id": "mineru_block_0098",
+    "page": 10,
+    "bbox": [
+      121,
+      457,
+      875,
+      651
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0098",
+        "page": 10,
+        "bbox": [
+          121,
+          457,
+          875,
+          651
+        ],
+        "code": "ambiguous_superscript",
+        "detail": {
+          "interpretation": "zero/letter/prime requires source-image verification"
+        },
+        "status": "flagged",
+        "id": "finding_6dfad5092ad3e3a7b456"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "As to the free OH(2) and OH(6) of softwood fiber, the relative content showed a slight increase trend in general. The enhancement of the free OH(2) and OH(6) was understandable, because there was the breakage of H-bonds among cellulosic molecules, which resulted in more extensive delamination and higher specific surface area (as shown in Figure S4 and Table S1 in Online Resource). This made cellulose more accessible to water and chemicals. However, for the free OH(2) and OH(6) of hardwood fiber, the number of the free OH(2) and OH(6) decreased by 21.65% from 14.32% to 11.22%, with revolutions increasing from 0 r to 4000 r, followed by an increase of 45.37% in the stage of refining from 4000 r to 12,000 r, along with an decrease of 17.11%. It could be explained by the instability of free OH groups, which makes it easy to form new H-bonds, such as O(2)H· · · O(6) or O(6)H· · · O(3<sup>0</sup>)H-bonds. Thus although there is the formation of free OH(2) and OH(6) during fibrillation, the content of the free OH(2) and OH(6) might disease; meanwhile, the content of the O(6)H· · · O(3<sup>0</sup>) or the O(2)H· · · O(6) H-bonds might increase upon drying.",
+    "corrected_text": "As to the free OH(2) and OH(6) of softwood fiber, the relative content showed a slight increase trend in general. The enhancement of the free OH(2) and OH(6) was understandable, because there was the breakage of H-bonds among cellulosic molecules, which resulted in more extensive delamination and higher specific surface area (as shown in Figure S4 and Table S1 in Online Resource). This made cellulose more accessible to water and chemicals. However, for the free OH(2) and OH(6) of hardwood fiber, the number of the free OH(2) and OH(6) decreased by 21.65% from 14.32% to 11.22%, with revolutions increasing from 0 r to 4000 r, followed by an increase of 45.37% in the stage of refining from 4000 r to 12,000 r, along with an decrease of 17.11%. It could be explained by the instability of free OH groups, which makes it easy to form new H-bonds, such as O(2)H···O(6) or O(6)H···O(3′)H-bonds. Thus although there is the formation of free OH(2) and OH(6) during fibrillation, the content of the free OH(2) and OH(6) might disease; meanwhile, the content of the O(6)H···O(3′) or the O(2)H···O(6) H-bonds might increase upon drying.",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 864,
+        "original_end": 865,
+        "corrected_start": 864,
+        "corrected_end": 864,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 866,
+        "original_end": 867,
+        "corrected_start": 865,
+        "corrected_end": 865,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 868,
+        "original_end": 869,
+        "corrected_start": 866,
+        "corrected_end": 866,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 883,
+        "original_end": 884,
+        "corrected_start": 880,
+        "corrected_end": 880,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 885,
+        "original_end": 886,
+        "corrected_start": 881,
+        "corrected_end": 881,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 887,
+        "original_end": 888,
+        "corrected_start": 882,
+        "corrected_end": 882,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 891,
+        "original_end": 903,
+        "corrected_start": 885,
+        "corrected_end": 886,
+        "before": "<sup>0</sup>",
+        "after": "′"
+      },
+      {
+        "operation": "delete",
+        "original_start": 1086,
+        "original_end": 1087,
+        "corrected_start": 1069,
+        "corrected_end": 1069,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1088,
+        "original_end": 1089,
+        "corrected_start": 1070,
+        "corrected_end": 1070,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1090,
+        "original_end": 1091,
+        "corrected_start": 1071,
+        "corrected_end": 1071,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 1094,
+        "original_end": 1106,
+        "corrected_start": 1074,
+        "corrected_end": 1075,
+        "before": "<sup>0</sup>",
+        "after": "′"
+      },
+      {
+        "operation": "delete",
+        "original_start": 1121,
+        "original_end": 1122,
+        "corrected_start": 1090,
+        "corrected_end": 1090,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1123,
+        "original_end": 1124,
+        "corrected_start": 1091,
+        "corrected_end": 1091,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1125,
+        "original_end": 1126,
+        "corrected_start": 1092,
+        "corrected_end": 1092,
+        "before": " ",
+        "after": ""
+      }
+    ],
+    "image_sha256": "1d6415306fea511a116bfe5aa95321ef6db683221b215869d6bb8c6267cb4942",
+    "request_sha256": "e0d78c63d5e473596b62283c8ac8b428554a621461ae4ce2185163bb4bcd4cf5",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝框内该段两处 H-bond 记号在图像中清晰显示为 O(3′)（3 后带上标撇号/primed 3），而原生文本误作上标“0”；其余文字（含“might disease”“an decrease of 17.11%”等原样内容）与图像一致。",
+      "visible_text": "As to the free OH(2) and OH(6) of softwood fiber, the relative content showed a slight increase trend in general. The enhancement of the free OH(2) and OH(6) was understandable, because there was the breakage of H-bonds among cellulosic molecules, which resulted in more extensive delamination and higher specific surface area (as shown in Figure S4 and Table S1 in Online Resource). This made cellulose more accessible to water and chemicals. However, for the free OH(2) and OH(6) of hardwood fiber, the number of the free OH(2) and OH(6) decreased by 21.65% from 14.32% to 11.22%, with revolutions increasing from 0 r to 4000 r, followed by an increase of 45.37% in the stage of refining from 4000 r to 12,000 r, along with an decrease of 17.11%. It could be explained by the instability of free OH groups, which makes it easy to form new H-bonds, such as O(2)H···O(6) or O(6)H···O(3′)H-bonds. Thus although there is the formation of free OH(2) and OH(6) during fibrillation, the content of the free OH(2) and OH(6) might disease; meanwhile, the content of the O(6)H···O(3′) or the O(2)H···O(6) H-bonds might increase upon drying.",
+      "corrected_text": "As to the free OH(2) and OH(6) of softwood fiber, the relative content showed a slight increase trend in general. The enhancement of the free OH(2) and OH(6) was understandable, because there was the breakage of H-bonds among cellulosic molecules, which resulted in more extensive delamination and higher specific surface area (as shown in Figure S4 and Table S1 in Online Resource). This made cellulose more accessible to water and chemicals. However, for the free OH(2) and OH(6) of hardwood fiber, the number of the free OH(2) and OH(6) decreased by 21.65% from 14.32% to 11.22%, with revolutions increasing from 0 r to 4000 r, followed by an increase of 45.37% in the stage of refining from 4000 r to 12,000 r, along with an decrease of 17.11%. It could be explained by the instability of free OH groups, which makes it easy to form new H-bonds, such as O(2)H···O(6) or O(6)H···O(3′)H-bonds. Thus although there is the formation of free OH(2) and OH(6) during fibrillation, the content of the free OH(2) and OH(6) might disease; meanwhile, the content of the O(6)H···O(3′) or the O(2)H···O(6) H-bonds might increase upon drying.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1631,
+      "completion_tokens": 1588,
+      "total_tokens": 3219,
+      "reasoning_tokens": 846,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 10,
+        "bbox": [
+          121,
+          457,
+          875,
+          651
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_9fbc33769f5f0f64b92e"
+  },
+  {
+    "source_id": "mineru_block_0100",
+    "page": 10,
+    "bbox": [
+      121,
+      684,
+      875,
+      797
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0100",
+        "page": 10,
+        "bbox": [
+          121,
+          684,
+          875,
+          797
+        ],
+        "code": "ambiguous_superscript",
+        "detail": {
+          "interpretation": "zero/letter/prime requires source-image verification"
+        },
+        "status": "flagged",
+        "id": "finding_025b183a8e51fe18a102"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "Similar to the CI-XI, the content of O(6)H· · · O(3<sup>0</sup>) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coeficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 $( p < 0 . 0 5 )$ for hardwood fibers, respectively. The similar trends in the content of the O(6)H· · · O(3<sup>0</sup>) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H· · · O(3<sup>0</sup>) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].",
+    "corrected_text": "Similar to the CI-XI, the content of O(6)H···O(3′) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coefficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. The similar trends in the content of the O(6)H···O(3′) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H···O(3′) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 43,
+        "original_end": 44,
+        "corrected_start": 43,
+        "corrected_end": 43,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 45,
+        "original_end": 46,
+        "corrected_start": 44,
+        "corrected_end": 44,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 47,
+        "original_end": 48,
+        "corrected_start": 45,
+        "corrected_end": 45,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 51,
+        "original_end": 63,
+        "corrected_start": 48,
+        "corrected_end": 49,
+        "before": "<sup>0</sup>",
+        "after": "′"
+      },
+      {
+        "operation": "insert",
+        "original_start": 220,
+        "original_end": 220,
+        "corrected_start": 206,
+        "corrected_end": 207,
+        "before": "",
+        "after": "f"
+      },
+      {
+        "operation": "delete",
+        "original_start": 344,
+        "original_end": 345,
+        "corrected_start": 331,
+        "corrected_end": 331,
+        "before": "$",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 346,
+        "original_end": 347,
+        "corrected_start": 332,
+        "corrected_end": 332,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 352,
+        "original_end": 353,
+        "corrected_start": 337,
+        "corrected_end": 337,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 354,
+        "original_end": 355,
+        "corrected_start": 338,
+        "corrected_end": 338,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 356,
+        "original_end": 357,
+        "corrected_start": 339,
+        "corrected_end": 339,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 358,
+        "original_end": 359,
+        "corrected_start": 340,
+        "corrected_end": 340,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 360,
+        "original_end": 361,
+        "corrected_start": 341,
+        "corrected_end": 341,
+        "before": "$",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 444,
+        "original_end": 445,
+        "corrected_start": 424,
+        "corrected_end": 424,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 446,
+        "original_end": 447,
+        "corrected_start": 425,
+        "corrected_end": 425,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 448,
+        "original_end": 449,
+        "corrected_start": 426,
+        "corrected_end": 426,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 452,
+        "original_end": 464,
+        "corrected_start": 429,
+        "corrected_end": 430,
+        "before": "<sup>0</sup>",
+        "after": "′"
+      },
+      {
+        "operation": "delete",
+        "original_start": 563,
+        "original_end": 564,
+        "corrected_start": 529,
+        "corrected_end": 529,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 565,
+        "original_end": 566,
+        "corrected_start": 530,
+        "corrected_end": 530,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 567,
+        "original_end": 568,
+        "corrected_start": 531,
+        "corrected_end": 531,
+        "before": " ",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 571,
+        "original_end": 583,
+        "corrected_start": 534,
+        "corrected_end": 535,
+        "before": "<sup>0</sup>",
+        "after": "′"
+      }
+    ],
+    "image_sha256": "361e59dd5b5072650952d2c0d11ee831904a80ab0e4610740d2351208806a02c",
+    "request_sha256": "e172678754d8c9d1863157fe36538b4cf05559cb29357f95e6f72721248a24a8",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝框内正文显示的是 O(3′)（撇号/prime，而非上标0），且单词为“coefficients”（原文误作“coeficients”），其余数字、p值、图号与引用[35]均一致；框外上方标题属页边上下文不应转录。",
+      "visible_text": "Similar to the CI-XI, the content of O(6)H···O(3′) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coefficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. The similar trends in the content of the O(6)H···O(3′) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H···O(3′) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].",
+      "corrected_text": "Similar to the CI-XI, the content of O(6)H···O(3′) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coefficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. The similar trends in the content of the O(6)H···O(3′) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H···O(3′) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1228,
+      "completion_tokens": 795,
+      "total_tokens": 2023,
+      "reasoning_tokens": 356,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 10,
+        "bbox": [
+          121,
+          684,
+          875,
+          797
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_a34903fe6de7611fc199"
+  },
+  {
+    "source_id": "mineru_block_0106",
+    "page": 11,
+    "bbox": [
+      121,
+      674,
+      875,
+      853
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0106",
+        "page": 11,
+        "bbox": [
+          121,
+          674,
+          875,
+          853
+        ],
+        "code": "repeated_long_phrase",
+        "detail": {
+          "ngram_words": 12,
+          "interpretation": "suspected, not proven duplicate"
+        },
+        "status": "flagged",
+        "id": "finding_d52bc0297b18ee3d2bdf"
+      },
+      {
+        "source_id": "mineru_block_0106",
+        "page": 11,
+        "bbox": [
+          121,
+          674,
+          875,
+          853
+        ],
+        "code": "suspicious_inline_markup",
+        "detail": {
+          "interpretation": "sentence fragments in superscripts/subscripts"
+        },
+        "status": "flagged",
+        "id": "finding_f4e59b8c6e610f3b08f3"
+      },
+      {
+        "source_id": "mineru_block_0106",
+        "page": 11,
+        "bbox": [
+          121,
+          674,
+          875,
+          853
+        ],
+        "code": "ambiguous_superscript",
+        "detail": {
+          "interpretation": "zero/letter/prime requires source-image verification"
+        },
+        "status": "flagged",
+        "id": "finding_a746bf3107628470b3ec"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "poor for the following reasons. The free OH groups are easier for forming the O(2)H⋯O(6) H-<sub>The correlation between the CI-XI and the O(2)H</sub>· · · <sub>O(6) H-bonds or the free OH(2) and OH(6)</sub> bonds as opposed to the O(6)H<sup>⋯</sup>O(3′) H-bonds in the amorphous region, because the distancewas poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose unitscorrelation between the CI-XI and the O(2)H⋯O(6) H-bonds or the free OH(2) and<sub>H-bonds as opposed to the O(6)H</sub>· · · <sub>O(3</sub>0<sub>) H-bonds in the amorphous region, because the distance</sub> in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content for the following reasons. The free OH groups are easier for forming the O(2)H⋯between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units <sup>of</sup> <sup>O(6)H⋯O(3′)</sup> <sup>H-bonds,</sup> <sup>there</sup> <sup>was</sup> <sup>less</sup> <sup>difference</sup> <sup>in</sup> <sup>the</sup> <sup>content</sup> <sup>of</sup> <sup>the</sup> <sup>O(2)H⋯O(6)</sup> <sup>H-bonds</sup> <sup>or</sup> <sup>the</sup>⋯in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content free OH groups between the crystalline region and amorphous region, which sometimes made the<sub>of O(6)H</sub>· · · <sub>O(3</sub><sup>0</sup><sub>) H-bonds, there was less diference in the content of the O(2)H</sub>· · · <sub>O(6) H-bonds or the</sub> content of the two bonds not change much in regards to the crystallinity. The O(3)H⋯O(5) H-bonds<sub>free OH groups between the crystalline region and amorphous region, which sometimes made the</sub> is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI<sub>content of the two bonds not change much in regards to the crystallinity. The O(3)H</sub>· · · <sub>O(5) H-bonds</sub> refining. Hence, the correlation between O(3)H⋯O(5) H-bonds and the CI-XI was not discussed in theO(3′) H-bonds, there was less difference in the content of the O(2)H⋯O(6) H-bonds<sub>is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI</sub> present study. groups between the crystalline region and amorphous region, which sometimes mrefining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.",
+    "corrected_text": "The correlation between the CI-XI and the O(2)H· · · O(6) H-bonds or the free OH(2) and OH(6) was poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) H-bonds as opposed to the O(6)H· · · O(3′) H-bonds in the amorphous region, because the distance between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content of O(6)H· · · O(3′) H-bonds, there was less difference in the content of the O(2)H· · · O(6) H-bonds or the free OH groups between the crystalline region and amorphous region, which sometimes made the content of the two bonds not change much in regards to the crystallinity. The O(3)H· · · O(5) H-bonds is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI refining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 0,
+        "original_end": 96,
+        "corrected_start": 0,
+        "corrected_end": 0,
+        "before": "poor for the following reasons. The free OH groups are easier for forming the O(2)H⋯O(6) H-<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 143,
+        "original_end": 149,
+        "corrected_start": 47,
+        "corrected_end": 47,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 155,
+        "original_end": 160,
+        "corrected_start": 53,
+        "corrected_end": 53,
+        "before": "<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 200,
+        "original_end": 206,
+        "corrected_start": 93,
+        "corrected_end": 93,
+        "before": "</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 207,
+        "original_end": 307,
+        "corrected_start": 94,
+        "corrected_end": 94,
+        "before": "bonds as opposed to the O(6)H<sup>⋯</sup>O(3′) H-bonds in the amorphous region, because the distance",
+        "after": ""
+      },
+      {
+        "operation": "insert",
+        "original_start": 404,
+        "original_end": 404,
+        "corrected_start": 191,
+        "corrected_end": 288,
+        "before": "",
+        "after": " H-bonds as opposed to the O(6)H· · · O(3′) H-bonds in the amorphous region, because the distance"
+      },
+      {
+        "operation": "delete",
+        "original_start": 508,
+        "original_end": 715,
+        "corrected_start": 392,
+        "corrected_end": 392,
+        "before": "correlation between the CI-XI and the O(2)H⋯O(6) H-bonds or the free OH(2) and<sub>H-bonds as opposed to the O(6)H</sub>· · · <sub>O(3</sub>0<sub>) H-bonds in the amorphous region, because the distance</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 816,
+        "original_end": 1004,
+        "corrected_start": 493,
+        "corrected_end": 493,
+        "before": "for the following reasons. The free OH groups are easier for forming the O(2)H⋯between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units <sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1006,
+        "original_end": 1012,
+        "corrected_start": 495,
+        "corrected_end": 495,
+        "before": "</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1013,
+        "original_end": 1018,
+        "corrected_start": 496,
+        "corrected_end": 496,
+        "before": "<sup>",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 1023,
+        "original_end": 1024,
+        "corrected_start": 501,
+        "corrected_end": 507,
+        "before": "⋯",
+        "after": "· · · "
+      },
+      {
+        "operation": "delete",
+        "original_start": 1029,
+        "original_end": 1035,
+        "corrected_start": 512,
+        "corrected_end": 512,
+        "before": "</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1036,
+        "original_end": 1041,
+        "corrected_start": 513,
+        "corrected_end": 513,
+        "before": "<sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1049,
+        "original_end": 1055,
+        "corrected_start": 521,
+        "corrected_end": 521,
+        "before": "</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1056,
+        "original_end": 1061,
+        "corrected_start": 522,
+        "corrected_end": 522,
+        "before": "<sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1066,
+        "original_end": 1072,
+        "corrected_start": 527,
+        "corrected_end": 527,
+        "before": "</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1073,
+        "original_end": 1078,
+        "corrected_start": 528,
+        "corrected_end": 528,
+        "before": "<sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1081,
+        "original_end": 1087,
+        "corrected_start": 531,
+        "corrected_end": 531,
+        "before": "</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1088,
+        "original_end": 1093,
+        "corrected_start": 532,
+        "corrected_end": 532,
+        "before": "<sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1097,
+        "original_end": 1103,
+        "corrected_start": 536,
+        "corrected_end": 536,
+        "before": "</sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1104,
+        "original_end": 1109,
+        "corrected_start": 537,
+        "corrected_end": 537,
+        "before": "<sup>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1119,
+        "original_end": 1314,
+        "corrected_start": 547,
+        "corrected_end": 547,
+        "before": "</sup> <sup>in</sup> <sup>the</sup> <sup>content</sup> <sup>of</sup> <sup>the</sup> <sup>O(2)H⋯O(6)</sup> <sup>H-bonds</sup> <sup>or</sup> <sup>the</sup>⋯in the adjacent molecular chain (as shown",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1317,
+        "original_end": 1360,
+        "corrected_start": 550,
+        "corrected_end": 550,
+        "before": " Figure 9). Accordingly, when compared with",
+        "after": ""
+      },
+      {
+        "operation": "insert",
+        "original_start": 1372,
+        "original_end": 1372,
+        "corrected_start": 562,
+        "corrected_end": 600,
+        "before": "",
+        "after": " of the O(2)H· · · O(6) H-bonds or the"
+      },
+      {
+        "operation": "delete",
+        "original_start": 1465,
+        "original_end": 1626,
+        "corrected_start": 693,
+        "corrected_end": 693,
+        "before": "<sub>of O(6)H</sub>· · · <sub>O(3</sub><sup>0</sup><sub>) H-bonds, there was less diference in the content of the O(2)H</sub>· · · <sub>O(6) H-bonds or the</sub>",
+        "after": ""
+      },
+      {
+        "operation": "replace",
+        "original_start": 1710,
+        "original_end": 1711,
+        "corrected_start": 777,
+        "corrected_end": 783,
+        "before": "⋯",
+        "after": "· · · "
+      },
+      {
+        "operation": "delete",
+        "original_start": 1723,
+        "original_end": 1826,
+        "corrected_start": 795,
+        "corrected_end": 795,
+        "before": "<sub>free OH groups between the crystalline region and amorphous region, which sometimes made the</sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1926,
+        "original_end": 1938,
+        "corrected_start": 895,
+        "corrected_end": 895,
+        "before": "<sub>content",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 1939,
+        "original_end": 2432,
+        "corrected_start": 896,
+        "corrected_end": 896,
+        "before": "of the two bonds not change much in regards to the crystallinity. The O(3)H</sub>· · · <sub>O(5) H-bonds</sub> refining. Hence, the correlation between O(3)H⋯O(5) H-bonds and the CI-XI was not discussed in theO(3′) H-bonds, there was less difference in the content of the O(2)H⋯O(6) H-bonds<sub>is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI</sub> present study. groups between the crystalline region and amorphous region, which sometimes m",
+        "after": ""
+      }
+    ],
+    "image_sha256": "2eb423a10934a700bcfaf4544f1d770a6da9d43dcb535fdafd0d6160ea900ca2",
+    "request_sha256": "6e6a3318b5899ffadc772a9283b8cf2dd80ff2ff3eedcf2353227bc32d499788",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "目标框为一段连续正文，但原生文本被严重打乱：句子被重复、插入上下标片段并错位（如“poor for the following reasons”出现两次，O(2)H⋯O(6) H-bonds 片段被拆散）。图像显示的是从“The correlation between the CI-XI…”到“…was not discussed in the present study.”的完整单段落，句子顺序清晰，无重复。可见 O(6)H···O(3′) 中的撇号与 O(2)H、OH(2)、OH(6) 等编号，以及 Figure 9、PFI refining 等均按原文保留。",
+      "visible_text": "The correlation between the CI-XI and the O(2)H· · · O(6) H-bonds or the free OH(2) and OH(6) was poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) H-bonds as opposed to the O(6)H· · · O(3′) H-bonds in the amorphous region, because the distance between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content of O(6)H· · · O(3′) H-bonds, there was less difference in the content of the O(2)H· · · O(6) H-bonds or the free OH groups between the crystalline region and amorphous region, which sometimes made the content of the two bonds not change much in regards to the crystallinity. The O(3)H· · · O(5) H-bonds is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI refining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.",
+      "corrected_text": "The correlation between the CI-XI and the O(2)H· · · O(6) H-bonds or the free OH(2) and OH(6) was poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) H-bonds as opposed to the O(6)H· · · O(3′) H-bonds in the amorphous region, because the distance between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content of O(6)H· · · O(3′) H-bonds, there was less difference in the content of the O(2)H· · · O(6) H-bonds or the free OH groups between the crystalline region and amorphous region, which sometimes made the content of the two bonds not change much in regards to the crystallinity. The O(3)H· · · O(5) H-bonds is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI refining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 3090,
+      "completion_tokens": 1078,
+      "total_tokens": 4168,
+      "reasoning_tokens": 369,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 11,
+        "bbox": [
+          121,
+          674,
+          875,
+          853
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_d0aaaac7818e12e74bf1"
+  },
+  {
+    "source_id": "mineru_block_0107",
+    "page": 11,
+    "bbox": [
+      122,
+      862,
+      245,
+      878
+    ],
+    "status": "accepted_correction",
+    "findings": [
+      {
+        "source_id": "mineru_block_0107",
+        "page": 11,
+        "bbox": [
+          122,
+          862,
+          245,
+          878
+        ],
+        "code": "mixed_heading_prefix_preserved",
+        "detail": {
+          "prefix": "as mentioned<sub>"
+        },
+        "status": "flagged",
+        "id": "finding_3a841988ac34bbd3163a"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "as mentioned<sub>4. Conclusions</sub>",
+    "corrected_text": "4. Conclusions",
+    "original_kind": "heading",
+    "corrected_kind": "heading",
+    "original_text_level": 2,
+    "corrected_text_level": 2,
+    "edits": [
+      {
+        "operation": "delete",
+        "original_start": 0,
+        "original_end": 17,
+        "corrected_start": 0,
+        "corrected_end": 0,
+        "before": "as mentioned<sub>",
+        "after": ""
+      },
+      {
+        "operation": "delete",
+        "original_start": 31,
+        "original_end": 37,
+        "corrected_start": 14,
+        "corrected_end": 14,
+        "before": "</sub>",
+        "after": ""
+      }
+    ],
+    "image_sha256": "aefef6a2e0f2506c6efe373c300eb97b30317e09bdfab30202513089b05ea272",
+    "request_sha256": "b7a4c4be91257a0083c537103a622867bb8367001c51d307bcf95132e3b2de88",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝框内仅显示加粗的章节标题“4. Conclusions”，其上下分别为“present study.”与“PFI refining ac”，框内没有“as mentioned”字样；原生文本把上一行的残片与标题拼在一起，属于混入的错误前缀，应更正为框内实际标题，并保留为二级标题。",
+      "visible_text": "4. Conclusions",
+      "corrected_text": "4. Conclusions",
+      "heading_action": "keep",
+      "heading_level": 2
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 812,
+      "completion_tokens": 290,
+      "total_tokens": 1102,
+      "reasoning_tokens": 181,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 11,
+        "bbox": [
+          122,
+          862,
+          245,
+          878
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_8dfba185da2c74323962"
+  },
+  {
+    "source_id": "mineru_block_0112",
+    "page": 12,
+    "bbox": [
+      121,
+      227,
+      875,
+      326
+    ],
+    "status": "verified_unchanged",
+    "findings": [
+      {
+        "source_id": "mineru_block_0112",
+        "page": 12,
+        "bbox": [
+          121,
+          227,
+          875,
+          326
+        ],
+        "code": "repeated_long_phrase",
+        "detail": {
+          "ngram_words": 12,
+          "interpretation": "suspected, not proven duplicate"
+        },
+        "status": "flagged",
+        "id": "finding_dfc848738b3e9eef6eb6"
+      }
+    ],
+    "automatic_checks": [],
+    "original_text": "Supplementary Materials: The following are available online at http://www.mdpi.com/2073-4360/12/12/2912/s1, Figure S1: XRD fitting results of softwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S2: XRD fitting results of hardwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S3: Nonlinear fitting curves of the band of hardwood fibers for hydroxyl groups: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S4: The BET N2 adsorption/desorption isotherms at various refining revolutions of pulp fibers: (a) softwood; (b) hardwood, Table S1: Cumulative pore volume, average pore size and specific surface area of softwood pulp fiber through refining, Cumulative pore volume, average pore size and specific surface area of hardwood pulp fiber through refining.",
+    "corrected_text": "Supplementary Materials: The following are available online at http://www.mdpi.com/2073-4360/12/12/2912/s1, Figure S1: XRD fitting results of softwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S2: XRD fitting results of hardwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S3: Nonlinear fitting curves of the band of hardwood fibers for hydroxyl groups: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S4: The BET N2 adsorption/desorption isotherms at various refining revolutions of pulp fibers: (a) softwood; (b) hardwood, Table S1: Cumulative pore volume, average pore size and specific surface area of softwood pulp fiber through refining, Cumulative pore volume, average pore size and specific surface area of hardwood pulp fiber through refining.",
+    "original_kind": "paragraph",
+    "corrected_kind": "paragraph",
+    "original_text_level": null,
+    "corrected_text_level": null,
+    "edits": [],
+    "image_sha256": "a0cb86a3fd58fa74731de14d14bcf2bf41c18acf2e1b7c8a73a27acd653b4b96",
+    "request_sha256": "6dace94ac4fb0056412d6146915731322bca91fb8874a7f66345bec46d804fc2",
+    "review": {
+      "decision": "correct",
+      "confidence": "high",
+      "reason": "蓝色框内为补充材料说明段落，逐句核对可见文字与 native_text 完全一致：网址、Figure S1–S4、Table S1 的编号、(a)~(e) 各 0/4000/8000/12,000/16,000 revolutions 数值及 softwood/hardwood 均吻合；末句两处 Table S1 描述确为原文中并列的两个标题，属正常重复而非抽取重复。",
+      "visible_text": "Supplementary Materials: The following are available online at http://www.mdpi.com/2073-4360/12/12/2912/s1, Figure S1: XRD fitting results of softwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S2: XRD fitting results of hardwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S3: Nonlinear fitting curves of the band of hardwood fibers for hydroxyl groups: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S4: The BET N2 adsorption/desorption isotherms at various refining revolutions of pulp fibers: (a) softwood; (b) hardwood, Table S1: Cumulative pore volume, average pore size and specific surface area of softwood pulp fiber through refining, Cumulative pore volume, average pore size and specific surface area of hardwood pulp fiber through refining.",
+      "corrected_text": null,
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1383,
+      "completion_tokens": 520,
+      "total_tokens": 1903,
+      "reasoning_tokens": 121,
+      "cached_tokens": 256
+    },
+    "review_scope": "flagged_source_unit",
+    "header_geometry": [],
+    "verified_regions": [
+      {
+        "page": 12,
+        "bbox": [
+          121,
+          227,
+          875,
+          326
+        ]
+      }
+    ],
+    "scope": "AI source-image verification with programmatic guards; not expert certification",
+    "id": "correction_1b6fee9f2a60e8481e98"
+  }
+]

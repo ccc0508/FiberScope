@@ -1,0 +1,735 @@
+{
+  "mineru_block_0006": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:07.540100+00:00",
+    "source_id": "mineru_block_0006",
+    "request_sha256": "4f0b83dd1d86aee25e6ef8b97a19a47d3b2a00ad9d1641cd4380f831501e3b5d",
+    "prompt_sha256": "e93c49570af1b7f41ca6cfcd172dac92d61ea5605fa9c66c02b5bc3c729b3509",
+    "image_sha256": "d4577b8aa294858ff7471dde4ec61eeb5ff7adf13607b99ddb4e76b305e6c75c",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1460,
+      "completion_tokens": 1326,
+      "total_tokens": 2786,
+      "reasoning_tokens": 771,
+      "cached_tokens": 0
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"图像中摘要明确显示“affects”“coefficient”，且氢键符号为O(6)H···O(3′)，不是O(3<sup>0</sup>)，故原生文本存在字符错误。\",\"visible_text\":\"Abstract: Supramolecular structure is the critical factor that affects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H···O(3′) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coefficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.\",\"corrected_text\":\"Abstract: Supramolecular structure is the critical factor that affects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H···O(3′) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coefficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "图像中摘要明确显示“affects”“coefficient”，且氢键符号为O(6)H···O(3′)，不是O(3<sup>0</sup>)，故原生文本存在字符错误。",
+      "visible_text": "Abstract: Supramolecular structure is the critical factor that affects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H···O(3′) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coefficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.",
+      "corrected_text": "Abstract: Supramolecular structure is the critical factor that affects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H···O(3′) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coefficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:56:16.785560+00:00",
+    "latency_seconds": 9.244
+  },
+  "mineru_block_0016": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:07.540170+00:00",
+    "source_id": "mineru_block_0016",
+    "request_sha256": "5bf2e14465c730f86b238153480d1368d2f764b9bbee7bc8641d4fc4db8288c7",
+    "prompt_sha256": "ee37605b71a31f6240815f4091a9efbb8fe3ec14fde3f1219ab7e2e507ae4100",
+    "image_sha256": "0bb5d99cba1c78733d5bfdc61ce90e8285ff08c20721392a8483b260801deca9",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1381,
+      "completion_tokens": 1052,
+      "total_tokens": 2433,
+      "reasoning_tokens": 493,
+      "cached_tokens": 0
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"目标区域内可见文本中，氢键能量句写作“O(6)H···O(3′)”（3 右上角为撇号），而原始提取写成“O(3<sup>0</sup>)”（上标零），符号错误；另外可见文本为“differences”与“differed”，原始提取分别误作“diferences”“difered”，属拼写/OCR 错误。其余文字与图像一致。\",\"visible_text\":\"Fourier transformation infrared spectroscopy (FT-IR), which is sensitive to molecular structure, can be as an indirect measurement for studying H-bonding network. FT-IR deconvolution of hydroxyl groups band was adopted in order to study the changes of the energy of H-bonds and the H-bonding distance during delignification [13] or the deconstruction of cellulose [14]. Moreover, it was used to study the differences of the content of H-bonds not only between dislocation region and normal region [15], but also among plant species [16,17]. Regarding the changes of H-bonding network during PFI refining, Yuan et al. [18] reported that the content of H-bonds and crystallinity index (CI) of eucalyptus fibers changed with the increment of beating time. Subsequently, Zhao et al. [8] found that the H-bonding energy for O(6)H···O(3′) inter-molecular H-bonds decreased by 12.9% and evolutions of the content of certain H-bonds differed at various refining stages.\",\"corrected_text\":\"Fourier transformation infrared spectroscopy (FT-IR), which is sensitive to molecular structure, can be as an indirect measurement for studying H-bonding network. FT-IR deconvolution of hydroxyl groups band was adopted in order to study the changes of the energy of H-bonds and the H-bonding distance during delignification [13] or the deconstruction of cellulose [14]. Moreover, it was used to study the differences of the content of H-bonds not only between dislocation region and normal region [15], but also among plant species [16,17]. Regarding the changes of H-bonding network during PFI refining, Yuan et al. [18] reported that the content of H-bonds and crystallinity index (CI) of eucalyptus fibers changed with the increment of beating time. Subsequently, Zhao et al. [8] found that the H-bonding energy for O(6)H···O(3′) inter-molecular H-bonds decreased by 12.9% and evolutions of the content of certain H-bonds differed at various refining stages.\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "目标区域内可见文本中，氢键能量句写作“O(6)H···O(3′)”（3 右上角为撇号），而原始提取写成“O(3<sup>0</sup>)”（上标零），符号错误；另外可见文本为“differences”与“differed”，原始提取分别误作“diferences”“difered”，属拼写/OCR 错误。其余文字与图像一致。",
+      "visible_text": "Fourier transformation infrared spectroscopy (FT-IR), which is sensitive to molecular structure, can be as an indirect measurement for studying H-bonding network. FT-IR deconvolution of hydroxyl groups band was adopted in order to study the changes of the energy of H-bonds and the H-bonding distance during delignification [13] or the deconstruction of cellulose [14]. Moreover, it was used to study the differences of the content of H-bonds not only between dislocation region and normal region [15], but also among plant species [16,17]. Regarding the changes of H-bonding network during PFI refining, Yuan et al. [18] reported that the content of H-bonds and crystallinity index (CI) of eucalyptus fibers changed with the increment of beating time. Subsequently, Zhao et al. [8] found that the H-bonding energy for O(6)H···O(3′) inter-molecular H-bonds decreased by 12.9% and evolutions of the content of certain H-bonds differed at various refining stages.",
+      "corrected_text": "Fourier transformation infrared spectroscopy (FT-IR), which is sensitive to molecular structure, can be as an indirect measurement for studying H-bonding network. FT-IR deconvolution of hydroxyl groups band was adopted in order to study the changes of the energy of H-bonds and the H-bonding distance during delignification [13] or the deconstruction of cellulose [14]. Moreover, it was used to study the differences of the content of H-bonds not only between dislocation region and normal region [15], but also among plant species [16,17]. Regarding the changes of H-bonding network during PFI refining, Yuan et al. [18] reported that the content of H-bonds and crystallinity index (CI) of eucalyptus fibers changed with the increment of beating time. Subsequently, Zhao et al. [8] found that the H-bonding energy for O(6)H···O(3′) inter-molecular H-bonds decreased by 12.9% and evolutions of the content of certain H-bonds differed at various refining stages.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:56:15.314556+00:00",
+    "latency_seconds": 7.7726
+  },
+  "mineru_block_0047": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:15.316832+00:00",
+    "source_id": "mineru_block_0047",
+    "request_sha256": "989e1eebfdecfc2022649955fa9bd1fdc8513602962f35b1b00bc05cd64fe441",
+    "prompt_sha256": "30040cb50122c44a1e4aefacd56b3584fd5d776ba0b18d8ce838c1025a51afa7",
+    "image_sha256": "1447dd16a66e4893fbb364bd6f9a2cddb427a7ef50169a490e2243f31abd48eb",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 836,
+      "completion_tokens": 409,
+      "total_tokens": 1245,
+      "reasoning_tokens": 327,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"蓝色目标框内仅显示加粗章节标题“3. Results and Discussions”；原生文本混入了重复的 sub/sup 标记和重复标题片段，与图像可见内容不符。\",\"visible_text\":\"3. Results and Discussions\",\"corrected_text\":\"3. Results and Discussions\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色目标框内仅显示加粗章节标题“3. Results and Discussions”；原生文本混入了重复的 sub/sup 标记和重复标题片段，与图像可见内容不符。",
+      "visible_text": "3. Results and Discussions",
+      "corrected_text": "3. Results and Discussions",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:56:19.285115+00:00",
+    "latency_seconds": 3.9673
+  },
+  "mineru_block_0048": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:16.788354+00:00",
+    "source_id": "mineru_block_0048",
+    "request_sha256": "652f10780c0b041960b867ee7ea241d730e00351573ce59d58bd9ab41256298c",
+    "prompt_sha256": "5b042300b2cba7d7dfbaccc6c19dcf09a985869fc74e16049e81ce790239a338",
+    "image_sha256": "e0de745acec614ddd85bf918824276ed6a9d928f3d2fb3ad01c9c6fbcd43d49f",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 883,
+      "completion_tokens": 227,
+      "total_tokens": 1110,
+      "reasoning_tokens": 100,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"蓝色框内实际只出现一次斜体小节标题“3.1. The Morphological Analysis, Swelling, and Mechanical Properties”，而原提取文本将该标题重复拼接了两遍（“...Properties3.1. The Morphological...”），属重复折叠错误，需以可见的单次标题替换。\",\"visible_text\":\"3.1. The Morphological Analysis, Swelling, and Mechanical Properties\",\"corrected_text\":\"3.1. The Morphological Analysis, Swelling, and Mechanical Properties\",\"heading_action\":\"keep\",\"heading_level\":2}",
+    "error_type": "ValueError",
+    "finished_at": "2026-10-30T09:56:19.583796+00:00",
+    "latency_seconds": 2.7946,
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色框内实际只出现一次斜体小节标题“3.1. The Morphological Analysis, Swelling, and Mechanical Properties”，而原提取文本将该标题重复拼接了两遍（“...Properties3.1. The Morphological...”），属重复折叠错误，需以可见的单次标题替换。",
+      "visible_text": "3.1. The Morphological Analysis, Swelling, and Mechanical Properties",
+      "corrected_text": "3.1. The Morphological Analysis, Swelling, and Mechanical Properties",
+      "heading_action": "keep",
+      "heading_level": 2
+    },
+    "revalidated_without_api_call": {
+      "original_record_sha256": "cd1d9eafa372514f5ddac520a599cd039db4183cd8bf8a18e6715424b09bb992",
+      "reason": "Accept harmless native heading_level on a keep action; metadata remains unchanged."
+    }
+  },
+  "mineru_block_0049": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:19.288732+00:00",
+    "source_id": "mineru_block_0049",
+    "request_sha256": "718f73c83b616d27f43c0a28efb14454434008ac9fc2f80ab67954226f70d5d9",
+    "prompt_sha256": "a5163096d0a298f14bdf224e9ce94d58c061fe4c37fb7850d24d3d84787685f4",
+    "image_sha256": "0eb9bd3b9457b0bd5a77e26d8509b33e09fa4f45eecdcdc0986d944ebf980d5f",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 2332,
+      "completion_tokens": 572,
+      "total_tokens": 2904,
+      "reasoning_tokens": 195,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"目标矩形内的可见文字为一整段连续正文（无上标/下标碎片），而PDF原生文本出现了整段重复、句子片段被拆成上下标等错误；按图像逐行可读出完整且唯一的段落。\",\"visible_text\":\"For softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length had a downward trend, and the fines content has an upward trend for the softwood fibers during PFI refining, as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibers changed significantly. However, two parameters of hardwood fibers had no significant variations relative to softwood fibers. It might be because of the lower refining pressure that was applied in hardwood fibers. The macro-fibrillation index characterizes external macro-fibrillation. The results of fiber morphology analysis showed that external fibrillation increased with the refining process. It is consistent with the increasing specific surface area (as shown in Table S1 in Online Resource).\",\"corrected_text\":\"For softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length had a downward trend, and the fines content has an upward trend for the softwood fibers during PFI refining, as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibers changed significantly. However, two parameters of hardwood fibers had no significant variations relative to softwood fibers. It might be because of the lower refining pressure that was applied in hardwood fibers. The macro-fibrillation index characterizes external macro-fibrillation. The results of fiber morphology analysis showed that external fibrillation increased with the refining process. It is consistent with the increasing specific surface area (as shown in Table S1 in Online Resource).\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "目标矩形内的可见文字为一整段连续正文（无上标/下标碎片），而PDF原生文本出现了整段重复、句子片段被拆成上下标等错误；按图像逐行可读出完整且唯一的段落。",
+      "visible_text": "For softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length had a downward trend, and the fines content has an upward trend for the softwood fibers during PFI refining, as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibers changed significantly. However, two parameters of hardwood fibers had no significant variations relative to softwood fibers. It might be because of the lower refining pressure that was applied in hardwood fibers. The macro-fibrillation index characterizes external macro-fibrillation. The results of fiber morphology analysis showed that external fibrillation increased with the refining process. It is consistent with the increasing specific surface area (as shown in Table S1 in Online Resource).",
+      "corrected_text": "For softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length had a downward trend, and the fines content has an upward trend for the softwood fibers during PFI refining, as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibers changed significantly. However, two parameters of hardwood fibers had no significant variations relative to softwood fibers. It might be because of the lower refining pressure that was applied in hardwood fibers. The macro-fibrillation index characterizes external macro-fibrillation. The results of fiber morphology analysis showed that external fibrillation increased with the refining process. It is consistent with the increasing specific surface area (as shown in Table S1 in Online Resource).",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:56:23.212718+00:00",
+    "latency_seconds": 3.9229
+  },
+  "mineru_block_0052": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:19.597154+00:00",
+    "source_id": "mineru_block_0052",
+    "request_sha256": "825e3970f138bde3b55955e57027f61f8293d6c5998914e9546f48cd5e968b91",
+    "prompt_sha256": "45ebd07dda9c4c2c596b4f80e55bea3706d709d97b0a48fa5a7718e9b4f55c51",
+    "image_sha256": "1affbf8bbb0805b1103ec343d0b05000795666efd8537830942ac4c2016d39f9",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1722,
+      "completion_tokens": 783,
+      "total_tokens": 2505,
+      "reasoning_tokens": 372,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"目标框内是完整连续的正文段落，可见文本为清晰单份印刷体；而原生文本混杂大量重复句子片段（如“The beating degree and the WRV had a significant increment with increasing PFI refining”及“revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the”重复两次）并将正常词句错误地标记为上下标（如“<sup>surface</sup> <sup>and</sup> <sup>more</sup>…”与“<sub>new surface and more pores…</sub>”错位）。图像中仅有一次段落文字，句子连续、无重复、无上下标碎裂，故需按可见内容整体替换。\",\"visible_text\":\"The beating degree and the WRV had a significant increment with increasing PFI refining revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the new surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling characterized by WRV makes the fibers more compliant in transverse [1], which contributes to improving the inter-fiber bonding strength of the fiber network. The results of fiber morphology analysis and water retention value showing that the fibrillation and the separation between fibrils increase with the refining process.\",\"corrected_text\":\"The beating degree and the WRV had a significant increment with increasing PFI refining revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the new surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling characterized by WRV makes the fibers more compliant in transverse [1], which contributes to improving the inter-fiber bonding strength of the fiber network. The results of fiber morphology analysis and water retention value showing that the fibrillation and the separation between fibrils increase with the refining process.\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "目标框内是完整连续的正文段落，可见文本为清晰单份印刷体；而原生文本混杂大量重复句子片段（如“The beating degree and the WRV had a significant increment with increasing PFI refining”及“revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the”重复两次）并将正常词句错误地标记为上下标（如“<sup>surface</sup> <sup>and</sup> <sup>more</sup>…”与“<sub>new surface and more pores…</sub>”错位）。图像中仅有一次段落文字，句子连续、无重复、无上下标碎裂，故需按可见内容整体替换。",
+      "visible_text": "The beating degree and the WRV had a significant increment with increasing PFI refining revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the new surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling characterized by WRV makes the fibers more compliant in transverse [1], which contributes to improving the inter-fiber bonding strength of the fiber network. The results of fiber morphology analysis and water retention value showing that the fibrillation and the separation between fibrils increase with the refining process.",
+      "corrected_text": "The beating degree and the WRV had a significant increment with increasing PFI refining revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the new surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling characterized by WRV makes the fibers more compliant in transverse [1], which contributes to improving the inter-fiber bonding strength of the fiber network. The results of fiber morphology analysis and water retention value showing that the fibrillation and the separation between fibrils increase with the refining process.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:56:24.864276+00:00",
+    "latency_seconds": 5.2661
+  },
+  "mineru_block_0057": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:23.216689+00:00",
+    "source_id": "mineru_block_0057",
+    "request_sha256": "19c8833ad9f8b8bf681a2fdbce7d63786b1f8776b9417e5b79435ef5ded5b4a6",
+    "prompt_sha256": "d8b861a11992825754a43bf86ae9abfc1a796dc64cf714c5eb07239b3a2d50f7",
+    "image_sha256": "2f2b6b9df78459291c8b17afe4558bebba0b89348344d9f0ebef579a14c51f3d",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 3418,
+      "completion_tokens": 781,
+      "total_tokens": 4199,
+      "reasoning_tokens": 308,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"目标矩形内是一段完整正文，原生文本把同一段落整段重复并混入大量错误的上下标碎片（如“In Figure 3…”反复出现、短句被拆成 superscript/subscript），与图中可见的通顺段落不符；图中段落自上而下连续，无重复文字，且“…Kouko et al. [24]”等引用与数字均清晰可读。\",\"visible_text\":\"In Figure 3, the tensile index, zero-span tensile index, and wet-web strength represented as a function of the refining revolutions. The increment of tensile strength is mainly caused by the increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of softwood fiber had a more significant increase when compared to that of hardwood fiber. It is for that fiber length plays an essential role in wet–web strength. The zero-span tensile index was usually used in characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that PFI refining did not reduce fiber strength, which is consistent with the report of Kouko et al. [24]. The above results showed that PFI refining improved the extent of fibrillation (especially the internal fibrillation), the swelling of fibers, and the tensile strength of sheets without a decrease of the tensile strength of fibers.\",\"corrected_text\":\"In Figure 3, the tensile index, zero-span tensile index, and wet-web strength represented as a function of the refining revolutions. The increment of tensile strength is mainly caused by the increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of softwood fiber had a more significant increase when compared to that of hardwood fiber. It is for that fiber length plays an essential role in wet–web strength. The zero-span tensile index was usually used in characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that PFI refining did not reduce fiber strength, which is consistent with the report of Kouko et al. [24]. The above results showed that PFI refining improved the extent of fibrillation (especially the internal fibrillation), the swelling of fibers, and the tensile strength of sheets without a decrease of the tensile strength of fibers.\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "目标矩形内是一段完整正文，原生文本把同一段落整段重复并混入大量错误的上下标碎片（如“In Figure 3…”反复出现、短句被拆成 superscript/subscript），与图中可见的通顺段落不符；图中段落自上而下连续，无重复文字，且“…Kouko et al. [24]”等引用与数字均清晰可读。",
+      "visible_text": "In Figure 3, the tensile index, zero-span tensile index, and wet-web strength represented as a function of the refining revolutions. The increment of tensile strength is mainly caused by the increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of softwood fiber had a more significant increase when compared to that of hardwood fiber. It is for that fiber length plays an essential role in wet–web strength. The zero-span tensile index was usually used in characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that PFI refining did not reduce fiber strength, which is consistent with the report of Kouko et al. [24]. The above results showed that PFI refining improved the extent of fibrillation (especially the internal fibrillation), the swelling of fibers, and the tensile strength of sheets without a decrease of the tensile strength of fibers.",
+      "corrected_text": "In Figure 3, the tensile index, zero-span tensile index, and wet-web strength represented as a function of the refining revolutions. The increment of tensile strength is mainly caused by the increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of softwood fiber had a more significant increase when compared to that of hardwood fiber. It is for that fiber length plays an essential role in wet–web strength. The zero-span tensile index was usually used in characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that PFI refining did not reduce fiber strength, which is consistent with the report of Kouko et al. [24]. The above results showed that PFI refining improved the extent of fibrillation (especially the internal fibrillation), the swelling of fibers, and the tensile strength of sheets without a decrease of the tensile strength of fibers.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:56:28.007474+00:00",
+    "latency_seconds": 4.7897
+  },
+  "mineru_block_0060": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:24.867061+00:00",
+    "source_id": "mineru_block_0060",
+    "request_sha256": "3661c09f5e27aabea187f4d6e51088fbd5aa66100b4e6c6ba6ac80641f3ec50d",
+    "prompt_sha256": "fbdb17f36f5820db499f7a6d01244b2a4366ee44e2631acb2307f1c92d1b7ba6",
+    "image_sha256": "e96dbcf5dffa5ca82f2f769b892b49bf0b052c536bc1b9dbbe9f71291d6f6dab",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 979,
+      "completion_tokens": 307,
+      "total_tokens": 1286,
+      "reasoning_tokens": 119,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"蓝色目标框内仅有一行斜体小节标题“3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size”；上方正文行（“for unrefined and refined samples: (a) softwood fibers and (b) hardw...”）位于框外，属于页边上下文。native_text 误将上一行的片段“strength for unrefined and refined samples: (a) softwood fibers”并入标题，且原文字“Efect”实为“Effect”。应仅保留框内标题文字。\",\"visible_text\":\"3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size\",\"corrected_text\":\"3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size\",\"heading_action\":\"keep\",\"heading_level\":2}",
+    "error_type": "ValueError",
+    "finished_at": "2026-10-30T09:56:27.681986+00:00",
+    "latency_seconds": 2.8141,
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色目标框内仅有一行斜体小节标题“3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size”；上方正文行（“for unrefined and refined samples: (a) softwood fibers and (b) hardw...”）位于框外，属于页边上下文。native_text 误将上一行的片段“strength for unrefined and refined samples: (a) softwood fibers”并入标题，且原文字“Efect”实为“Effect”。应仅保留框内标题文字。",
+      "visible_text": "3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size",
+      "corrected_text": "3.2. Effect of PFI Refining on Crystalline Index and Crystallite Size",
+      "heading_action": "keep",
+      "heading_level": 2
+    },
+    "revalidated_without_api_call": {
+      "original_record_sha256": "a2237293bfba0e9d507f78f2a872ed0a5f74ac5bae81fb501992c78992db95aa",
+      "reason": "Accept harmless native heading_level on a keep action; metadata remains unchanged."
+    }
+  },
+  "mineru_block_0061": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:27.687490+00:00",
+    "source_id": "mineru_block_0061",
+    "request_sha256": "6265ef123a364aff75bd8b7ab76ea856cbff1fad622cfb9ee3ca11a3c43b27d5",
+    "prompt_sha256": "e79288fb074a5b6086d1bfa6c449c69b97b60e93ee824dfb1cf552f49093fbcc",
+    "image_sha256": "f4f95707c6c508f2b7efe5d79a34ced550f9e3117dcefc6abd5e472f390339fb",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 3459,
+      "completion_tokens": 1171,
+      "total_tokens": 4630,
+      "reasoning_tokens": 649,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"蓝色框内是一段连续正文，而原提取文本出现大量重复句式、被拆成上标的片段及断裂词语，与图像中完整段落明显不符。\",\"visible_text\":\"The cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and hardwood fibers, with a correlation coefficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].\",\"corrected_text\":\"The cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and hardwood fibers, with a correlation coefficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色框内是一段连续正文，而原提取文本出现大量重复句式、被拆成上标的片段及断裂词语，与图像中完整段落明显不符。",
+      "visible_text": "The cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and hardwood fibers, with a correlation coefficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].",
+      "corrected_text": "The cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and hardwood fibers, with a correlation coefficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:56:34.986301+00:00",
+    "latency_seconds": 7.2976
+  },
+  "mineru_block_0066": {
+    "status": "completed",
+    "started_at": "2026-10-30T10:13:27.690052+00:00",
+    "source_id": "mineru_block_0066",
+    "request_sha256": "cf6a9a07f39cb3bf606ee856bbf9d57f20953ce693c18b79749058dc926ee429",
+    "prompt_sha256": "e69c7dfbd69d1a672c1e5caef8b1e52097e52a16fcf423e0d6f4c3c629a737b8",
+    "image_sha256": "d94c4c14e1c40ee8da2ff671a170d96ea1ebfdca0cc0b5ee4574b0da1751ea3c",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1257,
+      "completion_tokens": 2661,
+      "total_tokens": 3918,
+      "reasoning_tokens": 2548,
+      "cached_tokens": 0
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "finish_reason": "stop",
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"两处晶粒尺寸列标题中的“110”第二个“1”上方有可见短横线；矢量横线的 x 范围 332.247–336.730 与第二个字符的边界重合，原记录遗漏该上划线，应为 1\\\\bar{1}0，仅第二个 1 带横线，不扩展到整个指数。\",\"patches\":[{\"before\":\"110\",\"after\":\"1\\\\bar{1}0\",\"occurrences\":2}]}",
+    "header_review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "两处晶粒尺寸列标题中的“110”第二个“1”上方有可见短横线；矢量横线的 x 范围 332.247–336.730 与第二个字符的边界重合，原记录遗漏该上划线，应为 1\\bar{1}0，仅第二个 1 带横线，不扩展到整个指数。",
+      "patches": [
+        {
+          "before": "110",
+          "after": "1\\bar{1}0",
+          "occurrences": 2
+        }
+      ]
+    },
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "两处晶粒尺寸列标题中的“110”第二个“1”上方有可见短横线；矢量横线的 x 范围 332.247–336.730 与第二个字符的边界重合，原记录遗漏该上划线，应为 1\\bar{1}0，仅第二个 1 带横线，不扩展到整个指数。",
+      "visible_text": "Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>1\\bar{1}0</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>1\\bar{1}0</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+      "corrected_text": "Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>1\\bar{1}0</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>1\\bar{1}0</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "review_scope": "flagged_header_cells_only; unchanged data/caption/footnotes copied from native source",
+    "finished_at": "2026-10-30T10:13:45.968809+00:00",
+    "latency_seconds": 18.2763
+  },
+  "mineru_block_0072": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:34.989030+00:00",
+    "source_id": "mineru_block_0072",
+    "request_sha256": "2e5c6b87b90b6b2233032217b6ba4e497ee5e158c3ac76eb59e918f837b03115",
+    "prompt_sha256": "534e898abf1e9c09d53295fbb3906a97c0d36471e37cc62761b12f1f085268dc",
+    "image_sha256": "9a343b1a796b0742c7cf0f24a905400c5c404e01d59fbea433074b718a031251",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 773,
+      "completion_tokens": 416,
+      "total_tokens": 1189,
+      "reasoning_tokens": 323,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"蓝色框内可见粗体字样仅为测量标注“4.1 nm”，属于图中的尺寸/数值标注，并非章节标题；原文却将其标为二级标题，分类错误，应降级为非标题文本。文字本身与图像一致。\",\"visible_text\":\"4.1 nm\",\"corrected_text\":\"4.1 nm\",\"heading_action\":\"demote\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色框内可见粗体字样仅为测量标注“4.1 nm”，属于图中的尺寸/数值标注，并非章节标题；原文却将其标为二级标题，分类错误，应降级为非标题文本。文字本身与图像一致。",
+      "visible_text": "4.1 nm",
+      "corrected_text": "4.1 nm",
+      "heading_action": "demote",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:56:38.493979+00:00",
+    "latency_seconds": 3.5038
+  },
+  "mineru_block_0074": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:38.499110+00:00",
+    "source_id": "mineru_block_0074",
+    "request_sha256": "a97d89b102f238219292f1b8efe8cf9db237b22d4b28fe74431cd1e1238a4d1a",
+    "prompt_sha256": "e0e1af321b91e94817c4028807aa398a25d6fefb3f1201d3059805ef6c2b14fa",
+    "image_sha256": "48ffbbfdb0d348a74df0d73939ebfd5887edf79663e8b9ad8eda36ac4473b5c9",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1567,
+      "completion_tokens": 1793,
+      "total_tokens": 3360,
+      "reasoning_tokens": 1313,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"蓝色框内是完整连续段落；图中文字没有 native_text 中重复的句子片段，也没有错位的上下标，且段落内容完整可读。\",\"visible_text\":\"It is known that both the (1\\\\overline{1}0) and the (110) lattice plane are hydrophilic, and the (200)lattice plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) planes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (1\\\\overline{1}0) plane and (200) plane, which is consistent with the report of Duchemin et al., as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then it made these planes suffer more mechanical actions, so there was more adhesion (cocrystallization) and cleavage of cellulose chains created for (110) plane during PFI refining.\",\"corrected_text\":\"It is known that both the (1\\\\overline{1}0) and the (110) lattice plane are hydrophilic, and the (200)lattice plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) planes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (1\\\\overline{1}0) plane and (200) plane, which is consistent with the report of Duchemin et al., as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then it made these planes suffer more mechanical actions, so there was more adhesion (cocrystallization) and cleavage of cellulose chains created for (110) plane during PFI refining.\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色框内是完整连续段落；图中文字没有 native_text 中重复的句子片段，也没有错位的上下标，且段落内容完整可读。",
+      "visible_text": "It is known that both the (1\\overline{1}0) and the (110) lattice plane are hydrophilic, and the (200)lattice plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) planes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (1\\overline{1}0) plane and (200) plane, which is consistent with the report of Duchemin et al., as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then it made these planes suffer more mechanical actions, so there was more adhesion (cocrystallization) and cleavage of cellulose chains created for (110) plane during PFI refining.",
+      "corrected_text": "It is known that both the (1\\overline{1}0) and the (110) lattice plane are hydrophilic, and the (200)lattice plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) planes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (1\\overline{1}0) plane and (200) plane, which is consistent with the report of Duchemin et al., as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then it made these planes suffer more mechanical actions, so there was more adhesion (cocrystallization) and cleavage of cellulose chains created for (110) plane during PFI refining.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:56:49.179321+00:00",
+    "latency_seconds": 10.679
+  },
+  "mineru_block_0075": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:49.182495+00:00",
+    "source_id": "mineru_block_0075",
+    "request_sha256": "2aa343e34c91ec2f13344254a0a1c5d4582f5e3549d9b3c915934526660be7e6",
+    "prompt_sha256": "e860e249fed0aa72efce41d6f2a7ef4a726ff08420a2d456d005a4c7a056ecd5",
+    "image_sha256": "340d6bc9e396203d4685f27b6b4af5f7dc8d6a0ce7cf599f792f3850ec6f35fb",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1229,
+      "completion_tokens": 828,
+      "total_tokens": 2057,
+      "reasoning_tokens": 504,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"蓝色框内为一段连续正文，实际阅读顺序为“However, ... It could be explained in terms of coalescence of chains or some crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30]. Additionally, ... hard for water molecules to penetrate.”；原生文本插入了不存在的“paracrys”及“ate through the spaces between the hydrophilic (110) planes in para...”片段，并错误地把“crystallographic stacking...”和结尾句设为下标/上标，均为可见的抽取错误。\",\"visible_text\":\"However, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30]. Additionally, it was probably due to the weaker cleavage effect on (200) lattice planes that was hard for water molecules to penetrate.\",\"corrected_text\":\"However, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30]. Additionally, it was probably due to the weaker cleavage effect on (200) lattice planes that was hard for water molecules to penetrate.\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色框内为一段连续正文，实际阅读顺序为“However, ... It could be explained in terms of coalescence of chains or some crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30]. Additionally, ... hard for water molecules to penetrate.”；原生文本插入了不存在的“paracrys”及“ate through the spaces between the hydrophilic (110) planes in para...”片段，并错误地把“crystallographic stacking...”和结尾句设为下标/上标，均为可见的抽取错误。",
+      "visible_text": "However, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30]. Additionally, it was probably due to the weaker cleavage effect on (200) lattice planes that was hard for water molecules to penetrate.",
+      "corrected_text": "However, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30]. Additionally, it was probably due to the weaker cleavage effect on (200) lattice planes that was hard for water molecules to penetrate.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:56:54.574464+00:00",
+    "latency_seconds": 5.391
+  },
+  "mineru_block_0092": {
+    "status": "completed",
+    "started_at": "2026-10-30T10:09:25.134039+00:00",
+    "source_id": "mineru_block_0092",
+    "request_sha256": "9065677a0dc36b0209f28e03e4d069bab3a5a6e1eac4f79a30e87443677f4a09",
+    "prompt_sha256": "dfc271f45e3f9295bfd934adf805740e49f1a2a1127a3230ecb6929e366ee050",
+    "image_sha256": "1b1804c004a45dd59ab75514b7cabc944910fcd33e5b12a3713e177f1b1a1e74",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 2286,
+      "completion_tokens": 3075,
+      "total_tokens": 5361,
+      "reasoning_tokens": 2239,
+      "cached_tokens": 2048
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "finish_reason": "stop",
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"蓝色框内两页连续段落清晰可读；原生文本把可见的 O(3′) 误作 O(3⁰)，并夹带重复的上标句段（如“For the content of...”和“with the revolutions...”）。跨页处“but also”应与下一页“the formation”直接衔接，且目标段落不含后续“As to the O(3)H···O(5)...”段。\",\"visible_text\":\"For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).\",\"corrected_text\":\"For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝色框内两页连续段落清晰可读；原生文本把可见的 O(3′) 误作 O(3⁰)，并夹带重复的上标句段（如“For the content of...”和“with the revolutions...”）。跨页处“but also”应与下一页“the formation”直接衔接，且目标段落不含后续“As to the O(3)H···O(5)...”段。",
+      "visible_text": "For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).",
+      "corrected_text": "For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T10:09:42.930587+00:00",
+    "latency_seconds": 17.7849
+  },
+  "mineru_block_0098": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:57:08.861599+00:00",
+    "source_id": "mineru_block_0098",
+    "request_sha256": "e0d78c63d5e473596b62283c8ac8b428554a621461ae4ce2185163bb4bcd4cf5",
+    "prompt_sha256": "3ce5cd07ba3823c29faeb6f17a3b2da08dbfb2471e9908c4bab5545c4c3d0bf3",
+    "image_sha256": "1d6415306fea511a116bfe5aa95321ef6db683221b215869d6bb8c6267cb4942",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1631,
+      "completion_tokens": 1588,
+      "total_tokens": 3219,
+      "reasoning_tokens": 846,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"蓝框内该段两处 H-bond 记号在图像中清晰显示为 O(3′)（3 后带上标撇号/primed 3），而原生文本误作上标“0”；其余文字（含“might disease”“an decrease of 17.11%”等原样内容）与图像一致。\",\"visible_text\":\"As to the free OH(2) and OH(6) of softwood fiber, the relative content showed a slight increase trend in general. The enhancement of the free OH(2) and OH(6) was understandable, because there was the breakage of H-bonds among cellulosic molecules, which resulted in more extensive delamination and higher specific surface area (as shown in Figure S4 and Table S1 in Online Resource). This made cellulose more accessible to water and chemicals. However, for the free OH(2) and OH(6) of hardwood fiber, the number of the free OH(2) and OH(6) decreased by 21.65% from 14.32% to 11.22%, with revolutions increasing from 0 r to 4000 r, followed by an increase of 45.37% in the stage of refining from 4000 r to 12,000 r, along with an decrease of 17.11%. It could be explained by the instability of free OH groups, which makes it easy to form new H-bonds, such as O(2)H···O(6) or O(6)H···O(3′)H-bonds. Thus although there is the formation of free OH(2) and OH(6) during fibrillation, the content of the free OH(2) and OH(6) might disease; meanwhile, the content of the O(6)H···O(3′) or the O(2)H···O(6) H-bonds might increase upon drying.\",\"corrected_text\":\"As to the free OH(2) and OH(6) of softwood fiber, the relative content showed a slight increase trend in general. The enhancement of the free OH(2) and OH(6) was understandable, because there was the breakage of H-bonds among cellulosic molecules, which resulted in more extensive delamination and higher specific surface area (as shown in Figure S4 and Table S1 in Online Resource). This made cellulose more accessible to water and chemicals. However, for the free OH(2) and OH(6) of hardwood fiber, the number of the free OH(2) and OH(6) decreased by 21.65% from 14.32% to 11.22%, with revolutions increasing from 0 r to 4000 r, followed by an increase of 45.37% in the stage of refining from 4000 r to 12,000 r, along with an decrease of 17.11%. It could be explained by the instability of free OH groups, which makes it easy to form new H-bonds, such as O(2)H···O(6) or O(6)H···O(3′)H-bonds. Thus although there is the formation of free OH(2) and OH(6) during fibrillation, the content of the free OH(2) and OH(6) might disease; meanwhile, the content of the O(6)H···O(3′) or the O(2)H···O(6) H-bonds might increase upon drying.\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝框内该段两处 H-bond 记号在图像中清晰显示为 O(3′)（3 后带上标撇号/primed 3），而原生文本误作上标“0”；其余文字（含“might disease”“an decrease of 17.11%”等原样内容）与图像一致。",
+      "visible_text": "As to the free OH(2) and OH(6) of softwood fiber, the relative content showed a slight increase trend in general. The enhancement of the free OH(2) and OH(6) was understandable, because there was the breakage of H-bonds among cellulosic molecules, which resulted in more extensive delamination and higher specific surface area (as shown in Figure S4 and Table S1 in Online Resource). This made cellulose more accessible to water and chemicals. However, for the free OH(2) and OH(6) of hardwood fiber, the number of the free OH(2) and OH(6) decreased by 21.65% from 14.32% to 11.22%, with revolutions increasing from 0 r to 4000 r, followed by an increase of 45.37% in the stage of refining from 4000 r to 12,000 r, along with an decrease of 17.11%. It could be explained by the instability of free OH groups, which makes it easy to form new H-bonds, such as O(2)H···O(6) or O(6)H···O(3′)H-bonds. Thus although there is the formation of free OH(2) and OH(6) during fibrillation, the content of the free OH(2) and OH(6) might disease; meanwhile, the content of the O(6)H···O(3′) or the O(2)H···O(6) H-bonds might increase upon drying.",
+      "corrected_text": "As to the free OH(2) and OH(6) of softwood fiber, the relative content showed a slight increase trend in general. The enhancement of the free OH(2) and OH(6) was understandable, because there was the breakage of H-bonds among cellulosic molecules, which resulted in more extensive delamination and higher specific surface area (as shown in Figure S4 and Table S1 in Online Resource). This made cellulose more accessible to water and chemicals. However, for the free OH(2) and OH(6) of hardwood fiber, the number of the free OH(2) and OH(6) decreased by 21.65% from 14.32% to 11.22%, with revolutions increasing from 0 r to 4000 r, followed by an increase of 45.37% in the stage of refining from 4000 r to 12,000 r, along with an decrease of 17.11%. It could be explained by the instability of free OH groups, which makes it easy to form new H-bonds, such as O(2)H···O(6) or O(6)H···O(3′)H-bonds. Thus although there is the formation of free OH(2) and OH(6) during fibrillation, the content of the free OH(2) and OH(6) might disease; meanwhile, the content of the O(6)H···O(3′) or the O(2)H···O(6) H-bonds might increase upon drying.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:57:16.881635+00:00",
+    "latency_seconds": 8.0192
+  },
+  "mineru_block_0100": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:57:16.895161+00:00",
+    "source_id": "mineru_block_0100",
+    "request_sha256": "e172678754d8c9d1863157fe36538b4cf05559cb29357f95e6f72721248a24a8",
+    "prompt_sha256": "3f94d5c1fd157daafb96decf68ade86c8335fb5c20b26e5c5f65faf6f3a734ad",
+    "image_sha256": "361e59dd5b5072650952d2c0d11ee831904a80ab0e4610740d2351208806a02c",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1228,
+      "completion_tokens": 795,
+      "total_tokens": 2023,
+      "reasoning_tokens": 356,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"蓝框内正文显示的是 O(3′)（撇号/prime，而非上标0），且单词为“coefficients”（原文误作“coeficients”），其余数字、p值、图号与引用[35]均一致；框外上方标题属页边上下文不应转录。\",\"visible_text\":\"Similar to the CI-XI, the content of O(6)H···O(3′) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coefficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. The similar trends in the content of the O(6)H···O(3′) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H···O(3′) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].\",\"corrected_text\":\"Similar to the CI-XI, the content of O(6)H···O(3′) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coefficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. The similar trends in the content of the O(6)H···O(3′) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H···O(3′) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝框内正文显示的是 O(3′)（撇号/prime，而非上标0），且单词为“coefficients”（原文误作“coeficients”），其余数字、p值、图号与引用[35]均一致；框外上方标题属页边上下文不应转录。",
+      "visible_text": "Similar to the CI-XI, the content of O(6)H···O(3′) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coefficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. The similar trends in the content of the O(6)H···O(3′) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H···O(3′) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].",
+      "corrected_text": "Similar to the CI-XI, the content of O(6)H···O(3′) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coefficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. The similar trends in the content of the O(6)H···O(3′) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H···O(3′) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:57:21.672592+00:00",
+    "latency_seconds": 4.7763
+  },
+  "mineru_block_0106": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:57:21.676563+00:00",
+    "source_id": "mineru_block_0106",
+    "request_sha256": "6e6a3318b5899ffadc772a9283b8cf2dd80ff2ff3eedcf2353227bc32d499788",
+    "prompt_sha256": "851d052a74a0dedd27b2061ad7c29adcd747d42de6e1f0232831f4dbceaf0edf",
+    "image_sha256": "2eb423a10934a700bcfaf4544f1d770a6da9d43dcb535fdafd0d6160ea900ca2",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 3090,
+      "completion_tokens": 1078,
+      "total_tokens": 4168,
+      "reasoning_tokens": 369,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"目标框为一段连续正文，但原生文本被严重打乱：句子被重复、插入上下标片段并错位（如“poor for the following reasons”出现两次，O(2)H⋯O(6) H-bonds 片段被拆散）。图像显示的是从“The correlation between the CI-XI…”到“…was not discussed in the present study.”的完整单段落，句子顺序清晰，无重复。可见 O(6)H···O(3′) 中的撇号与 O(2)H、OH(2)、OH(6) 等编号，以及 Figure 9、PFI refining 等均按原文保留。\",\"visible_text\":\"The correlation between the CI-XI and the O(2)H· · · O(6) H-bonds or the free OH(2) and OH(6) was poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) H-bonds as opposed to the O(6)H· · · O(3′) H-bonds in the amorphous region, because the distance between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content of O(6)H· · · O(3′) H-bonds, there was less difference in the content of the O(2)H· · · O(6) H-bonds or the free OH groups between the crystalline region and amorphous region, which sometimes made the content of the two bonds not change much in regards to the crystallinity. The O(3)H· · · O(5) H-bonds is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI refining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.\",\"corrected_text\":\"The correlation between the CI-XI and the O(2)H· · · O(6) H-bonds or the free OH(2) and OH(6) was poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) H-bonds as opposed to the O(6)H· · · O(3′) H-bonds in the amorphous region, because the distance between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content of O(6)H· · · O(3′) H-bonds, there was less difference in the content of the O(2)H· · · O(6) H-bonds or the free OH groups between the crystalline region and amorphous region, which sometimes made the content of the two bonds not change much in regards to the crystallinity. The O(3)H· · · O(5) H-bonds is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI refining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "目标框为一段连续正文，但原生文本被严重打乱：句子被重复、插入上下标片段并错位（如“poor for the following reasons”出现两次，O(2)H⋯O(6) H-bonds 片段被拆散）。图像显示的是从“The correlation between the CI-XI…”到“…was not discussed in the present study.”的完整单段落，句子顺序清晰，无重复。可见 O(6)H···O(3′) 中的撇号与 O(2)H、OH(2)、OH(6) 等编号，以及 Figure 9、PFI refining 等均按原文保留。",
+      "visible_text": "The correlation between the CI-XI and the O(2)H· · · O(6) H-bonds or the free OH(2) and OH(6) was poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) H-bonds as opposed to the O(6)H· · · O(3′) H-bonds in the amorphous region, because the distance between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content of O(6)H· · · O(3′) H-bonds, there was less difference in the content of the O(2)H· · · O(6) H-bonds or the free OH groups between the crystalline region and amorphous region, which sometimes made the content of the two bonds not change much in regards to the crystallinity. The O(3)H· · · O(5) H-bonds is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI refining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.",
+      "corrected_text": "The correlation between the CI-XI and the O(2)H· · · O(6) H-bonds or the free OH(2) and OH(6) was poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) H-bonds as opposed to the O(6)H· · · O(3′) H-bonds in the amorphous region, because the distance between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content of O(6)H· · · O(3′) H-bonds, there was less difference in the content of the O(2)H· · · O(6) H-bonds or the free OH groups between the crystalline region and amorphous region, which sometimes made the content of the two bonds not change much in regards to the crystallinity. The O(3)H· · · O(5) H-bonds is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI refining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:57:27.674020+00:00",
+    "latency_seconds": 5.9964
+  },
+  "mineru_block_0107": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:57:24.165127+00:00",
+    "source_id": "mineru_block_0107",
+    "request_sha256": "b7a4c4be91257a0083c537103a622867bb8367001c51d307bcf95132e3b2de88",
+    "prompt_sha256": "a55d68ea7765ae4346780f2a0e2d98149402f8703cce1dc97c2ea16636bd93db",
+    "image_sha256": "aefef6a2e0f2506c6efe373c300eb97b30317e09bdfab30202513089b05ea272",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 812,
+      "completion_tokens": 290,
+      "total_tokens": 1102,
+      "reasoning_tokens": 181,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"蓝框内仅显示加粗的章节标题“4. Conclusions”，其上下分别为“present study.”与“PFI refining ac”，框内没有“as mentioned”字样；原生文本把上一行的残片与标题拼在一起，属于混入的错误前缀，应更正为框内实际标题，并保留为二级标题。\",\"visible_text\":\"4. Conclusions\",\"corrected_text\":\"4. Conclusions\",\"heading_action\":\"keep\",\"heading_level\":2}",
+    "error_type": "ValueError",
+    "finished_at": "2026-10-30T09:57:29.076424+00:00",
+    "latency_seconds": 4.9102,
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝框内仅显示加粗的章节标题“4. Conclusions”，其上下分别为“present study.”与“PFI refining ac”，框内没有“as mentioned”字样；原生文本把上一行的残片与标题拼在一起，属于混入的错误前缀，应更正为框内实际标题，并保留为二级标题。",
+      "visible_text": "4. Conclusions",
+      "corrected_text": "4. Conclusions",
+      "heading_action": "keep",
+      "heading_level": 2
+    },
+    "revalidated_without_api_call": {
+      "original_record_sha256": "0b7b46cca4feae7e403b5e974bb1d634ceee88f316413b28c257a481cdd07662",
+      "reason": "Accept harmless native heading_level on a keep action; metadata remains unchanged."
+    }
+  },
+  "mineru_block_0112": {
+    "status": "completed",
+    "started_at": "2026-10-30T09:57:27.677492+00:00",
+    "source_id": "mineru_block_0112",
+    "request_sha256": "6dace94ac4fb0056412d6146915731322bca91fb8874a7f66345bec46d804fc2",
+    "prompt_sha256": "609ec9f2c41f52c0f7ee44079a835dca09123f89349c1a2fa5461e65710b9c17",
+    "image_sha256": "a0cb86a3fd58fa74731de14d14bcf2bf41c18acf2e1b7c8a73a27acd653b4b96",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 1383,
+      "completion_tokens": 520,
+      "total_tokens": 1903,
+      "reasoning_tokens": 121,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"correct\",\"confidence\":\"high\",\"reason\":\"蓝色框内为补充材料说明段落，逐句核对可见文字与 native_text 完全一致：网址、Figure S1–S4、Table S1 的编号、(a)~(e) 各 0/4000/8000/12,000/16,000 revolutions 数值及 softwood/hardwood 均吻合；末句两处 Table S1 描述确为原文中并列的两个标题，属正常重复而非抽取重复。\",\"visible_text\":\"Supplementary Materials: The following are available online at http://www.mdpi.com/2073-4360/12/12/2912/s1, Figure S1: XRD fitting results of softwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S2: XRD fitting results of hardwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S3: Nonlinear fitting curves of the band of hardwood fibers for hydroxyl groups: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S4: The BET N2 adsorption/desorption isotherms at various refining revolutions of pulp fibers: (a) softwood; (b) hardwood, Table S1: Cumulative pore volume, average pore size and specific surface area of softwood pulp fiber through refining, Cumulative pore volume, average pore size and specific surface area of hardwood pulp fiber through refining.\",\"corrected_text\":null,\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "correct",
+      "confidence": "high",
+      "reason": "蓝色框内为补充材料说明段落，逐句核对可见文字与 native_text 完全一致：网址、Figure S1–S4、Table S1 的编号、(a)~(e) 各 0/4000/8000/12,000/16,000 revolutions 数值及 softwood/hardwood 均吻合；末句两处 Table S1 描述确为原文中并列的两个标题，属正常重复而非抽取重复。",
+      "visible_text": "Supplementary Materials: The following are available online at http://www.mdpi.com/2073-4360/12/12/2912/s1, Figure S1: XRD fitting results of softwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S2: XRD fitting results of hardwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S3: Nonlinear fitting curves of the band of hardwood fibers for hydroxyl groups: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S4: The BET N2 adsorption/desorption isotherms at various refining revolutions of pulp fibers: (a) softwood; (b) hardwood, Table S1: Cumulative pore volume, average pore size and specific surface area of softwood pulp fiber through refining, Cumulative pore volume, average pore size and specific surface area of hardwood pulp fiber through refining.",
+      "corrected_text": null,
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:57:31.851860+00:00",
+    "latency_seconds": 4.1735
+  }
+}

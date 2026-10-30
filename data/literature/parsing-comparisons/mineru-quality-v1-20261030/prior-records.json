@@ -1,0 +1,193 @@
+[
+  {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:28.011958+00:00",
+    "source_id": "mineru_block_0066",
+    "request_sha256": "0de584dfd2098ca41a07e06a83764459e82eed3ce56f9cd970e541c83e57e509",
+    "prompt_sha256": "94cd34f28b6a82a308a97df5e96af32f24c97b6306cbd4895b1b772a10e2cb7d",
+    "image_sha256": "148c520d78371ad99216c929d67476e7750c3d3fed7e5dda2898b0af0e4a7ca0",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 2507,
+      "completion_tokens": 10448,
+      "total_tokens": 12955,
+      "reasoning_tokens": 8829,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"蓝框内 (a)、(b) 两处“Crystallite Size (nm)”的第一列表头均为带上划线的 110（\\\\(\\\\overline{110}\\\\)），原生文本却写成无上划线的 110；同时 (b) 分隔行在图中横跨整表，原生结构用空首格加 colspan=5 会造成居中偏移。其余数值与表头文字可见一致；标题和脚注位于蓝框外，未纳入目标。\",\"visible_text\":\"<table><tr><td colspan=\\\"6\\\">(a)</td></tr><tr><td rowspan=\\\"2\\\">Revolutions</td><td colspan=\\\"2\\\">CI (%)</td><td colspan=\\\"3\\\">Crystallite Size (nm)</td></tr><tr><td>CI-XI <sup>a</sup></td><td>CI-XA <sup>b</sup></td><td>\\\\(\\\\overline{110}\\\\)</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td colspan=\\\"6\\\">(b)</td></tr><tr><td rowspan=\\\"2\\\">Revolutions</td><td colspan=\\\"2\\\">CI (%)</td><td colspan=\\\"3\\\">Crystallite Size (nm)</td></tr><tr><td>CI-XI <sup>a</sup></td><td>CI-XA <sup>b</sup></td><td>\\\\(\\\\overline{110}\\\\)</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>\",\"corrected_text\":\"<table><tr><td colspan=\\\"6\\\">(a)</td></tr><tr><td rowspan=\\\"2\\\">Revolutions</td><td colspan=\\\"2\\\">CI (%)</td><td colspan=\\\"3\\\">Crystallite Size (nm)</td></tr><tr><td>CI-XI <sup>a</sup></td><td>CI-XA <sup>b</sup></td><td>\\\\(\\\\overline{110}\\\\)</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td colspan=\\\"6\\\">(b)</td></tr><tr><td rowspan=\\\"2\\\">Revolutions</td><td colspan=\\\"2\\\">CI (%)</td><td colspan=\\\"3\\\">Crystallite Size (nm)</td></tr><tr><td>CI-XI <sup>a</sup></td><td>CI-XA <sup>b</sup></td><td>\\\\(\\\\overline{110}\\\\)</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "蓝框内 (a)、(b) 两处“Crystallite Size (nm)”的第一列表头均为带上划线的 110（\\(\\overline{110}\\)），原生文本却写成无上划线的 110；同时 (b) 分隔行在图中横跨整表，原生结构用空首格加 colspan=5 会造成居中偏移。其余数值与表头文字可见一致；标题和脚注位于蓝框外，未纳入目标。",
+      "visible_text": "<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td>CI-XI <sup>a</sup></td><td>CI-XA <sup>b</sup></td><td>\\(\\overline{110}\\)</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td colspan=\"6\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td>CI-XI <sup>a</sup></td><td>CI-XA <sup>b</sup></td><td>\\(\\overline{110}\\)</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+      "corrected_text": "<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td>CI-XI <sup>a</sup></td><td>CI-XA <sup>b</sup></td><td>\\(\\overline{110}\\)</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td colspan=\"6\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td>CI-XI <sup>a</sup></td><td>CI-XA <sup>b</sup></td><td>\\(\\overline{110}\\)</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:57:24.162034+00:00",
+    "latency_seconds": 56.1489
+  },
+  {
+    "status": "completed",
+    "started_at": "2026-10-30T09:56:54.579300+00:00",
+    "source_id": "mineru_block_0092",
+    "request_sha256": "3d505356c5f16f0142c8c53560df6302aac6c4be919ca753194f955478261d82",
+    "prompt_sha256": "644365ce5ef60cc3a1551b66f7302aa6ed114092520f2dd5147422dcc05ce164",
+    "image_sha256": "1b1804c004a45dd59ab75514b7cabc944910fcd33e5b12a3713e177f1b1a1e74",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 2630,
+      "completion_tokens": 2515,
+      "total_tokens": 5145,
+      "reasoning_tokens": 2018,
+      "cached_tokens": 256
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"uncertain\",\"confidence\":\"medium\",\"reason\":\"蓝框内的段落文字清晰可读，但与 native_text 不完全对应：框内段落底边在“...but also”处被裁剪截断，native_text 后续的“the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds…WRV of fibers”等内容不在目标矩形内，无法据图核对。就已可见部分可确认 native_text 存在重复片段（“For the content of O(6)H···O(3⁰) inter-molecular H-bonds of softwood fiber, the trend can be”被重复一次并伪装成上标）以及“O(3⁰)”应为“O(3′)”（图像显示为撇号而非上标零），但因目标被截断、无法给出覆盖全文的完整替换，故不作修改，建议扩大裁剪后复核。\",\"visible_text\":\"For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also\",\"corrected_text\":null,\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "uncertain",
+      "confidence": "medium",
+      "reason": "蓝框内的段落文字清晰可读，但与 native_text 不完全对应：框内段落底边在“...but also”处被裁剪截断，native_text 后续的“the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds…WRV of fibers”等内容不在目标矩形内，无法据图核对。就已可见部分可确认 native_text 存在重复片段（“For the content of O(6)H···O(3⁰) inter-molecular H-bonds of softwood fiber, the trend can be”被重复一次并伪装成上标）以及“O(3⁰)”应为“O(3′)”（图像显示为撇号而非上标零），但因目标被截断、无法给出覆盖全文的完整替换，故不作修改，建议扩大裁剪后复核。",
+      "visible_text": "For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also",
+      "corrected_text": null,
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T09:57:08.857412+00:00",
+    "latency_seconds": 14.2769
+  },
+  {
+    "status": "failed",
+    "started_at": "2026-10-30T10:05:01.574564+00:00",
+    "source_id": "mineru_block_0066",
+    "request_sha256": "b99a4e6f38c70119929ab400916524af77f9733533238443d7423c6b0aeb7464",
+    "prompt_sha256": "d44b60b023b6004ecd55838a49f9828292c8f5e23412b65bb5a84b208d46be24",
+    "image_sha256": "72aa65115206979a6908ee4dd2d4ae93d1bc9bc2a19437eb79bd331bc411d660",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 2851,
+      "completion_tokens": 12000,
+      "total_tokens": 14851,
+      "reasoning_tokens": 11478,
+      "cached_tokens": 1152
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"medium\",\"reason\":\"放大图显示 Crystallite Size 首列标题为带上划线的 110，原提取漏掉上划线；脚注中可见 double-f 的 diffraction，原提取误作 difraction。其余表头、数据和行结构一致。\",\"visible_text\":\"Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\\n\\n<table><tr><td colspan=\\\"6\\\">(a)</td></tr><tr><td rowspan=\\\"2\\\">Revolutions</td><td colspan=\\\"2\\\">CI (%)</td><td colspan=\\\"3\\\">Crystallite Size (nm)</td></tr><tr><td>CI-XI<sup>a</sup></td><td>CI-XA<sup>b</sup></td><td>\\\\(\\\\overline{1}10\\\\)</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\\\"5\\\">(b)</td></tr><tr><td rowspan=\\\"2\\\">Revolutions</td><td colspan=\\\"2\\\">CI (%)</td><td colspan=\\\"3\\\">C",
+    "error_type": "JSONDecodeError",
+    "finished_at": "2026-10-30T10:06:12.330816+00:00",
+    "latency_seconds": 70.7536
+  },
+  {
+    "status": "completed",
+    "started_at": "2026-10-30T10:05:01.583268+00:00",
+    "source_id": "mineru_block_0092",
+    "request_sha256": "9065677a0dc36b0209f28e03e4d069bab3a5a6e1eac4f79a30e87443677f4a09",
+    "prompt_sha256": "dfc271f45e3f9295bfd934adf805740e49f1a2a1127a3230ecb6929e366ee050",
+    "image_sha256": "1b1804c004a45dd59ab75514b7cabc944910fcd33e5b12a3713e177f1b1a1e74",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 2286,
+      "completion_tokens": 2932,
+      "total_tokens": 5218,
+      "reasoning_tokens": 2125,
+      "cached_tokens": 1024
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"目标区域可见为连续正文段落，并非标题。原生文本在同段内重复插入整句片段，且将图中清楚的 O(3′) 误作 O(3^0)；跨页处应接续为“but also the formation…”，不能重复或遗漏边界词。\",\"visible_text\":\"For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).\",\"corrected_text\":\"For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).\",\"heading_action\":\"keep\",\"heading_level\":null}",
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "目标区域可见为连续正文段落，并非标题。原生文本在同段内重复插入整句片段，且将图中清楚的 O(3′) 误作 O(3^0)；跨页处应接续为“but also the formation…”，不能重复或遗漏边界词。",
+      "visible_text": "For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).",
+      "corrected_text": "For the content of O(6)H···O(3′) inter-molecular H-bonds of softwood fiber, the trend can be divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H···O(3′) H-bonds of hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H···O(3′) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H···O(3′) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "finished_at": "2026-10-30T10:05:18.158311+00:00",
+    "latency_seconds": 16.5736
+  },
+  {
+    "status": "completed",
+    "started_at": "2026-10-30T10:09:25.125663+00:00",
+    "source_id": "mineru_block_0066",
+    "request_sha256": "8677d0b59f9ec6b665936f0db36e779fe915f2c5245c8201346ac3df91d13f63",
+    "prompt_sha256": "6bd7e697c65ea00d1c0e2defb624cba5dc51924772cc86f53650e04bfda5f9b1",
+    "image_sha256": "d94c4c14e1c40ee8da2ff671a170d96ea1ebfdca0cc0b5ee4574b0da1751ea3c",
+    "model_info": {
+      "requested_model": "deepseek-flash",
+      "thinking_enabled": true,
+      "reasoning_effort": "high",
+      "returned_model": "deepseek-flash",
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    },
+    "usage": {
+      "prompt_tokens": 703,
+      "completion_tokens": 567,
+      "total_tokens": 1270,
+      "reasoning_tokens": 483,
+      "cached_tokens": 0
+    },
+    "monetary_cost": null,
+    "monetary_cost_note": "Provider did not return an invoice amount.",
+    "provider_calls": 1,
+    "finish_reason": "stop",
+    "response_text": "{\"decision\":\"incorrect\",\"confidence\":\"high\",\"reason\":\"两处表头中“Crystallite Size (nm)”下第一列的横线仅位于首个数字“1”上方，原单元格“110”缺少该上划线标注；不应将横线扩展到整个“110”。\",\"patches\":[{\"before\":\"110\",\"after\":\"\\\\bar{1}10\",\"occurrences\":2}]}",
+    "header_review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "两处表头中“Crystallite Size (nm)”下第一列的横线仅位于首个数字“1”上方，原单元格“110”缺少该上划线标注；不应将横线扩展到整个“110”。",
+      "patches": [
+        {
+          "before": "110",
+          "after": "\\bar{1}10",
+          "occurrences": 2
+        }
+      ]
+    },
+    "review": {
+      "decision": "incorrect",
+      "confidence": "high",
+      "reason": "两处表头中“Crystallite Size (nm)”下第一列的横线仅位于首个数字“1”上方，原单元格“110”缺少该上划线标注；不应将横线扩展到整个“110”。",
+      "visible_text": "Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>\\bar{1}10</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>\\bar{1}10</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+      "corrected_text": "Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>\\bar{1}10</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>\\bar{1}10</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+      "heading_action": "keep",
+      "heading_level": null
+    },
+    "review_scope": "flagged_header_cells_only; unchanged data/caption/footnotes copied from native source",
+    "finished_at": "2026-10-30T10:09:32.003974+00:00",
+    "latency_seconds": 6.8757
+  }
+]

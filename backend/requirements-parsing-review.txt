@@ -1,0 +1,4 @@
+# Install after the normal backend and literature dependencies.
+-r requirements-literature.txt
+PyMuPDF==1.28.0
+# Poppler's pdftoppm executable must also be available on PATH.

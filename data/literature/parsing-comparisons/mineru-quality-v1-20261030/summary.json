@@ -1,0 +1,36 @@
+{
+  "version": "mineru-quality-v1",
+  "source_pdf_sha256": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4",
+  "source_units": 117,
+  "flagged_units": 19,
+  "findings": 27,
+  "unflagged_sample_count": 0,
+  "review_statuses": {
+    "completed": 19
+  },
+  "correction_statuses": {
+    "accepted_correction": 18,
+    "verified_unchanged": 1
+  },
+  "provider_calls": 24,
+  "usage": {
+    "prompt_tokens": 42703,
+    "completion_tokens": 48134,
+    "total_tokens": 90837,
+    "reasoning_tokens": 37067,
+    "cached_tokens": 8576
+  },
+  "monetary_cost": null,
+  "chunks": 95,
+  "chunk_kinds": {
+    "paragraph": 42,
+    "equation": 5,
+    "figure_caption": 9,
+    "table": 2,
+    "reference": 37
+  },
+  "sections": 14,
+  "remaining_organization_anomalies": [],
+  "source_preservation": "Immutable native snapshot plus reversible full before/after ledger. New offsets explicitly identify the corrected view.",
+  "quality_scope": "AI verification of flagged crops only; no normal sampling, expert certification or whole-paper accuracy claim."
+}
