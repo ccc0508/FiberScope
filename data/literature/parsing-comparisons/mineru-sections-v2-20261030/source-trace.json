@@ -1,0 +1,2708 @@
+{
+  "mineru_block_0000": {
+    "old": {
+      "source_id": "mineru_block_0000",
+      "native_block_index": 0,
+      "page": 1,
+      "bbox": [
+        124,
+        116,
+        176,
+        130
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Article",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      0
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0001": {
+    "old": {
+      "source_id": "mineru_block_0001",
+      "native_block_index": 1,
+      "page": 1,
+      "bbox": [
+        122,
+        131,
+        862,
+        206
+      ],
+      "native_type": "text",
+      "native_text_level": 1,
+      "kind": "heading",
+      "text": "Probing Efect of Papirindustriens Forskningsinstitut (PFI) Refining on Aggregation Structure of Cellulose: Crystal Packing and Hydrogen-Bonding Network",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [],
+    "document_title": true
+  },
+  "mineru_block_0002": {
+    "old": {
+      "source_id": "mineru_block_0002",
+      "native_block_index": 2,
+      "page": 1,
+      "bbox": [
+        122,
+        221,
+        453,
+        237
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Kunpeng Li, Lihong Zhao \\* and Beihai He",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      1
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0003": {
+    "old": {
+      "source_id": "mineru_block_0003",
+      "native_block_index": 3,
+      "page": 1,
+      "bbox": [
+        129,
+        243,
+        870,
+        287
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "State Key Laboratory of Pulp and Paper Engineering, South China University of Technology, 381 Wushan Rd., Tianhe District, Guangzhou 510640, China; felikp@mail.scut.edu.cn (K.L.); ppebhhe@scut.edu.cn (B.H.) \\* Correspondence: zhaolh@scut.edu.cn",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      1
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0004": {
+    "old": {
+      "source_id": "mineru_block_0004",
+      "native_block_index": 4,
+      "page": 1,
+      "bbox": [
+        132,
+        303,
+        722,
+        318
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Received: 17 November 2020; Accepted: 2 December 2020; Published: 4 December 2020",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      1
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0006": {
+    "old": {
+      "source_id": "mineru_block_0006",
+      "native_block_index": 6,
+      "page": 1,
+      "bbox": [
+        131,
+        330,
+        875,
+        525
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Abstract: Supramolecular structure is the critical factor that afects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H· · · O(3<sup>0</sup>) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coeficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      2
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0007": {
+    "old": {
+      "source_id": "mineru_block_0007",
+      "native_block_index": 7,
+      "page": 1,
+      "bbox": [
+        132,
+        537,
+        875,
+        570
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Keywords: natural cellulosic fibers; mechanical refining; Crystallinity; Crystallite size; Hydrogen bonds",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      3
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0008": {
+    "old": {
+      "source_id": "mineru_block_0008",
+      "native_block_index": 8,
+      "page": 1,
+      "bbox": [
+        122,
+        615,
+        245,
+        629
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "1. Introduction",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [
+      "sec_1bde6666475f11ad"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0009": {
+    "old": {
+      "source_id": "mineru_block_0009",
+      "native_block_index": 9,
+      "page": 1,
+      "bbox": [
+        121,
+        637,
+        875,
+        847
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Mechanical, chemical, and biological treatments are usually adopted to obtain the desired physical and mechanical properties and for further utilization of the natural cellulosic fibers. Therein, Papirindustriens forskningsinstitut (PFI) refining is the most common laboratory refiner in order to improve the inter-fiber bonding capacity [1] and accessibility [2,3], and manufacture the micro-fibrillated or nano-fibrillated cellulose [4–6]. The main efects of PFI refining on fibers are: (i) internal fibrillation—delaminating, loosening, and swelling of fiber wall; (ii) external fibrillation—peeling of fibrils from the fiber surface while remaining attached; (iii) fiber shortening—fiber cutting due to shearing action, and (iv) fines formation—primary fines come from ray cells and parenchyma cells and microfibrils that are caused by fiber shortening or external fibrillation. Moreover, the PFI refining could be adopted to obtain a higher internal fibrillation than other laboratory refiners [1]. These efects of the PFI refining on cellulosic fibers will improve the accessibility, the swelling, the flexibility, and the inter-fiber bonding capacity of fibers. It is assumed that these changes in the macro-level structure and properties are related to the changes of crystallinity and H-bonding network during refining [7,8].",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      4,
+      5
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0010": {
+    "old": {
+      "source_id": "mineru_block_0010",
+      "native_block_index": 10,
+      "page": 1,
+      "bbox": [
+        121,
+        846,
+        875,
+        910
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "There are some diferent conclusions regarding to the efects of PFI refining on crystallinity of cellulose, not like that of ball milling, which efectively reduces the crystallinity as the treatment progresses. Although some researchers considered that the crystallinity decreased during PFI refining for corn stover [9] or softwood pulp [10], some researchers reported that the crystallinity increased first and then decreased with the degree of refining for hardwood bleached kraft pulp fibers [11] or for unbleached eucalyptus fibers [12]. Moreover, Zhao et al. [7] reported that the crystallinity initially fluctuated upward and then downward, followed by a repeating fluctuation with PFI refining for tobacco stem mechanical pulp. None of the previous studies identified a clear trend, but the results were that the crystallinity varied during PFI refinement. Based on the large proportion of H-bonds in crystalline region of cellulose, it can be assumed that the H-bonding network might change during PFI refining.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      5
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0016": {
+    "old": {
+      "source_id": "mineru_block_0016",
+      "native_block_index": 16,
+      "page": 2,
+      "bbox": [
+        121,
+        216,
+        875,
+        376
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Fourier transformation infrared spectroscopy (FT-IR), which is sensitive to molecular structure, can be as an indirect measurement for studying H-bonding network. FT-IR deconvolution of hydroxyl groups band was adopted in order to study the changes of the energy of H-bonds and the H-bonding distance during delignification [13] or the deconstruction of cellulose [14]. Moreover, it was used to study the diferences of the content of H-bonds not only between dislocation region and normal region [15], but also among plant species [16,17]. Regarding the changes of H-bonding network during PFI refining, Yuan et al. [18] reported that the content of H-bonds and crystallinity index (CI) of eucalyptus fibers changed with the increment of beating time. Subsequently, Zhao et al. [8] found that the H-bonding energy for O(6)H· · · O(3<sup>0</sup>) inter-molecular H-bonds decreased by 12.9% and evolutions of the content of certain H-bonds difered at various refining stages.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      6
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0017": {
+    "old": {
+      "source_id": "mineru_block_0017",
+      "native_block_index": 17,
+      "page": 2,
+      "bbox": [
+        121,
+        376,
+        875,
+        505
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "There is still a lack of literature on the efects of PFI refinement on the H-bonding network. Particularly, the relationship between the content of H-bonds and crystallinity is still worthy of further study, which will deepen the understanding of the molecular aggregation and distribution of H-bonds, providing a molecular-scale explanation for the variations in accessibility, swelling, flexibility, and fibrillation of cellulosic fibers during PFI refinement. Therefore, this work explored the efects of PFI refinement on the CI, crystallite size, energy of H-bonds, H-bonding distance, and content of H-bonds for softwood pulp fibers and hardwood pulp fibers. Attempts were made in order to establish the correlations between the CI and content of various H-bonds.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      7
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0018": {
+    "old": {
+      "source_id": "mineru_block_0018",
+      "native_block_index": 18,
+      "page": 2,
+      "bbox": [
+        122,
+        517,
+        218,
+        531
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "2. Methods",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [
+      "sec_7e9755e3e1f93ba9"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0019": {
+    "old": {
+      "source_id": "mineru_block_0019",
+      "native_block_index": 19,
+      "page": 2,
+      "bbox": [
+        122,
+        544,
+        250,
+        561
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "2.1. PFI Refining",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [
+      "sec_cc39ad2e800e9268"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0020": {
+    "old": {
+      "source_id": "mineru_block_0020",
+      "native_block_index": 20,
+      "page": 2,
+      "bbox": [
+        121,
+        567,
+        877,
+        728
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Commercial bleached softwood and hardwood kraft pulp fibers were obtained from Zhongzhirenhe Company (Jinan, Shandong Province, China). Two pulp were treated with a PFI refiner (Hamjern Maskin A/S, Hamar, Norway) according to Tappi T248 wd-97, with a pulp consistency of 10%, the gap between the opposite refining plates was 0.2 mm, and forces per bar length were 3.33 N/mm and 1.77 N/mm for softwood fibers and hardwood fibers, respectively. The drainability was characterized by the Schopper Riegler number (SR-number) with the standards ISO 5267-1. Two pulp fibers were separately refined in a PFI refiner at 0, 4000, 8000, 12,000, and 16,000 revolutions and at 0, 4000, 8000, 12,000, and 16,000 revolutions, respectively. Corresponding various pulps with an increasing beating degree, such as 16, 20, 40, 63, and 79<sup>◦</sup> SR, were obtained for softwood fibers and 0, 26, 40, 57, and 70<sup>◦</sup> SR were obtained for hardwood fibers.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      8
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0021": {
+    "old": {
+      "source_id": "mineru_block_0021",
+      "native_block_index": 21,
+      "page": 2,
+      "bbox": [
+        122,
+        739,
+        633,
+        755
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "2.2. Morphological Analysis of Fibers and Mechanical Properties of Sheets",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [
+      "sec_7839564cd592e64b"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0022": {
+    "old": {
+      "source_id": "mineru_block_0022",
+      "native_block_index": 22,
+      "page": 2,
+      "bbox": [
+        121,
+        762,
+        875,
+        843
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "The fines content, weighted mean length, and macro-fibrillation index of each sample were determined with a MORFI LB analyzer (Techpap SAS, Grenoble, France). The tensile strength of dry sheets and Wet-web strength were tested according to TAPPI T494 and Chinese standard GBT 12914-2008, respectively. The zero-span tensile strength was tested with the Z-Span 2400 apparatus (Pulmac International Co. Ltd., Montpelier, VT, USA), according to the standard ISO 15361.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      9
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0025": {
+    "old": {
+      "source_id": "mineru_block_0025",
+      "native_block_index": 25,
+      "page": 3,
+      "bbox": [
+        122,
+        103,
+        369,
+        118
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "2.3. Water Retention Value (WRV)",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [
+      "sec_d242f7c7a5422c81"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0026": {
+    "old": {
+      "source_id": "mineru_block_0026",
+      "native_block_index": 26,
+      "page": 3,
+      "bbox": [
+        157,
+        127,
+        724,
+        143
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "The WRV was determined with 0.5 g samples (o.d.) according to ISO 23714.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      10
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0027": {
+    "old": {
+      "source_id": "mineru_block_0027",
+      "native_block_index": 27,
+      "page": 3,
+      "bbox": [
+        381,
+        155,
+        616,
+        187
+      ],
+      "native_type": "equation",
+      "native_text_level": null,
+      "kind": "equation",
+      "text": "$$\nW R V(\\%) = \\frac{(m_ {1} - m_ {2})}{m_ {2}}\\times 100\\%\\tag{1}\n$$",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      11
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0028": {
+    "old": {
+      "source_id": "mineru_block_0028",
+      "native_block_index": 28,
+      "page": 3,
+      "bbox": [
+        121,
+        196,
+        875,
+        212
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "where $m _ { 1 }$ is the weight of the sample after centrifugation and $m _ { 2 }$ is the weight of the oven-dried sample.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      12
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0029": {
+    "old": {
+      "source_id": "mineru_block_0029",
+      "native_block_index": 29,
+      "page": 3,
+      "bbox": [
+        122,
+        223,
+        263,
+        239
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "2.4. XRD Analysis",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [
+      "sec_64d73adf8617b65d"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0030": {
+    "old": {
+      "source_id": "mineru_block_0030",
+      "native_block_index": 30,
+      "page": 3,
+      "bbox": [
+        121,
+        246,
+        877,
+        359
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "The crystallinity of pretreated fibers was determined by a Shimadzu XRD 7000S (Shimadzu, Kyoto, Japan), while using Cu-Ka radiation. The samples were scanned at 40 kV and 30 mA in a 2θ range of $4 { - } 4 0 ^ { \\circ }$ at 1<sup>◦</sup>/min. It is well known that two polymorphs, cellulose Iα and Iβ, are present in native cellulose; for clarity, all of the reflections indexed here are on the Iβ lattice. Before analysis, the experimental data is nine point smoothed with Savitzky–Golay algorithm. The two types of CI values were obtained from peak intensity method (CI − XI) and peak fitting (CI-XA), respectively. The CI − XI was calculated as in Equation (2) [19].",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      13
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0031": {
+    "old": {
+      "source_id": "mineru_block_0031",
+      "native_block_index": 31,
+      "page": 3,
+      "bbox": [
+        384,
+        370,
+        611,
+        403
+      ],
+      "native_type": "equation",
+      "native_text_level": null,
+      "kind": "equation",
+      "text": "$$\nC I - X I = \\frac {\\left(I _ {2 0 0} - I _ {a m}\\right)}{I _ {2 0 0}} \\times 1 0 0 \\%\\tag{2}\n$$",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      14
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0032": {
+    "old": {
+      "source_id": "mineru_block_0032",
+      "native_block_index": 32,
+      "page": 3,
+      "bbox": [
+        121,
+        412,
+        873,
+        458
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "where I200 is the maximum difraction intensity value of the (200) lattice plane between the scattering angles of $2 \\Theta = 2 2 ^ { \\circ }$ and $2 3 ^ { \\circ }$ , and $I _ { a m }$ is the minimum difraction intensity of amorphous fraction between $2 \\Theta = 1 8 ^ { \\circ }$ and $1 9 ^ { \\circ }$",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      15
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0033": {
+    "old": {
+      "source_id": "mineru_block_0033",
+      "native_block_index": 33,
+      "page": 3,
+      "bbox": [
+        119,
+        460,
+        875,
+        542
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "All of the XRD difractograms were smoothed with the Savitzky–Golay algorithm and baseline-corrected with linear fit function. Subsequently, the baseline-corrected difractograms were deconvoluted with the Pearson VII function. The value of the CI-XA equals the area percentage occupied by crystalline peaks over the total area of the difraction pattern [20]. In addition, the crystallite size was calculated by the widely used Scherrer Equation (3) [21]:",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      15
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0034": {
+    "old": {
+      "source_id": "mineru_block_0034",
+      "native_block_index": 34,
+      "page": 3,
+      "bbox": [
+        433,
+        551,
+        554,
+        583
+      ],
+      "native_type": "equation",
+      "native_text_level": null,
+      "kind": "equation",
+      "text": "$$\nL = \\frac {k \\times \\lambda}{(\\beta \\times \\cos \\theta)}\\tag{3}\n$$",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      16
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0035": {
+    "old": {
+      "source_id": "mineru_block_0035",
+      "native_block_index": 35,
+      "page": 3,
+      "bbox": [
+        121,
+        594,
+        875,
+        675
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "where L is the size that is perpendicular to the lattice plane, k is a constant that depends on the crystal shape (0.89), λ is the wavelength of the incident beam in the difraction experiment (0.154 nm), $\\beta$ is the full width at half maximum of the difraction peak, and θ is the Bragg’s angle. In general, the values of the calculated crystallite sizes might be lower than that of the real crystallite sizes, because the peak broadening from the instrumental factors was not considered [22].",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      17
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0036": {
+    "old": {
+      "source_id": "mineru_block_0036",
+      "native_block_index": 36,
+      "page": 3,
+      "bbox": [
+        122,
+        686,
+        268,
+        701
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "2.5. FT-IR Analysis",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [
+      "sec_9e87d769b0f1cbc8"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0037": {
+    "old": {
+      "source_id": "mineru_block_0037",
+      "native_block_index": 37,
+      "page": 3,
+      "bbox": [
+        121,
+        708,
+        875,
+        804
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "THE FT-IR spectra were recorded on solid samples in KBr pellets by means of an FT-IR Bruker Vertex 70 spectrometer (Karlsruhe, Germany). Unrefined and refined fibers were smashed into powder between 40 and 60 mesh. Subsequently, the powder sample of each species (5 mg) was dispersed in a matrix of highly pure KBr (500 mg). The spectral was recorded by averaging 64 recordings and at a resolution of 4 $\\mathrm { c m } ^ { - 1 }$ with transmission mode from 4000 cm<sup>−1</sup> to $4 0 0 \\mathrm { c m } ^ { - 1 }$ . The results were made on the average spectrum that was obtained from five recordings.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      18
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0038": {
+    "old": {
+      "source_id": "mineru_block_0038",
+      "native_block_index": 38,
+      "page": 3,
+      "bbox": [
+        121,
+        804,
+        873,
+        837
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "The energy of the H-bonding $\\mathrm { E _ { H } }$ for several OH stretching bands was calculated while using Equation (4) [13].",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      18
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0039": {
+    "old": {
+      "source_id": "mineru_block_0039",
+      "native_block_index": 39,
+      "page": 3,
+      "bbox": [
+        445,
+        835,
+        549,
+        863
+      ],
+      "native_type": "equation",
+      "native_text_level": null,
+      "kind": "equation",
+      "text": "$$\n\\mathrm {E_ {H}} = \\frac {\\nu_ {0} - \\nu}{\\nu_ {0}}\\tag{4}\n$$",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      19
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0040": {
+    "old": {
+      "source_id": "mineru_block_0040",
+      "native_block_index": 40,
+      "page": 3,
+      "bbox": [
+        122,
+        869,
+        873,
+        903
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "$\\boldsymbol { v } _ { 0 }$ is the wavenumber corresponding to free OH groups $( 3 6 5 0 \\mathrm { c m } ^ { - 1 } ) .$ , ν is the frequency $( \\mathrm { c m } ^ { - 1 } )$ ) of the bonded OH groups, and k is a constant $( 1 / \\mathrm { k } = 2 . 6 2 5 \\times 1 0 2 \\mathrm { k J } )$ ).",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      20
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0043": {
+    "old": {
+      "source_id": "mineru_block_0043",
+      "native_block_index": 43,
+      "page": 4,
+      "bbox": [
+        121,
+        103,
+        875,
+        135
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "The H-bonding distance R is obtained while using the Pimentel and Sederholm equation [23], as follows.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      21
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0044": {
+    "old": {
+      "source_id": "mineru_block_0044",
+      "native_block_index": 44,
+      "page": 4,
+      "bbox": [
+        384,
+        134,
+        613,
+        154
+      ],
+      "native_type": "equation",
+      "native_text_level": null,
+      "kind": "equation",
+      "text": "$$\n\\triangle \\nu (\\mathrm{cm} ^ {- 1}) = 4 4 3 0 \\times (2. 8 4 - \\mathrm{R})\\tag{5}\n$$",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      22
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0045": {
+    "old": {
+      "source_id": "mineru_block_0045",
+      "native_block_index": 45,
+      "page": 4,
+      "bbox": [
+        121,
+        161,
+        873,
+        209
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "$\\triangle \\nu = \\nu _ { 0 } - \\nu , \\nu _ { 0 }$ is the monomeric OH stretching frequency, which is taken to be $3 6 0 0 { \\mathrm { c m } } ^ { - 1 }$ , ν is the stretching frequency $( \\mathrm { c m } ^ { - 1 } )$ observed in the infrared spectrum of the sample, and R is the H-bonding distance (Å).",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      23
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0046": {
+    "old": {
+      "source_id": "mineru_block_0046",
+      "native_block_index": 46,
+      "page": 4,
+      "bbox": [
+        121,
+        209,
+        875,
+        324
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "The spectral was normalized $\\mathsf { a t 1 0 1 6 ~ c m ^ { - 1 } }$ and the derivative curve was obtained by applying the Savitzky–Golay algorithm. The wavenumbers of H-bonding components are taken from second-derivative spectra according to regions that are assigned to various H-bonds. Nonlinear fitting of the FT-IR spectral region from $\\bar { 3 } 0 0 0 \\mathrm { c m } ^ { - 1 }$ to $3 7 0 0 ~ \\mathrm { c m } ^ { - \\mathrm { 1 } }$ was carried out with Gaussian function in Peakfit 4.12 software (SeaSolve Software Inc., Framingham, MA, USA). The Pearson correlation coeficients were evaluated between the CI and content of various H-bonds, with a statistically significant p-value of <0.05, while using Spss 25.0 statistics software (IBM Corp., Armonk, NY, USA).",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      23
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0047": {
+    "old": {
+      "source_id": "mineru_block_0047",
+      "native_block_index": 47,
+      "page": 4,
+      "bbox": [
+        122,
+        332,
+        336,
+        349
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "<sub>3. Results and Discussions</sub><sup>3.</sup> <sup>Results</sup> <sup>and</sup> <sup>Discussions</sup>",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [
+      "sec_45d0f4cf2dd51ce4"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0048": {
+    "old": {
+      "source_id": "mineru_block_0048",
+      "native_block_index": 48,
+      "page": 4,
+      "bbox": [
+        122,
+        361,
+        610,
+        376
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "3.1. The Morphological Analysis, Swelling, and Mechanical Properties3.1. The Morphological Analysis, Swelling, and Mechanical Properties",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [
+      "sec_026cdb5825ab7567"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0049": {
+    "old": {
+      "source_id": "mineru_block_0049",
+      "native_block_index": 49,
+      "page": 4,
+      "bbox": [
+        119,
+        384,
+        875,
+        514
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "For softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length hadFor softwood fibers and hardwood fibers, the macro-fibrillation index and the fiber length had a downward trend, and the fines content has an upward trend for the softwood fibers during PFIa downward trend, and the fines content has an upward trend for the softwood fibers during PFI refining, as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibersrefining, as can be seen in Figure 1. The macro-fibrillation index and fiber length of softwood fibers <sub>c</sub>h<sub>ange</sub>d <sub>signi</sub>fi<sub>cant</sub>l<sub>y. However, two parameters o</sub>f h<sub>ar</sub>d<sub>woo</sub>d fib<sub>ers</sub> h<sub>a</sub>d <sub>no signi</sub>fi<sub>cant variations</sub>changed significantly. However, two parameters of hardwood fibers had no significant variations <sub>re</sub>l<sub>ative to so</sub>f<sub>twoo</sub>d fib<sub>ers. It mig</sub>h<sub>t</sub> b<sub>e</sub> b<sub>ecause o</sub>f <sub>t</sub>h<sub>e</sub> l<sub>ower re</sub>fi<sub>ning pressure t</sub>h<sub>at was app</sub>l<sub>ie</sub>d <sub>in</sub>relative to softwood fibers. It might be because of the lower refining pressure that was applied in hardwood fibers. The macro-fibrillation index characterizes external macro-fibrillation. The results of<sup>hardwood</sup> <sup>fibers.</sup> <sup>The</sup> <sup>macro-fibrillation</sup> <sup>index</sup> <sup>characterizes</sup> <sup>external</sup> <sup>macro-fibrillation.</sup> <sup>The</sup> <sup>results</sup> fib<sub>er</sub> <sub>morp</sub>h<sub>o</sub>l<sub>ogy</sub> <sub>ana</sub>l<sub>ysis</sub> <sub>s</sub>h<sub>owe</sub>d <sub>t</sub>h<sub>at</sub> <sub>externa</sub>l fib<sub>ri</sub>ll<sub>ation</sub> <sub>increase</sub>d <sub>wit</sub>h <sub>t</sub>h<sub>e</sub> <sub>re</sub>fi<sub>ning</sub> <sub>process.</sub> <sub>It</sub> <sub>is</sub>of fiber morphology analysis showed that external fibrillation increased with the refining process. It consistent with the increasing specific surface area (as shown in Table S1 in Online Resource).<sup>is</sup> <sup>consistent</sup> <sup>with</sup> <sup>the</sup> <sup>increasing</sup> <sup>specific</sup> <sup>surface</sup> <sup>area</sup> <sup>(as</sup> <sup>shown</sup> <sup>in</sup> <sup>Table</sup> <sup>S1</sup> <sup>in</sup> <sup>Online</sup> <sup>Resourc</sup>",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      24,
+      25
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0051": {
+    "old": {
+      "source_id": "mineru_block_0051",
+      "native_block_index": 51,
+      "page": 4,
+      "bbox": [
+        473,
+        527,
+        833,
+        709
+      ],
+      "native_type": "chart",
+      "native_text_level": null,
+      "kind": "figure_caption",
+      "text": "Figure 1. The morphological analysis for the unrefined and refined samples: (a) softwood fibers and (b) hardwood fibers.",
+      "image_path": "images/3a32788223b7f1bf1c812c833cc568a25548de0e6271610fe76891b3bd7b7098.jpg"
+    },
+    "new_chunk_indices": [
+      26
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0052": {
+    "old": {
+      "source_id": "mineru_block_0052",
+      "native_block_index": 52,
+      "page": 4,
+      "bbox": [
+        121,
+        758,
+        875,
+        871
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "The beating degree and the WRV had a significant increment with increasing PFI refining <sup>The</sup> <sup>beating</sup> <sup>degree</sup> <sup>and</sup> <sup>the</sup> <sup>WRV</sup> <sup>had</sup> <sup>a</sup> <sup>significant</sup> <sup>increment</sup> <sup>with</sup> <sup>increasing</sup> <sup>PFI</sup> <sup>refining</sup>revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the revolutions, as can be seen in Figure 2. It is caused by the higher fibrillation that produces the new<sub>new surface and more pores (as shown in Table S1 in Online Resource). The increase in swelling</sub> <sup>surface</sup> <sup>and</sup> <sup>more</sup> <sup>pores</sup> <sup>(as</sup> <sup>shown</sup> <sup>in</sup> <sup>Table</sup> <sup>S1</sup> <sup>in</sup> <sup>Online</sup> <sup>Resource).</sup> <sup>The</sup> <sup>increase</sup> <sup>in</sup> <sup>swelling</sup>characterized by WRV makes the fibers more compliant in transverse [1], which contributes to <sup>characterized</sup> <sup>by</sup> <sup>WRV</sup> <sup>makes</sup> <sup>the</sup> <sup>fibers</sup> <sup>more</sup> <sup>compliant</sup> <sup>in</sup> <sup>transverse</sup> <sup>[1],</sup> <sup>which</sup> <sup>contributes</sup> <sup>to</sup>improving the inter-fiber bonding strength of the fiber network. The results of fiber morphology <sup>improving</sup> <sup>the</sup> <sup>inter-fiber</sup> <sup>bonding</sup> <sup>strength</sup> <sup>of</sup> <sup>the</sup> <sup>fiber</sup> <sup>network.</sup> <sup>The</sup> <sup>results</sup> <sup>of</sup> <sup>fiber</sup> <sup>morphology</sup>analysis and water retention value showing that the fibrillation and the separation between fibrils <sup>analysis</sup> <sup>and</sup> <sup>water</sup> <sup>retention</sup> <sup>valu</sup>increase with the refining process.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      27,
+      28,
+      29
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0056": {
+    "old": {
+      "source_id": "mineru_block_0056",
+      "native_block_index": 56,
+      "page": 5,
+      "bbox": [
+        495,
+        102,
+        833,
+        282
+      ],
+      "native_type": "chart",
+      "native_text_level": null,
+      "kind": "figure_caption",
+      "text": "Figure 2. The beating degree and Water Retention Value (WRV) for the unrefined and refined samples: (a) softwood fibers and (b) hardwood fibers.",
+      "image_path": "images/79ba4faf07445dd00db31268f34b0e8d7d0e0e2298eb3527d859ace9d1843367.jpg"
+    },
+    "new_chunk_indices": [
+      30
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0057": {
+    "old": {
+      "source_id": "mineru_block_0057",
+      "native_block_index": 57,
+      "page": 5,
+      "bbox": [
+        121,
+        332,
+        875,
+        494
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "<sub>In Figure 3, the tensile index, zero-span tensile index, and wet-web strength represented as a</sub><sup>In</sup> <sup>Figure</sup> <sup>3,</sup> <sup>the</sup> <sup>tensile</sup> <sup>index,</sup> <sup>zero-span</sup> <sup>tensile</sup> <sup>index,</sup> <sup>and</sup> <sup>wet-web</sup> <sup>strength</sup> <sup>represented</sup> <sup>as</sup> <sup>a</sup> <sup>In</sup> <sup>Figure</sup> <sup>3,</sup> <sup>the</sup> <sup>tensile</sup> <sup>index,</sup> <sup>zero-span</sup> <sup>tensile</sup> <sup>index,</sup> <sup>and</sup> <sup>wet-web</sup> <sup>strength</sup> <sup>represented</sup> <sup>as</sup> <sup>a</sup>function of the refining revolutions. The increment of tensile strength is mainly caused by the increasing function of the refining revolutions. The increment of tensile strength is mainly caused by the<sub>fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of softwood</sub><sup>increasing</sup> <sup>fibrillation</sup> <sup>and</sup> <sup>fines</sup> <sup>during</sup> <sup>PFI</sup> <sup>refining,</sup> <sup>as</sup> <sup>mentioned</sup> <sup>above.</sup> <sup>The</sup> <sup>wet–web</sup> <sup>strength</sup> <sup>of</sup> increasing fibrillation and fines during PFI refining, as mentioned above. The wet–web strength of<sub>fiber</sub> <sub>had</sub> <sub>a</sub> <sub>more</sub> <sub>significant</sub> <sub>increase</sub> <sub>when</sub> <sub>compared</sub> <sub>to</sub> <sub>that</sub> <sub>of</sub> <sub>hardwood</sub> <sub>fiber.</sub> <sub>It</sub> <sub>is</sub> <sub>for</sub> <sub>that</sub> <sub>fiber</sub> <sup>softwood</sup> <sup>fiber</sup> <sup>had</sup> <sup>a</sup> <sup>more</sup> <sup>significant</sup> <sup>increase</sup> <sup>when</sup> <sup>compared</sup> <sup>to</sup> <sup>that</sup> <sup>of</sup> <sup>hardwood</sup> <sup>fiber.</sup> <sup>It</sup> <sup>is</sup> <sup>for</sup>length plays an essential role in wet–web strength. The zero-span tensile index was usually used in <sup>that</sup> <sup>fiber</sup> <sup>length</sup> <sup>plays</sup> <sup>an</sup> <sup>essential</sup> <sup>role</sup> <sup>in</sup> <sup>wet–web</sup> <sup>strength.</sup> <sup>The</sup> <sup>zero-span</sup> <sup>tensile</sup> <sup>index</sup> <sup>was</sup> <sup>usually</sup><sub>characterizing the tensile strength of fibers. The results of the zero-span tensile index showed that</sub> used in characterizing the tensile strength of fibers. The results of the zero-span tensile index showed <sub>PFI</sub> <sub>refining</sub> <sub>did</sub> <sub>not</sub> <sub>reduce</sub> <sub>fiber</sub> <sub>strength,</sub> <sub>which</sub> <sub>is</sub> <sub>consistent</sub> <sub>with</sub> <sub>the</sub> <sub>report</sub> <sub>of</sub> <sub>Kouko</sub> <sub>et</sub> <sub>al.</sub> <sub>[24].</sub> that PFI refining did not reduce fiber strength, which is consistent with the report of Kouko et al. [24].<sub>The</sub> <sub>above</sub> <sub>results</sub> <sub>showed</sub> <sub>that</sub> <sub>PFI</sub> <sub>refining</sub> <sub>improved</sub> <sub>the</sub> <sub>extent</sub> <sub>of</sub> <sub>fibrillation</sub> <sub>(especially</sub> <sub>the</sub> <sub>internal</sub><sup>The</sup> <sup>above</sup> <sup>results</sup> <sup>showed</sup> <sup>that</sup> <sup>PFI</sup> <sup>refining</sup> <sup>improved</sup> <sup>the</sup> <sup>extent</sup> <sup>of</sup> <sup>fibrillation</sup> <sup>(especially</sup> <sup>the</sup> <sup>internal</sup> The above results showed that PFI refining improved the extent of fibrillation (especially the internal<sub>fibrillation), the swelling of fibers, and the tensile strength of sheets without a decrease of the tensile</sub><sup>fibrillation),</sup> <sup>the</sup> <sup>swelling</sup> <sup>of</sup> <sup>fibers,</sup> <sup>and</sup> <sup>the</sup> <sup>tensile</sup> <sup>strength</sup> <sup>of</sup> <sup>sheets</sup> <sup>without</sup> <sup>a</sup> <sup>decrease</sup> <sup>of</sup> <sup>the</sup> <sup>tensile</sup> fibrillation), the s<sub>strength of fibers.</sub><sup>strength</sup> <sup>of</sup> <sup>fibers.</sup>",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      31,
+      32,
+      33,
+      34
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0059": {
+    "old": {
+      "source_id": "mineru_block_0059",
+      "native_block_index": 59,
+      "page": 5,
+      "bbox": [
+        477,
+        506,
+        836,
+        688
+      ],
+      "native_type": "chart",
+      "native_text_level": null,
+      "kind": "figure_caption",
+      "text": "Figure 3. The rheological analysis of wet sheets, the tensile strength of dry sheets, and the fiber strength for unrefined and refined samples: (a) softwood fibers and (b) hardwood fibers.",
+      "image_path": "images/add05704c60f27fcd47f5cdc5002b28aabe729e0af2ab7560d4e8a2d25ae88ed.jpg"
+    },
+    "new_chunk_indices": [
+      35
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0060": {
+    "old": {
+      "source_id": "mineru_block_0060",
+      "native_block_index": 60,
+      "page": 5,
+      "bbox": [
+        122,
+        733,
+        589,
+        750
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "strength for unrefined and refined samples: (a) softwood fibers3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      36
+    ],
+    "section_ids": [
+      "sec_6d37f51559c4275b"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0061": {
+    "old": {
+      "source_id": "mineru_block_0061",
+      "native_block_index": 61,
+      "page": 5,
+      "bbox": [
+        121,
+        757,
+        877,
+        902
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "The cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates <sup>The</sup> <sup>cellulose</sup> <sup>polymorph</sup> <sup>of</sup> <sup>these</sup> <sup>two</sup> <sup>fibers</sup> <sup>had</sup> <sup>no</sup> <sup>change</sup> <sup>during</sup> <sup>PFI</sup> <sup>treatment,</sup> <sup>which</sup>that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource The cellulose polymorph of these two fibers had no change during PFI treatment, which<sup>illustrates</sup> <sup>that</sup> <sup>the</sup> <sup>PFI</sup> <sup>refining</sup> <sup>is</sup> <sup>a</sup> <sup>relatively</sup> <sup>mild</sup> <sup>mechanical</sup> <sup>treatment,</sup> <sup>as</sup> <sup>the</sup> <sup>results</sup> <sup>of</sup> <sup>XRD</sup> <sup>in</sup>(Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers showed a reduction illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in <sup>Online</sup> <sup>Resource</sup> <sup>(Figures</sup> <sup>S1</sup> <sup>and</sup> <sup>S2)</sup> <sup>show.</sup> <sup>In</sup> <sup>general,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>of</sup> <sup>softwood</sup> <sup>fibers</sup> of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers<sup>showed</sup> <sup>a</sup> <sup>reduction</sup> <sup>of</sup> <sup>4.66%</sup> <sup>and</sup> <sup>15.47%,</sup> <sup>respectively,</sup> <sup>and</sup> <sup>those</sup> <sup>of</sup> <sup>hardwood</sup> <sup>fibers</sup> <sup>decreased</sup> <sup>by</sup>respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was remarkably higher than showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by<sup>2.65%</sup> <sup>and</sup> <sup>19.4%,</sup> <sup>respectively,</sup> <sup>as</sup> <sup>can</sup> <sup>be</sup> <sup>seen</sup> <sup>in</sup> <sup>Figure</sup> <sup>4</sup> <sup>and</sup> <sup>Table</sup> <sup>1.</sup> <sup>The</sup> <sup>value</sup> <sup>of</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>was</sup>the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was<sup>remarkably</sup> <sup>higher</sup> <sup>than</sup> <sup>the</sup> <sup>CI-XA,</sup> <sup>which</sup> <sup>might</sup> <sup>be</sup> <sup>caused</sup> <sup>by</sup> <sup>the</sup> <sup>over-fitting</sup> <sup>of</sup> <sup>amorphous</sup>CI-XA. However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous<sup>contribution</sup> <sup>in</sup> <sup>the</sup> <sup>analysis</sup> <sup>of</sup> <sup>CI-XA.</sup> <sup>However,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>were</sup> <sup>correlated</sup> <sup>significantly</sup>hardwood fibers, with a correlation coeficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated signif<sup>for</sup> <sup>both</sup> <sup>softwood</sup> <sup>fibers</sup> <sup>and</sup> <sup>hardwood</sup> <sup>fibers,</sup> <sup>with</sup> <sup>a</sup> <sup>correlation</sup> <sup>coefficient</sup> <sup>of</sup> <sup>0.919</sup> <sup>(p</sup> <sup><</sup> <sup>0.</sup>for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      37,
+      38,
+      39,
+      40
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0065": {
+    "old": {
+      "source_id": "mineru_block_0065",
+      "native_block_index": 65,
+      "page": 6,
+      "bbox": [
+        494,
+        102,
+        833,
+        288
+      ],
+      "native_type": "chart",
+      "native_text_level": null,
+      "kind": "figure_caption",
+      "text": "Figure 4. The CI-XI (crystallinity index obtained by comparing intensity of X-ray difractometer (XRD) peaks) and CI-XA (crystallinity index obtained by comparing area of XRD peaks) for refined and unrefined samples: (a) softwood fiber and (b) hardwood fiber.",
+      "image_path": "images/48d79ce53fd9aa6e88535005764872bece71828bba7925eedee82485d92a784e.jpg"
+    },
+    "new_chunk_indices": [
+      41
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0066": {
+    "old": {
+      "source_id": "mineru_block_0066",
+      "native_block_index": 66,
+      "page": 6,
+      "bbox": [
+        184,
+        370,
+        811,
+        629
+      ],
+      "native_type": "table",
+      "native_text_level": null,
+      "kind": "table",
+      "text": "Table 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+      "image_path": "images/68664c50be85079aa47964a80729640233b23137e0f8d80682c383eff48dcf12.jpg"
+    },
+    "new_chunk_indices": [
+      42
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0067": {
+    "old": {
+      "source_id": "mineru_block_0067",
+      "native_block_index": 67,
+      "page": 6,
+      "bbox": [
+        121,
+        675,
+        875,
+        803
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "The trends of CI (CI-XI and CI-XA) for softwood fibers and hardwood fibers were all similar, decreasing first and then increasing, along with a decline, as shown in Figure 4. The fluctuation of the CI was probably because of the mechanical action of PFI refining on the diferent regions of cellulose. In the first refining stage, the decrease of the CI showed that mechanical treatment may mainly act in the crystalline region. Subsequently, the growth of the CI could be interpreted as greater force acting on the amorphous region in which cocrystallization might occur upon drying under the mechanical and thermal action of PFI refining. The subsequent decrease might be the continuous destruction of crystalline region.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      43
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0068": {
+    "old": {
+      "source_id": "mineru_block_0068",
+      "native_block_index": 68,
+      "page": 6,
+      "bbox": [
+        121,
+        803,
+        877,
+        901
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Recently, researches indicated that plant cell walls commonly contained microfibrils with 18 cellulose chains [26]. Frequently adopted arrangements of the 18 cellulose chains are 234432, 34443, and 333333 [27]. Therein, 234432 arrangement was found to be more probable based on calculation [28]. Thus, according to the crystallite sizes (as Table 1 shows) and the unit cell parameters of cellulose Iβ, there was most likely to be an average of two-fibrils with an arrangement of 234,432 packed side-by-side for both softwood fibers and hardwood fibers (as seen in Figure 5, drawn with mercury",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      44
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0071": {
+    "old": {
+      "source_id": "mineru_block_0071",
+      "native_block_index": 71,
+      "page": 7,
+      "bbox": [
+        121,
+        103,
+        873,
+        137
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "4.1.2 software). The result is consistent with the report of Haigler & Roberts [26], which shows that there might be two microfibrils associated along part of their length.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      45
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0072": {
+    "old": {
+      "source_id": "mineru_block_0072",
+      "native_block_index": 72,
+      "page": 7,
+      "bbox": [
+        475,
+        152,
+        571,
+        172
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "4.1 nm",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      45
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0073": {
+    "old": {
+      "source_id": "mineru_block_0073",
+      "native_block_index": 73,
+      "page": 7,
+      "bbox": [
+        218,
+        185,
+        776,
+        524
+      ],
+      "native_type": "image",
+      "native_text_level": null,
+      "kind": "figure_caption",
+      "text": "Figure 5. Cross-section model of cellulose crystallite for softwood fibers and hardwood fibers.",
+      "image_path": "images/5f2ad5fa2f77ebbc1ffb3f4c5e302020fabad074323d164c08ede0ed511567d9.jpg"
+    },
+    "new_chunk_indices": [
+      46
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0074": {
+    "old": {
+      "source_id": "mineru_block_0074",
+      "native_block_index": 74,
+      "page": 7,
+      "bbox": [
+        121,
+        558,
+        875,
+        703
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "It is known that both the $( 1 \\overline { { 1 } } 0 )$ and the (110) lattice plane are hydrophilic, and the (200)lattice \\_plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) n that both the (110) and the (110) lattice plane are hydrophilic, and tplanes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (110) plane and (200) plane, which is consistent with the report of Duchemin et al., the highest theoretical roughness and accessibility to the hydrophi<sub>as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate</sub> ]. Throughout the refining of two pulp fibers, the sizes perpendicular through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then \\_it made these planes sufer more mechanical actions, so there was more adhesion (cocrystallization) latile than the (110) plane and (200) plane, which iand cleavage of cellulose chains created for (110) plane during PFI refining.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      47
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0075": {
+    "old": {
+      "source_id": "mineru_block_0075",
+      "native_block_index": 75,
+      "page": 7,
+      "bbox": [
+        121,
+        703,
+        875,
+        784
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "However, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some ate through the spaces between the hydrophilic (110) planes in paracrys<sub>crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30].</sub> nd then it made these planes suffer more mechanical actions, so theAdditionally, it was probably due to the weaker cleavage efect on (200) lattice planes that was hard for water molecules to penetrate.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      48
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0076": {
+    "old": {
+      "source_id": "mineru_block_0076",
+      "native_block_index": 76,
+      "page": 7,
+      "bbox": [
+        122,
+        795,
+        800,
+        810
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [
+      "sec_cc3b709dfb9e0ce9"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0077": {
+    "old": {
+      "source_id": "mineru_block_0077",
+      "native_block_index": 77,
+      "page": 7,
+      "bbox": [
+        122,
+        819,
+        875,
+        898
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "A mixture of inter-molecular and intra-molecular H-bonds is considered to be the cause for the broadening of OH bands in the FT-IR spectra. Therefore, taking derivative of the OH bands can improve the resolution of various H-bonds. Normally, $3 5 8 0 { - } 3 5 5 0 \\mathrm { c m } ^ { - 1 }$ is for free OH(2) and $\\mathrm { O H } ( 6 ) , 3 4 5 5 { - } 3 4 1 0 \\mathrm { c m } ^ { - 1 }$ ic stacking of adjacent microfiis for O(2)H· · · O(6) intra-molecular H-bonds, $3 3 7 5 { - } 3 3 4 0 \\mathrm { c m } ^ { - 1 }$ theis for $\\mathrm { O } ( 3 ) \\mathrm { H } \\cdots \\mathrm { O } ( 5 )$ nes were alignedintra-molecular H-bonds, and $3 3 1 0 { - } 3 2 3 0 \\ \\mathrm { c m } ^ { - 1 }$ is for $\\mathrm { O } ( 6 ) \\mathrm { H } \\cdots \\mathrm { O } ( 3 ^ { \\prime } )$ inter-molecular H-bonds in cellulose I [31,32].",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      49
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0080": {
+    "old": {
+      "source_id": "mineru_block_0080",
+      "native_block_index": 80,
+      "page": 8,
+      "bbox": [
+        121,
+        103,
+        875,
+        234
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "The peak position assigned to $\\mathrm { O } ( 6 ) \\mathrm { H } \\cdots \\mathrm { O } ( 3 ^ { \\prime } )$ inter-molecular H-bonds (around $3 2 2 7 ~ \\mathrm { c m } ^ { - 1 } )$ O(3)H· · · O(5) intra-molecular H-bonds (around 3346 cm<sup>−1</sup>), and O(2)H· · · O(6) intra-molecular H-bonds (around 3452 cm<sup>−1</sup>) of softwood fibers and hardwood fibers almost kept constant in the whole refining process, as shown in Figure 6a,b. According to the formulae of H-bonding energy and H-bonding distance (Equations (4) and (5)), the H-bonding energies and H-bonding distances of the three H-bonds remained unchanged, as the peak positions of three H-bonds almost did not exhibit red shift or blue shift. The results showed that PFI refining did not change the H-bonding energies and H-bonding distances, just as it did not change the cellulose polymorph in the above results",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      50
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0082": {
+    "old": {
+      "source_id": "mineru_block_0082",
+      "native_block_index": 82,
+      "page": 8,
+      "bbox": [
+        500,
+        247,
+        833,
+        445
+      ],
+      "native_type": "chart",
+      "native_text_level": null,
+      "kind": "figure_caption",
+      "text": "Figure 6. The second derivative of the Fourier transformation infrared spectroscopy (FT-IR) spectraFigure 6. The second derivative of the Fourier transformation infrared spectroscopy (FT-IR) spectra for for the refined and unrefined samples: (a) softwood fiber and (b) hardwood fthe refined and unrefined samples: (a) softwood fiber and (b) hardwood fiber.",
+      "image_path": "images/7f3cd4825b26eb048ddf721f8c82a99e00432dc5beaad1ec9e7d750988cb48f3.jpg"
+    },
+    "new_chunk_indices": [
+      51
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0083": {
+    "old": {
+      "source_id": "mineru_block_0083",
+      "native_block_index": 83,
+      "page": 8,
+      "bbox": [
+        121,
+        494,
+        875,
+        592
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Because the recorded infrared spectrum is the convolution of the real spectrum and the linear function of instrument. The band of hydroxyl groups $( 3 0 0 0 { - } 3 7 0 0 \\mathrm { c m } ^ { - 1 } )$ was deconvoluted into four predominant bands in the present study based on the peak positions above. Subsequently, the relative content of various H-bonds was calculated based on area proportion of the band, respectively. Finally, the data and curves obtained using nonlinear fitting for softwood fibers is shown in Table 2a and Figure 7, and the results of hardwood fibers can be seen in Table 2b and Figure S3.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      52
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0084": {
+    "old": {
+      "source_id": "mineru_block_0084",
+      "native_block_index": 84,
+      "page": 8,
+      "bbox": [
+        166,
+        640,
+        830,
+        889
+      ],
+      "native_type": "table",
+      "native_text_level": null,
+      "kind": "table",
+      "text": "Table 2. (a) The relative content of three H-bonds and the free OH for softwood fibers through refining. (b) The relative content of three H-bonds and the free OH for hardwood fibers through refining.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td>Revolutions</td><td>O(6)H···O(3&#x27;)</td><td>O(3)H···O(5)</td><td>O(2)H···O(6)</td><td>Free OH(2) and OH(6)</td><td> $r^2$ </td></tr><tr><td>0</td><td>28.23</td><td>28.44</td><td>31.40</td><td>11.93</td><td>0.9995</td></tr><tr><td>4000</td><td>26.05</td><td>31.31</td><td>32.50</td><td>10.14</td><td>0.9995</td></tr><tr><td>8000</td><td>28.43</td><td>30.86</td><td>25.87</td><td>14.84</td><td>0.9995</td></tr><tr><td>12,000</td><td>26.68</td><td>32.58</td><td>25.49</td><td>15.25</td><td>0.9996</td></tr><tr><td>16,000</td><td>23.56</td><td>34.92</td><td>29.38</td><td>12.14</td><td>0.9996</td></tr><tr><td colspan=\"6\">(b)</td></tr><tr><td>Revolutions</td><td>O(6)H···O(3&#x27;)</td><td>O(3)H···O(5)</td><td>O(2)H···O(6)</td><td>Free OH(2) and OH(6)</td><td> $r^2$ </td></tr><tr><td>0</td><td>26.55</td><td>29.09</td><td>30.04</td><td>14.32</td><td>0.9990</td></tr><tr><td>4000</td><td>24.44</td><td>33.06</td><td>31.28</td><td>11.22</td><td>0.9991</td></tr><tr><td>8000</td><td>26.89</td><td>29.81</td><td>28.99</td><td>14.31</td><td>0.9991</td></tr><tr><td>12,000</td><td>27.01</td><td>29.28</td><td>27.40</td><td>16.31</td><td>0.9992</td></tr><tr><td>16,000</td><td>24.98</td><td>31.65</td><td>29.85</td><td>13.52</td><td>0.9989</td></tr></table>",
+      "image_path": "images/2aa82371904a835b63a211298b6c3a0553cb2edeba07d1454ef1755fd5662957.jpg"
+    },
+    "new_chunk_indices": [
+      53
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0091": {
+    "old": {
+      "source_id": "mineru_block_0091",
+      "native_block_index": 91,
+      "page": 9,
+      "bbox": [
+        332,
+        499,
+        668,
+        696
+      ],
+      "native_type": "chart",
+      "native_text_level": null,
+      "kind": "figure_caption",
+      "text": "Figure 7. The deconvoluted FT-IR spectra of softwood fibers at various revolutions: (a) 0 r, (b) 4000 r, (c) 8000 r, (d) 12,000 r, and (e) 16,000 r.",
+      "image_path": "images/262282fa68a5a8ac18ddc18858a9858d1d225e36e8facbe08a6a176279ed5396.jpg"
+    },
+    "new_chunk_indices": [
+      54
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0092": {
+    "old": {
+      "source_id": "mineru_block_0092",
+      "native_block_index": 92,
+      "page": 9,
+      "bbox": [
+        119,
+        747,
+        877,
+        908
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "For the content of O(6)H· · · O(3<sup>0</sup>) inter-molecular H-bonds of softwood fiber, the trend can be <sup>For</sup> <sup>the</sup> <sup>content</sup> <sup>of</sup> <sup>O(6)H O(3′)</sup> <sup>inter-molecular</sup> <sup>H-bonds</sup> <sup>of</sup> <sup>softwood</sup> <sup>fiber,</sup> <sup>the</sup> <sup>trend</sup> <sup>can</sup> <sup>be</sup>divided into two stages, as shown in Table 2a. It decreased by 7.72% from 28.23% to 26.05% as refining from 0r to 4000 r and then increased by 9.14% from 4000 r to 8000 r, followed by a decrease of 17.13%, with the revolutions increasing from 8000 r to 16,000 r. Regarding the O(6)H· · · O(3<sup>0</sup>) H-bonds of <sup>with</sup> <sup>the</sup> <sup>revolutions</sup> <sup>increasing</sup> <sup>from</sup> <sup>8000</sup> <sup>r</sup> <sup>to</sup> <sup>16,000</sup> <sup>r.</sup> <sup>Regarding</sup> <sup>the</sup> <sup>O(6)H O(3′)</sup> <sup>H-bonds</sup> <sup>of</sup>hardwood fiber, the trend was almost similar to that of softwood fibers, except for a small increase of 0.45% from 8000 r to 12,000 r (in Table 2b). On the whole, the amount of the O(6)H· · · O(3<sup>0</sup>) H-bonds for softwood fibers and hardwood fibers decreased by 16.54% and 5.91% altogether, respectively. The decrease might be due to the cleavage among cellulose molecular chains under the mechanical action of PFI refining, which was closely related to internal and external fibrillation (as seen in Section 3.1). On the other hand, the increase illustrates that there was not only the breakage, but also the formation of O(6)H· · · O(3<sup>0</sup>) H-bonds. Both the fewer inter-molecular H-bonds and the lower CI (as Section 3.2 shows) will further improve the flexibility of cellulosic fibers, due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers (as seen in Section 3.1).",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      55,
+      56
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0096": {
+    "old": {
+      "source_id": "mineru_block_0096",
+      "native_block_index": 96,
+      "page": 10,
+      "bbox": [
+        121,
+        152,
+        875,
+        328
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "As to the O(3)H· · · O(5) intra-molecular H-bonds of softwood fiber, the content had a growth of 10.09% from 28.44% to 31.31% in the stage of refining from 0 r to 4000 r, and then had a slight decrease of 1.44% from 4000 r to 8000 r, followed by an increase of 13.16% until the end of refining. Overall, the trend was similar to that of hardwood fibers, which first increased and then had a decrease, followed by a growth. During the whole refining, the amount of $\\mathrm { O } ( 3 ) \\mathrm { H } \\cdots \\mathrm { O } ( 5 )$ H-bonds for softwood fibers and hardwood fibers showed an upward tendency and increased by 22.78% and 8.8%, respectively. The increase might be because the stable O(3)H· · · O(5) H-bonds might have not only less breakage under the action of water as destructor to the crystallites [30], but also creation in the amorphous region upon drying. Because hydrogen bond–covalent bond synergies play an important role in the cellulose stifness axial modulus, more O(3)H· · · O(5) H-bonds will enhance the cellulose stifness [33,34].",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      57
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0097": {
+    "old": {
+      "source_id": "mineru_block_0097",
+      "native_block_index": 97,
+      "page": 10,
+      "bbox": [
+        121,
+        329,
+        875,
+        457
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "In the case of the O(2)H· · · O(6) intra-molecular H-bonds for softwood fiber, the trend of content can be described as two phases. It had an increase of 3.5% from 31.4% to 32.5% in the stage of refining from 0 r to 4000 r and it then decreased by 21.57% from 4000 r to 12000 r, along with a growth of 15.26% in the last refining stage. For the content of the O(2)H· · · O(6) H-bonds of hardwood fiber, it increased firstly and then had a decrease that was also followed by an increase. For both fibers, the content of O(2)H· · · O(6) H-bonds decreased, except for the stage of refining from 0 r to 4000 r. It might be due to the fact that the O(2)H· · · O(6) H-bonds, which are much more accessible to water, are less stable than O(3)H· · · O(5) H-bonds.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      58
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0098": {
+    "old": {
+      "source_id": "mineru_block_0098",
+      "native_block_index": 98,
+      "page": 10,
+      "bbox": [
+        121,
+        457,
+        875,
+        651
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "As to the free OH(2) and OH(6) of softwood fiber, the relative content showed a slight increase trend in general. The enhancement of the free OH(2) and OH(6) was understandable, because there was the breakage of H-bonds among cellulosic molecules, which resulted in more extensive delamination and higher specific surface area (as shown in Figure S4 and Table S1 in Online Resource). This made cellulose more accessible to water and chemicals. However, for the free OH(2) and OH(6) of hardwood fiber, the number of the free OH(2) and OH(6) decreased by 21.65% from 14.32% to 11.22%, with revolutions increasing from 0 r to 4000 r, followed by an increase of 45.37% in the stage of refining from 4000 r to 12,000 r, along with an decrease of 17.11%. It could be explained by the instability of free OH groups, which makes it easy to form new H-bonds, such as O(2)H· · · O(6) or O(6)H· · · O(3<sup>0</sup>)H-bonds. Thus although there is the formation of free OH(2) and OH(6) during fibrillation, the content of the free OH(2) and OH(6) might disease; meanwhile, the content of the O(6)H· · · O(3<sup>0</sup>) or the O(2)H· · · O(6) H-bonds might increase upon drying.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      59
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0099": {
+    "old": {
+      "source_id": "mineru_block_0099",
+      "native_block_index": 99,
+      "page": 10,
+      "bbox": [
+        122,
+        661,
+        742,
+        677
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [
+      "sec_13a4f17698d53b5f"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0100": {
+    "old": {
+      "source_id": "mineru_block_0100",
+      "native_block_index": 100,
+      "page": 10,
+      "bbox": [
+        121,
+        684,
+        875,
+        797
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Similar to the CI-XI, the content of O(6)H· · · O(3<sup>0</sup>) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coeficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 $( p < 0 . 0 5 )$ for hardwood fibers, respectively. The similar trends in the content of the O(6)H· · · O(3<sup>0</sup>) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H· · · O(3<sup>0</sup>) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      60
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0104": {
+    "old": {
+      "source_id": "mineru_block_0104",
+      "native_block_index": 104,
+      "page": 11,
+      "bbox": [
+        499,
+        104,
+        833,
+        291
+      ],
+      "native_type": "chart",
+      "native_text_level": null,
+      "kind": "figure_caption",
+      "text": "Figure 8. The trend of the CI-XI, the CI-XA, and the O(6)H· · · O(3<sup>0</sup>) H-bonds: (a) softwood fibers andd fibers. (b) hardwood fibers.",
+      "image_path": "images/66d3c4dc853fae7795242fac9ed9a7a08f57e7511a43807e4f151aff951ce66c.jpg"
+    },
+    "new_chunk_indices": [
+      61
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0105": {
+    "old": {
+      "source_id": "mineru_block_0105",
+      "native_block_index": 105,
+      "page": 11,
+      "bbox": [
+        152,
+        341,
+        842,
+        638
+      ],
+      "native_type": "image",
+      "native_text_level": null,
+      "kind": "figure_caption",
+      "text": "Figure 9. The illustration of a two-phase structure of cellulose.",
+      "image_path": "images/a187e932c3dc17411404d352a5d1569254e9527f00ecdde4b6f33ddd0cdd5fef.jpg"
+    },
+    "new_chunk_indices": [
+      62
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0106": {
+    "old": {
+      "source_id": "mineru_block_0106",
+      "native_block_index": 106,
+      "page": 11,
+      "bbox": [
+        121,
+        674,
+        875,
+        853
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "poor for the following reasons. The free OH groups are easier for forming the O(2)H⋯O(6) H-<sub>The correlation between the CI-XI and the O(2)H</sub>· · · <sub>O(6) H-bonds or the free OH(2) and OH(6)</sub> bonds as opposed to the O(6)H<sup>⋯</sup>O(3′) H-bonds in the amorphous region, because the distancewas poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose unitscorrelation between the CI-XI and the O(2)H⋯O(6) H-bonds or the free OH(2) and<sub>H-bonds as opposed to the O(6)H</sub>· · · <sub>O(3</sub>0<sub>) H-bonds in the amorphous region, because the distance</sub> in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content for the following reasons. The free OH groups are easier for forming the O(2)H⋯between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units <sup>of</sup> <sup>O(6)H⋯O(3′)</sup> <sup>H-bonds,</sup> <sup>there</sup> <sup>was</sup> <sup>less</sup> <sup>difference</sup> <sup>in</sup> <sup>the</sup> <sup>content</sup> <sup>of</sup> <sup>the</sup> <sup>O(2)H⋯O(6)</sup> <sup>H-bonds</sup> <sup>or</sup> <sup>the</sup>⋯in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content free OH groups between the crystalline region and amorphous region, which sometimes made the<sub>of O(6)H</sub>· · · <sub>O(3</sub><sup>0</sup><sub>) H-bonds, there was less diference in the content of the O(2)H</sub>· · · <sub>O(6) H-bonds or the</sub> content of the two bonds not change much in regards to the crystallinity. The O(3)H⋯O(5) H-bonds<sub>free OH groups between the crystalline region and amorphous region, which sometimes made the</sub> is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI<sub>content of the two bonds not change much in regards to the crystallinity. The O(3)H</sub>· · · <sub>O(5) H-bonds</sub> refining. Hence, the correlation between O(3)H⋯O(5) H-bonds and the CI-XI was not discussed in theO(3′) H-bonds, there was less difference in the content of the O(2)H⋯O(6) H-bonds<sub>is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI</sub> present study. groups between the crystalline region and amorphous region, which sometimes mrefining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      63,
+      64,
+      65
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0107": {
+    "old": {
+      "source_id": "mineru_block_0107",
+      "native_block_index": 107,
+      "page": 11,
+      "bbox": [
+        122,
+        862,
+        245,
+        878
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "as mentioned<sub>4. Conclusions</sub>",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      65
+    ],
+    "section_ids": [
+      "sec_1c4b9a8ae3765aec"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0108": {
+    "old": {
+      "source_id": "mineru_block_0108",
+      "native_block_index": 108,
+      "page": 11,
+      "bbox": [
+        121,
+        885,
+        875,
+        917
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "upramolecular structure, including crystallite size, crystallinity, and content of various H-bonds.PFI refining acts not only on the macro-level structure and mechanical properties, but also on The results indicated that the fibrillation and properties of fibers are related to the variation of thethe supramolecular structure, including crystallite size, crystallinity, and content of various H-bonds.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      66
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0111": {
+    "old": {
+      "source_id": "mineru_block_0111",
+      "native_block_index": 111,
+      "page": 12,
+      "bbox": [
+        121,
+        104,
+        875,
+        217
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "The results indicated that the fibrillation and properties of fibers are related to the variation of the supramolecular structure during PFI refining. It is noticeable that there was a significantly positive correlation between the CI-XI and content of O(6)H· · · O(3)’ H-bonds during PFI refining for softwood fibers and hardwood fibers. Thus, the trend of the content of O(6)H· · · O(3)’ H-bonds might be generally speculated based on CI-XI while refining. Besides, the crystallite size, crystallinity, and content of various H-bonds did not change much in general. It is assumed that PFI refining is an excellent mechanical treatment of fibrillation with relatively little destruction on the supramolecular structure.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      67
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0112": {
+    "old": {
+      "source_id": "mineru_block_0112",
+      "native_block_index": 112,
+      "page": 12,
+      "bbox": [
+        121,
+        227,
+        875,
+        326
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Supplementary Materials: The following are available online at http://www.mdpi.com/2073-4360/12/12/2912/s1, Figure S1: XRD fitting results of softwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S2: XRD fitting results of hardwood fibers: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S3: Nonlinear fitting curves of the band of hardwood fibers for hydroxyl groups: (a) 0, (b) 4000, (c) 8000, (d) 12,000, (e) 16,000 revolutions of PFI refining, Figure S4: The BET N2 adsorption/desorption isotherms at various refining revolutions of pulp fibers: (a) softwood; (b) hardwood, Table S1: Cumulative pore volume, average pore size and specific surface area of softwood pulp fiber through refining, Cumulative pore volume, average pore size and specific surface area of hardwood pulp fiber through refining.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      68
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0113": {
+    "old": {
+      "source_id": "mineru_block_0113",
+      "native_block_index": 113,
+      "page": 12,
+      "bbox": [
+        121,
+        331,
+        875,
+        382
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Author Contributions: Conceptualization, methodology, software, validation, formal analysis, investigation, data curation, writing—original draft preparation, and visualization: K.L.; conceptualization, validation, funding acquisition, writing—review and editing: L.Z.; conceptualization, resources, supervision, project administration, and funding acquisition: B.H. All authors have read and agreed to the published version of the manuscript.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      69
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0114": {
+    "old": {
+      "source_id": "mineru_block_0114",
+      "native_block_index": 114,
+      "page": 12,
+      "bbox": [
+        122,
+        386,
+        873,
+        424
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Funding: This work was supported by the National Natural Science Foundation of China (21706083), the Key Area R&D Program of Guangdong Province (2020B0101070001), and the National Key R&D Program of China (2017YFB0309501).",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      69
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0115": {
+    "old": {
+      "source_id": "mineru_block_0115",
+      "native_block_index": 115,
+      "page": 12,
+      "bbox": [
+        122,
+        429,
+        873,
+        468
+      ],
+      "native_type": "text",
+      "native_text_level": null,
+      "kind": "paragraph",
+      "text": "Conflicts of Interest: The authors declare no conflict of interest. The funders had no role in the design of the study; in the collection, analyses, or interpretation of data; in the writing of the manuscript, or in the decision to publish the results.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      69
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0116": {
+    "old": {
+      "source_id": "mineru_block_0116",
+      "native_block_index": 116,
+      "page": 12,
+      "bbox": [
+        122,
+        483,
+        215,
+        498
+      ],
+      "native_type": "text",
+      "native_text_level": 2,
+      "kind": "heading",
+      "text": "References",
+      "image_path": null
+    },
+    "new_chunk_indices": [],
+    "section_ids": [
+      "sec_b968cc64f953cffa"
+    ],
+    "document_title": false
+  },
+  "mineru_block_0117": {
+    "old": {
+      "source_id": "mineru_block_0117",
+      "native_block_index": 117,
+      "page": 12,
+      "bbox": [
+        124,
+        507,
+        873,
+        551
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "1. Gharehkhani, S.; Sadeghinezhad, E.; Kazi, S.N.; Yarmand, H.; Badarudin, A.; Safaei, M.R.; Zubir, M.N.M. Basic efects of pulp refining on fiber properties—A review. Carbohydr. Polym. 2015, 115, 785–803. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      70
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0118": {
+    "old": {
+      "source_id": "mineru_block_0118",
+      "native_block_index": 118,
+      "page": 12,
+      "bbox": [
+        124,
+        554,
+        872,
+        582
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "2. Liu, W.; Wu, R.; Wang, B.; Hu, Y.; Hou, Q.; Zhang, P.; Wu, R. Comparative study on diferent pretreatment on enzymatic hydrolysis of corncob residues. Bioresour. Technol. 2020, 295, 122244. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      71
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0119": {
+    "old": {
+      "source_id": "mineru_block_0119",
+      "native_block_index": 119,
+      "page": 12,
+      "bbox": [
+        124,
+        583,
+        873,
+        613
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "3. Lourenço, A.F.; Gamelas, J.A.; Sarmento, P.; Ferreira, P.J. Enzymatic nanocellulose in papermaking–The key role as filler flocculant and strengthening agent. Carbohydr. Polym. 2019, 224, 115200. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      72
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0120": {
+    "old": {
+      "source_id": "mineru_block_0120",
+      "native_block_index": 120,
+      "page": 12,
+      "bbox": [
+        124,
+        615,
+        873,
+        658
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "4. Espinosa, E.; Rol, F.; Bras, J.; Rodríguez, A. Use of multi-factorial analysis to determine the quality of cellulose nanofibers: Efect of nanofibrillation treatment and residual lignin content. Cellulose 2020, 27, 10689–10705. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      73
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0121": {
+    "old": {
+      "source_id": "mineru_block_0121",
+      "native_block_index": 121,
+      "page": 12,
+      "bbox": [
+        124,
+        659,
+        873,
+        703
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "5. Jiménez-López, L.; Eugenio, M.E.; Ibarra, D.; Darder, M.; Martín, J.A.; Martín-Sampedro, R. Cellulose Nanofibers from a Dutch Elm Disease-Resistant Ulmus minor Clone. Polymers 2020, 12, 2450. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      74
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0122": {
+    "old": {
+      "source_id": "mineru_block_0122",
+      "native_block_index": 122,
+      "page": 12,
+      "bbox": [
+        124,
+        707,
+        873,
+        736
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "6. Li, Z.; Liu, W.; Guan, F.; Li, G.; Song, Z.; Yu, D.; Wang, H.; Liu, H. Using cellulose fibers to fabricate transparent paper by microfibrillation. Carbohydr. Polym. 2019, 214, 26–33. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      75
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0123": {
+    "old": {
+      "source_id": "mineru_block_0123",
+      "native_block_index": 123,
+      "page": 12,
+      "bbox": [
+        124,
+        737,
+        873,
+        781
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "7. Zhao, D.; Yang, F.; Dai, Y.; Tao, F.; Shen, Y.; Duan, W.; Zhou, X.; Ma, H.; Tang, L.; Li, J. Exploring crystalline structural variations of cellulose during pulp beating of tobacco stems. Carbohydr. Polym. 2017, 174, 146–153. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      76
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0124": {
+    "old": {
+      "source_id": "mineru_block_0124",
+      "native_block_index": 124,
+      "page": 12,
+      "bbox": [
+        124,
+        783,
+        873,
+        827
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "8. Zhao, D.; Deng, Y.; Han, D.; Tan, L.; Ding, Y.; Zhou, Z.; Xu, H.; Guo, Y. Exploring structural variations of hydrogen-bonding patterns in cellulose during mechanical pulp refining of tobacco stems. Carbohydr. Polym. 2019, 204, 247–254. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      77
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0125": {
+    "old": {
+      "source_id": "mineru_block_0125",
+      "native_block_index": 125,
+      "page": 12,
+      "bbox": [
+        124,
+        829,
+        873,
+        872
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "9. Xu, H.; Li, B.; Mu, X.; Yu, G.; Liu, C.; Zhang, Y.; Wang, H. Quantitative characterization of the impact of pulp refining on enzymatic saccharification of the alkaline pretreated corn stover. Bioresour. Technol. 2014, 169, 19–26. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      78
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0126": {
+    "old": {
+      "source_id": "mineru_block_0126",
+      "native_block_index": 126,
+      "page": 12,
+      "bbox": [
+        124,
+        875,
+        873,
+        904
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "10. Gao, W.; Xiang, Z.; Chen, K.; Yang, R.; Yang, F. Efect of depth beating on the fiber properties and enzymatic saccharification eficiency of softwood kraft pulp. Carbohydr. Polym. 2015, 127, 400–406. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      79
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0129": {
+    "old": {
+      "source_id": "mineru_block_0129",
+      "native_block_index": 129,
+      "page": 13,
+      "bbox": [
+        124,
+        105,
+        873,
+        135
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "11. Liu, W.; Wang, B.; Hou, Q.; Chen, W.; Wu, M. Efects of fibrillation on the wood fibers’ enzymatic hydrolysis enhanced by mechanical refining. Bioresour. Technol. 2016, 206, 99–103. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      80
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0130": {
+    "old": {
+      "source_id": "mineru_block_0130",
+      "native_block_index": 130,
+      "page": 13,
+      "bbox": [
+        124,
+        136,
+        873,
+        165
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "12. Chen, Y.; Wan, J.; Zhang, X.; Ma, Y.; Wang, Y. Efect of beating on recycled properties of unbleached eucalyptus cellulose fiber. Carbohydr. Polym. 2012, 87, 730–736. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      81
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0131": {
+    "old": {
+      "source_id": "mineru_block_0131",
+      "native_block_index": 131,
+      "page": 13,
+      "bbox": [
+        124,
+        166,
+        873,
+        196
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "13. Popescu, C.; Popescu, M.; Singurel, G.; Vasile, C.; Argyropoulos, D.S.; Willfor, S. Spectral characterization of eucalyptus wood. Appl. Spectrosc. 2007, 61, 1168–1177. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      82
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0132": {
+    "old": {
+      "source_id": "mineru_block_0132",
+      "native_block_index": 132,
+      "page": 13,
+      "bbox": [
+        124,
+        197,
+        873,
+        225
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "14. Wang, S.; Gao, W.; Chen, K.; Xiang, Z.; Zeng, J.; Wang, B.; Xu, J. Deconstruction of cellulosic fibers to fibrils based on enzymatic pretreatment. Bioresour. Technol. 2018, 267, 426–430. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      83
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0133": {
+    "old": {
+      "source_id": "mineru_block_0133",
+      "native_block_index": 133,
+      "page": 13,
+      "bbox": [
+        124,
+        227,
+        875,
+        256
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "15. Dai, D.; Fan, M. Investigation of the dislocation of natural fibres by Fourier-transform infrared spectroscopy. Vib. Spectrosc. 2011, 55, 300–306. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      84
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0134": {
+    "old": {
+      "source_id": "mineru_block_0134",
+      "native_block_index": 134,
+      "page": 13,
+      "bbox": [
+        124,
+        258,
+        875,
+        318
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "16. Djikanovi´c, D.; Deveˇcerski, A.; Steinbach, G.; Simonovi´c, J.; Matovi´c, B.; Garab, G.; Kalauzi, A.; Radoti´c, K Comparison of macromolecular interactions in the cell walls of hardwood, softwood and maize by fluorescence and FTIR spectroscopy, diferential polarization laser scanning microscopy and X-ray difraction. Wood Sci. Technol. 2016, 50, 547–566. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      85
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0135": {
+    "old": {
+      "source_id": "mineru_block_0135",
+      "native_block_index": 135,
+      "page": 13,
+      "bbox": [
+        124,
+        319,
+        873,
+        363
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "17. Popescu, C.M.; Singurel, G.; Popescu, M.C.; Vasile, C.; Argyropoulos, D.S.; Willför, S. Vibrational spectroscopy and X-ray diffraction methods to establish the differences between hardwood and softwood. Carbohydr. Polym. 2009, 77, 851–857. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      86
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0136": {
+    "old": {
+      "source_id": "mineru_block_0136",
+      "native_block_index": 136,
+      "page": 13,
+      "bbox": [
+        124,
+        365,
+        873,
+        395
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "18. Yuan, L.; Wan, J.; Ma, Y.; Wang, Y.; Huang, M.; Chen, Y. The content of diferent hydrogen bond models and crystal structure of eucalyptus fibers during beating. Bioresources 2012, 8, 717–734. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      87
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0137": {
+    "old": {
+      "source_id": "mineru_block_0137",
+      "native_block_index": 137,
+      "page": 13,
+      "bbox": [
+        124,
+        395,
+        873,
+        426
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "19. Sánchez, P.B.; Tsubaki, S.; Pádua, A.A.; Wada, Y. Kinetic analysis of microwave-enhanced cellulose dissolution in ionic solvents. Phys. Chem. Chem. Phys. 2020, 22, 1003–1010. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      88
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0138": {
+    "old": {
+      "source_id": "mineru_block_0138",
+      "native_block_index": 138,
+      "page": 13,
+      "bbox": [
+        122,
+        426,
+        873,
+        457
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "20. Zhao, L.; Li, S.; Liang, C.; Qiao, L.; Du, K. High-strength and low-crystallinity cellulose/agarose composite microspheres: Fabrication, characterization and protein adsorption. Biochem. Eng. J. 2020, 107826. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      89
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0139": {
+    "old": {
+      "source_id": "mineru_block_0139",
+      "native_block_index": 139,
+      "page": 13,
+      "bbox": [
+        122,
+        457,
+        873,
+        487
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "21. Wang, G.; Yang, X.; Wang, W. Reinforcing linear low-density polyethylene with surfactant-treated microfibrillated cellulose. Polymers 2019, 11, 441. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      90
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0140": {
+    "old": {
+      "source_id": "mineru_block_0140",
+      "native_block_index": 140,
+      "page": 13,
+      "bbox": [
+        122,
+        488,
+        873,
+        533
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "22. Elazzouzi-Hafraoui, S.; Nishiyama, Y.; Putaux, J.; Heux, L.; Dubreuil, F.; Rochas, C. The shape and size distribution of crystalline nanoparticles prepared by acid hydrolysis of native cellulose. Biomacromolecules 2008, 9, 57–65. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      91
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0141": {
+    "old": {
+      "source_id": "mineru_block_0141",
+      "native_block_index": 141,
+      "page": 13,
+      "bbox": [
+        122,
+        533,
+        873,
+        564
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "23. Tribulová, T.; Kaˇcík, F.; Evtuguin, D.V.; Cabalov<sup>ˇ</sup> á, I.; Durkoviˇc, J. The e<sup>ˇ</sup> fects of transition metal sulfates on cellulose crystallinity during accelerated ageing of silver fir wood. Cellulose 2019, 26, 2625–2638. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      92
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0142": {
+    "old": {
+      "source_id": "mineru_block_0142",
+      "native_block_index": 142,
+      "page": 13,
+      "bbox": [
+        122,
+        565,
+        875,
+        609
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "24. Kouko, J.; Jajcinovic, M.; Fischer, W.; Ketola, A.; Hirn, U.; Retulainen, E. Efect of mechanically induced micro deformations on extensibility and strength of individual softwood pulp fibers and sheets. Cellulose 2019, 26, 1995–2012. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      93
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0143": {
+    "old": {
+      "source_id": "mineru_block_0143",
+      "native_block_index": 143,
+      "page": 13,
+      "bbox": [
+        122,
+        611,
+        873,
+        640
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "25. Ahvenainen, P.; Kontro, I.; Svedström, K. Comparison of sample crystallinity determination methods by X-ray difraction for challenging cellulose I materials. Cellulose 2016, 23, 1073–1086. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      94
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0144": {
+    "old": {
+      "source_id": "mineru_block_0144",
+      "native_block_index": 144,
+      "page": 13,
+      "bbox": [
+        122,
+        640,
+        873,
+        671
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "26. Haigler, C.H.; Roberts, A.W. Structure/function relationships in the rosette cellulose synthesis complex illuminated by an evolutionary perspective. Cellulose 2019, 26, 227–247. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      95
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0145": {
+    "old": {
+      "source_id": "mineru_block_0145",
+      "native_block_index": 145,
+      "page": 13,
+      "bbox": [
+        122,
+        671,
+        873,
+        702
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "27. Kubicki, J.D.; Yang, H.; Sawada, D.; O’Neill, H.; Oehme, D.; Cosgrove, D. The shape of native plant cellulose microfibrils. Sci. Rep. 2018, 8, 13983. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      96
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0146": {
+    "old": {
+      "source_id": "mineru_block_0146",
+      "native_block_index": 146,
+      "page": 13,
+      "bbox": [
+        122,
+        703,
+        873,
+        733
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "28. Yang, H.; Kubicki, J.D. A density functional theory study on the shape of the primary cellulose microfibril in plants: Efects of C6 exocyclic group conformation and H-bonding. Cellulose 2020, 27, 2389–2402. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      97
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0147": {
+    "old": {
+      "source_id": "mineru_block_0147",
+      "native_block_index": 147,
+      "page": 13,
+      "bbox": [
+        122,
+        734,
+        873,
+        763
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "29. Duchemin, B.; Thuault, A.; Vicente, A.; Rigaud, B.; Fernandez, C.; Eve, S. Ultrastructure of cellulose crystallites in flax textile fibres. Cellulose 2012, 19, 1837–1854. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      98
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0148": {
+    "old": {
+      "source_id": "mineru_block_0148",
+      "native_block_index": 148,
+      "page": 13,
+      "bbox": [
+        124,
+        764,
+        875,
+        809
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "30. Fernandes, A.N.; Thomas, L.H.; Altaner, C.M.; Callow, P.; Forsyth, V.T.; Apperley, D.C.; Kennedy, C.J.; Jarvis, M.C. Nanostructure of cellulose microfibrils in spruce wood. Proc. Natl. Acad. Sci. USA 2011, 108, E1195–E1203. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      99
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0149": {
+    "old": {
+      "source_id": "mineru_block_0149",
+      "native_block_index": 149,
+      "page": 13,
+      "bbox": [
+        122,
+        810,
+        873,
+        840
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "31. Scholz, D.; Xie, J.; Kröcher, O.; Vogel, F. Mechanochemistry-assisted hydrolysis of softwood over stable sulfonated carbon catalysts in a semi-batch process. RSC Adv. 2019, 9, 33525–33538. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      100
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0150": {
+    "old": {
+      "source_id": "mineru_block_0150",
+      "native_block_index": 150,
+      "page": 13,
+      "bbox": [
+        122,
+        841,
+        873,
+        885
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "32. Li, L.; Zhuang, J.; Zou, H.; Pang, J.; Yu, S. Partition usage of cellulose by coupling approach of supercritical carbon dioxide and cellulase to reducing sugar and nanocellulose. Carbohydr. Polym. 2020, 229, 115533. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      101
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0151": {
+    "old": {
+      "source_id": "mineru_block_0151",
+      "native_block_index": 151,
+      "page": 13,
+      "bbox": [
+        122,
+        887,
+        873,
+        917
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "33. Djahedi, C.; Bergenstråhle-Wohlert, M.; Berglund, L.A.; Wohlert, J. Role of hydrogen bonding in cellulose deformation: The leverage efect analyzed by molecular modeling. Cellulose 2016, 23, 2315–2323. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      102
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0154": {
+    "old": {
+      "source_id": "mineru_block_0154",
+      "native_block_index": 154,
+      "page": 14,
+      "bbox": [
+        124,
+        105,
+        870,
+        134
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "34. Altaner, C.M.; Thomas, L.H.; Fernandes, A.N.; Jarvis, M.C. How cellulose stretches: Synergism between covalent and hydrogen bonding. Biomacromolecules 2014, 15, 791–798. [CrossRef] [PubMed]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      103
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0155": {
+    "old": {
+      "source_id": "mineru_block_0155",
+      "native_block_index": 155,
+      "page": 14,
+      "bbox": [
+        124,
+        136,
+        870,
+        164
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "35. Kondo, T.; Sawatari, C. A Fourier transform infra-red spectroscopic analysis of the character of hydrogen bonds in amorphous cellulose. Polymer 1996, 37, 393–399. [CrossRef]",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      104
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0156": {
+    "old": {
+      "source_id": "mineru_block_0156",
+      "native_block_index": 156,
+      "page": 14,
+      "bbox": [
+        124,
+        177,
+        870,
+        202
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "Publisher’s Note: MDPI stays neutral with regard to jurisdictional claims in published maps and institutional afiliations.",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      105
+    ],
+    "section_ids": [],
+    "document_title": false
+  },
+  "mineru_block_0158": {
+    "old": {
+      "source_id": "mineru_block_0158",
+      "native_block_index": 158,
+      "page": 14,
+      "bbox": [
+        277,
+        212,
+        872,
+        256
+      ],
+      "native_type": "ref_text",
+      "native_text_level": null,
+      "kind": "reference",
+      "text": "© 2020 by the authors. Licensee MDPI, Basel, Switzerland. This article is an open access article distributed under the terms and conditions of the Creative Commons Attribution (CC BY) license (http://creativecommons.org/licenses/by/4.0/).",
+      "image_path": null
+    },
+    "new_chunk_indices": [
+      106
+    ],
+    "section_ids": [],
+    "document_title": false
+  }
+}

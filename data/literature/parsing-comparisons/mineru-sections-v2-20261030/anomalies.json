@@ -1,0 +1,29 @@
+[
+  {
+    "source_id": "mineru_block_0047",
+    "page": 4,
+    "code": "repeated_title_label_collapsed_raw_preserved"
+  },
+  {
+    "source_id": "mineru_block_0048",
+    "page": 4,
+    "code": "repeated_title_label_collapsed_raw_preserved"
+  },
+  {
+    "source_id": "mineru_block_0060",
+    "page": 5,
+    "code": "mixed_heading_prefix_preserved",
+    "prefix": "strength for unrefined and refined samples: (a) softwood fibers"
+  },
+  {
+    "source_id": "mineru_block_0072",
+    "page": 7,
+    "code": "measurement_annotation"
+  },
+  {
+    "source_id": "mineru_block_0107",
+    "page": 11,
+    "code": "mixed_heading_prefix_preserved",
+    "prefix": "as mentioned<sub>"
+  }
+]

@@ -1,0 +1,409 @@
+{
+  "document_titles": [
+    {
+      "title": "Probing Efect of Papirindustriens Forskningsinstitut (PFI) Refining on Aggregation Structure of Cellulose: Crystal Packing and Hydrogen-Bonding Network",
+      "source_span": {
+        "source_id": "mineru_block_0001",
+        "start": 0,
+        "end": 151,
+        "page": 1,
+        "bbox": [
+          122,
+          131,
+          862,
+          206
+        ],
+        "text": "Probing Efect of Papirindustriens Forskningsinstitut (PFI) Refining on Aggregation Structure of Cellulose: Crystal Packing and Hydrogen-Bonding Network"
+      }
+    }
+  ],
+  "sections": [
+    {
+      "id": "sec_1bde6666475f11ad",
+      "title": "1. Introduction",
+      "number": "1",
+      "depth": 1,
+      "parent_id": null,
+      "path": [
+        "1. Introduction"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0008",
+          "start": 0,
+          "end": 15,
+          "page": 1,
+          "bbox": [
+            122,
+            615,
+            245,
+            629
+          ],
+          "text": "1. Introduction"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_7e9755e3e1f93ba9",
+      "title": "2. Methods",
+      "number": "2",
+      "depth": 1,
+      "parent_id": null,
+      "path": [
+        "2. Methods"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0018",
+          "start": 0,
+          "end": 10,
+          "page": 2,
+          "bbox": [
+            122,
+            517,
+            218,
+            531
+          ],
+          "text": "2. Methods"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_cc39ad2e800e9268",
+      "title": "2.1. PFI Refining",
+      "number": "2.1",
+      "depth": 2,
+      "parent_id": "sec_7e9755e3e1f93ba9",
+      "path": [
+        "2. Methods",
+        "2.1. PFI Refining"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0019",
+          "start": 0,
+          "end": 17,
+          "page": 2,
+          "bbox": [
+            122,
+            544,
+            250,
+            561
+          ],
+          "text": "2.1. PFI Refining"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_7839564cd592e64b",
+      "title": "2.2. Morphological Analysis of Fibers and Mechanical Properties of Sheets",
+      "number": "2.2",
+      "depth": 2,
+      "parent_id": "sec_7e9755e3e1f93ba9",
+      "path": [
+        "2. Methods",
+        "2.2. Morphological Analysis of Fibers and Mechanical Properties of Sheets"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0021",
+          "start": 0,
+          "end": 73,
+          "page": 2,
+          "bbox": [
+            122,
+            739,
+            633,
+            755
+          ],
+          "text": "2.2. Morphological Analysis of Fibers and Mechanical Properties of Sheets"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_d242f7c7a5422c81",
+      "title": "2.3. Water Retention Value (WRV)",
+      "number": "2.3",
+      "depth": 2,
+      "parent_id": "sec_7e9755e3e1f93ba9",
+      "path": [
+        "2. Methods",
+        "2.3. Water Retention Value (WRV)"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0025",
+          "start": 0,
+          "end": 32,
+          "page": 3,
+          "bbox": [
+            122,
+            103,
+            369,
+            118
+          ],
+          "text": "2.3. Water Retention Value (WRV)"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_64d73adf8617b65d",
+      "title": "2.4. XRD Analysis",
+      "number": "2.4",
+      "depth": 2,
+      "parent_id": "sec_7e9755e3e1f93ba9",
+      "path": [
+        "2. Methods",
+        "2.4. XRD Analysis"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0029",
+          "start": 0,
+          "end": 17,
+          "page": 3,
+          "bbox": [
+            122,
+            223,
+            263,
+            239
+          ],
+          "text": "2.4. XRD Analysis"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_9e87d769b0f1cbc8",
+      "title": "2.5. FT-IR Analysis",
+      "number": "2.5",
+      "depth": 2,
+      "parent_id": "sec_7e9755e3e1f93ba9",
+      "path": [
+        "2. Methods",
+        "2.5. FT-IR Analysis"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0036",
+          "start": 0,
+          "end": 19,
+          "page": 3,
+          "bbox": [
+            122,
+            686,
+            268,
+            701
+          ],
+          "text": "2.5. FT-IR Analysis"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_45d0f4cf2dd51ce4",
+      "title": "3. Results and Discussions",
+      "number": "3",
+      "depth": 1,
+      "parent_id": null,
+      "path": [
+        "3. Results and Discussions"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0047",
+          "start": 0,
+          "end": 107,
+          "page": 4,
+          "bbox": [
+            122,
+            332,
+            336,
+            349
+          ],
+          "text": "<sub>3. Results and Discussions</sub><sup>3.</sup> <sup>Results</sup> <sup>and</sup> <sup>Discussions</sup>"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_026cdb5825ab7567",
+      "title": "3.1. The Morphological Analysis, Swelling, and Mechanical Properties",
+      "number": "3.1",
+      "depth": 2,
+      "parent_id": "sec_45d0f4cf2dd51ce4",
+      "path": [
+        "3. Results and Discussions",
+        "3.1. The Morphological Analysis, Swelling, and Mechanical Properties"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0048",
+          "start": 0,
+          "end": 136,
+          "page": 4,
+          "bbox": [
+            122,
+            361,
+            610,
+            376
+          ],
+          "text": "3.1. The Morphological Analysis, Swelling, and Mechanical Properties3.1. The Morphological Analysis, Swelling, and Mechanical Properties"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_6d37f51559c4275b",
+      "title": "3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size",
+      "number": "3.2",
+      "depth": 2,
+      "parent_id": "sec_45d0f4cf2dd51ce4",
+      "path": [
+        "3. Results and Discussions",
+        "3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0060",
+          "start": 63,
+          "end": 131,
+          "page": 5,
+          "bbox": [
+            122,
+            733,
+            589,
+            750
+          ],
+          "text": "3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_cc3b709dfb9e0ce9",
+      "title": "3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds",
+      "number": "3.3",
+      "depth": 2,
+      "parent_id": "sec_45d0f4cf2dd51ce4",
+      "path": [
+        "3. Results and Discussions",
+        "3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0076",
+          "start": 0,
+          "end": 93,
+          "page": 7,
+          "bbox": [
+            122,
+            795,
+            800,
+            810
+          ],
+          "text": "3.3. Efect of PFI Refining on H-Bonding Energies, H-Bonding Distances, and Content of H-Bonds"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_13a4f17698d53b5f",
+      "title": "3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining",
+      "number": "3.4",
+      "depth": 2,
+      "parent_id": "sec_45d0f4cf2dd51ce4",
+      "path": [
+        "3. Results and Discussions",
+        "3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0099",
+          "start": 0,
+          "end": 86,
+          "page": 10,
+          "bbox": [
+            122,
+            661,
+            742,
+            677
+          ],
+          "text": "3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_1c4b9a8ae3765aec",
+      "title": "4. Conclusions",
+      "number": "4",
+      "depth": 1,
+      "parent_id": null,
+      "path": [
+        "4. Conclusions"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0107",
+          "start": 17,
+          "end": 37,
+          "page": 11,
+          "bbox": [
+            122,
+            862,
+            245,
+            878
+          ],
+          "text": "4. Conclusions</sub>"
+        }
+      ],
+      "role": "section"
+    },
+    {
+      "id": "sec_b968cc64f953cffa",
+      "title": "References",
+      "number": null,
+      "depth": 1,
+      "parent_id": null,
+      "path": [
+        "References"
+      ],
+      "status": "inferred",
+      "source_spans": [
+        {
+          "source_id": "mineru_block_0116",
+          "start": 0,
+          "end": 10,
+          "page": 12,
+          "bbox": [
+            122,
+            483,
+            215,
+            498
+          ],
+          "text": "References"
+        }
+      ],
+      "role": "references"
+    }
+  ]
+}

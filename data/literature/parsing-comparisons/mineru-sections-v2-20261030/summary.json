@@ -1,0 +1,261 @@
+{
+  "version": "mineru-sections-v2",
+  "source_pdf_sha256": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4",
+  "native_content_sha256": "73dc30b72b0a8f3305053db5715e0cdd7d02a78f23ba01b982562cdae0ff9f18",
+  "native_blocks": 161,
+  "previous_retrieval_blocks": 117,
+  "new_retrieval_blocks": 107,
+  "sections": 14,
+  "chunk_kinds": {
+    "paragraph": 54,
+    "equation": 5,
+    "figure_caption": 9,
+    "table": 2,
+    "reference": 37
+  },
+  "anomalies": {
+    "repeated_title_label_collapsed_raw_preserved": 2,
+    "mixed_heading_prefix_preserved": 2,
+    "measurement_annotation": 1
+  },
+  "excluded_native_blocks": [
+    {
+      "source_id": "mineru_block_0005",
+      "native_type": "image",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0011",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0012",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0013",
+      "native_type": "footer",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0014",
+      "native_type": "footer",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0015",
+      "native_type": "text",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0023",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0024",
+      "native_type": "page_number",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0041",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0042",
+      "native_type": "page_number",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0050",
+      "native_type": "chart",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0053",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0054",
+      "native_type": "page_number",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0055",
+      "native_type": "chart",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0058",
+      "native_type": "chart",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0062",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0063",
+      "native_type": "page_number",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0064",
+      "native_type": "chart",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0069",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0070",
+      "native_type": "page_number",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0078",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0079",
+      "native_type": "page_number",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0081",
+      "native_type": "chart",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0085",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0086",
+      "native_type": "page_number",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0087",
+      "native_type": "chart",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0088",
+      "native_type": "chart",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0089",
+      "native_type": "chart",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0090",
+      "native_type": "chart",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0093",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0094",
+      "native_type": "page_number",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0095",
+      "native_type": "text",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0101",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0102",
+      "native_type": "page_number",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0103",
+      "native_type": "chart",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0109",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0110",
+      "native_type": "page_number",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0127",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0128",
+      "native_type": "page_number",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0152",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0153",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0157",
+      "native_type": "image",
+      "reason": "no_textual_content"
+    },
+    {
+      "source_id": "mineru_block_0159",
+      "native_type": "header",
+      "reason": "page_auxiliary"
+    },
+    {
+      "source_id": "mineru_block_0160",
+      "native_type": "page_number",
+      "reason": "page_auxiliary"
+    }
+  ],
+  "source_coverage": {
+    "native_units": 117,
+    "characters": 53861,
+    "exact_once": true
+  },
+  "policy": "Section labels inferred automatically; raw body characters preserved exactly with source spans. No reference filtering, table row indexing, new context expansion, or prompt change.",
+  "paragraph_target_chars": 1200,
+  "max_evidence_chars": 8000,
+  "parser_version": "3.4.4",
+  "parser_backend": "hybrid",
+  "cross_page_chunks": 0,
+  "model_calls": 0,
+  "limitations": [
+    "Only captions are used; no vision model.",
+    "Chapter labels are program-generated metadata, not verbatim PDF quotations.",
+    "Same-page neighbor expansion remains unchanged; this is not parent-section retrieval.",
+    "Body duplicates, scientific notation, HTML tables and reference availability remain unchanged."
+  ]
+}

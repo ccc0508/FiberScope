@@ -1,0 +1,13 @@
+{
+  "files": {
+    "anomalies.json": "254bd5502b76a39307ca2bcc67e7a29c3876b8e6043a1e98ccc3e9041dd6c00f",
+    "chunks.jsonl": "2e03ed527c65e71d8047407cd0e35bd09c6444b3c1542ba8ec799a45d365c811",
+    "comparison.html": "61007df3dbb984694534c953109ed2b886f9016f2228ecababb452ec8fb95634",
+    "sections.json": "341ee8cf5451230eb0627454df0b9979c251293eeb4dc7b458cf6bf91bf141a0",
+    "source-trace.json": "af03d0a6a4dcb844d6d846e9fdbf08b65c50e882b4fca4149eb7b22dfbdb3fd6",
+    "summary.json": "51b5c79fe8924ab3fdf65d8a25b2af9b4851959e5c8a4ee418c718a09df1f21c"
+  },
+  "rules_sha256": "75e5a06cb6577de71df481b18c75842a230991678d4ee0446b54a18c462792fd",
+  "builder_sha256": "93840b22f5c830b7417ffd225e33b92178afbafd115455587bc20d9e831ce004",
+  "model_calls": 0
+}
