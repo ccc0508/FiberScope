@@ -1,0 +1,2740 @@
+{
+  "version": "mineru-quality-jev-v1",
+  "published_on": "2026-10-30",
+  "question_count": 32,
+  "policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+  "judges": [
+    "jev"
+  ],
+  "new_luna_calls": 0,
+  "new_control_grading_calls": 0,
+  "new_valid_grades": 32,
+  "new_grading_statuses": {
+    "completed": 32
+  },
+  "new_grading_accounting": {
+    "calls": 32,
+    "known_tokens": {
+      "input_tokens": 2142171,
+      "output_tokens": 117247,
+      "total_tokens": 2259418
+    },
+    "usage_unknown_calls": 0,
+    "reported_cost_usd": "0.089971182",
+    "cost_unknown_calls": 0,
+    "invoice_cost_usd": null,
+    "request_time_ms": 102723
+  },
+  "comparisons": {
+    "sections": {
+      "control": "sections",
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "tasks": 31,
+      "scores": {
+        "sections": {
+          "tasks": 31,
+          "point_macro_average": 0.9059139784946236,
+          "support_counts": {
+            "supported": 111,
+            "partially_supported": 2
+          },
+          "citation_precision": {
+            "numerator": 118,
+            "denominator": 122,
+            "value": 0.9672131147540983
+          },
+          "citation_coverage": {
+            "numerator": 107,
+            "denominator": 113,
+            "value": 0.9469026548672567
+          },
+          "boundary_mean": 1.7741935483870968,
+          "all_five_pass": 20
+        },
+        "quality": {
+          "tasks": 31,
+          "point_macro_average": 0.9354838709677419,
+          "support_counts": {
+            "supported": 125,
+            "partially_supported": 2
+          },
+          "citation_precision": {
+            "numerator": 135,
+            "denominator": 137,
+            "value": 0.9854014598540146
+          },
+          "citation_coverage": {
+            "numerator": 120,
+            "denominator": 127,
+            "value": 0.9448818897637795
+          },
+          "boundary_mean": 1.8709677419354838,
+          "all_five_pass": 18
+        }
+      },
+      "point_delta": 0.029569892473118253,
+      "point_wins": [
+        "PFI2-016",
+        "PFI2-020",
+        "PFI2-028",
+        "PFI2-032"
+      ],
+      "point_losses": [
+        "PFI2-004",
+        "PFI2-011",
+        "PFI2-015"
+      ],
+      "exclusions": [
+        {
+          "task_id": "PFI2-023",
+          "unavailable": [
+            "sections"
+          ]
+        }
+      ]
+    },
+    "pymupdf": {
+      "control": "pymupdf",
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "tasks": 31,
+      "scores": {
+        "pymupdf": {
+          "tasks": 31,
+          "point_macro_average": 0.9596774193548387,
+          "support_counts": {
+            "supported": 123
+          },
+          "citation_precision": {
+            "numerator": 127,
+            "denominator": 130,
+            "value": 0.9769230769230769
+          },
+          "citation_coverage": {
+            "numerator": 119,
+            "denominator": 123,
+            "value": 0.967479674796748
+          },
+          "boundary_mean": 1.935483870967742,
+          "all_five_pass": 22
+        },
+        "quality": {
+          "tasks": 31,
+          "point_macro_average": 0.9354838709677419,
+          "support_counts": {
+            "supported": 125,
+            "partially_supported": 2
+          },
+          "citation_precision": {
+            "numerator": 135,
+            "denominator": 137,
+            "value": 0.9854014598540146
+          },
+          "citation_coverage": {
+            "numerator": 120,
+            "denominator": 127,
+            "value": 0.9448818897637795
+          },
+          "boundary_mean": 1.8709677419354838,
+          "all_five_pass": 18
+        }
+      },
+      "point_delta": -0.024193548387096864,
+      "point_wins": [],
+      "point_losses": [
+        "PFI2-011"
+      ],
+      "exclusions": [
+        {
+          "task_id": "PFI2-023",
+          "unavailable": [
+            "pymupdf"
+          ]
+        }
+      ]
+    },
+    "native": {
+      "control": "native",
+      "task_ids": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-004",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-015",
+        "PFI2-016",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-020",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-031",
+        "PFI2-032"
+      ],
+      "tasks": 31,
+      "scores": {
+        "native": {
+          "tasks": 31,
+          "point_macro_average": 0.9032258064516129,
+          "support_counts": {
+            "supported": 109,
+            "partially_supported": 1
+          },
+          "citation_precision": {
+            "numerator": 116,
+            "denominator": 117,
+            "value": 0.9914529914529915
+          },
+          "citation_coverage": {
+            "numerator": 107,
+            "denominator": 110,
+            "value": 0.9727272727272728
+          },
+          "boundary_mean": 1.8387096774193548,
+          "all_five_pass": 20
+        },
+        "quality": {
+          "tasks": 31,
+          "point_macro_average": 0.9301075268817204,
+          "support_counts": {
+            "supported": 122,
+            "partially_supported": 2
+          },
+          "citation_precision": {
+            "numerator": 132,
+            "denominator": 134,
+            "value": 0.9850746268656716
+          },
+          "citation_coverage": {
+            "numerator": 118,
+            "denominator": 124,
+            "value": 0.9516129032258065
+          },
+          "boundary_mean": 1.8387096774193548,
+          "all_five_pass": 18
+        }
+      },
+      "point_delta": 0.026881720430107503,
+      "point_wins": [
+        "PFI2-023",
+        "PFI2-024",
+        "PFI2-025"
+      ],
+      "point_losses": [
+        "PFI2-011",
+        "PFI2-015"
+      ],
+      "exclusions": [
+        {
+          "task_id": "PFI2-028",
+          "unavailable": [
+            "native"
+          ]
+        }
+      ]
+    }
+  },
+  "common_task_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-005",
+    "PFI2-006",
+    "PFI2-007",
+    "PFI2-008",
+    "PFI2-009",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-012",
+    "PFI2-013",
+    "PFI2-014",
+    "PFI2-015",
+    "PFI2-016",
+    "PFI2-017",
+    "PFI2-018",
+    "PFI2-019",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-024",
+    "PFI2-025",
+    "PFI2-026",
+    "PFI2-027",
+    "PFI2-029",
+    "PFI2-030",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "common_scores": {
+    "quality": {
+      "tasks": 30,
+      "point_macro_average": 0.9333333333333333,
+      "support_counts": {
+        "supported": 120,
+        "partially_supported": 2
+      },
+      "citation_precision": {
+        "numerator": 130,
+        "denominator": 132,
+        "value": 0.9848484848484849
+      },
+      "citation_coverage": {
+        "numerator": 116,
+        "denominator": 122,
+        "value": 0.9508196721311475
+      },
+      "boundary_mean": 1.8666666666666667,
+      "all_five_pass": 18
+    },
+    "sections": {
+      "tasks": 30,
+      "point_macro_average": 0.9361111111111111,
+      "support_counts": {
+        "supported": 108,
+        "partially_supported": 2
+      },
+      "citation_precision": {
+        "numerator": 115,
+        "denominator": 119,
+        "value": 0.9663865546218487
+      },
+      "citation_coverage": {
+        "numerator": 104,
+        "denominator": 110,
+        "value": 0.9454545454545454
+      },
+      "boundary_mean": 1.8333333333333333,
+      "all_five_pass": 20
+    },
+    "pymupdf": {
+      "tasks": 30,
+      "point_macro_average": 0.9583333333333334,
+      "support_counts": {
+        "supported": 118
+      },
+      "citation_precision": {
+        "numerator": 122,
+        "denominator": 125,
+        "value": 0.976
+      },
+      "citation_coverage": {
+        "numerator": 115,
+        "denominator": 118,
+        "value": 0.9745762711864406
+      },
+      "boundary_mean": 1.9333333333333333,
+      "all_five_pass": 22
+    },
+    "native": {
+      "tasks": 30,
+      "point_macro_average": 0.9111111111111111,
+      "support_counts": {
+        "supported": 107,
+        "partially_supported": 1
+      },
+      "citation_precision": {
+        "numerator": 114,
+        "denominator": 115,
+        "value": 0.991304347826087
+      },
+      "citation_coverage": {
+        "numerator": 105,
+        "denominator": 108,
+        "value": 0.9722222222222222
+      },
+      "boundary_mean": 1.8666666666666667,
+      "all_five_pass": 20
+    }
+  },
+  "new_answer_runtime": {
+    "questions": 32,
+    "outcomes": {
+      "answered": 32
+    },
+    "generation_calls": 34,
+    "generation_known_tokens": {
+      "prompt_tokens": 132409,
+      "completion_tokens": 30843,
+      "total_tokens": 163252,
+      "reasoning_tokens": 21891,
+      "cached_tokens": 11520
+    },
+    "generation_usage_unknown_calls": 0,
+    "embedding_known_tokens": 1011,
+    "embedding_usage_unknown_questions": 0,
+    "median_end_to_end_seconds": 12.418,
+    "total_sequential_seconds": 425.086,
+    "median_context_chars": 11589.5,
+    "budget_limited_questions": [],
+    "actual_billing_usd": null,
+    "notes": "Reasoning tokens are a subset of completion tokens, not additional tokens.",
+    "per_question": [
+      {
+        "task_id": "PFI2-001",
+        "status": "answered",
+        "elapsed_ms": 11849,
+        "core_ms": 4114,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 2647,
+              "completion_tokens": 397,
+              "total_tokens": 3044,
+              "reasoning_tokens": 280,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 29,
+          "completion_tokens": 0,
+          "total_tokens": 29
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_5d15871b4a7424d9c623",
+            "chk_be6801c49bc244880429",
+            "chk_7a14b2b9f2f683fafd52",
+            "chk_3c4b79a605b560af8a36",
+            "chk_4996da413603c09f9fc7",
+            "chk_4915a31d2f62b3c6ff87",
+            "chk_312c2834feb38dbf08e7",
+            "chk_ec682fd623ca713ebb6a"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 4,
+          "context_chars": 8139,
+          "added_chunk_ids": [
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_17a9afc2de85331bb432",
+            "chk_d1df0363fb02904a1d4e",
+            "chk_cad80e9da7625c40c893",
+            "chk_e382c229cdd0ac5177ee",
+            "chk_3e41952e28147fe44d64",
+            "chk_fbd1637e96b5514e93b1"
+          ]
+        },
+        "result_sha256": "b38e0c2c589f8db894c1bcd1d9c421299f90df842bdde1919ffe77103f6769da"
+      },
+      {
+        "task_id": "PFI2-002",
+        "status": "answered",
+        "elapsed_ms": 9603,
+        "core_ms": 4199,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 4705,
+              "completion_tokens": 487,
+              "total_tokens": 5192,
+              "reasoning_tokens": 320,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 40,
+          "completion_tokens": 0,
+          "total_tokens": 40
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_5d15871b4a7424d9c623",
+            "chk_6e4a5aff4e8cfeb979dc",
+            "chk_7a14b2b9f2f683fafd52",
+            "chk_2f6feef797693ee971fc",
+            "chk_4996da413603c09f9fc7",
+            "chk_c32b99776fea66084ff9",
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_bfa6aebf16bbe00aee8c"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 14752,
+          "added_chunk_ids": [
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_17a9afc2de85331bb432",
+            "chk_b06c61b7937a6d30aac1",
+            "chk_fb97648117f349411564",
+            "chk_e382c229cdd0ac5177ee",
+            "chk_04665404d2334794d44c",
+            "chk_b4f2211cb73ca5433b83",
+            "chk_e3ffa51e2aadc2ee4562",
+            "chk_c4ccd083da275497125c",
+            "chk_e20ae845b4c03a8c661b"
+          ]
+        },
+        "result_sha256": "893f8eb1bcd731b4c83aa04aab10766d61d03993c11f77ba862405e13191f7ea"
+      },
+      {
+        "task_id": "PFI2-003",
+        "status": "answered",
+        "elapsed_ms": 9838,
+        "core_ms": 4102,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3977,
+              "completion_tokens": 489,
+              "total_tokens": 4466,
+              "reasoning_tokens": 328,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 28,
+          "completion_tokens": 0,
+          "total_tokens": 28
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_5d15871b4a7424d9c623",
+            "chk_fbb59fe1a06f619ab569",
+            "chk_afc9d9945afb530cf247",
+            "chk_c4ccd083da275497125c",
+            "chk_bfa6aebf16bbe00aee8c",
+            "chk_31ab980a5ea079e08d38",
+            "chk_e69a130bee8dd1f1edfc",
+            "chk_4996da413603c09f9fc7"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 12552,
+          "added_chunk_ids": [
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_17a9afc2de85331bb432",
+            "chk_9a39ae68025ab01da8a7",
+            "chk_c32b99776fea66084ff9",
+            "chk_33c321c67d065acb040b",
+            "chk_e20ae845b4c03a8c661b",
+            "chk_01058014f13af688ca24",
+            "chk_7a14b2b9f2f683fafd52"
+          ]
+        },
+        "result_sha256": "15e7b98ece58c1de8e8752ab3736dd6a54b6b87c4a2678283989436496108699"
+      },
+      {
+        "task_id": "PFI2-004",
+        "status": "answered",
+        "elapsed_ms": 14113,
+        "core_ms": 8605,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3800,
+              "completion_tokens": 1180,
+              "total_tokens": 4980,
+              "reasoning_tokens": 933,
+              "cached_tokens": 256
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 47,
+          "completion_tokens": 0,
+          "total_tokens": 47
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_5d15871b4a7424d9c623",
+            "chk_2f6feef797693ee971fc",
+            "chk_4996da413603c09f9fc7",
+            "chk_7a14b2b9f2f683fafd52",
+            "chk_31ab980a5ea079e08d38",
+            "chk_e69a130bee8dd1f1edfc",
+            "chk_6e4a5aff4e8cfeb979dc",
+            "chk_2227416236bc0600dd04"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 6,
+          "context_chars": 12482,
+          "added_chunk_ids": [
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_17a9afc2de85331bb432",
+            "chk_04665404d2334794d44c",
+            "chk_b4f2211cb73ca5433b83",
+            "chk_e382c229cdd0ac5177ee",
+            "chk_01058014f13af688ca24",
+            "chk_b06c61b7937a6d30aac1",
+            "chk_fb97648117f349411564"
+          ]
+        },
+        "result_sha256": "2c4db09e6395cfbde1f781ddce84e9705adb821cd09b752c3c087dc67671369f"
+      },
+      {
+        "task_id": "PFI2-005",
+        "status": "answered",
+        "elapsed_ms": 9365,
+        "core_ms": 3407,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 2701,
+              "completion_tokens": 329,
+              "total_tokens": 3030,
+              "reasoning_tokens": 201,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 19,
+          "completion_tokens": 0,
+          "total_tokens": 19
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_fb97648117f349411564",
+            "chk_17a9afc2de85331bb432",
+            "chk_93e777bee0213e9dbd04",
+            "chk_177f0a8d772391a2de3c",
+            "chk_6e4a5aff4e8cfeb979dc",
+            "chk_2227416236bc0600dd04",
+            "chk_3a612e3c2c8155711c34"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 4,
+          "context_chars": 8312,
+          "added_chunk_ids": [
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_b06c61b7937a6d30aac1",
+            "chk_5d15871b4a7424d9c623",
+            "chk_526a05837ef5129baea9",
+            "chk_5a9eba6c5c7c886945c6"
+          ]
+        },
+        "result_sha256": "c8de3d5e626cfd166ee2903ab364aadf7af19dea02a7a1b1e6e984eba45f8754"
+      },
+      {
+        "task_id": "PFI2-006",
+        "status": "answered",
+        "elapsed_ms": 9214,
+        "core_ms": 3770,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 2554,
+              "completion_tokens": 390,
+              "total_tokens": 2944,
+              "reasoning_tokens": 213,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 23,
+          "completion_tokens": 0,
+          "total_tokens": 23
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_cf589c7e2fa0ee4e1f46",
+            "chk_a564193c5c7aa183fd5f",
+            "chk_526a05837ef5129baea9",
+            "chk_177f0a8d772391a2de3c",
+            "chk_2227416236bc0600dd04",
+            "chk_5ba418c156ad430b61a3",
+            "chk_93e777bee0213e9dbd04",
+            "chk_ac09f9797fb4597e0acb"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 5,
+          "context_chars": 5745,
+          "added_chunk_ids": [
+            "chk_5a9eba6c5c7c886945c6",
+            "chk_3a612e3c2c8155711c34",
+            "chk_fb97648117f349411564",
+            "chk_f8dba2f5fcef5ef93bb0"
+          ]
+        },
+        "result_sha256": "a9e4ce990dffd1f1464bffc82d6a86e492805f6e6d50cd1411e7e0535972ef9b"
+      },
+      {
+        "task_id": "PFI2-007",
+        "status": "answered",
+        "elapsed_ms": 12350,
+        "core_ms": 6999,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3551,
+              "completion_tokens": 971,
+              "total_tokens": 4522,
+              "reasoning_tokens": 656,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 30,
+          "completion_tokens": 0,
+          "total_tokens": 30
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_88430484ce40a562a45c",
+            "chk_5a9eba6c5c7c886945c6",
+            "chk_571fdb2362fc8fa450a9",
+            "chk_e20ae845b4c03a8c661b",
+            "chk_5cecf8540d52956ef273",
+            "chk_93e777bee0213e9dbd04"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 5,
+          "context_chars": 9427,
+          "added_chunk_ids": [
+            "chk_bfa6aebf16bbe00aee8c",
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_526a05837ef5129baea9",
+            "chk_182c0b23db1cfd519f90",
+            "chk_593af2498c6722f2e65a",
+            "chk_48bb4a171341b5a5964c"
+          ]
+        },
+        "result_sha256": "b3e7234260527a023c05e75bf9d6f2f085a987307af7c2543c97743451aafd7a"
+      },
+      {
+        "task_id": "PFI2-008",
+        "status": "answered",
+        "elapsed_ms": 9391,
+        "core_ms": 3993,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3870,
+              "completion_tokens": 515,
+              "total_tokens": 4385,
+              "reasoning_tokens": 313,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 33,
+          "completion_tokens": 0,
+          "total_tokens": 33
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_e20ae845b4c03a8c661b",
+            "chk_88430484ce40a562a45c",
+            "chk_571fdb2362fc8fa450a9",
+            "chk_93e777bee0213e9dbd04",
+            "chk_5d15871b4a7424d9c623",
+            "chk_04665404d2334794d44c"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 6,
+          "context_chars": 10651,
+          "added_chunk_ids": [
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_bfa6aebf16bbe00aee8c",
+            "chk_593af2498c6722f2e65a",
+            "chk_526a05837ef5129baea9",
+            "chk_5a9eba6c5c7c886945c6",
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_17a9afc2de85331bb432",
+            "chk_2f6feef797693ee971fc"
+          ]
+        },
+        "result_sha256": "4d755f2a5a912dd9974e63e8c8a21b56679e26055e7e41b36483973c81c77b0b"
+      },
+      {
+        "task_id": "PFI2-009",
+        "status": "answered",
+        "elapsed_ms": 10414,
+        "core_ms": 4948,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3919,
+              "completion_tokens": 725,
+              "total_tokens": 4644,
+              "reasoning_tokens": 514,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 36,
+          "completion_tokens": 0,
+          "total_tokens": 36
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_e20ae845b4c03a8c661b",
+            "chk_31ab980a5ea079e08d38",
+            "chk_571fdb2362fc8fa450a9",
+            "chk_93e777bee0213e9dbd04",
+            "chk_88430484ce40a562a45c",
+            "chk_2f6feef797693ee971fc"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 6,
+          "context_chars": 10808,
+          "added_chunk_ids": [
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_bfa6aebf16bbe00aee8c",
+            "chk_01058014f13af688ca24",
+            "chk_593af2498c6722f2e65a",
+            "chk_526a05837ef5129baea9",
+            "chk_5a9eba6c5c7c886945c6",
+            "chk_04665404d2334794d44c",
+            "chk_b4f2211cb73ca5433b83"
+          ]
+        },
+        "result_sha256": "c1ac0c286fa68f10f7c305fcb04bf442b39239d1aeda917d67bbfad32046891d"
+      },
+      {
+        "task_id": "PFI2-010",
+        "status": "answered",
+        "elapsed_ms": 10864,
+        "core_ms": 4960,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 4485,
+              "completion_tokens": 701,
+              "total_tokens": 5186,
+              "reasoning_tokens": 457,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 37,
+          "completion_tokens": 0,
+          "total_tokens": 37
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_afc9d9945afb530cf247",
+            "chk_5d15871b4a7424d9c623",
+            "chk_2227416236bc0600dd04",
+            "chk_4996da413603c09f9fc7",
+            "chk_bfa6aebf16bbe00aee8c",
+            "chk_c4ccd083da275497125c",
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_31ab980a5ea079e08d38"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 13454,
+          "added_chunk_ids": [
+            "chk_c32b99776fea66084ff9",
+            "chk_33c321c67d065acb040b",
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_17a9afc2de85331bb432",
+            "chk_fb97648117f349411564",
+            "chk_7a14b2b9f2f683fafd52",
+            "chk_e20ae845b4c03a8c661b",
+            "chk_01058014f13af688ca24"
+          ]
+        },
+        "result_sha256": "6bcdb0004d11194e49b70c90e720b6aeec8b0d8224c09bced91c2f12168c3304"
+      },
+      {
+        "task_id": "PFI2-011",
+        "status": "answered",
+        "elapsed_ms": 14044,
+        "core_ms": 7747,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3697,
+              "completion_tokens": 1094,
+              "total_tokens": 4791,
+              "reasoning_tokens": 813,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 20,
+          "completion_tokens": 0,
+          "total_tokens": 20
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_2227416236bc0600dd04",
+            "chk_4996da413603c09f9fc7",
+            "chk_6e4a5aff4e8cfeb979dc",
+            "chk_04665404d2334794d44c",
+            "chk_177f0a8d772391a2de3c",
+            "chk_31ab980a5ea079e08d38",
+            "chk_01058014f13af688ca24",
+            "chk_5d15871b4a7424d9c623"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 6,
+          "context_chars": 12416,
+          "added_chunk_ids": [
+            "chk_b06c61b7937a6d30aac1",
+            "chk_fb97648117f349411564",
+            "chk_7a14b2b9f2f683fafd52",
+            "chk_2f6feef797693ee971fc",
+            "chk_3a612e3c2c8155711c34",
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_17a9afc2de85331bb432"
+          ]
+        },
+        "result_sha256": "d7d02ad3cb9eb5507f3b52bb0afb003631725bf20b490b41959fcac729cc9ce9"
+      },
+      {
+        "task_id": "PFI2-012",
+        "status": "answered",
+        "elapsed_ms": 9526,
+        "core_ms": 4114,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3736,
+              "completion_tokens": 500,
+              "total_tokens": 4236,
+              "reasoning_tokens": 308,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 35,
+          "completion_tokens": 0,
+          "total_tokens": 35
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_88430484ce40a562a45c",
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_571fdb2362fc8fa450a9",
+            "chk_5cecf8540d52956ef273",
+            "chk_e20ae845b4c03a8c661b",
+            "chk_c202cbb7a34b9c3fc673",
+            "chk_93e777bee0213e9dbd04"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 5,
+          "context_chars": 10212,
+          "added_chunk_ids": [
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_bfa6aebf16bbe00aee8c",
+            "chk_593af2498c6722f2e65a",
+            "chk_0e6ef61e8789e75a9a05",
+            "chk_48bb4a171341b5a5964c",
+            "chk_526a05837ef5129baea9",
+            "chk_5a9eba6c5c7c886945c6"
+          ]
+        },
+        "result_sha256": "ad73cf06c3e81ccd71e6fa72305458fc4b354d583b613eaae1402301a016e187"
+      },
+      {
+        "task_id": "PFI2-013",
+        "status": "answered",
+        "elapsed_ms": 15152,
+        "core_ms": 9882,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 4829,
+              "completion_tokens": 1336,
+              "total_tokens": 6165,
+              "reasoning_tokens": 1011,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 21,
+          "completion_tokens": 0,
+          "total_tokens": 21
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_4996da413603c09f9fc7",
+            "chk_e20ae845b4c03a8c661b",
+            "chk_afc9d9945afb530cf247",
+            "chk_2227416236bc0600dd04",
+            "chk_04665404d2334794d44c",
+            "chk_31ab980a5ea079e08d38",
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_5cecf8540d52956ef273"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 14580,
+          "added_chunk_ids": [
+            "chk_7a14b2b9f2f683fafd52",
+            "chk_bfa6aebf16bbe00aee8c",
+            "chk_c4ccd083da275497125c",
+            "chk_33c321c67d065acb040b",
+            "chk_fb97648117f349411564",
+            "chk_2f6feef797693ee971fc",
+            "chk_01058014f13af688ca24",
+            "chk_48bb4a171341b5a5964c"
+          ]
+        },
+        "result_sha256": "0e8b56339f0965c27039bb01eae6284cf092dd07648cd58ec0611f1ccbb77b4d"
+      },
+      {
+        "task_id": "PFI2-014",
+        "status": "answered",
+        "elapsed_ms": 16049,
+        "core_ms": 10158,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3845,
+              "completion_tokens": 1329,
+              "total_tokens": 5174,
+              "reasoning_tokens": 961,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 27,
+          "completion_tokens": 0,
+          "total_tokens": 27
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_2227416236bc0600dd04",
+            "chk_7a14b2b9f2f683fafd52",
+            "chk_01058014f13af688ca24",
+            "chk_4996da413603c09f9fc7",
+            "chk_04665404d2334794d44c",
+            "chk_3a612e3c2c8155711c34",
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_0e6ef61e8789e75a9a05"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 12832,
+          "added_chunk_ids": [
+            "chk_fb97648117f349411564",
+            "chk_e382c229cdd0ac5177ee",
+            "chk_31ab980a5ea079e08d38",
+            "chk_2f6feef797693ee971fc",
+            "chk_177f0a8d772391a2de3c",
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_5c83a81c632f03a0002b",
+            "chk_5d15871b4a7424d9c623",
+            "chk_c202cbb7a34b9c3fc673"
+          ]
+        },
+        "result_sha256": "d368286e34d99fad20bd00fd57a2910995cd5b44cbe2e18e5d5336905aeaf310"
+      },
+      {
+        "task_id": "PFI2-015",
+        "status": "answered",
+        "elapsed_ms": 9317,
+        "core_ms": 3926,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 4533,
+              "completion_tokens": 405,
+              "total_tokens": 4938,
+              "reasoning_tokens": 171,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 24,
+          "completion_tokens": 0,
+          "total_tokens": 24
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_4996da413603c09f9fc7",
+            "chk_6e4a5aff4e8cfeb979dc",
+            "chk_5d15871b4a7424d9c623",
+            "chk_3c4b79a605b560af8a36",
+            "chk_007889658e00d7b4cb1b",
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_e20ae845b4c03a8c661b",
+            "chk_fb97648117f349411564"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 13819,
+          "added_chunk_ids": [
+            "chk_7a14b2b9f2f683fafd52",
+            "chk_b06c61b7937a6d30aac1",
+            "chk_2227416236bc0600dd04",
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_17a9afc2de85331bb432",
+            "chk_ec682fd623ca713ebb6a",
+            "chk_baf967103b3397835df1",
+            "chk_73f3ecc0f0ddda5e94eb",
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_bfa6aebf16bbe00aee8c"
+          ]
+        },
+        "result_sha256": "bdc7dd3dc9a2bdfe9cdfd6b7ae5d74193be1d19a2afe3bc3e0d3352d04cd01be"
+      },
+      {
+        "task_id": "PFI2-016",
+        "status": "answered",
+        "elapsed_ms": 17385,
+        "core_ms": 11391,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3494,
+              "completion_tokens": 937,
+              "total_tokens": 4431,
+              "reasoning_tokens": 705,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          },
+          {
+            "attempt": 2,
+            "usage": {
+              "prompt_tokens": 3528,
+              "completion_tokens": 582,
+              "total_tokens": 4110,
+              "reasoning_tokens": 344,
+              "cached_tokens": 3328
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 33,
+          "completion_tokens": 0,
+          "total_tokens": 33
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_3a612e3c2c8155711c34",
+            "chk_4996da413603c09f9fc7",
+            "chk_865db2afb720e9e79e0c",
+            "chk_cc5f50c06a1bc4037d6b",
+            "chk_007889658e00d7b4cb1b",
+            "chk_2227416236bc0600dd04",
+            "chk_48bb4a171341b5a5964c",
+            "chk_7a14b2b9f2f683fafd52"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 6,
+          "context_chars": 10862,
+          "added_chunk_ids": [
+            "chk_177f0a8d772391a2de3c",
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_e382c229cdd0ac5177ee",
+            "chk_dab2988a0c3664fda010",
+            "chk_a7c9e0894bcb1f6ea34a",
+            "chk_ed166dbf514c9327913c",
+            "chk_5cecf8540d52956ef273",
+            "chk_baf967103b3397835df1",
+            "chk_73f3ecc0f0ddda5e94eb",
+            "chk_fb97648117f349411564"
+          ]
+        },
+        "result_sha256": "e051aca9f807d461af3142f4eba17dbfb19f5b7a93ad833e675effe294cd99bd"
+      },
+      {
+        "task_id": "PFI2-017",
+        "status": "answered",
+        "elapsed_ms": 9031,
+        "core_ms": 3251,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3540,
+              "completion_tokens": 296,
+              "total_tokens": 3836,
+              "reasoning_tokens": 188,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 21,
+          "completion_tokens": 0,
+          "total_tokens": 21
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_3c4b79a605b560af8a36",
+            "chk_3a612e3c2c8155711c34",
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_2227416236bc0600dd04",
+            "chk_007889658e00d7b4cb1b",
+            "chk_cc5f50c06a1bc4037d6b",
+            "chk_c4ccd083da275497125c",
+            "chk_4996da413603c09f9fc7"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 11318,
+          "added_chunk_ids": [
+            "chk_ec682fd623ca713ebb6a",
+            "chk_177f0a8d772391a2de3c",
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_fb97648117f349411564",
+            "chk_baf967103b3397835df1",
+            "chk_73f3ecc0f0ddda5e94eb",
+            "chk_ed166dbf514c9327913c",
+            "chk_c32b99776fea66084ff9",
+            "chk_afc9d9945afb530cf247",
+            "chk_7a14b2b9f2f683fafd52"
+          ]
+        },
+        "result_sha256": "9aee9715e51a92d2529f31aa4bf072919c020ddf039420315592ab947f745615"
+      },
+      {
+        "task_id": "PFI2-018",
+        "status": "answered",
+        "elapsed_ms": 17407,
+        "core_ms": 11204,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 2932,
+              "completion_tokens": 1842,
+              "total_tokens": 4774,
+              "reasoning_tokens": 1455,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 31,
+          "completion_tokens": 0,
+          "total_tokens": 31
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_4c53c165c4555bf14010",
+            "chk_f8dba2f5fcef5ef93bb0",
+            "chk_b1bd76207877c3241680",
+            "chk_5c83a81c632f03a0002b",
+            "chk_b06c61b7937a6d30aac1",
+            "chk_f611c9766b7bce3e4bf7",
+            "chk_9a39ae68025ab01da8a7",
+            "chk_e69a130bee8dd1f1edfc"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 5,
+          "context_chars": 8536,
+          "added_chunk_ids": [
+            "chk_eeb537a089dd7d63e6ba",
+            "chk_5ba418c156ad430b61a3",
+            "chk_6e4a5aff4e8cfeb979dc",
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_fbb59fe1a06f619ab569",
+            "chk_d49edab2db458aa92dcf"
+          ]
+        },
+        "result_sha256": "b8ef94d06137a5d3ef06de7bcdbba5a409d6cbab2188ac26d15cbad79b8e3abe"
+      },
+      {
+        "task_id": "PFI2-019",
+        "status": "answered",
+        "elapsed_ms": 14041,
+        "core_ms": 4099,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 4779,
+              "completion_tokens": 556,
+              "total_tokens": 5335,
+              "reasoning_tokens": 278,
+              "cached_tokens": 256
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 39,
+          "completion_tokens": 0,
+          "total_tokens": 39
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_33c321c67d065acb040b",
+            "chk_48bb4a171341b5a5964c",
+            "chk_fbb59fe1a06f619ab569",
+            "chk_31ab980a5ea079e08d38",
+            "chk_c202cbb7a34b9c3fc673",
+            "chk_5ba418c156ad430b61a3",
+            "chk_ed166dbf514c9327913c",
+            "chk_ac09f9797fb4597e0acb"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 12670,
+          "added_chunk_ids": [
+            "chk_afc9d9945afb530cf247",
+            "chk_cc5f50c06a1bc4037d6b",
+            "chk_5cecf8540d52956ef273",
+            "chk_9a39ae68025ab01da8a7",
+            "chk_01058014f13af688ca24",
+            "chk_593af2498c6722f2e65a",
+            "chk_0e6ef61e8789e75a9a05",
+            "chk_f8dba2f5fcef5ef93bb0"
+          ]
+        },
+        "result_sha256": "765de14f28b70b7d922780351ca801e6c773465d0643103c3d4dcb29c4f19b8f"
+      },
+      {
+        "task_id": "PFI2-020",
+        "status": "answered",
+        "elapsed_ms": 11432,
+        "core_ms": 5277,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3955,
+              "completion_tokens": 674,
+              "total_tokens": 4629,
+              "reasoning_tokens": 347,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 29,
+          "completion_tokens": 0,
+          "total_tokens": 29
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_fbb59fe1a06f619ab569",
+            "chk_dd7f2350e3acb7797adc",
+            "chk_fed11e24d70576f757ff",
+            "chk_fbd1637e96b5514e93b1",
+            "chk_4c53c165c4555bf14010",
+            "chk_ac09f9797fb4597e0acb",
+            "chk_5c83a81c632f03a0002b",
+            "chk_5f79b45cd1f7d2ed6303"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 10570,
+          "added_chunk_ids": [
+            "chk_9a39ae68025ab01da8a7",
+            "chk_91d9ca4b29b9536dfe63",
+            "chk_8cd98ca443223f592e36",
+            "chk_aad61fe42085566481ae",
+            "chk_ed1407631d554d5dcb8b",
+            "chk_312c2834feb38dbf08e7",
+            "chk_e382c229cdd0ac5177ee",
+            "chk_eeb537a089dd7d63e6ba",
+            "chk_f8dba2f5fcef5ef93bb0",
+            "chk_5d15871b4a7424d9c623"
+          ]
+        },
+        "result_sha256": "3d6c84325ff3d673cfc062107312698d44c5b6e2f8b0a9470c979c6f8c2cbfe0"
+      },
+      {
+        "task_id": "PFI2-021",
+        "status": "answered",
+        "elapsed_ms": 10777,
+        "core_ms": 5390,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 4931,
+              "completion_tokens": 633,
+              "total_tokens": 5564,
+              "reasoning_tokens": 425,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 38,
+          "completion_tokens": 0,
+          "total_tokens": 38
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_31ab980a5ea079e08d38",
+            "chk_cc5f50c06a1bc4037d6b",
+            "chk_ed166dbf514c9327913c",
+            "chk_48bb4a171341b5a5964c",
+            "chk_ac09f9797fb4597e0acb",
+            "chk_4996da413603c09f9fc7",
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_fbb59fe1a06f619ab569"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 6,
+          "context_chars": 13073,
+          "added_chunk_ids": [
+            "chk_01058014f13af688ca24",
+            "chk_5cecf8540d52956ef273",
+            "chk_7a14b2b9f2f683fafd52",
+            "chk_9a39ae68025ab01da8a7"
+          ]
+        },
+        "result_sha256": "e01300c5da4a4125bceba046eba9ea848fd32e29e6b501e19ad61e424fbea0a7"
+      },
+      {
+        "task_id": "PFI2-022",
+        "status": "answered",
+        "elapsed_ms": 14135,
+        "core_ms": 8706,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 4663,
+              "completion_tokens": 1440,
+              "total_tokens": 6103,
+              "reasoning_tokens": 1258,
+              "cached_tokens": 256
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 53,
+          "completion_tokens": 0,
+          "total_tokens": 53
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_5cecf8540d52956ef273",
+            "chk_571fdb2362fc8fa450a9",
+            "chk_ac09f9797fb4597e0acb",
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_04665404d2334794d44c",
+            "chk_c202cbb7a34b9c3fc673",
+            "chk_31ab980a5ea079e08d38",
+            "chk_48bb4a171341b5a5964c"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 6,
+          "context_chars": 11684,
+          "added_chunk_ids": [
+            "chk_ed166dbf514c9327913c",
+            "chk_593af2498c6722f2e65a",
+            "chk_0e6ef61e8789e75a9a05",
+            "chk_2f6feef797693ee971fc",
+            "chk_01058014f13af688ca24"
+          ]
+        },
+        "result_sha256": "6a6a3d08374dd29b6fc5cef79374d30a33ae31b9d63da0c35b815e922527f229"
+      },
+      {
+        "task_id": "PFI2-023",
+        "status": "answered",
+        "elapsed_ms": 15291,
+        "core_ms": 8014,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 4823,
+              "completion_tokens": 865,
+              "total_tokens": 5688,
+              "reasoning_tokens": 703,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 34,
+          "completion_tokens": 0,
+          "total_tokens": 34
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_5cecf8540d52956ef273",
+            "chk_571fdb2362fc8fa450a9",
+            "chk_fbd1637e96b5514e93b1",
+            "chk_c202cbb7a34b9c3fc673",
+            "chk_04665404d2334794d44c",
+            "chk_ac09f9797fb4597e0acb",
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_31ab980a5ea079e08d38"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 12482,
+          "added_chunk_ids": [
+            "chk_48bb4a171341b5a5964c",
+            "chk_593af2498c6722f2e65a",
+            "chk_0e6ef61e8789e75a9a05",
+            "chk_312c2834feb38dbf08e7",
+            "chk_e382c229cdd0ac5177ee",
+            "chk_2f6feef797693ee971fc",
+            "chk_01058014f13af688ca24"
+          ]
+        },
+        "result_sha256": "0bdf03dfe3e6b8d50c06109945a7ab4fbe80d606cd99f26ff7e07ae739a7302e"
+      },
+      {
+        "task_id": "PFI2-024",
+        "status": "answered",
+        "elapsed_ms": 19817,
+        "core_ms": 14409,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3849,
+              "completion_tokens": 2139,
+              "total_tokens": 5988,
+              "reasoning_tokens": 1594,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 34,
+          "completion_tokens": 0,
+          "total_tokens": 34
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_7a14b2b9f2f683fafd52",
+            "chk_2227416236bc0600dd04",
+            "chk_5d15871b4a7424d9c623",
+            "chk_3a612e3c2c8155711c34",
+            "chk_4996da413603c09f9fc7",
+            "chk_6e4a5aff4e8cfeb979dc",
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_afc9d9945afb530cf247"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 5,
+          "context_chars": 13156,
+          "added_chunk_ids": [
+            "chk_e382c229cdd0ac5177ee",
+            "chk_b06c61b7937a6d30aac1",
+            "chk_fb97648117f349411564",
+            "chk_5c83a81c632f03a0002b",
+            "chk_17a9afc2de85331bb432",
+            "chk_177f0a8d772391a2de3c",
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_c4ccd083da275497125c",
+            "chk_33c321c67d065acb040b"
+          ]
+        },
+        "result_sha256": "6bd7ceac5a94966b8de10f7afce8d01c99617b2fe5ccf4339319bac5fbe9ca65"
+      },
+      {
+        "task_id": "PFI2-025",
+        "status": "answered",
+        "elapsed_ms": 11970,
+        "core_ms": 5268,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3736,
+              "completion_tokens": 510,
+              "total_tokens": 4246,
+              "reasoning_tokens": 378,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 21,
+          "completion_tokens": 0,
+          "total_tokens": 21
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_5d15871b4a7424d9c623",
+            "chk_2f6feef797693ee971fc",
+            "chk_4c53c165c4555bf14010",
+            "chk_2227416236bc0600dd04",
+            "chk_3a612e3c2c8155711c34",
+            "chk_e69a130bee8dd1f1edfc",
+            "chk_3c4b79a605b560af8a36",
+            "chk_31ab980a5ea079e08d38"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 8,
+          "context_chars": 11495,
+          "added_chunk_ids": [
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_17a9afc2de85331bb432",
+            "chk_04665404d2334794d44c",
+            "chk_b4f2211cb73ca5433b83",
+            "chk_eeb537a089dd7d63e6ba",
+            "chk_f8dba2f5fcef5ef93bb0",
+            "chk_fb97648117f349411564",
+            "chk_177f0a8d772391a2de3c",
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_ec682fd623ca713ebb6a",
+            "chk_01058014f13af688ca24"
+          ]
+        },
+        "result_sha256": "11dec207f173295ae2cb72609d554680a53e204d39ad02d7f143b0c5cd4945de"
+      },
+      {
+        "task_id": "PFI2-026",
+        "status": "answered",
+        "elapsed_ms": 12386,
+        "core_ms": 6225,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 4332,
+              "completion_tokens": 684,
+              "total_tokens": 5016,
+              "reasoning_tokens": 478,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 30,
+          "completion_tokens": 0,
+          "total_tokens": 30
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_2f6feef797693ee971fc",
+            "chk_17a9afc2de85331bb432",
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_31ab980a5ea079e08d38",
+            "chk_e69a130bee8dd1f1edfc",
+            "chk_93e777bee0213e9dbd04",
+            "chk_5d15871b4a7424d9c623",
+            "chk_48bb4a171341b5a5964c"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 13298,
+          "added_chunk_ids": [
+            "chk_04665404d2334794d44c",
+            "chk_b4f2211cb73ca5433b83",
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_3a612e3c2c8155711c34",
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_01058014f13af688ca24",
+            "chk_526a05837ef5129baea9",
+            "chk_5a9eba6c5c7c886945c6",
+            "chk_ed166dbf514c9327913c",
+            "chk_5cecf8540d52956ef273"
+          ]
+        },
+        "result_sha256": "2bae84c3e0bd3542130d700439a8c3d1abe17f43fa7c93e98cc881d7e85085ad"
+      },
+      {
+        "task_id": "PFI2-027",
+        "status": "answered",
+        "elapsed_ms": 16110,
+        "core_ms": 9739,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3345,
+              "completion_tokens": 1326,
+              "total_tokens": 4671,
+              "reasoning_tokens": 1038,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 33,
+          "completion_tokens": 0,
+          "total_tokens": 33
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_2f6feef797693ee971fc",
+            "chk_17a9afc2de85331bb432",
+            "chk_be6801c49bc244880429",
+            "chk_3c4b79a605b560af8a36",
+            "chk_177f0a8d772391a2de3c",
+            "chk_007889658e00d7b4cb1b",
+            "chk_dab2988a0c3664fda010"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 9679,
+          "added_chunk_ids": [
+            "chk_3a612e3c2c8155711c34",
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_04665404d2334794d44c",
+            "chk_b4f2211cb73ca5433b83",
+            "chk_5d15871b4a7424d9c623",
+            "chk_d1df0363fb02904a1d4e",
+            "chk_4915a31d2f62b3c6ff87",
+            "chk_ec682fd623ca713ebb6a",
+            "chk_baf967103b3397835df1",
+            "chk_73f3ecc0f0ddda5e94eb",
+            "chk_8cd98ca443223f592e36",
+            "chk_865db2afb720e9e79e0c"
+          ]
+        },
+        "result_sha256": "bd289d885171724edadbcb7045eebb1f7042d986b447ef0d25d02dcf703cf5c3"
+      },
+      {
+        "task_id": "PFI2-028",
+        "status": "answered",
+        "elapsed_ms": 17606,
+        "core_ms": 10855,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3371,
+              "completion_tokens": 1636,
+              "total_tokens": 5007,
+              "reasoning_tokens": 1298,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 43,
+          "completion_tokens": 0,
+          "total_tokens": 43
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_2f6feef797693ee971fc",
+            "chk_bc7e975be92cd59927b0",
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_007889658e00d7b4cb1b",
+            "chk_4915a31d2f62b3c6ff87",
+            "chk_3c4b79a605b560af8a36",
+            "chk_4996da413603c09f9fc7",
+            "chk_ec682fd623ca713ebb6a"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 5,
+          "context_chars": 10542,
+          "added_chunk_ids": [
+            "chk_04665404d2334794d44c",
+            "chk_b4f2211cb73ca5433b83",
+            "chk_819c8ee21f9d53e75cd6",
+            "chk_5c83a81c632f03a0002b",
+            "chk_5d15871b4a7424d9c623",
+            "chk_baf967103b3397835df1",
+            "chk_73f3ecc0f0ddda5e94eb",
+            "chk_be6801c49bc244880429",
+            "chk_cad80e9da7625c40c893",
+            "chk_7a14b2b9f2f683fafd52"
+          ]
+        },
+        "result_sha256": "7a9c521b2e47a4a24f9d7f0e0b4ecc3a58e6a38b64146eba99dc68ea25998880"
+      },
+      {
+        "task_id": "PFI2-029",
+        "status": "answered",
+        "elapsed_ms": 12583,
+        "core_ms": 6306,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 4068,
+              "completion_tokens": 700,
+              "total_tokens": 4768,
+              "reasoning_tokens": 526,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 31,
+          "completion_tokens": 0,
+          "total_tokens": 31
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_17a9afc2de85331bb432",
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_2f6feef797693ee971fc",
+            "chk_177f0a8d772391a2de3c",
+            "chk_93e777bee0213e9dbd04",
+            "chk_5d15871b4a7424d9c623",
+            "chk_ac09f9797fb4597e0acb",
+            "chk_bfa6aebf16bbe00aee8c"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 6,
+          "context_chars": 11958,
+          "added_chunk_ids": [
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_3a612e3c2c8155711c34",
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_04665404d2334794d44c",
+            "chk_b4f2211cb73ca5433b83",
+            "chk_526a05837ef5129baea9",
+            "chk_5a9eba6c5c7c886945c6",
+            "chk_e20ae845b4c03a8c661b"
+          ]
+        },
+        "result_sha256": "3aa7648a610a71fc0b852345e723f4335adb4ccc904f17f23e51114a1dc01a73"
+      },
+      {
+        "task_id": "PFI2-030",
+        "status": "answered",
+        "elapsed_ms": 12450,
+        "core_ms": 5613,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3101,
+              "completion_tokens": 646,
+              "total_tokens": 3747,
+              "reasoning_tokens": 310,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 23,
+          "completion_tokens": 0,
+          "total_tokens": 23
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_3c4b79a605b560af8a36",
+            "chk_4996da413603c09f9fc7",
+            "chk_3a612e3c2c8155711c34",
+            "chk_007889658e00d7b4cb1b",
+            "chk_aad61fe42085566481ae",
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_6e4a5aff4e8cfeb979dc",
+            "chk_2227416236bc0600dd04"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 6,
+          "context_chars": 9899,
+          "added_chunk_ids": [
+            "chk_ec682fd623ca713ebb6a",
+            "chk_7a14b2b9f2f683fafd52",
+            "chk_177f0a8d772391a2de3c",
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_baf967103b3397835df1",
+            "chk_73f3ecc0f0ddda5e94eb",
+            "chk_fed11e24d70576f757ff",
+            "chk_b06c61b7937a6d30aac1",
+            "chk_fb97648117f349411564"
+          ]
+        },
+        "result_sha256": "7c503ea868fc0301d056e18d7f81086e2bc4d5ec611599cda2ca4ac77ad49b6e"
+      },
+      {
+        "task_id": "PFI2-031",
+        "status": "answered",
+        "elapsed_ms": 14986,
+        "core_ms": 8649,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 5232,
+              "completion_tokens": 1158,
+              "total_tokens": 6390,
+              "reasoning_tokens": 464,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 24,
+          "completion_tokens": 0,
+          "total_tokens": 24
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_4996da413603c09f9fc7",
+            "chk_e20ae845b4c03a8c661b",
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_04665404d2334794d44c",
+            "chk_afc9d9945afb530cf247",
+            "chk_5f79b45cd1f7d2ed6303",
+            "chk_6e4a5aff4e8cfeb979dc"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 7,
+          "context_chars": 16424,
+          "added_chunk_ids": [
+            "chk_7a14b2b9f2f683fafd52",
+            "chk_bfa6aebf16bbe00aee8c",
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_2f6feef797693ee971fc",
+            "chk_c4ccd083da275497125c",
+            "chk_33c321c67d065acb040b",
+            "chk_5c83a81c632f03a0002b",
+            "chk_5d15871b4a7424d9c623",
+            "chk_b06c61b7937a6d30aac1",
+            "chk_fb97648117f349411564"
+          ]
+        },
+        "result_sha256": "a5a7f2b757d0b5be5fbfc45ea386b82303307569def9589389ca9b557b07ca80"
+      },
+      {
+        "task_id": "PFI2-032",
+        "status": "answered",
+        "elapsed_ms": 26590,
+        "core_ms": 20015,
+        "generation_calls": [
+          {
+            "attempt": 1,
+            "usage": {
+              "prompt_tokens": 3923,
+              "completion_tokens": 1770,
+              "total_tokens": 5693,
+              "reasoning_tokens": 1404,
+              "cached_tokens": 128
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          },
+          {
+            "attempt": 2,
+            "usage": {
+              "prompt_tokens": 3958,
+              "completion_tokens": 1601,
+              "total_tokens": 5559,
+              "reasoning_tokens": 1219,
+              "cached_tokens": 3712
+            },
+            "outcome": "generated",
+            "model_info": {
+              "requested_model": "deepseek-flash",
+              "returned_model": "deepseek-flash",
+              "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+              "thinking_enabled": true,
+              "reasoning_effort": "high"
+            }
+          }
+        ],
+        "embedding_usage": {
+          "prompt_tokens": 45,
+          "completion_tokens": 0,
+          "total_tokens": 45
+        },
+        "context": {
+          "enabled": true,
+          "seed_chunk_ids": [
+            "chk_5cecf8540d52956ef273",
+            "chk_4a9d108c14852ea3ef4e",
+            "chk_88430484ce40a562a45c",
+            "chk_571fdb2362fc8fa450a9",
+            "chk_af3ae9d5c89c0c84b952",
+            "chk_04665404d2334794d44c",
+            "chk_fbd1637e96b5514e93b1",
+            "chk_e20ae845b4c03a8c661b"
+          ],
+          "radius": 1,
+          "max_evidence_chars": 8000,
+          "max_total_chars": 24000,
+          "omitted_seed_chunk_ids": [],
+          "budget_limited": false,
+          "result_count": 6,
+          "context_chars": 10939,
+          "added_chunk_ids": [
+            "chk_48bb4a171341b5a5964c",
+            "chk_bfa6aebf16bbe00aee8c",
+            "chk_593af2498c6722f2e65a",
+            "chk_7edd8d4825e7c215f7e1",
+            "chk_2f6feef797693ee971fc",
+            "chk_312c2834feb38dbf08e7",
+            "chk_e382c229cdd0ac5177ee"
+          ]
+        },
+        "result_sha256": "535726915969d803428c23392c55cf8f30bf640e5ca82b247a074504dfc278d9"
+      }
+    ]
+  },
+  "controlled_configuration": {
+    "embedding_provider": "openai",
+    "embedding_model": "BAAI/bge-m3",
+    "embedding_dimensions": 1024,
+    "llm_provider": "deepseek",
+    "llm_model": "deepseek-flash",
+    "top_k": 8,
+    "min_score": 0.35,
+    "pipeline_version": "literature-context-v1",
+    "prompt_pipeline_sha256": "6eece925749c7bb532f6be739eae9b365e22be599c31b5e0a71deecb3a5f1b2c",
+    "llm_thinking_enabled": true,
+    "llm_reasoning_effort": "high",
+    "pipeline_source_files": [
+      "application/prompts.py",
+      "application/citations.py",
+      "application/answer_question.py",
+      "application/retrieve.py",
+      "adapters/providers/deepseek.py",
+      "adapters/providers/openai.py",
+      "application/context.py",
+      "domain/models.py",
+      "adapters/sqlite/metadata_store.py"
+    ],
+    "context_expansion": {
+      "context_expansion_enabled": true,
+      "context_neighbor_radius": 1,
+      "context_max_evidence_chars": 8000,
+      "context_max_total_chars": 24000
+    },
+    "provider_endpoint_fingerprints": {
+      "llm_base_url": "a34e2a4708ed1c61008a151688838dcf1c44d4e7f08054633e72ba7c0b16cfc1",
+      "embedding_base_url": "dcfb966d818ddf8f4d10f7397ce546e86d3fcb8afe26371506405f6978c6f661"
+    }
+  },
+  "seed_kind_counts": {
+    "paragraph": 176,
+    "reference": 25,
+    "figure_caption": 32,
+    "table": 19,
+    "equation": 4
+  },
+  "index_chunks": 95,
+  "index_quality_summary": {
+    "version": "mineru-quality-v1",
+    "source_pdf_sha256": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4",
+    "source_units": 117,
+    "flagged_units": 19,
+    "findings": 27,
+    "unflagged_sample_count": 0,
+    "review_statuses": {
+      "completed": 19
+    },
+    "correction_statuses": {
+      "accepted_correction": 18,
+      "verified_unchanged": 1
+    },
+    "provider_calls": 24,
+    "usage": {
+      "prompt_tokens": 42703,
+      "completion_tokens": 48134,
+      "total_tokens": 90837,
+      "reasoning_tokens": 37067,
+      "cached_tokens": 8576
+    },
+    "monetary_cost": null,
+    "chunks": 95,
+    "chunk_kinds": {
+      "paragraph": 42,
+      "equation": 5,
+      "figure_caption": 9,
+      "table": 2,
+      "reference": 37
+    },
+    "sections": 14,
+    "remaining_organization_anomalies": [],
+    "source_preservation": "Immutable native snapshot plus reversible full before/after ledger. New offsets explicitly identify the corrected view.",
+    "quality_scope": "AI verification of flagged crops only; no normal sampling, expert certification or whole-paper accuracy claim."
+  },
+  "historical_index_embedding_calls": [
+    {
+      "status": "completed",
+      "chunk_count": 64,
+      "usage": {
+        "prompt_tokens": 13297,
+        "completion_tokens": 0,
+        "total_tokens": 13297
+      }
+    },
+    {
+      "status": "completed",
+      "chunk_count": 31,
+      "usage": {
+        "prompt_tokens": 3069,
+        "completion_tokens": 0,
+        "total_tokens": 3069
+      }
+    }
+  ],
+  "preprocessing_cost_note": "Parse review and index embedding are from the preceding completed stage, not repeated this round.",
+  "active_application_configuration_unchanged": true,
+  "limitations": [
+    "Single development-set answer generation and one first-valid Jev grade per answer; no stability or holdout claim.",
+    "Provider model aliases/settings are frozen, not remote weights.",
+    "Original source references and the scoring policy are unchanged. No human grades assigned by this report."
+  ],
+  "new_grading_attempts_by_task": {
+    "PFI2-029": 1,
+    "PFI2-002": 1,
+    "PFI2-026": 1,
+    "PFI2-032": 1,
+    "PFI2-020": 1,
+    "PFI2-024": 1,
+    "PFI2-008": 1,
+    "PFI2-031": 1,
+    "PFI2-011": 1,
+    "PFI2-027": 1,
+    "PFI2-010": 1,
+    "PFI2-017": 1,
+    "PFI2-001": 1,
+    "PFI2-006": 1,
+    "PFI2-025": 1,
+    "PFI2-003": 1,
+    "PFI2-016": 1,
+    "PFI2-009": 1,
+    "PFI2-030": 1,
+    "PFI2-015": 1,
+    "PFI2-013": 1,
+    "PFI2-019": 1,
+    "PFI2-022": 1,
+    "PFI2-005": 1,
+    "PFI2-018": 1,
+    "PFI2-012": 1,
+    "PFI2-007": 1,
+    "PFI2-023": 1,
+    "PFI2-028": 1,
+    "PFI2-004": 1,
+    "PFI2-021": 1,
+    "PFI2-014": 1
+  },
+  "all_new_grades_valid_on_first_attempt": true,
+  "new_32_summary": {
+    "tasks": 32,
+    "point_macro_average": 0.9322916666666666,
+    "support_counts": {
+      "supported": 127,
+      "partially_supported": 2
+    },
+    "citation_precision": {
+      "numerator": 137,
+      "denominator": 139,
+      "value": 0.9856115107913669
+    },
+    "citation_coverage": {
+      "numerator": 122,
+      "denominator": 129,
+      "value": 0.9457364341085271
+    },
+    "boundary_mean": 1.84375,
+    "all_five_pass": 18
+  },
+  "all_five_changes_from_sections": {
+    "wins": [
+      "PFI2-020"
+    ],
+    "losses": [
+      "PFI2-004",
+      "PFI2-025",
+      "PFI2-027"
+    ]
+  },
+  "case_diagnostics": {
+    "PFI2-011": {
+      "key_point_scores": {
+        "P1": 0,
+        "P2": 0
+      },
+      "supplied_page_ranges": [
+        [
+          4,
+          4
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          12,
+          12
+        ],
+        [
+          5,
+          5
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "table_source_chunk_ids": [],
+      "literal_source_markers": {
+        "70.42": false,
+        "72.54": false,
+        "73.01": false,
+        "75.06": false,
+        "0.888": false,
+        "0.912": false,
+        "0.889": false
+      },
+      "limitation": "Raw source-kind and literal-value checks only; not semantic sufficiency or a new grade."
+    },
+    "PFI2-032": {
+      "key_point_scores": {
+        "P1": 1,
+        "P2": 1,
+        "P3": 1
+      },
+      "supplied_page_ranges": [
+        [
+          10,
+          10
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          11,
+          11
+        ],
+        [
+          5,
+          5
+        ],
+        [
+          12,
+          12
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "table_source_chunk_ids": [
+        "chk_4a9d108c14852ea3ef4e"
+      ],
+      "literal_source_markers": {
+        "70.42": true,
+        "72.54": true,
+        "73.01": true,
+        "75.06": true,
+        "0.888": true,
+        "0.912": true,
+        "0.889": true
+      },
+      "limitation": "Raw source-kind and literal-value checks only; not semantic sufficiency or a new grade."
+    }
+  }
+}

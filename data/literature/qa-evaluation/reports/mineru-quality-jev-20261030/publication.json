@@ -1,0 +1,12 @@
+{
+  "version": "mineru-quality-jev-v1",
+  "document_sha256": "6a6929d0c5c6db2e4b2c108a536df822fbdef412ca1bde3b16bc067e77199200",
+  "exporter_sha256": "0c29afd2e0aba591fb9e2432b7cfd62e324650ab8405142ea395bc57fe05ff1f",
+  "files": {
+    "audit.json": "d3bf15eebac9923690c0128b07984c216574f947cf457e7a8cb448c0531c1a29",
+    "comparison.html": "b4e520595994d0ccb0d000d0f14adb7b6fe59b0daadfb790ba72509bae32053d",
+    "comparison.json": "b0c91d9fd5ba019dae11d3f99451ae615ebfa2005232662a06ba1ce2a628cb0f",
+    "questions-answers-reviews.jsonl": "48090a9e553f37b287bde0b730c8ee21167e96c103f3f7fe2f3b6b7ae9bde2a4",
+    "verification.json": "b1093bac3adc6be32255fe7beb8326b93aa9253d7ceb9f12ec1c60584cd5cda1"
+  }
+}

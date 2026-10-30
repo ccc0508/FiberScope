@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "question_rows": 32,
+  "new_first_attempt_jev_grades": 32,
+  "independent_per_point_and_citation_arithmetic": true,
+  "maximum_paired_subsets_verified": true,
+  "missing_grades_not_zero_filled": true,
+  "new_luna_calls": 0,
+  "new_control_grading_calls": 0,
+  "publication_hashes_verified": true
+}
