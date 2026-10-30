@@ -1,0 +1,13 @@
+{
+  "version": "answer-guidance-fixed-evidence-v1",
+  "input_sha256": "e4206afe073da877c9579934a64073b62b9983387791d00a081ff889bc52518f",
+  "exporter_sha256": "cb337e588f0761c455da16e8d4ef9e4d22a3372e3422986f7886e3c70708dab2",
+  "document_sha256": "574bad64c67de6e06a76324db276996469f01550e146fe79450ded7d7423e012",
+  "files": {
+    "comparison.html": "757f4db87f22b84cd91565a41c44c5582c903076f713ffe6a8b0438086f5a21b",
+    "comparison.json": "5278dc76d69819599dedb1f5508422661f9f08ff92b7f4142112755b49e27b1d",
+    "evidence-controls.json": "ef6975f611e68ea8cbf45c388a07990b8324dd82ecabb2d1a956688e95ab0aff",
+    "questions-answers-reviews.jsonl": "199dac8562a29b62e2885912b814bbe04bcfec35cca7d15aebff13140126955c"
+  },
+  "model_calls": 0
+}

@@ -1,0 +1,264 @@
+{
+  "all_supplied_contexts_identical": true,
+  "tasks": 32,
+  "per_question": [
+    {
+      "task_id": "PFI2-001",
+      "available_context_sha256": "7a948909d0d1a2f10766a50c77b1d4f5d687b0aacaba385f269910d5d4b71a03",
+      "excerpt_count": 3,
+      "source_chars": 7973,
+      "full_input_evidence_sha256": "8594dd0ed37cbf9669a7716896e0216831370fbc98c7e4941c7f76208e312080",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-002",
+      "available_context_sha256": "05efcd416af8261b28883b93afb45bb3fd993b6c51a1cd67810102c47252759b",
+      "excerpt_count": 9,
+      "source_chars": 17177,
+      "full_input_evidence_sha256": "0cb91fc00f111fdaeb8a3fc440d905d62ff3a0651597cc4ab4ae5c763fda7785",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-003",
+      "available_context_sha256": "e3ce3b5d0d4cbed55ce4a91fb770d7e54d99949fab4e64897f80ac0ea60f50b1",
+      "excerpt_count": 9,
+      "source_chars": 15287,
+      "full_input_evidence_sha256": "7cb03b74855064f62e64e4d6e323add224d95b0552a4c69abf5cd080f3787ec0",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-004",
+      "available_context_sha256": "22fcab21a6325264b3596dbcaf203653453c426ff039154aa1efd77b84760b3b",
+      "excerpt_count": 7,
+      "source_chars": 14863,
+      "full_input_evidence_sha256": "fdf04240e9dbbded54330ea28919a836b57c9082534ebf5792f81e5c8daf2a9e",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-005",
+      "available_context_sha256": "dfe7be19a967749faf3d9da1f276527cf265b8d646e9d51d415a837121eec3ee",
+      "excerpt_count": 5,
+      "source_chars": 11230,
+      "full_input_evidence_sha256": "0c7a83f1f67c598762ff54d18a6474b307b904c9a8bc894cbe0ae5b9f4bc8aae",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-006",
+      "available_context_sha256": "8906693fd40fdcbe93170cee4b117e749b0f1e04460a38909ad984d867ef0e8e",
+      "excerpt_count": 9,
+      "source_chars": 13043,
+      "full_input_evidence_sha256": "53a2c0845ebb70f84b75cb5316beebfda7f2d5cd59d00f630dc46da186f643ec",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-007",
+      "available_context_sha256": "63b3b49c4f774ccd0c946b5655f4417d037813ecb708d6238ca8f6b69a3e61b4",
+      "excerpt_count": 6,
+      "source_chars": 10920,
+      "full_input_evidence_sha256": "bee32682ce54edbbd1198a33fabd45317a6424330c799689d9046a46abacec79",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-008",
+      "available_context_sha256": "45f19716acb3b51c80ae272f665c190af21ce17182e210bcb94f02bc714239ed",
+      "excerpt_count": 7,
+      "source_chars": 12293,
+      "full_input_evidence_sha256": "8755150d02d2b4232ff44cc3b045db326926d6c97e5a4d71f4069243d5aaeda7",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-009",
+      "available_context_sha256": "37fdc7bd7e75116abb1a5c6c035b880bb06e39ff6f87af45911b2fe631174125",
+      "excerpt_count": 7,
+      "source_chars": 12109,
+      "full_input_evidence_sha256": "09a9ef549bcfc470205d6025058542498ba2e69c74c2e272640f0f197b4288fe",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-010",
+      "available_context_sha256": "32367ee7914f9198d9ecb24e6c4d5186d96e1d83b630bc7a18bc91417a8ace98",
+      "excerpt_count": 9,
+      "source_chars": 15463,
+      "full_input_evidence_sha256": "1d2b8871cb337eabb6d4738792607a8c6e36a4bdb813fbde84589b1434abc74f",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-011",
+      "available_context_sha256": "4e80d226476b8c90d74bbbf20bd2f8fe09269e3c1a5eb87780d0d89dab160f6a",
+      "excerpt_count": 7,
+      "source_chars": 13758,
+      "full_input_evidence_sha256": "413b88f0a4de8c0832c3c44dc4fb3b878c881db23cae852c13a5049c4cab2b7a",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-012",
+      "available_context_sha256": "bc451d179ee7be740502f62073cf82e94cb8297582c54815f0fc7a7789609e1d",
+      "excerpt_count": 6,
+      "source_chars": 11854,
+      "full_input_evidence_sha256": "4fc85074feb40feb4be9420239159e423a051aaa7efd1de754f1d643b75f19da",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-013",
+      "available_context_sha256": "173b1bc1231c703157759232330b42a76bfaa2f48f024b25e6e6af12fe1e1d80",
+      "excerpt_count": 10,
+      "source_chars": 17424,
+      "full_input_evidence_sha256": "886705c0b29b49323261f0d48bff8eae74625c5b25df0d1da09005ecaf8bdbf0",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-014",
+      "available_context_sha256": "fdf354447cc7043645d9fa03ba495c1faf18a041920ae4d7b2f78533b04311fd",
+      "excerpt_count": 8,
+      "source_chars": 15517,
+      "full_input_evidence_sha256": "3d4a6cbe63379531465c067f73414003485afb8c99017b8bad2bffdc45b6c220",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-015",
+      "available_context_sha256": "8b835abc17b076312880add9a1bb6c5103c087ccacd66826e97b8f824ed96650",
+      "excerpt_count": 8,
+      "source_chars": 13687,
+      "full_input_evidence_sha256": "bf4c5607c89d2b75dcf07027c300a5084396e61beb49fb4dea43ce0592918b71",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-016",
+      "available_context_sha256": "a06917c6e0567ec24c77fda2830cc8fc4f5c3cc16673c4db60dacfe30e424ef0",
+      "excerpt_count": 6,
+      "source_chars": 11901,
+      "full_input_evidence_sha256": "cc36399fc8b65c58f506b90ddb6a7de8b00b36d1d7c86493ae97a1b424ff8773",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-017",
+      "available_context_sha256": "138d5f797f5e95914810d09613dc9e6636bcef73125f3e021e79a6013b638e15",
+      "excerpt_count": 8,
+      "source_chars": 13078,
+      "full_input_evidence_sha256": "3ace4a97612690e00c5cd04cae0512952154d0ba4773860710e2f3ba9c3c7b41",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-018",
+      "available_context_sha256": "89a076bec24ca55237382778e41289748910e73a53ea442d43bc43c0d03d6b83",
+      "excerpt_count": 7,
+      "source_chars": 11193,
+      "full_input_evidence_sha256": "8dac778135bbad28febe8fef452c5bf0ff8c4b17a4df7ab8a0be2ec4907e75c7",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-019",
+      "available_context_sha256": "6695b4eecb1d45d7e97976d1ae0ef6c10359364d179755e804523fa18dfa5a67",
+      "excerpt_count": 8,
+      "source_chars": 14164,
+      "full_input_evidence_sha256": "c3c9c8f1916f488041f2405ab7b4f86e40c11b89b6e6aed98500c47d7825a0fc",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-020",
+      "available_context_sha256": "cc8f5bac8c761d61fec6500d0c9902d75625445e30096df4f50d00593a4452b4",
+      "excerpt_count": 8,
+      "source_chars": 12520,
+      "full_input_evidence_sha256": "d59e9f6ad4ae71de40c81d95d576dd4f9291d5c5ad46a1a2f78a5a65bc1b49aa",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-021",
+      "available_context_sha256": "8cb033105319c9cad3759c035a990ed3e908ef250f77c867ba4cb2e2ff24bfec",
+      "excerpt_count": 9,
+      "source_chars": 15743,
+      "full_input_evidence_sha256": "dacd69ff49fa2f5d4a4e1d5437d2529af6e4dafa1c375df18eb983ae706e3eca",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-022",
+      "available_context_sha256": "b796c2decdf58f4655a39bbe57c491d0d2165e1311f7d1d83f64dec1eec5246b",
+      "excerpt_count": 9,
+      "source_chars": 14354,
+      "full_input_evidence_sha256": "21f4f73362e0c3703577858cbf9dce5f45e375897859b0fe471f2874e08617a6",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-023",
+      "available_context_sha256": "baafc1f5afa173fa6221c3f477879d19c7b3d6907475004257328aa31ea90579",
+      "excerpt_count": 10,
+      "source_chars": 16227,
+      "full_input_evidence_sha256": "a4218812df0f4f9d563bd45cc100a888a96eb6cb2ba8620ef044838a900f3fc6",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-024",
+      "available_context_sha256": "a9c5de9a51034603e7b08b58d1078a9212859b31b47433a8b9c5b21a29fd5c97",
+      "excerpt_count": 6,
+      "source_chars": 15643,
+      "full_input_evidence_sha256": "1babb3391b3f9ec8b49c7891fee75ece7214c1a304b1f23ebc5c6c38bdfa221a",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-025",
+      "available_context_sha256": "4657f5c18dbf184ee9fcea835e2f89f998c439a2430e95e79566c175b71343f8",
+      "excerpt_count": 8,
+      "source_chars": 11680,
+      "full_input_evidence_sha256": "500f0a1bd52bc35aa0eecbd7b3ca27c16b4ac346452f5ae36a6e82a5ee59643d",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-026",
+      "available_context_sha256": "b57ce690a1f017948faa74fd45360186a4b16565bec1549ed5fffdcd95d34172",
+      "excerpt_count": 9,
+      "source_chars": 15985,
+      "full_input_evidence_sha256": "008ee3ba69f9bb511f5699660619c998fff6d25e170077ff4dbf2051b956c058",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-027",
+      "available_context_sha256": "0d1ff9bbad3b3151ef447326225a6a463e222256429210646a03724815578acc",
+      "excerpt_count": 8,
+      "source_chars": 11431,
+      "full_input_evidence_sha256": "b550a6627508d77d2d7f3982da44f10076f375d74b83b526826bf420d0a92e8d",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-028",
+      "available_context_sha256": "b1f5f6442cf56cee7cd0b4f8e0709e218f8ed7312c56b8e553a4647bbb9a0eed",
+      "excerpt_count": 5,
+      "source_chars": 10542,
+      "full_input_evidence_sha256": "82c895a612dbeb2c06694e65e6750fdc45df5b0b5a721f30cbb084499a706878",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-029",
+      "available_context_sha256": "5f844f2988a05c099f19fdbf69a431bd5bc0cad4e76064c15bea42c11946d4fc",
+      "excerpt_count": 9,
+      "source_chars": 16445,
+      "full_input_evidence_sha256": "3462d5e67e4fa84dacd05f87b16da775349cf45402325ecd931b6d91aac324fb",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-030",
+      "available_context_sha256": "243288631ad8d94dc03d0ff559379fdcc2489e4237cc8bf7bb6a21597592ce8c",
+      "excerpt_count": 7,
+      "source_chars": 11347,
+      "full_input_evidence_sha256": "aefcd5be9ea46ce37df5e562409709505b74a6df4b75631d34f440699dead56f",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-031",
+      "available_context_sha256": "79fa2c4630bd17d411b88caddcd68c265c8fe148b91115bcf8d3fcc4b8c30069",
+      "excerpt_count": 8,
+      "source_chars": 16292,
+      "full_input_evidence_sha256": "a09138955cf4222d111216b7cffe656241d434ea6988f4a8a0460feffd89f995",
+      "full_locator_fingerprint_present": true
+    },
+    {
+      "task_id": "PFI2-032",
+      "available_context_sha256": "84a498104a61d56611e161f41cd28d4bb9ec08b0d712374945c2fab932134c50",
+      "excerpt_count": 7,
+      "source_chars": 12186,
+      "full_input_evidence_sha256": "40201911052bcc94ce4c6b17e6c7abfdf7f11b70353fb6cc772560146acec8d8",
+      "full_locator_fingerprint_present": true
+    }
+  ],
+  "method": "Exact equality of supplied context values and order; optional complete source/locator fingerprint equality. No semantic evidence scoring.",
+  "generation_settings_equal": true
+}

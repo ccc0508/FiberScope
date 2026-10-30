@@ -27,3 +27,16 @@
 固定证据A/B只检验生成环节；即使本轮改善，也不能声称完整检索流程已改善或新论文泛化。若值得保留，后续另行验证完整流程与重复稳定性。
 
 实现入口：`backend/literature_rag/application/prompts.py`、`scripts/answer_guidance_worker.py`、`scripts/run_answer_guidance_20261031.py`。私有运行合同、模型凭据与固定证据保存在已忽略的`.rag-data`，不上传密钥。
+
+## 本轮结果与复现
+
+两版各32份新回答已完成；Jev原协议得到63份有效评分，第3题新版三次评分均未通过引用组与单条引用的一致性检查，保留缺失。共同31题要点94.35%→94.89%，单条引用有效99.21%→95.80%，五项全部达标23→19题。生成请求33→42次，已知生成Token增加47.67%。不建议据此开启默认指引；完整分析及裁判疑点见[结果报告](QA_ANSWER_GUIDANCE_REPORT_20261031.md)。
+
+以下仅离线读取原始封存并生成报告，不调用答题或评分API：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\collect_answer_guidance_20261031.py
+.\.venv\Scripts\python.exe scripts\report_answer_guidance_20261031.py --document docs/QA_ANSWER_GUIDANCE_REPORT_20261031.md
+```
+
+报告目录已存在时，第二条命令加`--refresh`；刷新前先核验上次交付文件及文档封存。`questions-answers-reviews.jsonl`公开全部32题、两份新答案、参考标准和Jev原始判定，缺失评分保留null。原请求、全部尝试和凭据留在本地忽略目录。
