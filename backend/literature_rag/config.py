@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     context_max_evidence_chars: int = Field(default=8000,ge=256,le=100000)
     context_max_total_chars: int = Field(default=24000,ge=256,le=100000)
     table_retrieval_enabled: bool = False
+    answer_guidance_enabled: bool = False
     rerank_enabled: bool = False
     rerank_provider: Literal['siliconflow'] = 'siliconflow'
     rerank_model: str = 'BAAI/bge-reranker-v2-m3'

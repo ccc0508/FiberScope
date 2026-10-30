@@ -5,7 +5,7 @@ from typing import Annotated
 from openai import OpenAI
 from pydantic import BaseModel, Field, StringConstraints, ValidationError
 
-from literature_rag.application.prompts import SYSTEM_PROMPT, evidence_prompt
+from literature_rag.application.prompts import system_prompt, evidence_prompt
 from literature_rag.domain.errors import ProviderError, ProviderResponseError
 from literature_rag.domain.models import Evidence, GeneratedAnswer, GeneratedClaim
 
@@ -156,8 +156,11 @@ class OpenAIGenerator:
         api_key: str,
         base_url: str | None = None,
         client: OpenAI | None = None,
+        *,
+        answer_guidance_enabled: bool = False,
     ) -> None:
         self._model = model
+        self.system_prompt = system_prompt(answer_guidance_enabled)
         self.client = client if client is not None else _client(api_key, base_url)
 
     @property
@@ -172,7 +175,7 @@ class OpenAIGenerator:
     ) -> GeneratedAnswer:
         from literature_rag.diagnostics import provider_usage
         self.last_usage = None
-        system = {"role": "system", "content": SYSTEM_PROMPT}
+        system = {"role": "system", "content": self.system_prompt}
         user = {
             "role": "user",
             "content": evidence_prompt(question, evidences, retry_feedback),
