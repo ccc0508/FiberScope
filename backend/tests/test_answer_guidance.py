@@ -4,7 +4,7 @@ from types import SimpleNamespace as NS
 
 import pytest
 
-from literature_rag.application.prompts import SYSTEM_PROMPT,ANSWER_GUIDANCE,evidence_prompt,system_prompt
+from literature_rag.application.prompts import SYSTEM_PROMPT,ANSWER_GUIDANCE,ANSWER_GUIDANCE_VERSION,evidence_prompt,system_prompt
 from literature_rag.adapters.providers.deepseek import DeepSeekGenerator,_JSON_OUTPUT_INSTRUCTION
 from literature_rag.adapters.providers.openai import OpenAIGenerator
 from literature_rag.config import Settings
@@ -59,5 +59,5 @@ def test_openai_ab_preserves_schema_store_policy_and_source_payload():
 def test_guidance_is_identified_without_exposing_private_configuration(tmp_path):
     p=tmp_path/'test.env';p.write_text('RAG_ANSWER_GUIDANCE_ENABLED=true\nRAG_LLM_API_KEY=secret-canary\n',encoding='utf-8')
     c=configuration_snapshot(p)
-    assert c['answer_guidance']['enabled'] and c['answer_guidance']['version']=='answer-completeness-v1'
+    assert c['answer_guidance']['enabled'] and c['answer_guidance']['version']==ANSWER_GUIDANCE_VERSION
     assert 'secret-canary' not in json.dumps(c)
