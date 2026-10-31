@@ -27,6 +27,13 @@ LIMITATIONS=[
     '网站默认配置未切换。远端模型别名相同和High相同不能保证远端权重固定。']
 
 
+def selected_jobs(import_jobs):
+    # The import bundle also archives DSH; only RAG was selected for this study.
+    jobs=sorted((j for j in import_jobs if j['system']=='rag'),key=lambda j:j['task_id'])
+    require([j['task_id'] for j in jobs]==[f'PFI2-{i:03}' for i in range(1,33)],'Expected exactly 32 selected RAG jobs')
+    return jobs
+
+
 def collect(root,out):
     root,out=Path(root),Path(out);c=judge.read_json(out/'experiment.json');gc=judge.read_json(out/'grading-contract.json')
     records=[];runtimes=[];proofs={};traces={};judging=[];all_results=[]
@@ -39,7 +46,7 @@ def collect(root,out):
         require(all(s!='pending' for _,_,s in audit[5]),'Wait for pending grading requests')
         verify_import_binding(audit,bundle);attempts,statuses=attempt_details(out/'studies'/arm,max_attempts=3)
         traces[arm]={}
-        for job in sorted(audit[1],key=lambda j:j['task_id']):
+        for job in selected_jobs(audit[1]):
             tid=job['task_id'];row=bundle['results'][tid];r=row['response'];f=judge.read_json(out/'fixtures'/arm/(tid+'.json'))
             d=r['fixed_seed_diagnostics'];expected=c['fixtures'][tid][arm]
             require(judge.digest(out/'fixtures'/arm/(tid+'.json'))==expected['fixture_sha256'],'Fixture changed')
@@ -70,6 +77,7 @@ def collect(root,out):
             attempts=attempts,observed_models=model_observations(list(bundle['results'].values())))
     for tid in c['task_ids']:
         require(traces['control'][tid]['seeds_sha256']==traces['guidance'][tid]['seeds_sha256'],'A/B primary hits differ')
+    require(len(records)==64,'Expected exactly two records for each of the 32 questions')
     notes_path=out/'analysis-notes.json'
     notes=judge.read_json(notes_path) if notes_path.exists() else []
     require(isinstance(notes,list) and all(isinstance(n,str) for n in notes),'Analyst notes must be text')
@@ -79,7 +87,8 @@ def collect(root,out):
             new_embedding_calls=0,new_rerank_calls=0,default_configuration_changed=False,strategies=STRATEGIES),
         accounting=dict(jev=scoring.accounting(judging,'jev'),answer_timing=answer_timing(all_results),actual_generation_cost=None),
         provenance=dict(experiment_sha256=judge.digest(out/'experiment.json'),grading_contract_sha256=judge.digest(out/'grading-contract.json'),
-            source_run_sha256=c['source_run_sha256'],source_results_sha256=c['source_results_sha256'],runs=proofs),
+            source_run_sha256=c['source_run_sha256'],source_results_sha256=c['source_results_sha256'],runs=proofs,
+            reporting_amendments=c.get('reporting_amendments',[])),
         analyst_notes=notes,limitations=LIMITATIONS,provider_calls_by_collector=0)
     save(out/'analysis-input.json',payload)
     return dict(records=len(records),provider_calls=0)

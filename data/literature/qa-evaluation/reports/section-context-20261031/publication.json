@@ -1,0 +1,11 @@
+{
+  "files": {
+    "comparison.html": "f14a8daf0df8cad8d9f0ba2adb4e93a3c604025505b4d8442c48a7ea95bf0392",
+    "comparison.json": "7c2cedd0063663348b8f31edcea558bf39536b2562a4554eb992538e67ce654f",
+    "questions-answers-reviews.jsonl": "760912c22ce6933e30c1913919b68fe61391e8fcc97635058da89367a1e8627b"
+  },
+  "document_sha256": "f31b9ec09f8b3aee7aa8928bf7547bccc381f231982023a940b166e1359eaedd",
+  "analysis_input_sha256": "43c46f8580daefff82f96d3ce79e44545172dbf8fd9b66d5b0c162cc509282cb",
+  "reporter_sha256": "21092aaed1c5e92d1e43edcc36b546ba237f95a038f22b54a0f099271659023e",
+  "reporter_model_calls": 0
+}

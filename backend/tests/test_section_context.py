@@ -89,3 +89,20 @@ def test_oversized_primary_is_an_error_and_no_evidence_is_silently_lost():
     a=chunk(1,'a'*300);cat=catalog([a],{a.id:'s'})
     with pytest.raises(ValueError,match='Primary hit cannot fit'):
         assemble_sections([seed(a)],cat,ContextOptions(True,max_evidence_chars=256))
+
+
+def test_section_larger_than_single_evidence_splits_without_losing_primary_hits():
+    a=chunk(1,'a'*200);b=chunk(2,'b'*200,2);c=chunk(3,'c'*200,3)
+    cat=catalog([a,b,c],{n.id:'s' for n in [a,b,c]})
+    out,info=assemble_sections([seed(a),seed(b,'[2]'),seed(c,'[3]')],cat,
+        ContextOptions(True,max_evidence_chars=256,max_total_chars=700))
+    assert len(out)==3 and sum(len(e.text) for e in out)==600
+    assert {s.chunk_id for e in out for s in e.source_chunks}=={a.id,b.id,c.id}
+    assert not info['omitted_seed_chunk_ids']
+
+
+def test_supplement_table_number_is_not_confused_with_main_table():
+    a=chunk(1,'See Table S1.');b=chunk(5,'Table 1: main',kind='table');c=chunk(9,'Table S1: supplement',kind='table')
+    cat=catalog([a,b,c],{a.id:'s',b.id:'t',c.id:'u'})
+    out,_=assemble_sections([seed(a)],cat,ContextOptions(True))
+    assert c.text in out[0].text and b.text not in out[0].text
