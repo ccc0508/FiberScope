@@ -24,6 +24,8 @@ def verify(library,query_cache,output,env_file):
     library,query_cache,output=Path(library).resolve(),Path(query_cache).resolve(),Path(output).resolve()
     if output.exists():raise ValueError('Preserve previous verification; use a new output path')
     settings=Settings(_env_file=env_file)
+    if settings.rerank_enabled:
+        raise ValueError('This offline verifier excludes reranking; use probe_mineru_unified_rerank.py for an explicit API probe')
     env_hash=digest(env_file);metadata_hash=digest(library/'metadata.sqlite3')
     structure=json.loads((library/'structure.json').read_text('utf-8'))
     queries=json.loads(query_cache.read_text('utf-8'))

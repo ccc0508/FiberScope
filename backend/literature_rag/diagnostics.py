@@ -54,6 +54,7 @@ def configuration_snapshot(env_file: Path):
             result['table_retrieval'].pop('linked_sources_per_context')
             result['table_retrieval'].pop('max_linked_sources')
     if settings.rerank_enabled:
+        context_pipeline_version=result['pipeline_version']
         result.update(pipeline_version='literature-candidate-rerank-v1',pipeline_source_files=sources,
             rerank=dict(enabled=True,version='candidate-rerank-v1',provider=settings.rerank_provider,
                 model=settings.rerank_model,timeout_seconds=settings.rerank_timeout_seconds,
@@ -61,6 +62,11 @@ def configuration_snapshot(env_file: Path):
                 max_candidates=50,max_chunks_per_doc=1024,overlap_tokens=80,
                 input='full_parent_source_text',application_truncation=False,
                 retry_count=0,error_policy='fail_without_vector_fallback',score_threshold=None))
+        if settings.context_expansion_strategy=='body_section':
+            result['pipeline_version']='mineru-unified-rerank-v1'
+            result['rerank'].update(context_pipeline_version=context_pipeline_version,
+                position='before_primary_selection_and_unified_context',
+                candidate_inputs='full_source_chunks_before_expansion')
     if settings.answer_guidance_enabled:
         from .application.prompts import ANSWER_GUIDANCE_VERSION,ANSWER_GUIDANCE
         result.update(answer_guidance=dict(enabled=True,version=ANSWER_GUIDANCE_VERSION,
