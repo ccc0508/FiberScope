@@ -1078,15 +1078,15 @@ label,
   display: grid;
   gap: 7px;
   font-size: 12px;
-  color: #8b7e64;
+  color: var(--ink-2);
   min-width: 0;
 }
 input,
 textarea {
   border: 1px solid #dcebe7;
   border-radius: 6px;
-  background: white;
-  color: #524835;
+  background: var(--panel);
+  color: var(--ink);
   padding: 10px;
   font: inherit;
   min-width: 0;
@@ -1494,7 +1494,7 @@ input[type="file"]::file-selector-button {
 }
 .decision legend {
   font-size: 12px;
-  color: #8b7e64;
+  color: var(--ink-2);
   margin-bottom: 10px;
 }
 .decision label {

@@ -66,3 +66,52 @@ export function niceTicks(min: number, max: number, count = 5): number[] {
     ticks.push(Number((ticks[ticks.length - 1]! + step).toFixed(10)));
   return ticks;
 }
+
+// 与设计稿相同的确定性伪随机数（mulberry32），保证纹理每次渲染一致
+export function mulberry32(seed: number): () => number {
+  let a = seed;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// 图表纸面上的纤维纹理：每 900 px² 一根略弯的短纤维，约三成稍粗
+export function fiberPaths(
+  width: number,
+  height: number,
+  seed = 7301,
+): { d: string; wide: boolean }[] {
+  const rng = mulberry32(seed),
+    n = Math.round((width * height) / 900),
+    out: { d: string; wide: boolean }[] = [];
+  const f = (v: number) => v.toFixed(1);
+  for (let i = 0; i < n; i++) {
+    const len = 20 + rng() * 40,
+      ang = rng() * Math.PI;
+    const cx = rng() * width,
+      cy = rng() * height;
+    const dx = Math.cos(ang),
+      dy = Math.sin(ang),
+      nx = -dy,
+      ny = dx;
+    const bend = (rng() - 0.5) * len * 0.35,
+      bend2 = (rng() - 0.5) * len * 0.35;
+    const x0 = cx - (dx * len) / 2,
+      y0 = cy - (dy * len) / 2,
+      x3 = cx + (dx * len) / 2,
+      y3 = cy + (dy * len) / 2;
+    const c1x = x0 + (dx * len) / 3 + nx * bend,
+      c1y = y0 + (dy * len) / 3 + ny * bend;
+    const c2x = x3 - (dx * len) / 3 + nx * bend2,
+      c2y = y3 - (dy * len) / 3 + ny * bend2;
+    out.push({
+      d: `M${f(x0)},${f(y0)} C${f(c1x)},${f(c1y)} ${f(c2x)},${f(c2y)} ${f(x3)},${f(y3)}`,
+      wide: rng() < 0.3,
+    });
+  }
+  return out;
+}
