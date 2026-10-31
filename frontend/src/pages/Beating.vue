@@ -12,6 +12,7 @@ import {
   ChartNoAxesCombined,
   ChevronLeft,
   ChevronRight,
+  Download,
   Minus,
   Plus,
   RefreshCw,
@@ -137,10 +138,53 @@ const curve = (code: Material): CurvePoint[] =>
     .filter((r) => value(r) !== null)
     .map((r) => ({ x: r.beating_revolutions, y: value(r)! }));
 const counts = computed(() => ({
-  all: rows.value.length,
-  SW: byMaterial.value.SW.length,
-  HW: byMaterial.value.HW.length,
+  all: rows.value.filter(inRange).length,
+  SW: byMaterial.value.SW.filter(inRange).length,
+  HW: byMaterial.value.HW.filter(inRange).length,
 }));
+
+/* ---------- 打浆度区间：筛选表格与读数，曲线保留全部点、区间外淡化 ---------- */
+const srOf = (r: BeatingRow) =>
+  typeof r[SR_KEY] === "number" && Number.isFinite(r[SR_KEY])
+    ? (r[SR_KEY] as number)
+    : null;
+const srRange = computed(() => {
+  const m = /^(\d{1,3})-(\d{1,3})$/.exec(String(route.query.sr ?? ""));
+  const lo = m ? Number(m[1]) : 0,
+    hi = m ? Number(m[2]) : 100;
+  return lo <= hi && hi <= 100 ? { lo, hi } : { lo: 0, hi: 100 };
+});
+const rangeActive = computed(
+  () => srRange.value.lo > 0 || srRange.value.hi < 100,
+);
+// 区间未收窄时不按打浆度过滤，打浆度缺失的行照常显示
+function inRange(r: BeatingRow) {
+  if (!rangeActive.value) return true;
+  const sr = srOf(r);
+  return sr !== null && sr >= srRange.value.lo && sr <= srRange.value.hi;
+}
+function setRange(lo: number, hi: number) {
+  const a = Math.min(lo, hi),
+    b = Math.max(lo, hi);
+  update("sr", a === 0 && b === 100 ? undefined : `${a}-${b}`);
+}
+const listedBy = (code: Material) => byMaterial.value[code].filter(inRange);
+const listed = computed(() =>
+  shownMaterials.value.flatMap((code) => listedBy(code)),
+);
+const histogram = computed(() => {
+  const bins = Array.from({ length: 10 }, () => 0);
+  for (const r of visible.value) {
+    const sr = srOf(r);
+    if (sr !== null) bins[Math.min(9, Math.floor(sr / 10))]!++;
+  }
+  const max = Math.max(1, ...bins);
+  return bins.map((n, i) => ({
+    n,
+    h: n ? Math.max(8, (n / max) * 100) : 0,
+    on: i * 10 + 10 > srRange.value.lo && i * 10 < srRange.value.hi,
+  }));
+});
 
 /* ---------- KPI ---------- */
 const round100 = (v: number) => Math.round(v / 100) * 100;
@@ -282,18 +326,18 @@ const cursorRows = computed(() =>
 /* ---------- 读数面板 ---------- */
 const selected = computed(
   () =>
-    visible.value.find((r) => r.canonical_code === selectedCode.value) ??
-    visible.value[0] ??
+    listed.value.find((r) => r.canonical_code === selectedCode.value) ??
+    listed.value[0] ??
     null,
 );
 const selectedIndex = computed(() =>
-  selected.value ? visible.value.indexOf(selected.value) : -1,
+  selected.value ? listed.value.indexOf(selected.value) : -1,
 );
 function select(row: BeatingRow) {
   selectedCode.value = row.canonical_code;
 }
 async function step(delta: number) {
-  const next = visible.value[selectedIndex.value + delta];
+  const next = listed.value[selectedIndex.value + delta];
   if (!next) return;
   select(next);
   // 逐个浏览时，把表格里对应的行滚进视野
@@ -302,19 +346,145 @@ async function step(delta: number) {
     .querySelector(`[data-code="${next.canonical_code}"]`)
     ?.scrollIntoView({ block: "nearest" });
 }
-const otherAtSameRevs = computed(() => {
-  const s = selected.value;
-  if (!s) return null;
-  const other: Material = s.material_code === "SW" ? "HW" : "SW";
+// 同转数下另一种原料：有实测用实测，否则相邻实测点线性插值，超出实测范围为 null（不外推）
+function otherAt(row: BeatingRow) {
+  const other: Material = row.material_code === "SW" ? "HW" : "SW";
   const exact = byMaterial.value[other].find(
-    (r) => r.beating_revolutions === s.beating_revolutions,
+    (r) => r.beating_revolutions === row.beating_revolutions,
   );
   const exactValue = exact ? value(exact) : null;
   if (exactValue !== null)
     return { code: other, value: exactValue, estimated: false };
-  const estimated = interpolateAt(curve(other), s.beating_revolutions);
+  const estimated = interpolateAt(curve(other), row.beating_revolutions);
   return { code: other, value: estimated, estimated: estimated !== null };
+}
+const otherAtSameRevs = computed(() =>
+  selected.value ? otherAt(selected.value) : null,
+);
+// 选中样本距目标打浆度：还差多少 °SR、按本原料曲线估算还需多少转
+const toTarget = computed(() => {
+  const s = selected.value,
+    v = s ? value(s) : null;
+  if (!isSr.value || !s || v === null) return null;
+  const at = reach.value[s.material_code];
+  return {
+    gap: target.value - v,
+    revs:
+      at === null ? null : Math.max(0, round100(at - s.beating_revolutions)),
+  };
 });
+function deltaOf(row: BeatingRow) {
+  const own = value(row),
+    other = otherAt(row);
+  return own === null || other.value === null
+    ? null
+    : { d: own - other.value, estimated: other.estimated };
+}
+const deltaMax = computed(() =>
+  Math.max(1e-9, ...listed.value.map((r) => Math.abs(deltaOf(r)?.d ?? 0))),
+);
+const signed = (d: number) =>
+  `${d > 0 ? "+" : d < 0 ? "−" : ""}${number(Math.abs(d), digits.value)}`;
+
+// 选中点旁的读数标签：自己在另一条曲线下方就放下面，在上方就放上面，避开另一条线
+const selLabel = computed(() => {
+  const s = selected.value,
+    v = s ? value(s) : null;
+  if (!s || v === null || !shownMaterials.value.includes(s.material_code))
+    return null;
+  const x = px(s.beating_revolutions),
+    y = py(v);
+  const text = `${fmt(v)} ${unit.value}`,
+    w = text.length * 6.8 + 12;
+  // 看标签将要占据的位置上另一条曲线在哪：另一条线在上方就放下面，反之放上面
+  const otherCode: Material = s.material_code === "SW" ? "HW" : "SW";
+  const perRev =
+    xMax.value / (plotWidth.value - margin.value.l - margin.value.r);
+  const otherY =
+    material.value === "all"
+      ? interpolateAt(
+          curve(otherCode),
+          s.beating_revolutions + (6 + w / 2) * perRev,
+        )
+      : null;
+  const below = otherY === null ? y < PLOT_H / 2 : otherY >= v;
+  let ly = below ? y + 12 : y - 32;
+  ly = Math.max(margin.value.t, Math.min(PLOT_H - margin.value.b - 22, ly));
+  const right = x + 6 + w <= plotWidth.value - margin.value.r;
+  return { x: right ? x + 6 : x - 6 - w, y: ly, w, text };
+});
+
+/* ---------- 勾选与导出 ---------- */
+const checked = ref(new Set<string>());
+function toggle(code: string, on: boolean) {
+  const next = new Set(checked.value);
+  if (on) next.add(code);
+  else next.delete(code);
+  checked.value = next;
+}
+const allChecked = computed(
+  () =>
+    listed.value.length > 0 &&
+    listed.value.every((r) => checked.value.has(r.canonical_code)),
+);
+const someChecked = computed(
+  () =>
+    !allChecked.value &&
+    listed.value.some((r) => checked.value.has(r.canonical_code)),
+);
+function toggleAll(on: boolean) {
+  const next = new Set(checked.value);
+  for (const r of listed.value)
+    if (on) next.add(r.canonical_code);
+    else next.delete(r.canonical_code);
+  checked.value = next;
+}
+const exportRows = computed(() => {
+  const picked = listed.value.filter((r) =>
+    checked.value.has(r.canonical_code),
+  );
+  return picked.length ? picked : listed.value;
+});
+function exportCsv() {
+  const head = [
+    "样本编码",
+    "样本名称",
+    "原料",
+    "打浆转数(r)",
+    "打浆度(°SR)",
+    `${metric.value.name}(${unit.value})`,
+    "较另一种原料(同转数)",
+    "另一种原料取值方式",
+  ];
+  const cell = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const lines = exportRows.value.map((r) => {
+    const delta = deltaOf(r);
+    return [
+      r.canonical_code,
+      r.display_name,
+      materialName(r.material_code),
+      r.beating_revolutions,
+      srOf(r) ?? "",
+      value(r) ?? "",
+      delta ? delta.d : "",
+      delta
+        ? delta.estimated
+          ? "线性插值"
+          : "实测"
+        : "无（超出实测范围或缺失）",
+    ];
+  });
+  // 数值原样导出，不做取整；带 BOM 便于 Excel 识别中文
+  const csv =
+    "\ufeff" + [head, ...lines].map((l) => l.map(cell).join(",")).join("\r\n");
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(
+    new Blob([csv], { type: "text/csv;charset=utf-8" }),
+  );
+  link.download = `打浆分析_${metric.value.key}_${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
 function openDetail(row: BeatingRow) {
   detailSample.value =
     samples.value.find((s) => s.canonical_code === row.canonical_code) ?? null;
@@ -430,10 +600,83 @@ onBeforeUnmount(() => {
             @update:model-value="update('metric', $event)"
           />
         </div>
-        <p class="beating-count" role="status">
-          {{ visible.length }} 个样本 <span>·</span>
-          {{ valid.length }} 个有效数据点
-        </p>
+        <div class="range-group">
+          <div class="range-head">
+            <span class="control-caption" id="beating-sr-label">打浆度区间</span
+            ><span class="range-val"
+              >{{ srRange.lo }} – {{ srRange.hi }}<small>°SR</small></span
+            >
+          </div>
+          <div class="hist" aria-hidden="true">
+            <i
+              v-for="(b, i) in histogram"
+              :key="i"
+              :class="{ out: !b.on }"
+              :style="{ height: `${b.h}%` }"
+            ></i>
+          </div>
+          <div class="dual-range">
+            <div class="dual-track">
+              <i
+                :style="{
+                  left: `${srRange.lo}%`,
+                  width: `${srRange.hi - srRange.lo}%`,
+                }"
+              ></i>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              :value="srRange.lo"
+              aria-label="打浆度下限"
+              @input="
+                setRange(
+                  Math.min(
+                    +($event.target as HTMLInputElement).value,
+                    srRange.hi,
+                  ),
+                  srRange.hi,
+                )
+              "
+            />
+            <input
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              :value="srRange.hi"
+              aria-label="打浆度上限"
+              @input="
+                setRange(
+                  srRange.lo,
+                  Math.max(
+                    +($event.target as HTMLInputElement).value,
+                    srRange.lo,
+                  ),
+                )
+              "
+            />
+          </div>
+          <div class="ruler-labels">
+            <span>0</span><span>50</span><span>100</span>
+          </div>
+        </div>
+        <div class="count-group">
+          <p class="beating-count" role="status">
+            {{ listed.length }} 个样本 <span>·</span>
+            {{ valid.length }} 个有效数据点
+          </p>
+          <button
+            v-if="rangeActive"
+            class="text-button"
+            type="button"
+            @click="setRange(0, 100)"
+          >
+            重置区间
+          </button>
+        </div>
       </section>
 
       <!-- KPI：打浆度看“达到目标需要多少转”，其他指标看打浆前后的变化 -->
@@ -680,6 +923,7 @@ onBeforeUnmount(() => {
                     class="plot-point"
                     :class="{
                       on: selected?.canonical_code === r.canonical_code,
+                      out: !inRange(r),
                     }"
                     role="button"
                     tabindex="0"
@@ -732,6 +976,17 @@ onBeforeUnmount(() => {
                     :cy="py(target)"
                     r="3.5"
                   />
+                </g>
+                <g v-if="selLabel" class="sel-label" aria-hidden="true">
+                  <rect
+                    :x="selLabel.x"
+                    :y="selLabel.y"
+                    :width="selLabel.w"
+                    height="20"
+                  />
+                  <text :x="selLabel.x + 6" :y="selLabel.y + 14">
+                    {{ selLabel.text }}
+                  </text>
                 </g>
               </svg>
             </div>
@@ -807,7 +1062,7 @@ onBeforeUnmount(() => {
           <div class="beating-chart-heading">
             <h2>样本读数</h2>
             <span v-if="selected" class="readout-pos"
-              >{{ selectedIndex + 1 }} / {{ visible.length }}</span
+              >{{ selectedIndex + 1 }} / {{ listed.length }}</span
             >
           </div>
           <div v-if="selected" class="readout-body">
@@ -853,6 +1108,41 @@ onBeforeUnmount(() => {
                   }"
                 ></i>
               </div>
+            </div>
+            <div v-if="toTarget" class="readout-block">
+              <div class="block-head">
+                <span>距目标 {{ target }} °SR</span
+                ><span v-if="toTarget.gap <= 0">已达到</span>
+              </div>
+              <div class="target-gap">
+                <div>
+                  <strong>{{
+                    toTarget.gap > 0 ? number(toTarget.gap, 1) : "0"
+                  }}</strong
+                  ><small>°SR</small>
+                  <span>还差</span>
+                </div>
+                <div>
+                  <strong>{{
+                    toTarget.gap <= 0
+                      ? "—"
+                      : toTarget.revs === null
+                        ? "未达到"
+                        : number(toTarget.revs)
+                  }}</strong
+                  ><small v-if="toTarget.gap > 0 && toTarget.revs !== null"
+                    >r</small
+                  >
+                  <span>约需再打浆</span>
+                </div>
+              </div>
+              <p class="kpi-note">
+                {{
+                  toTarget.gap > 0 && toTarget.revs === null
+                    ? `${materialName(selected.material_code)}在实测范围内没有达到目标。`
+                    : "转数按本原料相邻实测点线性插值估算，取整到百转。"
+                }}
+              </p>
             </div>
             <div v-if="otherAtSameRevs" class="readout-block">
               <div class="block-head">
@@ -916,7 +1206,7 @@ onBeforeUnmount(() => {
                 <button
                   class="button"
                   type="button"
-                  :disabled="selectedIndex >= visible.length - 1"
+                  :disabled="selectedIndex >= listed.length - 1"
                   aria-label="下一个样本"
                   @click="step(1)"
                 >
@@ -933,9 +1223,26 @@ onBeforeUnmount(() => {
         <div class="beating-chart-heading">
           <div>
             <h2>
-              实验明细 <span class="quiet-tag">{{ visible.length }}</span>
+              实验明细 <span class="quiet-tag">{{ listed.length }}</span>
             </h2>
-            <p>按原料分组、打浆转数升序；“—”表示缺失。</p>
+            <p>
+              按原料分组、打浆转数升序；“—”表示缺失；“≈”表示另一种原料在该转数无实测、按插值比较。
+            </p>
+          </div>
+          <div class="table-actions">
+            <span>已勾选 {{ checked.size }}</span>
+            <button
+              class="button"
+              type="button"
+              :disabled="!listed.length"
+              @click="exportCsv"
+            >
+              <Download :size="15" />{{
+                exportRows.length === listed.length
+                  ? "导出筛选结果"
+                  : `导出已勾选 ${exportRows.length} 条`
+              }}（CSV）
+            </button>
           </div>
         </div>
         <div
@@ -947,27 +1254,54 @@ onBeforeUnmount(() => {
           <table>
             <thead>
               <tr>
+                <th class="check-cell">
+                  <input
+                    type="checkbox"
+                    class="check"
+                    aria-label="勾选当前筛选的全部样本"
+                    :checked="allChecked"
+                    :indeterminate="someChecked"
+                    @change="
+                      toggleAll(($event.target as HTMLInputElement).checked)
+                    "
+                  />
+                </th>
                 <th>样本编码</th>
                 <th class="numeric">打浆转数 / r</th>
                 <th class="value-head">{{ metric.name }} / {{ unit }}</th>
+                <th class="numeric">较另一种原料（同转数）</th>
                 <th>来源</th>
               </tr>
             </thead>
             <tbody v-for="code in shownMaterials" :key="code">
-              <tr class="group-row">
-                <td colspan="4">
+              <tr v-if="listedBy(code).length" class="group-row">
+                <td colspan="6">
                   <i :style="{ background: color(code) }"></i
                   ><strong>{{ materialName(code) }}</strong
-                  ><span>{{ byMaterial[code].length }} 个样本</span>
+                  ><span>{{ listedBy(code).length }} 个样本</span>
                 </td>
               </tr>
               <tr
-                v-for="r in byMaterial[code]"
+                v-for="r in listedBy(code)"
                 :key="r.canonical_code"
                 :data-code="r.canonical_code"
                 :class="{ on: selected?.canonical_code === r.canonical_code }"
                 @click="select(r)"
               >
+                <td class="check-cell" @click.stop>
+                  <input
+                    type="checkbox"
+                    class="check"
+                    :aria-label="`勾选 ${r.canonical_code}`"
+                    :checked="checked.has(r.canonical_code)"
+                    @change="
+                      toggle(
+                        r.canonical_code,
+                        ($event.target as HTMLInputElement).checked,
+                      )
+                    "
+                  />
+                </td>
                 <td>
                   <button class="sample-code" @click.stop="openDetail(r)">
                     {{ r.canonical_code }}
@@ -991,6 +1325,33 @@ onBeforeUnmount(() => {
                     ></span>
                   </div>
                 </td>
+                <td class="delta-cell">
+                  <template v-if="deltaOf(r)"
+                    ><span
+                      class="delta-value"
+                      :title="
+                        deltaOf(r)!.estimated
+                          ? '另一种原料在该转数无实测，按相邻实测点线性插值'
+                          : '两种原料在该转数都有实测'
+                      "
+                      >{{ deltaOf(r)!.estimated ? "≈" : ""
+                      }}{{ signed(deltaOf(r)!.d) }}</span
+                    ><svg width="64" height="10" aria-hidden="true">
+                      <line x1="32" x2="32" y1="0" y2="10" class="mid" />
+                      <rect
+                        :x="
+                          deltaOf(r)!.d < 0
+                            ? 32 - (Math.abs(deltaOf(r)!.d) / deltaMax) * 30
+                            : 32
+                        "
+                        y="2.5"
+                        :width="(Math.abs(deltaOf(r)!.d) / deltaMax) * 30"
+                        height="5"
+                        :fill="color(code)"
+                      /></svg
+                  ></template>
+                  <span v-else class="delta-none">—</span>
+                </td>
                 <td>
                   <button class="text-button" @click.stop="openDetail(r)">
                     查看详情
@@ -1000,7 +1361,12 @@ onBeforeUnmount(() => {
             </tbody>
           </table>
         </div>
-        <p v-if="!visible.length" class="beating-state">暂无匹配数据。</p>
+        <div v-if="!listed.length" class="beating-state">
+          <p>没有打浆度在 {{ srRange.lo }}–{{ srRange.hi }} °SR 之间的样本。</p>
+          <button class="button" type="button" @click="setRange(0, 100)">
+            重置区间
+          </button>
+        </div>
       </section>
     </template>
     <SampleDetail :sample="detailSample" @close="detailSample = null" />
@@ -1015,7 +1381,8 @@ onBeforeUnmount(() => {
 .page-heading {
   position: relative;
   isolation: isolate;
-  min-height: 128px;
+  min-height: 120px;
+  margin-bottom: 16px;
 }
 .page-heading > :not(.fiber-hero) {
   position: relative;
@@ -1025,8 +1392,8 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: flex-end;
   gap: 28px;
-  padding: 16px 22px;
-  margin-bottom: 16px;
+  padding: 14px 20px;
+  margin-bottom: 14px;
   position: relative;
   z-index: 3;
   flex-wrap: wrap;
@@ -1081,11 +1448,115 @@ onBeforeUnmount(() => {
 .material-seg button.on .seg-count {
   color: var(--signal);
 }
-.beating-count {
+.count-group {
   margin-left: auto;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.beating-count {
   font-size: 13px;
   color: var(--muted);
-  align-self: center;
+}
+/* 打浆度区间：分布直方图 + 双滑块，拇指做成游标卡尺的卡爪 */
+.range-group {
+  width: 240px;
+}
+.range-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.range-val {
+  font: 500 13px var(--font-mono);
+  color: var(--ink);
+}
+.range-val small {
+  margin-left: 3px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.hist {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 26px;
+  padding: 0 4px;
+}
+.hist i {
+  flex: 1;
+  background: #a89a7d;
+  border-radius: 1px 1px 0 0;
+}
+.hist i.out {
+  opacity: 0.28;
+}
+.dual-range {
+  position: relative;
+  height: 18px;
+}
+.dual-track {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 8px;
+  height: 2px;
+  background: var(--border-strong);
+}
+.dual-track i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--signal);
+}
+.dual-range input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  margin: 0;
+  background: none;
+  pointer-events: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.dual-range input::-webkit-slider-runnable-track {
+  height: 18px;
+  background: none;
+}
+.dual-range input::-moz-range-track {
+  height: 18px;
+  background: none;
+}
+.dual-range input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: auto;
+  width: 8px;
+  height: 18px;
+  border-radius: 1px;
+  background: var(--signal);
+  cursor: ew-resize;
+}
+.dual-range input::-moz-range-thumb {
+  pointer-events: auto;
+  width: 8px;
+  height: 18px;
+  border: 0;
+  border-radius: 1px;
+  background: var(--signal);
+  cursor: ew-resize;
+}
+.dual-range input:focus-visible {
+  outline: none;
+}
+.dual-range input:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+.dual-range input:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
 }
 .beating-count span {
   margin: 0 10px;
@@ -1216,7 +1687,7 @@ onBeforeUnmount(() => {
   align-items: stretch;
 }
 .beating-chart {
-  padding: 18px 20px 16px;
+  padding: 16px 18px 14px;
   min-width: 0;
 }
 .beating-chart-heading {
@@ -1282,6 +1753,17 @@ onBeforeUnmount(() => {
 }
 .plot-point:focus {
   outline: none;
+}
+.plot-point.out .mark {
+  opacity: 0.25;
+}
+.sel-label rect {
+  fill: var(--paper);
+  stroke: var(--signal-ink);
+}
+.sel-label text {
+  fill: var(--signal-ink);
+  font-weight: 500;
 }
 .plot-point:focus-visible .mark {
   stroke: var(--signal-ink);
@@ -1367,7 +1849,7 @@ onBeforeUnmount(() => {
 
 /* 读数面板 */
 .beating-readout {
-  padding: 18px 20px;
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
 }
@@ -1461,6 +1943,30 @@ onBeforeUnmount(() => {
   inset: 0 auto 0 0;
   transition: width 0.3s ease-out;
 }
+.target-gap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.target-gap div {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.target-gap strong {
+  font: 500 22px/1 var(--font-mono);
+  color: var(--ink);
+}
+.target-gap small {
+  font: 400 12px var(--font-mono);
+  color: var(--muted);
+}
+.target-gap span {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--muted);
+}
 .compare-row {
   display: grid;
   grid-template-columns: 64px 1fr 56px;
@@ -1500,7 +2006,50 @@ onBeforeUnmount(() => {
 
 /* 表格：按原料分组 */
 .beating-table .beating-chart-heading {
-  padding: 18px 22px;
+  padding: 16px 20px;
+}
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.check-cell {
+  width: 40px;
+  padding-right: 0;
+}
+.check {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--signal);
+  cursor: pointer;
+}
+.delta-cell {
+  text-align: right;
+  white-space: nowrap;
+}
+.delta-cell svg {
+  vertical-align: middle;
+  margin-left: 10px;
+}
+.delta-cell .mid {
+  stroke: var(--border-strong);
+}
+.delta-value {
+  font: 500 13px var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.delta-none {
+  color: var(--muted);
+}
+/* 打浆页更紧凑：表格行距收一档 */
+.beating-table td {
+  height: 40px;
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 .group-row td {
   background: var(--canvas);
@@ -1591,9 +2140,16 @@ tbody tr:not(.group-row) {
     gap: 14px;
     padding: 16px;
   }
-  .beating-count {
+  .count-group {
     margin-left: 0;
     width: 100%;
+    align-items: flex-start;
+  }
+  .range-group {
+    width: 100%;
+  }
+  .table-actions span {
+    display: none;
   }
   .beating-kpis {
     grid-template-columns: 1fr 1fr;
