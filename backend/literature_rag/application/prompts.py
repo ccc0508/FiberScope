@@ -16,19 +16,23 @@ abbreviations, numerical values, and citation references accurately.
 Never invent a filename, page number, chunk id, citation reference, or outside fact.
 Return a concise answer and a list of individually cited claims."""
 
-ANSWER_GUIDANCE_VERSION = 'answer-completeness-v2'
+ANSWER_GUIDANCE_VERSION = 'answer-completeness-v3'
 ANSWER_GUIDANCE = """Answer each requested part directly and briefly. Put all substantive content in claims.
+For every part you cannot answer, include an explicit claim saying what cannot be answered from these
+excerpts and what information or material is missing. Do not silently skip it or substitute related facts.
+These limitations must appear in claims, not only in the undisplayed answer field.
 Omit related background, repeated conclusions and unrequested detail.
 Keep claims short. Split independently supported facts when they need different sources; for conflicting
 values, cite each value separately before stating the conflict.
-Attach the smallest sufficient reference set. Every attached reference must directly support a substantive
-component of that claim; together they must cover the whole claim. Topical similarity is insufficient.
+Attach the smallest sufficient reference set. For factual claims, every attached reference must directly
+support a substantive component; together they must cover the whole claim. Topical similarity is insufficient.
 Include the sample, value, unit and conditions needed for the requested comparison. Use one numerical
 example or counterexample only when relevant and available; never estimate missing data.
 Preserve the authors' uncertainty. State necessary interpretation limits when justified by the evidence;
 do not turn association into established causation or a conversion formula, or invent generic caveats.
-Answer supported parts first. Bound missing information to the supplied excerpts unless wider absence is
-established. Explain what the cited excerpts actually report; do not use topical citations as proof of absence.
+Bound missing information to the supplied excerpts unless wider absence is established. For a pure
+scope limitation, references identify the supplied material being limited; they do not prove whole-paper
+absence. Distinguish these limits from scientific facts, without adding new output fields.
 Do not reconstruct raw measurements from summaries. Return only the existing answer/claims structure."""
 
 

@@ -6,10 +6,16 @@ import pytest
 
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'scripts'))
-import answer_guidance_v2_20261031 as study
+import answer_guidance_v2_20261031 as v2
+import answer_guidance_v3_20261031 as v3
 
 
-def sealed(tmp_path,monkeypatch):
+@pytest.fixture(params=[v2,v3],ids=['v2','v3'])
+def study(request):
+    return request.param
+
+
+def sealed(study,tmp_path,monkeypatch):
     (tmp_path/'scripts').mkdir();controller=tmp_path/'scripts/controller.py';controller.write_bytes(b'controller')
     engine=tmp_path/'scripts/engine.py';engine.write_bytes(b'original')
     out=tmp_path/'private';out.mkdir()
@@ -24,8 +30,8 @@ def sealed(tmp_path,monkeypatch):
 
 
 @pytest.mark.parametrize('change',['controller','engine','version'])
-def test_changed_controller_engine_or_version_halts_before_a_paid_operation(tmp_path,monkeypatch,change):
-    controller,engine,c=sealed(tmp_path,monkeypatch);assert study.check_contract()==c
+def test_changed_controller_engine_or_version_halts_before_a_paid_operation(study,tmp_path,monkeypatch,change):
+    controller,engine,c=sealed(study,tmp_path,monkeypatch);assert study.check_contract()==c
     if change=='controller':controller.write_bytes(b'changed')
     elif change=='engine':engine.write_bytes(b'changed')
     else:
@@ -33,8 +39,8 @@ def test_changed_controller_engine_or_version_halts_before_a_paid_operation(tmp_
     with pytest.raises(ValueError):study.execute('run')
 
 
-def test_new_collection_does_not_inject_prior_study_conclusions(tmp_path,monkeypatch):
-    _,_,c=sealed(tmp_path,monkeypatch);received=[]
+def test_new_collection_does_not_inject_prior_study_conclusions(study,tmp_path,monkeypatch):
+    _,_,c=sealed(study,tmp_path,monkeypatch);received=[]
     def collect(root,out,analyst_notes):
         received.append(analyst_notes)
         return dict(records=[],controls={},provenance={},analyst_notes=analyst_notes)
@@ -48,6 +54,6 @@ def test_new_collection_does_not_inject_prior_study_conclusions(tmp_path,monkeyp
     with pytest.raises(ValueError):study.collect(notes)
 
 
-def test_prepared_study_cannot_be_overwritten(tmp_path,monkeypatch):
-    sealed(tmp_path,monkeypatch)
+def test_prepared_study_cannot_be_overwritten(study,tmp_path,monkeypatch):
+    sealed(study,tmp_path,monkeypatch)
     with pytest.raises(ValueError,match='never overwrite'):study.prepare()
