@@ -421,18 +421,18 @@ load();
 </template>
 
 <style scoped>
-.source-parts { margin-top: 12px; color: #62758a; font-size: 13px; }
+.source-parts { margin-top: 12px; color: #8a7d62; font-size: 13px; }
 .source-parts summary { cursor: pointer; }
 .source-parts > div { margin-top: 12px; }
-.record-info, .feedback-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 18px; font-size: 12px; color: #8191a4; }
+.record-info, .feedback-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 18px; font-size: 12px; color: #a49881; }
 .record-info { justify-content: space-between; }
-.feedback-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid #edf1f5; }
+.feedback-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid #f5f2ed; }
 .feedback-section h3 { font-size: 14px; margin: 0; }
-.chosen { background: #edf5fc; border-color: #8eb8dc; color: #4386bf; }
+.chosen { background: #e3efec; border-color: #5fa8a2; color: #0b6e68; }
 .feedback-section fieldset { display: flex; flex-wrap: wrap; gap: 12px; border: 0; padding: 12px 0; margin: 14px 0 0; font-size: 12px; }
-.feedback-section legend, .feedback-note { color: #8191a4; font-size: 12px; }
+.feedback-section legend, .feedback-note { color: #a49881; font-size: 12px; }
 .feedback-section fieldset label { display: inline-flex; align-items: center; gap: 5px; }
-.feedback-section textarea { box-sizing: border-box; width: 100%; margin: 8px 0 12px; border: 1px solid #dce5ed; border-radius: 6px; padding: 10px; font: inherit; font-size: 13px; resize: vertical; }
+.feedback-section textarea { box-sizing: border-box; width: 100%; margin: 8px 0 12px; border: 1px solid #dcebe7; border-radius: 6px; padding: 10px; font: inherit; font-size: 13px; resize: vertical; }
 .feedback-error { color: #b16642; font-size: 12px; }
 .literature-page {
   display: flex;
@@ -454,23 +454,23 @@ load();
   margin-left: 16px;
   font-size: 12px;
   font-weight: 400;
-  color: #8191a4;
+  color: #a49881;
 }
 .muted {
   font-size: 12px;
   line-height: 1.8;
-  color: #8191a4;
+  color: #a49881;
 }
 .library-document {
   display: flex;
   align-items: center;
   gap: 14px;
   padding-top: 15px;
-  border-top: 1px solid #edf1f5;
+  border-top: 1px solid #f5f2ed;
 }
 .library-document > svg {
   flex-shrink: 0;
-  color: #58a397;
+  color: #127a3a;
 }
 .library-document > div {
   flex: 1;
@@ -483,12 +483,12 @@ load();
 }
 .library-document small {
   display: block;
-  color: #8191a4;
+  color: #a49881;
   font-size: 12px;
   margin-top: 6px;
 }
 .text-link {
-  color: #4386bf;
+  color: #0b6e68;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -511,21 +511,21 @@ load();
   resize: vertical;
   min-height: 120px;
   max-height: 360px;
-  border: 1px solid #dce5ed;
+  border: 1px solid #dcebe7;
   border-radius: 8px;
   font: inherit;
   font-size: 14px;
   line-height: 1.8;
   padding: 14px;
-  color: #40566d;
-  background: #fbfcfe;
+  color: #0b5f5a;
+  background: #fefdfb;
 }
 .question-card textarea:focus {
-  outline: 2px solid #8eb8dc;
+  outline: 2px solid #5fa8a2;
   outline-offset: 2px;
 }
 .question-card textarea::placeholder {
-  color: #9aa8b8;
+  color: #b8ae9a;
 }
 .question-foot {
   display: flex;
@@ -536,7 +536,7 @@ load();
 }
 .question-foot p {
   font-size: 12px;
-  color: #8191a4;
+  color: #a49881;
   margin: 0;
   line-height: 1.8;
 }
@@ -554,14 +554,14 @@ load();
   gap: 10px;
   margin-top: 22px;
   padding-top: 18px;
-  border-top: 1px solid #edf1f5;
+  border-top: 1px solid #f5f2ed;
   font-size: 12px;
-  color: #8191a4;
+  color: #a49881;
 }
 .example-questions button {
-  border: 1px solid #e1e9f0;
-  background: #f7fafc;
-  color: #617e99;
+  border: 1px solid #dcebe7;
+  background: #fcfaf7;
+  color: #988662;
   border-radius: 6px;
   padding: 8px 10px;
   font: inherit;
@@ -570,15 +570,15 @@ load();
   line-height: 1.7;
 }
 .example-questions button:hover {
-  background: #edf5fc;
+  background: #e3efec;
 }
 .literature-state {
   padding: 30px;
   text-align: center;
-  color: #718399;
+  color: #998c71;
 }
 .literature-state > svg {
-  color: #4386bf;
+  color: #0b6e68;
 }
 .literature-state h2 {
   font-size: 16px;
@@ -600,26 +600,26 @@ load();
 }
 .answer-heading span {
   font-size: 12px;
-  color: #8191a4;
+  color: #a49881;
 }
 .submitted-question {
   font-size: 13px;
-  color: #8191a4;
+  color: #a49881;
   padding-bottom: 18px;
-  border-bottom: 1px solid #edf1f5;
+  border-bottom: 1px solid #f5f2ed;
   overflow-wrap: anywhere;
 }
 .answer-content {
   font-size: 14px;
   line-height: 2;
-  color: #40566d;
+  color: #0b5f5a;
   overflow-wrap: anywhere;
 }
 .citation-ref {
   font: inherit;
   font-size: 12px;
-  color: #4386bf;
-  background: #edf5fc;
+  color: #0b6e68;
+  background: #e3efec;
   border: 0;
   border-radius: 4px;
   cursor: pointer;
@@ -628,7 +628,7 @@ load();
 }
 .answer-note {
   font-size: 12px;
-  color: #8191a4;
+  color: #a49881;
   line-height: 1.8;
   margin-bottom: 0;
 }
@@ -638,7 +638,7 @@ load();
   gap: 16px;
 }
 .evidence-card:focus {
-  outline: 2px solid #8eb8dc;
+  outline: 2px solid #5fa8a2;
   outline-offset: 3px;
 }
 .evidence-heading {
@@ -658,20 +658,20 @@ load();
 }
 .evidence-heading small {
   font-size: 12px;
-  color: #8191a4;
+  color: #a49881;
 }
 .evidence-number {
-  color: #4386bf;
+  color: #0b6e68;
   font-size: 13px;
 }
 .evidence-card blockquote {
   margin: 18px 0 0;
   padding: 12px 16px;
-  border-left: 3px solid #c8ddef;
-  background: #f8fafc;
+  border-left: 3px solid #dcebe7;
+  background: #fcfbf8;
   font-size: 13px;
   line-height: 1.9;
-  color: #657c91;
+  color: #918265;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   max-height: 320px;
