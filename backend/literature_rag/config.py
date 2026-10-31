@@ -119,8 +119,6 @@ class Settings(BaseSettings):
         if self.context_expansion_strategy=='body_section':
             if not self.context_expansion_enabled:
                 raise ValueError('body-section context requires enabled expansion')
-            if self.table_retrieval_enabled:
-                raise ValueError('body-section context manages table links without a separate table-expansion stage')
         if self.rerank_enabled:
             if not self.rerank_model.strip() or not self.rerank_base_url or not self.rerank_api_key or not self.rerank_api_key.get_secret_value().strip():
                 raise ValueError('enabled reranking requires model, base URL and API key')

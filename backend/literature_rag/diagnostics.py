@@ -39,6 +39,13 @@ def configuration_snapshot(env_file: Path):
         result.update(pipeline_version=VERSION,pipeline_source_files=sources)
         result['context_expansion'].update(strategy='body_section',non_body_expansion=False,
             fallback_policy='same_page_identified_body_sentence_continuation_only')
+        if settings.table_retrieval_enabled:
+            from .application.table_evidence import BODY_TABLE_VERSION
+            result['pipeline_version']=BODY_TABLE_VERSION
+            result['context_expansion'].update(table_hit_expansion='explicit_body_links_only',
+                non_body_expansion=True,non_body_section_expansion=False,metadata_expansion=False)
+            result['table_retrieval'].update(link_policy='identified_body_table_only',recursive=False,
+                duplicate_source_policy='skip_sources_already_in_section_or_primary_hits')
     if settings.rerank_enabled:
         result.update(pipeline_version='literature-candidate-rerank-v1',pipeline_source_files=sources,
             rerank=dict(enabled=True,version='candidate-rerank-v1',provider=settings.rerank_provider,

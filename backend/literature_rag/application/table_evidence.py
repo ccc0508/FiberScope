@@ -10,6 +10,7 @@ from literature_rag.domain.errors import InfrastructureError
 from literature_rag.domain.models import EvidenceSource, VectorMatch
 
 VERSION = 'table-evidence-v1'
+BODY_TABLE_VERSION = 'body-section-table-evidence-v1'
 
 
 class TableRelations:
@@ -48,6 +49,24 @@ class TableRelations:
         for vector in self.vectors.values():
             if len(vector) != dims or any(type(x) not in (int,float) or not isfinite(x) for x in vector) or fsum(x*x for x in vector) <= 0:
                 raise InfrastructureError('invalid row embedding')
+
+    def validate_body_catalog(self, catalog):
+        """A role-aware pipeline must never load legacy links from abstract/metadata."""
+        for cid, chunk in self.chunks.items():
+            source = catalog.chunks.get(cid)
+            if source is None or (source.text, source.document_id, source.page_start, source.page_end,
+                    source.kind, source.chunk_index) != (chunk.text, chunk.document_id, chunk.page_start,
+                    chunk.page_end, chunk.kind, chunk.chunk_index):
+                raise InfrastructureError('table sources differ from the body-section catalog')
+        for row in self.rows:
+            parent = catalog.mapping[row['parent_chunk_id']]
+            if parent['content_role'] != 'table' or parent['role_status'] != 'identified':
+                raise InfrastructureError('row retrieval requires an identified source table')
+        for link in self.links:
+            a, b = (catalog.mapping[link[key]] for key in ('source_chunk_id', 'target_chunk_id'))
+            if (a['role_status'] != 'identified' or b['role_status'] != 'identified'
+                    or {a['content_role'], b['content_role']} != {'body', 'table'}):
+                raise InfrastructureError('table links require identified body and table roles')
 
     @classmethod
     def load(cls, root: Path, metadata, provider, model, dimensions):
@@ -110,8 +129,10 @@ class TableVectorSearch:
         return [VectorMatch(cid,score) for cid,score in candidates]
 
 
-def append_related_tables(evidences, relations: TableRelations, options, diagnostics):
+def append_related_tables(evidences, relations: TableRelations, options, diagnostics, *, body_catalog=None):
     """Add complete linked sources after existing context; preserve original hits and budgets."""
+    if body_catalog is not None:
+        relations.validate_body_catalog(body_catalog)
     result = list(evidences)
     present = {s.chunk_id for e in result for s in e.source_chunks} | {e.chunk_id for e in result}
     total = sum(len(e.text) for e in result)
@@ -142,4 +163,8 @@ def append_related_tables(evidences, relations: TableRelations, options, diagnos
         table_relationship_additions=additions,table_relationship_omissions=omitted)
     diagnostics['added_chunk_ids'] = list(dict.fromkeys([*diagnostics.get('added_chunk_ids',[]),*[a['target_chunk_id'] for a in additions]]))
     diagnostics['budget_limited'] |= any(x['reason']=='length_budget' for x in omitted)
+    if body_catalog is not None:
+        diagnostics.update(version=BODY_TABLE_VERSION, table_link_policy='identified_body_table_only',
+            table_links_recursive=False, table_hit_expansion='explicit_body_links_only',
+            non_body_expansion=True, non_body_section_expansion=False, metadata_expansion=False)
     return result, diagnostics

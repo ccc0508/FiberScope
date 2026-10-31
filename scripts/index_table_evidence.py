@@ -112,9 +112,17 @@ def plan(source):
         ids=[row[0] for row in conn.execute('SELECT id FROM chunks ORDER BY document_id,chunk_index')]
     chunks=store.get_chunks(ids)
     if len(chunks)!=structure['chunks']:raise ValueError('Source chunk count mismatch')
+    role_catalog=None
+    if any('content_role' in m for m in structure.get('mapping',{}).values()):
+        from literature_rag.application.body_context import BodySectionCatalog
+        role_catalog=BodySectionCatalog(chunks,structure)
     rows=[];tables={};by_id={c.id:c for c in chunks}
     for chunk in chunks:
         if chunk.kind=='table':
+            if role_catalog is not None:
+                m=role_catalog.mapping[chunk.id]
+                if m['role_status']!='identified' or m['content_role']!='table':
+                    raise ValueError('Cannot index a table with uncertain content role')
             parsed=table_rows(chunk)
             key=(chunk.document_id,parsed[0]['table_number'])
             if key in tables:raise ValueError('Ambiguous duplicate table number')
@@ -123,7 +131,12 @@ def plan(source):
     links=[]
     for chunk in chunks:
         if chunk.kind!='paragraph':continue
-        for number in sorted(table_references(chunk.text)):
+        body_text=chunk.text
+        if role_catalog is not None:
+            m=role_catalog.mapping[chunk.id]
+            if m['role_status']!='identified' or m['content_role']!='body':continue
+            body_text=m.get('body_text',chunk.text)
+        for number in sorted(table_references(body_text)):
             target=tables.get((chunk.document_id,number))
             if target:
                 links.append(dict(source_chunk_id=chunk.id,target_chunk_id=target,
@@ -136,6 +149,7 @@ def plan(source):
                 kind='table_explicitly_discussed_by_body',table_number=link['table_number']))
     links.sort(key=lambda link:(by_id[link['source_chunk_id']].chunk_index,abs(by_id[link['source_chunk_id']].chunk_index-by_id[link['target_chunk_id']].chunk_index),link['target_chunk_id']))
     return dict(version=VERSION,source_structure_sha256=digest(source/'structure.json'),rows=rows,links=links,
+        **(dict(content_role_policy='identified_body_table_only') if role_catalog is not None else {}),
         parent_text_sha256={cid:sha256(by_id[cid].text.encode()).hexdigest() for cid in tables.values()},
         policy='Row text is retrieval-only; evidence is the complete existing source table. Explicit body table references only, same document. No QA question input or manual scientific values.')
 
@@ -184,7 +198,7 @@ def preview(source,output):
     save(output/'table-retrieval.json',result)
     e=lambda value:escape(str(value),quote=True)
     html=['<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>表格行检索与原表关联</title><style>body{font:15px/1.7 system-ui;margin:30px;background:#f4f7fb;color:#203247}main{max-width:1200px;margin:auto}article{background:white;padding:18px;margin:14px 0;border:1px solid #dce5ef;border-radius:8px}pre{white-space:pre-wrap;overflow-wrap:anywhere}summary{cursor:pointer}</style><main><h1>表格行检索与原表关联</h1>',
-        '<p>完整原表与正文95块保留。下列表示仅参与检索，命中后返回完整表格；不作为逐字原文引用。</p>']
+        '<p>完整原表与正文保持不变。下列表示仅参与检索，命中后返回完整表格；不作为逐字原文引用。</p>']
     for row in result['rows']:
         html.append('<article><h2>Table '+str(row['table_number'])+' · 分组 '+e(row['group'])+' · 数据行 '+str(row['data_index'])+'</h2><pre>'+e(row['text'])+'</pre><details><summary>原始行与父表位置</summary><pre>'+e(json.dumps({k:v for k,v in row.items() if k!='text'},ensure_ascii=False,indent=2))+'</pre></details></article>')
     html.append('<article><h2>正文与表格关联</h2><pre>'+e(json.dumps(result['links'],ensure_ascii=False,indent=2))+'</pre></article></main></html>')
