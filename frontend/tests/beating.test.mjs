@@ -10,7 +10,14 @@ const compiled = ts.transpile(source, {
   target: ts.ScriptTarget.ES2022,
   module: ts.ModuleKind.ES2022,
 });
-const { sortedCurve, interpolateAt, firstReach, niceTicks } = await import(
+const {
+  sortedCurve,
+  interpolateAt,
+  firstReach,
+  niceTicks,
+  fiberPaths,
+  mulberry32,
+} = await import(
   `data:text/javascript;base64,${Buffer.from(compiled).toString("base64")}`
 );
 const curve = [
@@ -55,4 +62,16 @@ test("nice ticks cover the range with round steps", () => {
   const t = niceTicks(0.31, 0.47, 4);
   assert.ok(t[0] <= 0.31 && t[t.length - 1] >= 0.47);
   assert.ok(niceTicks(5, 5).length >= 2);
+});
+
+test("fibre texture is deterministic and scales with area", () => {
+  const a = fiberPaths(300, 300),
+    b = fiberPaths(300, 300);
+  assert.equal(a.length, 100);
+  assert.deepEqual(a, b);
+  assert.equal(fiberPaths(600, 300).length, 200);
+  assert.match(a[0].d, /^M[\d.-]+,[\d.-]+ C/);
+  const r = mulberry32(1);
+  const v = [r(), r(), r()];
+  assert.ok(v.every((x) => x >= 0 && x < 1));
 });
