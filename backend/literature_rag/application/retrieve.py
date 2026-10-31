@@ -112,13 +112,15 @@ class RetrievalService:
         self.last_seed_evidences = list(evidences)
         if self.body_context_catalog is None:
             evidences,self.last_context_diagnostics=assemble(evidences,self.metadata,self.context_options)
+            if self.table_relations is not None:
+                from literature_rag.application.table_evidence import append_related_tables
+                evidences,self.last_context_diagnostics=append_related_tables(evidences,self.table_relations,
+                    self.context_options,self.last_context_diagnostics)
         else:
             from literature_rag.application.body_context import assemble_body_context
-            evidences,self.last_context_diagnostics=assemble_body_context(evidences,self.body_context_catalog,self.context_options)
+            evidences,self.last_context_diagnostics=assemble_body_context(evidences,self.body_context_catalog,
+                self.context_options,table_relations=self.table_relations)
         if self.table_relations is not None:
-            from literature_rag.application.table_evidence import append_related_tables
-            evidences,self.last_context_diagnostics=append_related_tables(evidences,self.table_relations,self.context_options,
-                self.last_context_diagnostics,body_catalog=self.body_context_catalog)
             self.last_context_diagnostics['table_retrieval']=self.vectors.last_diagnostics
         if self.reranker is not None:
             self.last_context_diagnostics['rerank']=self.last_rerank_diagnostics

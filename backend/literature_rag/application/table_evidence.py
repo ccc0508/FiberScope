@@ -10,7 +10,7 @@ from literature_rag.domain.errors import InfrastructureError
 from literature_rag.domain.models import EvidenceSource, VectorMatch
 
 VERSION = 'table-evidence-v1'
-BODY_TABLE_VERSION = 'scientific-section-table-evidence-v2'
+BODY_TABLE_VERSION = 'unified-scientific-table-context-v3'
 
 
 class TableRelations:
@@ -132,7 +132,7 @@ class TableVectorSearch:
 def append_related_tables(evidences, relations: TableRelations, options, diagnostics, *, body_catalog=None):
     """Add complete linked sources after existing context; preserve original hits and budgets."""
     if body_catalog is not None:
-        relations.validate_body_catalog(body_catalog)
+        raise ValueError('Use unified primary candidates for scientific-section context')
     result = list(evidences)
     present = {s.chunk_id for e in result for s in e.source_chunks} | {e.chunk_id for e in result}
     total = sum(len(e.text) for e in result)
@@ -163,8 +163,4 @@ def append_related_tables(evidences, relations: TableRelations, options, diagnos
         table_relationship_additions=additions,table_relationship_omissions=omitted)
     diagnostics['added_chunk_ids'] = list(dict.fromkeys([*diagnostics.get('added_chunk_ids',[]),*[a['target_chunk_id'] for a in additions]]))
     diagnostics['budget_limited'] |= any(x['reason']=='length_budget' for x in omitted)
-    if body_catalog is not None:
-        diagnostics.update(version=BODY_TABLE_VERSION, table_link_policy='identified_body_table_only',
-            table_links_recursive=False, table_hit_expansion='reliable_section_then_explicit_body_links',
-            non_body_expansion=True, non_body_section_expansion=True, metadata_expansion=False)
     return result, diagnostics

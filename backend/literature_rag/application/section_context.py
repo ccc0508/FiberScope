@@ -56,6 +56,9 @@ class SectionCatalog:
     def evidence_group_key(self, seed, section_id):
         return seed.document_id, section_id or seed.chunk_id
 
+    def order_candidates(self, seeds, candidates):
+        return candidates
+
     def candidates(self, seed, radius):
         c = self.chunks[seed.chunk_id]
         if not self.trusted(c):
@@ -127,7 +130,7 @@ def assemble_sections(seeds: Sequence[Evidence], catalog: SectionCatalog, option
     skipped = set()
     # All primary hits have already reserved their full space before expansion.
     for i, g in enumerate(split):
-        for c in g['candidates']:
+        for c in catalog.order_candidates([e for _, e in g['hits']], g['candidates']):
             if c.id in occupied:
                 continue
             proposed = len(join_chunks(order([*selections[i], c])))

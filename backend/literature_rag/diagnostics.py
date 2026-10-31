@@ -13,7 +13,8 @@ def configuration_snapshot(env_file: Path):
     if settings.context_expansion_enabled:
         sources += ['application/context.py','domain/models.py','adapters/sqlite/metadata_store.py']
         if settings.context_expansion_strategy=='body_section':
-            sources += ['application/body_context.py','application/role_context.py','application/section_context.py']
+            sources += ['application/body_context.py','application/role_context.py','application/section_context.py',
+                        'application/unified_context.py']
     if settings.table_retrieval_enabled:
         sources += ['application/table_evidence.py']
     if settings.rerank_enabled:
@@ -39,14 +40,19 @@ def configuration_snapshot(env_file: Path):
         result.update(pipeline_version=VERSION,pipeline_source_files=sources)
         result['context_expansion'].update(strategy='body_section',non_body_expansion=True,
             non_body_section_expansion=True,metadata_expansion=False,section_trigger_roles=list(SECTION_TRIGGER_ROLES),
-            table_hit_expansion='reliable_section',equation_hit_expansion='reliable_section_only',
+            table_hit_expansion='unified_primary_candidates',equation_hit_expansion='reliable_section_only',
+            assembly_passes=1,candidate_roots_only=True,post_context_expansion=False,
+            candidate_priority=['primary','explicit_table_link','section','body_continuation'],
             fallback_policy='same_page_identified_body_sentence_continuation_only')
         if settings.table_retrieval_enabled:
             from .application.table_evidence import BODY_TABLE_VERSION
             result['pipeline_version']=BODY_TABLE_VERSION
-            result['context_expansion']['table_hit_expansion']='reliable_section_then_explicit_body_links'
             result['table_retrieval'].update(link_policy='identified_body_table_only',recursive=False,
+                link_candidates_per_primary=2,max_unique_link_candidates=8,
+                expansion='unified_primary_candidates',
                 duplicate_source_policy='skip_sources_already_in_section_or_primary_hits')
+            result['table_retrieval'].pop('linked_sources_per_context')
+            result['table_retrieval'].pop('max_linked_sources')
     if settings.rerank_enabled:
         result.update(pipeline_version='literature-candidate-rerank-v1',pipeline_source_files=sources,
             rerank=dict(enabled=True,version='candidate-rerank-v1',provider=settings.rerank_provider,
