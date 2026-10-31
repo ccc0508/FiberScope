@@ -285,7 +285,7 @@ onBeforeUnmount(() => controller?.abort());
                   :cy="y(r)"
                   :r="focused?.canonical_code === r.canonical_code ? 6 : 3.5"
                   :fill="pointColor(r)"
-                  stroke="white"
+                  stroke="#fffefb"
                   stroke-width="1.5"
                 />
                 <title>
@@ -397,13 +397,13 @@ onBeforeUnmount(() => controller?.abort());
 .control-caption {
   display: block;
   font-size: 12px;
-  color: #978d78;
+  color: var(--muted);
   margin-bottom: 8px;
 }
 .blend-count {
   margin-left: auto;
   font-size: 13px;
-  color: #8c8068;
+  color: var(--muted);
 }
 .blend-count span {
   margin: 0 10px;
@@ -422,7 +422,7 @@ onBeforeUnmount(() => controller?.abort());
 }
 .blend-chart-heading p {
   font-size: 13px;
-  color: #a29884;
+  color: var(--muted);
   margin-top: 8px;
 }
 .blend-legend {
@@ -430,7 +430,7 @@ onBeforeUnmount(() => controller?.abort());
   display: flex;
   gap: 20px;
   font-size: 13px;
-  color: #8a7d64;
+  color: var(--ink-2);
 }
 .blend-legend span {
   display: flex;
@@ -475,7 +475,7 @@ onBeforeUnmount(() => controller?.abort());
   border-radius: 6px;
   padding: 12px 16px;
   font-size: 13px;
-  color: #908267;
+  color: var(--muted);
 }
 .blend-tooltip strong {
   color: #0b5f5a;
@@ -483,7 +483,7 @@ onBeforeUnmount(() => controller?.abort());
 .blend-note,
 .unit-note {
   font-size: 12px;
-  color: #9f947e;
+  color: var(--muted);
   margin-top: 14px;
   line-height: 1.7;
 }
@@ -496,7 +496,7 @@ onBeforeUnmount(() => controller?.abort());
 .blend-state {
   padding: 64px 24px;
   text-align: center;
-  color: #9a8d73;
+  color: var(--muted);
 }
 .blend-state p {
   margin: 14px 0;

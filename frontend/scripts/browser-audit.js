@@ -143,7 +143,8 @@ async (page) => {
             a.canonical_code.localeCompare(b.canonical_code),
         ),
         metrics: [{ key: "beating_degree_sr" }, ...metrics],
-        cell: 2,
+        codeCell: 1,
+        cell: 3,
       },
       {
         path: "/blends",
@@ -163,12 +164,12 @@ async (page) => {
         const actual = await page
           .locator(config.rows ?? "main table tbody tr")
           .evaluateAll(
-            (rows, col) =>
+            (rows, [codeCol, col]) =>
               rows.map((r) => [
-                r.cells[0].textContent.trim(),
+                r.cells[codeCol].textContent.trim(),
                 r.cells[col].textContent.trim(),
               ]),
-            config.cell,
+            [config.codeCell ?? 0, config.cell],
           );
         const expected = config.data.map((r) => [
           r.canonical_code,
