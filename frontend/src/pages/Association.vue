@@ -305,7 +305,7 @@ onBeforeUnmount(() => controller?.abort());
                 :r="focused?.canonical_code === r.canonical_code ? 7 : 5"
                 :fill="colors[r.sample_type]"
                 fill-opacity=".8"
-                stroke="white"
+                stroke="#fffefb"
                 stroke-width="1.5"
               />
               <title>
@@ -421,7 +421,7 @@ onBeforeUnmount(() => controller?.abort());
 }
 .association-controls label {
   display: block;
-  color: #978d78;
+  color: var(--muted);
   font-size: 12px;
   margin-bottom: 8px;
 }
@@ -440,7 +440,7 @@ onBeforeUnmount(() => controller?.abort());
 .association-heading p,
 .axis-caption {
   font-size: 13px;
-  color: #9e9178;
+  color: var(--muted);
   margin-top: 9px;
   line-height: 1.7;
 }
@@ -449,7 +449,7 @@ onBeforeUnmount(() => controller?.abort());
   gap: 18px;
   flex-wrap: wrap;
   font-size: 13px;
-  color: #8a7d64;
+  color: var(--ink-2);
 }
 .association-legend span {
   display: flex;
@@ -493,7 +493,7 @@ onBeforeUnmount(() => controller?.abort());
   padding: 12px 16px;
   background: #fcfaf7;
   border-radius: 6px;
-  color: #908267;
+  color: var(--muted);
   font-size: 13px;
 }
 .association-tooltip strong {
@@ -511,7 +511,7 @@ onBeforeUnmount(() => controller?.abort());
   border-radius: 7px;
 }
 .correlation-grid h3 {
-  color: #8a7d64;
+  color: var(--ink-2);
   font-size: 13px;
 }
 .correlation-grid strong {
@@ -523,14 +523,14 @@ onBeforeUnmount(() => controller?.abort());
 .correlation-grid p,
 .correlation-grid small {
   font-size: 12px;
-  color: #9e9178;
+  color: var(--muted);
   line-height: 1.7;
 }
 .association-note,
 .unit-note {
   font-size: 12px;
   line-height: 1.8;
-  color: #9e9178;
+  color: var(--muted);
   margin-top: 16px;
 }
 .unit-note {
@@ -542,7 +542,7 @@ onBeforeUnmount(() => controller?.abort());
 .association-state {
   text-align: center;
   padding: 64px 24px;
-  color: #9a8d73;
+  color: var(--muted);
 }
 .association-state p {
   margin: 14px 0;

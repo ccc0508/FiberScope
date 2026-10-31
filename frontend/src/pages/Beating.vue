@@ -26,6 +26,7 @@ import {
   type Sample,
 } from "../api";
 import {
+  fiberPaths,
   firstReach,
   interpolateAt,
   niceTicks,
@@ -229,6 +230,8 @@ onMounted(() => {
     { immediate: true },
   );
 });
+// 纸面纤维随尺寸重新生成；同一尺寸下结果固定
+const fibers = computed(() => fiberPaths(plotWidth.value, PLOT_H));
 const margin = computed(() => ({
   t: 22,
   r: plotWidth.value < 480 ? 14 : 26,
@@ -820,6 +823,14 @@ onBeforeUnmount(() => {
                 @pointermove="pointer"
                 @pointerleave="cursorRevs = null"
               >
+                <g class="paper-fibers" aria-hidden="true">
+                  <path
+                    v-for="(f, i) in fibers"
+                    :key="i"
+                    :d="f.d"
+                    :stroke-width="f.wide ? 1.4 : 1"
+                  />
+                </g>
                 <g class="grid">
                   <line
                     v-for="t in yTicks"
@@ -1388,6 +1399,13 @@ onBeforeUnmount(() => {
   position: relative;
   z-index: 1;
 }
+/* 页头按钮压在显微图上，垫一层纸色保证可读 */
+.page-heading .button {
+  background: var(--panel);
+}
+.page-heading .button:hover {
+  background: #e9e1cf;
+}
 .beating-controls {
   display: flex;
   align-items: flex-end;
@@ -1419,7 +1437,7 @@ onBeforeUnmount(() => {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--ink-2);
-  font-size: 13px;
+  font-size: 14px;
   transition:
     background-color 0.15s,
     border-color 0.15s;
@@ -1602,7 +1620,7 @@ onBeforeUnmount(() => {
   min-height: 40px;
 }
 .kpi-value strong {
-  font: 500 34px/1 var(--font-mono);
+  font: 500 40px/1 var(--font-mono);
   font-variant-numeric: tabular-nums;
   color: var(--ink);
   letter-spacing: -0.02em;
@@ -1687,6 +1705,7 @@ onBeforeUnmount(() => {
   align-items: stretch;
 }
 .beating-chart {
+  border-color: var(--border-strong);
   padding: 16px 18px 14px;
   min-width: 0;
 }
@@ -1727,6 +1746,12 @@ onBeforeUnmount(() => {
 .beating-plot .axis-title {
   font-family: inherit;
   font-weight: 500;
+}
+.paper-fibers path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-linecap: round;
+  opacity: 0.06;
 }
 .grid line {
   stroke: #e9e2d2;
@@ -1869,7 +1894,7 @@ onBeforeUnmount(() => {
   color: var(--muted);
 }
 .readout-name {
-  font: 700 20px/1.35 var(--font-serif);
+  font: 700 22px/1.3 var(--font-serif);
   color: var(--ink);
   margin-top: 2px;
 }
@@ -1904,13 +1929,18 @@ onBeforeUnmount(() => {
   margin-top: 4px;
 }
 .readout-big strong {
-  font: 500 34px/1 var(--font-mono);
+  font: 500 40px/1 var(--font-mono);
   color: var(--ink);
   letter-spacing: -0.02em;
 }
 .readout-big strong.sm {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 400;
+}
+/* 大数字正下方一条 4px 纸边色细条，与数字等宽 */
+.readout-big div:first-child strong {
+  padding-bottom: 6px;
+  border-bottom: 4px solid var(--paper-edge);
 }
 .readout-big small {
   font: 400 12px var(--font-mono);
@@ -2045,16 +2075,11 @@ onBeforeUnmount(() => {
 .delta-none {
   color: var(--muted);
 }
-/* 打浆页更紧凑：表格行距收一档 */
-.beating-table td {
-  height: 40px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-}
 .group-row td {
-  background: var(--canvas);
-  padding-top: 8px;
-  padding-bottom: 8px;
+  height: 34px;
+  background: #efe8da;
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 .group-row td > * {
   vertical-align: middle;

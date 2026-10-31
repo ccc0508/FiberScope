@@ -69,8 +69,8 @@ refresh(true);
 <style scoped>
 .history-panel { padding: 22px 24px; }
 summary { display: flex; align-items: center; gap: 9px; cursor: pointer; font-weight: 700; font-size: 16px; }
-summary span { font-size: 12px; font-weight: 400; color: #a49881; margin-left: auto; }
-.history-note, .history-pagination { font-size: 12px; color: #a49881; line-height: 1.8; }
+summary span { font-size: 12px; font-weight: 400; color: var(--muted); margin-left: auto; }
+.history-note, .history-pagination { font-size: 12px; color: var(--muted); line-height: 1.8; }
 .history-tools, .history-tools form { display: flex; align-items: center; gap: 10px; }
 .history-tools { justify-content: space-between; flex-wrap: wrap; margin: 16px 0; }
 .history-tools .button { flex-shrink: 0; white-space: nowrap; }
@@ -80,7 +80,7 @@ input { width: 100%; min-width: 40px; max-width: 320px; border: 1px solid #dcebe
 .history-row { text-align: left; border: 1px solid transparent; background: #fcfbf8; color: #0b5f5a; padding: 12px; border-radius: 7px; cursor: pointer; font: inherit; min-width: 0; }
 .history-row:hover, .history-row.selected { background: #e3efec; border-color: #dcebe7; }
 .history-row strong { display: block; font-weight: 400; font-size: 13px; overflow-wrap: anywhere; }
-.history-row span { display: block; margin-top: 6px; font-size: 11px; color: #a49881; }
+.history-row span { display: block; margin-top: 6px; font-size: 11px; color: var(--muted); }
 .history-pagination { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 15px; }
 .history-pagination .button:last-child { margin-left: auto; }
 .history-error { color: #b16642; font-size: 13px; line-height: 1.8; }
