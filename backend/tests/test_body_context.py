@@ -104,8 +104,9 @@ def test_retriever_uses_new_policy_after_single_vector_search_without_legacy_nei
 def test_configuration_is_explicit_and_default_keeps_legacy_behavior(tmp_path):
     assert Settings(_env_file=None).context_expansion_strategy=='same_page'
     with pytest.raises(ValueError):Settings(_env_file=None,context_expansion_strategy='body_section')
-    with pytest.raises(ValueError):Settings(_env_file=None,context_expansion_strategy='body_section',
+    integrated=Settings(_env_file=None,context_expansion_strategy='body_section',
         context_expansion_enabled=True,table_retrieval_enabled=True)
+    assert integrated.table_retrieval_enabled
     env=tmp_path/'.env';env.write_text('RAG_CONTEXT_EXPANSION_ENABLED=true\nRAG_CONTEXT_EXPANSION_STRATEGY=body_section\n',encoding='utf-8')
     snapshot=configuration_snapshot(env)
     assert snapshot['pipeline_version']==VERSION and snapshot['context_expansion']['non_body_expansion'] is False
