@@ -109,9 +109,9 @@ def publish():
             current=dict(candidate=job['candidate'],review=new['reviews'].get(tid),metrics=new['metrics'].get(tid)),
             baseline=dict(candidate=old['jobs'][tid]['candidate'],review=old['reviews'].get(tid),metrics=old['metrics'].get(tid))))
     PUBLIC.mkdir(parents=True)
-    judge.write(PUBLIC/'comparison.json',result)
+    scoring.save(PUBLIC/'comparison.json',result)
     (PUBLIC/'questions-answers-reviews.jsonl').write_text(''.join(judge.encode(row)+'\n' for row in rows),encoding='utf-8',newline='\n')
-    judge.write(PUBLIC/'audit.json',dict(new_valid_records=new['proofs'],old_valid_records=old['proofs'],
+    scoring.save(PUBLIC/'audit.json',dict(new_valid_records=new['proofs'],old_valid_records=old['proofs'],
         source_run_sha256=judge.digest(RUN/'run.json'),source_study_sha256=judge.digest(STUDY/'study.json'),
         source_import_sha256=judge.digest(IMPORT/'import.json'),old_study_sha256=judge.digest(HISTORY/'study.json'),
         grader_harness=new['study']['harness_files'],scores_changed_by_exporter=False,report_model_calls=0))
@@ -142,7 +142,7 @@ def publish():
         '[逐题HTML报告](../data/literature/qa-evaluation/reports/mineru-current-20261101/comparison.html)',
         '[机器可读结果](../data/literature/qa-evaluation/reports/mineru-current-20261101/comparison.json)']
     DOC.write_text('\n'.join(lines)+'\n',encoding='utf-8',newline='\n')
-    judge.write(PUBLIC/'publication.json',dict(files={p.name:judge.digest(p) for p in PUBLIC.iterdir() if p.is_file()},
+    scoring.save(PUBLIC/'publication.json',dict(files={p.name:judge.digest(p) for p in PUBLIC.iterdir() if p.is_file()},
         document_sha256=judge.digest(DOC),exporter_sha256=judge.digest(Path(__file__)),report_model_calls=0))
     return {k:result[k] for k in ['valid_current_grades','current_summary','comparison','changes','judge_accounting','runtime']}
 
