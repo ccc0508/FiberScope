@@ -1,0 +1,11 @@
+{
+  "files": {
+    "answers-reviews.jsonl": "21c92573dcd443bb20d27dfe3e21e8790dcfc2700a1d7741bcf37acbfb0ec47d",
+    "comparison.html": "d70b437638b8ed776a878b06f71ce141cfca733d68372194361c5f87d4763140",
+    "comparison.json": "a7929b57c2c7fc787345d012c410583a1571fcd3c544b29dd8c1b6b5ebe72fc9"
+  },
+  "document_sha256": "47dd2e1e0e8e5624d2ac53334b96f7c45d03208be378adadfdd92422849c09e1",
+  "analysis_input_sha256": "6fce96493bbb187f5ec77432eacade143b6af09dcae0c52056e029cb836aee77",
+  "reporter_sha256": "2e90034010111ca3ffecfcab1e3c17026a6b2c75f437d88c55e47c3468906201",
+  "reporter_model_calls": 0
+}

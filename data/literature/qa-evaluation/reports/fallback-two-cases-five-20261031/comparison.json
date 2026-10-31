@@ -1,0 +1,260 @@
+{
+  "version": "two-case-five-independent-repeats-v1",
+  "summaries": [
+    {
+      "task_id": "PFI2-016",
+      "arm": "control",
+      "target_point": "P3",
+      "criterion": "明确区分纸页与纤维层面的强度，说明纸页变强不能推断单根纤维必然变强。",
+      "planned_answers": 5,
+      "valid_grades": 5,
+      "complete": 3,
+      "partial": 2,
+      "missing": 0,
+      "unknown": 0,
+      "incomplete_count": 2,
+      "incomplete_rate": 0.4,
+      "strict_missing_rate": 0.0,
+      "round_labels": [
+        "partial",
+        "complete",
+        "complete",
+        "complete",
+        "partial"
+      ]
+    },
+    {
+      "task_id": "PFI2-016",
+      "arm": "guidance",
+      "target_point": "P3",
+      "criterion": "明确区分纸页与纤维层面的强度，说明纸页变强不能推断单根纤维必然变强。",
+      "planned_answers": 5,
+      "valid_grades": 5,
+      "complete": 2,
+      "partial": 3,
+      "missing": 0,
+      "unknown": 0,
+      "incomplete_count": 3,
+      "incomplete_rate": 0.6,
+      "strict_missing_rate": 0.0,
+      "round_labels": [
+        "complete",
+        "partial",
+        "partial",
+        "partial",
+        "complete"
+      ]
+    },
+    {
+      "task_id": "PFI2-028",
+      "arm": "control",
+      "target_point": "P1",
+      "criterion": "明确说明缺少第二篇论文或其证据，无法完成所要求的跨文献比较。",
+      "planned_answers": 5,
+      "valid_grades": 5,
+      "complete": 2,
+      "partial": 0,
+      "missing": 3,
+      "unknown": 0,
+      "incomplete_count": 3,
+      "incomplete_rate": 0.6,
+      "strict_missing_rate": 0.6,
+      "round_labels": [
+        "missing",
+        "missing",
+        "complete",
+        "missing",
+        "complete"
+      ]
+    },
+    {
+      "task_id": "PFI2-028",
+      "arm": "guidance",
+      "target_point": "P1",
+      "criterion": "明确说明缺少第二篇论文或其证据，无法完成所要求的跨文献比较。",
+      "planned_answers": 5,
+      "valid_grades": 5,
+      "complete": 5,
+      "partial": 0,
+      "missing": 0,
+      "unknown": 0,
+      "incomplete_count": 0,
+      "incomplete_rate": 0.0,
+      "strict_missing_rate": 0.0,
+      "round_labels": [
+        "complete",
+        "complete",
+        "complete",
+        "complete",
+        "complete"
+      ]
+    }
+  ],
+  "runtimes": {
+    "control": {
+      "answers": 10,
+      "generation_calls": 10,
+      "known_tokens": {
+        "prompt_tokens": 64400,
+        "completion_tokens": 17107,
+        "total_tokens": 81507,
+        "reasoning_tokens": 13679,
+        "cached_tokens": 62080
+      },
+      "usage_unknown_calls": 0,
+      "median_seconds": 14.6505
+    },
+    "guidance": {
+      "answers": 10,
+      "generation_calls": 10,
+      "known_tokens": {
+        "prompt_tokens": 60880,
+        "completion_tokens": 14576,
+        "total_tokens": 75456,
+        "reasoning_tokens": 11183,
+        "cached_tokens": 58880
+      },
+      "usage_unknown_calls": 0,
+      "median_seconds": 14.1035
+    }
+  },
+  "accounting": {
+    "jev": {
+      "calls": 20,
+      "known_tokens": {
+        "input_tokens": 1567705,
+        "output_tokens": 92479,
+        "total_tokens": 1660184
+      },
+      "usage_unknown_calls": 0,
+      "reported_cost_usd": "0.065843610",
+      "cost_unknown_calls": 0,
+      "invoice_cost_usd": null,
+      "request_time_ms": 86887
+    }
+  },
+  "controls": {
+    "rounds": 5,
+    "fresh_answers": 20,
+    "old_answers_included": false,
+    "new_embedding_calls": 0,
+    "new_rerank_calls": 0,
+    "default_configuration_changed": false,
+    "fixtures": {
+      "control": {
+        "PFI2-016": "b9a90f7230da5e103a2232a660dcfb2d473af2cbc6e08bfa1feea3c80034d840",
+        "PFI2-028": "f9d297ffc4130448429c36da5f47fdfd6cae109f5863760bb1c8f8de1e7d2f20"
+      },
+      "guidance": {
+        "PFI2-016": "dc672ddee2dc421b4142ff188f139c73556797c5970bbc36a67446925db45576",
+        "PFI2-028": "ca33bd72f61d328845666bae68f4ce6acd207f3a15316692c7929c9231e47494"
+      }
+    },
+    "generation_settings": {
+      "control": {
+        "embedding_provider": "openai",
+        "embedding_model": "BAAI/bge-m3",
+        "embedding_dimensions": 1024,
+        "llm_provider": "deepseek",
+        "llm_model": "deepseek-flash",
+        "top_k": 8,
+        "min_score": 0.35,
+        "pipeline_version": "literature-context-v1",
+        "prompt_pipeline_sha256": "6eece925749c7bb532f6be739eae9b365e22be599c31b5e0a71deecb3a5f1b2c",
+        "llm_thinking_enabled": true,
+        "llm_reasoning_effort": "high",
+        "pipeline_source_files": [
+          "application/prompts.py",
+          "application/citations.py",
+          "application/answer_question.py",
+          "application/retrieve.py",
+          "adapters/providers/deepseek.py",
+          "adapters/providers/openai.py",
+          "application/context.py",
+          "domain/models.py",
+          "adapters/sqlite/metadata_store.py"
+        ],
+        "context_expansion": {
+          "context_expansion_enabled": true,
+          "context_neighbor_radius": 1,
+          "context_max_evidence_chars": 8000,
+          "context_max_total_chars": 24000
+        },
+        "provider_endpoint_fingerprints": {
+          "llm_base_url": "a34e2a4708ed1c61008a151688838dcf1c44d4e7f08054633e72ba7c0b16cfc1",
+          "embedding_base_url": "dcfb966d818ddf8f4d10f7397ce546e86d3fcb8afe26371506405f6978c6f661"
+        }
+      },
+      "guidance": {
+        "embedding_provider": "openai",
+        "embedding_model": "BAAI/bge-m3",
+        "embedding_dimensions": 1024,
+        "llm_provider": "deepseek",
+        "llm_model": "deepseek-flash",
+        "top_k": 8,
+        "min_score": 0.35,
+        "pipeline_version": "literature-context-v1",
+        "prompt_pipeline_sha256": "6eece925749c7bb532f6be739eae9b365e22be599c31b5e0a71deecb3a5f1b2c",
+        "llm_thinking_enabled": true,
+        "llm_reasoning_effort": "high",
+        "pipeline_source_files": [
+          "application/prompts.py",
+          "application/citations.py",
+          "application/answer_question.py",
+          "application/retrieve.py",
+          "adapters/providers/deepseek.py",
+          "adapters/providers/openai.py",
+          "application/context.py",
+          "domain/models.py",
+          "adapters/sqlite/metadata_store.py"
+        ],
+        "context_expansion": {
+          "context_expansion_enabled": true,
+          "context_neighbor_radius": 1,
+          "context_max_evidence_chars": 8000,
+          "context_max_total_chars": 24000
+        },
+        "provider_endpoint_fingerprints": {
+          "llm_base_url": "a34e2a4708ed1c61008a151688838dcf1c44d4e7f08054633e72ba7c0b16cfc1",
+          "embedding_base_url": "dcfb966d818ddf8f4d10f7397ce546e86d3fcb8afe26371506405f6978c6f661"
+        }
+      }
+    }
+  },
+  "provenance": {
+    "experiment_sha256": "e1d87280d86e05766b833a4115deb323360e2879f15c9d8538160b80aba6fd65",
+    "study_sha256": "2c2420f3ccfa550edca9d18974a6ca6792fd43eb89087541d714ce586aaabcc5",
+    "engine_sha256": {
+      "repeat_fallback_cases_20261031.py": "386df90b0079d8c09b4f2f64fd4cea44dba5858d46df434116b6d84689eafc83",
+      "report_repeated_fallback_cases_20261031.py": "2e90034010111ca3ffecfcab1e3c17026a6b2c75f437d88c55e47c3468906201",
+      "section_context_20261031.py": "a129a9b2352df41192c7e6fc42afe9183703e78317c64507a2d2fd1bba806ead",
+      "context_expansion_worker.py": "1eb78826218cc70a4de464ff5f2f187236ad069efe4f6abc5123b23c3e8e1cdc",
+      "qa_system_judge.py": "677e9b788d91abe36ca2cee7ae2c45c697474ab290426f435f61212e95d1fffc",
+      "import_qa_system_answers.py": "c3043c8b056d63775e804ad16da4066f843974e87dfea7227d388b562a23851f",
+      "qa_scoring_policy.py": "9988e428fe187cabb9963477f30d6962e087c571c40bbb83384e7d97cea57445",
+      "judge_qa_eval.py": "e53e57f738b60b6df6d22d582cd9100ed167ac0ea39648294912b643f998c59c",
+      "judge_qa_jev.py": "2c3b61f36bd57a8871f2f294bd8a9bfcb6c7a5b15e53cbcddcb986c26ac235a3",
+      "judge_qa_luna.py": "8a8e489d3696c30b8317b22979f57b0c1d5d616c490a6a97fdfb37f4ac99a995",
+      "validate_qa_eval.py": "50baab3fe8abe03fbbd7cb20c083c70aca9c09ee5188859da0ac2e5cd47f621e"
+    }
+  },
+  "analyst_notes": [
+    "已完成20份全新回答：第16、28题在保留邻块与删除邻块条件下各5次。此前单轮回答和评分均未计入；20个独立工作进程、20次生成请求，没有触发格式/引用纠正。全部20份Jev评分一次有效，没有评分缺失。",
+    "第16题关注P3：是否明确区分纸页与单根纤维强度，并说明不能推断必然同步提高。保留版3次完整、2次部分、0次缺失，未完整率2/5（40%）；删除版2次完整、3次部分、0次缺失，未完整率3/5（60%）。两组只差1份回答，不能据此断定删除有稳定负面作用。两组都不是完全漏掉科学事实，而是部分回答没有把“未下降”与“不能推断一定提高”解释清楚。",
+    "第28题关注P1：是否明确说明缺少第二篇论文或其证据，无法完成跨文献比较。保留版2次完整、3次缺失，未完整率3/5（60%）；删除版5次完整、0次缺失，未完整率0/5。三份缺失答案只总结PFI论文，没有说明比较范围限制。这次方向与此前“保留版完整、删除版漏答”的单轮相反，不能认定删除相邻参考文献必然导致漏答。",
+    "五次目标要点顺序：第16题保留=部分/完整/完整/完整/部分，删除=完整/部分/部分/部分/完整；第28题保留=缺失/缺失/完整/缺失/完整，删除=完整/完整/完整/完整/完整。完整、部分、缺失分别沿用Jev原1、0.5、0标签，不由报告重新评分。",
+    "本轮更直接显示两类输入均可能出现回答完整性波动：第16题两版都有部分回答，第28题保留版也会忽略任务限制。第28题删除版本轮表现较好值得保留观察，但每组仅5次，不能声称已证明删块提升、显著改善或因果关系。",
+    "仍保留Jev对全部要点、事实、引用、引用组和边界的原始判断。第28题主观察项只采用P1，避免把P2“未编造第二篇/未声称已比较”的评价争议直接混入明确缺失说明的频率。没有修改原评分标准或原分。",
+    "两种输入各10份回答的已知总Token为81507和75456（删除版少7.42%，含推理Token），中位进程耗时为14.6505和14.1035秒。实际答题货币费用未知；Jev20次请求API报告费用0.065843610美元。没有新增检索、Embedding或重排调用。",
+    "网站默认配置未改变。报告包含两道题的每次原答案、实际证据、引用与Jev评分，既有单轮及分类实验均保留。当前结果不足以把此前两题的下降归因于删除邻块。"
+  ],
+  "limitations": [
+    "每题每种输入各5份全新独立回答，旧单轮不计入；相同材料、模型别名、High、提示词和原引用纠正机制。",
+    "主观察项事先指定为第16题P3、第28题P1。Jev原判1=完整、0.5=部分、0=缺失；未完整回答率统计0或0.5，完全缺失率只统计0。其他要点和边界另列。",
+    "无效评分记未知，不算漏答或答全。频率分母明确为有效评分数，同时保留计划5次和未知数；不补第6份答案填补评分缺失。",
+    "只用原Jev协议与首个有效评分，最多3次评分尝试；每份评分独立组装上下文，不提供其他回答或旧分。裁判标签不是专家定论。",
+    "每组仅5次，是描述性小样本，不证明统计显著性或因果关系。生成波动与裁判波动未分开识别。",
+    "没有新增检索、Embedding或重排；网站默认配置未改变。Token包括推理Token，答题实际费用未知，Jev API报告费用不是核验账单。"
+  ],
+  "reporter_model_calls": 0
+}
