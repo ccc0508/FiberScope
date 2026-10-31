@@ -1,7 +1,22 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+  nextTick,
+} from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { ChartNoAxesCombined, RefreshCw, TriangleAlert } from "lucide-vue-next";
+import {
+  ChartNoAxesCombined,
+  ChevronLeft,
+  ChevronRight,
+  Minus,
+  Plus,
+  RefreshCw,
+  TriangleAlert,
+} from "lucide-vue-next";
 import {
   get,
   number,
@@ -9,15 +24,28 @@ import {
   type ListResult,
   type Sample,
 } from "../api";
+import {
+  firstReach,
+  interpolateAt,
+  niceTicks,
+  type CurvePoint,
+} from "../beating";
+import { materialCodeColors } from "../palette";
 import FilterSelect from "../components/FilterSelect.vue";
 import SampleDetail from "../components/SampleDetail.vue";
+import FiberHero from "../components/FiberHero.vue";
 
+type Material = "SW" | "HW";
 interface BeatingRow {
   canonical_code: string;
-  material_code: "SW" | "HW";
+  display_name: string;
+  material_code: Material;
   beating_revolutions: number;
   [key: string]: string | number | null;
 }
+const MATERIALS: Material[] = ["SW", "HW"];
+const SR_KEY = "beating_degree_sr";
+
 const route = useRoute(),
   router = useRouter();
 const rows = ref<BeatingRow[]>([]),
@@ -25,10 +53,13 @@ const rows = ref<BeatingRow[]>([]),
 const metadata = ref<Metadata | null>(null);
 const loading = ref(true),
   error = ref("");
-const selected = ref<Sample | null>(null),
-  focused = ref<BeatingRow | null>(null);
+const detailSample = ref<Sample | null>(null);
+const selectedCode = ref<string | null>(null);
+const cursorRevs = ref<number | null>(null);
+
+/* ---------- 筛选：原料、指标、目标打浆度都放在 URL 上 ---------- */
 const defaultMetric = {
-  key: "beating_degree_sr",
+  key: SR_KEY,
   name: "打浆度",
   unit: "°SR",
   group: "condition",
@@ -43,81 +74,263 @@ const metric = computed(
   () =>
     metrics.value.find((i) => i.key === route.query.metric) ?? defaultMetric,
 );
-const material = computed(() =>
-  ["SW", "HW"].includes(String(route.query.material))
-    ? String(route.query.material)
+const isSr = computed(() => metric.value.key === SR_KEY);
+const material = computed<"all" | Material>(() =>
+  MATERIALS.includes(route.query.material as Material)
+    ? (route.query.material as Material)
     : "all",
 );
-const materialOptions = [
-  { value: "all", label: "全部原料" },
-  { value: "SW", label: "针叶木浆", color: "#5796ce" },
-  { value: "HW", label: "阔叶木浆", color: "#79b7ad" },
-];
+const target = computed(() => {
+  const t = Number(route.query.target);
+  return Number.isFinite(t) && t >= 20 && t <= 85 ? Math.round(t) : 45;
+});
 const metricOptions = computed(() =>
   metrics.value.map((i) => ({ value: i.key, label: i.name })),
 );
-const visible = computed(() =>
-  rows.value
-    .filter(
-      (r) => material.value === "all" || r.material_code === material.value,
-    )
-    .sort(
-      (a, b) =>
-        a.beating_revolutions - b.beating_revolutions ||
-        a.canonical_code.localeCompare(b.canonical_code),
-    ),
-);
+function update(key: string, next: string | undefined) {
+  void router.replace({ query: { ...route.query, [key]: next } });
+}
+const setTarget = (t: number) =>
+  update("target", String(Math.max(20, Math.min(85, t))));
+
+/* ---------- 数据 ---------- */
+const materialName = (code: Material) =>
+  code === "SW" ? "针叶木浆" : "阔叶木浆";
+const color = (code: Material) => materialCodeColors[code];
+const unit = computed(() => metric.value.unit ?? "单位未确认");
 const value = (r: BeatingRow): number | null =>
   typeof r[metric.value.key] === "number" &&
   Number.isFinite(r[metric.value.key])
     ? (r[metric.value.key] as number)
     : null;
+const digits = computed(() => {
+  const values = rows.value.map(value).filter((v): v is number => v !== null);
+  const span = values.length ? Math.max(...values) - Math.min(...values) : 1;
+  return span >= 50 ? 1 : span >= 5 ? 2 : 3;
+});
+const fmt = (v: number | null) => number(v, digits.value);
+
+const byMaterial = computed(
+  () =>
+    Object.fromEntries(
+      MATERIALS.map((code) => [
+        code,
+        rows.value
+          .filter((r) => r.material_code === code)
+          .sort(
+            (a, b) =>
+              a.beating_revolutions - b.beating_revolutions ||
+              a.canonical_code.localeCompare(b.canonical_code),
+          ),
+      ]),
+    ) as Record<Material, BeatingRow[]>,
+);
+const shownMaterials = computed(() =>
+  material.value === "all" ? MATERIALS : [material.value],
+);
+const visible = computed(() =>
+  shownMaterials.value.flatMap((code) => byMaterial.value[code]),
+);
 const valid = computed(() => visible.value.filter((r) => value(r) !== null));
-const unit = computed(() => metric.value.unit ?? "单位未确认");
-const materialName = (code: string) =>
-  code === "SW" ? "针叶木浆" : "阔叶木浆";
-const color = (code: string) => (code === "SW" ? "#4386bf" : "#58a397");
-const yDomain = computed(() => {
+const curve = (code: Material): CurvePoint[] =>
+  byMaterial.value[code]
+    .filter((r) => value(r) !== null)
+    .map((r) => ({ x: r.beating_revolutions, y: value(r)! }));
+const counts = computed(() => ({
+  all: rows.value.length,
+  SW: byMaterial.value.SW.length,
+  HW: byMaterial.value.HW.length,
+}));
+
+/* ---------- KPI ---------- */
+const round100 = (v: number) => Math.round(v / 100) * 100;
+const reach = computed(
+  () =>
+    Object.fromEntries(
+      MATERIALS.map((code) => [code, firstReach(curve(code), target.value)]),
+    ) as Record<Material, number | null>,
+);
+const reachGap = computed(() => {
+  const { SW, HW } = reach.value;
+  // 用取整后的值相减，和上面两格显示的数字对得上
+  return SW !== null && HW !== null ? round100(SW) - round100(HW) : null;
+});
+const change = (code: Material) => {
+  const c = curve(code);
+  if (c.length < 2) return null;
+  const first = c[0]!,
+    last = c[c.length - 1]!;
+  return {
+    from: first,
+    to: last,
+    pct: first.y !== 0 ? ((last.y - first.y) / Math.abs(first.y)) * 100 : null,
+  };
+};
+
+/* ---------- 曲线：按容器实际宽度绘制，文字不随缩放变形 ---------- */
+const plotBox = ref<HTMLElement>();
+const plotWidth = ref(720);
+const PLOT_H = 360;
+let sizeObserver: ResizeObserver | undefined;
+onMounted(() => {
+  sizeObserver = new ResizeObserver(([entry]) => {
+    if (entry) plotWidth.value = Math.max(240, entry.contentRect.width);
+  });
+  watch(
+    plotBox,
+    (el, old) => {
+      if (old) sizeObserver?.unobserve(old);
+      if (el) sizeObserver?.observe(el);
+    },
+    { immediate: true },
+  );
+});
+const margin = computed(() => ({
+  t: 22,
+  r: plotWidth.value < 480 ? 14 : 26,
+  b: 46,
+  l: plotWidth.value < 480 ? 46 : 58,
+}));
+const xMax = computed(
+  () =>
+    Math.ceil(
+      Math.max(5000, ...rows.value.map((r) => r.beating_revolutions)) / 5000,
+    ) * 5000,
+);
+const xTicks = computed(() => {
+  const step = plotWidth.value < 560 ? 10000 : 5000,
+    out: number[] = [];
+  for (let v = 0; v <= xMax.value; v += step) out.push(v);
+  return out;
+});
+const yTicks = computed(() => {
   const values = valid.value.map((r) => value(r)!);
+  if (isSr.value) values.push(target.value);
   if (!values.length) return [0, 1];
   const min = Math.min(...values),
-    max = Math.max(...values),
-    pad = (max - min || Math.abs(max) || 1) * 0.12;
-  return [min >= 0 ? Math.max(0, min - pad) : min - pad, max + pad];
+    max = Math.max(...values);
+  return niceTicks(min >= 0 ? Math.max(0, min - (max - min) * 0.08) : min, max);
 });
-const xMax = computed(() =>
-  Math.max(1, ...visible.value.map((r) => r.beating_revolutions)),
-);
-const x = (r: BeatingRow) => 80 + (r.beating_revolutions / xMax.value) * 830;
-const y = (r: BeatingRow) =>
-  285 -
-  ((value(r)! - yDomain.value[0]!) / (yDomain.value[1]! - yDomain.value[0]!)) *
-    245;
+const yMin = computed(() => yTicks.value[0]!),
+  yMax = computed(() => yTicks.value[yTicks.value.length - 1]!);
+const px = (revs: number) =>
+  margin.value.l +
+  (revs / xMax.value) * (plotWidth.value - margin.value.l - margin.value.r);
+const py = (v: number) =>
+  margin.value.t +
+  (1 - (v - yMin.value) / (yMax.value - yMin.value || 1)) *
+    (PLOT_H - margin.value.t - margin.value.b);
 const series = computed(() =>
-  ["SW", "HW"].map((code) => {
-    const points = visible.value.filter((r) => r.material_code === code);
+  shownMaterials.value.map((code) => {
     let connected = false;
-    const path = points
+    // 缺失值处断开，只连接相邻有效观测
+    const path = byMaterial.value[code]
       .map((r) => {
-        if (value(r) === null) {
+        const v = value(r);
+        if (v === null) {
           connected = false;
           return "";
         }
-        const segment = `${connected ? "L" : "M"}${x(r)},${y(r)}`;
+        const seg = `${connected ? "L" : "M"}${px(r.beating_revolutions).toFixed(1)},${py(v).toFixed(1)}`;
         connected = true;
-        return segment;
+        return seg;
       })
       .join(" ");
-    return { code, points: points.filter((r) => value(r) !== null), path };
+    return {
+      code,
+      path,
+      points: byMaterial.value[code].filter((r) => value(r) !== null),
+    };
   }),
 );
-function update(key: string, next: string) {
-  void router.replace({ query: { ...route.query, [key]: next } });
+const targetHits = computed(() =>
+  isSr.value
+    ? shownMaterials.value
+        .map((code) => ({ code, x: reach.value[code] }))
+        .filter((h): h is { code: Material; x: number } => h.x !== null)
+    : [],
+);
+const measuredRevs = computed(() =>
+  [...new Set(valid.value.map((r) => r.beating_revolutions))].sort(
+    (a, b) => a - b,
+  ),
+);
+function pointer(event: PointerEvent) {
+  const box = (event.currentTarget as SVGElement).getBoundingClientRect();
+  const x = event.clientX - box.left;
+  if (x < margin.value.l - 8 || x > plotWidth.value - margin.value.r + 8) {
+    cursorRevs.value = null;
+    return;
+  }
+  let best: number | null = null;
+  for (const r of measuredRevs.value)
+    if (best === null || Math.abs(px(r) - x) < Math.abs(px(best) - x)) best = r;
+  cursorRevs.value = best;
 }
-function detail(row: BeatingRow) {
-  selected.value =
+const cursorRows = computed(() =>
+  cursorRevs.value === null
+    ? []
+    : shownMaterials.value.map((code) => ({
+        code,
+        row:
+          byMaterial.value[code].find(
+            (r) => r.beating_revolutions === cursorRevs.value,
+          ) ?? null,
+      })),
+);
+
+/* ---------- 读数面板 ---------- */
+const selected = computed(
+  () =>
+    visible.value.find((r) => r.canonical_code === selectedCode.value) ??
+    visible.value[0] ??
+    null,
+);
+const selectedIndex = computed(() =>
+  selected.value ? visible.value.indexOf(selected.value) : -1,
+);
+function select(row: BeatingRow) {
+  selectedCode.value = row.canonical_code;
+}
+async function step(delta: number) {
+  const next = visible.value[selectedIndex.value + delta];
+  if (!next) return;
+  select(next);
+  // 逐个浏览时，把表格里对应的行滚进视野
+  await nextTick();
+  document
+    .querySelector(`[data-code="${next.canonical_code}"]`)
+    ?.scrollIntoView({ block: "nearest" });
+}
+const otherAtSameRevs = computed(() => {
+  const s = selected.value;
+  if (!s) return null;
+  const other: Material = s.material_code === "SW" ? "HW" : "SW";
+  const exact = byMaterial.value[other].find(
+    (r) => r.beating_revolutions === s.beating_revolutions,
+  );
+  const exactValue = exact ? value(exact) : null;
+  if (exactValue !== null)
+    return { code: other, value: exactValue, estimated: false };
+  const estimated = interpolateAt(curve(other), s.beating_revolutions);
+  return { code: other, value: estimated, estimated: estimated !== null };
+});
+function openDetail(row: BeatingRow) {
+  detailSample.value =
     samples.value.find((s) => s.canonical_code === row.canonical_code) ?? null;
 }
+const valueBar = (v: number | null) =>
+  v === null
+    ? 0
+    : Math.max(
+        0,
+        Math.min(
+          100,
+          ((v - yMin.value) / (yMax.value - yMin.value || 1)) * 100,
+        ),
+      );
+
+/* ---------- 读取 ---------- */
 let controller: AbortController | undefined;
 async function load() {
   controller?.abort();
@@ -125,7 +338,6 @@ async function load() {
   controller = current;
   loading.value = true;
   error.value = "";
-  focused.value = null;
   try {
     const [data, meta, sampleData] = await Promise.all([
       get<ListResult<BeatingRow>>(
@@ -150,16 +362,20 @@ async function load() {
 watch(
   () => [material.value, metric.value.key],
   () => {
-    focused.value = null;
+    cursorRevs.value = null;
   },
 );
 void load();
-onBeforeUnmount(() => controller?.abort());
+onBeforeUnmount(() => {
+  controller?.abort();
+  sizeObserver?.disconnect();
+});
 </script>
 
 <template>
   <div class="overview beating-page">
     <section class="page-heading">
+      <FiberHero />
       <div>
         <span class="eyebrow"><ChartNoAxesCombined :size="14" /> 实验分析</span>
         <h1>打浆分析</h1>
@@ -180,14 +396,29 @@ onBeforeUnmount(() => controller?.abort());
     <template v-else>
       <section class="card beating-controls" aria-label="打浆分析筛选">
         <div>
-          <span class="control-caption">原料</span
-          ><FilterSelect
-            id="beating-material"
-            label="原料"
-            :model-value="material"
-            :options="materialOptions"
-            @update:model-value="update('material', $event)"
-          />
+          <span class="control-caption" id="beating-material-label">原料</span>
+          <div
+            class="material-seg"
+            role="radiogroup"
+            aria-labelledby="beating-material-label"
+          >
+            <button
+              v-for="opt in ['all', ...MATERIALS] as const"
+              :key="opt"
+              type="button"
+              role="radio"
+              :aria-checked="material === opt"
+              :class="{ on: material === opt }"
+              @click="update('material', opt === 'all' ? undefined : opt)"
+            >
+              <i
+                :class="{ all: opt === 'all' }"
+                :style="opt === 'all' ? {} : { background: color(opt) }"
+              ></i
+              >{{ opt === "all" ? "全部" : materialName(opt)
+              }}<span class="seg-count">{{ counts[opt] }}</span>
+            </button>
+          </div>
         </div>
         <div>
           <span class="control-caption">分析指标</span
@@ -204,128 +435,507 @@ onBeforeUnmount(() => controller?.abort());
           {{ valid.length }} 个有效数据点
         </p>
       </section>
-      <section class="card beating-chart">
-        <div class="beating-chart-heading">
-          <div>
-            <h2>{{ metric.name }}随打浆转数的变化</h2>
-            <p>纵轴：{{ metric.name }}（{{ unit }}）</p>
+
+      <!-- KPI：打浆度看“达到目标需要多少转”，其他指标看打浆前后的变化 -->
+      <section class="card beating-kpis" aria-label="关键指标">
+        <template v-if="isSr">
+          <div class="kpi">
+            <div class="kpi-label">目标打浆度</div>
+            <div class="kpi-value">
+              <strong>{{ target }}</strong
+              ><small>°SR</small>
+              <span class="stepper">
+                <button
+                  type="button"
+                  aria-label="目标打浆度降低 5"
+                  :disabled="target <= 20"
+                  @click="setTarget(target - 5)"
+                >
+                  <Minus :size="13" /></button
+                ><button
+                  type="button"
+                  aria-label="目标打浆度提高 5"
+                  :disabled="target >= 85"
+                  @click="setTarget(target + 5)"
+                >
+                  <Plus :size="13" />
+                </button>
+              </span>
+            </div>
+            <div class="ruler" aria-hidden="true">
+              <i :style="{ left: `${target}%` }"></i>
+            </div>
+            <div class="ruler-labels">
+              <span>0</span><span>50</span><span>100</span>
+            </div>
           </div>
-          <div class="beating-legend">
-            <span
-              v-for="s in series.filter((s) => s.points.length)"
-              :key="s.code"
-              ><i :style="{ background: color(s.code) }"></i
-              >{{ materialName(s.code) }}</span
+          <div
+            v-for="code in MATERIALS"
+            :key="code"
+            class="kpi"
+            :class="{ dim: material !== 'all' && material !== code }"
+          >
+            <div class="kpi-label">
+              <i class="swatch" :style="{ background: color(code) }"></i
+              >{{ materialName(code) }} · 达到 {{ target }} °SR
+            </div>
+            <div class="kpi-value">
+              <template v-if="reach[code] !== null"
+                ><strong>{{ number(round100(reach[code]!)) }}</strong
+                ><small>转</small></template
+              ><strong v-else class="na">未达到</strong>
+            </div>
+            <div class="ruler" aria-hidden="true">
+              <i
+                v-if="reach[code] !== null"
+                :style="{ left: `${(reach[code]! / xMax) * 100}%` }"
+              ></i>
+            </div>
+            <div class="ruler-labels">
+              <span>0</span><span>{{ number(xMax) }}</span>
+            </div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">两种原料相差</div>
+            <div class="kpi-value">
+              <template v-if="reachGap !== null"
+                ><strong>{{ number(round100(Math.abs(reachGap))) }}</strong
+                ><small>转</small></template
+              ><strong v-else class="na">—</strong>
+            </div>
+            <p class="kpi-note">
+              <template v-if="reachGap !== null"
+                >{{
+                  reachGap > 0 ? "阔叶木浆" : "针叶木浆"
+                }}更早达到目标。</template
+              >按相邻实测点线性插值估算，取整到百转。
+            </p>
+          </div>
+        </template>
+        <template v-else>
+          <div
+            v-for="code in MATERIALS"
+            :key="code"
+            class="kpi wide"
+            :class="{ dim: material !== 'all' && material !== code }"
+          >
+            <div class="kpi-label">
+              <i class="swatch" :style="{ background: color(code) }"></i
+              >{{ materialName(code) }} · {{ metric.name }}
+            </div>
+            <div v-if="change(code)" class="kpi-value">
+              <strong>{{ fmt(change(code)!.to.y) }}</strong
+              ><small>{{ unit }}</small>
+              <span v-if="change(code)!.pct !== null" class="delta"
+                >{{ change(code)!.pct! >= 0 ? "+" : "−"
+                }}{{ number(Math.abs(change(code)!.pct!), 1) }}%</span
+              >
+            </div>
+            <div v-else class="kpi-value"><strong class="na">—</strong></div>
+            <p v-if="change(code)" class="kpi-note">
+              {{ number(change(code)!.from.x) }} 转时
+              {{ fmt(change(code)!.from.y) }} →
+              {{ number(change(code)!.to.x) }} 转时
+              {{ fmt(change(code)!.to.y) }}
+            </p>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">有效数据点</div>
+            <div class="kpi-value">
+              <strong>{{ valid.length }}</strong
+              ><small>/ {{ visible.length }}</small>
+            </div>
+            <p class="kpi-note">缺失值不计入，曲线在缺失处断开。</p>
+          </div>
+        </template>
+      </section>
+      <p v-if="metric.unit_status !== 'confirmed'" class="unit-note">
+        {{ metric.name }}的单位{{
+          metric.unit_status === "tentative" ? "暂定，待确认" : "尚未确认"
+        }}，数值保留原始口径。
+      </p>
+
+      <div class="beating-row">
+        <section class="card beating-chart">
+          <div class="beating-chart-heading">
+            <div>
+              <h2>{{ metric.name }}随打浆转数的变化</h2>
+              <p>纵轴：{{ metric.name }}（{{ unit }}）</p>
+            </div>
+          </div>
+          <div class="sheet">
+            <div v-if="!valid.length" class="beating-state" role="status">
+              当前原料没有该指标的有效数据，请切换指标或原料。
+            </div>
+            <div v-else ref="plotBox" class="plot-box">
+              <svg
+                class="beating-plot"
+                :width="plotWidth"
+                :height="PLOT_H"
+                :viewBox="`0 0 ${plotWidth} ${PLOT_H}`"
+                aria-label="打浆趋势图；可用Tab定位数据点，Enter选中样本"
+                @pointermove="pointer"
+                @pointerleave="cursorRevs = null"
+              >
+                <g class="grid">
+                  <line
+                    v-for="t in yTicks"
+                    :key="`gy${t}`"
+                    :x1="margin.l"
+                    :x2="plotWidth - margin.r"
+                    :y1="py(t)"
+                    :y2="py(t)"
+                  />
+                  <line
+                    v-for="t in xTicks.slice(1)"
+                    :key="`gx${t}`"
+                    :x1="px(t)"
+                    :x2="px(t)"
+                    :y1="margin.t"
+                    :y2="PLOT_H - margin.b"
+                  />
+                </g>
+                <g class="axis">
+                  <line
+                    :x1="margin.l"
+                    :x2="margin.l"
+                    :y1="margin.t"
+                    :y2="PLOT_H - margin.b"
+                  />
+                  <line
+                    :x1="margin.l"
+                    :x2="plotWidth - margin.r"
+                    :y1="PLOT_H - margin.b"
+                    :y2="PLOT_H - margin.b"
+                  />
+                  <g v-for="t in yTicks" :key="`ty${t}`">
+                    <line
+                      :x1="margin.l - 6"
+                      :x2="margin.l"
+                      :y1="py(t)"
+                      :y2="py(t)"
+                    />
+                    <text :x="margin.l - 10" :y="py(t) + 4" text-anchor="end">
+                      {{ number(t, t % 1 ? digits : 0) }}
+                    </text>
+                  </g>
+                  <g v-for="t in xTicks" :key="`tx${t}`">
+                    <line
+                      :x1="px(t)"
+                      :x2="px(t)"
+                      :y1="PLOT_H - margin.b"
+                      :y2="PLOT_H - margin.b + 6"
+                    />
+                    <text
+                      :x="px(t)"
+                      :y="PLOT_H - margin.b + 20"
+                      :text-anchor="
+                        t === 0 ? 'start' : t === xMax ? 'end' : 'middle'
+                      "
+                    >
+                      {{ number(t) }}
+                    </text>
+                  </g>
+                  <text
+                    class="axis-title"
+                    :x="plotWidth - margin.r"
+                    :y="PLOT_H - 6"
+                    text-anchor="end"
+                  >
+                    打浆转数 / r
+                  </text>
+                </g>
+                <g v-if="isSr" class="target">
+                  <line
+                    :x1="margin.l"
+                    :x2="plotWidth - margin.r"
+                    :y1="py(target)"
+                    :y2="py(target)"
+                  />
+                  <text
+                    :x="plotWidth - margin.r - 4"
+                    :y="py(target) - 6"
+                    text-anchor="end"
+                  >
+                    目标 {{ target }} °SR
+                  </text>
+                </g>
+                <g v-if="cursorRevs !== null" class="cursor">
+                  <line
+                    :x1="px(cursorRevs)"
+                    :x2="px(cursorRevs)"
+                    :y1="margin.t"
+                    :y2="PLOT_H - margin.b"
+                  />
+                </g>
+                <g
+                  v-for="s in series"
+                  :key="s.code"
+                  :style="{ '--c': color(s.code) }"
+                >
+                  <path :d="s.path" class="line" />
+                  <g
+                    v-for="r in s.points"
+                    :key="r.canonical_code"
+                    class="plot-point"
+                    :class="{
+                      on: selected?.canonical_code === r.canonical_code,
+                    }"
+                    role="button"
+                    tabindex="0"
+                    :aria-label="`${r.canonical_code}，${r.beating_revolutions}转，${metric.name}${value(r)} ${unit}，选中查看读数`"
+                    @click="select(r)"
+                    @focus="select(r)"
+                    @keydown.enter.prevent="openDetail(r)"
+                    @keydown.space.prevent="openDetail(r)"
+                  >
+                    <circle
+                      :cx="px(r.beating_revolutions)"
+                      :cy="py(value(r)!)"
+                      r="10"
+                      fill="transparent"
+                    />
+                    <circle
+                      v-if="s.code === 'SW'"
+                      class="mark"
+                      :cx="px(r.beating_revolutions)"
+                      :cy="py(value(r)!)"
+                      r="3.6"
+                    />
+                    <rect
+                      v-else
+                      class="mark"
+                      :x="px(r.beating_revolutions) - 3.4"
+                      :y="py(value(r)!) - 3.4"
+                      width="6.8"
+                      height="6.8"
+                    />
+                    <circle
+                      v-if="selected?.canonical_code === r.canonical_code"
+                      class="ring"
+                      :cx="px(r.beating_revolutions)"
+                      :cy="py(value(r)!)"
+                      r="9"
+                    />
+                    <title>
+                      {{ r.canonical_code }} ·
+                      {{ number(r.beating_revolutions) }} r · {{ metric.name }}
+                      {{ fmt(value(r)) }} {{ unit }}
+                    </title>
+                  </g>
+                </g>
+                <g class="target-hits">
+                  <circle
+                    v-for="h in targetHits"
+                    :key="h.code"
+                    :cx="px(h.x)"
+                    :cy="py(target)"
+                    r="3.5"
+                  />
+                </g>
+              </svg>
+            </div>
+            <div class="sheet-legend">
+              <span class="legend-title">图例</span>
+              <span
+                v-for="code in shownMaterials"
+                :key="code"
+                class="legend-key"
+              >
+                <svg width="26" height="10" aria-hidden="true">
+                  <line
+                    x1="0"
+                    x2="26"
+                    y1="5"
+                    y2="5"
+                    :stroke="color(code)"
+                    stroke-width="2"
+                  />
+                  <circle
+                    v-if="code === 'SW'"
+                    cx="13"
+                    cy="5"
+                    r="3.4"
+                    :fill="color(code)"
+                  />
+                  <rect
+                    v-else
+                    x="9.8"
+                    y="1.8"
+                    width="6.4"
+                    height="6.4"
+                    :fill="color(code)"
+                  />
+                </svg>
+                {{ materialName(code) }}
+              </span>
+              <span v-if="isSr" class="legend-key">
+                <svg width="26" height="10" aria-hidden="true">
+                  <line x1="0" x2="26" y1="5" y2="5" class="target-key" />
+                </svg>
+                目标打浆度
+              </span>
+            </div>
+          </div>
+          <div class="beating-tooltip" aria-live="polite">
+            <template v-if="cursorRevs !== null">
+              <strong>{{ number(cursorRevs) }} r</strong>
+              <span v-for="c in cursorRows" :key="c.code" class="tip-item">
+                <i :style="{ background: color(c.code) }"></i
+                >{{ materialName(c.code) }}
+                <b>{{
+                  c.row && value(c.row) !== null
+                    ? `${fmt(value(c.row))} ${unit}`
+                    : "该转数无实测"
+                }}</b>
+              </span>
+            </template>
+            <span v-else
+              >移到曲线上逐个转数读数；点击或用 Tab 选中数据点，Enter
+              打开样本来源。</span
             >
           </div>
-        </div>
-        <p v-if="metric.unit_status !== 'confirmed'" class="unit-note">
-          {{ metric.name }}的单位{{
-            metric.unit_status === "tentative" ? "暂定，待确认" : "尚未确认"
-          }}，数值保留原始口径。
-        </p>
-        <div v-if="!valid.length" class="beating-state" role="status">
-          当前原料没有该指标的有效数据，请切换指标或原料。
-        </div>
-        <div
-          v-else
-          class="beating-plot-scroll"
-          role="region"
-          aria-label="打浆趋势图，可横向滚动"
-          tabindex="0"
-        >
-          <svg
-            class="beating-plot"
-            viewBox="0 0 960 345"
-            aria-label="打浆趋势图；可用Tab定位数据点，Enter查看样本详情"
-          >
-            <g v-for="i in 6" :key="`y${i}`">
-              <line
-                x1="80"
-                x2="910"
-                :y1="40 + (i - 1) * 49"
-                :y2="40 + (i - 1) * 49"
-                stroke="#edf0f4"
-              />
-              <text x="68" :y="44 + (i - 1) * 49" text-anchor="end">
-                {{
-                  number(
-                    yDomain[1]! - ((i - 1) / 5) * (yDomain[1]! - yDomain[0]!),
-                    2,
-                  )
-                }}
-              </text>
-            </g>
-            <g v-for="i in 6" :key="`x${i}`">
-              <text :x="80 + (i - 1) * 166" y="309" text-anchor="middle">
-                {{ number(((i - 1) / 5) * xMax, 0) }}
-              </text>
-            </g>
-            <text x="495" y="337" text-anchor="middle">打浆转数 / r</text>
-            <g v-for="s in series" :key="s.code">
-              <path
-                :d="s.path"
-                fill="none"
-                :stroke="color(s.code)"
-                stroke-width="2"
-              />
-              <g
-                v-for="r in s.points"
-                :key="r.canonical_code"
-                class="plot-point"
-                role="button"
-                tabindex="0"
-                :aria-label="`${r.canonical_code}，${r.beating_revolutions}转，${metric.name}${value(r)} ${unit}，查看详情`"
-                @mouseenter="focused = r"
-                @mouseleave="focused = null"
-                @focus="focused = r"
-                @blur="focused = null"
-                @click="detail(r)"
-                @keydown.enter.prevent="detail(r)"
-                @keydown.space.prevent="detail(r)"
+          <p class="beating-note">
+            线段仅连接相邻有效观测，不作拟合或因果推断。缺失值断开显示；不同指标的纵轴范围独立计算。<template
+              v-if="isSr"
+              >“达到目标”的转数是相邻两个实测点之间的线性插值估算。</template
+            >
+          </p>
+        </section>
+
+        <section class="card beating-readout" aria-label="样本读数">
+          <div class="beating-chart-heading">
+            <h2>样本读数</h2>
+            <span v-if="selected" class="readout-pos"
+              >{{ selectedIndex + 1 }} / {{ visible.length }}</span
+            >
+          </div>
+          <div v-if="selected" class="readout-body">
+            <div>
+              <div class="readout-code">{{ selected.canonical_code }}</div>
+              <div class="readout-name">{{ selected.display_name }}</div>
+              <div class="readout-mat">
+                <i :style="{ background: color(selected.material_code) }"></i
+                >{{ materialName(selected.material_code) }}
+              </div>
+            </div>
+            <div class="readout-big">
+              <div>
+                <span>{{ metric.name }}</span>
+                <p>
+                  <strong>{{ fmt(value(selected)) }}</strong
+                  ><small>{{ unit }}</small>
+                </p>
+              </div>
+              <div>
+                <span>打浆转数</span>
+                <p>
+                  <strong class="sm">{{
+                    number(selected.beating_revolutions)
+                  }}</strong
+                  ><small>r</small>
+                </p>
+              </div>
+            </div>
+            <div class="readout-block">
+              <div class="block-head">
+                <span>打浆进程</span
+                ><span
+                  ><b>{{ number(selected.beating_revolutions) }}</b> /
+                  {{ number(xMax) }} r</span
+                >
+              </div>
+              <div class="track">
+                <i
+                  :style="{
+                    width: `${(selected.beating_revolutions / xMax) * 100}%`,
+                    background: color(selected.material_code),
+                  }"
+                ></i>
+              </div>
+            </div>
+            <div v-if="otherAtSameRevs" class="readout-block">
+              <div class="block-head">
+                <span>同转数下另一种原料</span
+                ><span>{{ number(selected.beating_revolutions) }} r</span>
+              </div>
+              <div class="compare-row me">
+                <span>{{ materialName(selected.material_code) }}</span>
+                <div class="track">
+                  <i
+                    :style="{
+                      width: `${valueBar(value(selected))}%`,
+                      background: color(selected.material_code),
+                    }"
+                  ></i>
+                </div>
+                <b>{{ fmt(value(selected)) }}</b>
+              </div>
+              <div class="compare-row">
+                <span>{{ materialName(otherAtSameRevs.code) }}</span>
+                <div class="track">
+                  <i
+                    :style="{
+                      width: `${valueBar(otherAtSameRevs.value)}%`,
+                      background: color(otherAtSameRevs.code),
+                    }"
+                  ></i>
+                </div>
+                <b>{{ fmt(otherAtSameRevs.value) }}</b>
+              </div>
+              <p class="kpi-note">
+                <template v-if="otherAtSameRevs.value === null"
+                  >该转数超出{{
+                    materialName(otherAtSameRevs.code)
+                  }}的实测范围，不外推。</template
+                ><template v-else-if="otherAtSameRevs.estimated"
+                  >{{
+                    materialName(otherAtSameRevs.code)
+                  }}在该转数无实测，按相邻实测点线性插值。</template
+                ><template v-else>两种原料在该转数都有实测。</template>
+              </p>
+            </div>
+            <div class="readout-actions">
+              <button
+                class="button"
+                type="button"
+                @click="openDetail(selected)"
               >
-                <circle :cx="x(r)" :cy="y(r)" r="10" fill="transparent" />
-                <circle
-                  :cx="x(r)"
-                  :cy="y(r)"
-                  :r="focused?.canonical_code === r.canonical_code ? 6 : 3.5"
-                  :fill="color(s.code)"
-                  stroke="white"
-                  stroke-width="1.5"
-                />
-                <title>
-                  {{ r.canonical_code }} · {{ number(r.beating_revolutions) }} r
-                  · {{ metric.name }} {{ number(value(r), 4) }} {{ unit }}
-                </title>
-              </g>
-            </g>
-          </svg>
-        </div>
-        <div class="beating-tooltip" aria-live="polite">
-          <template v-if="focused"
-            ><strong
-              >{{ materialName(focused.material_code) }} ·
-              {{ focused.canonical_code }}</strong
-            ><span>{{ number(focused.beating_revolutions) }} r</span
-            ><span
-              >{{ metric.name }}：{{ number(value(focused), 4) }}
-              {{ unit }}</span
-            ></template
-          ><span v-else
-            >悬停或聚焦查看数值，点击数据点查看样本详情与来源。</span
-          >
-        </div>
-        <p class="beating-note">
-          线段仅连接相邻有效观测，不作拟合或因果推断。缺失值断开显示；不同指标的纵轴范围独立计算。
-        </p>
-      </section>
+                查看样本详情与来源
+              </button>
+              <div class="readout-nav">
+                <button
+                  class="button"
+                  type="button"
+                  :disabled="selectedIndex <= 0"
+                  aria-label="上一个样本"
+                  @click="step(-1)"
+                >
+                  <ChevronLeft :size="15" />上一个
+                </button>
+                <button
+                  class="button"
+                  type="button"
+                  :disabled="selectedIndex >= visible.length - 1"
+                  aria-label="下一个样本"
+                  @click="step(1)"
+                >
+                  下一个<ChevronRight :size="15" />
+                </button>
+              </div>
+            </div>
+          </div>
+          <p v-else class="beating-state">暂无匹配数据。</p>
+        </section>
+      </div>
+
       <section class="card beating-table">
         <div class="beating-chart-heading">
           <div>
             <h2>
               实验明细 <span class="quiet-tag">{{ visible.length }}</span>
             </h2>
-            <p>按打浆转数升序排列；“—”表示缺失。</p>
+            <p>按原料分组、打浆转数升序；“—”表示缺失。</p>
           </div>
         </div>
         <div
@@ -338,24 +948,51 @@ onBeforeUnmount(() => controller?.abort());
             <thead>
               <tr>
                 <th>样本编码</th>
-                <th>原料</th>
                 <th class="numeric">打浆转数 / r</th>
-                <th class="numeric">{{ metric.name }} / {{ unit }}</th>
+                <th class="value-head">{{ metric.name }} / {{ unit }}</th>
                 <th>来源</th>
               </tr>
             </thead>
-            <tbody>
-              <tr v-for="r in visible" :key="r.canonical_code">
+            <tbody v-for="code in shownMaterials" :key="code">
+              <tr class="group-row">
+                <td colspan="4">
+                  <i :style="{ background: color(code) }"></i
+                  ><strong>{{ materialName(code) }}</strong
+                  ><span>{{ byMaterial[code].length }} 个样本</span>
+                </td>
+              </tr>
+              <tr
+                v-for="r in byMaterial[code]"
+                :key="r.canonical_code"
+                :data-code="r.canonical_code"
+                :class="{ on: selected?.canonical_code === r.canonical_code }"
+                @click="select(r)"
+              >
                 <td>
-                  <button class="sample-code" @click="detail(r)">
+                  <button class="sample-code" @click.stop="openDetail(r)">
                     {{ r.canonical_code }}
                   </button>
                 </td>
-                <td>{{ materialName(r.material_code) }}</td>
                 <td class="numeric">{{ number(r.beating_revolutions) }}</td>
-                <td class="numeric">{{ number(value(r), 4) }}</td>
+                <td class="value-cell">
+                  <div class="value-wrap">
+                    <span class="numeric">{{ number(value(r), 4) }}</span>
+                    <span class="value-bar" aria-hidden="true"
+                      ><i
+                        :style="{
+                          width: `${valueBar(value(r))}%`,
+                          background: color(code),
+                        }"
+                      ></i
+                      ><b
+                        v-if="isSr"
+                        :style="{ left: `${valueBar(target)}%` }"
+                      ></b
+                    ></span>
+                  </div>
+                </td>
                 <td>
-                  <button class="text-button" @click="detail(r)">
+                  <button class="text-button" @click.stop="openDetail(r)">
                     查看详情
                   </button>
                 </td>
@@ -366,17 +1003,30 @@ onBeforeUnmount(() => controller?.abort());
         <p v-if="!visible.length" class="beating-state">暂无匹配数据。</p>
       </section>
     </template>
-    <SampleDetail :sample="selected" @close="selected = null" />
+    <SampleDetail :sample="detailSample" @close="detailSample = null" />
   </div>
 </template>
 
 <style scoped>
+/* 页头显微图向右出血，超出部分裁掉，不产生横向滚动 */
+.beating-page {
+  overflow-x: clip;
+}
+.page-heading {
+  position: relative;
+  isolation: isolate;
+  min-height: 128px;
+}
+.page-heading > :not(.fiber-hero) {
+  position: relative;
+  z-index: 1;
+}
 .beating-controls {
   display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 18px 22px;
-  margin-bottom: 22px;
+  align-items: flex-end;
+  gap: 28px;
+  padding: 16px 22px;
+  margin-bottom: 16px;
   position: relative;
   z-index: 3;
   flex-wrap: wrap;
@@ -384,21 +1034,190 @@ onBeforeUnmount(() => controller?.abort());
 .control-caption {
   display: block;
   font-size: 12px;
-  color: #788697;
+  color: var(--muted);
   margin-bottom: 8px;
+}
+.material-seg {
+  display: flex;
+  gap: 4px;
+}
+.material-seg button {
+  flex: none;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--ink-2);
+  font-size: 13px;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+.material-seg button:hover {
+  background: var(--canvas);
+}
+.material-seg button.on {
+  border-color: var(--signal);
+  background: var(--signal-tint);
+  color: var(--ink);
+}
+.material-seg i {
+  width: 10px;
+  height: 10px;
+  border-radius: 1px;
+}
+.material-seg i.all {
+  background: linear-gradient(90deg, var(--sw) 0 50%, var(--hw) 50%);
+}
+.seg-count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.material-seg button.on .seg-count {
+  color: var(--signal);
 }
 .beating-count {
   margin-left: auto;
   font-size: 13px;
-  color: #68798c;
+  color: var(--muted);
+  align-self: center;
 }
 .beating-count span {
   margin: 0 10px;
-  color: #adb7c4;
+  color: var(--border-strong);
+}
+
+/* KPI：一条带刻度的读数条 */
+.beating-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 16px;
+  padding: 0;
+}
+.kpi {
+  padding: 14px 20px 12px;
+  border-left: 1px solid var(--border);
+  min-width: 0;
+  transition: opacity 0.15s;
+}
+.kpi:first-child {
+  border-left: 0;
+}
+.kpi.dim {
+  opacity: 0.4;
+}
+.kpi-label {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+}
+.kpi-value {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 6px;
+  min-height: 40px;
+}
+.kpi-value strong {
+  font: 500 34px/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.kpi-value strong.na {
+  font-size: 22px;
+  color: var(--muted);
+}
+.kpi-value small {
+  font: 400 13px/1 var(--font-mono);
+  color: var(--muted);
+}
+.kpi-value .delta {
+  margin-left: 8px;
+  font: 500 13px var(--font-mono);
+  color: var(--ink-2);
+}
+.kpi-note {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.stepper {
+  margin-left: auto;
+  display: inline-flex;
+  gap: 4px;
+  align-self: center;
+}
+.stepper button {
+  width: 26px;
+  height: 26px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--ink-2);
+}
+.stepper button:hover:not(:disabled) {
+  color: var(--signal);
+  border-color: var(--signal);
+}
+/* 刻度尺：底线 + 短刻度 + 三角指针 */
+.ruler {
+  position: relative;
+  height: 16px;
+  margin-top: 10px;
+  background:
+    linear-gradient(var(--muted), var(--muted)) 0 7px / 100% 1px no-repeat,
+    repeating-linear-gradient(90deg, var(--muted) 0 1px, transparent 1px 5%) 0
+      7px / 100% 5px no-repeat;
+  opacity: 0.9;
+}
+.ruler i {
+  position: absolute;
+  top: -3px;
+  width: 0;
+  height: 0;
+  margin-left: -5px;
+  border: 5px solid transparent;
+  border-top: 8px solid var(--signal);
+  border-bottom: 0;
+}
+.ruler-labels {
+  display: flex;
+  justify-content: space-between;
+  font: 400 11px var(--font-mono);
+  color: var(--muted);
+}
+.unit-note {
+  font-size: 12px;
+  color: #986f31;
+  margin: -6px 0 14px;
+}
+
+/* 曲线 + 读数 */
+.beating-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: stretch;
 }
 .beating-chart {
-  padding: 24px;
-  margin-bottom: 24px;
+  padding: 18px 20px 16px;
+  min-width: 0;
 }
 .beating-chart-heading {
   display: flex;
@@ -409,37 +1228,54 @@ onBeforeUnmount(() => controller?.abort());
 }
 .beating-chart-heading p {
   font-size: 13px;
-  color: #8491a2;
-  margin-top: 8px;
+  color: var(--muted);
+  margin-top: 6px;
 }
-.beating-legend {
-  display: flex;
-  gap: 20px;
-  font-size: 13px;
-  color: #64758a;
+/* 一张压在卡片上的白纸：纸边 + 淡投影 */
+.sheet {
+  margin-top: 14px;
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  border-radius: 1px;
+  box-shadow:
+    0 1px 2px rgba(60, 45, 20, 0.08),
+    0 4px 12px -6px rgba(60, 45, 20, 0.18);
 }
-.beating-legend span {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.beating-legend i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-.beating-plot-scroll {
-  overflow-x: auto;
-  margin-top: 16px;
+.plot-box {
+  width: 100%;
+  overflow: hidden;
 }
 .beating-plot {
-  width: 100%;
-  min-width: 640px;
   display: block;
+  touch-action: pan-y;
 }
 .beating-plot text {
-  font-size: 12px;
-  fill: #8592a4;
+  font: 400 11px var(--font-mono);
+  fill: var(--ink-2);
+}
+.beating-plot .axis-title {
+  font-family: inherit;
+  font-weight: 500;
+}
+.grid line {
+  stroke: #e9e2d2;
+  shape-rendering: crispEdges;
+}
+.axis line {
+  stroke: #9a8d72;
+  shape-rendering: crispEdges;
+}
+.line {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.mark {
+  fill: var(--c);
+  stroke: var(--paper);
+  stroke-width: 2;
+  paint-order: stroke;
 }
 .plot-point {
   cursor: pointer;
@@ -447,49 +1283,309 @@ onBeforeUnmount(() => controller?.abort());
 .plot-point:focus {
   outline: none;
 }
-.plot-point:focus circle:last-of-type {
-  stroke: #263f61;
+.plot-point:focus-visible .mark {
+  stroke: var(--signal-ink);
   stroke-width: 2.5;
 }
+.ring {
+  fill: none;
+  stroke: var(--signal-ink);
+  stroke-width: 1.5;
+}
+.target line,
+.target-key {
+  stroke: var(--signal-ink);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+.target text {
+  fill: var(--signal-ink);
+  font-weight: 500;
+}
+.target-hits circle {
+  fill: var(--paper);
+  stroke: var(--signal-ink);
+  stroke-width: 1.5;
+}
+.cursor line {
+  stroke: var(--signal-ink);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.sheet-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
+  padding: 8px 14px;
+  border-top: 1px solid #e9e2d2;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.legend-title {
+  color: var(--muted);
+}
+.legend-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 .beating-tooltip {
-  min-height: 48px;
+  min-height: 42px;
   display: flex;
   align-items: center;
   gap: 18px;
   flex-wrap: wrap;
-  background: #f7fafc;
-  border-radius: 6px;
-  padding: 12px 16px;
-  font-size: 13px;
-  color: #677a90;
+  padding: 10px 2px 0;
+  font-size: 12px;
+  color: var(--muted);
 }
 .beating-tooltip strong {
-  color: #3b536e;
+  font-family: var(--font-mono);
+  color: var(--signal);
 }
-.beating-note,
-.unit-note {
+.tip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-2);
+}
+.tip-item i {
+  width: 10px;
+  height: 2px;
+}
+.tip-item b {
+  font: 500 12px var(--font-mono);
+  color: var(--ink);
+}
+.beating-note {
   font-size: 12px;
-  color: #7e8d9f;
-  margin-top: 14px;
+  color: var(--muted);
+  margin-top: 8px;
   line-height: 1.7;
 }
-.unit-note {
-  color: #986f31;
+
+/* 读数面板 */
+.beating-readout {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
 }
+.readout-pos {
+  font: 400 12px var(--font-mono);
+  color: var(--muted);
+}
+.readout-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 14px;
+  flex: 1;
+}
+.readout-code {
+  font: 500 12px var(--font-mono);
+  color: var(--muted);
+}
+.readout-name {
+  font: 700 20px/1.35 var(--font-serif);
+  color: var(--ink);
+  margin-top: 2px;
+}
+.readout-mat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-top: 6px;
+}
+.readout-mat i {
+  width: 10px;
+  height: 10px;
+  border-radius: 1px;
+}
+.readout-big {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.readout-big span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.readout-big p {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 4px;
+}
+.readout-big strong {
+  font: 500 34px/1 var(--font-mono);
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.readout-big strong.sm {
+  font-size: 22px;
+  font-weight: 400;
+}
+.readout-big small {
+  font: 400 12px var(--font-mono);
+  color: var(--muted);
+}
+.readout-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.block-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+}
+.block-head b {
+  font: 500 12px var(--font-mono);
+  color: var(--ink);
+}
+.track {
+  position: relative;
+  height: 6px;
+  background: #e8e1d2;
+  border-radius: 1px;
+  overflow: hidden;
+}
+.track i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  transition: width 0.3s ease-out;
+}
+.compare-row {
+  display: grid;
+  grid-template-columns: 64px 1fr 56px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.compare-row b {
+  font: 500 12px var(--font-mono);
+  color: var(--ink-2);
+  text-align: right;
+}
+.compare-row.me {
+  color: var(--ink);
+}
+.compare-row.me b {
+  color: var(--ink);
+}
+.compare-row:not(.me) .track i {
+  opacity: 0.5;
+}
+.readout-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.readout-actions .button {
+  justify-content: center;
+}
+.readout-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* 表格：按原料分组 */
 .beating-table .beating-chart-heading {
-  padding: 22px;
+  padding: 18px 22px;
+}
+.group-row td {
+  background: var(--canvas);
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.group-row td > * {
+  vertical-align: middle;
+}
+.group-row i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 1px;
+  margin-right: 8px;
+}
+.group-row strong {
+  font: 700 14px var(--font-serif);
+  color: var(--ink);
+}
+.group-row span {
+  margin-left: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+tbody tr.on td {
+  background: var(--signal-tint);
+}
+tbody tr.on td:first-child {
+  box-shadow: inset 2px 0 0 var(--signal);
+}
+tbody tr:not(.group-row) {
+  cursor: pointer;
+}
+.value-head,
+.value-cell {
+  padding-left: 24px;
+}
+.value-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.value-wrap .numeric {
+  min-width: 64px;
+}
+.value-bar {
+  position: relative;
+  flex: 1;
+  max-width: 260px;
+  height: 4px;
+  background: #e8e1d2;
+  border-radius: 1px;
+}
+.value-bar i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 1px;
+}
+.value-bar b {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 1px;
+  background: var(--signal);
 }
 .beating-state {
   padding: 64px 24px;
   text-align: center;
-  color: #73849a;
+  color: var(--muted);
 }
 .beating-state p {
   margin: 14px 0;
 }
+@media (max-width: 1100px) {
+  .beating-row {
+    grid-template-columns: 1fr;
+  }
+}
 @media (max-width: 720px) {
   .beating-controls > div {
     width: 100%;
+  }
+  .material-seg {
+    overflow-x: auto;
   }
   .beating-controls {
     gap: 14px;
@@ -499,15 +1595,29 @@ onBeforeUnmount(() => controller?.abort());
     margin-left: 0;
     width: 100%;
   }
-  .beating-chart {
-    padding: 16px;
+  .beating-kpis {
+    grid-template-columns: 1fr 1fr;
   }
-  .beating-tooltip {
-    min-height: 90px;
-    gap: 8px;
+  .kpi {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+    padding: 12px 14px;
   }
-  .beating-chart-heading h2 {
-    line-height: 1.6;
+  .kpi:nth-child(-n + 2) {
+    border-top: 0;
+  }
+  .kpi:nth-child(even) {
+    border-left: 1px solid var(--border);
+  }
+  .kpi-value strong {
+    font-size: 26px;
+  }
+  .beating-chart,
+  .beating-readout {
+    padding: 14px;
+  }
+  .value-bar {
+    display: none;
   }
 }
 </style>

@@ -207,7 +207,7 @@ watch(zoom, locate);
   max-height: 840px;
   overflow: auto;
   border: 1px solid var(--border);
-  background: #e9edf1;
+  background: #f2efe8;
   border-radius: 5px;
   position: relative;
 }
@@ -244,8 +244,8 @@ watch(zoom, locate);
   stroke-width: 1.2;
 }
 .context-mark {
-  fill: #4386bf24;
-  stroke: #4386bf77;
+  fill: #0b6e6824;
+  stroke: #0b6e6877;
   stroke-width: 0.5;
 }
 .original-legend {
@@ -265,8 +265,8 @@ watch(zoom, locate);
   border-radius: 2px;
 }
 .original-legend .context {
-  background: #4386bf24;
-  border-color: #4386bf77;
+  background: #0b6e6824;
+  border-color: #0b6e6877;
   margin-left: 10px;
 }
 .original-error {
@@ -274,7 +274,7 @@ watch(zoom, locate);
   line-height: 1.8;
   color: #a55d31;
   padding: 20px;
-  background: #fff8ed;
+  background: #faf7f2;
 }
 .original-error .button {
   display: block;

@@ -14,6 +14,7 @@ import {
 import { pearson, axisDomain } from "../analysis";
 import FilterSelect from "../components/FilterSelect.vue";
 import SampleDetail from "../components/SampleDetail.vue";
+import { materialColors } from "../palette";
 interface Row extends Sample {
   [key: string]: string | number | null;
 }
@@ -65,7 +66,7 @@ const kind = computed(() =>
     ? String(route.query.type)
     : "all",
 );
-const colors = { softwood: "#4386bf", hardwood: "#58a397", blend: "#9282bc" };
+const colors = materialColors;
 const types = [
   { value: "all", label: "全部样本类型" },
   ...typeKeys.map((t) => ({ value: t, label: typeNames[t], color: colors[t] })),
@@ -260,7 +261,7 @@ onBeforeUnmount(() => controller?.abort());
                 x2="890"
                 :y1="40 + (i - 1) * 50"
                 :y2="40 + (i - 1) * 50"
-                stroke="#edf0f4"
+                stroke="#f5f2ec"
               />
               <text x="77" :y="44 + (i - 1) * 50" text-anchor="end">
                 {{
@@ -420,7 +421,7 @@ onBeforeUnmount(() => controller?.abort());
 }
 .association-controls label {
   display: block;
-  color: #788697;
+  color: #978d78;
   font-size: 12px;
   margin-bottom: 8px;
 }
@@ -439,7 +440,7 @@ onBeforeUnmount(() => controller?.abort());
 .association-heading p,
 .axis-caption {
   font-size: 13px;
-  color: #78899e;
+  color: #9e9178;
   margin-top: 9px;
   line-height: 1.7;
 }
@@ -448,7 +449,7 @@ onBeforeUnmount(() => controller?.abort());
   gap: 18px;
   flex-wrap: wrap;
   font-size: 13px;
-  color: #64758a;
+  color: #8a7d64;
 }
 .association-legend span {
   display: flex;
@@ -471,7 +472,7 @@ onBeforeUnmount(() => controller?.abort());
 }
 .association-plot text {
   font-size: 12px;
-  fill: #8592a4;
+  fill: #a49a85;
 }
 .association-point {
   cursor: pointer;
@@ -480,7 +481,7 @@ onBeforeUnmount(() => controller?.abort());
   outline: none;
 }
 .association-point:focus circle:last-of-type {
-  stroke: #263f61;
+  stroke: #0a4f4b;
   stroke-width: 2.5;
 }
 .association-tooltip {
@@ -490,13 +491,13 @@ onBeforeUnmount(() => controller?.abort());
   gap: 16px;
   flex-wrap: wrap;
   padding: 12px 16px;
-  background: #f7fafc;
+  background: #fcfaf7;
   border-radius: 6px;
-  color: #677a90;
+  color: #908267;
   font-size: 13px;
 }
 .association-tooltip strong {
-  color: #3b536e;
+  color: #0b5f5a;
 }
 .correlation-grid {
   display: grid;
@@ -506,30 +507,30 @@ onBeforeUnmount(() => controller?.abort());
 }
 .correlation-grid article {
   padding: 18px;
-  background: #f9fbfc;
+  background: #fcfbf9;
   border-radius: 7px;
 }
 .correlation-grid h3 {
-  color: #64758a;
+  color: #8a7d64;
   font-size: 13px;
 }
 .correlation-grid strong {
   display: block;
   font-size: 30px;
-  color: #3b536e;
+  color: #0b5f5a;
   margin: 10px 0;
 }
 .correlation-grid p,
 .correlation-grid small {
   font-size: 12px;
-  color: #78899e;
+  color: #9e9178;
   line-height: 1.7;
 }
 .association-note,
 .unit-note {
   font-size: 12px;
   line-height: 1.8;
-  color: #78899e;
+  color: #9e9178;
   margin-top: 16px;
 }
 .unit-note {
@@ -541,7 +542,7 @@ onBeforeUnmount(() => controller?.abort());
 .association-state {
   text-align: center;
   padding: 64px 24px;
-  color: #73849a;
+  color: #9a8d73;
 }
 .association-state p {
   margin: 14px 0;
