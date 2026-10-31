@@ -12,6 +12,9 @@ import LiteratureData from "./pages/LiteratureData.vue";
 import "@fontsource/lato/latin-400.css";
 import "@fontsource/lato/latin-700.css";
 import "@fontsource/lato/latin-900.css";
+import "@fontsource/noto-serif-sc/700.css";
+import "@fontsource/ibm-plex-mono/latin-400.css";
+import "@fontsource/ibm-plex-mono/latin-500.css";
 import "./style.css";
 
 const router = createRouter({

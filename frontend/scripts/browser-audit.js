@@ -133,13 +133,17 @@ async (page) => {
       {
         path: "/beating",
         id: "beating-metric",
+        // 按原料分组（针叶在前），组内按打浆转数升序；分组标题行不计入
+        rows: "main table tbody tr[data-code]",
         data: [...beating].sort(
           (a, b) =>
+            (a.material_code === "SW" ? 0 : 1) -
+              (b.material_code === "SW" ? 0 : 1) ||
             a.beating_revolutions - b.beating_revolutions ||
             a.canonical_code.localeCompare(b.canonical_code),
         ),
         metrics: [{ key: "beating_degree_sr" }, ...metrics],
-        cell: 3,
+        cell: 2,
       },
       {
         path: "/blends",
@@ -157,7 +161,7 @@ async (page) => {
       for (let i = 0; i < config.metrics.length; i++) {
         await choose(config.id, i);
         const actual = await page
-          .locator("main table tbody tr")
+          .locator(config.rows ?? "main table tbody tr")
           .evaluateAll(
             (rows, col) =>
               rows.map((r) => [

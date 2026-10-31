@@ -240,7 +240,7 @@ load();
                 x2="880"
                 :y1="50 + (i - 1) * 46"
                 :y2="50 + (i - 1) * 46"
-                stroke="#edf1f5"
+                stroke="#f5f2ed"
               />
               <text x="76" :y="55 + (i - 1) * 46" text-anchor="end">
                 {{
@@ -248,7 +248,7 @@ load();
                 }}
               </text>
             </g>
-            <path :d="path" fill="none" stroke="#4386bf" stroke-width="3" />
+            <path :d="path" fill="none" stroke="#0b6e68" stroke-width="3" />
             <g v-for="r in visible" :key="r.cycle_no">
               <text :x="x(r)" y="305" text-anchor="middle">
                 {{ r.cycle_no }}
@@ -275,7 +275,7 @@ load();
                 :cx="x(r)"
                 :cy="y(value(r)!)"
                 :r="focused === r ? 7 : 5"
-                fill="#4386bf"
+                fill="#0b6e68"
                 stroke="white"
                 stroke-width="2"
               />
@@ -402,25 +402,25 @@ load();
   display: grid;
   gap: 9px;
   font-size: 12px;
-  color: #718399;
+  color: #998c71;
   min-width: 230px;
 }
 .dataset-count {
   margin-left: auto;
   font-size: 12px;
-  color: #718399;
+  color: #998c71;
   padding-bottom: 10px;
 }
 .block-summary {
   display: flex;
   gap: 28px;
   flex-wrap: wrap;
-  color: #718399;
+  color: #998c71;
   font-size: 13px;
 }
 .block-summary strong {
   margin-left: 8px;
-  color: #40566d;
+  color: #0b5f5a;
   font-weight: 700;
 }
 .section-head {
@@ -438,12 +438,12 @@ load();
 .section-head p,
 .dialog-heading p {
   margin: 0;
-  color: #8191a4;
+  color: #a49881;
   font-size: 12px;
 }
 .section-head > span {
   font-size: 12px;
-  color: #718399;
+  color: #998c71;
 }
 .chart-scroll {
   overflow-x: auto;
@@ -456,7 +456,7 @@ load();
   max-height: 430px;
 }
 .cycle-chart text {
-  fill: #8191a4;
+  fill: #a49881;
   font-size: 12px;
 }
 .cycle-point {
@@ -464,22 +464,22 @@ load();
   outline: none;
 }
 .cycle-point:focus circle:last-child {
-  stroke: #203e5b;
+  stroke: #0a4f4b;
   stroke-width: 3;
 }
 .point-summary {
-  background: #f8fafc;
+  background: #fcfbf8;
   padding: 14px 24px;
-  color: #718399;
+  color: #998c71;
   font-size: 12px;
   min-height: 46px;
-  border-top: 1px solid #edf1f5;
+  border-top: 1px solid #f5f2ed;
   border-radius: 0 0 8px 8px;
 }
 .text-link {
   border: 0;
   background: none;
-  color: #4386bf;
+  color: #0b6e68;
   cursor: pointer;
   font: inherit;
   padding: 5px 0;
@@ -490,33 +490,33 @@ load();
 .method-note {
   font-size: 12px;
   line-height: 1.8;
-  color: #8191a4;
+  color: #a49881;
   margin: 0;
 }
 .state {
   padding: 36px;
   text-align: center;
-  color: #718399;
+  color: #998c71;
 }
 .observations-dialog {
-  border: 1px solid #e1e8ef;
+  border: 1px solid #dcebe7;
   border-radius: 12px;
   padding: 24px;
   width: min(760px, calc(100vw - 32px));
   max-height: 85vh;
-  color: #40566d;
-  box-shadow: 0 24px 80px #203e5b33;
+  color: #0b5f5a;
+  box-shadow: 0 24px 80px #0a4f4b33;
 }
 .observations-dialog::backdrop {
-  background: #263e594d;
+  background: #0a4f4b4d;
 }
 .original-note {
   font-size: 13px;
-  color: #718399;
+  color: #998c71;
 }
 .observations-dialog small {
   display: block;
-  color: #8191a4;
+  color: #a49881;
   margin-top: 6px;
 }
 .observations-dialog table {
