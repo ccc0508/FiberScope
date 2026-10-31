@@ -276,7 +276,7 @@ load();
                 :cy="y(value(r)!)"
                 :r="focused === r ? 7 : 5"
                 fill="#0b6e68"
-                stroke="white"
+                stroke="#fffefb"
                 stroke-width="2"
               />
             </g>
@@ -402,20 +402,20 @@ load();
   display: grid;
   gap: 9px;
   font-size: 12px;
-  color: #998c71;
+  color: var(--muted);
   min-width: 230px;
 }
 .dataset-count {
   margin-left: auto;
   font-size: 12px;
-  color: #998c71;
+  color: var(--muted);
   padding-bottom: 10px;
 }
 .block-summary {
   display: flex;
   gap: 28px;
   flex-wrap: wrap;
-  color: #998c71;
+  color: var(--muted);
   font-size: 13px;
 }
 .block-summary strong {
@@ -438,12 +438,12 @@ load();
 .section-head p,
 .dialog-heading p {
   margin: 0;
-  color: #a49881;
+  color: var(--muted);
   font-size: 12px;
 }
 .section-head > span {
   font-size: 12px;
-  color: #998c71;
+  color: var(--muted);
 }
 .chart-scroll {
   overflow-x: auto;
@@ -470,7 +470,7 @@ load();
 .point-summary {
   background: #fcfbf8;
   padding: 14px 24px;
-  color: #998c71;
+  color: var(--muted);
   font-size: 12px;
   min-height: 46px;
   border-top: 1px solid #f5f2ed;
@@ -490,13 +490,13 @@ load();
 .method-note {
   font-size: 12px;
   line-height: 1.8;
-  color: #a49881;
+  color: var(--muted);
   margin: 0;
 }
 .state {
   padding: 36px;
   text-align: center;
-  color: #998c71;
+  color: var(--muted);
 }
 .observations-dialog {
   border: 1px solid #dcebe7;
@@ -512,11 +512,11 @@ load();
 }
 .original-note {
   font-size: 13px;
-  color: #998c71;
+  color: var(--muted);
 }
 .observations-dialog small {
   display: block;
-  color: #a49881;
+  color: var(--muted);
   margin-top: 6px;
 }
 .observations-dialog table {

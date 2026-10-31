@@ -529,12 +529,12 @@ load();
 .file-overview summary span {
   font-size: 12px;
   font-weight: 400;
-  color: #a49881;
+  color: var(--muted);
   margin-left: 12px;
 }
 .section-note {
   font-size: 12px;
-  color: #a49881;
+  color: var(--muted);
   line-height: 1.8;
 }
 .file-grid {
@@ -552,7 +552,7 @@ load();
   border-radius: 8px;
   background: #fffdf8;
   padding: 14px;
-  color: #817152;
+  color: var(--ink-2);
   cursor: pointer;
   font: inherit;
   transition:
@@ -577,7 +577,7 @@ load();
 .file-card small {
   display: block;
   font-size: 11px;
-  color: #a49881;
+  color: var(--muted);
   margin-top: 5px;
 }
 .source-heading {
@@ -595,7 +595,7 @@ load();
 .source-heading p,
 .source-heading > span {
   font-size: 12px;
-  color: #a49881;
+  color: var(--muted);
   margin: 0;
   line-height: 1.7;
 }
@@ -618,7 +618,7 @@ load();
   min-width: 280px;
 }
 .source-search > svg {
-  color: #a49881;
+  color: var(--muted);
   flex-shrink: 0;
 }
 .source-search > button {
@@ -633,7 +633,7 @@ load();
   padding: 9px 10px;
   font: inherit;
   font-size: 12px;
-  background: white;
+  background: var(--panel);
   color: #0b5f5a;
 }
 .source-records > .section-note {
@@ -653,7 +653,7 @@ load();
 }
 .sources-table small {
   display: block;
-  color: #a49881;
+  color: var(--muted);
   font-size: 11px;
   margin-top: 4px;
 }
@@ -679,7 +679,7 @@ load();
   justify-content: space-between;
   align-items: center;
   padding: 14px 24px;
-  color: #a49881;
+  color: var(--muted);
   font-size: 12px;
 }
 .source-pagination > div {
@@ -703,18 +703,18 @@ load();
   display: block;
   font-size: 12px;
   margin-top: 8px;
-  color: #998c71;
+  color: var(--muted);
   font-weight: 400;
 }
 .count-grid p {
   font-size: 12px;
   line-height: 1.8;
-  color: #998c71;
+  color: var(--muted);
 }
 .source-state {
   padding: 32px;
   text-align: center;
-  color: #998c71;
+  color: var(--muted);
 }
 .source-dialog {
   border: 1px solid #dcebe7;
@@ -737,7 +737,7 @@ load();
   line-height: 1.6;
 }
 .source-dialog .dialog-heading p {
-  color: #a49881;
+  color: var(--muted);
   font-size: 12px;
 }
 .usage-list {
@@ -759,12 +759,12 @@ load();
 }
 .usage-list small,
 .indicator-note small {
-  color: #a49881;
+  color: var(--muted);
   font-size: 12px;
 }
 .usage-list p {
   margin: 0;
-  color: #998c71;
+  color: var(--muted);
 }
 .indicator-note,
 .observation-section {

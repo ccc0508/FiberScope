@@ -201,8 +201,8 @@ onBeforeUnmount(() => {
   padding: 0 11px;
   border: 1px solid #dcebe7;
   border-radius: 6px;
-  background: white;
-  color: #857961;
+  background: var(--panel);
+  color: var(--ink-2);
   font-size: 13px;
   transition:
     border-color 0.15s,
@@ -237,7 +237,7 @@ onBeforeUnmount(() => {
   max-width: calc(100vw - 48px);
   max-height: min(360px, 50vh);
   overflow-y: auto;
-  background: white;
+  background: var(--panel);
   border: 1px solid #dcebe7;
   border-radius: 9px;
   padding: 7px;
@@ -249,7 +249,7 @@ onBeforeUnmount(() => {
 }
 .filter-popover-title {
   padding: 7px 9px 9px;
-  color: #a69c89;
+  color: var(--muted);
   font-size: 11px;
   font-weight: 500;
 }
@@ -261,7 +261,7 @@ onBeforeUnmount(() => {
   padding: 8px 9px;
   border-radius: 5px;
   cursor: pointer;
-  color: #817459;
+  color: var(--ink-2);
   font-size: 13px;
   transition:
     background 0.1s,
@@ -288,7 +288,7 @@ onBeforeUnmount(() => {
 }
 .filter-option-count {
   font-size: 11px;
-  color: #afa289;
+  color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
 .filter-check {
