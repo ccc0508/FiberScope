@@ -7,7 +7,7 @@
 在 PowerShell 中运行：
 
 ```powershell
-Set-Location 'D:\develop\srp2.0'
+Set-Location 'C:\path\to\project'
 .\database\backup\create_baseline_backup.ps1
 ```
 
@@ -25,7 +25,7 @@ Set-Location 'D:\develop\srp2.0'
 
 ```powershell
 $psql = 'C:\Program Files\PostgreSQL\18\bin\psql.exe'
-$dir = 'D:\develop\srp2.0\database\migrations'
+$dir = 'C:\path\to\project\database\migrations'
 
 & $psql -X -W -v ON_ERROR_STOP=1 -U postgres -d plant_fiber_db `
   -f "$dir\V006__create_analysis_views.sql"

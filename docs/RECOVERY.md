@@ -27,13 +27,13 @@ Windows启动阶段使用文件日志和关闭的标准输入，避免后台Post
 验收后可停止指定的演练实例（替换为脚本实际返回的目录）：
 
 ```powershell
-& 'C:\Program Files\PostgreSQL\18\bin\pg_ctl.exe' -D 'D:\develop\srp2.0\tmp\restore_时间戳\cluster' -m fast -w stop
+& 'C:\Program Files\PostgreSQL\18\bin\pg_ctl.exe' -D 'C:\path\to\project\tmp\restore_时间戳\cluster' -m fast -w stop
 ```
 
 需要继续使用时，在相同目录与端口启动：
 
 ```powershell
-& 'C:\Program Files\PostgreSQL\18\bin\pg_ctl.exe' -D 'D:\develop\srp2.0\tmp\restore_时间戳\cluster' -l 'D:\develop\srp2.0\tmp\restore_时间戳\server.log' -o '-h 127.0.0.1 -p 55432' -w start
+& 'C:\Program Files\PostgreSQL\18\bin\pg_ctl.exe' -D 'C:\path\to\project\tmp\restore_时间戳\cluster' -l 'C:\path\to\project\tmp\restore_时间戳\server.log' -o '-h 127.0.0.1 -p 55432' -w start
 ```
 
 ## 验收版本

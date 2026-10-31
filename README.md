@@ -26,7 +26,7 @@ FastAPI实验数据只读后端与自动化集成测试，以及数据总览、�
 | [GPT-6 Luna评分接入](docs/QA_LUNA_JUDGE.md) | OpenRouter独立凭证、v3评分、32题输入与API费用记录；32题评分完成 |
 | [Luna与Jev正式对照](docs/QA_LUNA_JEV_V3_REPORT_20261027.md) | 同32题必答均分89.06%/88.02%，要点一致率93.90%；13题分歧、源文抽查和全部补评费用 |
 | [完整题目答案与双评理由](docs/QA_FULL_QUESTIONS_AND_REVIEWS_20261027.md) | 32题原回答、参考答案、逐项分数与原始评语；附其余5题状态及原文证据，另有可搜索打印的[浏览器版](docs/QA_FULL_QUESTIONS_AND_REVIEWS_20261027.html) |
-| [服务器迁移验收](docs/SERVER_DEPLOYMENT.md) | Ubuntu单机部署、数据校验、服务自启与定时备份 |
+| [服务器部署说明](deploy/ubuntu/README.md) | 通用部署结构、数据迁移、服务自启与定时备份 |
 | [文献提取与审核](docs/LITERATURE_EXTRACTION.md) | 整篇自动发现表格与正文数据、原文对照、审核版本、导出及基准评测 |
 | [前端验收记录](docs/FRONTEND_VALIDATION.md) | 构建、真实浏览器交互和响应式检查 |
 | [全站验收记录](docs/FULL_SITE_VALIDATION.md) | 六个页面的数据核对、完整流程、异常状态和响应式回归 |
@@ -34,15 +34,17 @@ FastAPI实验数据只读后端与自动化集成测试，以及数据总览、�
 | [恢复与验收](docs/RECOVERY.md) | 独立恢复实例与验收脚本适用阶段 |
 | [本阶段验收记录](docs/VALIDATION_REPORT.md) | 实际完成范围、数量与限制 |
 | [数据库迁移](database/migrations/) | V001—V012 |
-| [历史交接文档](项目交接文档.md) | 2026-09-02数据库阶段背景；现状以本README和验收记录为准 |
+| [仓库内容管理](docs/REPOSITORY_CONTENTS.md) | 开发资料、私有研究材料和生成产物的存放边界 |
 
 数据基线：61个物理样本、63个实验展示点；再生纸浆131条观测、47个循环汇总点、4条质量复核。
 全部12项纤维特性和9项核心纸张性能保留。原始Excel不修改，未知单位和处理条件不推断。
 
-`data/`包含原始研究资料，仅用于本项目授权用途。`backups/`、`tmp/`、真实环境文件和依赖目录不进入Git。
+`data/`中保留建库和回归测试所需的来源及评测资料，仅用于本项目授权用途。
+个人汇报、项目分工、历史交接、生成文档和重复材料包保存在仓库外的私有归档中。
+`output/`、`backups/`、`tmp/`、真实环境文件和依赖目录不进入Git；详见[仓库内容管理](docs/REPOSITORY_CONTENTS.md)。
 2026-09-13已完成原数据库验收，创建fiber_app，并将本机API接入原数据库5432端口；
 10个接口实际HTTP检查通过，8个数据接口与原数据库逐行对照一致。实验数据未修改。
-已完成Ubuntu服务器部署，使用`/fiberscope/`访问；服务器API仅监听本机，由Nginx提供公网入口，详见服务器迁移验收。
+支持Ubuntu单机部署，通过`/fiberscope/`挂载；API仅监听本机，由Nginx提供入口，见[部署说明](deploy/ubuntu/README.md)。
 
 文献问答与提取记录长期保存在服务端，所有访问者可查看和导出，并可修改文献审核；问答评价保留原提交浏览器权限。
 记录保存在独立的`.rag-data/qa_history.sqlite3`，不写入实验数据库；备份及全量导出见[问答记录说明](docs/QA_HISTORY.md)。

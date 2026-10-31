@@ -26,7 +26,7 @@
 请在 PowerShell 中进入项目目录：
 
 ```powershell
-Set-Location 'D:\develop\srp2.0'
+Set-Location 'C:\path\to\project'
 python .\database\importer\precheck_data.py
 ```
 

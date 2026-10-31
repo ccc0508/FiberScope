@@ -1,6 +1,6 @@
 # Reused literature core
 
-Source: the user's existing `D:\develop\srp` repository, commit
+Source: the predecessor repository, commit
 `887c2e465f3b8ded9d92927cf2523d53516fc99f`.
 
 This snapshot includes only configuration, domain models, protocols, retrieval,

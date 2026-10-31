@@ -27,3 +27,19 @@ backups/
 database/importer/reports/*generated.sql
 .DS_Store
 Thumbs.db
+
+# Generated artifacts and private research/presentation material live outside Git.
+/output/
+*.ppt
+*.pptx
+/*.pdf
+/*.zip
+/data/*.zip
+/data/dataset/
+/data/tasks/
+/docs/tasks/
+/docs/tasks.zip
+/docs/SERVER_DEPLOYMENT.md
+/项目交接文档.md
+/fiber-lab-ui*.html
+/000?-frontend-*.patch

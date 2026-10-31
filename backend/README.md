@@ -44,7 +44,7 @@ Copy-Item backend/.env.example backend/.env
 优先使用独立恢复实例，测试不会执行正式导入或修改业务数据。
 
 ```powershell
-$env:TEST_DB_ENV = 'D:\develop\srp2.0\tmp\restore_时间戳\app.env'
+$env:TEST_DB_ENV = 'C:\path\to\project\tmp\restore_时间戳\app.env'
 Set-Location backend
 ..\.venv\Scripts\python.exe -m pytest -q
 ```
