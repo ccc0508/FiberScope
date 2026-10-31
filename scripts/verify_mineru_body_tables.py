@@ -14,6 +14,7 @@ from build_mineru_body_tables import read_catalog
 from index_table_evidence import digest,save
 from literature_rag.adapters.chroma.vector_store import ChromaVectorStore
 from literature_rag.application.context import ContextOptions
+from literature_rag.application.body_context import SECTION_TRIGGER_ROLES
 from literature_rag.application.retrieve import RetrievalService
 from literature_rag.application.table_evidence import TableRelations,TableVectorSearch,BODY_TABLE_VERSION
 from literature_rag.config import Settings
@@ -46,7 +47,7 @@ def verify(library,query_cache,output,env_file):
             return self.current['vector']
     cached=Cached()
     service=RetrievalService(metadata,vectors,cached,ContextOptions(True),relations,body_context_catalog=catalog)
-    records=[];decisions=Counter();linked=0;table_seeds=0
+    records=[];decisions=Counter();section_roles=Counter();linked=0;table_seeds=0;formula_seeds=0
     for query in queries['queries']:
         cached.current=query
         result=service.retrieve(query['question'],8,.35)
@@ -59,9 +60,16 @@ def verify(library,query_cache,output,env_file):
         for e in seeds:
             m=catalog.mapping[e.chunk_id]
             if m['content_role']=='table':table_seeds+=1
-            if m['role_status']!='identified' or m['content_role']!='body':
+            if m['content_role']=='equation':formula_seeds+=1
+            actual=next(s for out in result for s in out.source_chunks if s.chunk_id==e.chunk_id)
+            assert (actual.text,actual.page_start,actual.page_end)==(e.text,e.page_start,e.page_end)
+            if m['role_status']!='identified' or m['content_role'] not in SECTION_TRIGGER_ROLES:
                 own=next(e2 for e2 in result if e.chunk_id in e2.seed_chunk_ids and e2.chunk_id==e.chunk_id)
                 assert own.text==e.text and [s.chunk_id for s in own.source_chunks]==[e.chunk_id]
+            elif catalog.trusted(catalog.chunks[e.chunk_id]):
+                decision=next(d for d in info['decisions'] if d['seed_chunk_id']==e.chunk_id)
+                assert decision['mode']=='section'
+                section_roles[m['content_role']]+=1
         for cid in set(source_ids)-primary:
             m=catalog.mapping[cid]
             assert m['role_status']=='identified' and m['content_role'] in {'body','table','equation','figure_caption'}
@@ -73,8 +81,9 @@ def verify(library,query_cache,output,env_file):
     if len(records)!=32 or len({r['task_id'] for r in records})!=32:raise ValueError('Expected 32 unique cached tasks')
     result=dict(version=BODY_TABLE_VERSION,questions=len(records),chunks=len(catalog.chunks),
         rows=len(relations.rows),links=len(relations.links),decision_counts=dict(decisions),
-        table_primary_hit_occurrences=table_seeds,explicit_link_additions=linked,
-        all_primary_hits_preserved=True,no_duplicate_sources=True,all_character_budgets_passed=True,
+        section_trigger_counts=dict(section_roles),source_index_pipeline_version=structure.get('pipeline_version'),
+        table_primary_hit_occurrences=table_seeds,formula_primary_hit_occurrences=formula_seeds,explicit_link_additions=linked,
+        all_primary_hits_preserved=True,primary_text_and_pages_unchanged=True,no_duplicate_sources=True,all_character_budgets_passed=True,
         protected_non_body_hits_standalone=True,source_metadata_unchanged=True,default_configuration_unchanged=True,
         new_embedding_api_calls=0,cached_query_vector_lookups=cached.calls,new_generation_calls=0,new_judge_calls=0,
         quality_scores_produced=False,query_cache_sha256=digest(query_cache),structure_sha256=digest(library/'structure.json'),

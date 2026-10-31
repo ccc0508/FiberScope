@@ -10,7 +10,7 @@ from literature_rag.domain.errors import InfrastructureError
 from literature_rag.domain.models import EvidenceSource, VectorMatch
 
 VERSION = 'table-evidence-v1'
-BODY_TABLE_VERSION = 'body-section-table-evidence-v1'
+BODY_TABLE_VERSION = 'scientific-section-table-evidence-v2'
 
 
 class TableRelations:
@@ -165,6 +165,6 @@ def append_related_tables(evidences, relations: TableRelations, options, diagnos
     diagnostics['budget_limited'] |= any(x['reason']=='length_budget' for x in omitted)
     if body_catalog is not None:
         diagnostics.update(version=BODY_TABLE_VERSION, table_link_policy='identified_body_table_only',
-            table_links_recursive=False, table_hit_expansion='explicit_body_links_only',
-            non_body_expansion=True, non_body_section_expansion=False, metadata_expansion=False)
+            table_links_recursive=False, table_hit_expansion='reliable_section_then_explicit_body_links',
+            non_body_expansion=True, non_body_section_expansion=True, metadata_expansion=False)
     return result, diagnostics
