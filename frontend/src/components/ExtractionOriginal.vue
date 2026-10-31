@@ -214,7 +214,7 @@ watch(zoom, locate);
 .original-paper {
   position: relative;
   margin: 0 auto;
-  background: white;
+  background: var(--panel);
 }
 .original-paper.loading {
   min-height: 340px;
