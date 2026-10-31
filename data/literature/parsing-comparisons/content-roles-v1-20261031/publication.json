@@ -1,0 +1,9 @@
+{
+  "files": {
+    "comparison.html": "6218b54155d7371f7a5bce804ac3df761d4941da3c00dad315f322023f729b5f",
+    "roles-and-chunks.json": "a1af829e3aa0acae7ae56ea486daa08cba3084a037372f13b5f5bf34bcecd7b2",
+    "summary.json": "5b997ad9141169979ac75c3f32e9625aacb05930991f0c80a1273a88bd412755"
+  },
+  "model_calls": 0,
+  "classification_accuracy": null
+}
