@@ -50,13 +50,14 @@ def test_row_hit_returns_full_table_and_explicit_cross_page_body_with_one_query_
         kind='table_explicitly_discussed_by_body',table_number=1))
     retrieve,_,embedder=service([body,table],['body','table'],[],rel)
     result=retrieve.retrieve('Crystallinity at 4000 revolutions?',8,.35)
-    assert embedder.query_count==1 and result[0].text==table.text
-    assert result[0].source_chunks[0].chunk_id==table.id
-    assert result[1].text==body.text and result[1].page_start==2
-    assert [e.ref for e in result]==['[1]','[2]']
+    assert embedder.query_count==1 and len(result)==1 and result[0].chunk_id==table.id
+    assert {s.chunk_id:s.text for s in result[0].source_chunks}=={table.id:table.text,body.id:body.text}
+    assert (result[0].page_start,result[0].page_end)==(2,3)
+    assert result[0].ref=='[1]'
     assert all('非原文引文' not in e.text for e in result)
     info=retrieve.last_context_diagnostics
-    assert info['version']==BODY_TABLE_VERSION and info['table_hit_expansion']=='reliable_section_then_explicit_body_links'
+    assert info['version']==BODY_TABLE_VERSION and info['table_hit_expansion']=='unified_primary_candidates'
+    assert info['assembly_passes']==1 and info['candidate_roots_only'] and not info['post_context_expansion']
     assert info['metadata_expansion'] is False and info['table_retrieval']['row_candidates']==2
 
 
@@ -66,12 +67,13 @@ def test_link_supplements_body_without_section_and_never_duplicates_an_existing_
     rel.vectors={key:[1.,-1.,0.] for key in rel.vectors}
     retrieve,_,_=service([body,table],['body','table'],[VectorMatch(body.id,.9)],rel)
     result=retrieve.retrieve('The results?',8,.35)
-    assert [e.chunk_id for e in result]==[body.id,table.id]
+    assert len(result)==1 and result[0].chunk_id==body.id
+    assert {s.chunk_id for s in result[0].source_chunks}=={body.id,table.id}
     retrieve,_,_=service([body,table],['body','table'],[VectorMatch(body.id,.9),VectorMatch(table.id,.8)],rel)
     result=retrieve.retrieve('The results?',8,.35)
     ids=[s.chunk_id for e in result for s in e.source_chunks]
     assert len(ids)==len(set(ids))==2
-    assert not retrieve.last_context_diagnostics['table_relationship_additions']
+    assert not retrieve.last_context_diagnostics['selected_explicit_links']
 
 
 def test_section_table_already_added_is_not_appended_again():
@@ -81,7 +83,7 @@ def test_section_table_already_added_is_not_appended_again():
     retrieve.body_context_catalog=body_catalog([body,table],['body','table'])
     result=retrieve.retrieve('The results?',8,.35)
     assert len(result)==1 and {s.chunk_id for s in result[0].source_chunks}=={body.id,table.id}
-    assert not retrieve.last_context_diagnostics['table_relationship_additions']
+    assert retrieve.last_context_diagnostics['selected_explicit_link_chunk_ids']==[table.id]
 
 
 @pytest.mark.parametrize('role',['abstract','reference','authors','affiliation','dates','keywords','unknown','mixed'])
@@ -113,7 +115,8 @@ def test_table_budget_omits_whole_link_without_discarding_primary_or_adding_neig
         options=ContextOptions(True,max_total_chars=256))
     result=retrieve.retrieve('The results?',8,.35)
     assert len(result)==1 and result[0].text==body.text
-    assert retrieve.last_context_diagnostics['table_relationship_omissions']==[dict(chunk_id=table.id,reason='length_budget')]
+    omitted=retrieve.last_context_diagnostics['omitted_explicit_links']
+    assert len(omitted)==1 and omitted[0]['target_chunk_id']==table.id and omitted[0]['reason']=='length_budget'
     assert retrieve.last_context_diagnostics['budget_limited']
 
 
@@ -168,7 +171,8 @@ def test_worker_combines_row_search_and_body_context_in_its_actual_entrypoint(tm
     assert result['status']=='answered' and result['configuration']['pipeline_version']==BODY_TABLE_VERSION
     assert result['context_assembly']['decisions'][0]['mode']=='section'
     assert result['context_assembly']['added_chunk_ids']==[chunks[1].id]
-    assert not result['context_assembly']['table_relationship_additions']
+    assert result['context_assembly']['selected_explicit_link_chunk_ids']==[chunks[1].id]
+    assert result['context_assembly']['assembly_passes']==1
     sources=result['retrieved_evidence'][0]['source_chunks']
     assert next(s for s in sources if s['chunk_id']==chunks[2].id)['text']==chunks[2].text
     assert (result['citations'][0]['page_start'],result['citations'][0]['page_end'])==(2,3)

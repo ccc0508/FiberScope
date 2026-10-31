@@ -1,0 +1,122 @@
+{
+  "version": "unified-scientific-table-context-v3",
+  "questions": 32,
+  "chunks": 113,
+  "rows": 20,
+  "links": 10,
+  "decision_counts": {
+    "section": 192,
+    "non_body_standalone": 61,
+    "uncertain_standalone": 3
+  },
+  "section_trigger_counts": {
+    "body": 167,
+    "table": 21,
+    "equation": 4
+  },
+  "source_index_pipeline_version": "body-section-table-evidence-v1",
+  "table_primary_hit_occurrences": 21,
+  "formula_primary_hit_occurrences": 4,
+  "explicit_link_candidate_edges": 35,
+  "selected_explicit_link_chunk_occurrences": 34,
+  "only_primary_hits_collect_candidates": true,
+  "assembly_passes_per_question": 1,
+  "post_context_expansion": false,
+  "all_primary_hits_preserved": true,
+  "primary_text_and_pages_unchanged": true,
+  "no_duplicate_sources": true,
+  "all_character_budgets_passed": true,
+  "protected_non_body_hits_standalone": true,
+  "source_metadata_unchanged": true,
+  "default_configuration_unchanged": true,
+  "new_embedding_api_calls": 0,
+  "cached_query_vector_lookups": 32,
+  "new_generation_calls": 0,
+  "new_judge_calls": 0,
+  "quality_scores_produced": false,
+  "query_cache_sha256": "f9f0e47408656954da7c28b29b32319b8e2d5ef8aadd6d909881a8575668a62f",
+  "structure_sha256": "25f67170cccc2330f52226457f927316e5d4c7733361920a0ed505e031811d16",
+  "verifier_sha256": "0ea7ca41937d8ed30a381ecc708abb4d1d5f4aeaa1fd4bbd755d217136bf1c13",
+  "related_tests_passed": 185,
+  "primary_hits_scores_and_order_unchanged": true,
+  "old_context_chars": 582751,
+  "new_context_chars": 575543,
+  "removed_question_chunk_occurrences": 21,
+  "added_question_chunk_occurrences": 13,
+  "old_post_stage_target_review": [
+    {
+      "task_id": "PFI2-009",
+      "target_chunk_id": "chk_6a8d253d82d884f4acc7",
+      "old_proposed_group_lengths": [
+        8253
+      ],
+      "now_in_final": false
+    },
+    {
+      "task_id": "PFI2-011",
+      "target_chunk_id": "chk_6a8d253d82d884f4acc7",
+      "old_proposed_group_lengths": [
+        8253
+      ],
+      "now_in_final": false
+    },
+    {
+      "task_id": "PFI2-014",
+      "target_chunk_id": "chk_6a8d253d82d884f4acc7",
+      "old_proposed_group_lengths": [
+        8253
+      ],
+      "now_in_final": false
+    },
+    {
+      "task_id": "PFI2-016",
+      "target_chunk_id": "chk_6a8d253d82d884f4acc7",
+      "old_proposed_group_lengths": [
+        8253
+      ],
+      "now_in_final": false
+    },
+    {
+      "task_id": "PFI2-017",
+      "target_chunk_id": "chk_43cdf887b7ecb297dc98",
+      "old_proposed_group_lengths": [
+        8389
+      ],
+      "now_in_final": false
+    },
+    {
+      "task_id": "PFI2-024",
+      "target_chunk_id": "chk_43cdf887b7ecb297dc98",
+      "old_proposed_group_lengths": [
+        8389
+      ],
+      "now_in_final": false
+    },
+    {
+      "task_id": "PFI2-029",
+      "target_chunk_id": "chk_43cdf887b7ecb297dc98",
+      "old_proposed_group_lengths": [
+        8389
+      ],
+      "now_in_final": false
+    },
+    {
+      "task_id": "PFI2-031",
+      "target_chunk_id": "chk_6a8d253d82d884f4acc7",
+      "old_proposed_group_lengths": [
+        8253
+      ],
+      "now_in_final": false
+    }
+  ],
+  "old_verification_sha256": "e429db0a223dad17d74042762e14ac31ac8c619c29110850bd7d80ff6d53d1bc",
+  "new_verification_sha256": "9413d5fa35a62a38f501e5a19d0e4f358ae81b8e31c0f6278093ca9123d790fd",
+  "source_files_sha256": {
+    "backend/literature_rag/application/body_context.py": "43fbc6479f90fa4286d9ece65b2c174efd74fa955fd0b10ab6dece4686c6cba9",
+    "backend/literature_rag/application/unified_context.py": "a5483bd4eaf0550993b0f397da65789a0524891a774fc4b06205e35434379bb7",
+    "backend/literature_rag/application/section_context.py": "bb1d7e111cf09e6273cea9b06d92996ed8c627220bbd97d3abfc3ce863f302e5",
+    "backend/literature_rag/application/table_evidence.py": "fc1618e60836363c91a8e4876a4b12a08864382a1e5894436afb5cb8168e4230",
+    "backend/literature_rag/application/retrieve.py": "eef94dab31dd75613beb5fb98ab4889c7741816b4fdc44881b61512106753ee5",
+    "backend/literature_rag/diagnostics.py": "cd87e8e3699692c821db35139800477a49fef4196103b44f4f587e1b20b68e10"
+  }
+}

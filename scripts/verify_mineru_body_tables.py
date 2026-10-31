@@ -47,7 +47,7 @@ def verify(library,query_cache,output,env_file):
             return self.current['vector']
     cached=Cached()
     service=RetrievalService(metadata,vectors,cached,ContextOptions(True),relations,body_context_catalog=catalog)
-    records=[];decisions=Counter();section_roles=Counter();linked=0;table_seeds=0;formula_seeds=0
+    records=[];decisions=Counter();section_roles=Counter();linked=0;link_candidates=0;table_seeds=0;formula_seeds=0
     for query in queries['queries']:
         cached.current=query
         result=service.retrieve(query['question'],8,.35)
@@ -57,6 +57,13 @@ def verify(library,query_cache,output,env_file):
         assert len(seeds)<=8 and vectors.last_diagnostics['parent_candidates']<=50
         assert all(e.text.strip() and len(e.text)<=8000 for e in result) and sum(len(e.text) for e in result)<=24000
         assert all('程序生成的表格行检索表示' not in e.text for e in result)
+        assert info['assembly_passes']==1 and info['candidate_roots_only'] and not info['post_context_expansion']
+        assert info['candidate_root_chunk_ids']==[e.chunk_id for e in seeds]
+        candidates={x['chunk_id'] for x in info['candidate_origins']}
+        assert set(source_ids)<=candidates
+        assert all(x['seed_chunk_id'] in primary for x in info['candidate_origins'])
+        for link in info['explicit_link_candidates']:
+            assert link['source_chunk_id']==link['seed_chunk_id'] and link['seed_chunk_id'] in primary
         for e in seeds:
             m=catalog.mapping[e.chunk_id]
             if m['content_role']=='table':table_seeds+=1
@@ -74,7 +81,8 @@ def verify(library,query_cache,output,env_file):
             m=catalog.mapping[cid]
             assert m['role_status']=='identified' and m['content_role'] in {'body','table','equation','figure_caption'}
         for d in info['decisions']:decisions[d['mode']]+=1
-        linked+=len(info['table_relationship_additions'])
+        linked+=len(info['selected_explicit_link_chunk_ids'])
+        link_candidates+=len(info['explicit_link_candidates'])
         records.append(dict(task_id=query['task_id'],question=query['question'],seeds=[asdict(e) for e in seeds],
             final=[asdict(e) for e in result],context=info))
     assert digest(env_file)==env_hash and digest(library/'metadata.sqlite3')==metadata_hash
@@ -82,7 +90,9 @@ def verify(library,query_cache,output,env_file):
     result=dict(version=BODY_TABLE_VERSION,questions=len(records),chunks=len(catalog.chunks),
         rows=len(relations.rows),links=len(relations.links),decision_counts=dict(decisions),
         section_trigger_counts=dict(section_roles),source_index_pipeline_version=structure.get('pipeline_version'),
-        table_primary_hit_occurrences=table_seeds,formula_primary_hit_occurrences=formula_seeds,explicit_link_additions=linked,
+        table_primary_hit_occurrences=table_seeds,formula_primary_hit_occurrences=formula_seeds,
+        explicit_link_candidate_edges=link_candidates,selected_explicit_link_chunk_occurrences=linked,
+        only_primary_hits_collect_candidates=True,assembly_passes_per_question=1,post_context_expansion=False,
         all_primary_hits_preserved=True,primary_text_and_pages_unchanged=True,no_duplicate_sources=True,all_character_budgets_passed=True,
         protected_non_body_hits_standalone=True,source_metadata_unchanged=True,default_configuration_unchanged=True,
         new_embedding_api_calls=0,cached_query_vector_lookups=cached.calls,new_generation_calls=0,new_judge_calls=0,
