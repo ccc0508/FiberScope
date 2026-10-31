@@ -19,7 +19,6 @@ import {
   Database,
   PanelLeftClose,
   PanelLeftOpen,
-  ChevronRight,
   BookOpen,
   FileSpreadsheet,
   X,
@@ -256,22 +255,16 @@ onBeforeUnmount(() => {
     </div>
   </aside>
   <div class="shell" :inert="navOpen">
-    <header class="topbar">
-      <div class="breadcrumbs">
-        <button
-          ref="navToggle"
-          class="icon-button mobile-toggle"
-          aria-label="展开导航"
-          :aria-expanded="navOpen"
-          @click="navOpen = true"
-        >
-          <PanelLeftOpen :size="20" /></button
-        ><span>植物纤维研究</span><ChevronRight :size="14" /><strong>{{
-          pageTitle
-        }}</strong>
-      </div>
-      <span class="topbar-note">实验数据分析平台</span>
-    </header>
+    <button
+      ref="navToggle"
+      class="icon-button mobile-toggle"
+      type="button"
+      aria-label="展开导航"
+      :aria-expanded="navOpen"
+      @click="navOpen = true"
+    >
+      <PanelLeftOpen :size="20" />
+    </button>
     <main id="main" tabindex="-1"><RouterView /></main>
   </div>
   <dialog
