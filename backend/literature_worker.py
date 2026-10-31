@@ -112,7 +112,12 @@ def main():
     try:
         context_options=ContextOptions(settings.context_expansion_enabled,settings.context_neighbor_radius,
                                       settings.context_max_evidence_chars,settings.context_max_total_chars)
-        answer = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options,table_relations,reranker), CapturedGenerator(), CitationValidator()).answer(
+        body_context_catalog=None
+        if settings.context_expansion_strategy=='body_section':
+            from literature_rag.application.body_context import BodySectionCatalog
+            body_context_catalog=BodySectionCatalog.load(root,metadata)
+        answer = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options,table_relations,reranker,
+            body_context_catalog=body_context_catalog), CapturedGenerator(), CitationValidator()).answer(
             body['question'], settings.top_k, settings.min_score)
     except (ProviderError, InfrastructureError) as error:
         print(json.dumps({'status': 'failed', 'answer': '', 'citations': [],

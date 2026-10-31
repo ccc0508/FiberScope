@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     top_k: int = Field(default=8, ge=1, le=50)
     min_score: float = Field(default=0.35, ge=0, le=1, allow_inf_nan=False)
     context_expansion_enabled: bool = False
+    context_expansion_strategy: Literal['same_page','body_section'] = 'same_page'
     context_neighbor_radius: int = Field(default=1,ge=0,le=2)
     context_max_evidence_chars: int = Field(default=8000,ge=256,le=100000)
     context_max_total_chars: int = Field(default=24000,ge=256,le=100000)
@@ -115,6 +116,11 @@ class Settings(BaseSettings):
             raise ValueError("chunk_overlap must be smaller than chunk_size")
         if self.table_retrieval_enabled and not self.context_expansion_enabled:
             raise ValueError('table retrieval requires bounded context expansion')
+        if self.context_expansion_strategy=='body_section':
+            if not self.context_expansion_enabled:
+                raise ValueError('body-section context requires enabled expansion')
+            if self.table_retrieval_enabled:
+                raise ValueError('body-section context manages table links without a separate table-expansion stage')
         if self.rerank_enabled:
             if not self.rerank_model.strip() or not self.rerank_base_url or not self.rerank_api_key or not self.rerank_api_key.get_secret_value().strip():
                 raise ValueError('enabled reranking requires model, base URL and API key')

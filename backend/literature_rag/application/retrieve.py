@@ -29,6 +29,7 @@ class RetrievalService:
         context_options: ContextOptions | None = None,
         table_relations=None,
         reranker: Reranker | None = None,
+        body_context_catalog=None,
     ) -> None:
         self.metadata = metadata
         self.vectors = vectors
@@ -36,6 +37,9 @@ class RetrievalService:
         self.context_options = context_options or ContextOptions()
         self.table_relations = table_relations
         self.reranker = reranker
+        self.body_context_catalog = body_context_catalog
+        if body_context_catalog is not None and (not self.context_options.enabled or table_relations is not None):
+            raise ValueError('body-section context requires enabled expansion and no separate table-expansion stage')
         self.last_rerank_diagnostics: dict = {}
         self.last_seed_evidences: list[Evidence] = []
         self.last_context_diagnostics: dict = {}
@@ -104,7 +108,11 @@ class RetrievalService:
             evidences,self.last_rerank_diagnostics=rank_candidates(question,evidences,self.reranker,top_k)
         evidences = evidences[:top_k]
         self.last_seed_evidences = list(evidences)
-        evidences,self.last_context_diagnostics=assemble(evidences,self.metadata,self.context_options)
+        if self.body_context_catalog is None:
+            evidences,self.last_context_diagnostics=assemble(evidences,self.metadata,self.context_options)
+        else:
+            from literature_rag.application.body_context import assemble_body_context
+            evidences,self.last_context_diagnostics=assemble_body_context(evidences,self.body_context_catalog,self.context_options)
         if self.table_relations is not None:
             from literature_rag.application.table_evidence import append_related_tables
             evidences,self.last_context_diagnostics=append_related_tables(evidences,self.table_relations,self.context_options,self.last_context_diagnostics)

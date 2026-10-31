@@ -12,6 +12,8 @@ def configuration_snapshot(env_file: Path):
                'application/retrieve.py', 'adapters/providers/deepseek.py', 'adapters/providers/openai.py']
     if settings.context_expansion_enabled:
         sources += ['application/context.py','domain/models.py','adapters/sqlite/metadata_store.py']
+        if settings.context_expansion_strategy=='body_section':
+            sources += ['application/body_context.py','application/role_context.py','application/section_context.py']
     if settings.table_retrieval_enabled:
         sources += ['application/table_evidence.py']
     if settings.rerank_enabled:
@@ -32,6 +34,11 @@ def configuration_snapshot(env_file: Path):
             table_retrieval=dict(enabled=True,version='table-evidence-v1',row_cosine='exact',
                 parent_fusion='maximum_cosine',max_parent_candidates=50,
                 linked_sources_per_context=2,max_linked_sources=8,normal_region_sampling=False))
+    if settings.context_expansion_strategy=='body_section':
+        from .application.body_context import VERSION
+        result.update(pipeline_version=VERSION,pipeline_source_files=sources)
+        result['context_expansion'].update(strategy='body_section',non_body_expansion=False,
+            fallback_policy='same_page_identified_body_sentence_continuation_only')
     if settings.rerank_enabled:
         result.update(pipeline_version='literature-candidate-rerank-v1',pipeline_source_files=sources,
             rerank=dict(enabled=True,version='candidate-rerank-v1',provider=settings.rerank_provider,
