@@ -46,7 +46,7 @@ Embedding模型、provider或维度变化时，应创建新索引；不能直接
 ## 一次性迁移工具
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/setup_literature.py --source-root D:\develop\srp
+.\.venv\Scripts\python.exe scripts/setup_literature.py --source-root C:\path\to\legacy-project
 ```
 
 迁移工具获取旧导入器使用的文件锁，备份文献元数据库和向量库，复制已完成文献并校验PDF的SHA-256，然后将PDF路径改为快照内的相对路径。它仅复制指定RAG配置项，不读取或复制旧实验数据库，不重新生成embedding。目标`.rag-data`或配置文件已存在时拒绝覆盖。

@@ -4,7 +4,7 @@
 
 ## 作答材料
 
-[下载1017完整材料包](../output/agent-benchmark/DSH_deepseek_v41_flash_1017_high_20261028.zip)，[阅读操作说明](../output/agent-benchmark/DSH_deepseek_v41_flash_1017_high_20261028/README.md)。旧v4命名材料包保留归档，请使用此新版。
+独立作答材料包及其操作说明已移至仓库外的私有归档，不再通过Git分发。题目与格式的开发基准仍见[评测题集](../fiberscope-eval-v2/README.md)；其中包含答案相关资料，不可直接交给作答Agent。
 
 每个独立会话只提供原始PDF和一题的tasks/PFI2-xxx.md。共32个会话，均固定模型与High档位。不得提供现有评测报告、参考答案、必答点、旧RAG回答或裁判结论。先将压缩包解压至项目仓库以外，避免作答Agent读取仓库中的答案资料。
 

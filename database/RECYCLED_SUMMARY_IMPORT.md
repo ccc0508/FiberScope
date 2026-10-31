@@ -47,7 +47,7 @@
 在PowerShell中进入项目目录：
 
 ```powershell
-Set-Location 'D:\develop\srp2.0'
+Set-Location 'C:\path\to\project'
 $psql = 'C:\Program Files\PostgreSQL\18\bin\psql.exe'
 ```
 

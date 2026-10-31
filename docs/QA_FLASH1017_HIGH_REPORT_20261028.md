@@ -56,6 +56,6 @@ Luna与Jev独立评分，不接收旧答案、另一裁判分数或作答模型�
 
 [完整比较](../data/literature/qa-evaluation/reports/flash1017-high-20261028/comparison.json)、[Luna标签](../data/literature/qa-evaluation/reports/flash1017-high-20261028/luna-scores.jsonl)、[Jev标签](../data/literature/qa-evaluation/reports/flash1017-high-20261028/jev-scores.jsonl)。
 [32题新回答及引用](../data/literature/qa-evaluation/reports/flash1017-high-20261028/answers.jsonl)。该文件包含真实回答，不可交给DSH作答。
-[新DSH材料包](../output/agent-benchmark/DSH_deepseek_v41_flash_1017_high_20261028.zip)。其中只有原始论文、32题及统一格式，无答案与评分。
+独立DSH作答材料包已移至仓库外的私有归档；该材料包只有原始论文、32题及统一格式，无答案与评分。
 本机私有配置已更新为High、300秒总期限；服务器SSH连接被关闭，显式配置和代码尚未部署到线上。GitHub保存代码和报告；忽略目录保存答题结果、用量和裁判原始响应，不保存答题模型的推理原文或公开密钥。
 官方依据：[当前模型与旧别名说明](https://api-docs.deepseek.com/quick_start/pricing/)、[High与thinking参数](https://api-docs.deepseek.com/guides/thinking_mode/)。
