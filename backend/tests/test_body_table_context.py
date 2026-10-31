@@ -56,7 +56,7 @@ def test_row_hit_returns_full_table_and_explicit_cross_page_body_with_one_query_
     assert [e.ref for e in result]==['[1]','[2]']
     assert all('非原文引文' not in e.text for e in result)
     info=retrieve.last_context_diagnostics
-    assert info['version']==BODY_TABLE_VERSION and info['table_hit_expansion']=='explicit_body_links_only'
+    assert info['version']==BODY_TABLE_VERSION and info['table_hit_expansion']=='reliable_section_then_explicit_body_links'
     assert info['metadata_expansion'] is False and info['table_retrieval']['row_candidates']==2
 
 
@@ -154,7 +154,7 @@ def test_worker_combines_row_search_and_body_context_in_its_actual_entrypoint(tm
         model_name='fake-generator'
         def __init__(self,*args,**kwargs):pass
         def generate(self,question,evidence,feedback=None):
-            assert evidence[0].text==chunks[2].text
+            assert next(s for s in evidence[0].source_chunks if s.chunk_id==chunks[2].id).text==chunks[2].text
             return GeneratedAnswer('The table reports crystallinity values. [1]',
                 (GeneratedClaim('The table reports crystallinity values.',('[1]',)),))
     monkeypatch.setattr('literature_rag.config.Settings',lambda **kwargs:settings)
@@ -166,9 +166,12 @@ def test_worker_combines_row_search_and_body_context_in_its_actual_entrypoint(tm
     literature_worker.main()
     result=json.loads(capsys.readouterr().out)
     assert result['status']=='answered' and result['configuration']['pipeline_version']==BODY_TABLE_VERSION
-    assert result['context_assembly']['table_relationship_additions'][0]['target_chunk_id']==chunks[1].id
-    assert result['retrieved_evidence'][0]['text']==chunks[2].text
-    assert result['citations'][0]['page_start']==3
+    assert result['context_assembly']['decisions'][0]['mode']=='section'
+    assert result['context_assembly']['added_chunk_ids']==[chunks[1].id]
+    assert not result['context_assembly']['table_relationship_additions']
+    sources=result['retrieved_evidence'][0]['source_chunks']
+    assert next(s for s in sources if s['chunk_id']==chunks[2].id)['text']==chunks[2].text
+    assert (result['citations'][0]['page_start'],result['citations'][0]['page_end'])==(2,3)
 
 
 def source_library(tmp_path):

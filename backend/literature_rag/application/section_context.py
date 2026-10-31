@@ -53,6 +53,9 @@ class SectionCatalog:
         return bool(node and node['status'] == m.get('section_status') == 'inferred'
                     and node.get('role') != 'references' and c.kind != 'reference')
 
+    def evidence_group_key(self, seed, section_id):
+        return seed.document_id, section_id or seed.chunk_id
+
     def candidates(self, seed, radius):
         c = self.chunks[seed.chunk_id]
         if not self.trusted(c):
@@ -98,7 +101,7 @@ def assemble_sections(seeds: Sequence[Evidence], catalog: SectionCatalog, option
         if not c.text.strip() or len(c.text) > options.max_evidence_chars:
             raise ValueError('Primary hit cannot fit; never truncate or silently discard it')
         sid, candidates, mode = catalog.candidates(e, options.radius)
-        key = (e.document_id, sid or e.chunk_id)
+        key = catalog.evidence_group_key(e, sid)
         group = groups.setdefault(key, dict(hits=[], candidates=[]))
         group['hits'].append((rank, e))
         group['candidates'].extend(candidates)

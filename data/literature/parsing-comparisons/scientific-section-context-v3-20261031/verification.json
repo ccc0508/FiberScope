@@ -1,0 +1,51 @@
+{
+  "version": "scientific-section-table-evidence-v2",
+  "questions": 32,
+  "chunks": 113,
+  "rows": 20,
+  "links": 10,
+  "decision_counts": {
+    "section": 192,
+    "non_body_standalone": 61,
+    "uncertain_standalone": 3
+  },
+  "section_trigger_counts": {
+    "body": 167,
+    "table": 21,
+    "equation": 4
+  },
+  "source_index_pipeline_version": "body-section-table-evidence-v1",
+  "table_primary_hit_occurrences": 21,
+  "formula_primary_hit_occurrences": 4,
+  "explicit_link_additions": 8,
+  "all_primary_hits_preserved": true,
+  "primary_text_and_pages_unchanged": true,
+  "no_duplicate_sources": true,
+  "all_character_budgets_passed": true,
+  "protected_non_body_hits_standalone": true,
+  "source_metadata_unchanged": true,
+  "default_configuration_unchanged": true,
+  "new_embedding_api_calls": 0,
+  "cached_query_vector_lookups": 32,
+  "new_generation_calls": 0,
+  "new_judge_calls": 0,
+  "quality_scores_produced": false,
+  "query_cache_sha256": "f9f0e47408656954da7c28b29b32319b8e2d5ef8aadd6d909881a8575668a62f",
+  "structure_sha256": "25f67170cccc2330f52226457f927316e5d4c7733361920a0ed505e031811d16",
+  "verifier_sha256": "02e44c8e3d7262e2aaa7c826fdf9d85a5aed9023cd1f9f74840827a8570495d3",
+  "related_tests_passed": 170,
+  "same_primary_hits_scores_and_order": true,
+  "old_total_context_chars": 543426,
+  "new_total_context_chars": 582751,
+  "prior_verification_sha256": "7df11b979baa3de7c486c4f8f464b05f8f44656b1fba41d69b5b8323f9c83bd6",
+  "full_verification_sha256": "e429db0a223dad17d74042762e14ac31ac8c619c29110850bd7d80ff6d53d1bc",
+  "fixed_projection_verification_sha256": "81a14994fc3642afe62490f09f420322e11195be955525a8c94daeeeb09eadbb",
+  "source_files_sha256": {
+    "backend/literature_rag/application/body_context.py": "32ee4052ea0ce9df3e4b9760cdb2a3f8ae2571df3f083c8fd2a65bca1c4c977e",
+    "backend/literature_rag/application/section_context.py": "a9cdb2a0b1464cde38a4efbac9d750bfe8dc6402f94abf1c732ef483e8683c64",
+    "backend/literature_rag/application/role_context.py": "166838804b5c8d4551f80405f2203af1d98cb95a1cc838c0a051e779d1b7a879",
+    "backend/literature_rag/application/table_evidence.py": "f1c742bc42a5bbc069116e075becd292bfc2a915459649daf03e16261f91610d",
+    "backend/literature_rag/application/retrieve.py": "9384878b264cc015130bead6a64a924e5bb884f3c54d39ec1479eb8f745d66ae",
+    "backend/literature_rag/diagnostics.py": "8b64ad8fc34117abc1fd302148382e93273456baff15751ea6c987d0867d1805"
+  }
+}

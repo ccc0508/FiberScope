@@ -35,8 +35,8 @@ def test_sentence_continuation_in_trusted_section_uses_section_path_only():
 
 
 @pytest.mark.parametrize('role',['abstract','authors','affiliation','dates','keywords','reference','copyright',
-    'publisher_note','funding','conflicts','author_contributions','supplementary','table','equation','figure_caption'])
-def test_every_non_body_hit_keeps_itself_even_with_reliable_section_and_matching_abstract_group(role):
+    'publisher_note','funding','conflicts','author_contributions','supplementary','figure_caption'])
+def test_metadata_and_caption_hits_keep_themselves_even_with_reliable_section(role):
     a=chunk(1,'The matched source');b=chunk(2,'an adjacent source')
     c=body_catalog([a,b],[role,role])
     out,info=assemble_body_context([seed(a)],c,ContextOptions(True))
@@ -109,5 +109,6 @@ def test_configuration_is_explicit_and_default_keeps_legacy_behavior(tmp_path):
     assert integrated.table_retrieval_enabled
     env=tmp_path/'.env';env.write_text('RAG_CONTEXT_EXPANSION_ENABLED=true\nRAG_CONTEXT_EXPANSION_STRATEGY=body_section\n',encoding='utf-8')
     snapshot=configuration_snapshot(env)
-    assert snapshot['pipeline_version']==VERSION and snapshot['context_expansion']['non_body_expansion'] is False
+    assert snapshot['pipeline_version']==VERSION and snapshot['context_expansion']['metadata_expansion'] is False
+    assert snapshot['context_expansion']['section_trigger_roles']==['body','table','equation']
     assert 'application/body_context.py' in snapshot['pipeline_source_files']

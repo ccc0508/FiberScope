@@ -1,4 +1,4 @@
-"""Offline verification of body-first context policy on the sealed 113-block corpus."""
+"""Offline verification of scientific-section policy on the sealed 113-block corpus."""
 from collections import Counter
 from dataclasses import asdict
 from hashlib import sha256
@@ -8,13 +8,15 @@ import sys
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'backend'))
-from literature_rag.application.body_context import BodySectionCatalog,assemble_body_context,VERSION
+from literature_rag.application.body_context import BodySectionCatalog,assemble_body_context,VERSION,SECTION_TRIGGER_ROLES
 from literature_rag.application.context import ContextOptions
 from literature_rag.adapters.sqlite.metadata_store import SqliteMetadataStore
 from literature_rag.domain.models import Evidence
 
 
 def run():
+    target=ROOT/'.rag-data/verifications'/f'{VERSION}-20261031.json'
+    if target.exists():raise ValueError('Preserve prior verification; choose a new version/output')
     library=ROOT/'.rag-data/index-versions/content-roles-v1-20261031'
     structure=json.loads((library/'structure.json').read_text('utf-8'))
     class ReadOnly(SqliteMetadataStore):
@@ -40,7 +42,7 @@ def run():
         for d in info['decisions']:
             decisions[d['mode']]+=1
             m=catalog.mapping[d['seed_chunk_id']]
-            if m['content_role']!='body' or m['role_status']!='identified':
+            if m['content_role'] not in SECTION_TRIGGER_ROLES or m['role_status']!='identified':
                 assert d['section_id'] is None and d['candidate_chunk_ids']==[d['seed_chunk_id']]
                 own=next(e for e in evidence if d['seed_chunk_id'] in e.seed_chunk_ids)
                 assert [s.chunk_id for s in own.source_chunks]==[d['seed_chunk_id']]
@@ -53,10 +55,10 @@ def run():
     assert sha256((ROOT/'backend/.env.literature').read_bytes()).hexdigest()==env_hash
     result=dict(version=VERSION,questions=32,catalog_chunks=len(catalog.chunks),decision_counts=dict(decisions),
         all_primary_hits_preserved=True,no_duplicate_sources=True,all_character_budgets_passed=True,
-        non_body_hits_standalone=True,reliable_body_uses_section_only=True,metadata_unchanged=True,
+        protected_non_body_hits_standalone=True,reliable_scientific_hits_use_section_only=True,metadata_unchanged=True,
         default_configuration_unchanged=True,new_provider_calls=0,new_generation_calls=0,new_embedding_calls=0,
         quality_scores_produced=False,records=records,rule_sha256=sha256((ROOT/'backend/literature_rag/application/body_context.py').read_bytes()).hexdigest())
-    target=ROOT/'.rag-data/verifications/body-section-context-v2-20261031.json';target.parent.mkdir(parents=True,exist_ok=True)
+    target.parent.mkdir(parents=True,exist_ok=True)
     target.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     return {k:v for k,v in result.items() if k!='records'}
 

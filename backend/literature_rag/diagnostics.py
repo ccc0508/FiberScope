@@ -35,15 +35,16 @@ def configuration_snapshot(env_file: Path):
                 parent_fusion='maximum_cosine',max_parent_candidates=50,
                 linked_sources_per_context=2,max_linked_sources=8,normal_region_sampling=False))
     if settings.context_expansion_strategy=='body_section':
-        from .application.body_context import VERSION
+        from .application.body_context import VERSION,SECTION_TRIGGER_ROLES
         result.update(pipeline_version=VERSION,pipeline_source_files=sources)
-        result['context_expansion'].update(strategy='body_section',non_body_expansion=False,
+        result['context_expansion'].update(strategy='body_section',non_body_expansion=True,
+            non_body_section_expansion=True,metadata_expansion=False,section_trigger_roles=list(SECTION_TRIGGER_ROLES),
+            table_hit_expansion='reliable_section',equation_hit_expansion='reliable_section_only',
             fallback_policy='same_page_identified_body_sentence_continuation_only')
         if settings.table_retrieval_enabled:
             from .application.table_evidence import BODY_TABLE_VERSION
             result['pipeline_version']=BODY_TABLE_VERSION
-            result['context_expansion'].update(table_hit_expansion='explicit_body_links_only',
-                non_body_expansion=True,non_body_section_expansion=False,metadata_expansion=False)
+            result['context_expansion']['table_hit_expansion']='reliable_section_then_explicit_body_links'
             result['table_retrieval'].update(link_policy='identified_body_table_only',recursive=False,
                 duplicate_source_policy='skip_sources_already_in_section_or_primary_hits')
     if settings.rerank_enabled:
