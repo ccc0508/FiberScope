@@ -30,6 +30,7 @@ import {
 } from "../api";
 import SampleDetail from "../components/SampleDetail.vue";
 import FilterSelect from "../components/FilterSelect.vue";
+import { materialColors } from "../palette";
 
 const route = useRoute(),
   router = useRouter();
@@ -75,7 +76,7 @@ const filterOptions = computed(() => [
     value: type,
     label: typeNames[type],
     count: counts.value ? typeCounts.value[type] : undefined,
-    color: ["#5796ce", "#79b7ad", "#ad9aca"][index],
+    color: materialColors[type],
   })),
 ]);
 const points = computed(() =>

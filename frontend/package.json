@@ -4,13 +4,15 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "test": "node --test tests/analysis.test.mjs tests/sources.test.mjs tests/extraction.test.mjs tests/urls.test.mjs",
+    "test": "node --test tests/analysis.test.mjs tests/beating.test.mjs tests/sources.test.mjs tests/extraction.test.mjs tests/urls.test.mjs",
     "dev": "vite --host 127.0.0.1",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
     "@fontsource/lato": "^5.3.0",
+    "@fontsource/noto-serif-sc": "^5.3.1",
     "lucide-vue-next": "^0.468.0",
     "vue": "^3.5.0",
     "vue-router": "^4.5.0"
