@@ -17,4 +17,4 @@ fiberscope-eval-v2/source/*.txt whitespace=-blank-at-eol
 data/literature/parsing-comparisons/*/mineru-full.md -text whitespace=-blank-at-eol
 data/literature/parsing-comparisons/*/pymupdf-full.txt -text whitespace=-blank-at-eol
 # Keep sealed report JSON bytes unchanged when cloning on another OS.
-data/literature/qa-evaluation/reports/full-stack-20261031/*.json -text
+data/literature/qa-evaluation/reports/full-stack-20261031/*.json -text whitespace=cr-at-eol
