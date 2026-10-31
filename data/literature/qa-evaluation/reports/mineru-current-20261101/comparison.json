@@ -1,0 +1,332 @@
+{
+  "version": "mineru-current-evaluation-20261101",
+  "source_commit": "ba540a901089d816a647db5a284d9b957d54fb62",
+  "valid_current_grades": 32,
+  "eligible_current_task_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-005",
+    "PFI2-006",
+    "PFI2-007",
+    "PFI2-008",
+    "PFI2-009",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-012",
+    "PFI2-013",
+    "PFI2-014",
+    "PFI2-015",
+    "PFI2-016",
+    "PFI2-017",
+    "PFI2-018",
+    "PFI2-019",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-023",
+    "PFI2-024",
+    "PFI2-025",
+    "PFI2-026",
+    "PFI2-027",
+    "PFI2-028",
+    "PFI2-029",
+    "PFI2-030",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "current_summary": {
+    "tasks": 32,
+    "point_macro_average": 0.9453125,
+    "support_counts": {
+      "supported": 127,
+      "partially_supported": 3
+    },
+    "citation_precision": {
+      "numerator": 132,
+      "denominator": 134,
+      "value": 0.9850746268656716
+    },
+    "citation_coverage": {
+      "numerator": 128,
+      "denominator": 130,
+      "value": 0.9846153846153847
+    },
+    "boundary_mean": 1.875,
+    "all_five_pass": 22
+  },
+  "common_task_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-005",
+    "PFI2-006",
+    "PFI2-007",
+    "PFI2-008",
+    "PFI2-009",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-012",
+    "PFI2-013",
+    "PFI2-014",
+    "PFI2-015",
+    "PFI2-016",
+    "PFI2-017",
+    "PFI2-018",
+    "PFI2-019",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-024",
+    "PFI2-025",
+    "PFI2-026",
+    "PFI2-027",
+    "PFI2-028",
+    "PFI2-029",
+    "PFI2-030",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "comparison": {
+    "current": {
+      "tasks": 31,
+      "point_macro_average": 0.9543010752688172,
+      "support_counts": {
+        "supported": 125,
+        "partially_supported": 3
+      },
+      "citation_precision": {
+        "numerator": 130,
+        "denominator": 132,
+        "value": 0.9848484848484849
+      },
+      "citation_coverage": {
+        "numerator": 126,
+        "denominator": 128,
+        "value": 0.984375
+      },
+      "boundary_mean": 1.903225806451613,
+      "all_five_pass": 22
+    },
+    "baseline": {
+      "tasks": 31,
+      "point_macro_average": 0.9596774193548387,
+      "support_counts": {
+        "supported": 123
+      },
+      "citation_precision": {
+        "numerator": 127,
+        "denominator": 130,
+        "value": 0.9769230769230769
+      },
+      "citation_coverage": {
+        "numerator": 119,
+        "denominator": 123,
+        "value": 0.967479674796748
+      },
+      "boundary_mean": 1.935483870967742,
+      "all_five_pass": 22
+    }
+  },
+  "changes": {
+    "point_wins": [],
+    "point_losses": [
+      "PFI2-032"
+    ],
+    "joint_wins": [
+      "PFI2-020",
+      "PFI2-024",
+      "PFI2-028"
+    ],
+    "joint_losses": [
+      "PFI2-014",
+      "PFI2-029",
+      "PFI2-032"
+    ]
+  },
+  "excluded": [
+    {
+      "task_id": "PFI2-023",
+      "current_valid": true,
+      "baseline_valid": false,
+      "current_reference_concern": false,
+      "baseline_reference_concern": null
+    }
+  ],
+  "runtime": {
+    "answer_outcomes": {
+      "answered": 32
+    },
+    "median_end_to_end_seconds": 12.8975,
+    "generation": {
+      "calls": 32,
+      "known_tokens": {
+        "input_tokens": 240172,
+        "output_tokens": 34638,
+        "total_tokens": 274810
+      },
+      "total_token_unknown_calls": 0
+    },
+    "rerank": {
+      "calls": 32,
+      "known_tokens": {
+        "input_tokens": 473958,
+        "output_tokens": 0
+      },
+      "total_token_unknown_calls": 32
+    },
+    "question_embedding": {
+      "calls": 32,
+      "known_tokens": {
+        "input_tokens": 1011,
+        "output_tokens": 0,
+        "total_tokens": 1011
+      },
+      "total_token_unknown_calls": 0
+    },
+    "generation_currency_cost": null,
+    "rerank_currency_cost": null,
+    "embedding_currency_cost": null
+  },
+  "judge_accounting": {
+    "calls": 32,
+    "known_tokens": {
+      "input_tokens": 2450769,
+      "output_tokens": 120002,
+      "total_tokens": 2570771
+    },
+    "usage_unknown_calls": 0,
+    "reported_cost_usd": "0.102932298",
+    "cost_unknown_calls": 0,
+    "invoice_cost_usd": null,
+    "request_time_ms": 128733
+  },
+  "judge_statuses": [
+    {
+      "judge": "jev",
+      "system": "rag",
+      "status": "completed",
+      "count": 32
+    }
+  ],
+  "configuration": {
+    "embedding_provider": "openai",
+    "embedding_model": "BAAI/bge-m3",
+    "embedding_dimensions": 1024,
+    "llm_provider": "deepseek",
+    "llm_model": "deepseek-flash",
+    "top_k": 8,
+    "min_score": 0.35,
+    "pipeline_version": "mineru-unified-rerank-v1",
+    "prompt_pipeline_sha256": "e8a9e6bde94daf55155ddd719e2586d20ab921cb6c54dc0d681b4faa59825de3",
+    "llm_thinking_enabled": true,
+    "llm_reasoning_effort": "high",
+    "pipeline_source_files": [
+      "application/prompts.py",
+      "application/citations.py",
+      "application/answer_question.py",
+      "application/retrieve.py",
+      "adapters/providers/deepseek.py",
+      "adapters/providers/openai.py",
+      "application/context.py",
+      "domain/models.py",
+      "adapters/sqlite/metadata_store.py",
+      "application/body_context.py",
+      "application/role_context.py",
+      "application/section_context.py",
+      "application/unified_context.py",
+      "application/table_evidence.py",
+      "application/rerank.py",
+      "adapters/providers/rerank.py"
+    ],
+    "context_expansion": {
+      "context_expansion_enabled": true,
+      "context_neighbor_radius": 1,
+      "context_max_evidence_chars": 8000,
+      "context_max_total_chars": 24000,
+      "strategy": "body_section",
+      "non_body_expansion": true,
+      "non_body_section_expansion": true,
+      "metadata_expansion": false,
+      "section_trigger_roles": [
+        "body",
+        "table",
+        "equation"
+      ],
+      "table_hit_expansion": "unified_primary_candidates",
+      "equation_hit_expansion": "reliable_section_only",
+      "assembly_passes": 1,
+      "candidate_roots_only": true,
+      "post_context_expansion": false,
+      "candidate_priority": [
+        "primary",
+        "explicit_table_link",
+        "section",
+        "body_continuation"
+      ],
+      "fallback_policy": "same_page_identified_body_sentence_continuation_only"
+    },
+    "table_retrieval": {
+      "enabled": true,
+      "version": "table-evidence-v1",
+      "row_cosine": "exact",
+      "parent_fusion": "maximum_cosine",
+      "max_parent_candidates": 50,
+      "normal_region_sampling": false,
+      "link_policy": "identified_body_table_only",
+      "recursive": false,
+      "link_candidates_per_primary": 2,
+      "max_unique_link_candidates": 8,
+      "expansion": "unified_primary_candidates",
+      "duplicate_source_policy": "skip_sources_already_in_section_or_primary_hits"
+    },
+    "rerank": {
+      "enabled": true,
+      "version": "candidate-rerank-v1",
+      "provider": "siliconflow",
+      "model": "BAAI/bge-reranker-v2-m3",
+      "timeout_seconds": 60.0,
+      "endpoint_sha256": "dcfb966d818ddf8f4d10f7397ce546e86d3fcb8afe26371506405f6978c6f661",
+      "max_candidates": 50,
+      "max_chunks_per_doc": 1024,
+      "overlap_tokens": 80,
+      "input": "full_parent_source_text",
+      "application_truncation": false,
+      "retry_count": 0,
+      "error_policy": "fail_without_vector_fallback",
+      "score_threshold": null,
+      "context_pipeline_version": "unified-scientific-table-context-v3",
+      "position": "before_primary_selection_and_unified_context",
+      "candidate_inputs": "full_source_chunks_before_expansion"
+    },
+    "provider_endpoint_fingerprints": {
+      "llm_base_url": "a34e2a4708ed1c61008a151688838dcf1c44d4e7f08054633e72ba7c0b16cfc1",
+      "embedding_base_url": "dcfb966d818ddf8f4d10f7397ce546e86d3fcb8afe26371506405f6978c6f661"
+    }
+  },
+  "judge": {
+    "base_url": "https://openrouter.ai/api",
+    "requested_model": "typesafe/jev-1.14",
+    "api": "openrouter_decisions",
+    "timeout_seconds": 120.0,
+    "automatic_retries": 0,
+    "previous_scores_provided": false,
+    "scope": [
+      "key_points",
+      "claim_support",
+      "citation_support",
+      "citation_group_coverage",
+      "answerability"
+    ],
+    "independent_requests": true,
+    "sampling": "Native typed decisions; no sampling overrides or conversation identifiers."
+  },
+  "scoring_policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+  "comparison_kind": "historical_not_newly_generated_control",
+  "generated_questions": 32,
+  "new_luna_calls": 0,
+  "new_dsh_calls": 0,
+  "answer_guidance_enabled": false
+}
