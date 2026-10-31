@@ -170,7 +170,7 @@ onBeforeUnmount(() => {
           >
             <span
               class="filter-option-dot"
-              :style="{ background: option.color ?? '#99a8b9' }"
+              :style="{ background: option.color ?? '#b9ae99' }"
             ></span>
             <span class="filter-option-label">{{ option.label }}</span>
             <span v-if="option.count != null" class="filter-option-count">{{
@@ -199,10 +199,10 @@ onBeforeUnmount(() => {
   gap: 8px;
   height: 35px;
   padding: 0 11px;
-  border: 1px solid #dfe5ec;
+  border: 1px solid #dcebe7;
   border-radius: 6px;
   background: white;
-  color: #617085;
+  color: #857961;
   font-size: 13px;
   transition:
     border-color 0.15s,
@@ -210,17 +210,17 @@ onBeforeUnmount(() => {
     box-shadow 0.15s;
 }
 .filter-trigger:hover {
-  border-color: #a9c4dc;
-  background: #f8fbfe;
+  border-color: #b5d6d2;
+  background: #fdfcf9;
 }
 .filter-trigger.expanded {
-  border-color: #6ca1ce;
-  box-shadow: 0 0 0 3px #4386bf14;
+  border-color: #5fa8a2;
+  box-shadow: 0 0 0 3px #0b6e6814;
 }
 .filter-trigger.filtered {
-  color: #3476ad;
-  background: #f1f7fc;
-  border-color: #bbd4e9;
+  color: #0b5f5a;
+  background: #faf8f3;
+  border-color: #b5d6d2;
 }
 .filter-chevron {
   margin-left: 3px;
@@ -238,18 +238,18 @@ onBeforeUnmount(() => {
   max-height: min(360px, 50vh);
   overflow-y: auto;
   background: white;
-  border: 1px solid #e0e7ef;
+  border: 1px solid #dcebe7;
   border-radius: 9px;
   padding: 7px;
   box-shadow:
-    0 8px 28px #253d571a,
-    0 2px 6px #253d5709;
+    0 8px 28px #0a4f4b1a,
+    0 2px 6px #0a4f4b09;
   z-index: 20;
   transform-origin: top left;
 }
 .filter-popover-title {
   padding: 7px 9px 9px;
-  color: #8996a6;
+  color: #a69c89;
   font-size: 11px;
   font-weight: 500;
 }
@@ -261,21 +261,21 @@ onBeforeUnmount(() => {
   padding: 8px 9px;
   border-radius: 5px;
   cursor: pointer;
-  color: #596c81;
+  color: #817459;
   font-size: 13px;
   transition:
     background 0.1s,
     color 0.1s;
 }
 .filter-option.highlighted {
-  background: #f1f5fa;
+  background: #e3efec;
 }
 .filter-option.selected {
-  color: #3476ad;
-  background: #edf5fc;
+  color: #0b5f5a;
+  background: #e3efec;
 }
 .filter-option.selected.highlighted {
-  background: #e5f0fb;
+  background: #e3efec;
 }
 .filter-option-dot {
   width: 6px;
@@ -288,12 +288,12 @@ onBeforeUnmount(() => {
 }
 .filter-option-count {
   font-size: 11px;
-  color: #899caf;
+  color: #afa289;
   font-variant-numeric: tabular-nums;
 }
 .filter-check {
   visibility: hidden;
-  color: #4386bf;
+  color: #0b6e68;
 }
 .filter-check.visible {
   visibility: visible;

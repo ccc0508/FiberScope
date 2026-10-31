@@ -11,6 +11,7 @@ import {
 } from "../api";
 import FilterSelect from "../components/FilterSelect.vue";
 import SampleDetail from "../components/SampleDetail.vue";
+import { materialColors } from "../palette";
 
 interface BlendRow {
   canonical_code: string;
@@ -67,10 +68,10 @@ const pointName = (r: BlendRow) =>
       : "复配样本";
 const pointColor = (r: BlendRow) =>
   r.sw_proportion_pct === 0
-    ? "#58a397"
+    ? materialColors.hardwood
     : r.sw_proportion_pct === 100
-      ? "#4386bf"
-      : "#9282bc";
+      ? materialColors.softwood
+      : materialColors.blend;
 const value = (r: BlendRow): number | null =>
   typeof r[metric.value.key] === "number" &&
   Number.isFinite(r[metric.value.key])
@@ -196,9 +197,16 @@ onBeforeUnmount(() => controller?.abort());
             <p>纵轴：{{ metric.name }}（{{ unit }}）</p>
           </div>
           <div class="blend-legend">
-            <span><i style="background: #58a397"></i>纯阔叶木端点</span
-            ><span><i style="background: #9282bc"></i>复配样本</span
-            ><span><i style="background: #4386bf"></i>纯针叶木端点</span>
+            <span
+              ><i :style="{ background: materialColors.hardwood }"></i
+              >纯阔叶木端点</span
+            ><span
+              ><i :style="{ background: materialColors.blend }"></i
+              >复配样本</span
+            ><span
+              ><i :style="{ background: materialColors.softwood }"></i
+              >纯针叶木端点</span
+            >
           </div>
         </div>
         <p class="blend-note">
@@ -230,7 +238,7 @@ onBeforeUnmount(() => controller?.abort());
                 x2="910"
                 :y1="40 + (i - 1) * 49"
                 :y2="40 + (i - 1) * 49"
-                stroke="#edf0f4"
+                stroke="#f5f2ec"
               />
               <text x="68" :y="44 + (i - 1) * 49" text-anchor="end">
                 {{
@@ -250,7 +258,12 @@ onBeforeUnmount(() => controller?.abort());
               针叶木比例 / %（阔叶木比例 = 100% − 针叶木比例）
             </text>
             <g v-for="s in series" :key="s.code">
-              <path :d="s.path" fill="none" stroke="#9282bc" stroke-width="2" />
+              <path
+                :d="s.path"
+                fill="none"
+                :stroke="materialColors.blend"
+                stroke-width="2"
+              />
               <g
                 v-for="r in s.points"
                 :key="r.canonical_code"
@@ -384,17 +397,17 @@ onBeforeUnmount(() => controller?.abort());
 .control-caption {
   display: block;
   font-size: 12px;
-  color: #788697;
+  color: #978d78;
   margin-bottom: 8px;
 }
 .blend-count {
   margin-left: auto;
   font-size: 13px;
-  color: #68798c;
+  color: #8c8068;
 }
 .blend-count span {
   margin: 0 10px;
-  color: #adb7c4;
+  color: #c4bcad;
 }
 .blend-chart {
   padding: 24px;
@@ -409,7 +422,7 @@ onBeforeUnmount(() => controller?.abort());
 }
 .blend-chart-heading p {
   font-size: 13px;
-  color: #8491a2;
+  color: #a29884;
   margin-top: 8px;
 }
 .blend-legend {
@@ -417,7 +430,7 @@ onBeforeUnmount(() => controller?.abort());
   display: flex;
   gap: 20px;
   font-size: 13px;
-  color: #64758a;
+  color: #8a7d64;
 }
 .blend-legend span {
   display: flex;
@@ -440,7 +453,7 @@ onBeforeUnmount(() => controller?.abort());
 }
 .blend-plot text {
   font-size: 12px;
-  fill: #8592a4;
+  fill: #a49a85;
 }
 .plot-point {
   cursor: pointer;
@@ -449,7 +462,7 @@ onBeforeUnmount(() => controller?.abort());
   outline: none;
 }
 .plot-point:focus circle:last-of-type {
-  stroke: #263f61;
+  stroke: #0a4f4b;
   stroke-width: 2.5;
 }
 .blend-tooltip {
@@ -458,19 +471,19 @@ onBeforeUnmount(() => controller?.abort());
   align-items: center;
   gap: 18px;
   flex-wrap: wrap;
-  background: #f7fafc;
+  background: #fcfaf7;
   border-radius: 6px;
   padding: 12px 16px;
   font-size: 13px;
-  color: #677a90;
+  color: #908267;
 }
 .blend-tooltip strong {
-  color: #3b536e;
+  color: #0b5f5a;
 }
 .blend-note,
 .unit-note {
   font-size: 12px;
-  color: #7e8d9f;
+  color: #9f947e;
   margin-top: 14px;
   line-height: 1.7;
 }
@@ -483,7 +496,7 @@ onBeforeUnmount(() => controller?.abort());
 .blend-state {
   padding: 64px 24px;
   text-align: center;
-  color: #73849a;
+  color: #9a8d73;
 }
 .blend-state p {
   margin: 14px 0;
