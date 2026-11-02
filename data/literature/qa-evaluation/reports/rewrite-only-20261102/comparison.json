@@ -1,0 +1,393 @@
+{
+  "version": "rewrite-only-paired-20261102",
+  "common_task_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-005",
+    "PFI2-006",
+    "PFI2-007",
+    "PFI2-008",
+    "PFI2-009",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-012",
+    "PFI2-013",
+    "PFI2-014",
+    "PFI2-015",
+    "PFI2-016",
+    "PFI2-017",
+    "PFI2-018",
+    "PFI2-019",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-023",
+    "PFI2-024",
+    "PFI2-025",
+    "PFI2-026",
+    "PFI2-027",
+    "PFI2-028",
+    "PFI2-029",
+    "PFI2-030",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "comparison": {
+    "original": {
+      "tasks": 32,
+      "point_macro_average": 0.9401041666666666,
+      "support_counts": {
+        "supported": 131,
+        "partially_supported": 1
+      },
+      "citation_precision": {
+        "numerator": 134,
+        "denominator": 136,
+        "value": 0.9852941176470589
+      },
+      "citation_coverage": {
+        "numerator": 128,
+        "denominator": 132,
+        "value": 0.9696969696969697
+      },
+      "boundary_mean": 1.84375,
+      "all_five_pass": 20
+    },
+    "rewrite": {
+      "tasks": 32,
+      "point_macro_average": 0.9479166666666666,
+      "support_counts": {
+        "supported": 116,
+        "partially_supported": 2
+      },
+      "citation_precision": {
+        "numerator": 124,
+        "denominator": 127,
+        "value": 0.9763779527559056
+      },
+      "citation_coverage": {
+        "numerator": 116,
+        "denominator": 118,
+        "value": 0.9830508474576272
+      },
+      "boundary_mean": 1.84375,
+      "all_five_pass": 19
+    }
+  },
+  "all_valid_summaries": {
+    "original": {
+      "tasks": 32,
+      "point_macro_average": 0.9401041666666666,
+      "support_counts": {
+        "supported": 131,
+        "partially_supported": 1
+      },
+      "citation_precision": {
+        "numerator": 134,
+        "denominator": 136,
+        "value": 0.9852941176470589
+      },
+      "citation_coverage": {
+        "numerator": 128,
+        "denominator": 132,
+        "value": 0.9696969696969697
+      },
+      "boundary_mean": 1.84375,
+      "all_five_pass": 20
+    },
+    "rewrite": {
+      "tasks": 32,
+      "point_macro_average": 0.9479166666666666,
+      "support_counts": {
+        "supported": 116,
+        "partially_supported": 2
+      },
+      "citation_precision": {
+        "numerator": 124,
+        "denominator": 127,
+        "value": 0.9763779527559056
+      },
+      "citation_coverage": {
+        "numerator": 116,
+        "denominator": 118,
+        "value": 0.9830508474576272
+      },
+      "boundary_mean": 1.84375,
+      "all_five_pass": 19
+    }
+  },
+  "valid_grades": {
+    "original": 32,
+    "rewrite": 32
+  },
+  "excluded_task_ids": [],
+  "changes": {
+    "point_wins": [
+      "PFI2-011",
+      "PFI2-015",
+      "PFI2-018"
+    ],
+    "point_losses": [
+      "PFI2-016",
+      "PFI2-024"
+    ],
+    "joint_wins": [
+      "PFI2-011",
+      "PFI2-014",
+      "PFI2-025"
+    ],
+    "joint_losses": [
+      "PFI2-016",
+      "PFI2-020",
+      "PFI2-024",
+      "PFI2-029"
+    ]
+  },
+  "retrieval": {
+    "rewrite_statuses": {
+      "rewritten": 32
+    },
+    "same_candidate_set": 0,
+    "same_primary_order": 0,
+    "same_final_sources": 2,
+    "same_initial_generation_input": 0,
+    "shared_candidate_occurrences": 1388,
+    "rewrite_only_candidate_occurrences": 212,
+    "rewrite_only_primary_occurrences": 5,
+    "added_final_source_occurrences": 118,
+    "removed_final_source_occurrences": 200,
+    "changed_final_source_questions": [
+      "PFI2-001",
+      "PFI2-002",
+      "PFI2-003",
+      "PFI2-004",
+      "PFI2-005",
+      "PFI2-006",
+      "PFI2-008",
+      "PFI2-009",
+      "PFI2-010",
+      "PFI2-011",
+      "PFI2-012",
+      "PFI2-013",
+      "PFI2-014",
+      "PFI2-015",
+      "PFI2-016",
+      "PFI2-017",
+      "PFI2-019",
+      "PFI2-020",
+      "PFI2-021",
+      "PFI2-022",
+      "PFI2-023",
+      "PFI2-024",
+      "PFI2-025",
+      "PFI2-026",
+      "PFI2-027",
+      "PFI2-028",
+      "PFI2-029",
+      "PFI2-030",
+      "PFI2-031",
+      "PFI2-032"
+    ],
+    "note": "Counts are question/source occurrences, not paper chunks deleted or proof that required evidence improved.",
+    "point_changes_with_same_initial_generation_input": []
+  },
+  "runtime": {
+    "original": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 32
+      },
+      "median_end_to_end_seconds": 15.6805,
+      "sum_end_to_end_seconds": 521.12,
+      "generation": {
+        "calls": 36,
+        "known_tokens": {
+          "input_tokens": 273104,
+          "output_tokens": 37025,
+          "total_tokens": 310129
+        },
+        "total_token_unknown_calls": 0
+      },
+      "rerank": {
+        "calls": 32,
+        "known_tokens": {
+          "input_tokens": 473958,
+          "output_tokens": 0
+        },
+        "total_token_unknown_calls": 32
+      },
+      "question_embedding": {
+        "calls": 32,
+        "known_tokens": {
+          "input_tokens": 1011,
+          "output_tokens": 0,
+          "total_tokens": 1011
+        },
+        "total_token_unknown_calls": 0
+      },
+      "query_rewrite": {
+        "calls": 0,
+        "known_tokens": {},
+        "total_token_unknown_calls": 0
+      },
+      "currency_costs": {
+        "generation": null,
+        "rerank": null,
+        "question_embedding": null,
+        "query_rewrite": null
+      },
+      "returned_generation_models": {
+        "deepseek-flash": 36
+      },
+      "returned_rewrite_models": {}
+    },
+    "rewrite": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 32
+      },
+      "median_end_to_end_seconds": 16.872999999999998,
+      "sum_end_to_end_seconds": 566.169,
+      "generation": {
+        "calls": 32,
+        "known_tokens": {
+          "input_tokens": 208049,
+          "output_tokens": 31733,
+          "total_tokens": 239782
+        },
+        "total_token_unknown_calls": 0
+      },
+      "rerank": {
+        "calls": 32,
+        "known_tokens": {
+          "input_tokens": 541867,
+          "output_tokens": 0
+        },
+        "total_token_unknown_calls": 32
+      },
+      "question_embedding": {
+        "calls": 32,
+        "known_tokens": {
+          "input_tokens": 2476,
+          "output_tokens": 0,
+          "total_tokens": 2476
+        },
+        "total_token_unknown_calls": 0
+      },
+      "query_rewrite": {
+        "calls": 32,
+        "known_tokens": {
+          "input_tokens": 8054,
+          "output_tokens": 2305,
+          "total_tokens": 10359
+        },
+        "total_token_unknown_calls": 0
+      },
+      "currency_costs": {
+        "generation": null,
+        "rerank": null,
+        "question_embedding": null,
+        "query_rewrite": null
+      },
+      "returned_generation_models": {
+        "deepseek-flash": 32
+      },
+      "returned_rewrite_models": {
+        "deepseek-flash": 32
+      }
+    }
+  },
+  "failed_grades": [],
+  "judge_statuses": {
+    "original": [
+      {
+        "judge": "jev",
+        "system": "rag",
+        "status": "completed",
+        "count": 32
+      }
+    ],
+    "rewrite": [
+      {
+        "judge": "jev",
+        "system": "rag",
+        "status": "completed",
+        "count": 32
+      }
+    ]
+  },
+  "judge_accounting": {
+    "original": {
+      "calls": 32,
+      "known_tokens": {
+        "input_tokens": 2441206,
+        "output_tokens": 119690,
+        "total_tokens": 2560896
+      },
+      "usage_unknown_calls": 0,
+      "reported_cost_usd": "0.102530652",
+      "cost_unknown_calls": 0,
+      "invoice_cost_usd": null,
+      "request_time_ms": 124338
+    },
+    "rewrite": {
+      "calls": 32,
+      "known_tokens": {
+        "input_tokens": 2321161,
+        "output_tokens": 109022,
+        "total_tokens": 2430183
+      },
+      "usage_unknown_calls": 0,
+      "reported_cost_usd": "0.097488762",
+      "cost_unknown_calls": 0,
+      "invoice_cost_usd": null,
+      "request_time_ms": 120194
+    }
+  },
+  "judge": {
+    "base_url": "https://openrouter.ai/api",
+    "requested_model": "typesafe/jev-1.14",
+    "api": "openrouter_decisions",
+    "timeout_seconds": 120.0,
+    "automatic_retries": 0,
+    "previous_scores_provided": false,
+    "scope": [
+      "key_points",
+      "claim_support",
+      "citation_support",
+      "citation_group_coverage",
+      "answerability"
+    ],
+    "independent_requests": true,
+    "sampling": "Native typed decisions; no sampling overrides or conversation identifiers."
+  },
+  "scoring_policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+  "probe_accounting": {
+    "calls": 0,
+    "known_tokens": {},
+    "total_token_unknown_calls": 0
+  },
+  "probe_note": "No extra interface probes in this experiment.",
+  "comparison_kind": "fresh_same_commit_same_corpus_configuration_switch_only",
+  "source_commit": "97866ec512107e505de8f802be62dd8448350d4b",
+  "generated_questions": 64,
+  "new_luna_calls": 0,
+  "new_dsh_calls": 0,
+  "answer_guidance_enabled": false,
+  "interpretation": {
+    "source": "Post-evaluation source/answer inspection; these notes are not Jev-generated reasons and do not alter scores.",
+    "conclusion": "Mixed one-run results; no demonstrated overall improvement or reason to enable by default.",
+    "case_notes": {
+      "PFI2-011": "Jev把P1由0.5判为1；两版均给出非单调数值反例，具体要点边界可人工复核，不能直接称为新增证据带来的提升。",
+      "PFI2-015": "两版均已拿到3.33/1.77 N/mm与作者可能解释；Jev把混杂限制P3由0判为0.5，试验仍未完整说明不能全归因于浆种。",
+      "PFI2-018": "试验明确写出相对峰面积不是绝对含量，P3由0变1；两组原文块集合相同，属于组织/回答表达差异，未增加新的原文块。",
+      "PFI2-016": "试验列出纸页改善与零距抗张信息，但未明确完成不必同步提高的推断，P3由1变0.5；相关事实已在回答和证据中，不能归为原文完全未检索到。",
+      "PFI2-024": "试验漏答哪个因素贡献最大，以及论文没有独立贡献排序的限制，P3由1变0；需区分证据组织、生成遗漏和输入信息覆盖，不能只按分数确定原因。",
+      "PFI2-013": "改写擅自扩展到综述相关文献和多种机制，两条References文献条目进入主命中；新增主命中不必然是有效补证。",
+      "PFI2-032": "两组均未把含0.888的摘要送入最终证据，仍未指出摘要/正文冲突；该问题本轮没有修复。"
+    },
+    "next_step": "Retain an experimental switch; first constrain gratuitous query expansion and test colloquial questions before more default rollout."
+  }
+}

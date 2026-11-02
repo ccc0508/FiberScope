@@ -174,6 +174,18 @@ def publish():
         comparison_kind='fresh_same_commit_same_corpus_configuration_switch_only',
         source_commit=judge.read_json(plan('original')['run_dir']/'run.json')['source_commit'],
         generated_questions=64,new_luna_calls=0,new_dsh_calls=0,answer_guidance_enabled=False)
+    result['interpretation'] = dict(
+        source='Post-evaluation source/answer inspection; these notes are not Jev-generated reasons and do not alter scores.',
+        conclusion='Mixed one-run results; no demonstrated overall improvement or reason to enable by default.',
+        case_notes={
+            'PFI2-011':'Jev把P1由0.5判为1；两版均给出非单调数值反例，具体要点边界可人工复核，不能直接称为新增证据带来的提升。',
+            'PFI2-015':'两版均已拿到3.33/1.77 N/mm与作者可能解释；Jev把混杂限制P3由0判为0.5，试验仍未完整说明不能全归因于浆种。',
+            'PFI2-018':'试验明确写出相对峰面积不是绝对含量，P3由0变1；两组原文块集合相同，属于组织/回答表达差异，未增加新的原文块。',
+            'PFI2-016':'试验列出纸页改善与零距抗张信息，但未明确完成不必同步提高的推断，P3由1变0.5；相关事实已在回答和证据中，不能归为原文完全未检索到。',
+            'PFI2-024':'试验漏答哪个因素贡献最大，以及论文没有独立贡献排序的限制，P3由1变0；需区分证据组织、生成遗漏和输入信息覆盖，不能只按分数确定原因。',
+            'PFI2-013':'改写擅自扩展到综述相关文献和多种机制，两条References文献条目进入主命中；新增主命中不必然是有效补证。',
+            'PFI2-032':'两组均未把含0.888的摘要送入最终证据，仍未指出摘要/正文冲突；该问题本轮没有修复。'},
+        next_step='Retain an experimental switch; first constrain gratuitous query expansion and test colloquial questions before more default rollout.')
     PUBLIC.mkdir(parents=True)
     scoring.save(PUBLIC/'comparison.json',result)
     (PUBLIC/'questions-answers-reviews.jsonl').write_text(''.join(judge.encode(r)+'\n' for r in rows),encoding='utf-8',newline='\n')
@@ -188,10 +200,14 @@ def publish():
         '| '+' | '.join(headers)+' |','| '+' | '.join(['---']*len(headers))+' |']
     lines += ['| '+LABELS[a]+' | '+' | '.join(quality_cells(summaries[a]))+' |' for a in ARMS]
     lines += ['',f"有效评分：{result['valid_grades']}；共同题排除：{result['excluded_task_ids']}。无效不记零，不计算加权总分。",'',
-        f"32题中有{retrieval['same_initial_generation_input']}题首次生成输入完全一致；改写新增独有候选累计{retrieval['rewrite_only_candidate_occurrences']}题次/块，但进入主命中的独有块仅{retrieval['rewrite_only_primary_occurrences']}题次/块。输入一致题的要点变化为{retrieval['point_changes_with_same_initial_generation_input']}，这些变化不能归因于改写补到新证据。",'',
+        '**结论：本轮没有表现出整体优势。** 必答要点约上升0.78个百分点，引用组完整率上升；事实支持与单引有效率下降，边界均分相同，全达标题数20→19。先保留实验开关，不切换网站默认配置。','',
+        f"32题中有{retrieval['same_initial_generation_input']}题首次生成输入完全一致，30题原文块集合变化；改写相对独立对照新增候选累计{retrieval['rewrite_only_candidate_occurrences']}题次/块，进入主命中的独有块为{retrieval['rewrite_only_primary_occurrences']}题次/块。输入不同只能证明策略改变了材料或排列，仍不能排除回答生成和裁判随机性。",'',
         '## 逐题变化','',*[f"- {k}：{', '.join(v) or '无'}" for k,v in changes.items()],
-        '', '## 无效评分','', '```json',json.dumps(result['failed_grades'],ensure_ascii=False,indent=2),'```',
-        '评分格式、一致性校验或API失败均不代表回答得零分；原因与尝试见上。每份缺失评分已尝试3次并封存，不改裁判原判；这些题的两组回答仍完整列出。',
+        '', '## 重点题核对','', '以下为评分后的代码、原文和答案核对，不是Jev生成的文字理由，也没有修改原分。','',
+        *[f'- {tid}：{note}' for tid,note in result['interpretation']['case_notes'].items()],
+        '', '## 无效评分','',
+        ('64份Jev评分全部首次有效，无无效评分、补评或排除题。' if not result['failed_grades'] else
+         '缺失评分保留所有尝试，不记零；见机器可读结果的failed_grades。'),
         '', '## 检索实际变化','', '```json',json.dumps(retrieval,ensure_ascii=False,indent=2),'```','',
         '候选、主命中和最终原文是三个阶段；新增候选不等于补到必需证据。不同原文块的数量按题累计，同一块在多题出现会重复计数。新增/独有块由独立对照组候选与试验组候选比较计算，试验内部没有隐藏的原问题检索。完整改写、候选预算、增减块和逐题回答在HTML与JSONL。','',
         '## 耗时和用量','']
