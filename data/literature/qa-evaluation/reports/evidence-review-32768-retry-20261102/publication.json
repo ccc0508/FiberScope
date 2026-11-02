@@ -1,0 +1,8 @@
+{
+  "version": "evidence-review-32768-retry-publication-v1",
+  "files": {
+    "retry.json": "21dbe5a71a5b157b4b4ae32e224a25e622cd234607d94fdc04d38d8ad78d7d09"
+  },
+  "raw_private_results_preserved": true,
+  "new_external_judge_calls": 0
+}
