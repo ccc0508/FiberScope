@@ -5,14 +5,17 @@
 访问 `/literature`，或点击左侧“科研助手 → 文献问答”。
 
 - 展示已完成导入的文献、页数和片段数；支持单轮中文提问。
-- 复用旧项目的向量检索、阈值筛选、结构化回答、引用校验和无证据拒答。
+- 支持MinerU章节组织、文字/表格行/图片检索、双路查询、文字候选重排、结构化回答与引用校验。
 - 点击回答中的引用编号定位原文片段；点击“查看原文”打开PDF对应页。
+- 图文模式将命中证据关联的原PDF区域图片交给DeepSeek，引用卡片显示可点击的原图，并为历史记录独立缓存图片。
 - 提供等待、拒答、失败重试和手机布局；页面以纯文本渲染答案和文献片段。
 - 文献库为独立快照，不读取旧实验SQLite，也不改变当前PostgreSQL或原始Excel。
-- 服务端保存问答历史及全部检索证据，按浏览器会话隔离；支持用户评价、JSONL导出和独立备份，见[问答记录说明](QA_HISTORY.md)。
+- 服务端长期保存问答历史及全部检索证据，所有访问者可查看与导出；用户评价仍限原提交浏览器修改。支持JSONL导出和独立备份，见[问答记录说明](QA_HISTORY.md)。
 - 文献数据页可直接解析上传的PDF并保存候选数据，支持原文对照、修改/确认/驳回、审核版本和已确认数据导出，不经过向量检索；见[提取与审核说明](LITERATURE_EXTRACTION.md)。
 
-当前快照：1篇已完成导入的论文、14页、44个文本片段；embedding为BAAI/bge-m3、1024维。文献覆盖范围以页面列出的文件为准。引用可追溯不等于结论已通过独立语义审查。
+当前本机默认配置（2026-11-02）：1篇论文、14页、113个MinerU原文块、20条表格行及11组图像（Figure 1—9、Table 1—2）；Embedding为Qwen3-VL-Embedding、2560维，DeepSeek Flash High接收文字与原图。正文/表格/公式小节补全、表格关联、原问题+改写双路查询、BGE文字重排均启用；回答指引关闭。原BGE与Qwen纯文本库保留，历史评测不覆盖。详见[默认图文启用记录](QA_VISUAL_ACTIVATION_20261102.md)和[图片链路实现](QA_VISUAL_INTEGRATION_20261102.md)。
+
+文献覆盖范围以页面列出的文件为准。引用可追溯不等于结论已通过独立语义审查。本机私有配置与服务器独立，Git推送不会自动更新服务器的索引和模型配置。
 
 ## 本机运行
 
@@ -35,11 +38,14 @@
 | 配置 | 说明 |
 |---|---|
 | LITERATURE_ENABLED | 显式启用文献问答；默认false |
-| LITERATURE_DATA_DIR | 文献库目录，相对路径以backend目录为基准 |
-| LITERATURE_TIMEOUT_SECONDS | 单次子进程总时限，5—90秒，默认90秒 |
+| LITERATURE_DATA_DIR | 历史、提取和图片缓存的数据根目录，相对路径以backend目录为基准 |
+| LITERATURE_LIBRARY_DIR | 可选独立检索库目录；不改变历史和提取数据目录 |
+| LITERATURE_TIMEOUT_SECONDS | 单次子进程总时限，5—300秒，默认90秒；当前本机300秒 |
 | RAG_EMBEDDING_* | 与索引一致的provider、模型、维度、密钥和服务地址 |
 | RAG_LLM_* | 回答模型及服务配置，支持已有openai/deepseek适配器 |
 | RAG_TOP_K / RAG_MIN_SCORE | 检索上限与相似度阈值，沿用原RAG规则 |
+| RAG_VISUAL_RETRIEVAL_ENABLED | 开启同空间的Qwen图像召回和原图输入，要求已建好图像库及匹配的DeepSeek配置 |
+| RAG_VISUAL_MAX_IMAGES / RAG_VISUAL_MAX_TOTAL_BYTES | 原图数量和字节预算，默认4张、12 MiB |
 
 Embedding模型、provider或维度变化时，应创建新索引；不能直接把新配置套到原索引上。
 
@@ -71,10 +77,11 @@ backend/.env.literature
 | GET /literature/documents | enabled、文献列表、说明；不返回磁盘路径或密钥 |
 | POST /literature/ask | JSON请求`{"question":"研究问题","request_id":"UUID"}`；去除首尾空白后2—2000字符，返回202及记录编号 |
 | GET /literature/documents/{document_id}/pdf | 按文献ID读取允许目录内的PDF，支持浏览器`#page=N`跳页 |
-| GET /literature/history | 当前会话历史、搜索和分页 |
+| GET /literature/history | 公开历史、搜索和分页 |
 | GET /literature/history/{id} | 记录进度、结果、证据、配置和评价 |
 | POST /literature/history/{id}/feedback | 保存或修改当前会话的用户评价 |
-| GET /literature/history/export | 当前会话全部记录的JSONL导出 |
+| GET /literature/history/export | 全部公开记录的JSONL导出 |
+| GET /literature/images/{checksum} | 读取历史缓存中校验通过的原图PNG |
 
 提问返回记录（首次202/processing），前端轮询历史详情；完成后从`result`读取`status`（answered/refused）、`answer`、`citations`和模型流程耗时。记录顶层`latency_ms`为端到端耗时。引用包含`ref`、`document_id`、`filename`、`page_start`、`page_end`、`chunk_id`、`excerpt`。
 

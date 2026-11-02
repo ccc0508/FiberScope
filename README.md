@@ -11,6 +11,7 @@ FastAPI实验数据只读后端与自动化集成测试，以及数据总览、�
 | [后端运行说明](backend/README.md) | 安装、配置、启动与测试 |
 | [前端运行说明](frontend/README.md) | 八个页面的启动地址、功能和数据口径说明 |
 | [文献问答](docs/LITERATURE_QA.md) | 文献快照、模型配置、引用原文、接口与验收 |
+| [原图问答启用记录](docs/QA_VISUAL_ACTIVATION_20261102.md) | 本机默认启用Qwen图像召回、DeepSeek原图输入与引用图片，含两道真实HTTP验证 |
 | [问答评测起点](docs/QA_BASELINE.md) | qa-v1-20261024未优化代码、配置、文献索引快照与校验 |
 | [问答评测题集](docs/QA_EVALUATION.md) | 30题、78个评分要点、参考答案和原文证据，含拒答/部分可答/原文冲突 |
 | [首轮问答基线报告](docs/QA_BASELINE_REPORT_20261025.md) | 原版30题真实运行、AI来源初评和逐题依据；要点均分94.17%，严格达标20/30，待独立专家复核 |

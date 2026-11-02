@@ -1,0 +1,220 @@
+{
+  "version": "default-visual-activation-20261102",
+  "activated_at": "2026-11-02T09:50:36.253437+00:00",
+  "source_commit": "5eb83d41895b5963d4e24b1fb49eb35b4865e7b5",
+  "scope": "Local default literature configuration; remote server unchanged.",
+  "library": {
+    "documents": 1,
+    "pages": 14,
+    "chunks": 113,
+    "table_rows": 20,
+    "explicit_links": 10,
+    "images": 11,
+    "image_bytes": 1560893,
+    "embedding_model": "qwen3-vl-embedding",
+    "dimensions": 2560
+  },
+  "embedding_reindex_api_calls": 0,
+  "history_root_unchanged": true,
+  "old_library_preserved": true,
+  "before_config_sha256": "6d2d3ce7ef6f32cdb5045c7b0a0851e33a199b1ee63e8d47239a93cb3d938df9",
+  "active_config_sha256": "475f421a203abd33f084625d01ac9f27aa17635658a3325abffa6f5bf4f3ab7c",
+  "runtime_configuration": {
+    "embedding_provider": "dashscope",
+    "embedding_model": "qwen3-vl-embedding",
+    "embedding_dimensions": 2560,
+    "llm_provider": "deepseek",
+    "llm_model": "deepseek-flash",
+    "top_k": 8,
+    "min_score": 0.35,
+    "pipeline_version": "mineru-qwen-visual-v1",
+    "prompt_pipeline_sha256": "5dff5d20d6ddadaf533e9b0114aeba8889b6a418464d97fca8c89afdb656f50e",
+    "pipeline_source_files": [
+      "application/prompts.py",
+      "application/citations.py",
+      "application/answer_question.py",
+      "application/retrieve.py",
+      "adapters/providers/deepseek.py",
+      "adapters/providers/openai.py",
+      "domain/errors.py",
+      "application/context.py",
+      "domain/models.py",
+      "adapters/sqlite/metadata_store.py",
+      "application/body_context.py",
+      "application/role_context.py",
+      "application/section_context.py",
+      "application/unified_context.py",
+      "application/table_evidence.py",
+      "application/rerank.py",
+      "adapters/providers/rerank.py",
+      "application/query_rewrite.py",
+      "adapters/providers/query_rewrite.py",
+      "adapters/providers/dashscope.py",
+      "application/visual_evidence.py"
+    ],
+    "embedding_runtime": {
+      "api": "dashscope_native_multimodal",
+      "model": "qwen3-vl-embedding",
+      "dimensions": 2560,
+      "text_batch_limit": 20,
+      "image_batch_limit": 10,
+      "default_fusion": false,
+      "qa_input_modality": "text_and_images",
+      "image_generation_input_enabled": true,
+      "usage_note": "input_tokens counts text; image_tokens counts visual input; total_tokens is provider-reported.",
+      "endpoint_sha256": "3d3074c32a59b1d48fc41b46cdc5f389411691480738fa914cde3537cb61fbff"
+    },
+    "llm_thinking_enabled": true,
+    "llm_reasoning_effort": "high",
+    "context_expansion": {
+      "context_expansion_enabled": true,
+      "context_neighbor_radius": 1,
+      "context_max_evidence_chars": 8000,
+      "context_max_total_chars": 24000,
+      "strategy": "body_section",
+      "non_body_expansion": true,
+      "non_body_section_expansion": true,
+      "metadata_expansion": false,
+      "section_trigger_roles": [
+        "body",
+        "table",
+        "equation"
+      ],
+      "table_hit_expansion": "unified_primary_candidates",
+      "equation_hit_expansion": "reliable_section_only",
+      "assembly_passes": 1,
+      "candidate_roots_only": true,
+      "post_context_expansion": false,
+      "candidate_priority": [
+        "primary",
+        "explicit_table_link",
+        "section",
+        "body_continuation"
+      ],
+      "fallback_policy": "same_page_identified_body_sentence_continuation_only"
+    },
+    "table_retrieval": {
+      "enabled": true,
+      "version": "table-evidence-v1",
+      "row_cosine": "exact",
+      "parent_fusion": "maximum_cosine",
+      "max_parent_candidates": 50,
+      "normal_region_sampling": false,
+      "link_policy": "identified_body_table_only",
+      "recursive": false,
+      "link_candidates_per_primary": 2,
+      "max_unique_link_candidates": 8,
+      "expansion": "unified_primary_candidates",
+      "duplicate_source_policy": "skip_sources_already_in_section_or_primary_hits"
+    },
+    "rerank": {
+      "enabled": true,
+      "version": "candidate-rerank-v1",
+      "provider": "siliconflow",
+      "model": "BAAI/bge-reranker-v2-m3",
+      "timeout_seconds": 60.0,
+      "endpoint_sha256": "dcfb966d818ddf8f4d10f7397ce546e86d3fcb8afe26371506405f6978c6f661",
+      "max_candidates": 50,
+      "max_chunks_per_doc": 1024,
+      "overlap_tokens": 80,
+      "input": "full_parent_source_text",
+      "application_truncation": false,
+      "retry_count": 0,
+      "error_policy": "fail_without_vector_fallback",
+      "score_threshold": null,
+      "context_pipeline_version": "unified-scientific-table-context-v3",
+      "position": "before_primary_selection_and_unified_context",
+      "candidate_inputs": "full_source_chunks_before_expansion"
+    },
+    "query_rewrite": {
+      "enabled": true,
+      "version": "original-plus-rewrite-v1",
+      "provider": "deepseek",
+      "model": "deepseek-flash",
+      "thinking_enabled": false,
+      "temperature": 0,
+      "max_output_tokens": 768,
+      "retry_count": 0,
+      "timeout_seconds": 30.0,
+      "max_query_chars": 1200,
+      "instructions_sha256": "3dcda0ea873794f3000cf51c3927e7bbec6ed4a31667fbc27a33c343375dcbcc",
+      "max_queries": 2,
+      "candidates_per_query": 50,
+      "merged_candidate_limit": 50,
+      "fusion": "reciprocal_rank_fusion",
+      "rrf_k": 60,
+      "min_score_per_query": 0.35,
+      "failure_policy": "record_failure_and_search_original_only",
+      "original_query_always": true,
+      "rerank_query": "original",
+      "answer_query": "original",
+      "endpoint_sha256": "a34e2a4708ed1c61008a151688838dcf1c44d4e7f08054633e72ba7c0b16cfc1"
+    },
+    "visual_retrieval": {
+      "enabled": true,
+      "version": "pdf-visual-evidence-v1",
+      "embedding": "image_only_original_pdf_crop",
+      "parent": "authoritative_caption_or_full_table",
+      "fusion": "maximum_cosine_per_parent",
+      "rerank": "BGE_text_only_caption_and_body",
+      "image_delivery": "verified_base64_original",
+      "max_images": 4,
+      "max_total_bytes": 12582912,
+      "instruction_sha256": "c914f531fc82d2e8b7c856318e7a4e860e21124ad774099165f131126e491648",
+      "asset_snapshots": "content_addressed_png_with_document_page_bbox_and_hash"
+    }
+  },
+  "functional_checks": [
+    {
+      "task_id": "VIS-ACT-001",
+      "status": "answered",
+      "record_id": "ba38fa7d6f72445b87a16ee5dcda57a8",
+      "latency_ms": 16764,
+      "sent_image_counts": [
+        4
+      ],
+      "image_http_checks": [
+        {
+          "label": "Figure 9",
+          "ref": "[2]",
+          "page": 11,
+          "http_status": 200,
+          "sha256_match": true
+        }
+      ]
+    },
+    {
+      "task_id": "VIS-ACT-002",
+      "status": "answered",
+      "record_id": "fdd00abc0c3143c992ca2a9e8d54a907",
+      "latency_ms": 26771,
+      "sent_image_counts": [
+        4
+      ],
+      "image_http_checks": [
+        {
+          "label": "Figure 2",
+          "ref": "[4]",
+          "page": 5,
+          "http_status": 200,
+          "sha256_match": true
+        }
+      ]
+    }
+  ],
+  "browser_check": {
+    "image": "Figure 2",
+    "decoded_dimensions": [
+      1016,
+      405
+    ],
+    "clickable_original": true,
+    "horizontal_overflow": false,
+    "screenshot": "unavailable_window_minimized"
+  },
+  "automated_tests": {
+    "passed": 48
+  },
+  "new_judge_calls": 0,
+  "formal_image_quality_score": null
+}
