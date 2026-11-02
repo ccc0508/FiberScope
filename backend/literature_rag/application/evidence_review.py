@@ -15,7 +15,7 @@ from literature_rag.application.citations import CitationValidator
 from literature_rag.domain.errors import CitationValidationError, InfrastructureError, ProviderError
 from literature_rag.domain.models import GeneratedAnswer, GeneratedClaim
 
-VERSION = 'source-grounded-review-v1'
+VERSION = 'source-grounded-review-v2'
 NonBlank = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1200)]
 Ref = Annotated[str, StringConstraints(pattern=r'^\[[1-9][0-9]*\]$')]
 
@@ -37,13 +37,19 @@ These are checks, not mandatory boilerplate. Correct concise answers need no ext
 Keep a correct claim's values, units, object and references. Preserve uncertainty in both directions:
 do not hedge a directly reported result without cause. Omit unrelated background instead of expanding it.
 When a change is needed, return a minimal edit and an issue reason anchored to supplied source refs.
-Text basis must quote a short verbatim span from that exact supplied excerpt. Do not quote a paraphrase
-or silently use nearby full-paper text. Image basis must identify an actually attached asset and a visible
+Text basis must quote a short verbatim span from that exact supplied excerpt (prefer 8-120 characters).
+For broken/duplicated OCR lines, copy short intact spans separately; never reconstruct a clean long
+sentence or silently use nearby full-paper text. Image basis must identify an actually attached asset and a visible
 observation; do not invent precision or use images not supplied. Context basis is ONLY for unsupported
 draft content or a requested part missing from these excerpts, never to invent a new scientific fact or
 claim that an entire paper lacks something. An absent conflicting value cannot be reconstructed.
 Each edit targets the ZERO-BASED original draft claim_index, or null to append a missing relevant part.
 replacement_claims is a list of 1-3 concise cited claims; [] deletes a defective/unnecessary claim.
+Each issue is an independent edit to the ORIGINAL draft. If one issue cannot be verified, other independent
+edits may still be applied. Do not create dependencies between different edits.
+The necessary condition, qualification, or uncertainty identified in problem MUST be expressed in the
+replacement_claims itself, not only in problem. Fixing a vague phrase is insufficient when the missing
+experimental condition explains the limit. Add only the actual supported condition needed for this question.
 Never reorder or rewrite unaffected claims. Each material added/changed proposition needs source basis.
 If no material defect is established, return exactly {"issues": []}; do not improve style for its own sake.
 For issues return ONLY this JSON structure (max 8 issues):
@@ -178,7 +184,26 @@ class EvidenceReviewService:
         try:
             payload=self.provider.review(question,evidences,draft)
             trace['issues']=[i.model_dump(exclude_none=True) for i in payload.issues]
-            candidate,verified=apply_edits(payload,draft,evidences,self.visual_root)
+            # All edit targets refer to the original draft. Verify independent edits
+            # separately so one noisy source quote does not discard unrelated fixes.
+            accepted=[];rejected=[];seen=set()
+            for index,issue in enumerate(payload.issues):
+                try:
+                    if issue.claim_index is not None and issue.claim_index in seen:
+                        raise ReviewRejected('duplicate_original_claim_target')
+                    apply_edits(ReviewPayload(issues=[issue]),draft,evidences,self.visual_root)
+                except ReviewRejected as error:
+                    rejected.append(dict(issue_index=index,reason_code=error.code));continue
+                except CitationValidationError as error:
+                    rejected.append(dict(issue_index=index,reason_code='invalid_revised_citations',citation_rule=error.rule_code));continue
+                accepted.append(issue)
+                if issue.claim_index is not None:seen.add(issue.claim_index)
+            trace['accepted_issue_indexes']=[i for i in range(len(payload.issues)) if i not in {r['issue_index'] for r in rejected}]
+            trace['rejected_issues']=rejected
+            if payload.issues and not accepted:
+                trace.update(status='rejected',reason_code='no_independent_edit_verified')
+                return draft
+            candidate,verified=apply_edits(ReviewPayload(issues=accepted),draft,evidences,self.visual_root)
         except ReviewRejected as error:
             trace.update(status='rejected',reason_code=error.code)
             return draft

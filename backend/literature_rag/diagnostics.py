@@ -129,6 +129,7 @@ def configuration_snapshot(env_file: Path):
             reasoning_effort=settings.llm_reasoning_effort,timeout_seconds=settings.evidence_review_timeout_seconds,
             max_review_calls=1,automatic_retries=0,max_issues=8,max_replacements_per_issue=3,
             max_output_tokens=settings.evidence_review_max_output_tokens,
+            edit_policy='independent_original_claim_targets_verified_then_combined; invalid_combination_retains_draft',
             input='question_same_evidence_same_images_validated_draft_claims',retrieval_calls=0,
             instructions_sha256=sha256(SYSTEM_PROMPT.encode()).hexdigest(),
             acceptance='verified_source_locations_minimal_edits_and_original_citation_validator',
