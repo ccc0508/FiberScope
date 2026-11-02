@@ -21,7 +21,7 @@ def main():
     from literature_rag.application.context import ContextOptions
     from literature_rag.application.answer_question import AnswerService
     from literature_rag.application.citations import CitationValidator
-    from literature_rag.diagnostics import configuration_snapshot
+    from literature_rag.diagnostics import configuration_snapshot, combined_usage
     from literature_rag.domain.errors import ProviderError, InfrastructureError
 
     body = json.loads(sys.stdin.read())
@@ -57,6 +57,11 @@ def main():
                           if settings.llm_provider == 'deepseek' else {})
     generator = generator_type(settings.llm_model, settings.llm_api_key.get_secret_value(), settings.llm_base_url,
                                answer_guidance_enabled=settings.answer_guidance_enabled,**generation_options)
+    query_rewriter=None
+    if settings.query_rewrite_enabled:
+        from literature_rag.adapters.providers.query_rewrite import DeepSeekQueryRewriter
+        query_rewriter=DeepSeekQueryRewriter(settings.llm_model,settings.llm_api_key.get_secret_value(),
+            settings.llm_base_url,settings.query_rewrite_timeout_seconds)
     reranker=None
     rerank_calls=[]
     if settings.rerank_enabled:
@@ -83,6 +88,7 @@ def main():
         configuration['library_structure_sha256']=sha256((root/'structure.json').read_bytes()).hexdigest()
     seed_evidence=[]
     context_diagnostics={}
+    query_embedding_calls=[]
 
     class CapturedGenerator:
         model_name = generator.model_name
@@ -106,6 +112,9 @@ def main():
                 seed_evidence.extend(asdict(e) for e in self.last_seed_evidences)
                 context_diagnostics.update(self.last_context_diagnostics)
                 if settings.rerank_enabled:context_diagnostics['rerank']=self.last_rerank_diagnostics
+                if settings.query_rewrite_enabled:
+                    context_diagnostics['query_rewrite']=self.last_query_diagnostics
+                    query_embedding_calls.extend(self.last_query_embedding_calls)
             evidence_by_chunk.update({e.chunk_id: e for e in evidences})
             return evidences
 
@@ -117,7 +126,7 @@ def main():
             from literature_rag.application.body_context import BodySectionCatalog
             body_context_catalog=BodySectionCatalog.load(root,metadata)
         answer = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options,table_relations,reranker,
-            body_context_catalog=body_context_catalog), CapturedGenerator(), CitationValidator()).answer(
+            body_context_catalog=body_context_catalog,query_rewriter=query_rewriter), CapturedGenerator(), CitationValidator()).answer(
             body['question'], settings.top_k, settings.min_score)
     except (ProviderError, InfrastructureError) as error:
         print(json.dumps({'status': 'failed', 'answer': '', 'citations': [],
@@ -125,7 +134,9 @@ def main():
                           'error_status': 503, 'configuration': configuration,
                           'retrieved_evidence': [asdict(e) for e in evidence_by_chunk.values()],
                           'retrieval_seed_evidence': seed_evidence, 'context_assembly': context_diagnostics,
-                          'embedding_usage': getattr(embedder, 'last_usage', None),
+                          'embedding_usage': combined_usage(query_embedding_calls) if settings.query_rewrite_enabled else getattr(embedder, 'last_usage', None),
+                          **({'query_embedding_calls':query_embedding_calls,'query_rewrite_calls':
+                              [query_rewriter.last_call] if query_rewriter.last_call else []} if settings.query_rewrite_enabled else {}),
                           **({'rerank_calls':rerank_calls} if settings.rerank_enabled else {}),
                           'generation_calls': generation_calls, 'claims': [], 'latency_ms': 0}, ensure_ascii=False))
         return
@@ -136,7 +147,9 @@ def main():
     print(json.dumps({'status': answer.status.value, 'answer': answer.answer, 'citations': citations,
                       'latency_ms': answer.latency_ms, 'reason_code': answer.reason_code,
                       'configuration': configuration, 'generation_calls': generation_calls,
-                      'embedding_usage': getattr(embedder, 'last_usage', None),
+                      'embedding_usage': combined_usage(query_embedding_calls) if settings.query_rewrite_enabled else getattr(embedder, 'last_usage', None),
+                      **({'query_embedding_calls':query_embedding_calls,'query_rewrite_calls':
+                          [query_rewriter.last_call] if query_rewriter.last_call else []} if settings.query_rewrite_enabled else {}),
                       **({'rerank_calls':rerank_calls} if settings.rerank_enabled else {}),
                       'claims': [asdict(claim) for claim in generated_answers[-1].claims] if answer.status.value == 'answered' else [],
                       'retrieval_seed_evidence': seed_evidence, 'context_assembly': context_diagnostics,

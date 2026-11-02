@@ -35,6 +35,8 @@ class Settings(BaseSettings):
     context_max_total_chars: int = Field(default=24000,ge=256,le=100000)
     table_retrieval_enabled: bool = False
     answer_guidance_enabled: bool = False
+    query_rewrite_enabled: bool = False
+    query_rewrite_timeout_seconds: float = Field(default=30, gt=0, le=60, allow_inf_nan=False)
     rerank_enabled: bool = False
     rerank_provider: Literal['siliconflow'] = 'siliconflow'
     rerank_model: str = 'BAAI/bge-reranker-v2-m3'
@@ -122,4 +124,9 @@ class Settings(BaseSettings):
         if self.rerank_enabled:
             if not self.rerank_model.strip() or not self.rerank_base_url or not self.rerank_api_key or not self.rerank_api_key.get_secret_value().strip():
                 raise ValueError('enabled reranking requires model, base URL and API key')
+        if self.query_rewrite_enabled:
+            if not self.rerank_enabled:
+                raise ValueError('dual query retrieval requires original-question reranking')
+            if self.llm_provider != 'deepseek' or not self.llm_model or not self.llm_api_key or not self.llm_api_key.get_secret_value().strip():
+                raise ValueError('query rewrite requires configured DeepSeek credentials')
         return self

@@ -19,6 +19,8 @@ def configuration_snapshot(env_file: Path):
         sources += ['application/table_evidence.py']
     if settings.rerank_enabled:
         sources += ['application/rerank.py','adapters/providers/rerank.py']
+    if settings.query_rewrite_enabled:
+        sources += ['application/query_rewrite.py', 'adapters/providers/query_rewrite.py']
     fingerprint = sha256(b'\n'.join((root / source).read_bytes() for source in sources)).hexdigest()
     result = {**{key: getattr(settings, key) for key in (
         'embedding_provider', 'embedding_model', 'embedding_dimensions', 'llm_provider', 'llm_model', 'top_k', 'min_score')},
@@ -71,7 +73,29 @@ def configuration_snapshot(env_file: Path):
         from .application.prompts import ANSWER_GUIDANCE_VERSION,ANSWER_GUIDANCE
         result.update(answer_guidance=dict(enabled=True,version=ANSWER_GUIDANCE_VERSION,
             instructions_sha256=sha256(ANSWER_GUIDANCE.encode()).hexdigest()))
+    if settings.query_rewrite_enabled:
+        from .application.query_rewrite import VERSION, SYSTEM_PROMPT, MAX_QUERY_CHARS, RRF_K
+        result.update(pipeline_version='mineru-dual-query-v1' if settings.context_expansion_strategy == 'body_section'
+                      else 'literature-dual-query-v1', pipeline_source_files=sources,
+            query_rewrite=dict(enabled=True, version=VERSION, provider='deepseek', model=settings.llm_model,
+                thinking_enabled=False, temperature=0, max_output_tokens=768, retry_count=0,
+                timeout_seconds=settings.query_rewrite_timeout_seconds, max_query_chars=MAX_QUERY_CHARS,
+                instructions_sha256=sha256(SYSTEM_PROMPT.encode()).hexdigest(),
+                max_queries=2, candidates_per_query=50, merged_candidate_limit=50,
+                fusion='reciprocal_rank_fusion', rrf_k=RRF_K, min_score_per_query=settings.min_score,
+                failure_policy='record_failure_and_search_original_only', original_query_always=True,
+                rerank_query='original', answer_query='original',
+                endpoint_sha256=sha256((settings.llm_base_url or 'https://api.deepseek.com').encode()).hexdigest()))
     return result
+
+
+def combined_usage(calls):
+    """Only sum fields known for every call; never treat unknown usage as zero."""
+    if not calls or any(not call.get('usage') for call in calls):
+        return None
+    fields = set.intersection(*(set(call['usage']) for call in calls))
+    return {field: sum(call['usage'][field] for call in calls) for field in fields
+            if all(type(call['usage'][field]) is int and call['usage'][field] >= 0 for call in calls)} or None
 
 
 def provider_usage(response):
