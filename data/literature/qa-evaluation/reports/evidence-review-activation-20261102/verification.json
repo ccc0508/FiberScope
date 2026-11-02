@@ -1,0 +1,91 @@
+{
+  "local_enabled": true,
+  "server_deployed": false,
+  "model": "deepseek-flash",
+  "evidence_review_version": "source-grounded-review-v2",
+  "record_id": "57be8d67a8024cef95797bd26e53a51e",
+  "http_answer_status": "answered",
+  "review_status": "unchanged",
+  "primary_generation_calls": 1,
+  "review_calls": 1,
+  "actual_review_images": 4,
+  "end_to_end_ms": 77718,
+  "review_latency_ms": 35981,
+  "primary_usage": [
+    {
+      "prompt_tokens": 7581,
+      "completion_tokens": 4571,
+      "total_tokens": 12152,
+      "reasoning_tokens": 4122,
+      "cached_tokens": 256
+    }
+  ],
+  "review_usage": {
+    "prompt_tokens": 8405,
+    "completion_tokens": 6078,
+    "total_tokens": 14483,
+    "reasoning_tokens": 6072,
+    "cached_tokens": 640
+  },
+  "history_review_restored_for_fresh_visitor": true,
+  "browser_history": {
+    "restoredAnswerVisible": true,
+    "hasSourceLinks": true,
+    "title": "文献问答 · 植物纤维可视化分析平台",
+    "noInternalReviewPayloadInProduct": true,
+    "noPageOverflow": true
+  },
+  "browser_report": {
+    "title": "DeepSeek证据审校：固定草稿对照",
+    "questions": [
+      "PFI2-001",
+      "PFI2-002",
+      "PFI2-003",
+      "PFI2-004",
+      "PFI2-005",
+      "PFI2-006",
+      "PFI2-007",
+      "PFI2-008",
+      "PFI2-009",
+      "PFI2-010",
+      "PFI2-011",
+      "PFI2-012",
+      "PFI2-013",
+      "PFI2-014",
+      "PFI2-015",
+      "PFI2-016",
+      "PFI2-017",
+      "PFI2-018",
+      "PFI2-019",
+      "PFI2-020",
+      "PFI2-021",
+      "PFI2-022",
+      "PFI2-023",
+      "PFI2-024",
+      "PFI2-025",
+      "PFI2-026",
+      "PFI2-027",
+      "PFI2-028",
+      "PFI2-029",
+      "PFI2-030",
+      "PFI2-031",
+      "PFI2-032"
+    ],
+    "rows": [
+      "组别\t口径\t要点均分\t事实充分支持\t单条引用\t引用组完整\t边界均分\t全部达标",
+      "DeepSeek原稿\tJev原始共同有效题\t97.70%\t112/117\t123/128\t112/117\t1.931/2\t21/29",
+      "DeepSeek原稿\tCodex最终复核全部32题\t96.88%\t119/127\t137/139\t119/127\t1.844/2\t23/32",
+      "DeepSeek审校后\tJev原始共同有效题\t98.28%\t110/116\t121/127\t113/116\t1.931/2\t20/29",
+      "DeepSeek审校后\tCodex最终复核全部32题\t98.44%\t121/126\t136/138\t122/126\t1.906/2\t27/32"
+    ],
+    "q4": true,
+    "q16": true,
+    "noHorizontalOverflow": true
+  },
+  "raw_result_sha256": "b3a38076027d6d808b966209182a01c07197051b1ef0bebe12a3790125f37f2c",
+  "default_configuration_sha256": "9d20be1cfe72ef779dff0ea78b7ab5e6a2c99d8fcd1e78df011f691f3fef1f16",
+  "report_comparison_sha256": "264d9fc4ba4646ab7d33fe1959bd298a21c134cdf656bf08143fc644c85161bd",
+  "automated_related_tests": 136,
+  "benchmark_question_count": 32,
+  "api_calls_in_this_http_check_are_separate_from_benchmark": true
+}

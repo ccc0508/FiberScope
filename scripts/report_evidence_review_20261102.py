@@ -124,7 +124,13 @@ def publish():
         final_characters={arm:sum(len(r['job']['candidate']['answer']) for r in data['rows'].values()) for arm,data in arms.items()},
         incremental_retrieval_calls=0,incremental_primary_generation_calls=0,
         cost_note='DeepSeek monetary cost not returned; no price conversion invented. Pilot use is separate and included in disclosure.')
-    summary=dict(version='fixed-draft-source-review-20261102-v2',questions=32,matched_sources_and_original_drafts=32,
+    previous=ROOT/'data/literature/qa-evaluation/reports/evidence-review-20261102-v2/comparison.json'
+    if OUTPUT.name.endswith('-v3') and previous.is_file():
+        earlier=judge.read_json(previous)
+        runtime['previous_full_round']=dict(report='evidence-review-20261102-v2',report_sha256=judge.digest(previous),
+            review=earlier['runtime']['review'],judge_accounting={a:earlier['summaries'][a]['judge_accounting'] for a in ARMS},
+            note='Additional development experiment, not part of this round metrics; disclosed separately, not double-counting the pilot.')
+    summary=dict(version='fixed-draft-'+OUTPUT.name,questions=32,matched_sources_and_original_drafts=32,
         raw_jev_paired_question_ids=common,summaries=summaries,
         raw_jev_paired_delta=difference(*(summaries[a]['raw_jev_paired'] for a in ARMS)),
         final_codex_delta=difference(*(summaries[a]['final_codex'] for a in ARMS)),
