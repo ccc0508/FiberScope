@@ -1,0 +1,541 @@
+{
+  "version": "qwen-twojudges-repeat-v1",
+  "source_commit": "6298b7f7f7687e80dc70e0411f45ca5af97d93cd",
+  "question_count": 32,
+  "valid_grades": {
+    "jev": 32,
+    "luna": 32
+  },
+  "unflagged_task_ids": {
+    "jev": [
+      "PFI2-001",
+      "PFI2-002",
+      "PFI2-003",
+      "PFI2-004",
+      "PFI2-005",
+      "PFI2-006",
+      "PFI2-007",
+      "PFI2-008",
+      "PFI2-009",
+      "PFI2-010",
+      "PFI2-011",
+      "PFI2-012",
+      "PFI2-013",
+      "PFI2-014",
+      "PFI2-015",
+      "PFI2-016",
+      "PFI2-017",
+      "PFI2-018",
+      "PFI2-019",
+      "PFI2-020",
+      "PFI2-021",
+      "PFI2-022",
+      "PFI2-023",
+      "PFI2-024",
+      "PFI2-025",
+      "PFI2-026",
+      "PFI2-027",
+      "PFI2-028",
+      "PFI2-029",
+      "PFI2-030",
+      "PFI2-031",
+      "PFI2-032"
+    ],
+    "luna": [
+      "PFI2-001",
+      "PFI2-002",
+      "PFI2-003",
+      "PFI2-004",
+      "PFI2-005",
+      "PFI2-006",
+      "PFI2-007",
+      "PFI2-008",
+      "PFI2-009",
+      "PFI2-010",
+      "PFI2-011",
+      "PFI2-012",
+      "PFI2-013",
+      "PFI2-014",
+      "PFI2-015",
+      "PFI2-016",
+      "PFI2-017",
+      "PFI2-018",
+      "PFI2-019",
+      "PFI2-020",
+      "PFI2-021",
+      "PFI2-022",
+      "PFI2-023",
+      "PFI2-024",
+      "PFI2-025",
+      "PFI2-026",
+      "PFI2-027",
+      "PFI2-028",
+      "PFI2-029",
+      "PFI2-030",
+      "PFI2-031",
+      "PFI2-032"
+    ]
+  },
+  "common_task_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-005",
+    "PFI2-006",
+    "PFI2-007",
+    "PFI2-008",
+    "PFI2-009",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-012",
+    "PFI2-013",
+    "PFI2-014",
+    "PFI2-015",
+    "PFI2-016",
+    "PFI2-017",
+    "PFI2-018",
+    "PFI2-019",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-023",
+    "PFI2-024",
+    "PFI2-025",
+    "PFI2-026",
+    "PFI2-027",
+    "PFI2-028",
+    "PFI2-029",
+    "PFI2-030",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "comparison": {
+    "jev": {
+      "tasks": 32,
+      "point_macro_average": 0.9088541666666666,
+      "support_counts": {
+        "supported": 128,
+        "partially_supported": 2
+      },
+      "citation_precision": {
+        "numerator": 133,
+        "denominator": 136,
+        "value": 0.9779411764705882
+      },
+      "citation_coverage": {
+        "numerator": 128,
+        "denominator": 130,
+        "value": 0.9846153846153847
+      },
+      "boundary_mean": 1.8125,
+      "all_five_pass": 17
+    },
+    "luna": {
+      "tasks": 32,
+      "point_macro_average": 0.90625,
+      "support_counts": {
+        "supported": 128,
+        "partially_supported": 3
+      },
+      "citation_precision": {
+        "numerator": 137,
+        "denominator": 138,
+        "value": 0.9927536231884058
+      },
+      "citation_coverage": {
+        "numerator": 126,
+        "denominator": 131,
+        "value": 0.9618320610687023
+      },
+      "boundary_mean": 1.625,
+      "all_five_pass": 18
+    }
+  },
+  "all_valid_summaries": {
+    "jev": {
+      "tasks": 32,
+      "point_macro_average": 0.9088541666666666,
+      "support_counts": {
+        "supported": 128,
+        "partially_supported": 2
+      },
+      "citation_precision": {
+        "numerator": 133,
+        "denominator": 136,
+        "value": 0.9779411764705882
+      },
+      "citation_coverage": {
+        "numerator": 128,
+        "denominator": 130,
+        "value": 0.9846153846153847
+      },
+      "boundary_mean": 1.8125,
+      "all_five_pass": 17
+    },
+    "luna": {
+      "tasks": 32,
+      "point_macro_average": 0.90625,
+      "support_counts": {
+        "supported": 128,
+        "partially_supported": 3
+      },
+      "citation_precision": {
+        "numerator": 137,
+        "denominator": 138,
+        "value": 0.9927536231884058
+      },
+      "citation_coverage": {
+        "numerator": 126,
+        "denominator": 131,
+        "value": 0.9618320610687023
+      },
+      "boundary_mean": 1.625,
+      "all_five_pass": 18
+    }
+  },
+  "exclusions": [],
+  "failed_grades": [],
+  "historical_jev": {
+    "common_task_ids": [
+      "PFI2-001",
+      "PFI2-002",
+      "PFI2-003",
+      "PFI2-004",
+      "PFI2-005",
+      "PFI2-006",
+      "PFI2-007",
+      "PFI2-008",
+      "PFI2-009",
+      "PFI2-010",
+      "PFI2-011",
+      "PFI2-012",
+      "PFI2-013",
+      "PFI2-014",
+      "PFI2-015",
+      "PFI2-016",
+      "PFI2-017",
+      "PFI2-018",
+      "PFI2-019",
+      "PFI2-020",
+      "PFI2-021",
+      "PFI2-022",
+      "PFI2-024",
+      "PFI2-025",
+      "PFI2-026",
+      "PFI2-027",
+      "PFI2-028",
+      "PFI2-029",
+      "PFI2-030",
+      "PFI2-031",
+      "PFI2-032"
+    ],
+    "comparison": {
+      "previous_jev": {
+        "tasks": 31,
+        "point_macro_average": 0.9274193548387096,
+        "support_counts": {
+          "supported": 130,
+          "partially_supported": 1
+        },
+        "citation_precision": {
+          "numerator": 137,
+          "denominator": 138,
+          "value": 0.9927536231884058
+        },
+        "citation_coverage": {
+          "numerator": 128,
+          "denominator": 131,
+          "value": 0.9770992366412213
+        },
+        "boundary_mean": 1.8387096774193548,
+        "all_five_pass": 22
+      },
+      "current_jev": {
+        "tasks": 31,
+        "point_macro_average": 0.9112903225806451,
+        "support_counts": {
+          "supported": 125,
+          "partially_supported": 2
+        },
+        "citation_precision": {
+          "numerator": 130,
+          "denominator": 133,
+          "value": 0.9774436090225563
+        },
+        "citation_coverage": {
+          "numerator": 125,
+          "denominator": 127,
+          "value": 0.984251968503937
+        },
+        "boundary_mean": 1.8387096774193548,
+        "all_five_pass": 17
+      }
+    },
+    "changes": {
+      "point_wins": [
+        "PFI2-025"
+      ],
+      "point_losses": [
+        "PFI2-016",
+        "PFI2-022",
+        "PFI2-028"
+      ],
+      "joint_wins": [
+        "PFI2-025",
+        "PFI2-027"
+      ],
+      "joint_losses": [
+        "PFI2-010",
+        "PFI2-014",
+        "PFI2-016",
+        "PFI2-022",
+        "PFI2-024",
+        "PFI2-028",
+        "PFI2-030"
+      ]
+    },
+    "note": "Previous Qwen and new Qwen with newly generated answers and new Jev judgments, not an embedding change or a controlled judge-repeat-only test."
+  },
+  "disagreement_tasks": {
+    "key_points": [
+      "PFI2-007",
+      "PFI2-011",
+      "PFI2-016",
+      "PFI2-020",
+      "PFI2-022",
+      "PFI2-024",
+      "PFI2-025",
+      "PFI2-031"
+    ],
+    "claim_support": [
+      "PFI2-024",
+      "PFI2-030",
+      "PFI2-032"
+    ],
+    "citation_support": [
+      "PFI2-010",
+      "PFI2-026",
+      "PFI2-030"
+    ],
+    "citation_group_coverage": [
+      "PFI2-014",
+      "PFI2-024",
+      "PFI2-026",
+      "PFI2-029",
+      "PFI2-030"
+    ],
+    "answerability": [
+      "PFI2-004",
+      "PFI2-015",
+      "PFI2-022",
+      "PFI2-024",
+      "PFI2-025",
+      "PFI2-029"
+    ]
+  },
+  "disagreement_counts": {
+    "key_points": 9,
+    "claim_support": 3,
+    "citation_support": 3,
+    "citation_group_coverage": 5,
+    "answerability": 6
+  },
+  "disagreement_count_note": "Counts compare raw criterion labels, including citation choices that may be inapplicable to pure scope claims; they are not differences in final metric scores.",
+  "runtime": {
+    "questions": 32,
+    "outcomes": {
+      "answered": 32
+    },
+    "median_end_to_end_seconds": 14.891,
+    "median_question_embedding_seconds": 0.52,
+    "question_embedding": {
+      "calls": 64,
+      "known_tokens": {
+        "input_tokens": 4472,
+        "total_tokens": 4472
+      },
+      "total_token_unknown_calls": 0
+    },
+    "image_tokens": 0,
+    "generation": {
+      "calls": 33,
+      "known_tokens": {
+        "input_tokens": 237853,
+        "output_tokens": 34946,
+        "total_tokens": 272799
+      },
+      "total_token_unknown_calls": 0
+    },
+    "rerank": {
+      "calls": 32,
+      "known_tokens": {
+        "input_tokens": 450107,
+        "output_tokens": 0
+      },
+      "total_token_unknown_calls": 32
+    },
+    "cached_rewrite_replays": 32,
+    "rewrite_api_calls_during_answers": 0,
+    "monetary_costs": {
+      "embedding": null,
+      "generation": null,
+      "rerank": null
+    },
+    "timing_note": "End-to-end excludes offline shared-query preparation; not comparable to live-rewrite historical timing."
+  },
+  "answer_progress": {
+    "status": "completed",
+    "completed": 32,
+    "total": 32,
+    "last_case": "PFI2-032",
+    "outcomes": {
+      "answered": 32
+    },
+    "updated_at": "2026-11-02T07:29:25.658075+00:00"
+  },
+  "judges": {
+    "jev": {
+      "base_url": "https://openrouter.ai/api",
+      "requested_model": "typesafe/jev-1.14",
+      "api": "openrouter_decisions",
+      "timeout_seconds": 120.0,
+      "automatic_retries": 0,
+      "previous_scores_provided": false,
+      "scope": [
+        "key_points",
+        "claim_support",
+        "citation_support",
+        "citation_group_coverage",
+        "answerability"
+      ],
+      "independent_requests": true,
+      "sampling": "Native typed decisions; no sampling overrides or conversation identifiers."
+    },
+    "luna": {
+      "base_url": "https://openrouter.ai/api/v1",
+      "requested_model": "openai/gpt-6-luna",
+      "api": "chat_completions",
+      "timeout_seconds": 180.0,
+      "max_output_tokens": 16000,
+      "automatic_retries": 0,
+      "sampling": "Provider defaults; no temperature/top_p/seed override.",
+      "scope": [
+        "key_points",
+        "claim_support",
+        "citation_support",
+        "citation_group_coverage",
+        "answerability"
+      ]
+    }
+  },
+  "policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+  "judge_accounting": {
+    "jev": {
+      "calls": 32,
+      "known_tokens": {
+        "input_tokens": 2416251,
+        "output_tokens": 118024,
+        "total_tokens": 2534275
+      },
+      "usage_unknown_calls": 0,
+      "reported_cost_usd": "0.101482542",
+      "cost_unknown_calls": 0,
+      "invoice_cost_usd": null,
+      "request_time_ms": 110472
+    },
+    "luna": {
+      "calls": 34,
+      "known_tokens": {
+        "input_tokens": 2086666,
+        "output_tokens": 64397,
+        "total_tokens": 2151063
+      },
+      "usage_unknown_calls": 1,
+      "reported_cost_usd": "0.293029275",
+      "cost_unknown_calls": 1,
+      "invoice_cost_usd": null,
+      "request_time_ms": 822632
+    }
+  },
+  "citation_diagnostics": {
+    "validation_attempts": 33,
+    "failed_attempts": [
+      {
+        "task_id": "PFI2-010",
+        "attempt": 1,
+        "status": "failed",
+        "supplied_refs": [
+          "[1]",
+          "[2]",
+          "[3]"
+        ],
+        "rule_code": "missing_answer_reference",
+        "message": "answer中没有引用标记。",
+        "field": "answer",
+        "claim_index": null,
+        "draft": {
+          "answer": "两种纤维垂直于(200)晶面的晶粒尺寸在PFI打浆过程中总体均呈上升趋势：针叶木纤维从4.5 nm升至4.7 nm，阔叶木纤维从4.5 nm升至4.7 nm，其中阔叶木在12000转时达到4.8 nm。",
+          "claims": [
+            {
+              "text": "两种纤维垂直于(200)晶面的晶粒尺寸在PFI打浆过程中总体呈上升趋势。",
+              "citation_refs": [
+                "[2]"
+              ]
+            },
+            {
+              "text": "针叶木纤维从不打浆到16000转，垂直于(200)晶面的晶粒尺寸依次为4.5、4.6、4.6、4.7、4.7 nm。",
+              "citation_refs": [
+                "[1]"
+              ]
+            },
+            {
+              "text": "阔叶木纤维从不打浆到16000转，垂直于(200)晶面的晶粒尺寸依次为4.5、4.7、4.8、4.8、4.7 nm。",
+              "citation_refs": [
+                "[1]"
+              ]
+            },
+            {
+              "text": "打浆前后相比，针叶木纤维由4.5 nm增至4.7 nm，阔叶木纤维由4.5 nm增至4.7 nm。",
+              "citation_refs": [
+                "[1]"
+              ]
+            }
+          ]
+        },
+        "draft_sha256": "8f86386f6aa229aa38702fab09d7777f14afd3aee5856af7d9f8f02ddebf1841"
+      }
+    ],
+    "rule_counts": {
+      "missing_answer_reference": 1
+    },
+    "scope": "Only first structural failure per generated draft; failed drafts are diagnostics, never judge candidate answers."
+  },
+  "initial_generation_input_same_as_previous": 27,
+  "new_rewrite_api_calls": 0,
+  "new_dsh_api_calls": 0,
+  "new_answer_tasks": 32,
+  "new_scoring_jobs": 64,
+  "images_enabled": false,
+  "answer_guidance_enabled": false,
+  "report_model_calls": 0,
+  "limitations": [
+    "Single paper and development set, one new answer generation per question; cannot establish generalization or stability.",
+    "Luna and Jev assess the same final answers independently with the same five semantic criteria; missing grades are not zero.",
+    "Historical Jev comparison includes fresh generation and fresh judging; differences are not a diagnostic-feature improvement claim.",
+    "Image retrieval and visual answering disabled; no website/server deployment or configuration switch."
+  ],
+  "report_interpretation": {
+    "source": "Report observations of frozen answers, runtime diagnostics and original judge decisions; not a replacement grade.",
+    "findings": [
+      "两位裁判的要点均约91%，但全达标仅17/32和18/32。事实有依据与完整回答所有要求并不是一回事；不据此合成总分。",
+      "第16题两位都认为缺少或仅部分表达“纸页变强不等于单根纤维必然变强”的限制；首次生成输入与上轮相同。",
+      "第28题只总结了PFI论文，没有明确声明另一篇Non-Wood Fibers论文未在库中、无法做两篇比较，两位都判必答要点0、边界0；首次输入与上轮相同。",
+      "第32题仍漏摘要0.888与正文0.912的冲突，两位对该必答点均给部分覆盖；本轮正常返回不代表该问题已解决。",
+      "第22题氢键相对含量23.56/34.92没有写百分号；Jev给数值要点部分覆盖、Luna给完整，但Luna对回答边界更严格。这是评分分歧，报告不代替裁判改分。",
+      "第25题本轮明确说所给证据缺8000转BET值。Jev给完整要点，Luna只给部分覆盖；原判与Luna理由均保留。",
+      "第10题第一次草稿的claims已带引用，但未展示的answer摘要缺引用标记，触发missing_answer_reference；第二次成功。该诊断定位了格式问题，不是检索证据不足。"
+    ],
+    "caution": "本轮重新答题并重新评分；与上轮的涨跌包含生成、重排及裁判变化。新增诊断本身未改变校验规则，不把分数变化归因于诊断功能。"
+  }
+}

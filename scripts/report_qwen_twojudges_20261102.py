@@ -133,6 +133,17 @@ def publish():
             'Luna and Jev assess the same final answers independently with the same five semantic criteria; missing grades are not zero.',
             'Historical Jev comparison includes fresh generation and fresh judging; differences are not a diagnostic-feature improvement claim.',
             'Image retrieval and visual answering disabled; no website/server deployment or configuration switch.'])
+    result['report_interpretation']=dict(
+        source='Report observations of frozen answers, runtime diagnostics and original judge decisions; not a replacement grade.',
+        findings=[
+            '两位裁判的要点均约91%，但全达标仅17/32和18/32。事实有依据与完整回答所有要求并不是一回事；不据此合成总分。',
+            '第16题两位都认为缺少或仅部分表达“纸页变强不等于单根纤维必然变强”的限制；首次生成输入与上轮相同。',
+            '第28题只总结了PFI论文，没有明确声明另一篇Non-Wood Fibers论文未在库中、无法做两篇比较，两位都判必答要点0、边界0；首次输入与上轮相同。',
+            '第32题仍漏摘要0.888与正文0.912的冲突，两位对该必答点均给部分覆盖；本轮正常返回不代表该问题已解决。',
+            '第22题氢键相对含量23.56/34.92没有写百分号；Jev给数值要点部分覆盖、Luna给完整，但Luna对回答边界更严格。这是评分分歧，报告不代替裁判改分。',
+            '第25题本轮明确说所给证据缺8000转BET值。Jev给完整要点，Luna只给部分覆盖；原判与Luna理由均保留。',
+            '第10题第一次草稿的claims已带引用，但未展示的answer摘要缺引用标记，触发missing_answer_reference；第二次成功。该诊断定位了格式问题，不是检索证据不足。'],
+        caution='本轮重新答题并重新评分；与上轮的涨跌包含生成、重排及裁判变化。新增诊断本身未改变校验规则，不把分数变化归因于诊断功能。')
     PUBLIC.mkdir(parents=True)
     scoring.save(PUBLIC/'comparison.json',result)
     (PUBLIC/'questions-answers-reviews.jsonl').write_text(''.join(judge.encode(r)+'\n' for r in rows),encoding='utf-8',newline='\n')
@@ -148,6 +159,10 @@ def publish():
         '| --- | --- | --- | --- | --- | --- | --- | --- |',
         *['| '+LABELS[k]+' | '+' | '.join(quality_cells(summaries[k]))+' |' for k in KINDS],
         '', '不计算加权总分；比例分母随实际陈述/引用数量变化。主表使用同一组共同有效题，缺失不记零；每位裁判各自全量有效题另保存在JSON中。','',
+        '## 结果解读','',
+        '以下为对已保存回答、诊断及裁判原判的报告解读，不是新的评分，未修改任何裁判标签。','',
+        *['- '+s for s in result['report_interpretation']['findings']],
+        '',result['report_interpretation']['caution'],'',
         '## 与上轮Qwen的Jev比较','',
         '| 版本 | 共同题 | 必答要点 | 事实支持 | 单引有效 | 引用组完整 | 边界/2 | 全达标 |',
         '| --- | --- | --- | --- | --- | --- | --- | --- |',
@@ -181,6 +196,8 @@ def render(result,rows):
         '<style>body{margin:0;background:#f3f6fa;color:#203247;font:15px/1.7 system-ui}main{max-width:1300px;margin:28px auto;padding:0 18px}article,details{background:white;border:1px solid #dce5ef;border-radius:9px;padding:16px;margin:16px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f7f9fc;padding:12px}summary{cursor:pointer;font-weight:600}table{width:100%;border-collapse:collapse}td,th{padding:8px;text-align:left;border-bottom:1px solid #e1e7ee}.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}.pair section{min-width:0}@media(max-width:800px){.pair{display:block}td,th{padding:3px;font-size:12px}}</style><main>',
         '<h1>Qwen文字版重跑：Jev与Luna独立评分</h1><p>2026-11-02 · 新答32题 · MinerU全部采用的文字优化 · 图片关闭 · 相同五项规则</p><article>'+table+
         '<p>同一份最终回答交给两裁判，不计算加权总分，不取较高分。失败草稿仅供诊断，不送入评分候选答案。</p></article>',
+        '<article><h2>结果解读</h2><p>以下为报告解读，未修改两裁判原判。</p><ul>'+''.join('<li>'+e(s)+'</li>' for s in result['report_interpretation']['findings'])+
+        '</ul><p>'+e(result['report_interpretation']['caution'])+'</p></article>',
         '<details><summary>排除、分歧、用量和上轮对照</summary><pre>'+e(json.dumps(result,ensure_ascii=False,indent=2))+'</pre></details>']
     for row in rows:
         parts+=['<details id="'+e(row['task_id'])+'"><summary>'+e(row['task_id']+' · '+row['question'])+'</summary>',
