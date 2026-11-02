@@ -38,6 +38,8 @@ class Settings(BaseSettings):
     visual_max_images: int = Field(default=4,ge=1,le=12)
     visual_max_total_bytes: int = Field(default=12*1024*1024,ge=1024,le=24*1024*1024)
     answer_guidance_enabled: bool = False
+    evidence_review_enabled: bool = False
+    evidence_review_timeout_seconds: float = Field(default=90, gt=0, le=180, allow_inf_nan=False)
     query_rewrite_enabled: bool = False
     query_rewrite_mode: Literal['dual', 'rewrite_only'] = 'dual'
     query_rewrite_timeout_seconds: float = Field(default=30, gt=0, le=60, allow_inf_nan=False)
@@ -126,6 +128,9 @@ class Settings(BaseSettings):
         """Ensure adjacent chunks do not completely overlap."""
         if self.chunk_overlap >= self.chunk_size:
             raise ValueError("chunk_overlap must be smaller than chunk_size")
+        if self.evidence_review_enabled and (self.llm_provider!='deepseek' or self.llm_model!='deepseek-flash'
+                or not self.llm_api_key or not self.llm_api_key.get_secret_value().strip()):
+            raise ValueError('evidence review requires configured DeepSeek Flash credentials')
         if self.embedding_provider == 'dashscope':
             if self.embedding_model != 'qwen3-vl-embedding' or self.embedding_dimensions not in {256,512,768,1024,1536,2048,2560}:
                 raise ValueError('DashScope requires qwen3-vl-embedding with a supported dimension')

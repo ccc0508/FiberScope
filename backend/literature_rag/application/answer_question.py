@@ -37,10 +37,13 @@ class AnswerService:
         retriever: Retriever,
         generator: Generator,
         validator: CitationValidator,
+        reviewer=None,
     ) -> None:
         self.retriever = retriever
         self.generator = generator
         self.validator = validator
+        self.reviewer = reviewer
+        self.last_generated_answer = None
 
     def answer(
         self,
@@ -49,6 +52,7 @@ class AnswerService:
         min_score: float,
     ) -> Answer:
         started = perf_counter()
+        self.last_generated_answer = None
         evidences = self.retriever.retrieve(question, top_k, min_score)
         if not evidences:
             latency_ms = int((perf_counter() - started) * 1000)
@@ -101,6 +105,11 @@ class AnswerService:
                 )
                 continue
 
+            if self.reviewer is not None:
+                # Separate from primary generation and its structural retry loop.
+                generated = self.reviewer.review(question, evidences, generated)
+                validated = CitationValidator().validate(generated, evidences)
+            self.last_generated_answer = generated
             latency_ms = int((perf_counter() - started) * 1000)
             logger.info(
                 "answer_completed",
