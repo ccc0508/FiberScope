@@ -45,10 +45,12 @@
 | RAG_LLM_* | 回答模型及服务配置，支持已有openai/deepseek适配器 |
 | RAG_EVIDENCE_REVIEW_ENABLED | 可选DeepSeek一次证据审校，代码默认false，本地当前已启用；不重新检索 |
 | RAG_EVIDENCE_REVIEW_TIMEOUT_SECONDS | 审校请求时间上限，默认120秒；剩余整次请求预算不足则跳过并保留原稿 |
-| RAG_EVIDENCE_REVIEW_MAX_OUTPUT_TOKENS | 审校输出上限，默认16384；截断、无效结果或编辑校验失败均保留原稿并记录原因 |
+| RAG_EVIDENCE_REVIEW_MAX_OUTPUT_TOKENS | 审校输出上限，默认32768 Token，包含推理与最终审校结果；截断、无效结果或编辑校验失败均保留原稿并记录原因 |
 | RAG_TOP_K / RAG_MIN_SCORE | 检索上限与相似度阈值，沿用原RAG规则 |
 | RAG_VISUAL_RETRIEVAL_ENABLED | 开启同空间的Qwen图像召回和原图输入，要求已建好图像库及匹配的DeepSeek配置 |
 | RAG_VISUAL_MAX_IMAGES / RAG_VISUAL_MAX_TOTAL_BYTES | 原图数量和字节预算，默认4张、12 MiB |
+
+2026-11-02后续配置调整：本地 `.env.literature` 和 `.env.aliyun` 的审校输出上限由16384提高到32768 Token。High推理档位、120秒审校超时、300秒整次问答超时及检索参数均保持不变；本次只提高上限，未重新答题或评分。此前v2/v3评测及验收记录仍对应16384 Token，不代表提高上限后的效果；GitHub推送不会自动更新服务器私有配置。
 
 Embedding模型、provider或维度变化时，应创建新索引；不能直接把新配置套到原索引上。
 

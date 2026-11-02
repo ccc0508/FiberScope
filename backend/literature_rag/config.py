@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     answer_guidance_enabled: bool = False
     evidence_review_enabled: bool = False
     evidence_review_timeout_seconds: float = Field(default=120, gt=0, le=180, allow_inf_nan=False)
-    evidence_review_max_output_tokens: int = Field(default=16384, ge=1024, le=32768)
+    evidence_review_max_output_tokens: int = Field(default=32768, ge=1024, le=32768)
     query_rewrite_enabled: bool = False
     query_rewrite_mode: Literal['dual', 'rewrite_only'] = 'dual'
     query_rewrite_timeout_seconds: float = Field(default=30, gt=0, le=60, allow_inf_nan=False)

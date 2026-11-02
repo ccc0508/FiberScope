@@ -14,7 +14,7 @@ from literature_rag.domain.errors import ProviderError,ProviderResponseError
 
 class DeepSeekEvidenceReviewer:
     def __init__(self,model,api_key,base_url=None,*,thinking_enabled=None,reasoning_effort=None,
-                 timeout_seconds=120,max_output_tokens=16384,visual_root=None,client=None):
+                 timeout_seconds=120,max_output_tokens=32768,visual_root=None,client=None):
         if model!='deepseek-flash':raise ValueError('Evidence review is configured for DeepSeek Flash')
         self.model=model;self.thinking_enabled=thinking_enabled;self.reasoning_effort=reasoning_effort
         self.visual_root=visual_root
