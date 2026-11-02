@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     context_max_evidence_chars: int = Field(default=8000,ge=256,le=100000)
     context_max_total_chars: int = Field(default=24000,ge=256,le=100000)
     table_retrieval_enabled: bool = False
+    visual_retrieval_enabled: bool = False
+    visual_max_images: int = Field(default=4,ge=1,le=12)
+    visual_max_total_bytes: int = Field(default=12*1024*1024,ge=1024,le=24*1024*1024)
     answer_guidance_enabled: bool = False
     query_rewrite_enabled: bool = False
     query_rewrite_mode: Literal['dual', 'rewrite_only'] = 'dual'
@@ -122,6 +125,13 @@ class Settings(BaseSettings):
                 raise ValueError('DashScope requires qwen3-vl-embedding with a supported dimension')
             if self.embedding_base_url and not self.embedding_base_url.rstrip('/').endswith('/api/v1'):
                 raise ValueError('DashScope requires its native /api/v1 base URL')
+        if self.visual_retrieval_enabled:
+            if self.embedding_provider!='dashscope' or self.embedding_model!='qwen3-vl-embedding':
+                raise ValueError('visual retrieval requires matching Qwen3-VL text and image embeddings')
+            if self.llm_provider!='deepseek' or self.llm_model!='deepseek-flash':
+                raise ValueError('visual evidence requires the configured DeepSeek Flash vision model')
+            if self.context_expansion_strategy!='body_section':
+                raise ValueError('visual retrieval requires classified MinerU source parents')
         if self.table_retrieval_enabled and not self.context_expansion_enabled:
             raise ValueError('table retrieval requires bounded context expansion')
         if self.context_expansion_strategy=='body_section':

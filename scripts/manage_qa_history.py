@@ -39,6 +39,9 @@ def main():
                 original.backup(destination)
                 if destination.execute('PRAGMA integrity_check').fetchone()[0] != 'ok':
                     raise SystemExit('Backup verification failed.')
+        from app.qa_images import backup_answer_images
+        count=backup_answer_images(output,source.parent,Path(str(output)+'.assets'))
+        if count:print(f'Original image snapshots backed up: {count}; {output}.assets')
     print(f'{args.action} completed: {output}')
 
 

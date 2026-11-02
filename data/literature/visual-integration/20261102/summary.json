@@ -1,0 +1,320 @@
+{
+  "version": "original-pdf-visual-integration-20261102",
+  "status": "verified_mineru_candidate",
+  "assets": {
+    "count": 11,
+    "figures": 9,
+    "tables": 2,
+    "total_bytes": 1560893,
+    "metadata": [
+      {
+        "id": "img_4d26968afd70250008a1",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "parent_chunk_id": "chk_ce5ffcaa7e37a721cf33",
+        "label": "Figure 1",
+        "page": 4,
+        "bbox": [
+          156,
+          522,
+          838,
+          714
+        ],
+        "image_path": "visual-assets/23c30f4b658542af98fe308feb3f127d46fb12ff3a4ed4660f1156da0db178ab.png",
+        "sha256": "23c30f4b658542af98fe308feb3f127d46fb12ff3a4ed4660f1156da0db178ab",
+        "width": 1016,
+        "height": 405,
+        "byte_size": 102178,
+        "kind": "figure"
+      },
+      {
+        "id": "img_417cfb54ab7b96d68fe6",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "parent_chunk_id": "chk_37e5528e8514af77fea7",
+        "label": "Figure 2",
+        "page": 5,
+        "bbox": [
+          156,
+          97,
+          838,
+          289
+        ],
+        "image_path": "visual-assets/66b1cffac612276b192593b474d192742b3beae4322872c315c1f05bf6634799.png",
+        "sha256": "66b1cffac612276b192593b474d192742b3beae4322872c315c1f05bf6634799",
+        "width": 1016,
+        "height": 405,
+        "byte_size": 37600,
+        "kind": "figure"
+      },
+      {
+        "id": "img_d292481631e2d7b95136",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "parent_chunk_id": "chk_b8d536fdd8044b0fdaeb",
+        "label": "Figure 3",
+        "page": 5,
+        "bbox": [
+          159,
+          501,
+          841,
+          693
+        ],
+        "image_path": "visual-assets/a7a4167d80e73a232b4f54abe9a4f2a679a817848ea38a20ea0a9e8b5f147441.png",
+        "sha256": "a7a4167d80e73a232b4f54abe9a4f2a679a817848ea38a20ea0a9e8b5f147441",
+        "width": 1016,
+        "height": 405,
+        "byte_size": 89069,
+        "kind": "figure"
+      },
+      {
+        "id": "img_6b1648a1bc77413041ab",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "parent_chunk_id": "chk_c50ca9890325ed062bd1",
+        "label": "Figure 4",
+        "page": 6,
+        "bbox": [
+          156,
+          97,
+          838,
+          293
+        ],
+        "image_path": "visual-assets/3064d126094479f08e581c325eecffe27a4b806377371efe15cf0541f06f51c2.png",
+        "sha256": "3064d126094479f08e581c325eecffe27a4b806377371efe15cf0541f06f51c2",
+        "width": 1016,
+        "height": 413,
+        "byte_size": 47686,
+        "kind": "figure"
+      },
+      {
+        "id": "img_03d297b96cf3fb22d405",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "parent_chunk_id": "chk_e82492522d94fb51614d",
+        "label": "Table 1",
+        "page": 6,
+        "bbox": [
+          179,
+          365,
+          816,
+          634
+        ],
+        "image_path": "visual-assets/0d0b1804ca2b3efbffa4d7d6bca21f0bdbda0b5cf0e501f15585f127119ac16f.png",
+        "sha256": "0d0b1804ca2b3efbffa4d7d6bca21f0bdbda0b5cf0e501f15585f127119ac16f",
+        "width": 949,
+        "height": 567,
+        "byte_size": 68014,
+        "kind": "table"
+      },
+      {
+        "id": "img_60f83d8ec20baf9c4046",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "parent_chunk_id": "chk_8491d686a2f406536896",
+        "label": "Figure 5",
+        "page": 7,
+        "bbox": [
+          213,
+          180,
+          781,
+          529
+        ],
+        "image_path": "visual-assets/304e749188da6827b02e7b8a2bd59a63570f6604070d341edae1ed9a32f36985.png",
+        "sha256": "304e749188da6827b02e7b8a2bd59a63570f6604070d341edae1ed9a32f36985",
+        "width": 847,
+        "height": 736,
+        "byte_size": 360087,
+        "kind": "figure"
+      },
+      {
+        "id": "img_4f1aaf25ec8a93598f3d",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "parent_chunk_id": "chk_efa8fb857e1851045231",
+        "label": "Figure 6",
+        "page": 8,
+        "bbox": [
+          159,
+          242,
+          838,
+          450
+        ],
+        "image_path": "visual-assets/b9e5ad8304847919457ed44b9ddf791965fa5e0933f7a261a12581de6b2d4f0b.png",
+        "sha256": "b9e5ad8304847919457ed44b9ddf791965fa5e0933f7a261a12581de6b2d4f0b",
+        "width": 1012,
+        "height": 439,
+        "byte_size": 147270,
+        "kind": "figure"
+      },
+      {
+        "id": "img_f9fabe8bbb14215664e2",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "parent_chunk_id": "chk_eb4bc7fc3ed4001d6a17",
+        "label": "Table 2",
+        "page": 8,
+        "bbox": [
+          161,
+          635,
+          835,
+          894
+        ],
+        "image_path": "visual-assets/307aec81dfbe07db6212f96c7259ebff61ac18bbe952ec2f7d3ba20da427a035.png",
+        "sha256": "307aec81dfbe07db6212f96c7259ebff61ac18bbe952ec2f7d3ba20da427a035",
+        "width": 1004,
+        "height": 546,
+        "byte_size": 80302,
+        "kind": "table"
+      },
+      {
+        "id": "img_1821619da42d64f67840",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "parent_chunk_id": "chk_f6bb9e5d43017cbcd638",
+        "label": "Figure 7",
+        "page": 9,
+        "bbox": [
+          171,
+          100,
+          826,
+          701
+        ],
+        "image_path": "visual-assets/4cb0fdfaa793568942d59cfa512de3510c2a75172b9d0fae8d55764fa68e5f17.png",
+        "sha256": "4cb0fdfaa793568942d59cfa512de3510c2a75172b9d0fae8d55764fa68e5f17",
+        "width": 976,
+        "height": 1266,
+        "byte_size": 310770,
+        "kind": "figure"
+      },
+      {
+        "id": "img_468925894a0c5df4d6a0",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "parent_chunk_id": "chk_823ef0af6d530619ca9b",
+        "label": "Figure 8",
+        "page": 11,
+        "bbox": [
+          154,
+          99,
+          838,
+          297
+        ],
+        "image_path": "visual-assets/821c91727be309b862532721d461d8e7e1044fdf933c0d44c3c6a7fd8d85453c.png",
+        "sha256": "821c91727be309b862532721d461d8e7e1044fdf933c0d44c3c6a7fd8d85453c",
+        "width": 1019,
+        "height": 418,
+        "byte_size": 78251,
+        "kind": "figure"
+      },
+      {
+        "id": "img_59204b906609a1c0cfcc",
+        "document_id": "doc_0fcf2a50cfa02d21",
+        "parent_chunk_id": "chk_aa885c8fecba9a1870fa",
+        "label": "Figure 9",
+        "page": 11,
+        "bbox": [
+          147,
+          336,
+          847,
+          643
+        ],
+        "image_path": "visual-assets/7abc37a2c9c66d20b67e228e1566b63630e7369faa7cd074fd1a8a1294d28f59.png",
+        "sha256": "7abc37a2c9c66d20b67e228e1566b63630e7369faa7cd074fd1a8a1294d28f59",
+        "width": 1043,
+        "height": 647,
+        "byte_size": 239666,
+        "kind": "figure"
+      }
+    ],
+    "embedding_model": "qwen3-vl-embedding",
+    "dimensions": 2560,
+    "render_dpi": 180,
+    "vector_representation": "image_only_original_pdf_crops"
+  },
+  "preserved_text": {
+    "chunks": 113,
+    "table_rows": 20,
+    "explicit_table_links": 10,
+    "text_vectors_recomputed": false
+  },
+  "pipeline": {
+    "query": "original_plus_rewrite",
+    "candidate_fusion": "RRF_k60",
+    "rerank_query": "original",
+    "rerank_input": "text_caption_or_full_table",
+    "answer_query": "original",
+    "answer_image_input": "base64_image_url_original",
+    "max_primary_hits": 8,
+    "max_images": 4,
+    "max_image_bytes": 12582912
+  },
+  "image_embedding": {
+    "calls": 11,
+    "usage": {
+      "input_tokens": 242,
+      "image_tokens": 6053,
+      "total_tokens": 6295
+    },
+    "currency_cost": null
+  },
+  "smoke": {
+    "questions": 2,
+    "answered": 2,
+    "generation_calls": 2,
+    "all_cited_image_http_hash_checks_passed": true,
+    "new_jev_calls": 0,
+    "new_luna_calls": 0,
+    "generation_usage": {
+      "calls": 2,
+      "known_tokens": {
+        "input_tokens": 19113,
+        "output_tokens": 3169,
+        "total_tokens": 22282
+      },
+      "total_token_unknown_calls": 0
+    },
+    "query_embedding_usage": {
+      "calls": 4,
+      "known_tokens": {
+        "input_tokens": 253,
+        "total_tokens": 253
+      },
+      "total_token_unknown_calls": 0
+    },
+    "query_rewrite_usage": {
+      "calls": 2,
+      "known_tokens": {
+        "input_tokens": 526,
+        "output_tokens": 90,
+        "total_tokens": 616
+      },
+      "total_token_unknown_calls": 0
+    },
+    "rerank_usage": {
+      "calls": 2,
+      "known_tokens": {
+        "input_tokens": 26701,
+        "output_tokens": 0
+      },
+      "total_token_unknown_calls": 2
+    }
+  },
+  "verification": {
+    "backend_tests_passed": 293,
+    "frontend_typecheck_and_build": true,
+    "browser_loaded_image": {
+      "label": "Figure 9",
+      "width": 1043,
+      "height": 647
+    },
+    "history_backup_images": 7,
+    "history_images_include_uncited_inputs": true
+  },
+  "quality_improvement_measured": false,
+  "website_configuration_changed": false,
+  "server_deployed": false,
+  "source_fingerprints": {
+    "pdf_sha256": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4",
+    "native_sha256": "73dc30b72b0a8f3305053db5715e0cdd7d02a78f23ba01b982562cdae0ff9f18",
+    "visual_manifest_sha256": "4ef94c79f552912a308affc7d1c274bdcaa1f26f5b3a092dd61c462b1d0ed240",
+    "visual_ledger_sha256": "65ef38e96fcd481d68e7eb8ad8bf6fc6f671e6f0db1c06eceed8163505f3d84d",
+    "runtime_source_snapshot_sha256": "066e0b3256e30298373d4ae25626386c31a46781050d985ee0cc009c732f7224"
+  },
+  "limitations": [
+    "BGE reranking receives text, not the image pixels.",
+    "Whole figures can be omitted by ranking, final text membership or the image count/byte budget.",
+    "Two ungraded image-dependent questions demonstrate the path, not formal quality or stable accuracy.",
+    "The current image builder processes one document per run and requires numbered captions and reliable native locators."
+  ]
+}

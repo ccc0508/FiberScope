@@ -1,0 +1,10 @@
+{
+  "files": {
+    "answers.jsonl": "2c1a866e7bb79d1ec754371b463130026c9dc127b6f3f5f7788b7cf4634744f0",
+    "summary.json": "0e2e9b0eee6bc66014cd8b6429085d82161cebb70a0111ec2d3fc5774134abc0"
+  },
+  "document_sha256": "ae6caf3d3ca859c72257362f5b6f0bc4aa2b43b02eae56ef016489b7b902408a",
+  "contains_credentials": false,
+  "contains_image_binary": false,
+  "new_model_calls_from_export": 0
+}

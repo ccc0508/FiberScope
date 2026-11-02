@@ -55,10 +55,17 @@ def main():
         table_relations = TableRelations.load(root, metadata, settings.embedding_provider,
                                              settings.embedding_model, settings.embedding_dimensions)
         vectors = TableVectorSearch(vectors, table_relations)
+    visual_catalog=None
+    if settings.visual_retrieval_enabled:
+        from literature_rag.application.visual_evidence import VisualCatalog,VisualVectorSearch
+        visual_catalog=VisualCatalog.load(root,metadata,settings.embedding_provider,
+            settings.embedding_model,settings.embedding_dimensions)
+        vectors=VisualVectorSearch(vectors,visual_catalog)
     generator_type = DeepSeekGenerator if settings.llm_provider == 'deepseek' else OpenAIGenerator
     generation_options = ({'thinking_enabled': settings.llm_thinking_enabled,
                            'reasoning_effort': settings.llm_reasoning_effort}
                           if settings.llm_provider == 'deepseek' else {})
+    if settings.visual_retrieval_enabled:generation_options['visual_root']=root
     generator = generator_type(settings.llm_model, settings.llm_api_key.get_secret_value(), settings.llm_base_url,
                                answer_guidance_enabled=settings.answer_guidance_enabled,**generation_options)
     query_rewriter=None
@@ -131,7 +138,9 @@ def main():
             body_context_catalog=BodySectionCatalog.load(root,metadata)
         answer = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options,table_relations,reranker,
             body_context_catalog=body_context_catalog,query_rewriter=query_rewriter,
-            query_rewrite_mode=settings.query_rewrite_mode if settings.query_rewrite_enabled else 'dual'), CapturedGenerator(), CitationValidator()).answer(
+            query_rewrite_mode=settings.query_rewrite_mode if settings.query_rewrite_enabled else 'dual',
+            visual_catalog=visual_catalog,visual_max_images=settings.visual_max_images,
+            visual_max_total_bytes=settings.visual_max_total_bytes), CapturedGenerator(), CitationValidator()).answer(
             body['question'], settings.top_k, settings.min_score)
     except (ProviderError, InfrastructureError) as error:
         print(json.dumps({'status': 'failed', 'answer': '', 'citations': [],
