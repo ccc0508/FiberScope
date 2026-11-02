@@ -32,6 +32,9 @@ class RetrievalService:
         body_context_catalog=None,
         query_rewriter: QueryRewriter | None = None,
         query_rewrite_mode: str = 'dual',
+        visual_catalog=None,
+        visual_max_images: int = 4,
+        visual_max_total_bytes: int = 12*1024*1024,
     ) -> None:
         self.metadata = metadata
         self.vectors = vectors
@@ -42,6 +45,9 @@ class RetrievalService:
         self.body_context_catalog = body_context_catalog
         self.query_rewriter = query_rewriter
         self.query_rewrite_mode = query_rewrite_mode
+        self.visual_catalog=visual_catalog
+        self.visual_max_images=visual_max_images
+        self.visual_max_total_bytes=visual_max_total_bytes
         if query_rewrite_mode not in {'dual', 'rewrite_only'}:
             raise ValueError('unsupported query rewrite mode')
         if query_rewrite_mode == 'rewrite_only' and query_rewriter is None:
@@ -224,6 +230,11 @@ class RetrievalService:
                 self.last_query_diagnostics.update(rewritten_selected_ids=[e.chunk_id for e in self.last_seed_evidences],
                     rewritten_final_source_ids=sorted(final_ids))
             self.last_context_diagnostics['query_rewrite'] = self.last_query_diagnostics
+        if self.visual_catalog is not None:
+            evidences,visual_info=self.visual_catalog.attach(evidences,self.last_seed_evidences,question,
+                self.visual_max_images,self.visual_max_total_bytes)
+            self.last_context_diagnostics['visual_evidence']=visual_info
+            self.last_context_diagnostics['visual_retrieval']=getattr(self.vectors,'last_visual_diagnostics',{})
         logger.info(
             "retrieval_complete",
             extra={

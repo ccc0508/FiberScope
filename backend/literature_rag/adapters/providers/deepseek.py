@@ -67,6 +67,7 @@ class DeepSeekGenerator:
         thinking_enabled: bool | None = None,
         reasoning_effort: str | None = None,
         answer_guidance_enabled: bool = False,
+        visual_root=None,
     ) -> None:
         if thinking_enabled is not None and type(thinking_enabled) is not bool:
             raise ValueError('thinking_enabled must be boolean or None')
@@ -78,6 +79,7 @@ class DeepSeekGenerator:
         self.thinking_enabled = thinking_enabled
         self.reasoning_effort = reasoning_effort
         self.system_prompt = system_prompt(answer_guidance_enabled)
+        self.visual_root = visual_root
         self.client = client if client is not None else _client(api_key, base_url)
 
     @property
@@ -102,6 +104,13 @@ class DeepSeekGenerator:
                 "content": evidence_prompt(question, evidences, retry_feedback),
             },
         ]
+        sent_images=[]
+        if any(e.visual_assets for e in evidences):
+            if self.visual_root is None:
+                raise ProviderResponseError('visual evidence requires its verified source directory')
+            from literature_rag.application.visual_evidence import visual_content,VISION_INSTRUCTION
+            messages[1]['content'],sent_images=visual_content(evidences,self.visual_root,messages[1]['content'])
+            messages[0]['content']+='\n\n'+VISION_INSTRUCTION
         error_type: str | None = None
         response_failure = False
         try:
@@ -124,6 +133,8 @@ class DeepSeekGenerator:
                 'thinking_enabled': self.thinking_enabled,
                 'reasoning_effort': self.reasoning_effort,
             }
+            if self.visual_root is not None:
+                self.last_model_info.update(image_count=len(sent_images),images=sent_images,input_modality='text_and_images' if sent_images else 'text')
         except ValidationError as error:
             error_type = type(error).__name__
             response_failure = True

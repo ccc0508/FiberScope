@@ -74,15 +74,20 @@ def library_fingerprint(root):
             'index_files': {p.relative_to(root).as_posix(): digest(p)
                             for p in sorted((root / 'chroma').rglob('*'))
                             if p.is_file() and not p.name.startswith('chroma.sqlite3')}}
-    structured={name:digest(root/name) for name in ['structure.json','source-pages.json','quality-ledger.json','native-source.json','table-retrieval.json','table-row-vectors.json','chunk-organization.json'] if (root/name).is_file()}
+    structured={name:digest(root/name) for name in ['structure.json','source-pages.json','quality-ledger.json','native-source.json','table-retrieval.json','table-row-vectors.json','chunk-organization.json','visual-retrieval.json','visual-vectors.json'] if (root/name).is_file()}
     if structured:result['structure_files']=structured
+    if (root/'visual-retrieval.json').is_file():
+        from literature_rag.application.visual_evidence import verified_image_path
+        from literature_rag.domain.models import VisualAsset
+        rows=json.loads((root/'visual-retrieval.json').read_text(encoding='utf-8'))['assets']
+        result['visual_assets']={a['image_path']:digest(verified_image_path(root,VisualAsset(**a))) for a in rows}
     return result
 
 
 def copy_structure_files(library,frozen,expected):
     for name,checksum in expected.items():
         source=library/name
-        if name not in {'structure.json','source-pages.json','quality-ledger.json','native-source.json','table-retrieval.json','table-row-vectors.json','chunk-organization.json'} or source.is_symlink() or digest(source)!=checksum:
+        if name not in {'structure.json','source-pages.json','quality-ledger.json','native-source.json','table-retrieval.json','table-row-vectors.json','chunk-organization.json','visual-retrieval.json','visual-vectors.json'} or source.is_symlink() or digest(source)!=checksum:
             raise ValueError('Structure source fingerprint mismatch')
         shutil.copy2(source,frozen/name)
         if digest(frozen/name)!=checksum:raise ValueError('Copied structure fingerprint mismatch')
@@ -147,6 +152,12 @@ def check_index(root):
             config['embedding_provider'],config['embedding_model'],config['embedding_dimensions'])
         result['table_rows']=len(relations.rows)
         result['table_links']=len(relations.links)
+    if config.get('visual_retrieval',{}).get('enabled'):
+        from literature_rag.application.visual_evidence import VisualCatalog
+        from literature_rag.adapters.sqlite.metadata_store import SqliteMetadataStore
+        catalog=VisualCatalog.load(library,SqliteMetadataStore(library/'metadata.sqlite3'),
+            config['embedding_provider'],config['embedding_model'],config['embedding_dimensions'])
+        result['images']=len(catalog.assets)
     return result
 
 
@@ -222,6 +233,11 @@ def snapshot(output, env_file=None):
         backup_database(library / 'metadata.sqlite3', frozen / 'metadata.sqlite3')
         backup_database(library / 'chroma/chroma.sqlite3', frozen / 'chroma/chroma.sqlite3')
         copy_structure_files(library,frozen,before.get('structure_files',{}))
+        for name,checksum in before.get('visual_assets',{}).items():
+            source=library/name;destination=frozen/name
+            destination.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copy2(source,destination)
+            if digest(destination)!=checksum:raise ValueError('Copied original image differs from sealed input')
         for source in sorted((library / 'chroma').rglob('*')):
             if source.is_file() and not source.name.startswith('chroma.sqlite3'):
                 if source.is_symlink() or not source.resolve().is_relative_to(library.resolve()):

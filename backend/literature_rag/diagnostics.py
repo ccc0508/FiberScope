@@ -23,6 +23,9 @@ def configuration_snapshot(env_file: Path):
         sources += ['application/query_rewrite.py', 'adapters/providers/query_rewrite.py']
     if settings.embedding_provider == 'dashscope':
         sources += ['adapters/providers/dashscope.py']
+    if settings.visual_retrieval_enabled:
+        sources += ['application/visual_evidence.py','domain/models.py']
+    sources=list(dict.fromkeys(sources))
     fingerprint = sha256(b'\n'.join((root / source).read_bytes() for source in sources)).hexdigest()
     result = {**{key: getattr(settings, key) for key in (
         'embedding_provider', 'embedding_model', 'embedding_dimensions', 'llm_provider', 'llm_model', 'top_k', 'min_score')},
@@ -31,7 +34,8 @@ def configuration_snapshot(env_file: Path):
         result.update(pipeline_source_files=sources,embedding_runtime=dict(
             api='dashscope_native_multimodal',model=settings.embedding_model,dimensions=settings.embedding_dimensions,
             text_batch_limit=20,image_batch_limit=10,default_fusion=False,
-            qa_input_modality='text',image_generation_input_enabled=False,
+            qa_input_modality='text_and_images' if settings.visual_retrieval_enabled else 'text',
+            image_generation_input_enabled=settings.visual_retrieval_enabled,
             usage_note='input_tokens counts text; image_tokens counts visual input; total_tokens is provider-reported.',
             endpoint_sha256=sha256((settings.embedding_base_url or 'https://dashscope.aliyuncs.com/api/v1').encode()).hexdigest()))
     for key in ('llm_thinking_enabled', 'llm_reasoning_effort'):
@@ -102,6 +106,15 @@ def configuration_snapshot(env_file: Path):
                 version='rewrite-only-retrieval-and-rerank-v1',failure_policy='fail_without_original_query_fallback',
                 original_query_always=False,rerank_query='rewritten',answer_query='original')
             result['rerank']['query_source']='rewritten'
+    if settings.visual_retrieval_enabled:
+        from .application.visual_evidence import VERSION,VISION_INSTRUCTION
+        result.update(pipeline_version='mineru-qwen-visual-v1',pipeline_source_files=sources,
+            visual_retrieval=dict(enabled=True,version=VERSION,embedding='image_only_original_pdf_crop',
+                parent='authoritative_caption_or_full_table',fusion='maximum_cosine_per_parent',
+                rerank='BGE_text_only_caption_and_body',image_delivery='verified_base64_original',
+                max_images=settings.visual_max_images,max_total_bytes=settings.visual_max_total_bytes,
+                instruction_sha256=sha256(VISION_INSTRUCTION.encode()).hexdigest(),
+                asset_snapshots='content_addressed_png_with_document_page_bbox_and_hash'))
     return result
 
 
@@ -118,10 +131,10 @@ def provider_usage(response):
     usage = getattr(response, 'usage', None)
     if usage is None:
         return None
-    fields = ('prompt_tokens', 'completion_tokens', 'input_tokens', 'output_tokens', 'total_tokens')
+    fields = ('prompt_tokens', 'completion_tokens', 'input_tokens', 'output_tokens', 'total_tokens','image_tokens')
     result = {key: value for key in fields if type(value := getattr(usage, key, None)) is int and value >= 0}
     for group, names in [('completion_tokens_details', ('reasoning_tokens',)),
-                         ('prompt_tokens_details', ('cached_tokens',))]:
+                         ('prompt_tokens_details', ('cached_tokens','image_tokens'))]:
         details = getattr(usage, group, None)
         for key in names:
             value = getattr(details, key, None)

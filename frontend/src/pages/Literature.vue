@@ -55,6 +55,7 @@ const examples = [
 ];
 const pdf = (id: string, page = 1) =>
   apiPath(`literature/documents/${encodeURIComponent(id)}/pdf#page=${page}`);
+const imageUrl = (checksum: string) => apiPath(`literature/images/${encodeURIComponent(checksum)}`);
 const citation = (token: string) =>
   answer.value?.citations.find((c) => c.ref === token);
 let libraryController: AbortController | undefined,
@@ -408,6 +409,15 @@ load();
           /></a>
         </div>
         <blockquote>{{ c.excerpt }}</blockquote>
+        <div v-if="c.visual_assets?.length" class="citation-images">
+          <figure v-for="image in c.visual_assets" :key="image.id">
+            <a :href="imageUrl(image.sha256)" target="_blank" rel="noreferrer"
+              :aria-label="`查看 ${image.label} 原图，PDF 第 ${image.page} 页`">
+              <img :src="imageUrl(image.sha256)" :alt="`${image.label}，PDF 第 ${image.page} 页原图`" loading="lazy" />
+            </a>
+            <figcaption>{{ image.label }} · PDF 第 {{ image.page }} 页 · 点击查看原图</figcaption>
+          </figure>
+        </div>
         <details v-if="(c.source_chunks?.length ?? 0) > 1" class="source-parts">
           <summary>查看引用的原文组成（{{ c.source_chunks?.length }} 段）</summary>
           <div v-for="part in c.source_chunks" :key="part.chunk_id">
@@ -421,6 +431,23 @@ load();
 </template>
 
 <style scoped>
+.citation-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+.citation-images figure { margin: 0; min-width: 0; }
+.citation-images img {
+  display: block;
+  width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.citation-images figcaption { margin-top: 8px; color: var(--muted); font-size: 12px; }
 .source-parts { margin-top: 12px; color: var(--ink-2); font-size: 13px; }
 .source-parts summary { cursor: pointer; }
 .source-parts > div { margin-top: 12px; }

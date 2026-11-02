@@ -1,5 +1,14 @@
 import { apiPath } from "./urls";
 
+export interface CitationImage {
+  id: string;
+  label: string;
+  page: number;
+  sha256: string;
+  width: number;
+  height: number;
+}
+
 export interface Citation {
   ref: string;
   document_id: string;
@@ -8,6 +17,7 @@ export interface Citation {
   page_end: number;
   chunk_id: string;
   excerpt: string;
+  visual_assets?: CitationImage[];
   source_chunks?: {
     chunk_id: string;
     chunk_index: number;

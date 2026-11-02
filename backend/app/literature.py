@@ -168,6 +168,8 @@ class QuestionRunner:
                               'latency_ms': 0, 'reason_code': 'empty_library', 'retrieved_evidence': [], 'claims': [], 'generation_calls': []}
                 else:
                     result = run_answer(self.config, question)
+                from .qa_images import cache_answer_images
+                cache_answer_images(result,self.config.library_root,self.config.root)
                 result.setdefault('configuration', configuration)
                 self.store.complete(record_id, result, int((perf_counter() - started) * 1000))
             except HTTPException as error:
@@ -265,6 +267,15 @@ def router(config: LiteratureSettings | None = None, allowed_origins: list[str] 
             raise HTTPException(503, '文献问答尚未启用。')
         path, name = pdf_path(config, document_id)
         return FileResponse(path, media_type='application/pdf', filename=name, content_disposition_type='inline')
+
+    @routes.get('/images/{checksum}')
+    def cited_image(checksum: str):
+        if not config.enabled:raise HTTPException(503,'文献问答尚未启用。')
+        from .qa_images import cached_image_path
+        try:path=cached_image_path(config.root,checksum)
+        except (FileNotFoundError,OSError):raise HTTPException(404,'没有找到这张引用原图。') from None
+        return FileResponse(path,media_type='image/png',content_disposition_type='inline',
+                            headers={'X-Content-Type-Options':'nosniff','Cache-Control':'private, max-age=86400'})
 
     @routes.post('/ask')
     def ask(body: Question, request: Request, response: Response):

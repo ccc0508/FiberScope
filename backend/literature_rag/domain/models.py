@@ -92,6 +92,22 @@ class EvidenceSource:
 
 
 @dataclass(frozen=True, slots=True)
+class VisualAsset:
+    id: str
+    document_id: str
+    parent_chunk_id: str
+    label: str
+    page: int
+    bbox: tuple[float, ...]
+    image_path: str
+    sha256: str
+    width: int
+    height: int
+    byte_size: int
+    kind: str = 'figure'
+
+
+@dataclass(frozen=True, slots=True)
 class Evidence:
     ref: str
     chunk_id: str
@@ -104,6 +120,7 @@ class Evidence:
     source_chunks: tuple[EvidenceSource, ...] = ()
     seed_chunk_ids: tuple[str, ...] = ()
     context_status: str = 'original'
+    visual_assets: tuple[VisualAsset, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -126,6 +143,7 @@ class Citation:
     page_end: int
     chunk_id: str
     source_chunks: tuple[EvidenceSource, ...] = ()
+    visual_assets: tuple[VisualAsset, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
