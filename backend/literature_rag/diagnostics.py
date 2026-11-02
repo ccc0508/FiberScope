@@ -21,10 +21,19 @@ def configuration_snapshot(env_file: Path):
         sources += ['application/rerank.py','adapters/providers/rerank.py']
     if settings.query_rewrite_enabled:
         sources += ['application/query_rewrite.py', 'adapters/providers/query_rewrite.py']
+    if settings.embedding_provider == 'dashscope':
+        sources += ['adapters/providers/dashscope.py']
     fingerprint = sha256(b'\n'.join((root / source).read_bytes() for source in sources)).hexdigest()
     result = {**{key: getattr(settings, key) for key in (
         'embedding_provider', 'embedding_model', 'embedding_dimensions', 'llm_provider', 'llm_model', 'top_k', 'min_score')},
         'pipeline_version': 'literature-history-v1', 'prompt_pipeline_sha256': fingerprint}
+    if settings.embedding_provider == 'dashscope':
+        result.update(pipeline_source_files=sources,embedding_runtime=dict(
+            api='dashscope_native_multimodal',model=settings.embedding_model,dimensions=settings.embedding_dimensions,
+            text_batch_limit=20,image_batch_limit=10,default_fusion=False,
+            qa_input_modality='text',image_generation_input_enabled=False,
+            usage_note='input_tokens counts text; image_tokens counts visual input; total_tokens is provider-reported.',
+            endpoint_sha256=sha256((settings.embedding_base_url or 'https://dashscope.aliyuncs.com/api/v1').encode()).hexdigest()))
     for key in ('llm_thinking_enabled', 'llm_reasoning_effort'):
         if getattr(settings, key) is not None:
             result[key] = getattr(settings, key)

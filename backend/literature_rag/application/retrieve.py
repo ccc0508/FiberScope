@@ -68,6 +68,9 @@ class RetrievalService:
         finally:
             call.update(usage=getattr(self.embedder, 'last_usage', None),
                         latency_ms=int((perf_counter() - started) * 1000))
+            if hasattr(self.embedder, 'last_calls'):
+                from copy import deepcopy
+                call['provider_calls'] = deepcopy(self.embedder.last_calls)
         candidates = self.vectors.search(query_embedding, VECTOR_CANDIDATE_LIMIT)[:VECTOR_CANDIDATE_LIMIT]
         for match in candidates:
             if not _is_unit_interval_number(match.score):

@@ -29,7 +29,7 @@ def main():
     if not (root / 'chroma/chroma.sqlite3').is_file():
         raise FileNotFoundError('missing vector index')
     settings = Settings(_env_file=Path(__file__).resolve().parent / '.env.literature')
-    if settings.embedding_provider != 'openai' or settings.llm_provider not in ('openai', 'deepseek'):
+    if settings.embedding_provider not in ('openai', 'dashscope') or settings.llm_provider not in ('openai', 'deepseek'):
         raise ValueError('unsupported provider')
     if not all((settings.embedding_api_key, settings.embedding_model, settings.embedding_dimensions, settings.llm_api_key, settings.llm_model)):
         raise ValueError('missing configuration')
@@ -41,7 +41,11 @@ def main():
             return conn
 
     metadata = ReadOnlyMetadata(root / 'metadata.sqlite3')
-    embedder = OpenAIEmbedder(settings.embedding_model, settings.embedding_dimensions,
+    embedder_type = OpenAIEmbedder
+    if settings.embedding_provider == 'dashscope':
+        from literature_rag.adapters.providers.dashscope import DashScopeEmbedder
+        embedder_type = DashScopeEmbedder
+    embedder = embedder_type(settings.embedding_model, settings.embedding_dimensions,
                              settings.embedding_api_key.get_secret_value(), settings.embedding_base_url)
     vectors = ChromaVectorStore(root / 'chroma', settings.embedding_provider,
                                 settings.embedding_model, settings.embedding_dimensions)
