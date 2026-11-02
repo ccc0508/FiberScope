@@ -1,0 +1,401 @@
+{
+  "version": "matched-answer-models-adjudicated-v1",
+  "questions": 32,
+  "matched_text_and_images": 32,
+  "raw_jev_paired_task_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-005",
+    "PFI2-006",
+    "PFI2-007",
+    "PFI2-008",
+    "PFI2-009",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-012",
+    "PFI2-013",
+    "PFI2-014",
+    "PFI2-016",
+    "PFI2-017",
+    "PFI2-018",
+    "PFI2-019",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-023",
+    "PFI2-024",
+    "PFI2-025",
+    "PFI2-028",
+    "PFI2-029",
+    "PFI2-030",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "final_successful_subset_task_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-005",
+    "PFI2-006",
+    "PFI2-008",
+    "PFI2-009",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-012",
+    "PFI2-013",
+    "PFI2-014",
+    "PFI2-015",
+    "PFI2-016",
+    "PFI2-017",
+    "PFI2-018",
+    "PFI2-019",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-023",
+    "PFI2-024",
+    "PFI2-025",
+    "PFI2-026",
+    "PFI2-027",
+    "PFI2-028",
+    "PFI2-029",
+    "PFI2-030",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "successful_subset_note": "Diagnostic only: excludes answers blocked by the platform. The primary result remains all 32 questions.",
+  "external_judge": "typesafe/jev-1.14",
+  "final_authority": "Codex source review; not independent human expert labels",
+  "summaries": {
+    "astra": {
+      "raw_jev": {
+        "tasks": 31,
+        "point_macro_average": 0.9381720430107527,
+        "support_counts": {
+          "supported": 59,
+          "partially_supported": 9
+        },
+        "citation_precision": {
+          "numerator": 78,
+          "denominator": 87,
+          "value": 0.896551724137931
+        },
+        "citation_coverage": {
+          "numerator": 60,
+          "denominator": 68,
+          "value": 0.8823529411764706
+        },
+        "boundary_mean": 1.8387096774193548,
+        "all_five_pass": 15
+      },
+      "final_codex": {
+        "tasks": 32,
+        "point_macro_average": 0.9427083333333334,
+        "support_counts": {
+          "supported": 64,
+          "partially_supported": 7
+        },
+        "citation_precision": {
+          "numerator": 83,
+          "denominator": 91,
+          "value": 0.9120879120879121
+        },
+        "citation_coverage": {
+          "numerator": 64,
+          "denominator": 71,
+          "value": 0.9014084507042254
+        },
+        "boundary_mean": 1.8125,
+        "all_five_pass": 21
+      },
+      "corrected_question_ids": [
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-014",
+        "PFI2-024",
+        "PFI2-026",
+        "PFI2-030",
+        "PFI2-031"
+      ],
+      "supplemented_question_ids": [
+        "PFI2-015"
+      ],
+      "runtime": {
+        "answered": 31,
+        "generation_calls": 40,
+        "usage": {
+          "input_tokens": null,
+          "output_tokens": null,
+          "total_tokens": null
+        },
+        "usage_unknown_calls": 2,
+        "known_usage": {
+          "input_tokens": 481892,
+          "output_tokens": 21452,
+          "total_tokens": 503344
+        },
+        "returned_models": {
+          "gpt-6-astra": 38,
+          "<not_returned>": 2
+        },
+        "validation_failed_attempts": 7,
+        "actual_image_inputs": 147,
+        "reported_answer_cost_usd": null,
+        "answer_price_note": "Third-party invoice price not supplied; do not derive it from official prices."
+      },
+      "judge_accounting": {
+        "calls": 34,
+        "known_tokens": {
+          "input_tokens": 2349389,
+          "output_tokens": 75152,
+          "total_tokens": 2424541
+        },
+        "usage_unknown_calls": 0,
+        "reported_cost_usd": "0.098674338",
+        "cost_unknown_calls": 0,
+        "invoice_cost_usd": null,
+        "request_time_ms": 125099
+      },
+      "raw_jev_paired": {
+        "tasks": 29,
+        "point_macro_average": 0.9339080459770115,
+        "support_counts": {
+          "supported": 57,
+          "partially_supported": 8
+        },
+        "citation_precision": {
+          "numerator": 75,
+          "denominator": 82,
+          "value": 0.9146341463414634
+        },
+        "citation_coverage": {
+          "numerator": 58,
+          "denominator": 65,
+          "value": 0.8923076923076924
+        },
+        "boundary_mean": 1.8275862068965518,
+        "all_five_pass": 15
+      },
+      "final_codex_successful_subset": {
+        "tasks": 31,
+        "point_macro_average": 0.9731182795698925,
+        "support_counts": {
+          "supported": 64,
+          "partially_supported": 7
+        },
+        "citation_precision": {
+          "numerator": 83,
+          "denominator": 91,
+          "value": 0.9120879120879121
+        },
+        "citation_coverage": {
+          "numerator": 64,
+          "denominator": 71,
+          "value": 0.9014084507042254
+        },
+        "boundary_mean": 1.8709677419354838,
+        "all_five_pass": 21
+      }
+    },
+    "deepseek": {
+      "raw_jev": {
+        "tasks": 29,
+        "point_macro_average": 0.9770114942528736,
+        "support_counts": {
+          "supported": 112,
+          "partially_supported": 5
+        },
+        "citation_precision": {
+          "numerator": 123,
+          "denominator": 128,
+          "value": 0.9609375
+        },
+        "citation_coverage": {
+          "numerator": 112,
+          "denominator": 117,
+          "value": 0.9572649572649573
+        },
+        "boundary_mean": 1.9310344827586208,
+        "all_five_pass": 21
+      },
+      "final_codex": {
+        "tasks": 32,
+        "point_macro_average": 0.96875,
+        "support_counts": {
+          "supported": 120,
+          "partially_supported": 7
+        },
+        "citation_precision": {
+          "numerator": 137,
+          "denominator": 139,
+          "value": 0.9856115107913669
+        },
+        "citation_coverage": {
+          "numerator": 121,
+          "denominator": 127,
+          "value": 0.952755905511811
+        },
+        "boundary_mean": 1.84375,
+        "all_five_pass": 24
+      },
+      "corrected_question_ids": [
+        "PFI2-004",
+        "PFI2-006",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-016",
+        "PFI2-018",
+        "PFI2-030",
+        "PFI2-031"
+      ],
+      "supplemented_question_ids": [
+        "PFI2-015",
+        "PFI2-026",
+        "PFI2-027"
+      ],
+      "runtime": {
+        "answered": 32,
+        "generation_calls": 35,
+        "usage": {
+          "input_tokens": 312750,
+          "output_tokens": 49915,
+          "total_tokens": 362665
+        },
+        "usage_unknown_calls": 0,
+        "known_usage": {
+          "input_tokens": 312750,
+          "output_tokens": 49915,
+          "total_tokens": 362665
+        },
+        "returned_models": {
+          "deepseek-flash": 35
+        },
+        "validation_failed_attempts": 3,
+        "actual_image_inputs": 134,
+        "reported_answer_cost_usd": null,
+        "answer_price_note": "Third-party invoice price not supplied; do not derive it from official prices."
+      },
+      "judge_accounting": {
+        "calls": 38,
+        "known_tokens": {
+          "input_tokens": 2873193,
+          "output_tokens": 139221,
+          "total_tokens": 3012414
+        },
+        "usage_unknown_calls": 0,
+        "reported_cost_usd": "0.120674106",
+        "cost_unknown_calls": 0,
+        "invoice_cost_usd": null,
+        "request_time_ms": 142300
+      },
+      "raw_jev_paired": {
+        "tasks": 29,
+        "point_macro_average": 0.9770114942528736,
+        "support_counts": {
+          "supported": 112,
+          "partially_supported": 5
+        },
+        "citation_precision": {
+          "numerator": 123,
+          "denominator": 128,
+          "value": 0.9609375
+        },
+        "citation_coverage": {
+          "numerator": 112,
+          "denominator": 117,
+          "value": 0.9572649572649573
+        },
+        "boundary_mean": 1.9310344827586208,
+        "all_five_pass": 21
+      },
+      "final_codex_successful_subset": {
+        "tasks": 31,
+        "point_macro_average": 0.967741935483871,
+        "support_counts": {
+          "supported": 113,
+          "partially_supported": 7
+        },
+        "citation_precision": {
+          "numerator": 130,
+          "denominator": 132,
+          "value": 0.9848484848484849
+        },
+        "citation_coverage": {
+          "numerator": 114,
+          "denominator": 120,
+          "value": 0.95
+        },
+        "boundary_mean": 1.8387096774193548,
+        "all_five_pass": 23
+      }
+    }
+  },
+  "policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+  "adjudication_sha256": "07d6da809d3be71e9291367f089782d38a3b310492934b79068cac6e22f9b51b",
+  "contract": {
+    "version": "matched-answer-models-visual-v1",
+    "source_commit": "728f6822669375c70bc16fa70727f27bc21d50d0",
+    "orchestrator_sha256": "ccc934f5c4120b02d644f9eab350cf67255aa17a1ee9c393dfb74c712dabb633",
+    "dataset_manifest_sha256": "463c687ad22e035a90575d16a95ee154be3eda9bbab506b0bc7b20c4e8b4d47e",
+    "query_cache_sha256": "4c393104465899f3c20bea3f936172657d4240f747a77ef588aa66edf7d589e0",
+    "source_policy": "Current MinerU/Qwen image-enabled retrieval once per question; both models see identical final text, refs and image bytes.",
+    "answer_context": "Fresh independent worker per question. No reference answers, labels, grades or other model answers.",
+    "answer_guidance_enabled": false,
+    "model_reasoning_effort": "high",
+    "website_config_sha256": "475f421a203abd33f084625d01ac9f27aa17635658a3325abffa6f5bf4f3ab7c",
+    "max_generation_attempts": 2,
+    "raw_judge_policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+    "final_authority": "Codex source-based adjudication, separately logged; never overwrite raw Jev.",
+    "arms": {
+      "astra": {
+        "run_id": "pfi-answer-astra-20261102",
+        "run_manifest_sha256": "514d9de1e3ce6c444da0a80a270914b584faae15d24091000da99fc58ab85e8d"
+      },
+      "deepseek": {
+        "run_id": "pfi-answer-deepseek-20261102",
+        "run_manifest_sha256": "43371fd694353c29ee0adb13e8a14f19eb417b4ae274b12daf4379777d95dc0c"
+      }
+    },
+    "replay_sealed_at": "2026-11-02T12:20:26.759882+00:00",
+    "grading": {
+      "astra": {
+        "study_sha256": "ff9be93ac8395acadb9a9825ba3970c0bbaf017e657b07f4c77f5d095dae04eb",
+        "import_sha256": "10dfdd2e2dd8863df9f10a79177efc487f405788c402c5e51c48ed7ad03e66f5"
+      },
+      "deepseek": {
+        "study_sha256": "8523f0ab4ba89f3cdb1a494a1fa877754cba1d7bca95b5c9723f417a939dd630",
+        "import_sha256": "8ad6b2c8109dceaa2fb330bdb7d9bc9b07591d9ca4b23c6bccf5d6859dfe25ea"
+      }
+    },
+    "judge_settings": {
+      "jev": {
+        "base_url": "https://openrouter.ai/api",
+        "requested_model": "typesafe/jev-1.14",
+        "api": "openrouter_decisions",
+        "timeout_seconds": 120.0,
+        "automatic_retries": 0,
+        "previous_scores_provided": false,
+        "scope": [
+          "key_points",
+          "claim_support",
+          "citation_support",
+          "citation_group_coverage",
+          "answerability"
+        ],
+        "independent_requests": true,
+        "sampling": "Native typed decisions; no sampling overrides or conversation identifiers."
+      }
+    }
+  },
+  "limitations": [
+    "One run per model on one paper; no significance or generalization claim.",
+    "Current image-enabled retrieval differs from earlier text-only runs; main comparison is the newly matched pair.",
+    "Jev raw uses its unchanged attached-text protocol. Codex final additionally checks the exact verified images actually attached to the same citation ref; this evidence-unit extension applies to both arms and is disclosed separately.",
+    "Generation calls count application-level attempts. SDK automatic transport retries, if any, are not separate observable billed records.",
+    "End-to-end latencies are not compared: DeepSeek replays retrieval while Astra performs it.",
+    "Third-party actual model routing and invoice cost cannot be independently established from client response."
+  ]
+}

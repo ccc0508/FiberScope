@@ -1,0 +1,1262 @@
+{
+  "version": "codex-source-adjudication-v1",
+  "reviewer": "Codex",
+  "created_at": "2026-11-02T12:32:41.156763+00:00",
+  "policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+  "final_evidence_unit": "actual_attached_text_and_verified_images",
+  "scope_note": "Jev原始采用原封不动的文字协议。Codex最终复核检查同引用号实际交付原图，统一应用于两侧；不借用未交付原图或未附引用补组覆盖。其余要点0/0.5/1、事实/引用/边界准则不改。",
+  "independent_human_expert_gold": false,
+  "model_api_calls": 0,
+  "raw_jev_records_overwritten": false,
+  "inspected_images": [
+    "Figure 1",
+    "Figure 2",
+    "Figure 3",
+    "Figure 4",
+    "Figure 7",
+    "Table 1",
+    "Table 2"
+  ],
+  "items": [
+    {
+      "arm": "astra",
+      "task_id": "PFI2-001",
+      "result_sha256": "4fc2fabf5e9b872acf2d3a87c92b824d1ae460361b3c86059aca644e06567cb1",
+      "grader_input_sha256": "343bc88f4b6573fb51647556ba82c13f8bac3f6e50d5ac25e8d1d45b35a1c994",
+      "raw_review_sha256": "7bb18c8447f62aa972f3a18f8e811ba77b9a6e183031775c743baea86f43b236",
+      "summary": "核对方法原文：商业漂白针叶木与阔叶木硫酸盐浆；两项必答内容齐全。",
+      "evidence_checked": [
+        "E01",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-001",
+      "result_sha256": "ff3b8cea1b85ce75eec107e1332c68f35860f177ce44ee47991d46d2b3cbef9b",
+      "grader_input_sha256": "14ca8bc29251384e59cdc3d115a59961e9fc1a506965c93e71072aa8d1995ec3",
+      "raw_review_sha256": "c4a84dad71cfc8225eba424ac1a7959fa3c2b2d9f5eba07a56b81c1d4ff30124",
+      "summary": "核对方法原文：商业漂白针叶木与阔叶木硫酸盐浆；两项必答内容齐全。",
+      "evidence_checked": [
+        "E01",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-002",
+      "result_sha256": "94bef54a00c1d9065a3f2c809f9d2a0311ac59cff4c2ec67f63f643d46bc660c",
+      "grader_input_sha256": "9b1afb6a8a62981932a2f4f77a6a1bba63c63a47acd21ebcc4599e562d7c9636",
+      "raw_review_sha256": "f04e899dcd153d3932f8c56f5bf8e432b0489c784f3e1abb9e6c638427eeeceb",
+      "summary": "核对方法原文：两种浆均10%、0.2 mm；作用力分别3.33与1.77 N/mm，样本和单位正确。",
+      "evidence_checked": [
+        "E01",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-002",
+      "result_sha256": "2535db03d1d251889e36e96b4366878a234e1d2caae8cbd2b1a0d55753186984",
+      "grader_input_sha256": "e345f04ffd10550b127aaca11b04fbd0d13ea16526b70440bcbdcccce62e0c8f",
+      "raw_review_sha256": "186b585e183b46e2335680791971cafd49cf7bf396f8f858493ed1c340219d9d",
+      "summary": "核对方法原文：两种浆均10%、0.2 mm；作用力分别3.33与1.77 N/mm，样本和单位正确。",
+      "evidence_checked": [
+        "E01",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-003",
+      "result_sha256": "0b0a4870c9eda41164b8794fb789fe0d38505ae64ea077d1886f724462bb5829",
+      "grader_input_sha256": "e6925a8b368e0d912a016e269c544466bf408b44e91a16b551ebccf7f9916837",
+      "raw_review_sha256": "bbfec335279e1d32dd8cd0d823c2752e0371cd6dfa1186610a2321cec305dd9c",
+      "summary": "核对五个转数水平及数量，均为0、4000、8000、12000、16000；未冒充重复实验数。",
+      "evidence_checked": [
+        "E02",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-003",
+      "result_sha256": "4d5c511623ca56e3c649e2a637bb7d3313ef5f6a1d61a2aafefe9c844fb76fc1",
+      "grader_input_sha256": "f5e56a8d703e88a7e4206577309f2a10d4c79598a9a64ea9efccf1a33157c2ad",
+      "raw_review_sha256": "28f34b7bf2536898e097428218f3a552afa2635143b6ae795b2ae64d84847f69",
+      "summary": "核对五个转数水平及数量，均为0、4000、8000、12000、16000；未冒充重复实验数。",
+      "evidence_checked": [
+        "E02",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-004",
+      "result_sha256": "d893260a8702abe1cdcbdd8f7ff6bb0bbb0b97f8664abe67dfbfd20193c130d0",
+      "grader_input_sha256": "9a53d9b0ced72ecc45012a214374f721a7e2565aa4100068a994e2a8b073f0d8",
+      "raw_review_sha256": "7f40cb31ea6c9db1b0e2d55a72682d04974e0e56f66aa4bea3361876944f5bfa",
+      "summary": "63/57 °SR与转数映射正确，也说明12000转不能通用；未明确把不同作用力纳入限制，因此P3只给0.5。",
+      "evidence_checked": [
+        "E01",
+        "E03",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-004",
+      "result_sha256": "666b3265819773a8bcd9fe462504c10205c8f97da2f54fab6449673e2dc72ae8",
+      "grader_input_sha256": "0dd4d640cbb2ea3a9887bda11d3a1eb46a8ce0a30b6a1a8cfb749184b7c64520",
+      "raw_review_sha256": "db290336048dfb7accb1b82ad4b45333d5b36616a3970fc69c39f4259266aa52",
+      "summary": "63/57 °SR与转数映射正确，也说明12000转不能通用；未明确把不同作用力纳入限制，因此P3只给0.5。",
+      "evidence_checked": [
+        "E01",
+        "E03",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "support_C3",
+          "from": "partially_supported",
+          "to": "supported",
+          "reason": "需提高转数是限定本文条件下由57 °SR/12000转与70 °SR/16000转作出的有界判断；C4同时说明精确63 °SR转数未知，未做通用换算。",
+          "basis": "实际[1]及E03；回答C3/C4。作用力限制未说清仍在独立P3扣半分。",
+          "category": "semantic_correction"
+        },
+        {
+          "decision_key": "group_C3",
+          "from": "partial",
+          "to": "complete",
+          "reason": "需提高转数是限定本文条件下由57 °SR/12000转与70 °SR/16000转作出的有界判断；C4同时说明精确63 °SR转数未知，未做通用换算。",
+          "basis": "实际[1]及E03；回答C3/C4。作用力限制未说清仍在独立P3扣半分。",
+          "category": "semantic_correction"
+        }
+      ]
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-005",
+      "result_sha256": "1597aff78e21ecb9209e846c1343b145f76d69f5958cd8c30db36f017091e0b2",
+      "grader_input_sha256": "e3fb635db01a3db9599e0062380e2a47f77d2451a890296447e23c57b133bbaa",
+      "raw_review_sha256": "e0d0dbf6da6288abe1f73836b26794cf4ce23bef6832ccdf0c8955fb43b49cbe",
+      "summary": "MORFI LB及三项形态指标正确，中文近义译名与保留英文均可接受。",
+      "evidence_checked": [
+        "E04",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-005",
+      "result_sha256": "4049760fb37ce395f724547ab821668c639ea3c8c560b91c3bf70679520dfbd3",
+      "grader_input_sha256": "1ca2d0174c46dbbaaae1d73035604fcca7f54c46f0e3556c6ca05baef3dee9c5",
+      "raw_review_sha256": "9991eebe0a2f4d87484d65fcee5a76b5ad54e0ce8707713cb3a8f7f04e8e6d42",
+      "summary": "MORFI LB及三项形态指标正确，中文近义译名与保留英文均可接受。",
+      "evidence_checked": [
+        "E04",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-006",
+      "result_sha256": "8eb412d9c0f6e5cd2a5c8e2ade631795b398b665362dd8d7b7707a46d9cb365a",
+      "grader_input_sha256": "9179a0049cc0a635b1fa9936197bc318878e266ae4ff1a9fa8f0732fef628b87",
+      "raw_review_sha256": "151b1b8e00ee78ba403e70de76f718364d9c7de08c0e32fa841b2e7469636b06",
+      "summary": "0.5 g绝干、ISO 23714、WRV公式和质量定义均正确；按每个引用自身的具体贡献检查，而不要求每条引用独立证明整句。",
+      "evidence_checked": [
+        "E05",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-006",
+      "result_sha256": "25e3391bf395aca185175ec2124bb0d0c913cfdde26a8adb06064686d9d82e44",
+      "grader_input_sha256": "3f7e3f2958a0f354ea69af6a2eb37149ebf9d507253c5c47bde459207a9961b6",
+      "raw_review_sha256": "ba6a96e5b2facf45a206059d1ccf4f2e059c99f9ed01564024ce2e470aa43a77",
+      "summary": "0.5 g绝干、ISO 23714、WRV公式和质量定义均正确；按每个引用自身的具体贡献检查，而不要求每条引用独立证明整句。",
+      "evidence_checked": [
+        "E05",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "citation_C5_1",
+          "from": "unsupported",
+          "to": "supported",
+          "reason": "公式(m1−m2)/m2×100%直接贡献“差值/基准质量比值”这一实质组成，质量含义由[2]共同补足，不应要求[1]单独证明全句。",
+          "basis": "实际[1]WRV公式；实际[2]m1/m2定义。",
+          "category": "semantic_correction"
+        }
+      ]
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-007",
+      "result_sha256": "8a02533715c25fe3cc1f4c1fec5c5d2f073905c0870f0696279ed7f265dddedf",
+      "grader_input_sha256": "6984f9c32644cbd494fe9d2e388abcff374d197366d4cbb4c7c8a1c5cc3e65e4",
+      "raw_review_sha256": "ca5396adbbdf8c4b4e279382b28f3011eac68d7160d3d0319207f1fe58809091",
+      "summary": "正式结果是引用校验失败后的统一拒答，三项必答均未交付，Jev给0保留。两次草稿实际含正确公式，但其中[(I200−Iam)/I200]被现有宽泛方括号规则误判为引用。此为平台校验误伤，不能冒充模型不会回答；也不能把草稿计为正式成功答案。",
+      "evidence_checked": [
+        "E06",
+        "E07",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-007",
+      "result_sha256": "81666f62647152c845a2bfce29babee1f76ba3a75ea7fc6f91881653a91640fe",
+      "grader_input_sha256": "2a81bc9f55eecff0223f51242f4799b5365c89c0380da3c3f32d1573ac3ea29c",
+      "raw_review_sha256": "8eb44af3e975bfc11cbde2ca32fdfe26b92e9bbd6cef38445e5ebe0e1522241b",
+      "summary": "核对实际交付给用户的结果；不得拿未通过校验的草稿替代正式答案评分。",
+      "evidence_checked": [
+        "E06",
+        "E07",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-008",
+      "result_sha256": "1f92db7ae85da8bdba6293177c2b3b2c26417bd7f05f884a3e9d1276160f4cb4",
+      "grader_input_sha256": "63b949cdec816e7a9340502229548368a83a53790f37a7cc035b6ca05a972891",
+      "raw_review_sha256": "00d4531d98b74cfb8b8ca69fb9c09bd685c9f508b9130b0ddfb54c8c6cb95d1c",
+      "summary": "逐项核对Table 1(a)/(b)中0与16000转的8个结晶度数值和百分比单位，均正确。",
+      "evidence_checked": [
+        "E08",
+        "E09",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-008",
+      "result_sha256": "ce53f97cf3e37c8b57fa3dd4847acc17c4c1d75e2c04565cb5767c52cc44d629",
+      "grader_input_sha256": "f9c28fd5435ad9f6345d7178ac60dcbb369197c7a91236ab1befa09a50fc7663",
+      "raw_review_sha256": "c42007f7769fb2d02c25f269c28c9795e78131fd14783e3bb83bc0d51ab2d048",
+      "summary": "逐项核对Table 1(a)/(b)中0与16000转的8个结晶度数值和百分比单位，均正确。",
+      "evidence_checked": [
+        "E08",
+        "E09",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-009",
+      "result_sha256": "d7bb402a72e9db3041375b534d0975c6a5dd5350baa22ee3adac9479f16d50ab",
+      "grader_input_sha256": "c2f7808759bf80b07dfe49213879bac70e09aa38b1aada86644a63d89a42a595",
+      "raw_review_sha256": "894d17d27dfd1b85810eca30cc2384471a38bfb021ec96013d53862933f7680b",
+      "summary": "47.16%→42.35%，绝对差4.81个百分点，相对降幅10.20%，分母正确。",
+      "evidence_checked": [
+        "E09",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-009",
+      "result_sha256": "69afea7d837ffe3ade3cc4420b56075afa5d5f99293c11770edaa30e21a7ffa9",
+      "grader_input_sha256": "d8ff8dd16663e96b5b45f83ed3c8849ab68ba68998f9d27a9c92914e9fa214ba",
+      "raw_review_sha256": "75c99c7096d0f909b33dc4c466bb5f535f90b36b471296c60d3d5c8df2c3cf37",
+      "summary": "47.16%→42.35%，绝对差4.81个百分点，相对降幅10.20%，分母正确。",
+      "evidence_checked": [
+        "E09",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-010",
+      "result_sha256": "1abc46fa1276061613b7982e30ec407476c3e0b1caedace4b7ebdf4050f3cb74",
+      "grader_input_sha256": "9459f71e525b7ec573a60f952bb3d047d8e01e2c3b0385d47dd33eb2e86d588a",
+      "raw_review_sha256": "94d8d1a4d6c96341f1d3d854f0042fdbfb1181f20ff8941c617644bf97dbd4a4",
+      "summary": "核对Table 1的(200)列，两类浆均4.5→4.7 nm；列出的中间波动也正确，不需要额外拒答或边界扣分。",
+      "evidence_checked": [
+        "E08",
+        "E09",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "boundary",
+          "from": "partial",
+          "to": "appropriate",
+          "reason": "题目要求的两类(200)晶粒尺寸、端点和趋势均正确；补充真实中间波动不构成边界错误。",
+          "basis": "Table 1(a)/(b) (200)列：4.5、4.6/4.7、4.6/4.8、4.7/4.8、4.7 nm。",
+          "category": "semantic_correction"
+        }
+      ]
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-010",
+      "result_sha256": "9089ed6b0aefa7c6b6f6edc9ac750479573be549bc44a8ab8a795bd9a31152c5",
+      "grader_input_sha256": "ae808cebe3b4c32d2677dbc3111b47520d938da412a0044222389e0160bd4f52",
+      "raw_review_sha256": "1569ede4e2d0dbebcb6d40a61e4152a46d0d92da458d3df7e38fccdf18dd637d",
+      "summary": "核对Table 1的(200)列，两类浆均4.5→4.7 nm；列出的中间波动也正确，不需要额外拒答或边界扣分。",
+      "evidence_checked": [
+        "E08",
+        "E09",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-011",
+      "result_sha256": "6296f7814f92670f55b78861256730ee1c68f715cbd4e1e660dbf7894743ccc1",
+      "grader_input_sha256": "1937cf5bd2b6f05578ce33cafe4dae4eb4321a21b584fd79821cabee62a50398",
+      "raw_review_sha256": "5dc4630e5716956578f984974082d5fd52041cc5a506325740cf852fae729f66",
+      "summary": "非单调与总体下降分别核对；正确列出的首尾数值可表达总体下降，不强求固定措辞。正确的CI-XA反例同样能否定泛指的结晶度单调下降。",
+      "evidence_checked": [
+        "E08",
+        "E09",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "point_P1",
+          "from": "partial",
+          "to": "complete",
+          "reason": "回答明确非单调，并列出73.23→69.82及75.55→73.55的初末比较，语义上已表达总体下降，不能要求必须出现“总体下降”四字。",
+          "basis": "回答C1/C2；Table 1(a)/(b)；E08/E09。",
+          "category": "semantic_correction"
+        }
+      ]
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-011",
+      "result_sha256": "ab8d46f4199137c047dfd8ab2128a492981fcb06d342ae47f4e5c2c1ea574eab",
+      "grader_input_sha256": "443b854c6e13452f6eff982c17f31aeb48c3890a26fb6bfe05909378656064bb",
+      "raw_review_sha256": "3926e3cde1b67ce0e19d2c8884ae6f11483add5f3b4830527d0053a91e5233c0",
+      "summary": "非单调与总体下降分别核对；正确列出的首尾数值可表达总体下降，不强求固定措辞。正确的CI-XA反例同样能否定泛指的结晶度单调下降。",
+      "evidence_checked": [
+        "E08",
+        "E09",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-012",
+      "result_sha256": "55cf175d85c444b32835b0da734825d0589f9c7c0daed3ed308da5bb351a1123",
+      "grader_input_sha256": "b869dd75ee488ca4b4e0b4e9bedffacc83887bce914af8cd352ea7ab40534848",
+      "raw_review_sha256": "2635805f74eecfb0b1d18d8b9dfe471bd07ee27850866588456ca3ec70528921",
+      "summary": "CI-XI高于CI-XA；两者r=0.919/0.925且p<0.05，未与氢键相关系数混用。",
+      "evidence_checked": [
+        "E10",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-012",
+      "result_sha256": "e76f0aa28e60c2ac99cc90e3bda9622057af9de232666aa84dcb93a1c96778e5",
+      "grader_input_sha256": "0a02267932db1de3591570eeb66a042cb540ee19cb0cbf397bb8e304c97b8ed8",
+      "raw_review_sha256": "2636f10fc5930d9a4407b66e0f44dafc110b185ba518bd01669b23736216c631",
+      "summary": "CI-XI高于CI-XA；两者r=0.919/0.925且p<0.05，未与氢键相关系数混用。",
+      "evidence_checked": [
+        "E10",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-013",
+      "result_sha256": "b02286849032ffb175ee38b36293fcb5ba821b30a5c7f069f8c5f7a83cfe6584",
+      "grader_input_sha256": "3cbe4d45ad64161c9895ba908708af687204c608eabef7c2559bdf3c8f95658e",
+      "raw_review_sha256": "2b453736403133f6bc869962429af29757d29d679b93c7257457db7c7580ae6e",
+      "summary": "核对晶区—非晶区/干燥共结晶—后续破坏的解释及可能性措辞；实际引用中的表格也可直接支持数值走势。",
+      "evidence_checked": [
+        "E11",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-013",
+      "result_sha256": "21c417a27caad8a5b055ab5dd65d2136e6084b2ee734dc5b115b034952b6d6b5",
+      "grader_input_sha256": "003b9992197ef294849cd3c2fe1e9c6da5763117306fcc95d82ee8d6f23540c2",
+      "raw_review_sha256": "38332008329790c20165d8ad36dd35a28c37a5dd9f117133c09adfd6d300dec3",
+      "summary": "核对晶区—非晶区/干燥共结晶—后续破坏的解释及可能性措辞；实际引用中的表格也可直接支持数值走势。",
+      "evidence_checked": [
+        "E11",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "citation_C1_2",
+          "from": "unsupported",
+          "to": "supported",
+          "reason": "[4]Table 1的两类CI数列直接证明先降、再升、再降，属于实质证据而非仅主题相关。",
+          "basis": "实际[4] Table 1(a)/(b)及实际附加Table 1原图。",
+          "category": "semantic_correction"
+        }
+      ]
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-014",
+      "result_sha256": "2718b560bbb92b5298675a684d42fbabda43fa203b43e1bae6a7f43c7b70378a",
+      "grader_input_sha256": "46eb18a9c9aa72243000cbece867f5cd2b4500601cfff64d40dbe82687dd2f54",
+      "raw_review_sha256": "1f72db93bdfffb4a84f3476c5750599e11d8a898224977ea51b37fbcb6560e64",
+      "summary": "主干WRV—膨胀—横向柔顺—结合链条正确；区分作者的分子层面解释、链间氢键与纤维素主链断裂。",
+      "evidence_checked": [
+        "E13",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "support_C3",
+          "from": "partially_supported",
+          "to": "supported",
+          "reason": "此句明确归于作者解释；全文3.3确实把较少分子间氢键、较低CI与分子链运动、可及性和WRV联系，不是无依据额外机制。",
+          "basis": "3.3: Both the fewer inter-molecular H-bonds and the lower CI ... higher mobility ... accessibility, and the WRV ...",
+          "category": "semantic_correction"
+        },
+        {
+          "decision_key": "group_C3",
+          "from": "partial",
+          "to": "complete",
+          "reason": "实际[1]已包含上述解释及氢键相对含量分析，既有链间氢键减少也有CI/WRV的联系；不需补用未引用全文。",
+          "basis": "PFI2-014实际[1]：Both the fewer inter-molecular H-bonds and the lower CI ...",
+          "category": "semantic_correction"
+        }
+      ]
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-014",
+      "result_sha256": "97353d4101cf7de9ffcf19fa1884c70fd659d375cef23ad75a526e30106a17bc",
+      "grader_input_sha256": "1411aa2652d1eb4b810f7a579212d7bae9bbc8d81e4e43ccb51e3837bf652218",
+      "raw_review_sha256": "2f4610ab32841f42605721063f8b906136e207c56a2d38d00d466f36e0d0b19d",
+      "summary": "主干WRV—膨胀—横向柔顺—结合链条正确；区分作者的分子层面解释、链间氢键与纤维素主链断裂。",
+      "evidence_checked": [
+        "E13",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "citation_C5_2",
+          "from": "unsupported",
+          "to": "supported",
+          "reason": "[4]明确报告CI下降及两种CI的差异，直接提供C5中“较低结晶指数”的数据组成；完整机制同时由[1]支持。",
+          "basis": "实际[4]的In general, CI-XI/CI-XA reduction及低CI数据；完整组[1]+[4]。",
+          "category": "semantic_correction"
+        },
+        {
+          "decision_key": "support_C4",
+          "from": "supported",
+          "to": "partially_supported",
+          "reason": "原文是cellulose molecular chains之间的cleavage及氢键破坏；回答写成纤维素分子链本身断裂，扩大到主链断裂，未被该证据建立。",
+          "basis": "C4“可能使纤维素分子链断裂”；实际[1]/3.3为cleavage among cellulose molecular chains，并联系链间氢键。",
+          "category": "semantic_correction"
+        },
+        {
+          "decision_key": "group_C4",
+          "from": "complete",
+          "to": "partial",
+          "reason": "原文是cellulose molecular chains之间的cleavage及氢键破坏；回答写成纤维素分子链本身断裂，扩大到主链断裂，未被该证据建立。",
+          "basis": "C4“可能使纤维素分子链断裂”；实际[1]/3.3为cleavage among cellulose molecular chains，并联系链间氢键。",
+          "category": "semantic_correction"
+        }
+      ]
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-015",
+      "result_sha256": "bf1d7e906e27236b158511d724fb217c53136b696c68f33fcfa1d8e1e2750449",
+      "grader_input_sha256": "124a461cb31a9cbffa5ac32899739d7a4cf348ab0c827c37365543552dedfbfc",
+      "raw_review_sha256": null,
+      "summary": "另行完整补评。核对正文及实际附加Figure 1近似长度；两侧均把原文might改得偏确定，因此解释要点P2只给0.5。两侧都明确提供不同作用力并以该处理差异解释组间差异，P3接受其语义等价表达。",
+      "evidence_checked": [
+        "E01",
+        "E12",
+        "actual_claims_and_attached_citations",
+        "verified_original_figure_1_or_3_and_actual_image_delivery_hash"
+      ],
+      "changes": [],
+      "supplemental_decisions": {
+        "boundary": "partial",
+        "reference_check": "sound",
+        "point_P1": "complete",
+        "point_P2": "partial",
+        "point_P3": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "E12",
+        "group_C1": "complete",
+        "citation_C1_1": "supported",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "E12",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "kind_C3": "fact",
+        "support_C3": "partially_supported",
+        "basis_C3": "E12",
+        "group_C3": "partial",
+        "citation_C3_1": "supported",
+        "citation_C3_2": "supported"
+      },
+      "supplement_reason": "Jev三次均因引用组与单条引用结果自相矛盾而未通过协议校验；此完整评分由Codex按源材料补齐，未使用无效分数作为正式结果。",
+      "supplement_rationale": {
+        "P1": "正文与Figure1两类长度变化不同，正确。",
+        "P2": "给出较低作用力解释但将原文might写成主要原因，0.5。",
+        "P3": "列出不同作用力并明确以该处理差异解释长度差异，已表达非仅浆种的替代解释，接受语义等价。",
+        "C1": "实际Figure1可近似读取2050→1650 μm，标明约值可接受。",
+        "C2": "与正文相对不显著及图示近持平相符。",
+        "C3": "两个作用力数字正确，解释语气过强，因此事实与组覆盖partial；两个引用各有直接贡献。"
+      }
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-015",
+      "result_sha256": "57749cc509b5574180c0ae42d8d05fba2cabbd15f578fc94f7fc73de7cf9e135",
+      "grader_input_sha256": "017ffb18a0de7b302523a3714b2cad5cf582192e5683f369bbcbe472bcccf8f8",
+      "raw_review_sha256": null,
+      "summary": "另行完整补评。核对正文及实际附加Figure 1近似长度；两侧均把原文might改得偏确定，因此解释要点P2只给0.5。两侧都明确提供不同作用力并以该处理差异解释组间差异，P3接受其语义等价表达。",
+      "evidence_checked": [
+        "E01",
+        "E12",
+        "actual_claims_and_attached_citations",
+        "verified_original_figure_1_or_3_and_actual_image_delivery_hash"
+      ],
+      "changes": [],
+      "supplemental_decisions": {
+        "boundary": "partial",
+        "reference_check": "sound",
+        "point_P1": "complete",
+        "point_P2": "partial",
+        "point_P3": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "E12",
+        "group_C1": "complete",
+        "citation_C1_1": "supported",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "E12",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "kind_C3": "fact",
+        "support_C3": "partially_supported",
+        "basis_C3": "E12",
+        "group_C3": "partial",
+        "citation_C3_1": "supported",
+        "kind_C4": "fact",
+        "support_C4": "supported",
+        "basis_C4": "E01",
+        "group_C4": "complete",
+        "citation_C4_1": "supported"
+      },
+      "supplement_reason": "Jev三次均因引用组与单条引用结果自相矛盾而未通过协议校验；此完整评分由Codex按源材料补齐，未使用无效分数作为正式结果。",
+      "supplement_rationale": {
+        "P1": "两类长度变化差别正确。",
+        "P2": "压力作为原因有原文，但没有保留可能性，0.5。",
+        "P3": "不同力数值与压力造成差别的说明共同给出处理差异的替代解释。",
+        "C1": "正文直接支持针叶明显变化和阔叶无显著变化。",
+        "C2": "Figure1确实约2000→1600 μm、阔叶约900，按近似读图处理。",
+        "C3": "might变为归因，解释过确定，partial。",
+        "C4": "方法3.33/1.77 N/mm正确。"
+      }
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-016",
+      "result_sha256": "6fa44d40c37ce76035602ecc4640032ccd6bed420c9b880f3373e8b90b8ef379",
+      "grader_input_sha256": "6b2ab09e0fbede7ccaad32d4138aa955f425ea877ecde1748a5f29d00495f162",
+      "raw_review_sha256": "af726d967176a2753bfa11dc95b6dea2ab19840e608b1ed02a34d7f4eff2f16a",
+      "summary": "区分纸页网络与单根纤维，零距指标用于纤维本体强度；“未降低”不能升级为“已排除纤维强度提高的贡献”。",
+      "evidence_checked": [
+        "E14",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-016",
+      "result_sha256": "18e586823e4eaee02a5c3e8f278a95c10e9b43ccdda616c6f9faf0c352a063d5",
+      "grader_input_sha256": "c91703124a62339f9441d7b3909d290aee65c7f890340099984755c5cec07a14",
+      "raw_review_sha256": "c0104ea898744e49e8ba3ae9798ddc8251df2e4915ecd157e572871b6227e486",
+      "summary": "区分纸页网络与单根纤维，零距指标用于纤维本体强度；“未降低”不能升级为“已排除纤维强度提高的贡献”。",
+      "evidence_checked": [
+        "E14",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "point_P3",
+          "from": "complete",
+          "to": "partial",
+          "reason": "已区分网络和纤维，但C1把“不能必然推出纤维变强”升级成“不是直接来自单根纤维强度提高”，排除了一种未被论文排除的贡献。",
+          "basis": "C1“而不是直接来自单根纤维强度的提高”；E14仅说PFI refining did not reduce fiber strength。",
+          "category": "semantic_correction"
+        },
+        {
+          "decision_key": "support_C1",
+          "from": "supported",
+          "to": "partially_supported",
+          "reason": "主要来自细纤维化/fines有原文；“不是直接来自单根纤维强度提高”的排他因果没有被未降低的零距结论证明。",
+          "basis": "E14：mainly caused by increasing fibrillation and fines / did not reduce fiber strength。",
+          "category": "semantic_correction"
+        },
+        {
+          "decision_key": "group_C1",
+          "from": "complete",
+          "to": "partial",
+          "reason": "主要来自细纤维化/fines有原文；“不是直接来自单根纤维强度提高”的排他因果没有被未降低的零距结论证明。",
+          "basis": "E14：mainly caused by increasing fibrillation and fines / did not reduce fiber strength。",
+          "category": "semantic_correction"
+        },
+        {
+          "decision_key": "boundary",
+          "from": "appropriate",
+          "to": "partial",
+          "reason": "保留正确纸页/纤维区分，但对纤维强度贡献作出了过强排除，应为部分合适的科学边界。",
+          "basis": "同C1与E14，不能把未降低解释为已证明零贡献。",
+          "category": "semantic_correction"
+        }
+      ]
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-017",
+      "result_sha256": "4a3c55eddb2d434772b810ead73d14d948251d501aea62befb601f9ec3c2cdc4",
+      "grader_input_sha256": "4f0f762e28076bdf11795b1a48d6cdc8aec6a207d00d3458fbc6bf64e82837f7",
+      "raw_review_sha256": "f4148b6ada0eae8f8b1662b3f4b70c1d875f185997f896224cf3b881a5503dd1",
+      "summary": "针叶木湿纸幅增幅更明显，作者强调纤维长度作用，结论与方向均正确。",
+      "evidence_checked": [
+        "E14",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-017",
+      "result_sha256": "e36879db9c7f55f32a986ea5125f6f020d909df7fa641daf04eedb625d4e1d1f",
+      "grader_input_sha256": "68a70d5cc20750de850c9aea084bececb5e6ae0dc2a837d2d255f40392160fc3",
+      "raw_review_sha256": "30db37f10fcb8e2d1f25d2f63d4949309a6b59e87177d479998efbd3abd7d079",
+      "summary": "针叶木湿纸幅增幅更明显，作者强调纤维长度作用，结论与方向均正确。",
+      "evidence_checked": [
+        "E14",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-018",
+      "result_sha256": "38084f6b7bff8f9f9195652a53cd0a6ea9efa96d0474815df0be9a242e77be08",
+      "grader_input_sha256": "0f0ad3d050e85ac4abb7b9914e0734fad9ff611c6cb11d65b425a26c47f295e2",
+      "raw_review_sha256": "9dafbbf50467b18fd8f4a6a3602f42578376ff3ec68e4d79771df0d66a00a6f3",
+      "summary": "波段、Gaussian、面积比例均正确；两侧均未明确相对比例不等于绝对氢键数量，独立P3仍为0。图中四分峰和表内四项比例另按实际原图核查。",
+      "evidence_checked": [
+        "E15",
+        "E16",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-018",
+      "result_sha256": "1c4f108b04c75b95c7258880c091b50791eccacbe6f1e9050b3b0b4ec902841a",
+      "grader_input_sha256": "cad7ddd18291fc77641c447afbb79a7b529d1f4f50824638063f91678a7f4dce",
+      "raw_review_sha256": "bec8434643bce08af21297e46941843015bd70d080186ddc01ee548e8a2d426b",
+      "summary": "波段、Gaussian、面积比例均正确；两侧均未明确相对比例不等于绝对氢键数量，独立P3仍为0。图中四分峰和表内四项比例另按实际原图核查。",
+      "evidence_checked": [
+        "E15",
+        "E16",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "support_C6",
+          "from": "partially_supported",
+          "to": "supported",
+          "reason": "实际[3]同时附Table 2和Figure 7。图上每个a–e面板均有四个分峰，表中四类相对含量和r²也在同一证据组，四项总和近100%可直接复算。",
+          "basis": "[3] Figure 7 PNG 4cb0fdfaa793568942d59cfa512de3510c2a75172b9d0fae8d55764fa68e5f17；Table 2 PNG 307aec81dfbe07db6212f96c7259ebff61ac18bbe952ec2f7d3ba20da427a035。",
+          "category": "verified_image_extension"
+        },
+        {
+          "decision_key": "group_C6",
+          "from": "partial",
+          "to": "complete",
+          "reason": "实际[3]同时附Table 2和Figure 7。图上每个a–e面板均有四个分峰，表中四类相对含量和r²也在同一证据组，四项总和近100%可直接复算。",
+          "basis": "[3] Figure 7 PNG 4cb0fdfaa793568942d59cfa512de3510c2a75172b9d0fae8d55764fa68e5f17；Table 2 PNG 307aec81dfbe07db6212f96c7259ebff61ac18bbe952ec2f7d3ba20da427a035。",
+          "category": "verified_image_extension"
+        }
+      ]
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-019",
+      "result_sha256": "11d563de8ec6b28c77689a46955ee39cac57354320d8063be501b1b0ead410a5",
+      "grader_input_sha256": "a21c0d92e0d05377c3ab07b3f169b0e561ba4498c32b8a47367d83ccdd65ca6e",
+      "raw_review_sha256": "f4ec3c5862cf63b7d65f4ebd9fa830616ff4c5cbe69fac350a16e91897764120",
+      "summary": "3227、3346、3452 cm⁻¹与三类氢键一一对应；区间与约值按原文保留，不自行替作者更正。",
+      "evidence_checked": [
+        "E17",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-019",
+      "result_sha256": "c3d7a944c98e28589f12b706654adab0076f966b8dc4a6f3625e96511fc70cf2",
+      "grader_input_sha256": "19ed37381dcfb3967a8e17a04772f47272d4e9310113f757e67bf5f46acd60cc",
+      "raw_review_sha256": "f6e7a3a37ebd9fba893e98fe54ac0d2bacf97e1aabea29aa22fe323690160ff2",
+      "summary": "3227、3346、3452 cm⁻¹与三类氢键一一对应；区间与约值按原文保留，不自行替作者更正。",
+      "evidence_checked": [
+        "E17",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-020",
+      "result_sha256": "55402a8349ed1a089f3995d1907531e287e9bbad904685356037aa80f14ffe95",
+      "grader_input_sha256": "12fc797329ab1698e1327b4b1067e3df1b0c23fea40a9da228007f81200b7746",
+      "raw_review_sha256": "02dd0801f660b4fda20ac68e64e482b2547baec01be874549eea99c05f0c9765",
+      "summary": "能量/距离基本稳定与组分相对比例变化应区分；原文的机制推测不自动证明全部网络连接或同时发生的微观过程。",
+      "evidence_checked": [
+        "E17",
+        "E18",
+        "E19",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-020",
+      "result_sha256": "919ac597345e6385ac344811dc4db284ddd63b325a7a7999e63b279216893cef",
+      "grader_input_sha256": "864075fd7730925f240c7d6db417e71fcceb0c084c77ab22741418d69e4834f6",
+      "raw_review_sha256": "25c0ce841f160942d24f11ce1f6887f4db673ca3daf7da85b2c86439a27c3971",
+      "summary": "能量/距离基本稳定与组分相对比例变化应区分；原文的机制推测不自动证明全部网络连接或同时发生的微观过程。",
+      "evidence_checked": [
+        "E17",
+        "E18",
+        "E19",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-021",
+      "result_sha256": "0299a1c7cab3cc120a4274523c155b1be136f7490de9a354b217dbda8521b329",
+      "grader_input_sha256": "436e75b0d114c2a2b94aa8792956e20226ccc11936689e370003e647197e7c03",
+      "raw_review_sha256": "74c8c09770b599de0ca8290aa36ea145197dc34149af72694cd6f577575d47d4",
+      "summary": "33.06%→29.28%，下降3.78个百分点，相对下降11.43%，方向和基准正确。",
+      "evidence_checked": [
+        "E19",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-021",
+      "result_sha256": "d97d47d026a2dda3a1d7f84a311dd2a8784cdcf944ca21f69f6af72a3d03985e",
+      "grader_input_sha256": "7441e847d6df2890f70d57d7fb024a6f9a3f01cf43a911377e0d15f90c977190",
+      "raw_review_sha256": "75b651e88e03b5607b0f07c701abd0d5b6e62602d52fcc0ca101138ba17fa8ce",
+      "summary": "33.06%→29.28%，下降3.78个百分点，相对下降11.43%，方向和基准正确。",
+      "evidence_checked": [
+        "E19",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-022",
+      "result_sha256": "9938282f23b5b7423b465ee5479bcc3f0d840da9ebf6b211ed932864523fe8eb",
+      "grader_input_sha256": "cbb44caa24a53e9b4d4d5872bb3b3d7bb02b73244566b4417e9f0213b429ae2a",
+      "raw_review_sha256": "3f716fa163eb319b0b301d7560b26c6ccb1134922ad9c9c9f686143abd644e56",
+      "summary": "按针叶木16000转对齐Table 1(a)和2(a)，四个数值与百分比均正确，未声称取得逐重复配对原始数据。",
+      "evidence_checked": [
+        "E08",
+        "E18",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-022",
+      "result_sha256": "7160439f0922465033a69cca889d818cdbc562a69ee24b298646e54e8e322eb8",
+      "grader_input_sha256": "708c9649fd98c234b04100af55b7ab0ebdfcbbf5d89af43a421db5f20f1017ad",
+      "raw_review_sha256": "d429545fc2f5b74ec533a74a481aee9d52575a86ef55f2d8ea0a80e372f0a521",
+      "summary": "按针叶木16000转对齐Table 1(a)和2(a)，四个数值与百分比均正确，未声称取得逐重复配对原始数据。",
+      "evidence_checked": [
+        "E08",
+        "E18",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-023",
+      "result_sha256": "fa2e606c4907ccaf525042b53a3ff2df0d34b78fda871a5cd4c71c9a6fa4abdd",
+      "grader_input_sha256": "e9d9e4e6aff930c5da7bf8183136f88ba44f89d07e663368353f3f31117d7170",
+      "raw_review_sha256": "fa8d406fd6d045ddb208a4c81c9749449ca8abb169c9f435d6570368f07570bf",
+      "summary": "摘要0.888与正文0.912均列出并明确不一致；来源定位可由直接引用及正文归属共同确定，不要求额外猜一个正确值。",
+      "evidence_checked": [
+        "E20",
+        "E21",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-023",
+      "result_sha256": "f3da21e79fb944dbee44d08986a0df2ea2642c7debb19f2f9a592099554ccab7",
+      "grader_input_sha256": "df1512118841b58f93a055ddfe1f0d7352281b9eed0dba64eba3cca1932cd00a",
+      "raw_review_sha256": "53e4ea9a21492e8edcd0afde2fa406533dbb4630cdbb71f9aeb1f8f30e0e6cce",
+      "summary": "摘要0.888与正文0.912均列出并明确不一致；来源定位可由直接引用及正文归属共同确定，不要求额外猜一个正确值。",
+      "evidence_checked": [
+        "E20",
+        "E21",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-024",
+      "result_sha256": "a850ad062d14eee12483752a21a93ac9ddfe04043530cbc15ebae57e1689e73b",
+      "grader_input_sha256": "8b4ba6a0cbf5dc0ff87ed8a50840cbd3a2e921c3828c3d79039cbc6b7c753f91",
+      "raw_review_sha256": "fb74ea15a8549a53b8bd66f5f894890f0de7428fc298384de684d137f99d71f8",
+      "summary": "工艺—形态/WRV—结合—纸页强度链条及零距区分基本齐全，未提供虚构贡献率；额外“联系最直接”等排序语句仍须有支持。",
+      "evidence_checked": [
+        "E13",
+        "E14",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "citation_C2_2",
+          "from": "unsupported",
+          "to": "supported",
+          "reason": "[2]引言明确internal fibrillation的swelling及accessibility/flexibility/inter-fiber bonding capacity，实质支持C2中的部分纤维及结合变化；单条无需独立证明整句。",
+          "basis": "实际[2]：These effects ... improve the accessibility, the swelling, the flexibility, and the inter-fiber bonding capacity ...",
+          "category": "semantic_correction"
+        }
+      ]
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-024",
+      "result_sha256": "ac8673b424ea79ff37c3c7b4fbe937c5771a391d930b6d20dafac02be096c6d0",
+      "grader_input_sha256": "8a7fa9f1b66081622db32697fc4fe3e53904952c5530167abaab66c57872abe3",
+      "raw_review_sha256": "81aa110214912bdf9f4db26b0754243e2cf32fecb264b5358cf39fa10ffcf638",
+      "summary": "工艺—形态/WRV—结合—纸页强度链条及零距区分基本齐全，未提供虚构贡献率；额外“联系最直接”等排序语句仍须有支持。",
+      "evidence_checked": [
+        "E13",
+        "E14",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-025",
+      "result_sha256": "e0dde312c5a819d3be8cb8007de31692781054122c37176b80b020f0c8ec7d67",
+      "grader_input_sha256": "8a2976a8140780c3b678e38f5420777b3dae7aef62b2570160dca41d16b3b6f3",
+      "raw_review_sha256": "b3a05244f62fa94c43a29bc2fa875a9c1ec82161d6d4a1f28d2f80caa53905f5",
+      "summary": "给出外部Table S1定位并明确当前材料缺具体数值，已经足够表达不能精确作答，不强求固定拒答句。",
+      "evidence_checked": [
+        "E23",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-025",
+      "result_sha256": "b2e01d5ffcc0f68fd7ae311b1ab8193e5cdcf553fde04613c7cbd6efca8df07d",
+      "grader_input_sha256": "1e766033b23b53a84d7314791ddb18e4d7486886b7a4495093d522714d05099c",
+      "raw_review_sha256": "91abba3b16cd4caaaad096de31b809f005078cba2306a39716c8f8b1e462e41d",
+      "summary": "给出外部Table S1定位并明确当前材料缺具体数值，已经足够表达不能精确作答，不强求固定拒答句。",
+      "evidence_checked": [
+        "E23",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-026",
+      "result_sha256": "2336d2c09435d985462ee3cae40c37817c71569dd67e9c872d2411c046fb655c",
+      "grader_input_sha256": "9ed3b14a903e919800119b3859d964466fce1c9f28f3d794c7403f7afc8eab0c",
+      "raw_review_sha256": "8f18b9c27e44301617fb738c25f3c576981bddc01381f96e75bfbe90e3747bdd",
+      "summary": "实际Figure 3只有数据点/误差棒，不能还原逐次重复；原图颜色、系列、汇总形态均真实交付且经核查。未给作者数据获取建议属于可选项，不进入必答要点均分。",
+      "evidence_checked": [
+        "E14",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "support_C1",
+          "from": "partially_supported",
+          "to": "supported",
+          "reason": "回答实际收到[8]对应Figure 3；原图a面板的红色Tensile index、8000转数据点及误差棒均可确认，且未显示逐次原始测量。",
+          "basis": "[8] Figure 3，PNG a7a4167d80e73a232b4f54abe9a4f2a679a817848ea38a20ea0a9e8b5f147441；已核对当次model_info.images。",
+          "category": "verified_image_extension"
+        },
+        {
+          "decision_key": "group_C1",
+          "from": "partial",
+          "to": "complete",
+          "reason": "回答实际收到[8]对应Figure 3；原图a面板的红色Tensile index、8000转数据点及误差棒均可确认，且未显示逐次原始测量。",
+          "basis": "[8] Figure 3，PNG a7a4167d80e73a232b4f54abe9a4f2a679a817848ea38a20ea0a9e8b5f147441；已核对当次model_info.images。",
+          "category": "verified_image_extension"
+        }
+      ]
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-026",
+      "result_sha256": "b25e6c29b3910f36cbd5e228ca98f3d28809747a97054879828b74857fb09768",
+      "grader_input_sha256": "213fcac8e570a12c63808cef51fd6699276d8422b9ce284e4fa1fa4330a113f6",
+      "raw_review_sha256": null,
+      "summary": "实际Figure 3只有数据点/误差棒，不能还原逐次重复；原图颜色、系列、汇总形态均真实交付且经核查。未给作者数据获取建议属于可选项，不进入必答要点均分。",
+      "evidence_checked": [
+        "E14",
+        "actual_claims_and_attached_citations",
+        "verified_original_figure_1_or_3_and_actual_image_delivery_hash"
+      ],
+      "changes": [],
+      "supplemental_decisions": {
+        "boundary": "appropriate",
+        "reference_check": "sound",
+        "point_P1": "complete",
+        "point_P2": "complete",
+        "point_P3": "missing",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "E04",
+        "group_C1": "complete",
+        "citation_C1_1": "supported",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "E14",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "kind_C3": "scope",
+        "support_C3": "supported",
+        "basis_C3": "CONTEXT",
+        "group_C3": "missing",
+        "citation_C3_1": "unsupported",
+        "citation_C3_2": "unsupported"
+      },
+      "supplement_reason": "Jev三次均因引用组与单条引用结果自相矛盾而未通过协议校验；此完整评分由Codex按源材料补齐，未使用无效分数作为正式结果。",
+      "supplement_rationale": {
+        "P1/P2": "明确不可还原重复原始值，未编造；均1。",
+        "P3": "可选原始数据获取建议未写，不进入必答分。",
+        "C1": "方法确实只列TAPPI T494等标准，未列逐重复值。",
+        "C2": "实际收到Figure3，三条系列及误差棒可确认；完整支持。",
+        "C3": "仅表达当前资料可用性，不含额外科学事实，scope且引用分不适用。"
+      }
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-027",
+      "result_sha256": "b9b5805c3cf83f268bb364c7a06dfd84d3756e7c5f666ee6d186adc874772cbe",
+      "grader_input_sha256": "6774b303f44535cdf67b5d9f9b09fdee8e48f29034edab029032f1b77c6383e3",
+      "raw_review_sha256": "fd4a667a29ccef1908d0ecd367a0f45071a1bbaf63c5ad09a5a72e77227abef1",
+      "summary": "应答的抗张结论和不能提供的耐破/撕裂数值均处理；图3真实支持图中曲线，图2不能充当抗张或零距证据。纯缺失声明按scope检查。",
+      "evidence_checked": [
+        "E04",
+        "E14",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-027",
+      "result_sha256": "65c0550e10777d37dfdceca17eaf21aefcdc840001ca47266a29d6f3d0a72a51",
+      "grader_input_sha256": "a64bbb837acddfdb18117de86cfbe490ae664e547606b278615db6aa9f567396",
+      "raw_review_sha256": null,
+      "summary": "应答的抗张结论和不能提供的耐破/撕裂数值均处理；图3真实支持图中曲线，图2不能充当抗张或零距证据。纯缺失声明按scope检查。",
+      "evidence_checked": [
+        "E04",
+        "E14",
+        "actual_claims_and_attached_citations",
+        "verified_original_figure_1_or_3_and_actual_image_delivery_hash"
+      ],
+      "changes": [],
+      "supplemental_decisions": {
+        "boundary": "appropriate",
+        "reference_check": "sound",
+        "point_P1": "complete",
+        "point_P2": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "E14",
+        "group_C1": "complete",
+        "citation_C1_1": "supported",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "E14",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "kind_C3": "fact",
+        "support_C3": "supported",
+        "basis_C3": "E14",
+        "group_C3": "complete",
+        "citation_C3_1": "supported",
+        "kind_C4": "fact",
+        "support_C4": "supported",
+        "basis_C4": "E04",
+        "group_C4": "complete",
+        "citation_C4_1": "supported",
+        "citation_C4_2": "supported",
+        "kind_C5": "scope",
+        "support_C5": "supported",
+        "basis_C5": "CONTEXT",
+        "group_C5": "missing",
+        "citation_C5_1": "unsupported",
+        "citation_C5_2": "unsupported"
+      },
+      "supplement_reason": "Jev三次均因引用组与单条引用结果自相矛盾而未通过协议校验；此完整评分由Codex按源材料补齐，未使用无效分数作为正式结果。",
+      "supplement_rationale": {
+        "P1/P2": "正确回答抗张改善及机制，同时明确缺耐破/撕裂精确数据。",
+        "C1/C2": "实际[4]正文直接支持细纤维化/fines、润胀及零距未降低结论。",
+        "C3": "实际[2]附Figure3可见两类干纸抗张曲线上升。",
+        "C4": "方法列出三类力学测量，Figure3只显示这三类，图文共同支持；两引用各有贡献。",
+        "C5": "明确是资料不足以回答，scope检查，不计科学引用分。"
+      }
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-028",
+      "result_sha256": "10e5990b2bec5b8c5d12fa5f3b9ac2eae66a0477f8792c6544caf13e11671296",
+      "grader_input_sha256": "d848af12cc814d55856e373e231e8577b1f8821e8c29e4be52769b9c2e23f510",
+      "raw_review_sha256": "275012f48e6ef485a91079b994da7ebd516088358b91dd376a48a1de76e99abf",
+      "summary": "两侧均明确缺少第二篇资料，未虚构跨文献共同结论。纯资料范围声明的引用分不适用，不能把其原始未支持标签算成科学事实引用错误。",
+      "evidence_checked": [
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-028",
+      "result_sha256": "7e10e796e6bfb0f6094606cd9e11df839992c9a14acfb8a74119294933218df9",
+      "grader_input_sha256": "aa649a87398eca2a743b05f99871202f598688b3602843ef406dd4a2919166ca",
+      "raw_review_sha256": "2f18fbb490a69eac03b4d555fad6b7d25c2b96fbc73d172cab5f86e09546bb94",
+      "summary": "两侧均明确缺少第二篇资料，未虚构跨文献共同结论。纯资料范围声明的引用分不适用，不能把其原始未支持标签算成科学事实引用错误。",
+      "evidence_checked": [
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-029",
+      "result_sha256": "cdde7c4596b0a842b6ccba56c9d9884e3c953e02de3da0746ed1b3de7516994b",
+      "grader_input_sha256": "4ebcb76920731206f6d3ae4cc7ccfc98c2fda3be364ced72e38f7a500e4e048e",
+      "raw_review_sha256": "4a1df9b36d077f57d840423fca4794571a45501dcef3b07c27aeb067efa23a9b",
+      "summary": "正确区分FT-IR拟合r²与预测验证集R²/RMSE，未捏造模型名称。纯资料缺失说明的引用分不适用。",
+      "evidence_checked": [
+        "E16",
+        "E18",
+        "E21",
+        "E22",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-029",
+      "result_sha256": "21dc9caac1985c11f5f94ef108f43203bd577ce32920e8fb64a37135d8101c2a",
+      "grader_input_sha256": "a2eb74e43c69db87c87ff5dbc445bb3801f5bc5db0bb7f0a08ed64112d1b13ab",
+      "raw_review_sha256": "1f0b2ba073430e6965e79fbdf35582923c96ddddaa5f432ac89d4c0585c343e5",
+      "summary": "正确区分FT-IR拟合r²与预测验证集R²/RMSE，未捏造模型名称。纯资料缺失说明的引用分不适用。",
+      "evidence_checked": [
+        "E16",
+        "E18",
+        "E21",
+        "E22",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-030",
+      "result_sha256": "e93e824180ce0422ed5006b8cfb406293f5425bb0b8553ffff660ed008cc6421",
+      "grader_input_sha256": "a1ea6e7c198cabea61d32de74c672e78c2cd477b9f4d0b6c4dd0568c2bcf418c",
+      "raw_review_sha256": "443b3e199e10c1e27fc876ece4a5e9060e00419751acd3dc9101584ef6838a56",
+      "summary": "两侧均纠正湿纸幅增幅的错误前提；实际Figure 1还支持针叶木更长，不能仅因文字没有精确长度而否定图文事实。",
+      "evidence_checked": [
+        "E14",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "support_C2",
+          "from": "partially_supported",
+          "to": "supported",
+          "reason": "作者正文强调纤维长度对湿纸幅重要，实际[1]附Figure 1显示针叶木约2000 μm、阔叶木约900 μm；作者解释与长度比较都有依据。",
+          "basis": "E14及实际[1]附Figure 1，PNG 23c30f4b658542af98fe308feb3f127d46fb12ff3a4ed4660f1156da0db178ab。",
+          "category": "verified_image_extension"
+        }
+      ]
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-030",
+      "result_sha256": "4e5d64eacce59825a675193be2b60c8de8531a3bfe239982829007a1f437ff5f",
+      "grader_input_sha256": "a310a796e960d227bf9666dc96533840486aa276b411cd936195dcc22b314118",
+      "raw_review_sha256": "74add7b76980af23f7be56857f367b87782e50ae015f6b3dd14365a7c653d623",
+      "summary": "两侧均纠正湿纸幅增幅的错误前提；实际Figure 1还支持针叶木更长，不能仅因文字没有精确长度而否定图文事实。",
+      "evidence_checked": [
+        "E14",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "group_C5",
+          "from": "partial",
+          "to": "complete",
+          "reason": "实际[1]包含WRV—细纤维化—结合和针叶木湿纸幅增幅更明显的正文；整句各事实均在该引用内。",
+          "basis": "实际[1]的The beating degree and the WRV ... / inter-fiber bonding strength ... / wet-web strength of softwood ... more significant ...",
+          "category": "semantic_correction"
+        }
+      ]
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-031",
+      "result_sha256": "e3499938088391eaeff713f5e011234cfed8eb0ab7b83f05bc075e744a5dddab",
+      "grader_input_sha256": "0f7fafa2b34d5a04cc23adb0950335901d93740893f2cce07b86a0b095b78e5f",
+      "raw_review_sha256": "5ec7379a8e69c3084d0ea8781a519549c84d955b43bab643d5e81beb052749c9",
+      "summary": "两侧均纠正晶型I→II的错误前提；额外机制不能把可能解释写成确定因果，也不能把相对含量降幅当作绝对总量变化。",
+      "evidence_checked": [
+        "E08",
+        "E09",
+        "E24",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "boundary",
+          "from": "appropriate",
+          "to": "partial",
+          "reason": "纠正晶型前提是正确的，但C2把原文may/probably的晶区作用解释写成直接确定因果，因此不能判所有科学边界完整。",
+          "basis": "C2“使晶区受到破坏，所以结晶度指数下降”；E11原文mechanical treatment may ... / fluctuation probably ...",
+          "category": "semantic_correction"
+        }
+      ]
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-031",
+      "result_sha256": "5c9a72e97d35b3f1aca2b793a39455cfd75e5246354512e115edd4d0858aa4d7",
+      "grader_input_sha256": "cf10b7b746449ae817ba1b5d5da3edb441e1a4845bb9cd6f28dce4405974fc13",
+      "raw_review_sha256": "7837611b56565478b57f372dc273e59c33e77a93a746a210fedc12c1b597c0fa",
+      "summary": "两侧均纠正晶型I→II的错误前提；额外机制不能把可能解释写成确定因果，也不能把相对含量降幅当作绝对总量变化。",
+      "evidence_checked": [
+        "E08",
+        "E09",
+        "E24",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": [
+        {
+          "decision_key": "support_C6",
+          "from": "supported",
+          "to": "partially_supported",
+          "reason": "16.54%/5.91%是FT-IR相对峰面积占比的相对降幅，回答说“氢键总量”减少；还把might be due to改成确定归因，证据不足以支持这两层扩张。",
+          "basis": "C6“分子间氢键总量...减少16.54%和5.91%...归因”；E16相对峰面积定义、E27与3.3 might be due to ...",
+          "category": "semantic_correction"
+        },
+        {
+          "decision_key": "group_C6",
+          "from": "complete",
+          "to": "partial",
+          "reason": "16.54%/5.91%是FT-IR相对峰面积占比的相对降幅，回答说“氢键总量”减少；还把might be due to改成确定归因，证据不足以支持这两层扩张。",
+          "basis": "C6“分子间氢键总量...减少16.54%和5.91%...归因”；E16相对峰面积定义、E27与3.3 might be due to ...",
+          "category": "semantic_correction"
+        },
+        {
+          "decision_key": "boundary",
+          "from": "appropriate",
+          "to": "partial",
+          "reason": "晶型前提已正确纠正，但随后把相对组分变化表述为绝对总量并确定归因，科学边界未全部保持。",
+          "basis": "C6与E16/E27；与Astra31同样不因核心前提正确而免除额外确定性。",
+          "category": "semantic_correction"
+        }
+      ]
+    },
+    {
+      "arm": "astra",
+      "task_id": "PFI2-032",
+      "result_sha256": "c3e85f3cf557dedc9f3f7b43b4326ebf86176993542936911a2594c924ed7256",
+      "grader_input_sha256": "3a8efec51eee8aa2b859563be8e6905bfba004365e071c31775b2be45444b6e7",
+      "raw_review_sha256": "fd2c12735326dd80d77ddaf2c48de0846aa8f9056d34ba0279b5a7a510b04b78",
+      "summary": "两侧均纠正0.919/0.925含义并限制定量换算；都只给正文0.912/0.889，未指出摘要0.888冲突，P2保持0.5。最终证据确实没有摘要，属于检索后上下文缺失；此处不以缺证据免除漏答。",
+      "evidence_checked": [
+        "E10",
+        "E20",
+        "E21",
+        "E22",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    },
+    {
+      "arm": "deepseek",
+      "task_id": "PFI2-032",
+      "result_sha256": "8e1e306be0a1305d4ce36c7763026b71f8d244bc880d0a5755706234e86b3889",
+      "grader_input_sha256": "371b6ed431545ca6564e070e08eb55043032756e6f0f413bb7e400b71ab5c293",
+      "raw_review_sha256": "dcae12065adf4bc9da38b4104bd85711e8c9df39aeb1f63548f1e86598f4a4e2",
+      "summary": "两侧均纠正0.919/0.925含义并限制定量换算；都只给正文0.912/0.889，未指出摘要0.888冲突，P2保持0.5。最终证据确实没有摘要，属于检索后上下文缺失；此处不以缺证据免除漏答。",
+      "evidence_checked": [
+        "E10",
+        "E20",
+        "E21",
+        "E22",
+        "actual_claims_and_attached_citations"
+      ],
+      "changes": []
+    }
+  ]
+}

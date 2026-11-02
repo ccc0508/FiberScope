@@ -34,11 +34,15 @@ def load():
             rows[tid] = dict(job=job, raw_review=review, saved=saved, response=result['response'],
                 result_sha256=judge.digest(run_path(arm)/'results'/(tid+'.json')),
                 grader_input_sha256=entry['input_sha256'])
-        arms[arm]=dict(rows=rows,records=records,statuses={':'.join(k):v for k,v in statuses.items()})
+        arms[arm]=dict(rows=rows,records=records['jev'],statuses={':'.join(k):v for k,v in statuses.items()})
     for tid in arms['astra']['rows']:
         a,b=(arms[arm]['rows'][tid] for arm in ARMS)
         require(a['response']['retrieved_evidence']==b['response']['retrieved_evidence'],'Model source inputs differ')
         require(a['job']['reference_case']==b['job']['reference_case'],'Question or gold differs')
+        sent=lambda row:[c['model_info']['images'] for c in row['response']['generation_calls']
+                         if c.get('model_info') and 'images' in c['model_info']]
+        require(sent(a) and sent(b) and all(images==sent(a)[0] for images in sent(a)+sent(b)),
+                'Actually delivered source images differ')
     return arms
 
 
@@ -109,6 +113,7 @@ def publish():
     require(not PUBLIC.exists(),'Keep published reports immutable')
     arms=load();adj=judge.read_json(ADJUDICATION)
     require(adj['reviewer']=='Codex' and adj['policy_sha256']==grading.POLICY_SHA,'Wrong adjudicator/policy')
+    require(adj['final_evidence_unit']=='actual_attached_text_and_verified_images', 'Declare the multimodal review unit')
     index={(r['arm'],r['task_id']):r for r in adj['items']}
     require(len(index)==len(adj['items'])==64,'Review all 64 answers, not only one arm')
     records=[];summaries={};audit={}
@@ -126,37 +131,53 @@ def publish():
                 candidate=job['candidate'],raw_jev_review=raw,raw_jev_metrics=rm,
                 final_codex_review=final,final_codex_metrics=m,adjudication=a,
                 citation_validation=row['response']['citation_validation'],
-                sent_images=[c.get('model_info',{}).get('images',[]) for c in row['response']['generation_calls']],
+                sent_images=[(c.get('model_info') or {}).get('images',[]) for c in row['response']['generation_calls']],
                 generation_calls=row['response']['generation_calls']))
         responses=[v['response'] for v in data['rows'].values()]
         calls=[c for r in responses for c in r['generation_calls']]
-        usage={k:sum(c['usage'][k] for c in calls) if all(type((c.get('usage') or {}).get(k)) is int for c in calls) else None
-            for k in ['input_tokens','output_tokens','total_tokens']}
+        aliases={'input_tokens':'prompt_tokens','output_tokens':'completion_tokens','total_tokens':'total_tokens'}
+        usage={}
+        for key,alias in aliases.items():
+            values=[(c.get('usage') or {}).get(key,(c.get('usage') or {}).get(alias)) for c in calls]
+            usage[key]=sum(values) if all(type(v) is int for v in values) else None
         raw_ids={tid for tid,row in data['rows'].items() if row['raw_review'] is not None}
         summaries[arm]=dict(raw_jev=scoring.summarize(raw_rows) if raw_rows else None,
             final_codex=scoring.summarize(final_rows),corrected_question_ids=changes,
             supplemented_question_ids=sorted(set(data['rows'])-raw_ids),
             runtime=dict(answered=sum(r['status']=='answered' for r in responses),
-                generation_calls=len(calls),usage=usage,returned_models=dict(Counter((c.get('model_info') or {}).get('returned_model') for c in calls)),
+                generation_calls=len(calls),usage=usage,
+                usage_unknown_calls=sum(not c.get('usage') for c in calls),
+                known_usage={key:sum((c.get('usage') or {}).get(key,(c.get('usage') or {}).get(alias,0)) for c in calls)
+                    for key,alias in aliases.items()},
+                returned_models=dict(Counter((c.get('model_info') or {}).get('returned_model') or '<not_returned>' for c in calls)),
                 validation_failed_attempts=sum(a['status']=='failed' for r in responses for a in r['citation_validation']['attempts']),
                 actual_image_inputs=sum((c.get('model_info') or {}).get('image_count',0) for c in calls),
                 reported_answer_cost_usd=None,answer_price_note='Third-party invoice price not supplied; do not derive it from official prices.'),
             judge_accounting=scoring.accounting(data['records'],'jev'))
         audit[arm]=dict(statuses=data['statuses'],results={tid:v['result_sha256'] for tid,v in data['rows'].items()})
-    common=sorted(set(t for t,v in arms['astra']['rows'].items() if v['raw_review'] is not None) &
-                  set(t for t,v in arms['deepseek']['rows'].items() if v['raw_review'] is not None))
+    common=sorted(set(t for t,v in arms['astra']['rows'].items() if v['raw_review'] is not None and not v['raw_review']['reference_concern']) &
+                  set(t for t,v in arms['deepseek']['rows'].items() if v['raw_review'] is not None and not v['raw_review']['reference_concern']))
     for arm in ARMS:
         summaries[arm]['raw_jev_paired']=scoring.summarize([
             scoring.metrics(arms[arm]['rows'][t]['raw_review'],arms[arm]['rows'][t]['job']['reference_case'],
                 arms[arm]['rows'][t]['job']['task']['capabilities']) for t in common]) if common else None
+    success_ids=[tid for tid in sorted(arms['astra']['rows']) if all(
+        arms[arm]['rows'][tid]['response']['status']=='answered' for arm in ARMS)]
+    by_final={(r['arm'],r['task_id']):r for r in records}
+    for arm in ARMS:
+        summaries[arm]['final_codex_successful_subset']=scoring.summarize([
+            by_final[(arm,tid)]['final_codex_metrics'] for tid in success_ids])
     summary=dict(version='matched-answer-models-adjudicated-v1',questions=32,matched_text_and_images=32,
         raw_jev_paired_task_ids=common,
+        final_successful_subset_task_ids=success_ids,
+        successful_subset_note='Diagnostic only: excludes answers blocked by the platform. The primary result remains all 32 questions.',
         external_judge='typesafe/jev-1.14',final_authority='Codex source review; not independent human expert labels',
         summaries=summaries,policy_sha256=grading.POLICY_SHA,
         adjudication_sha256=judge.digest(ADJUDICATION),contract=judge.read_json(OUTPUT/'contract.json'),
         limitations=['One run per model on one paper; no significance or generalization claim.',
             'Current image-enabled retrieval differs from earlier text-only runs; main comparison is the newly matched pair.',
-            'Jev sees text evidence, not image pixels; visual facts require Codex image review.',
+            'Jev raw uses its unchanged attached-text protocol. Codex final additionally checks the exact verified images actually attached to the same citation ref; this evidence-unit extension applies to both arms and is disclosed separately.',
+            'Generation calls count application-level attempts. SDK automatic transport retries, if any, are not separate observable billed records.',
             'End-to-end latencies are not compared: DeepSeek replays retrieval while Astra performs it.',
             'Third-party actual model routing and invoice cost cannot be independently established from client response.'])
     PUBLIC.mkdir(parents=True)
@@ -181,14 +202,14 @@ def html_report(summary,records):
     pre=lambda v:'<pre>'+e(json.dumps(v,ensure_ascii=False,indent=2) if not isinstance(v,str) else v)+'</pre>'
     parts=['<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">',
         '<title>GPT-6 Astra 与 DeepSeek：同证据对照及评分复核</title><style>body{font:15px/1.75 system-ui;background:#f5f7fb;color:#203047;max-width:1280px;margin:32px auto;padding:0 20px}h1{font-size:29px}article,section{background:white;border:1px solid #dce4ef;border-radius:12px;padding:22px;margin:20px 0}table{border-collapse:collapse;width:100%;display:block;overflow:auto}td,th{border-bottom:1px solid #dce4ef;text-align:left;padding:10px;white-space:nowrap}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7fb;padding:14px;border-radius:8px}summary{cursor:pointer;font-weight:600}small{color:#63758c}.changed{border-left:4px solid #d48824}a{color:#2469b1}</style>',
-        '<h1>回答模型对照与评分复核</h1><p>32题 × 两个模型；同一份 MinerU＋千问检索证据、引用编号及原图。外部评委仅 Jev，最终以 Codex 对照原文复核为准。原始评分完整保留。</p>',
+        '<h1>回答模型对照与评分复核</h1><p>32题 × 两个模型；同一份 MinerU＋千问检索证据、引用编号及原图。外部评委仅 Jev，最终以 Codex 对照原文复核为准。原始评分完整保留。</p><p>口径说明：Jev原始分沿用文字引用协议；Codex最终分同时核查该引用编号下实际交付的原图，不能用库里存在但当时未交付的图片补证据。要点和边界准则保持原样。两侧统一适用。</p>',
         '<section><h2>汇总指标</h2><table><tr><th>回答模型</th><th>口径</th><th>要点均分</th><th>事实充分支持</th><th>单条引用</th><th>引用组完整</th><th>边界均分</th><th>全部达标</th></tr>']
     for arm in ARMS:
         s=summary['summaries'][arm]
         for label,key in [('Jev原始（两侧有效共同题）','raw_jev_paired'),('Codex最终复核（全部32题）','final_codex')]:
             if s[key] is not None:parts.append('<tr><td>'+e(LABELS[arm])+'</td><td>'+label+'</td>'+''.join('<td>'+e(v)+'</td>' for v in cells(s[key]))+'</tr>')
     parts+=['</table><p>没有加权总分。原始结果和复核结果分别比较；协议无效结果由 Codex 补评，不作为 Jev 零分。一次测试不能证明稳定性或统计显著性。</p></section>',
-        '<section><h2>32道题与逐项复核</h2><p>“事实支持”看完整论文是否支持陈述；“引用支持”只看回答实际附上的证据。含图引用的像素依据在复核中单独注明。</p></section>']
+        '<section><h2>32道题与逐项复核</h2><p>“事实支持”看论文是否支持陈述；“引用支持”只看回答实际附上的证据。含图引用的像素依据在复核中单独注明。纯资料缺失说明按scope检查，不混入科学事实的引用分母。</p></section>']
     by={(r['arm'],r['task_id']):r for r in records}
     for tid in sorted({r['task_id'] for r in records}):
         a=by[('astra',tid)]
@@ -202,7 +223,8 @@ def html_report(summary,records):
             if adj['changes']:parts+=['<h4>调整明细及证据</h4>'+pre(adj['changes'])]
             parts+=['<details><summary>Jev原始五维评分与最终评分</summary>'+pre(r['raw_jev_review'])+pre(r['final_codex_review'])+'</details>',
                 '<details><summary>实际引用与证据原文</summary>'+pre(r['candidate']['citations'])+'</details>',
-                '<details><summary>原图交付及引用校验记录</summary>'+pre(r['sent_images'])+pre(r['citation_validation'])+'</details></section>']
+                '<details><summary>原图交付及引用校验记录</summary>'+pre(r['sent_images'])+pre(r['citation_validation'])+'</details>',
+                '<details><summary>完整复核依据与补评决定</summary>'+pre(adj)+'</details></section>']
         parts+=['</article>']
     parts+=['<section><h2>调用与费用记录</h2>'+pre({a:summary['summaries'][a] for a in ARMS})+'</section>',
         '<section><h2>适用范围</h2>'+pre(summary['limitations'])+'<p>原论文：Li等，Polymers 2020, 12, 2912，DOI: <a href="https://doi.org/10.3390/polym12122912">10.3390/polym12122912</a>。本报告源材料保持原样。</p></section></html>']
