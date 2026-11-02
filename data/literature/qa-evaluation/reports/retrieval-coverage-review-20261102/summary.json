@@ -1,0 +1,708 @@
+{
+  "version": "retrieval-coverage-review-20261102",
+  "source_audit_sha256": "210060a8af09e1e88304a81cf8a059ad22506160652a508ca47a9ff3b896c106",
+  "auditor_sha256": "d6314d279d3dfd5cbdd62159c8c38ec75afac8a6985c6cc41394496adb8e7a1b",
+  "provider_calls": 0,
+  "metric": "Complete original reference interval coverage, not semantic key-fact recall or answer quality.",
+  "common_strict_reference_ids": [
+    "E01",
+    "E02",
+    "E03",
+    "E04",
+    "E08",
+    "E09",
+    "E18",
+    "E19",
+    "E22",
+    "E23",
+    "E25"
+  ],
+  "reference_occurrences": 20,
+  "strict_question_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-005",
+    "PFI2-008",
+    "PFI2-009",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-015",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-032"
+  ],
+  "total_non_scope_reference_occurrences": 43,
+  "summary": {
+    "current": {
+      "exact_comparable_reference_occurrences": 20,
+      "final_counts": {
+        "complete": 20
+      },
+      "missing_or_partial": []
+    },
+    "intermediate": {
+      "exact_comparable_reference_occurrences": 20,
+      "final_counts": {
+        "complete": 18,
+        "missing": 2
+      },
+      "missing_or_partial": [
+        {
+          "task_id": "PFI2-020",
+          "evidence_id": "E18",
+          "status": "missing",
+          "covered": 0,
+          "total": 269,
+          "ratio": 0.0,
+          "chunk_ids": [],
+          "alignment_status": "located"
+        },
+        {
+          "task_id": "PFI2-020",
+          "evidence_id": "E19",
+          "status": "missing",
+          "covered": 0,
+          "total": 269,
+          "ratio": 0.0,
+          "chunk_ids": [],
+          "alignment_status": "located"
+        }
+      ]
+    },
+    "original": {
+      "exact_comparable_reference_occurrences": 20,
+      "final_counts": {
+        "complete": 13,
+        "missing": 6,
+        "partial": 1
+      },
+      "missing_or_partial": [
+        {
+          "task_id": "PFI2-010",
+          "evidence_id": "E08",
+          "status": "missing",
+          "covered": 0,
+          "total": 222,
+          "ratio": 0.0,
+          "chunk_ids": [],
+          "alignment_status": "located"
+        },
+        {
+          "task_id": "PFI2-010",
+          "evidence_id": "E09",
+          "status": "missing",
+          "covered": 0,
+          "total": 222,
+          "ratio": 0.0,
+          "chunk_ids": [],
+          "alignment_status": "located"
+        },
+        {
+          "task_id": "PFI2-011",
+          "evidence_id": "E08",
+          "status": "missing",
+          "covered": 0,
+          "total": 222,
+          "ratio": 0.0,
+          "chunk_ids": [],
+          "alignment_status": "located"
+        },
+        {
+          "task_id": "PFI2-011",
+          "evidence_id": "E09",
+          "status": "missing",
+          "covered": 0,
+          "total": 222,
+          "ratio": 0.0,
+          "chunk_ids": [],
+          "alignment_status": "located"
+        },
+        {
+          "task_id": "PFI2-020",
+          "evidence_id": "E18",
+          "status": "missing",
+          "covered": 0,
+          "total": 269,
+          "ratio": 0.0,
+          "chunk_ids": [],
+          "alignment_status": "located"
+        },
+        {
+          "task_id": "PFI2-020",
+          "evidence_id": "E19",
+          "status": "missing",
+          "covered": 0,
+          "total": 269,
+          "ratio": 0.0,
+          "chunk_ids": [],
+          "alignment_status": "located"
+        },
+        {
+          "task_id": "PFI2-021",
+          "evidence_id": "E19",
+          "status": "partial",
+          "covered": 183,
+          "total": 269,
+          "ratio": 0.6802973977695167,
+          "chunk_ids": [
+            "chk_dba88ef15231f6347a84"
+          ],
+          "alignment_status": "located"
+        }
+      ]
+    }
+  },
+  "current_provisional_exceptions": [
+    {
+      "task_id": "PFI2-016",
+      "evidence_id": "E14",
+      "alignment": "unresolved",
+      "status": "unresolved",
+      "covered": 0,
+      "total": 0,
+      "ratio": null,
+      "chunk_ids": []
+    },
+    {
+      "task_id": "PFI2-017",
+      "evidence_id": "E14",
+      "alignment": "unresolved",
+      "status": "unresolved",
+      "covered": 0,
+      "total": 0,
+      "ratio": null,
+      "chunk_ids": []
+    },
+    {
+      "task_id": "PFI2-024",
+      "evidence_id": "E13",
+      "alignment": "review_required",
+      "status": "partial",
+      "covered": 1003,
+      "total": 1509,
+      "ratio": 0.6646785950960902,
+      "chunk_ids": [
+        "chk_856dddfcce6b30e8cef1",
+        "chk_a4b5abfbaeecef8af016"
+      ],
+      "alignment_status": "review_required"
+    },
+    {
+      "task_id": "PFI2-024",
+      "evidence_id": "E14",
+      "alignment": "unresolved",
+      "status": "unresolved",
+      "covered": 0,
+      "total": 0,
+      "ratio": null,
+      "chunk_ids": []
+    },
+    {
+      "task_id": "PFI2-027",
+      "evidence_id": "E14",
+      "alignment": "unresolved",
+      "status": "unresolved",
+      "covered": 0,
+      "total": 0,
+      "ratio": null,
+      "chunk_ids": []
+    },
+    {
+      "task_id": "PFI2-030",
+      "evidence_id": "E14",
+      "alignment": "unresolved",
+      "status": "unresolved",
+      "covered": 0,
+      "total": 0,
+      "ratio": null,
+      "chunk_ids": []
+    },
+    {
+      "task_id": "PFI2-032",
+      "evidence_id": "E20",
+      "alignment": "review_required",
+      "status": "missing",
+      "covered": 0,
+      "total": 144,
+      "ratio": 0.0,
+      "chunk_ids": [],
+      "alignment_status": "review_required"
+    }
+  ],
+  "result_origins": {
+    "PFI2-001": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "4004c1fee871fce33901903247779f7b8ffcc842eb679ea6b480397988798a93"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "31f63034fa7bf6d125780e81b14d1a6c891fcfe127cb333764f2fbc5d5997ae5"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "a593489b43d7814d25bace7328bdfc2da28220c028815c9e46da76f365b67322"
+      }
+    },
+    "PFI2-002": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "c60a3a6c12bacdefcc252bd29e217ab3b099d24d7614d648488f9f9b4aa92122"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "54f3f06a01593d2b7fbaf0bbe27aba377a2bb4439282c265299f00de6ac3d9b2"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "5d0cc7109be5a6c8670890215dd20f593cff5264827afc55af02b634ab346939"
+      }
+    },
+    "PFI2-003": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "da7929dd4528f81774244b9a5276e0eb5513641f74cd5f8d23a6eb5c9d5c85f2"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "c18bb4b8290b41784c2b6d00c21643b5d483f61a191bd9536173f8cfa4bd5d28"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "3147bb141b1989d3467415d6d605a946cfc42ca2b49715f183c768b092e4c9dd"
+      }
+    },
+    "PFI2-004": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "a39ff1c920d47fbed56897e5d594b678645d44f0ff2b572d2be52ed5127fcd46"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "63bb5878d72ab7c66096121de935d9a71eb9acada11fa303a9ad16c6c9a3233d"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "724d32a05d7646ab0910cc9d86f56f877bf0bcc6eb2a40ffc99f5154d0c9fe4f"
+      }
+    },
+    "PFI2-005": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "a8396aeeeab3e03ca654b293d36a87b3d83ca81332f228211f333cf947d15fc6"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "88829eddea0d99a8343e1298d9f2862e36415791f4f6e7e57985ae1d42193938"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "ddef3c851ca1b8d9c2d1cc027bec4ff29fd5a9ee3f8556e63cc77f56317f8be4"
+      }
+    },
+    "PFI2-006": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "48a344a8eb526a1733dda2ea65c9e69ab07927e93247ebfd1a34fe8ec6750126"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "664e093a86361bc566547f96b189d4b1a3b846cad818aced173be8947bd44c89"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "40cd1bcfe8ab6dc26379cc456d4c092f54cfaf8b259ec25d00e48ace738a750c"
+      }
+    },
+    "PFI2-007": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "4c28ab3132a889126067499f9363f18dc3ee36cc5df49b90861ac79272830462"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "bfdc0af7d5911fb9facbeada05b2857a59fa361413079cc22e00ef8baad00c44"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-recovery300",
+        "sha256": "cbc20ed66f063e73a007321bb0b57f26144f0cb8a00937ba61bf9a7c3e3e5ce9"
+      }
+    },
+    "PFI2-008": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "073a45307d9cca259e81e45ad1deb286574fce2d3d4c1e6a63efbff04db36788"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "c5ff1008d95f928fbb2e80d3efa1dc7336f816e067cbd7aec7ca9091dfdf84da"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-recovery300",
+        "sha256": "07ce13abd672292dcd788d585a01d5846e990c0d647d077766802c0bc909ffbd"
+      }
+    },
+    "PFI2-009": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "527c67848f76bebaf69db762fa8504ed1be91efc81b6d2dc7e14dc910dd9c89a"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "68dc86b6add3400f37bb0ddce202131d014738b1a463bfde60f889b69138177a"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-recovery300",
+        "sha256": "840f7bc50567f87a1c46d2f761217d28ef02002035a2191d43a0c204283acc14"
+      }
+    },
+    "PFI2-010": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "dbbe91618c1ce871bbe5114dd8cdfd9f17fc2ede2f4d88c4121c87d60c531da1"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "d78777a25ea3139de63d2bd1b861daad6e9a87876ddb4be9966d96f82eb825b0"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-recovery300",
+        "sha256": "35cbcfcb4ed382d1909a79c4348cb043bf41d54f82773dd444316a2a75ec42f1"
+      }
+    },
+    "PFI2-011": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "efcebab4b570b72b03a589020e10297e8347701ae06f6ec7a2ba1719592dbda5"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "e74efd7ee8f7e8684ad43cd17ebec19f7ab145069387210392efab420569ce50"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "fd92c02da8118877473c03f1924e1f38cea2f80472e07c02f85883db8b66576e"
+      }
+    },
+    "PFI2-012": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "775935f3b5db723f2506ab4180da61c248c9f2ef7cae1c74fd63cd4831e9c87a"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "871a14dd1b12f7706d190c0b727eced4a90da9ab6d100ca4b5c020a3fc6adb87"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "4bb702fac4bc099bebce7faea8cf762c23fa0355004ae838ed60083b09c49d6d"
+      }
+    },
+    "PFI2-013": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "fd575719ed9d63f074cde737bc94d2b640de25c339dcd03404bf5513bbb57adf"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "64afc8e5dcd49a9b7ede665c63022972ae9c2ddddf6e6fea464168f967de5420"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "ce64343fe2c6cefae93b1177c7676a219ae3e9ba05caa970f4bb87297f87a66c"
+      }
+    },
+    "PFI2-014": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "4a1842b38b3b559a6635fee6a286b667ab245c5f130b5e4dee28906f30285c49"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "df4b0d230961095c7c97f84275b04ab6dfa02dfad4f622df7cc791986227521d"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "566da410e540bc1bdf9fd1482d33852ae34f11ebef69f86f3903c7240211e026"
+      }
+    },
+    "PFI2-015": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "94f5e70d45eda7a0882e001e84123350db5484b0974960a27dc5d09fbf40600c"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "21c25f1ecac095ca8139d7961cc727a9f21ddce80a4c0956306771c4d2da6fea"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "c9bf71e27f6e91629e66ea30670b26daaf24e4b799d2949d780030cb63316c9c"
+      }
+    },
+    "PFI2-016": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "014897fc71a9cd21d326a436a8a313593318496d29f1ac10aa5c0216635eed27"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "d5e2d38e32574fe34c1834ea8be0ec800799328c4cbc9d7023a7019c85d5e433"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "97750f3e54d9116371beec5e2561b10a0c3fe8d65177af54b4896677994bde0a"
+      }
+    },
+    "PFI2-017": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "3a9d493b64be306d7d1fcab62457ca608d787796894a3622f2834b1145c0eb58"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "e5e3007c56eadf49d9010eae4a7e6cdf187b7d1a82f2f04395d62b9a87af3cb1"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "1ecdd9956fa0f9ac6212d7cdf0c44a77e24c378f22dae8b13e881228a52285db"
+      }
+    },
+    "PFI2-018": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "e938c40413d9061373fde4c9584140a3bd81c12fe0fad98eea9cf716d97a7383"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "94ef0fa7d9db4761d749ed782c13dfcd131c62a24c4caba98cb7e5e39ada643f"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "bc1969d522e67d565ccf52531367615631f2e29b119c9cc222d236480b5ad016"
+      }
+    },
+    "PFI2-019": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "a40af4ba5b76bea7043c3b2c4ba714d25bfdfba4de93891609de69d3be40e97c"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "3d0864c8a61cbc48a855a02e219c62a341b5ae92765cc91878ea9e84d05ae131"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "47210d024dc4ab616991f5525f58126b3ebff3f9b9c02a46aa5f6ad7837fb177"
+      }
+    },
+    "PFI2-020": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "965a5577da5126c37a255dde7fbeb6a4ffa55f1d057aafbdb01192a114c3c44f"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "dc572cc5c7b2f516a60c3edf75a2843cac4d206ff2b0900ce046f1e22028d3f8"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "cd1583194c78bc8a276afe5ae3b5bb9a20caf5ab21c83cce88e54bcb8744cb0e"
+      }
+    },
+    "PFI2-021": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "16927ca89303458c1895f68d3f24aece3e5eebd59598f2a63fa256e93e62099f"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "ecc5e78ad197a496763e3fe609605aecf601f0a327132ba0d59c8f697bacf257"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "78a757c6a8c390cdfd2e18b2f6b00f593ee32c2cf26bbbb8a7b8920d3971e89b"
+      }
+    },
+    "PFI2-022": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "e7cdf99a70ade498f38952687138afe053584579c8954a9e85edff763a2670da"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "d5309bc44f167bbb24e696b55ba897015473dd3809312ba4a1f3ef8620501261"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "ae67019a08b792d81dfcc1f4ec6b03c34834dac535623ae0982c83aa5f88c9a8"
+      }
+    },
+    "PFI2-023": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "ec7c79672c3aeac76f3d0ce6157ab81b7bad924ada5cb92e648fa4f0f00c76d0"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "08b95a36db8b87d2be1d88395df25097ca4b9389617c04120640b61379dbbfab"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "6d401a67c36859e1691d1409599de4128fbda39ff177c34a90c37cf7f4a4487e"
+      }
+    },
+    "PFI2-024": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "47277641bf9091de58ad18395f163faf1eb1de7edcdebdc704fba1a74fc5b691"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "0c14062d33bd7673198ddf81e185191864e44fb59f9bd17ad63924c7502d3cf1"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "e7831b9e34829aacdf8a087a7a35ea38b3fbaad8b16ce957c0f7c6e7b72f7d07"
+      }
+    },
+    "PFI2-025": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "3cadb2e2f2c0af7403fcf17168a9dc6954c00905d6976b61b63732eb4ea2e972"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "e953c53fcbd35f6ccb1326b51baddf436153f7e9486dbbc029b8a22871a7c1bf"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "105277ba72c2e63a5208fc4105e5c2378754f51c54cc36b81483188ff89e92d2"
+      }
+    },
+    "PFI2-026": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "81906e4880106aa53b33284d6006ca46b0237137dca02631c2ecc3c8b8d9dd30"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "6e945480a95d0df646e9410a7614cb343a7a70670a5bc3fa3271799ef4b1c9b1"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "236acd8499cf621296cfa51d66879c7ddd7f5f259add65cd736d3c16a2b56a2e"
+      }
+    },
+    "PFI2-027": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "f4e7967ad3f5f17c5871c94861e79752af59eec4a7d8b0b5665a8a1281caa605"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "6403517a089b14ad2c94e39c55dc4f6e4be8ef8e43008dff15a7ad2574384139"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "bfb5e8c5dd5b8cc9487fa56b0209e1171c7114aeb8a61752759c7775e16cc3ad"
+      }
+    },
+    "PFI2-028": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "05737bb35e17554ba1e30dca92f1cb533921c4f1b882144e7f88b5df15affdb8"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "b77b9d33192ba3ae019ddfbd609368bdb6567b053a5587cbda7cfb6b96d08cc7"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "3ef8657c1db007a9d6fcf138e19752084828d7c3827d3f1c7f039828a5759bd9"
+      }
+    },
+    "PFI2-029": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "5ef2f49889a03a1451d90c1c63cf16adbbab09171cc0a9089490753d375ae503"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "671a5a5b92bfe63878b7ede0653cdc31156c68fb6a482b8128e20e3b8e1bc2d4"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "8119689d2657006bf77696c8ea219cda4b6365fb541137f14d8d85eeb4582ed1"
+      }
+    },
+    "PFI2-030": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "0c11da2bf0bf4310f1f9fdda9613a775950fe5067486118d152b4d8956b5c61c"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "4f5a75bec9cf29dea9bfd6f701f3d9f429f8d4155c2ce8314bf65f2875d736e7"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "b34b205a6ebd4908c49ab353221fc6b7789cbc35658ed6ba42d08262231ded2b"
+      }
+    },
+    "PFI2-031": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "5f72e93ce87b818cdb39a23aea8a970f9c290ea1b0fb3952e1c415bbc61cfe28"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "c470cf2a31b31ea19e5212f067950894cc4da7642f505c8ecb4680fa9ce81643"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "f0fc86e408cd30fb23ab2d4f110fe6b0d1e911d8c20f1df550d0efe057813e9c"
+      }
+    },
+    "PFI2-032": {
+      "current": {
+        "run": "pfi-qwen-twojudges-20261102-r2",
+        "sha256": "1c892ccb93fd50a3e4353f92e1d8df9bf6c4853d9d896cb5cc3b66365ff4f738"
+      },
+      "intermediate": {
+        "run": "pfi-context-v1-20261029-r1",
+        "sha256": "ccb22e8649c2897633c8203272f134ed465444f1822f42659e2a552fb28315f9"
+      },
+      "original": {
+        "run": "pfi-v41flash1017-high-20261028-r1",
+        "sha256": "69d6868af3638f3af8ca8232812c46c6c646ca85124e27852787d32d3279b54d"
+      }
+    }
+  },
+  "raw_alignment_status_counts": {
+    "current": {
+      "located": 11,
+      "review_required": 15,
+      "unresolved": 2
+    },
+    "intermediate": {
+      "located": 28,
+      "review_required": 0,
+      "unresolved": 0
+    },
+    "original": {
+      "located": 28,
+      "review_required": 0,
+      "unresolved": 0
+    }
+  },
+  "limitations": [
+    "20 matched reference occurrences in 14 questions only; 23 non-scope reference occurrences excluded from strict comparison.",
+    "Question 32 missing abstract is outside exact-alignment subset; current 20/20 cannot imply no retrieval failure.",
+    "Whole reference-span absence does not imply no alternative sufficient evidence, especially question 20.",
+    "No full semantic sufficiency annotation, no causal component attribution or new-paper generalization."
+  ]
+}
