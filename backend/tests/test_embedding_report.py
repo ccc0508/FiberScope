@@ -6,7 +6,7 @@ import sys
 import pytest
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'scripts'))
-from report_embedding_20261102 import retrieval_diff,summarize_coverage,reference_coverage,runtime
+from report_embedding_20261102 import retrieval_diff,summarize_coverage,reference_coverage,runtime,interpret
 
 
 def response():
@@ -52,3 +52,21 @@ def test_shared_rewrite_is_not_counted_as_a_paid_generation_call():
     assert rt['median_question_embedding_seconds']==.07
     r['query_rewrite_calls'][0]['api_calls']=1
     with pytest.raises(ValueError,match='replayed'):runtime([dict(status='answered',end_to_end_ms=1000,response=r)])
+
+
+def test_citation_failure_contribution_is_diagnostic_and_does_not_delete_scores():
+    rows=[]
+    for tid,b,q,reason in [('PFI2-027',0,1,'citation_validation_failed'),
+                          ('PFI2-032',0,5/6,'citation_validation_failed'),
+                          ('PFI2-025',1,0,None)]:
+        rows.append(dict(task_id=tid,bge=dict(metrics=dict(point_mean=b),answer_runtime=dict(reason_code=reason)),
+                         qwen=dict(metrics=dict(point_mean=q))))
+    before=deepcopy(rows)
+    summary=dict(bge=dict(point_macro_average=1/3,all_five_pass=1),
+                 qwen=dict(point_macro_average=11/18,all_five_pass=0))
+    note=interpret(rows,[r['task_id'] for r in rows],summary)
+    assert rows==before
+    assert note['baseline_citation_failure_task_ids']==['PFI2-027','PFI2-032']
+    parts=note['point_delta_decomposition']
+    assert parts['total_percentage_points']==pytest.approx(100*5/18)
+    assert parts['other_questions_percentage_points']==pytest.approx(-100/3)

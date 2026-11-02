@@ -97,6 +97,32 @@ def failed_grades(arm,audit):
     return rows
 
 
+def interpret(rows,common,summary):
+    """Describe this frozen run; these observations never change Jev's decisions."""
+    selected=[r for r in rows if r['task_id'] in common]
+    refusal_cases=[r for r in selected if r['bge']['answer_runtime']['reason_code']=='citation_validation_failed']
+    contribution=sum(r['qwen']['metrics']['point_mean']-r['bge']['metrics']['point_mean'] for r in refusal_cases)/len(common)
+    delta=summary['qwen']['point_macro_average']-summary['bge']['point_macro_average']
+    observations={
+        'PFI2-004':'首次输入完全相同。两版均给63/57 °SR并列作用力条件；Jev把Qwen的条件限制要点评为部分覆盖。属于措辞/裁判敏感性，不能归因于新检索。',
+        'PFI2-015':'两版都找到纤维长度变化及较低作用力的解释，但都未明确说不能全部归因于浆种；Jev对这项限制分别判缺失/部分。没有证明补到了新的关键事实。',
+        'PFI2-020':'首次输入完全相同，要点均全覆盖。Qwen回答的陈述及引用组获全支持；BGE多写的一项free OH解释被判部分支持。',
+        'PFI2-024':'首次输入完全相同，要点均全覆盖。BGE有一条额外机制陈述被判部分支持；Qwen的表达全部获支持，属于生成表述差异。',
+        'PFI2-025':'两版都拿到补充表线索。Qwen列了Table S1与定性趋势，却没有明确说明当前证据缺少8000转的精确BET值，必答点从1降为0；并非提供了错误数值。',
+        'PFI2-026':'两版均无逐次重复实验数据。Qwen明确限定为所给证据未提供，获得完整要点；BGE措辞与引用组获部分支持。未证明原始数据召回增加。',
+        'PFI2-027':'首次输入完全相同。BGE两次生成后引用校验失败并返回统一拒答；Qwen回答可答部分并声明耐破/撕裂数据缺失。不能把此增分算作召回收益。',
+        'PFI2-032':'BGE两次生成后引用校验失败；Qwen纠正0.919/0.925的对象并给正文0.912/0.889，但仍漏摘要0.888及冲突，只获部分要点。不能视为已解决冲突检索。'}
+    return dict(source='Report interpretation of saved answers/runtime and original Jev labels; not Jev-generated rationale.',
+        mainline=f'共同{len(common)}题，要点提高{delta*100:.2f}个百分点；五项全达标BGE为{summary["bge"]["all_five_pass"]}题，Qwen为{summary["qwen"]["all_five_pass"]}题。本轮略好，但未证明文字检索稳定领先。',
+        baseline_citation_failure_task_ids=[r['task_id'] for r in refusal_cases],
+        point_delta_decomposition=dict(total_percentage_points=delta*100,
+            baseline_citation_failure_questions_percentage_points=contribution*100,
+            other_questions_percentage_points=(delta-contribution)*100,
+            note='Arithmetic decomposition, not causal attribution; keep all these questions in the primary paired result.'),
+        cases=[dict(task_id=r['task_id'],note=observations[r['task_id']]) for r in selected if r['task_id'] in observations],
+        next_step='保留候选，不据此替换网站默认版本。先补图像题单独核验多模态收益；文字部分优先定位引用校验拒答、缺数据声明及摘要/正文冲突漏检。')
+
+
 def publish():
     require(not PUBLIC.exists() and not DOC.exists(),'Preserve existing publication')
     runs=check_pair();data={a:audit_one(plan(a)['import_dir'],plan(a)['study_dir']) for a in ARMS}
@@ -166,6 +192,7 @@ def publish():
             '0.35 is inherited and uncalibrated for Qwen; this compares current settings rather than tuned model ceilings.',
             'Exact reference-interval coverage excludes unresolved/review-required alignment and is not a semantic answer score.',
             'No image retrieval or image answering evaluated; production candidate configuration unchanged.'])
+    result['interpretation']=interpret(rows,common,summary)
     PUBLIC.mkdir(parents=True)
     scoring.save(PUBLIC/'comparison.json',result)
     (PUBLIC/'questions-answers-reviews.jsonl').write_text(''.join(judge.encode(r)+'\n' for r in rows),encoding='utf-8',newline='\n')
@@ -180,6 +207,12 @@ def publish():
         '| '+' | '.join(headers)+' |','| '+' | '.join(['---']*len(headers))+' |']
     lines+=['| '+LABELS[a]+' | '+' | '.join(quality_cells(summary[a]))+' |' for a in ARMS]
     lines+=['',f"有效评分：{result['valid_grades']}；共同题排除{result['excluded_task_ids']}。无效评分不记零，不算加权总分。",'',
+        '## 结果解读','',result['interpretation']['mainline'],'',
+        '以下为报告对保存的回答、运行诊断及Jev原判的解读，不是Jev生成的文字理由，也不更改模型分数。','',
+        *[f"- {case['task_id']}：{case['note']}" for case in result['interpretation']['cases']],
+        '',f"要点差异的算术分解：{judge.encode(result['interpretation']['point_delta_decomposition'])}",
+        '第27/32题对总差异贡献较大，但含生成/校验失败，不能据此认定检索能力提高。主表仍保留这两题，没有事后删题抬分。','',
+        result['interpretation']['next_step'],'',
         '## 逐题变化','',*[f"- {k}：{', '.join(v) or '无'}" for k,v in changes.items()],
         '',f"32题中{retrieval['same_initial_generation_input']}题首次生成输入完全相同，这类题的分数变化不能归因于Embedding补到了新材料。",'',
         '## 检索变化与参考原文覆盖','', '```json',json.dumps(dict(retrieval=retrieval,reference_coverage=result['reference_coverage'],alignment_statuses=result['alignment_statuses']),ensure_ascii=False,indent=2),'```','',
@@ -191,6 +224,7 @@ def publish():
             f"  - 运行用量：{judge.encode(rt)}",f"  - Jev评分：{judge.encode(result['judge_accounting'][a])}"]
     lines+=['','端到端不含预先生成改写的耗时；改写一次计费、两组回放不再计费。不要与之前实时改写的耗时直接比较。推理Token已含在生成Token内，未返回金额保持未知。','',
         '## 无效评分','', '```json',json.dumps(result['failed_grades'],ensure_ascii=False,indent=2),'```','',
+        '本轮未重复入库Embedding；这里的Token仅统计新问题与本轮运行。此前索引重建的用量不混入本轮答题成本。','',
         '## 结论的适用范围','',
         '本轮比较同一113块、20条表格行、相同query和原BGE重排下的模型替换，不包含图片。仅一轮开发集结果，不证明稳定性或新论文泛化；0.35未针对Qwen校准，不代表两模型最佳能力。两组均新答、独立进程，裁判不看另一组答案、模型身份或旧分数。网站和启用图片的MinerU候选配置均未切换。','',
         '[方法](QA_EMBEDDING_METHOD_20261102.md)',
@@ -209,6 +243,9 @@ def render(result,rows):
         '<style>body{margin:0;background:#f3f6fa;color:#203247;font:15px/1.7 system-ui}main{max-width:1300px;margin:30px auto;padding:0 20px}article,details{background:white;border:1px solid #dce5ef;border-radius:10px;padding:18px;margin:15px 0}table{width:100%;border-collapse:collapse}td,th{padding:9px;text-align:left;border-bottom:1px solid #e6edf4}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f7f9fc;padding:12px}summary{cursor:pointer;font-weight:600}.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}.pair section{min-width:0}@media(max-width:800px){.pair{display:block}table{font-size:12px}td,th{padding:4px}}</style><main>',
         '<h1>BGE-M3与Qwen3-VL-Embedding：文字检索对照</h1><p>2026-11-02 · 图片关闭 · 相同原问题与改写 · 原问题重排 · 各32次新答题 · Jev五维</p><article>'+table+
         '<p>不计算加权总分；共享改写只生成一次，不让改写随机性混入模型替换。0.35阈值未专门校准；本轮不评价图片能力或新论文泛化。</p></article>',
+        '<article><h2>结果解读</h2><p>'+esc(result['interpretation']['mainline'])+'</p><p>以下是报告解读，不是Jev生成的文字理由，未改变原分数。</p><ul>'+''.join(
+            '<li><a href="#'+esc(c['task_id'])+'">'+esc(c['task_id'])+'</a>：'+esc(c['note'])+'</li>' for c in result['interpretation']['cases'])+
+        '</ul><p>'+esc(result['interpretation']['next_step'])+'</p></article>',
         '<details><summary>覆盖诊断、用量与排除说明</summary><pre>'+esc(json.dumps(result,ensure_ascii=False,indent=2))+'</pre></details>']
     for row in rows:
         parts+=['<details id="'+esc(row['task_id'])+'"><summary>'+esc(row['task_id']+' · '+row['question'])+'</summary>',

@@ -1,0 +1,1732 @@
+{
+  "proofs": {
+    "bge": [
+      {
+        "name": "jev-e4bbb65228efce3f9625",
+        "record_sha256": "c05ad61292a05e3c2c9599792bcec91f49f6ebd38e9687bc6945a087e7591023",
+        "request_sha256": "d0386f10f37039c16abe0dddee5e9f4fcaaf7a2931e12acb0f7418c7cda61c74"
+      },
+      {
+        "name": "jev-c73e981241f338825861",
+        "record_sha256": "00b01b14f73adae39e892dc1cdb1651afc7b8cb7c4aa1d94ea93a36810b375af",
+        "request_sha256": "b99a9f759df8ffe5642a5551d650a4aa43dcd6bc11f08f880c61093cbb2d5f12"
+      },
+      {
+        "name": "jev-3b79ac6d7cc243f9fd17",
+        "record_sha256": "86c007344dd651794156eb0e09fe68911f0d4ef705a6a605584bf0019b0bf142",
+        "request_sha256": "e5822098355ae5a8e7b4576bf8d5aaff619bc0b2de6d31d882b95194ce6a4a7b"
+      },
+      {
+        "name": "jev-f0159be14e8e6101c5c6",
+        "record_sha256": "0e16d6055688b931456c921a54151286a32f56c98ea5f955ae636a3c17446034",
+        "request_sha256": "16a07f2560677723270372f7f4fb5d4eb63445a96a987a363c74a48d05ed94c5"
+      },
+      {
+        "name": "jev-b1810866b1d0f74a218b",
+        "record_sha256": "a8e4594228e582e4d5473fbb546d56c7530b17d5846712079f5693a8cf1cfae5",
+        "request_sha256": "4a8a358bd12ba60917bea5b8fd0758c07e982b4e1f51e523f642262026baf560"
+      },
+      {
+        "name": "jev-e2097025d99b910708e9",
+        "record_sha256": "7ff50d02cdb75785665d64ecf25b5d27a70d5e6f7c5a46fcce62598cd05707fb",
+        "request_sha256": "207455acee411810e9ba2d687a4685ec2ad01b006ea47d9af6fb66b94284e363"
+      },
+      {
+        "name": "jev-a0c68f9b1e35a7443deb",
+        "record_sha256": "d7cb276c51cbd8d25c2b795d716124f4989fe32b5a7616115ec2290ffef854fb",
+        "request_sha256": "ab5c1b43b2354a90ec16c62e1da2519e5dbcf1e906294a204f831d8d3e51c7b5"
+      },
+      {
+        "name": "jev-771ff87304e1a1ead1b0",
+        "record_sha256": "7a8138123db613f95cde1695e8d729ee851221acb247e712d4daf11d39bc67fa",
+        "request_sha256": "fae182eed3006e8b398e4470345aa5c51905dba0044a4a04d9b62de2190ea923"
+      },
+      {
+        "name": "jev-e5d9470df28a66d4c428",
+        "record_sha256": "0f916ccb12da7ef2d75ae41519b43a96dcd0edc0259cca4784eafc77430cad5c",
+        "request_sha256": "0ed598db37109e1d95d99753068adc67f16d113401a1be062d42f204cd48486d"
+      },
+      {
+        "name": "jev-fd65f386c8037328d772",
+        "record_sha256": "1ded9c4d1432478228f24ebb145e83d158bd7c72de5f2b54ae347486b55611e8",
+        "request_sha256": "13c156be31aa50ed9b8bc01f50f1d8eb330eb4a3960257158803ed6cba32d89b"
+      },
+      {
+        "name": "jev-a7db082a512ae54a8ab0",
+        "record_sha256": "248d73062c294fc8d98179c30ae6777b22764601a2438b4458e31d0e7b6d272b",
+        "request_sha256": "f601448e00d28cbe1581a255048abcdabf601ae1ae6893a46c7e985cd372b62a"
+      },
+      {
+        "name": "jev-50fd9a6289e4a649b613",
+        "record_sha256": "96888f435e2b9e3007feb5b5d6e169272bf3369ecbb9fe23e511791a2740c05a",
+        "request_sha256": "d70a3bb4e5df8df71ba6da21decd96930a181e6fc4843ca2e2d870ec5b28cd36"
+      },
+      {
+        "name": "jev-bdaf70c6778c0a0afc66",
+        "record_sha256": "470e0714e0e052fc1b7bddab2002a395860eec523bc16614894cc52ecd2dacc3",
+        "request_sha256": "14f5f538b1fdd6859b75c082f408ebed86580247b815c4d241f2dbacc13f41b4"
+      },
+      {
+        "name": "jev-8e3739b122034fd71ef9",
+        "record_sha256": "fa28f440afc88a3c04c55b8623ba138935aacb9267a0e415b86b23659170e181",
+        "request_sha256": "bc162c2c4e718f8205e00e4d543a6d251f28c09844bd15d95ea1d8ad61ba5d5e"
+      },
+      {
+        "name": "jev-627f44d831fed5af4dc5",
+        "record_sha256": "3a89ab8645d64f528d6128b074f3ae227e1bc2ae076007cf0c5059eee6502aad",
+        "request_sha256": "b178f9747a3ed2c15dbda1635728d227ef1a3e865d4c256cc3e343162a45d14c"
+      },
+      {
+        "name": "jev-e97d01e035cede6a41b1",
+        "record_sha256": "546c92e1e44899741b5b03b4000de5444c1665c813d704f23dadffbe95dbfbb3",
+        "request_sha256": "33e680771a6ac79093f7607de2614eaf3243793b9ee0c5bcb9650f6cb55c4f78"
+      },
+      {
+        "name": "jev-9484412e1076b60318f1",
+        "record_sha256": "fa863f47292d5d0aa2fc8c2f1a4ff9c21fd624a3bdbf5e1a9304a698217342fa",
+        "request_sha256": "fd7734b1f5430b48fde6a9e9976fa31773a9f2d752c14d53e546581c34bd3ceb"
+      },
+      {
+        "name": "jev-86387fc196d0c6bbdb9b",
+        "record_sha256": "b6a2b8f8467ad65a2018e0479f7f485dd8cef04fb7ff75239e650a19d7b2af7a",
+        "request_sha256": "9dfc312f06a0af7c442584d9f7b1b58cff0a9bb83acccfec8db784751b5df194"
+      },
+      {
+        "name": "jev-e03fc8bca79804cfb925",
+        "record_sha256": "0b54f4257e0a5abc6155c4c3055523c2b7e71c6ff7a52b2e76961646bc2921ba",
+        "request_sha256": "342cfc9a1235cdd2755417f204df6b875717e74c192ca65751bbaf927b17068f"
+      },
+      {
+        "name": "jev-c5a6199f08219a8a3eef",
+        "record_sha256": "15e39de4ec6254c480e63f7c14364a613a6fce66440cc01f7dd7fa10659274ec",
+        "request_sha256": "a2ce4f5c084c2b15f1eac9ecb686bc5e8f787f52d10baa5a1294daa029d06a90"
+      },
+      {
+        "name": "jev-43a58a5090ec522a8406",
+        "record_sha256": "f9b87cbfe9867f89b7b4da7a5fe6508fc89b5f4c8a1a174e58cb7a92569b55b2",
+        "request_sha256": "b8befeed1ff7ca3ba8508264c1d74c9b5c49682627de6315cbaafda498a52f54"
+      },
+      {
+        "name": "jev-22c52e36825bd4feecd7",
+        "record_sha256": "48707786c8c8e39eaf0afec2ceb30b6a82d434f8680a005add5d437d6c652839",
+        "request_sha256": "46772b50bfcb32991781db1f6a3d5178eb8e49d3f419c6a18367ed5d6148ca66"
+      },
+      {
+        "name": "jev-2bed490593174adc4ee0",
+        "record_sha256": "ea20f6ace2ad4ec3c6a893d101fb853db43d9b24452a36c880cdcc2883d1fa0a",
+        "request_sha256": "1a024c4c77f3e5ee8de75e2c726514b4feabade042d506d1ff2f6f0263290777"
+      },
+      {
+        "name": "jev-6a5dc53e0a4b468b69c3",
+        "record_sha256": "35499204284ae7f9bcf0b6da8ce29f02074df64719b02e953c33fdbded6ab793",
+        "request_sha256": "be3d8ffa174d2a9e6e5ab81e2917711a8e72f162e44d3f216e89f7ed3e9076c0"
+      },
+      {
+        "name": "jev-dd51848b04309f669afc",
+        "record_sha256": "21ffb7662c1871d90cdcd21cea7c6017a48b63ac642e1cf9dd7caa7be42d8dbb",
+        "request_sha256": "78a0cd8564e8e18623c13569a3d2051541eeca966a1334fb295df39350b84af9"
+      },
+      {
+        "name": "jev-fcf03530c53401306ea0",
+        "record_sha256": "4781bc4fa0b439f447a2699f27f47e26a55f83b84aaaf209d5bd645a8f19fa5d",
+        "request_sha256": "913965ee8c8c28a918b81df606cc1a49a4e07cf0af37ae21ea4bb2c57a188c68"
+      },
+      {
+        "name": "jev-45ad81069aff5ad70849",
+        "record_sha256": "75041d693c49038edc337c9ccac96c93838f57f236e55083ca909a4738f259e5",
+        "request_sha256": "3ee29791c89c029bcb1d1fbe04c31e7d699dcd38a2b6cf024feaedc76c28efc5"
+      },
+      {
+        "name": "jev-594baeb96d73448019f2",
+        "record_sha256": "1833fbc5fe14cb282a85c6dfafd79db29a6700c6998dde3991ba7a84c6451fc1",
+        "request_sha256": "0b52259725c06379b113cf37dc870fd7ded854848834cf63a02fdb9a7b87098f"
+      },
+      {
+        "name": "jev-b4075d9244e7abfabafa",
+        "record_sha256": "525c8742366b8de03a66fd3425de065e5504336283bbcc35fb7032ba3e5920ad",
+        "request_sha256": "da65ce87049ddfd51283beee1e6ba6b85afbdb9b7ebd047bf6ec0906ed6bf4f7"
+      },
+      {
+        "name": "jev-f4ecff51fe7de3bcb44b",
+        "record_sha256": "a6406094e9baaf0a1e5441fcdf9b37453eb1a3d5f5ab5432afabb7e1e722cc9f",
+        "request_sha256": "c7ac5c4373b401d111b303fa81dd2236c98410d2111262a4433834cf09cc9346"
+      },
+      {
+        "name": "jev-3bd08924e764b51d1761",
+        "record_sha256": "ed4129e6ce0ad313571d9cc5848ab024611dd86959b62dd1759335c45524e498",
+        "request_sha256": "3591a0b9f520b6d3accc4756c589428da25080796eaacedb9f563bcce8954b64"
+      },
+      {
+        "name": "jev-ddb05edb280744aa9b33",
+        "record_sha256": "9b22eeb0a436d838eaed6d74db3d8b4851558c1af9acb69d2e88c2a805a4737a",
+        "request_sha256": "31eba6a92098cea70e3c95ca81bf054c355281c1636eba9d5dcffbd60ef7ed86"
+      }
+    ],
+    "qwen": [
+      {
+        "name": "jev-e4bbb65228efce3f9625",
+        "record_sha256": "c3711e7e1edc71a9c711dbec35a12ffc83898c6b1143ff895d958ca4f58cd6b5",
+        "request_sha256": "873515e0ca980f747622104b3e1f855ec8aa1c986c234abf9772dbd140311a5e"
+      },
+      {
+        "name": "jev-c73e981241f338825861",
+        "record_sha256": "905bf4730a1cdab44ff5c161d6c863d6023efaee875685fa2b707222fa9c0fda",
+        "request_sha256": "71a0a71544c2de1410b99b00487a98ba34509f78ccb21f4b9965a29d7a534156"
+      },
+      {
+        "name": "jev-3b79ac6d7cc243f9fd17",
+        "record_sha256": "0f45a253bc49c8b0023055cb118e90e0b36d1baabac1df12edea6311a7c6ced8",
+        "request_sha256": "8c7bf7a86c55b28b1fc8ec16b1a21873124d6972994657eb93fc5cc1f97905c5"
+      },
+      {
+        "name": "jev-f0159be14e8e6101c5c6",
+        "record_sha256": "f56bb367f79cda7d7c27ddc7ff1749c7a2e41a5775dde9003e1c79d572b61106",
+        "request_sha256": "6b849e5c70c3eea620ff24e47a70171acef2279e3561230c5cac10899b700142"
+      },
+      {
+        "name": "jev-b1810866b1d0f74a218b",
+        "record_sha256": "ff579e407df0d395794d869a7e0e0af5630c8d8a9e7953586b13e8ef841b1be4",
+        "request_sha256": "436c2a800140da0a86c93bf15755be4d23e0d5e8c5b9d6aab522df80c08fdd6b"
+      },
+      {
+        "name": "jev-e2097025d99b910708e9",
+        "record_sha256": "a48a8d8fa4779d5318e695f8a00c6cdde23c322ff797e2b5b8c0d55c030fb195",
+        "request_sha256": "f66ead5d4eb0d7cc35750a28306ce8a4364a7bb04196ca8bf873e3740be2edb0"
+      },
+      {
+        "name": "jev-a0c68f9b1e35a7443deb",
+        "record_sha256": "fc7299396a952abcf60db8cf342ad9ea8f23e545a641d0ee6da8bec5c671a60a",
+        "request_sha256": "ab5c1b43b2354a90ec16c62e1da2519e5dbcf1e906294a204f831d8d3e51c7b5"
+      },
+      {
+        "name": "jev-771ff87304e1a1ead1b0",
+        "record_sha256": "9b7db4ac40d4057f887269f0dde6e4d2472f0381051b2fd18ed129c466175aa4",
+        "request_sha256": "8c792936b259d788b29dfb366f0ae30c99b78978a2c70aca964a537e8b2140a3"
+      },
+      {
+        "name": "jev-e5d9470df28a66d4c428",
+        "record_sha256": "79babcc82b1dbbd946540733fb284a1553d7278fcdda173ec05cf213ef812799",
+        "request_sha256": "e705a30258b83301f7926e1e102ad066b8a00660f033c93ee2b88ce5d60fb9ee"
+      },
+      {
+        "name": "jev-fd65f386c8037328d772",
+        "record_sha256": "7056a22f424198ce6a6563f4b515d9d5266679a1fba36f1b3b5459d51fc9de82",
+        "request_sha256": "b32cac3f60066bf5f55d44f5d189ccfe2423fe53734d24c85f63aec0e156bb49"
+      },
+      {
+        "name": "jev-a7db082a512ae54a8ab0",
+        "record_sha256": "5fa9c98d093adad155ce33c978a6b0e5e1e5c01ed736d900f22dfa44d3efe75a",
+        "request_sha256": "9d4b63a23bc44fd734dcbbab2ae4b979729a18b3c477da7e04c471aba8339883"
+      },
+      {
+        "name": "jev-50fd9a6289e4a649b613",
+        "record_sha256": "e5820cf9453381d30c7f904ca08a5e6f1a2e7058ac6ddf24c092ddbbc826bb71",
+        "request_sha256": "b0e8758120dd1ce8591038923f6cf55b12bc3d323a843999f16423bf26e9ddb8"
+      },
+      {
+        "name": "jev-bdaf70c6778c0a0afc66",
+        "record_sha256": "90e17df09a84dbb7bcee4abaf2219f5873ea62750499af7ebfdb814d49632879",
+        "request_sha256": "289c2bd610296057c8c4313d432c5019691af443e992b281344b067c6492a9a0"
+      },
+      {
+        "name": "jev-8e3739b122034fd71ef9",
+        "record_sha256": "bdfba7ad13b29888f7e1c11feb0f3f5b96872cf317131094c35d4590c9816b21",
+        "request_sha256": "1117541f6a1581bd7fbf752e019483744f03d3fbebf12f3991938132180c49bf"
+      },
+      {
+        "name": "jev-627f44d831fed5af4dc5",
+        "record_sha256": "68033dc8d792987288b79978e535d8a8f575186c22c352e7c88bcb5957db6c6b",
+        "request_sha256": "439f9fe369530dd295b2479e22c7fc077fce0af001e3ce6982f2b84dde008b54"
+      },
+      {
+        "name": "jev-e97d01e035cede6a41b1",
+        "record_sha256": "97e9d60c4a9d33d30bc5ccd5d016854d5a9ccb285699af178d88803cdae2af3f",
+        "request_sha256": "97fe281f7f149e0e5d6043b57f6d4e0efcadcfee128d189731d2a8efbc026364"
+      },
+      {
+        "name": "jev-9484412e1076b60318f1",
+        "record_sha256": "c68815959a5f43223400151195b840e31cc2891a319591f9633bcae6d008aa7c",
+        "request_sha256": "c7574d927d0649bb813e3b28a957db8cb5c402d39a46fd7ec3fc147f6306f21d"
+      },
+      {
+        "name": "jev-86387fc196d0c6bbdb9b",
+        "record_sha256": "42002b6d40ffc2f5bf1b1323ef187c718c7c0615f39d848b81f50f36040546ee",
+        "request_sha256": "8ab1021a382749d82343312a669656d834f2cb01313527e3cc47fb48aac44c04"
+      },
+      {
+        "name": "jev-e03fc8bca79804cfb925",
+        "record_sha256": "0adcdf204356ba8fb95b03c30b1347eb14398c67d2e76e96557fa66a3a522b4e",
+        "request_sha256": "50df27178bb4475f8c27f5d119010a042b9a68306bd4806aba09cb1a91787aaa"
+      },
+      {
+        "name": "jev-c5a6199f08219a8a3eef",
+        "record_sha256": "b0550397b9cbba7a2d35956d38df46e8d4d91ecd3ae9b4505ad9fd8feee60525",
+        "request_sha256": "cd7046e02e498e8be1663b37933db03bf0ae2865bc94844c81288849b5ee0c40"
+      },
+      {
+        "name": "jev-43a58a5090ec522a8406",
+        "record_sha256": "07a8b6b63440ca73429932cae21b6a7e60b3f6605d562b074e223c5820c38f45",
+        "request_sha256": "b1b7e74ce91bbc5f7d228734bcd941e69307658a7105e3841ab22c1fbdecf771"
+      },
+      {
+        "name": "jev-22c52e36825bd4feecd7",
+        "record_sha256": "0ab750da623e2a94f725e73997633c368b379d57385f77a4261763cc098929fc",
+        "request_sha256": "8faae9cd660f1e390fcbe178d58ad0387c9e9d8cb39dc36e5ea012bc3d87dc9b"
+      },
+      {
+        "name": "jev-2bed490593174adc4ee0",
+        "record_sha256": "d7f1d0f40980dcec1e1430064dc31dec04b903fc752a7e12977a5e724f50e009",
+        "request_sha256": "600d30fb09d861f574f766464fcbb74a9d26d9f7c1b17bf6e2891bdd770e1076"
+      },
+      {
+        "name": "jev-6a5dc53e0a4b468b69c3",
+        "record_sha256": "bd9251156dbb75f1a3e4cbc40f7e6224017c405e5b507e1bca44190da26793e5",
+        "request_sha256": "d713b1b024f378bdf68fc6a18c47e371234266f35407b7b39e7d8446d0fa5253"
+      },
+      {
+        "name": "jev-dd51848b04309f669afc",
+        "record_sha256": "2bd9586cc16d8ecf488ef58be45f61c2c70600138b1d003a32419f00c3b2bf40",
+        "request_sha256": "cea27e173b21bf18a52f5b1a0b4b016e1c7ecd5e33fa99e012482d41bb690e0e"
+      },
+      {
+        "name": "jev-fcf03530c53401306ea0",
+        "record_sha256": "1757fb242bb2e575f039262c2a889392620eb8ddec9a1378955ff59b8f94c782",
+        "request_sha256": "08a6923ef4cc7e8d27cd6eca5a40bce762f88b70dfa056a462eb285ee1e47615"
+      },
+      {
+        "name": "jev-45ad81069aff5ad70849",
+        "record_sha256": "de3c4cc7bf9cbb8ab6a8c22ba191e3d9c017435d5b1900e9add2ddafae39e0b0",
+        "request_sha256": "349da703a5a568e816df6a62b728ed505fe1b81d6c0a94608f35407cb1d0dc92"
+      },
+      {
+        "name": "jev-b4075d9244e7abfabafa",
+        "record_sha256": "9ed479864a5f5cf824d90decaf35f414a238ee1e619fcbaf2177af407ffc1731",
+        "request_sha256": "54104faa193109bded796b87c37e03fc4b9a0e9b298f20664aac986a7c554e43"
+      },
+      {
+        "name": "jev-f4ecff51fe7de3bcb44b",
+        "record_sha256": "b9a8e5260cfac84e92ff316c1857904968cf2c18f05be2cb4f6a6597cac2fc08",
+        "request_sha256": "6f3c3622341cb19e93741688540bb2cb811fac03c62a64cfd01ea252ad9cd57d"
+      },
+      {
+        "name": "jev-3bd08924e764b51d1761",
+        "record_sha256": "4cdfa49d2ee7a4c1756de277d35f6334c93e5c789d3d1e9677a44e2cb3277184",
+        "request_sha256": "53db1494dcde33265baec26bafb7e88b7cb3b579a3f2f8ebd5abc7a94d90b544"
+      },
+      {
+        "name": "jev-ddb05edb280744aa9b33",
+        "record_sha256": "df57ace6ae5436addfff7e52af572ca7ede74eeb7dc1baddab18696ce58cc651",
+        "request_sha256": "ada314c41764eec22ddd8d8b68c758ba57c6f4bfe8bd41aa1bcf8031b8096e32"
+      }
+    ]
+  },
+  "runs": {
+    "bge": "4b2beddb243567d011b7cf473cadf272682c97b6864abd8df8a9143e5793144a",
+    "qwen": "b41467a5b79cdc3dfaaf7cb709bb3ecd2893af2f6bdbd812ecb798f004eb9cf5"
+  },
+  "studies": {
+    "bge": "75e66631728f64cc97472af21d094c7cfcd40ec9c40009610d2c9a3fbe2b00ee",
+    "qwen": "ddd0ab7ecf51af9fea4ad7a0a3cf5b422f75d859a28d4e33c7d05b6dcfb67ec8"
+  },
+  "contract_sha256": "a8effe0f5b422a20da46b6208bf9a193abc8263134ed0cac515a902cb0c91fa7",
+  "shared_query_cache_sha256": "4c393104465899f3c20bea3f936172657d4240f747a77ef588aa66edf7d589e0",
+  "alignment": {
+    "E01": {
+      "evidence_id": "E01",
+      "status": "located",
+      "segments": [
+        {
+          "status": "located",
+          "method": "exact_typography",
+          "pdf_page": 2,
+          "spans": [
+            {
+              "source_id": "mineru_block_0020",
+              "start": 0,
+              "end": 442
+            }
+          ],
+          "coverage": 1.0
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0020",
+          "start": 0,
+          "end": 442
+        }
+      ]
+    },
+    "E02": {
+      "evidence_id": "E02",
+      "status": "located",
+      "segments": [
+        {
+          "status": "located",
+          "method": "exact_typography",
+          "pdf_page": 2,
+          "spans": [
+            {
+              "source_id": "mineru_block_0020",
+              "start": 552,
+              "end": 725
+            }
+          ],
+          "coverage": 1.0
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0020",
+          "start": 552,
+          "end": 725
+        }
+      ]
+    },
+    "E03": {
+      "evidence_id": "E03",
+      "status": "located",
+      "segments": [
+        {
+          "status": "located",
+          "method": "exact_typography",
+          "pdf_page": 2,
+          "spans": [
+            {
+              "source_id": "mineru_block_0020",
+              "start": 662,
+              "end": 945
+            }
+          ],
+          "coverage": 1.0
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0020",
+          "start": 662,
+          "end": 945
+        }
+      ]
+    },
+    "E04": {
+      "evidence_id": "E04",
+      "status": "located",
+      "segments": [
+        {
+          "status": "located",
+          "method": "exact_typography",
+          "pdf_page": 2,
+          "spans": [
+            {
+              "source_id": "mineru_block_0022",
+              "start": 0,
+              "end": 465
+            }
+          ],
+          "coverage": 1.0
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0022",
+          "start": 0,
+          "end": 465
+        }
+      ]
+    },
+    "E05": {
+      "evidence_id": "E05",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 3,
+          "spans": [
+            {
+              "source_id": "mineru_block_0026",
+              "start": 0,
+              "end": 72
+            },
+            {
+              "source_id": "mineru_block_0027",
+              "start": 0,
+              "end": 69
+            },
+            {
+              "source_id": "mineru_block_0028",
+              "start": 0,
+              "end": 122
+            }
+          ],
+          "coverage": 0.9294117647058824,
+          "scientific_numeric_difference": true,
+          "edits": [
+            {
+              "operation": "replace",
+              "reference": "(m1-m2)",
+              "parsed": "$$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "\\"
+            },
+            {
+              "operation": "replace",
+              "reference": "×",
+              "parsed": "\\frac{(m_{1}-m_{2})}{m_{2}}\\times"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "\\"
+            },
+            {
+              "operation": "replace",
+              "reference": "(",
+              "parsed": "\\tag{"
+            },
+            {
+              "operation": "replace",
+              "reference": ")m2",
+              "parsed": "}$$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "_{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "_{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}$"
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0026",
+          "start": 0,
+          "end": 72
+        },
+        {
+          "source_id": "mineru_block_0027",
+          "start": 0,
+          "end": 69
+        },
+        {
+          "source_id": "mineru_block_0028",
+          "start": 0,
+          "end": 122
+        }
+      ]
+    },
+    "E06": {
+      "evidence_id": "E06",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 3,
+          "spans": [
+            {
+              "source_id": "mineru_block_0030",
+              "start": 499,
+              "end": 668
+            },
+            {
+              "source_id": "mineru_block_0031",
+              "start": 0,
+              "end": 98
+            },
+            {
+              "source_id": "mineru_block_0032",
+              "start": 0,
+              "end": 287
+            }
+          ],
+          "coverage": 0.9263456090651558,
+          "scientific_numeric_difference": true,
+          "edits": [
+            {
+              "operation": "replace",
+              "reference": "(I200-Iam)",
+              "parsed": "$$"
+            },
+            {
+              "operation": "replace",
+              "reference": "×",
+              "parsed": "\\frac{\\left(I_{200}-I_{am}\\right)}{I_{200}}\\times"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "\\"
+            },
+            {
+              "operation": "replace",
+              "reference": "(",
+              "parsed": "\\tag{"
+            },
+            {
+              "operation": "replace",
+              "reference": ")I200",
+              "parsed": "}$$"
+            },
+            {
+              "operation": "delete",
+              "reference": "f",
+              "parsed": ""
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            },
+            {
+              "operation": "replace",
+              "reference": "θ",
+              "parsed": "\\Theta"
+            },
+            {
+              "operation": "replace",
+              "reference": "°",
+              "parsed": "^{\\circ}$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            },
+            {
+              "operation": "replace",
+              "reference": "°",
+              "parsed": "^{\\circ}$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "_{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}$"
+            },
+            {
+              "operation": "delete",
+              "reference": "f",
+              "parsed": ""
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            },
+            {
+              "operation": "replace",
+              "reference": "θ",
+              "parsed": "\\Theta"
+            },
+            {
+              "operation": "replace",
+              "reference": "°",
+              "parsed": "^{\\circ}$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            },
+            {
+              "operation": "delete",
+              "reference": "°.",
+              "parsed": ""
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0030",
+          "start": 499,
+          "end": 668
+        },
+        {
+          "source_id": "mineru_block_0031",
+          "start": 0,
+          "end": 98
+        },
+        {
+          "source_id": "mineru_block_0032",
+          "start": 0,
+          "end": 287
+        }
+      ]
+    },
+    "E07": {
+      "evidence_id": "E07",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 3,
+          "spans": [
+            {
+              "source_id": "mineru_block_0033",
+              "start": 226,
+              "end": 357
+            }
+          ],
+          "coverage": 0.990990990990991,
+          "scientific_numeric_difference": false,
+          "edits": [
+            {
+              "operation": "delete",
+              "reference": "f",
+              "parsed": ""
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0033",
+          "start": 226,
+          "end": 357
+        }
+      ]
+    },
+    "E08": {
+      "evidence_id": "E08",
+      "status": "located",
+      "segments": [
+        {
+          "method": "verified_table_rows",
+          "status": "located",
+          "pdf_page": 6,
+          "spans": [
+            {
+              "source_id": "mineru_block_0066",
+              "start": 0,
+              "end": 1619
+            }
+          ],
+          "numeric_rows": 5,
+          "numeric_cells": 30,
+          "table_number": "1",
+          "row_start": 0,
+          "note": "Atomic table object located by caption/page and every annotated numeric cell; not a judgment of answer sufficiency."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0066",
+          "start": 0,
+          "end": 1619
+        }
+      ]
+    },
+    "E09": {
+      "evidence_id": "E09",
+      "status": "located",
+      "segments": [
+        {
+          "method": "verified_table_rows",
+          "status": "located",
+          "pdf_page": 6,
+          "spans": [
+            {
+              "source_id": "mineru_block_0066",
+              "start": 0,
+              "end": 1619
+            }
+          ],
+          "numeric_rows": 5,
+          "numeric_cells": 30,
+          "table_number": "1",
+          "row_start": 5,
+          "note": "Atomic table object located by caption/page and every annotated numeric cell; not a judgment of answer sufficiency."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0066",
+          "start": 0,
+          "end": 1619
+        }
+      ]
+    },
+    "E10": {
+      "evidence_id": "E10",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 5,
+          "spans": [
+            {
+              "source_id": "mineru_block_0061",
+              "start": 2437,
+              "end": 3663
+            }
+          ],
+          "coverage": 0.8902439024390244,
+          "scientific_numeric_difference": true,
+          "edits": [
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "remarkablyhigherthantheCI-XA,whichmightbecausedbytheover-fittingofamorphousCI-XA.However,theCI-XIandtheCI-XAwerecorrelatedsignificantlyforbothsoftwoodfibersand"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "hardwoodfibers,withacorrelationcoeficientof0.919(p<0.05)forsoftwoodfibersand0.925(p<0.05)contributionintheanalysisofCI-XA.However,theCI-XIandtheCI-XAwerecorrelatedsignif"
+            },
+            {
+              "operation": "delete",
+              "reference": "05)forsoftwoodfibersand0.925(p<0.05)",
+              "parsed": ""
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0061",
+          "start": 2437,
+          "end": 3663
+        }
+      ]
+    },
+    "E11": {
+      "evidence_id": "E11",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 6,
+          "spans": [
+            {
+              "source_id": "mineru_block_0067",
+              "start": 175,
+              "end": 722
+            }
+          ],
+          "coverage": 0.9978401727861771,
+          "scientific_numeric_difference": false,
+          "edits": [
+            {
+              "operation": "delete",
+              "reference": "f",
+              "parsed": ""
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0067",
+          "start": 175,
+          "end": 722
+        }
+      ]
+    },
+    "E12": {
+      "evidence_id": "E12",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 4,
+          "spans": [
+            {
+              "source_id": "mineru_block_0049",
+              "start": 94,
+              "end": 2104
+            }
+          ],
+          "coverage": 1.0,
+          "scientific_numeric_difference": true,
+          "edits": [
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "adownwardtrend,andthefinescontenthasanupwardtrendforthesoftwoodfibersduringPFIrefining,ascanbeseeninFigure1.Themacro-fibrillationindexandfiberlengthofsoftwoodfibers"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "changedsignificantly.However,twoparametersofhardwoodfibershadnosignificantvariationsrelativetosoftwoodfibers.Itmightbebecauseofthelowerrefiningpressurethatwasappliedin"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "hardwoodfibers.Themacro-fibrillationindexcharacterizesexternalmacro-fibrillation.Theresults"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "offibermorphologyanalysisshowedthatexternalfibrillationincreasedwiththerefiningprocess.It"
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0049",
+          "start": 94,
+          "end": 2104
+        }
+      ]
+    },
+    "E13": {
+      "evidence_id": "E13",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 4,
+          "spans": [
+            {
+              "source_id": "mineru_block_0052",
+              "start": 302,
+              "end": 1811
+            }
+          ],
+          "coverage": 0.873046875,
+          "scientific_numeric_difference": true,
+          "edits": [
+            {
+              "operation": "delete",
+              "reference": "ThebeatingdegreeandtheWRVhadasignificantincrementwithincreasingPF",
+              "parsed": ""
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "revolutions,ascanbeseeninFigure2.Itiscausedbythehigherfibrillationthatproducesthe"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "newsurfaceandmorepores(asshowninTableS1inOnlineResource).Theincreaseinswelling"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "characterizedbyWRVmakesthefibersmorecompliantintransverse[1],whichcontributestoimprovingtheinter-fiberbondingstrengthofthefibernetwork.Theresultsoffibermorphology"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "analysisandwaterretentionvalu"
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0052",
+          "start": 302,
+          "end": 1811
+        }
+      ]
+    },
+    "E14": {
+      "evidence_id": "E14",
+      "status": "unresolved",
+      "segments": [
+        {
+          "status": "unresolved",
+          "method": "weak_text_alignment",
+          "pdf_page": 5,
+          "spans": [],
+          "coverage": 0.8236040609137056,
+          "edits": [
+            {
+              "operation": "delete",
+              "reference": "I",
+              "parsed": ""
+            },
+            {
+              "operation": "replace",
+              "reference": "F",
+              "parsed": "g,asment"
+            },
+            {
+              "operation": "replace",
+              "reference": "gur",
+              "parsed": "on"
+            },
+            {
+              "operation": "replace",
+              "reference": "3,t",
+              "parsed": "dabove.T"
+            },
+            {
+              "operation": "delete",
+              "reference": "tensileindex,zero-spantensileindex,and",
+              "parsed": ""
+            },
+            {
+              "operation": "delete",
+              "reference": "representedasafunction",
+              "parsed": ""
+            },
+            {
+              "operation": "delete",
+              "reference": "therefiningrevolutions.Theincrementoftensilestrengthismainlycausedbythe",
+              "parsed": ""
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "fiberhadamoresignificantincreasewhencomparedtothatofhardwoodfiber.Itisforthatfiber"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "lengthplaysanessentialroleinwet-webstrength.Thezero-spantensileindexwasusuallyusedin"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "characterizingthetensilestrengthoffibers.Theresultsofthezero-spantensileindexshowedthat"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "PFIrefiningdidnotreducefiberstrength,whichisconsistentwiththereportofKoukoetal.[24]."
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "TheaboveresultsshowedthatPFIrefiningimprovedtheextentoffibrillation(especiallytheinternalTheaboveresultsshowedthatPFIrefiningimprovedtheextentoffibrillation(especiallytheinternal"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "fibrillation),theswellingoffibers,andthetensilestrengthofsheetswithoutadecreaseofthetensilefibrillation),thes"
+            }
+          ]
+        }
+      ],
+      "spans": []
+    },
+    "E15": {
+      "evidence_id": "E15",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 4,
+          "spans": [
+            {
+              "source_id": "mineru_block_0046",
+              "start": 0,
+              "end": 771
+            }
+          ],
+          "coverage": 0.9982486865148862,
+          "scientific_numeric_difference": false,
+          "edits": [
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$\\mathsf{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "~"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "^{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}}$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$\\bar{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "\\mathrm{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}^{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "~\\mathrm{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}^{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "\\mathrm{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}}$"
+            },
+            {
+              "operation": "delete",
+              "reference": "f",
+              "parsed": ""
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0046",
+          "start": 0,
+          "end": 771
+        }
+      ]
+    },
+    "E16": {
+      "evidence_id": "E16",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 8,
+          "spans": [
+            {
+              "source_id": "mineru_block_0083",
+              "start": 118,
+              "end": 421
+            }
+          ],
+          "coverage": 1.0,
+          "scientific_numeric_difference": false,
+          "edits": [
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "\\mathrm{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}^{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0083",
+          "start": 118,
+          "end": 421
+        }
+      ]
+    },
+    "E17": {
+      "evidence_id": "E17",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 8,
+          "spans": [
+            {
+              "source_id": "mineru_block_0080",
+              "start": 0,
+              "end": 878
+            },
+            {
+              "source_id": "mineru_block_0082",
+              "start": 0,
+              "end": 9
+            }
+          ],
+          "coverage": 0.9922958397534669,
+          "scientific_numeric_difference": true,
+          "edits": [
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$\\mathrm{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "\\mathrm{"
+            },
+            {
+              "operation": "replace",
+              "reference": "···",
+              "parsed": "}\\cdots\\mathrm{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}"
+            },
+            {
+              "operation": "replace",
+              "reference": "'",
+              "parsed": "^{\\prime}"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "~\\mathrm{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}^{"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "}"
+            },
+            {
+              "operation": "replace",
+              "reference": ",",
+              "parsed": "$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "Figure6"
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0080",
+          "start": 0,
+          "end": 878
+        },
+        {
+          "source_id": "mineru_block_0082",
+          "start": 0,
+          "end": 9
+        }
+      ]
+    },
+    "E18": {
+      "evidence_id": "E18",
+      "status": "located",
+      "segments": [
+        {
+          "method": "verified_table_rows",
+          "status": "located",
+          "pdf_page": 8,
+          "spans": [
+            {
+              "source_id": "mineru_block_0084",
+              "start": 0,
+              "end": 1501
+            }
+          ],
+          "numeric_rows": 5,
+          "numeric_cells": 30,
+          "table_number": "2",
+          "row_start": 0,
+          "note": "Atomic table object located by caption/page and every annotated numeric cell; not a judgment of answer sufficiency."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0084",
+          "start": 0,
+          "end": 1501
+        }
+      ]
+    },
+    "E19": {
+      "evidence_id": "E19",
+      "status": "located",
+      "segments": [
+        {
+          "method": "verified_table_rows",
+          "status": "located",
+          "pdf_page": 8,
+          "spans": [
+            {
+              "source_id": "mineru_block_0084",
+              "start": 0,
+              "end": 1501
+            }
+          ],
+          "numeric_rows": 5,
+          "numeric_cells": 30,
+          "table_number": "2",
+          "row_start": 5,
+          "note": "Atomic table object located by caption/page and every annotated numeric cell; not a judgment of answer sufficiency."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0084",
+          "start": 0,
+          "end": 1501
+        }
+      ]
+    },
+    "E20": {
+      "evidence_id": "E20",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 1,
+          "spans": [
+            {
+              "source_id": "mineru_block_0006",
+              "start": 783,
+              "end": 927
+            }
+          ],
+          "coverage": 0.991869918699187,
+          "scientific_numeric_difference": false,
+          "edits": [
+            {
+              "operation": "delete",
+              "reference": "f",
+              "parsed": ""
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0006",
+          "start": 783,
+          "end": 927
+        }
+      ]
+    },
+    "E21": {
+      "evidence_id": "E21",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 10,
+          "spans": [
+            {
+              "source_id": "mineru_block_0100",
+              "start": 183,
+              "end": 396
+            }
+          ],
+          "coverage": 0.9942857142857143,
+          "scientific_numeric_difference": false,
+          "edits": [
+            {
+              "operation": "delete",
+              "reference": "f",
+              "parsed": ""
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "$"
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0100",
+          "start": 183,
+          "end": 396
+        }
+      ]
+    },
+    "E22": {
+      "evidence_id": "E22",
+      "status": "located",
+      "segments": [
+        {
+          "status": "located",
+          "method": "exact_typography",
+          "pdf_page": 12,
+          "spans": [
+            {
+              "source_id": "mineru_block_0111",
+              "start": 0,
+              "end": 720
+            }
+          ],
+          "coverage": 1.0
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0111",
+          "start": 0,
+          "end": 720
+        }
+      ]
+    },
+    "E23": {
+      "evidence_id": "E23",
+      "status": "located",
+      "segments": [
+        {
+          "status": "located",
+          "method": "exact_typography",
+          "pdf_page": 12,
+          "spans": [
+            {
+              "source_id": "mineru_block_0112",
+              "start": 665,
+              "end": 892
+            }
+          ],
+          "coverage": 1.0
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0112",
+          "start": 665,
+          "end": 892
+        }
+      ]
+    },
+    "E24": {
+      "evidence_id": "E24",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 5,
+          "spans": [
+            {
+              "source_id": "mineru_block_0061",
+              "start": 443,
+              "end": 841
+            }
+          ],
+          "coverage": 0.9270833333333334,
+          "scientific_numeric_difference": false,
+          "edits": [
+            {
+              "operation": "delete",
+              "reference": "OnlineResource",
+              "parsed": ""
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0061",
+          "start": 443,
+          "end": 841
+        }
+      ]
+    },
+    "E25": {
+      "evidence_id": "E25",
+      "status": "located",
+      "segments": [
+        {
+          "status": "located",
+          "method": "exact_typography",
+          "pdf_page": 4,
+          "spans": [
+            {
+              "source_id": "mineru_block_0052",
+              "start": 93,
+              "end": 369
+            }
+          ],
+          "coverage": 1.0
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0052",
+          "start": 93,
+          "end": 369
+        }
+      ]
+    },
+    "E26": {
+      "evidence_id": "E26",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 5,
+          "spans": [
+            {
+              "source_id": "mineru_block_0061",
+              "start": 1615,
+              "end": 2169
+            }
+          ],
+          "coverage": 0.8743169398907104,
+          "scientific_numeric_difference": true,
+          "edits": [
+            {
+              "operation": "delete",
+              "reference": "Ing",
+              "parsed": ""
+            },
+            {
+              "operation": "replace",
+              "reference": "n",
+              "parsed": "sp"
+            },
+            {
+              "operation": "replace",
+              "reference": "ra",
+              "parsed": "ctive"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "y"
+            },
+            {
+              "operation": "delete",
+              "reference": "theCI-XI",
+              "parsed": ""
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "os"
+            },
+            {
+              "operation": "delete",
+              "reference": "CI-XA",
+              "parsed": ""
+            },
+            {
+              "operation": "replace",
+              "reference": "soft",
+              "parsed": "hard"
+            },
+            {
+              "operation": "insert",
+              "reference": "",
+              "parsed": "decreasedbyrespectively,ascanbeseeninFigure4andTable1.ThevalueoftheCI-XIwasremarkablyhigherthan"
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0061",
+          "start": 1615,
+          "end": 2169
+        }
+      ]
+    },
+    "E27": {
+      "evidence_id": "E27",
+      "status": "review_required",
+      "segments": [
+        {
+          "status": "review_required",
+          "method": "near_text_anchor",
+          "pdf_page": 9,
+          "spans": [
+            {
+              "source_id": "mineru_block_0092",
+              "start": 1074,
+              "end": 1237
+            }
+          ],
+          "coverage": 0.9921875,
+          "scientific_numeric_difference": true,
+          "edits": [
+            {
+              "operation": "replace",
+              "reference": "'",
+              "parsed": "0"
+            }
+          ],
+          "note": "A corresponding passage was located, but parser text differs. Presence is positional only; semantic support is not certified."
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0092",
+          "start": 1074,
+          "end": 1237
+        }
+      ]
+    },
+    "E28": {
+      "evidence_id": "E28",
+      "status": "unresolved",
+      "segments": [
+        {
+          "status": "located",
+          "method": "exact_typography",
+          "pdf_page": 1,
+          "spans": [
+            {
+              "source_id": "mineru_block_0010",
+              "start": 210,
+              "end": 401
+            }
+          ],
+          "coverage": 1.0
+        },
+        {
+          "status": "unresolved",
+          "method": "no_long_text_anchor",
+          "pdf_page": 2,
+          "spans": []
+        }
+      ],
+      "spans": [
+        {
+          "source_id": "mineru_block_0010",
+          "start": 210,
+          "end": 401
+        }
+      ]
+    }
+  },
+  "scores_changed_by_exporter": false,
+  "report_model_calls": 0
+}

@@ -1,0 +1,482 @@
+{
+  "version": "text-embedding-shared-query-eval-20261102",
+  "source_commit": "45db742b766db815c2a76e197587216e04e9ee75",
+  "comparison": {
+    "bge": {
+      "tasks": 31,
+      "point_macro_average": 0.8924731182795699,
+      "support_counts": {
+        "supported": 119,
+        "partially_supported": 4
+      },
+      "citation_precision": {
+        "numerator": 128,
+        "denominator": 130,
+        "value": 0.9846153846153847
+      },
+      "citation_coverage": {
+        "numerator": 118,
+        "denominator": 123,
+        "value": 0.959349593495935
+      },
+      "boundary_mean": 1.8064516129032258,
+      "all_five_pass": 22
+    },
+    "qwen": {
+      "tasks": 31,
+      "point_macro_average": 0.9274193548387096,
+      "support_counts": {
+        "supported": 130,
+        "partially_supported": 1
+      },
+      "citation_precision": {
+        "numerator": 137,
+        "denominator": 138,
+        "value": 0.9927536231884058
+      },
+      "citation_coverage": {
+        "numerator": 128,
+        "denominator": 131,
+        "value": 0.9770992366412213
+      },
+      "boundary_mean": 1.8387096774193548,
+      "all_five_pass": 22
+    }
+  },
+  "all_valid_summaries": {
+    "bge": {
+      "tasks": 32,
+      "point_macro_average": 0.8854166666666666,
+      "support_counts": {
+        "supported": 121,
+        "partially_supported": 4
+      },
+      "citation_precision": {
+        "numerator": 130,
+        "denominator": 132,
+        "value": 0.9848484848484849
+      },
+      "citation_coverage": {
+        "numerator": 120,
+        "denominator": 125,
+        "value": 0.96
+      },
+      "boundary_mean": 1.78125,
+      "all_five_pass": 22
+    },
+    "qwen": {
+      "tasks": 31,
+      "point_macro_average": 0.9274193548387096,
+      "support_counts": {
+        "supported": 130,
+        "partially_supported": 1
+      },
+      "citation_precision": {
+        "numerator": 137,
+        "denominator": 138,
+        "value": 0.9927536231884058
+      },
+      "citation_coverage": {
+        "numerator": 128,
+        "denominator": 131,
+        "value": 0.9770992366412213
+      },
+      "boundary_mean": 1.8387096774193548,
+      "all_five_pass": 22
+    }
+  },
+  "common_task_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-005",
+    "PFI2-006",
+    "PFI2-007",
+    "PFI2-008",
+    "PFI2-009",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-012",
+    "PFI2-013",
+    "PFI2-014",
+    "PFI2-015",
+    "PFI2-016",
+    "PFI2-017",
+    "PFI2-018",
+    "PFI2-019",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-024",
+    "PFI2-025",
+    "PFI2-026",
+    "PFI2-027",
+    "PFI2-028",
+    "PFI2-029",
+    "PFI2-030",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "valid_grades": {
+    "bge": 32,
+    "qwen": 31
+  },
+  "excluded_task_ids": [
+    "PFI2-023"
+  ],
+  "failed_grades": [
+    {
+      "arm": "qwen",
+      "task_id": "PFI2-023",
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "invalid_scorecard",
+          "validation_message": "Group and citation decisions disagree",
+          "record_sha256": "bfea0a9f12668b97443e2e6833f5add3dbdd1a3551ac9d9ce25c302dee07da6b",
+          "usage": {
+            "input_tokens": 70127,
+            "output_tokens": 2741,
+            "total_tokens": 72868,
+            "reported_cost_usd": 0.002945334
+          }
+        },
+        {
+          "attempt": 2,
+          "status": "invalid_scorecard",
+          "validation_message": "Group and citation decisions disagree",
+          "record_sha256": "e19cc77dccea6f8d09df4c7230135858893a00e6870f84eca1c86670d43ea7e7",
+          "usage": {
+            "input_tokens": 70127,
+            "output_tokens": 2741,
+            "total_tokens": 72868,
+            "reported_cost_usd": 0.002945334
+          }
+        },
+        {
+          "attempt": 3,
+          "status": "invalid_scorecard",
+          "validation_message": "Group and citation decisions disagree",
+          "record_sha256": "0c56db70299b08243e08c27e925f7cd78bfd1aa266b1ef0f694714688c73601e",
+          "usage": {
+            "input_tokens": 70127,
+            "output_tokens": 2741,
+            "total_tokens": 72868,
+            "reported_cost_usd": 0.002945334
+          }
+        }
+      ],
+      "score": null
+    }
+  ],
+  "changes": {
+    "point_wins": [
+      "PFI2-015",
+      "PFI2-026",
+      "PFI2-027",
+      "PFI2-032"
+    ],
+    "point_losses": [
+      "PFI2-004",
+      "PFI2-025"
+    ],
+    "joint_wins": [
+      "PFI2-020",
+      "PFI2-024"
+    ],
+    "joint_losses": [
+      "PFI2-004",
+      "PFI2-025"
+    ]
+  },
+  "retrieval": {
+    "shared_queries_identical": true,
+    "same_primary_order": 20,
+    "same_initial_generation_input": 20,
+    "stage_changes": {
+      "candidates": {
+        "same_set": 0,
+        "added_occurrences": 391,
+        "removed_occurrences": 391
+      },
+      "primary": {
+        "same_set": 24,
+        "added_occurrences": 8,
+        "removed_occurrences": 8
+      },
+      "final": {
+        "same_set": 22,
+        "added_occurrences": 23,
+        "removed_occurrences": 33
+      }
+    },
+    "point_changes_with_same_initial_input": [
+      "PFI2-004",
+      "PFI2-027"
+    ]
+  },
+  "reference_coverage": {
+    "bge": {
+      "exact_reference_occurrences": 23,
+      "stages": {
+        "candidates": {
+          "numerator": 22,
+          "denominator": 23,
+          "value": 0.9565217391304348
+        },
+        "primary": {
+          "numerator": 22,
+          "denominator": 23,
+          "value": 0.9565217391304348
+        },
+        "final": {
+          "numerator": 22,
+          "denominator": 23,
+          "value": 0.9565217391304348
+        }
+      },
+      "excluded_occurrences": 24,
+      "scope": "Exact aligned reference source-interval coverage, not semantic evidence sufficiency or whole-benchmark recall."
+    },
+    "qwen": {
+      "exact_reference_occurrences": 23,
+      "stages": {
+        "candidates": {
+          "numerator": 22,
+          "denominator": 23,
+          "value": 0.9565217391304348
+        },
+        "primary": {
+          "numerator": 22,
+          "denominator": 23,
+          "value": 0.9565217391304348
+        },
+        "final": {
+          "numerator": 22,
+          "denominator": 23,
+          "value": 0.9565217391304348
+        }
+      },
+      "excluded_occurrences": 24,
+      "scope": "Exact aligned reference source-interval coverage, not semantic evidence sufficiency or whole-benchmark recall."
+    }
+  },
+  "alignment_statuses": {
+    "located": 11,
+    "review_required": 15,
+    "unresolved": 2
+  },
+  "runtime": {
+    "bge": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 30,
+        "refused": 2
+      },
+      "median_end_to_end_seconds": 13.842500000000001,
+      "median_question_embedding_seconds": 1.3265,
+      "question_embedding": {
+        "calls": 64,
+        "known_tokens": {
+          "input_tokens": 3428,
+          "output_tokens": 0,
+          "total_tokens": 3428
+        },
+        "total_token_unknown_calls": 0
+      },
+      "image_tokens": 0,
+      "generation": {
+        "calls": 36,
+        "known_tokens": {
+          "input_tokens": 260848,
+          "output_tokens": 36365,
+          "total_tokens": 297213
+        },
+        "total_token_unknown_calls": 0
+      },
+      "rerank": {
+        "calls": 32,
+        "known_tokens": {
+          "input_tokens": 470379,
+          "output_tokens": 0
+        },
+        "total_token_unknown_calls": 32
+      },
+      "cached_rewrite_replays": 32,
+      "rewrite_api_calls_during_answers": 0,
+      "monetary_costs": {
+        "embedding": null,
+        "generation": null,
+        "rerank": null
+      },
+      "timing_note": "End-to-end excludes offline shared-query preparation; not comparable to live-rewrite historical timing."
+    },
+    "qwen": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 32
+      },
+      "median_end_to_end_seconds": 15.4575,
+      "median_question_embedding_seconds": 0.556,
+      "question_embedding": {
+        "calls": 64,
+        "known_tokens": {
+          "input_tokens": 4472,
+          "total_tokens": 4472
+        },
+        "total_token_unknown_calls": 0
+      },
+      "image_tokens": 0,
+      "generation": {
+        "calls": 33,
+        "known_tokens": {
+          "input_tokens": 242408,
+          "output_tokens": 35661,
+          "total_tokens": 278069
+        },
+        "total_token_unknown_calls": 0
+      },
+      "rerank": {
+        "calls": 32,
+        "known_tokens": {
+          "input_tokens": 450107,
+          "output_tokens": 0
+        },
+        "total_token_unknown_calls": 32
+      },
+      "cached_rewrite_replays": 32,
+      "rewrite_api_calls_during_answers": 0,
+      "monetary_costs": {
+        "embedding": null,
+        "generation": null,
+        "rerank": null
+      },
+      "timing_note": "End-to-end excludes offline shared-query preparation; not comparable to live-rewrite historical timing."
+    }
+  },
+  "shared_rewrite_preparation": {
+    "usage": {
+      "calls": 32,
+      "known_tokens": {
+        "input_tokens": 8054,
+        "output_tokens": 2240,
+        "total_tokens": 10294
+      },
+      "total_token_unknown_calls": 0
+    },
+    "sum_request_seconds": 39.017,
+    "median_request_seconds": 1.236,
+    "currency_cost": null,
+    "statuses": {
+      "completed": 32
+    },
+    "cache_sha256": "4c393104465899f3c20bea3f936172657d4240f747a77ef588aa66edf7d589e0"
+  },
+  "judge_accounting": {
+    "bge": {
+      "calls": 32,
+      "known_tokens": {
+        "input_tokens": 2378601,
+        "output_tokens": 113942,
+        "total_tokens": 2492543
+      },
+      "usage_unknown_calls": 0,
+      "reported_cost_usd": "0.099901242",
+      "cost_unknown_calls": 0,
+      "invoice_cost_usd": null,
+      "request_time_ms": 117875
+    },
+    "qwen": {
+      "calls": 34,
+      "known_tokens": {
+        "input_tokens": 2606832,
+        "output_tokens": 129886,
+        "total_tokens": 2736718
+      },
+      "usage_unknown_calls": 0,
+      "reported_cost_usd": "0.109486944",
+      "cost_unknown_calls": 0,
+      "invoice_cost_usd": null,
+      "request_time_ms": 127956
+    }
+  },
+  "judge": {
+    "base_url": "https://openrouter.ai/api",
+    "requested_model": "typesafe/jev-1.14",
+    "api": "openrouter_decisions",
+    "timeout_seconds": 120.0,
+    "automatic_retries": 0,
+    "previous_scores_provided": false,
+    "scope": [
+      "key_points",
+      "claim_support",
+      "citation_support",
+      "citation_group_coverage",
+      "answerability"
+    ],
+    "independent_requests": true,
+    "sampling": "Native typed decisions; no sampling overrides or conversation identifiers."
+  },
+  "policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+  "images_enabled": false,
+  "generated_questions": 64,
+  "new_luna_calls": 0,
+  "new_dsh_calls": 0,
+  "comparison_kind": "fresh_answers_same_scientific_sources_shared_queries_different_embedding_route",
+  "caveats": [
+    "One paper and 32 development questions; one generation and one valid judge score per arm.",
+    "0.35 is inherited and uncalibrated for Qwen; this compares current settings rather than tuned model ceilings.",
+    "Exact reference-interval coverage excludes unresolved/review-required alignment and is not a semantic answer score.",
+    "No image retrieval or image answering evaluated; production candidate configuration unchanged."
+  ],
+  "interpretation": {
+    "source": "Report interpretation of saved answers/runtime and original Jev labels; not Jev-generated rationale.",
+    "mainline": "共同31题，要点提高3.49个百分点；五项全达标BGE为22题，Qwen为22题。本轮略好，但未证明文字检索稳定领先。",
+    "baseline_citation_failure_task_ids": [
+      "PFI2-027",
+      "PFI2-032"
+    ],
+    "point_delta_decomposition": {
+      "total_percentage_points": 3.4946236559139754,
+      "baseline_citation_failure_questions_percentage_points": 5.913978494623656,
+      "other_questions_percentage_points": -2.4193548387096806,
+      "note": "Arithmetic decomposition, not causal attribution; keep all these questions in the primary paired result."
+    },
+    "cases": [
+      {
+        "task_id": "PFI2-004",
+        "note": "首次输入完全相同。两版均给63/57 °SR并列作用力条件；Jev把Qwen的条件限制要点评为部分覆盖。属于措辞/裁判敏感性，不能归因于新检索。"
+      },
+      {
+        "task_id": "PFI2-015",
+        "note": "两版都找到纤维长度变化及较低作用力的解释，但都未明确说不能全部归因于浆种；Jev对这项限制分别判缺失/部分。没有证明补到了新的关键事实。"
+      },
+      {
+        "task_id": "PFI2-020",
+        "note": "首次输入完全相同，要点均全覆盖。Qwen回答的陈述及引用组获全支持；BGE多写的一项free OH解释被判部分支持。"
+      },
+      {
+        "task_id": "PFI2-024",
+        "note": "首次输入完全相同，要点均全覆盖。BGE有一条额外机制陈述被判部分支持；Qwen的表达全部获支持，属于生成表述差异。"
+      },
+      {
+        "task_id": "PFI2-025",
+        "note": "两版都拿到补充表线索。Qwen列了Table S1与定性趋势，却没有明确说明当前证据缺少8000转的精确BET值，必答点从1降为0；并非提供了错误数值。"
+      },
+      {
+        "task_id": "PFI2-026",
+        "note": "两版均无逐次重复实验数据。Qwen明确限定为所给证据未提供，获得完整要点；BGE措辞与引用组获部分支持。未证明原始数据召回增加。"
+      },
+      {
+        "task_id": "PFI2-027",
+        "note": "首次输入完全相同。BGE两次生成后引用校验失败并返回统一拒答；Qwen回答可答部分并声明耐破/撕裂数据缺失。不能把此增分算作召回收益。"
+      },
+      {
+        "task_id": "PFI2-032",
+        "note": "BGE两次生成后引用校验失败；Qwen纠正0.919/0.925的对象并给正文0.912/0.889，但仍漏摘要0.888及冲突，只获部分要点。不能视为已解决冲突检索。"
+      }
+    ],
+    "next_step": "保留候选，不据此替换网站默认版本。先补图像题单独核验多模态收益；文字部分优先定位引用校验拒答、缺数据声明及摘要/正文冲突漏检。"
+  }
+}
