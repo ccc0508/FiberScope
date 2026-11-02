@@ -24,6 +24,29 @@ RESULT = {'status': 'answered', 'answer': '纤维结构发生变化 [1]', 'laten
           'generation_calls': [{'attempt': 1, 'usage': {'total_tokens': 100}}]}
 
 
+def test_failed_draft_diagnostics_survive_history_export_and_restart(configured,monkeypatch):
+    from literature_rag.application.citations import RecordingCitationValidator
+    from literature_rag.domain.models import GeneratedAnswer,GeneratedClaim
+    from literature_rag.domain.errors import CitationValidationError
+    from tests.test_literature_answers import make_evidence
+    validator=RecordingCitationValidator()
+    draft=GeneratedAnswer('Synthetic failed draft without citation',(GeneratedClaim('Synthetic claim',('[1]',)),))
+    with pytest.raises(CitationValidationError):validator.validate(draft,[make_evidence()])
+    body={**RESULT,'status':'refused','answer':'Synthetic guarded refusal','claims':[],'citations':[],
+          'reason_code':'citation_validation_failed','citation_validation':validator.snapshot()}
+    monkeypatch.setattr(literature,'run_answer',lambda *_:json.loads(json.dumps(body)))
+    client=client_for(configured)
+    record=finished(client,client.post(BASE+'/ask',json={'question':'诊断记录持久化？'}).json()['id'])
+    assert record['result']['citation_validation']==body['citation_validation']
+    exported=json.loads(client.get(BASE+'/history/export').text)
+    assert exported['result']['citation_validation']==body['citation_validation']
+    assert 'Synthetic failed draft' not in record['result']['answer']
+    client.__exit__(None,None,None)
+    # New app instance loads the same immutable result JSON from SQLite.
+    refreshed=client_for(configured).get(BASE+'/history/'+record['id']).json()
+    assert refreshed['result']['citation_validation']==body['citation_validation']
+
+
 def test_all_owners_visible_after_cookie_clear_and_service_restart(configured, monkeypatch):
     monkeypatch.setattr(literature, 'run_answer', lambda *a: dict(RESULT))
     app = FastAPI()

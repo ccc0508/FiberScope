@@ -20,7 +20,7 @@ def main():
     from literature_rag.application.retrieve import RetrievalService
     from literature_rag.application.context import ContextOptions
     from literature_rag.application.answer_question import AnswerService
-    from literature_rag.application.citations import CitationValidator
+    from literature_rag.application.citations import RecordingCitationValidator
     from literature_rag.diagnostics import configuration_snapshot, combined_usage
     from literature_rag.domain.errors import ProviderError, InfrastructureError
 
@@ -89,6 +89,7 @@ def main():
     evidence_by_chunk = {}
     generation_calls = []
     generated_answers = []
+    citation_validator = RecordingCitationValidator(attempt_number=lambda: len(generation_calls))
     configuration = configuration_snapshot(Path(__file__).resolve().parent / '.env.literature')
     configuration['documents'] = [
         {'document_id': doc.id, 'filename': doc.filename, 'file_hash': doc.file_hash}
@@ -140,7 +141,7 @@ def main():
             body_context_catalog=body_context_catalog,query_rewriter=query_rewriter,
             query_rewrite_mode=settings.query_rewrite_mode if settings.query_rewrite_enabled else 'dual',
             visual_catalog=visual_catalog,visual_max_images=settings.visual_max_images,
-            visual_max_total_bytes=settings.visual_max_total_bytes), CapturedGenerator(), CitationValidator()).answer(
+            visual_max_total_bytes=settings.visual_max_total_bytes), CapturedGenerator(), citation_validator).answer(
             body['question'], settings.top_k, settings.min_score)
     except (ProviderError, InfrastructureError) as error:
         print(json.dumps({'status': 'failed', 'answer': '', 'citations': [],
@@ -152,7 +153,8 @@ def main():
                           **({'query_embedding_calls':query_embedding_calls,'query_rewrite_calls':
                               [query_rewriter.last_call] if query_rewriter.last_call else []} if settings.query_rewrite_enabled else {}),
                           **({'rerank_calls':rerank_calls} if settings.rerank_enabled else {}),
-                          'generation_calls': generation_calls, 'claims': [], 'latency_ms': 0}, ensure_ascii=False))
+                          'generation_calls': generation_calls, 'citation_validation': citation_validator.snapshot(),
+                          'claims': [], 'latency_ms': 0}, ensure_ascii=False))
         return
     citations = []
     for citation in answer.citations:
@@ -161,6 +163,7 @@ def main():
     print(json.dumps({'status': answer.status.value, 'answer': answer.answer, 'citations': citations,
                       'latency_ms': answer.latency_ms, 'reason_code': answer.reason_code,
                       'configuration': configuration, 'generation_calls': generation_calls,
+                      'citation_validation': citation_validator.snapshot(),
                       'embedding_usage': combined_usage(query_embedding_calls) if settings.query_rewrite_enabled else getattr(embedder, 'last_usage', None),
                       **({'query_embedding_calls':query_embedding_calls,'query_rewrite_calls':
                           [query_rewriter.last_call] if query_rewriter.last_call else []} if settings.query_rewrite_enabled else {}),

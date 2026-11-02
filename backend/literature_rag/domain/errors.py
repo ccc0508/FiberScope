@@ -23,4 +23,9 @@ class InfrastructureError(LiteratureRagError):
 
 
 class CitationValidationError(LiteratureRagError):
-    pass
+    def __init__(self, message: str, *, rule_code: str | None = None,
+                 field: str | None = None, claim_index: int | None = None):
+        super().__init__(message)
+        self.rule_code = rule_code
+        self.field = field
+        self.claim_index = claim_index
