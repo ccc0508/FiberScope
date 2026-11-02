@@ -1,0 +1,9 @@
+{
+  "version": "merged-evidence-review-publication-v1",
+  "files": {
+    "comparison.json": "276f2d47d52021e901988f79f7dbed8fe2f31a790db4bc4ab2a03c77bc687cdd",
+    "adjudication.json": "2e954771103fcdd5d9b7d5d15af90fdb174ebdcad1ab51a9bc9d73e4342795e7",
+    "questions-answers-reviews.jsonl": "ab5cfdea9b1b7d79cdc304b3d31ef9ea57eb0b3b81acbc461da44a515d02c842",
+    "comparison.html": "ba96b5c9e03a379ce9632a728dc5ad25a2bcc142caeca964cbf6de9d06b3c223"
+  }
+}
