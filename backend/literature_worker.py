@@ -126,7 +126,8 @@ def main():
             from literature_rag.application.body_context import BodySectionCatalog
             body_context_catalog=BodySectionCatalog.load(root,metadata)
         answer = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options,table_relations,reranker,
-            body_context_catalog=body_context_catalog,query_rewriter=query_rewriter), CapturedGenerator(), CitationValidator()).answer(
+            body_context_catalog=body_context_catalog,query_rewriter=query_rewriter,
+            query_rewrite_mode=settings.query_rewrite_mode if settings.query_rewrite_enabled else 'dual'), CapturedGenerator(), CitationValidator()).answer(
             body['question'], settings.top_k, settings.min_score)
     except (ProviderError, InfrastructureError) as error:
         print(json.dumps({'status': 'failed', 'answer': '', 'citations': [],

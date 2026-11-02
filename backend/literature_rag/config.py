@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     table_retrieval_enabled: bool = False
     answer_guidance_enabled: bool = False
     query_rewrite_enabled: bool = False
+    query_rewrite_mode: Literal['dual', 'rewrite_only'] = 'dual'
     query_rewrite_timeout_seconds: float = Field(default=30, gt=0, le=60, allow_inf_nan=False)
     rerank_enabled: bool = False
     rerank_provider: Literal['siliconflow'] = 'siliconflow'
@@ -126,7 +127,7 @@ class Settings(BaseSettings):
                 raise ValueError('enabled reranking requires model, base URL and API key')
         if self.query_rewrite_enabled:
             if not self.rerank_enabled:
-                raise ValueError('dual query retrieval requires original-question reranking')
+                raise ValueError('query rewrite requires configured reranking')
             if self.llm_provider != 'deepseek' or not self.llm_model or not self.llm_api_key or not self.llm_api_key.get_secret_value().strip():
                 raise ValueError('query rewrite requires configured DeepSeek credentials')
         return self
