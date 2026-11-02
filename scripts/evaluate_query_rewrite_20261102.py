@@ -37,8 +37,11 @@ def check_pair():
     require('query_rewrite' not in runs[0]['configuration_probe'], 'Control enables rewrite')
     require(runs[1]['configuration_probe']['query_rewrite']['enabled'], 'Treatment disables rewrite')
     for name in ['structure.json', 'table-retrieval.json', 'table-row-vectors.json', 'chunk-organization.json']:
-        require(judge.digest(plan('original')['run_dir']/'library'/name) ==
-                judge.digest(plan('rewrite')['run_dir']/'library'/name), 'Different scientific index sidecars')
+        original = plan('original')['run_dir']/'library'/name
+        rewritten = plan('rewrite')['run_dir']/'library'/name
+        require(original.exists() == rewritten.exists(), 'Different scientific index sidecar sets')
+        if original.exists():
+            require(judge.digest(original) == judge.digest(rewritten), 'Different scientific index sidecars')
     return runs
 
 
@@ -88,6 +91,7 @@ def prepare():
 
 
 def grade(workers=4):
+    require(type(workers) is int and 1 <= workers <= 4, 'Invalid judge concurrency')
     contract = judge.read_json(OUTPUT/'contract.json'); settings = grading.configs(['jev'])
     require(judge.digest(Path(__file__)) == contract['orchestrator_sha256'], 'Orchestrator changed')
     require(grading.public_settings(settings) == contract['requested_judges'], 'Judge settings changed')
@@ -104,8 +108,10 @@ def grade(workers=4):
             audit = reporting.audit(entry['import_dir'], entry['study_dir'])
             require(all(status != 'pending' for _,_,status in audit[5]), 'Inspect interrupted judge requests')
             jobs.extend((entry, job) for job in study['jobs'])
+        jobs.sort(key=lambda pair: judge.sha([pair[0]['arm'], pair[1]['name']]))
         result = execute_jobs(jobs, settings, threading.Event(), workers, 1)
         judge.write(OUTPUT/'grading-progress.json', result)
+        require(result['execution_error_type'] is None, 'Judge execution stopped; inspect saved records')
     return result
 
 
