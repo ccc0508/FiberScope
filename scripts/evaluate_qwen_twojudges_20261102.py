@@ -35,6 +35,8 @@ def attach():
     require(not list((RUN/'results').glob('*.json')) and 'embedding_eval_control' not in run,'Attach once before generation')
     require(comparable_configuration(run['configuration_probe'])==comparable_configuration(old['configuration_probe']),
         'Answer/retrieval policies differ from previous Qwen run')
+    require(all(run['configuration_probe'][k]==old['configuration_probe'][k] for k in
+        ['embedding_provider','embedding_model','embedding_dimensions']),'Embedding identity changed')
     require(scientific_sources(RUN/'library')==scientific_sources(OLD_RUN/'library'),'Scientific sources changed')
     require(run['dataset_files']==old['dataset_files'],'Question set changed')
     require(judge.digest(CACHE)==old['embedding_eval_control']['query_cache_sha256'],'Prepared queries changed')
