@@ -1,0 +1,776 @@
+{
+  "version": "fixed-draft-source-review-20261102-v2",
+  "questions": 32,
+  "matched_sources_and_original_drafts": 32,
+  "raw_jev_paired_question_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-005",
+    "PFI2-006",
+    "PFI2-007",
+    "PFI2-008",
+    "PFI2-009",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-012",
+    "PFI2-013",
+    "PFI2-014",
+    "PFI2-016",
+    "PFI2-017",
+    "PFI2-018",
+    "PFI2-019",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-023",
+    "PFI2-024",
+    "PFI2-025",
+    "PFI2-028",
+    "PFI2-029",
+    "PFI2-030",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "summaries": {
+    "control": {
+      "raw_jev_valid_tasks": 30,
+      "raw_jev": {
+        "tasks": 30,
+        "point_macro_average": 0.9722222222222222,
+        "support_counts": {
+          "supported": 112,
+          "partially_supported": 7
+        },
+        "citation_precision": {
+          "numerator": 125,
+          "denominator": 130,
+          "value": 0.9615384615384616
+        },
+        "citation_coverage": {
+          "numerator": 114,
+          "denominator": 119,
+          "value": 0.957983193277311
+        },
+        "boundary_mean": 1.9333333333333333,
+        "all_five_pass": 21
+      },
+      "raw_jev_paired": {
+        "tasks": 29,
+        "point_macro_average": 0.9712643678160919,
+        "support_counts": {
+          "supported": 112,
+          "partially_supported": 5
+        },
+        "citation_precision": {
+          "numerator": 123,
+          "denominator": 128,
+          "value": 0.9609375
+        },
+        "citation_coverage": {
+          "numerator": 114,
+          "denominator": 117,
+          "value": 0.9743589743589743
+        },
+        "boundary_mean": 1.9310344827586208,
+        "all_five_pass": 21
+      },
+      "final_codex": {
+        "tasks": 32,
+        "point_macro_average": 0.96875,
+        "support_counts": {
+          "supported": 119,
+          "partially_supported": 8
+        },
+        "citation_precision": {
+          "numerator": 137,
+          "denominator": 139,
+          "value": 0.9856115107913669
+        },
+        "citation_coverage": {
+          "numerator": 120,
+          "denominator": 127,
+          "value": 0.9448818897637795
+        },
+        "boundary_mean": 1.84375,
+        "all_five_pass": 24
+      },
+      "judge_accounting": {
+        "calls": 38,
+        "known_tokens": {
+          "input_tokens": 2873193,
+          "output_tokens": 139220,
+          "total_tokens": 3012413
+        },
+        "usage_unknown_calls": 0,
+        "reported_cost_usd": "0.120674106",
+        "cost_unknown_calls": 0,
+        "invoice_cost_usd": null,
+        "request_time_ms": 143125
+      },
+      "supplemented_question_ids": [
+        "PFI2-015",
+        "PFI2-027"
+      ],
+      "adjusted_question_ids": [
+        "PFI2-004",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-016",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-029",
+        "PFI2-031"
+      ]
+    },
+    "review": {
+      "raw_jev_valid_tasks": 29,
+      "raw_jev": {
+        "tasks": 29,
+        "point_macro_average": 0.9770114942528736,
+        "support_counts": {
+          "supported": 113,
+          "partially_supported": 4
+        },
+        "citation_precision": {
+          "numerator": 123,
+          "denominator": 129,
+          "value": 0.9534883720930233
+        },
+        "citation_coverage": {
+          "numerator": 114,
+          "denominator": 117,
+          "value": 0.9743589743589743
+        },
+        "boundary_mean": 1.9310344827586208,
+        "all_five_pass": 21
+      },
+      "raw_jev_paired": {
+        "tasks": 29,
+        "point_macro_average": 0.9770114942528736,
+        "support_counts": {
+          "supported": 113,
+          "partially_supported": 4
+        },
+        "citation_precision": {
+          "numerator": 123,
+          "denominator": 129,
+          "value": 0.9534883720930233
+        },
+        "citation_coverage": {
+          "numerator": 114,
+          "denominator": 117,
+          "value": 0.9743589743589743
+        },
+        "boundary_mean": 1.9310344827586208,
+        "all_five_pass": 21
+      },
+      "final_codex": {
+        "tasks": 32,
+        "point_macro_average": 0.9739583333333334,
+        "support_counts": {
+          "supported": 121,
+          "partially_supported": 6
+        },
+        "citation_precision": {
+          "numerator": 138,
+          "denominator": 140,
+          "value": 0.9857142857142858
+        },
+        "citation_coverage": {
+          "numerator": 122,
+          "denominator": 127,
+          "value": 0.9606299212598425
+        },
+        "boundary_mean": 1.875,
+        "all_five_pass": 25
+      },
+      "judge_accounting": {
+        "calls": 38,
+        "known_tokens": {
+          "input_tokens": 2873482,
+          "output_tokens": 139249,
+          "total_tokens": 3012731
+        },
+        "usage_unknown_calls": 0,
+        "reported_cost_usd": "0.120686244",
+        "cost_unknown_calls": 0,
+        "invoice_cost_usd": null,
+        "request_time_ms": 142210
+      },
+      "supplemented_question_ids": [
+        "PFI2-015",
+        "PFI2-026",
+        "PFI2-027"
+      ],
+      "adjusted_question_ids": [
+        "PFI2-004",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-011",
+        "PFI2-013",
+        "PFI2-014",
+        "PFI2-016",
+        "PFI2-018",
+        "PFI2-024",
+        "PFI2-025",
+        "PFI2-031"
+      ]
+    }
+  },
+  "raw_jev_paired_delta": {
+    "point_macro_percentage_points": 0.5747126436781658,
+    "citation_precision_percentage_points": -0.7449127906976716,
+    "citation_coverage_percentage_points": 0.0,
+    "boundary_mean": 0.0,
+    "all_five_pass": 0
+  },
+  "final_codex_delta": {
+    "point_macro_percentage_points": 0.520833333333337,
+    "citation_precision_percentage_points": 0.010277492291888013,
+    "citation_coverage_percentage_points": 1.5748031496062964,
+    "boundary_mean": 0.03125,
+    "all_five_pass": 1
+  },
+  "question_changes": [
+    {
+      "task_id": "PFI2-001",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-002",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-003",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-004",
+      "status": "revised",
+      "answer_changed": true,
+      "raw_jev_identical_answer_drift": null,
+      "point_before": 0.8333333333333334,
+      "point_after": 0.8333333333333334,
+      "joint_before": false,
+      "joint_after": false,
+      "analysis": "修正“同一条件下”的不准确表述，事实与引用组更严谨；但作用力差异只写进审校问题说明，没有进入显示的回答，必答P3仍为0.5。"
+    },
+    {
+      "task_id": "PFI2-005",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-006",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-007",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": true,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-008",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-009",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-010",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-011",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": true,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-012",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-013",
+      "status": "revised",
+      "answer_changed": true,
+      "raw_jev_identical_answer_drift": null,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "在额外机制说明中补回作者推测语气；相关系数及原有核心要点不变。本轮不把更谨慎的表述自动当成新增要点收益。"
+    },
+    {
+      "task_id": "PFI2-014",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": false,
+      "joint_after": false,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-015",
+      "status": "revised",
+      "answer_changed": true,
+      "raw_jev_identical_answer_drift": null,
+      "point_before": 0.8333333333333334,
+      "point_after": 1,
+      "joint_before": false,
+      "joint_after": true,
+      "analysis": "把确定归因改为作者推测/可能，修复P2的不确定性，0.5→1；原数值、图示和不同作用力条件保留，全部维度由未达标变为达标。"
+    },
+    {
+      "task_id": "PFI2-016",
+      "status": "rejected",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 0.8333333333333334,
+      "point_after": 0.8333333333333334,
+      "joint_before": false,
+      "joint_after": false,
+      "analysis": "审校识别了过强的排他推断，但所给长引文经过了模型顺句修复，与当前含重复/断裂的实际证据不能完整匹配，整份编辑被拒绝，原稿问题仍在。不得把正确建议当作已应用。"
+    },
+    {
+      "task_id": "PFI2-017",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-018",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 0.6666666666666666,
+      "point_after": 0.6666666666666666,
+      "joint_before": false,
+      "joint_after": false,
+      "analysis": "审校判原样保留，仍未明确相对峰面积比例不等于绝对氢键数量；独立P3继续0分，未解决。"
+    },
+    {
+      "task_id": "PFI2-019",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": true,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-020",
+      "status": "revised",
+      "answer_changed": true,
+      "raw_jev_identical_answer_drift": null,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "为额外氢键形成解释补回“可能”及干燥条件；原稿已满足本题必答要求，措辞更谨慎但要点分不增加。未看到新数值或条件错误。"
+    },
+    {
+      "task_id": "PFI2-021",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-022",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-023",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-024",
+      "status": "rejected",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": false,
+      "joint_after": false,
+      "analysis": "模型识别了相对含量/总量混淆和“联系最直接”无依据排序，但其中一条引文匹配失败，当前整份编辑原子接受策略拒绝全部修改，原稿三个问题未被修复。"
+    },
+    {
+      "task_id": "PFI2-025",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-026",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": null,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-027",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": null,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-028",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-029",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": true,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-030",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": true,
+      "joint_after": true,
+      "analysis": "审校后原样保留，问题、原稿及实际引用/原图未变，最终语义分保持一致；若Jev原分有差异单独作为评委波动记录。"
+    },
+    {
+      "task_id": "PFI2-031",
+      "status": "revised",
+      "answer_changed": true,
+      "raw_jev_identical_answer_drift": null,
+      "point_before": 1,
+      "point_after": 1,
+      "joint_before": false,
+      "joint_after": false,
+      "analysis": "补明0→16000转和相对降幅，添加真实Table 1来源，恢复机制的可能性；但C6仍说“氢键总量减少”，相对/绝对口径问题没有完整修复，事实与边界仍部分达标。"
+    },
+    {
+      "task_id": "PFI2-032",
+      "status": "unchanged",
+      "answer_changed": false,
+      "raw_jev_identical_answer_drift": false,
+      "point_before": 0.8333333333333334,
+      "point_after": 0.8333333333333334,
+      "joint_before": false,
+      "joint_after": false,
+      "analysis": "原样保留；摘要0.888并不在当前证据中，审校没有凭空补数，也无法解决该冲突证据缺失。"
+    }
+  ],
+  "runtime": {
+    "review": {
+      "calls": 32,
+      "usage_unknown_calls": 0,
+      "reported_cost_usd": null,
+      "input_tokens": 304161,
+      "output_tokens": 92164,
+      "total_tokens": 396325
+    },
+    "pilot": {
+      "calls": 4,
+      "usage_unknown_calls": 0,
+      "reported_cost_usd": null,
+      "input_tokens": 44526,
+      "output_tokens": 8848,
+      "total_tokens": 53374
+    },
+    "original_generation": {
+      "calls": 35,
+      "usage_unknown_calls": 0,
+      "reported_cost_usd": null,
+      "input_tokens": 312750,
+      "output_tokens": 49915,
+      "total_tokens": 362665
+    },
+    "review_status_counts": {
+      "unchanged": 25,
+      "revised": 5,
+      "rejected": 2
+    },
+    "review_status_question_ids": {
+      "rejected": [
+        "PFI2-016",
+        "PFI2-024"
+      ],
+      "revised": [
+        "PFI2-004",
+        "PFI2-013",
+        "PFI2-015",
+        "PFI2-020",
+        "PFI2-031"
+      ],
+      "unchanged": [
+        "PFI2-001",
+        "PFI2-002",
+        "PFI2-003",
+        "PFI2-005",
+        "PFI2-006",
+        "PFI2-007",
+        "PFI2-008",
+        "PFI2-009",
+        "PFI2-010",
+        "PFI2-011",
+        "PFI2-012",
+        "PFI2-014",
+        "PFI2-017",
+        "PFI2-018",
+        "PFI2-019",
+        "PFI2-021",
+        "PFI2-022",
+        "PFI2-023",
+        "PFI2-025",
+        "PFI2-026",
+        "PFI2-027",
+        "PFI2-028",
+        "PFI2-029",
+        "PFI2-030",
+        "PFI2-032"
+      ]
+    },
+    "review_latency_median_seconds": 14.6885,
+    "review_latency_sum_seconds": 605.453,
+    "final_characters": {
+      "control": 8041,
+      "review": 8099
+    },
+    "incremental_retrieval_calls": 0,
+    "incremental_primary_generation_calls": 0,
+    "cost_note": "DeepSeek monetary cost not returned; no price conversion invented. Pilot use is separate and included in disclosure."
+  },
+  "adoption": {
+    "default_enabled": false,
+    "decision": "implemented_optional_candidate_not_enabled_by_default",
+    "reason": "一次已见开发集上仅明确修复一个原有必答缺陷，另外仍有条件未落入正文、引文噪声拦截及未识别测量边界；新增一轮模型调用的收益尚不足以支持默认启用。",
+    "next_steps": [
+      "让识别出的必要条件真正写进修改陈述，而非只存在问题说明中。",
+      "改进噪声原文的可验证引用定位，并避免一个编辑定位失败连带拒绝其他独立有效修改。",
+      "核查相对/绝对测量口径和必要推断边界的漏检；保留未改坏正确内容的约束。"
+    ]
+  },
+  "evidence_unit_note": "Jev原始仍为不变的文字协议；Codex最终复核包含同引用号下实际提供的原图。相同原稿复用已核实源文判定，改动陈述重新核查；相同内容两侧最终同分。新增条件缺陷同时用于两侧并明示，不改写历史报告。",
+  "adjudication_sha256": "09e772816d141ca0ab20cac278ffb8efdd40656cbe214beccfcfdc95d4453138",
+  "contract": {
+    "version": "evidence-review-20261102-v2",
+    "created_at": "2026-11-02T13:35:00.273358+00:00",
+    "source_commit": "941777e94fa145f3817ecd49cca7fa84f98984d3",
+    "controller_sha256": "d10a8c0a8605a43ddbd560e94b810687fe21b2f6ad30a7aff65f7afba08467c6",
+    "run_sha256": "4421728afca1dab83d0900b759d9706ef9346d72941a49f4370191269a8535b2",
+    "source_run_sha256": "43371fd694353c29ee0adb13e8a14f19eb417b4ae274b12daf4379777d95dc0c",
+    "source_results": {
+      "PFI2-001": "ff3b8cea1b85ce75eec107e1332c68f35860f177ce44ee47991d46d2b3cbef9b",
+      "PFI2-002": "2535db03d1d251889e36e96b4366878a234e1d2caae8cbd2b1a0d55753186984",
+      "PFI2-003": "4d5c511623ca56e3c649e2a637bb7d3313ef5f6a1d61a2aafefe9c844fb76fc1",
+      "PFI2-004": "666b3265819773a8bcd9fe462504c10205c8f97da2f54fab6449673e2dc72ae8",
+      "PFI2-005": "4049760fb37ce395f724547ab821668c639ea3c8c560b91c3bf70679520dfbd3",
+      "PFI2-006": "25e3391bf395aca185175ec2124bb0d0c913cfdde26a8adb06064686d9d82e44",
+      "PFI2-007": "81666f62647152c845a2bfce29babee1f76ba3a75ea7fc6f91881653a91640fe",
+      "PFI2-008": "ce53f97cf3e37c8b57fa3dd4847acc17c4c1d75e2c04565cb5767c52cc44d629",
+      "PFI2-009": "69afea7d837ffe3ade3cc4420b56075afa5d5f99293c11770edaa30e21a7ffa9",
+      "PFI2-010": "9089ed6b0aefa7c6b6f6edc9ac750479573be549bc44a8ab8a795bd9a31152c5",
+      "PFI2-011": "ab8d46f4199137c047dfd8ab2128a492981fcb06d342ae47f4e5c2c1ea574eab",
+      "PFI2-012": "e76f0aa28e60c2ac99cc90e3bda9622057af9de232666aa84dcb93a1c96778e5",
+      "PFI2-013": "21c417a27caad8a5b055ab5dd65d2136e6084b2ee734dc5b115b034952b6d6b5",
+      "PFI2-014": "97353d4101cf7de9ffcf19fa1884c70fd659d375cef23ad75a526e30106a17bc",
+      "PFI2-015": "57749cc509b5574180c0ae42d8d05fba2cabbd15f578fc94f7fc73de7cf9e135",
+      "PFI2-016": "18e586823e4eaee02a5c3e8f278a95c10e9b43ccdda616c6f9faf0c352a063d5",
+      "PFI2-017": "e36879db9c7f55f32a986ea5125f6f020d909df7fa641daf04eedb625d4e1d1f",
+      "PFI2-018": "1c4f108b04c75b95c7258880c091b50791eccacbe6f1e9050b3b0b4ec902841a",
+      "PFI2-019": "c3d7a944c98e28589f12b706654adab0076f966b8dc4a6f3625e96511fc70cf2",
+      "PFI2-020": "919ac597345e6385ac344811dc4db284ddd63b325a7a7999e63b279216893cef",
+      "PFI2-021": "d97d47d026a2dda3a1d7f84a311dd2a8784cdcf944ca21f69f6af72a3d03985e",
+      "PFI2-022": "7160439f0922465033a69cca889d818cdbc562a69ee24b298646e54e8e322eb8",
+      "PFI2-023": "f3da21e79fb944dbee44d08986a0df2ea2642c7debb19f2f9a592099554ccab7",
+      "PFI2-024": "ac8673b424ea79ff37c3c7b4fbe937c5771a391d930b6d20dafac02be096c6d0",
+      "PFI2-025": "b2e01d5ffcc0f68fd7ae311b1ab8193e5cdcf553fde04613c7cbd6efca8df07d",
+      "PFI2-026": "b25e6c29b3910f36cbd5e228ca98f3d28809747a97054879828b74857fb09768",
+      "PFI2-027": "65c0550e10777d37dfdceca17eaf21aefcdc840001ca47266a29d6f3d0a72a51",
+      "PFI2-028": "7e10e796e6bfb0f6094606cd9e11df839992c9a14acfb8a74119294933218df9",
+      "PFI2-029": "21dc9caac1985c11f5f94ef108f43203bd577ce32920e8fb64a37135d8101c2a",
+      "PFI2-030": "4e5d64eacce59825a675193be2b60c8de8531a3bfe239982829007a1f437ff5f",
+      "PFI2-031": "5c9a72e97d35b3f1aca2b793a39455cfd75e5246354512e115edd4d0858aa4d7",
+      "PFI2-032": "8e1e306be0a1305d4ce36c7763026b71f8d244bc880d0a5755706234e86b3889"
+    },
+    "dataset_manifest_sha256": "463c687ad22e035a90575d16a95ee154be3eda9bbab506b0bc7b20c4e8b4d47e",
+    "website_config_sha256": "475f421a203abd33f084625d01ac9f27aa17635658a3325abffa6f5bf4f3ab7c",
+    "policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+    "review_calls_per_answer": 1,
+    "primary_generation_calls": 0,
+    "retrieval_calls": 0,
+    "comparison": "32 sealed delivered DeepSeek drafts versus one source-grounded review of each identical draft; no new primary generation.",
+    "model_context": "Only question, same sources/images and that question own draft claims; no gold, prior grades or other answers.",
+    "grading": "Independent fresh Jev requests for both arms, unchanged original text policy, first valid at most three attempts.",
+    "website_activation": "Decide after the matched experiment; keep current default unchanged during evaluation.",
+    "judges": {
+      "jev": {
+        "base_url": "https://openrouter.ai/api",
+        "requested_model": "typesafe/jev-1.14",
+        "api": "openrouter_decisions",
+        "timeout_seconds": 120.0,
+        "automatic_retries": 0,
+        "previous_scores_provided": false,
+        "scope": [
+          "key_points",
+          "claim_support",
+          "citation_support",
+          "citation_group_coverage",
+          "answerability"
+        ],
+        "independent_requests": true,
+        "sampling": "Native typed decisions; no sampling overrides or conversation identifiers."
+      }
+    },
+    "studies": {
+      "control": {
+        "study_sha256": "642ea032053cd59005de1f4c5b95fa856018b2ae760fb8af7efdf4eb9c1b3753",
+        "import_sha256": "8ad6b2c8109dceaa2fb330bdb7d9bc9b07591d9ca4b23c6bccf5d6859dfe25ea"
+      },
+      "review": {
+        "study_sha256": "c19ded08ab6624ac9028ac8deff08a9251624fc62f67360a44ca39bc1df25508",
+        "import_sha256": "98f7a199ca05b31aeba3e3384907d9aa172524a4ea992f0bf7bae9520e30158f"
+      }
+    }
+  },
+  "limitations": [
+    "One paper and 32 previously seen development questions; no generalization or stability claim.",
+    "Control reuses exact original delivered answers; this estimates net one-pass review effect, not two fresh full RAG runs.",
+    "Jev uses unchanged text-only grading; Codex final additionally checks only actual attached original images, symmetrically.",
+    "Fresh Jev grades of byte-identical answers can differ; deterministic source adjudication uses the same final decision for identical content.",
+    "Source quote verification proves location, not semantic correctness; an accepted review may miss or introduce defects.",
+    "No RAG retrieval or question rewrite improvement is tested. Missing source evidence cannot be supplied by this review."
+  ]
+}

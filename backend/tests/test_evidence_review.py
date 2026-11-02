@@ -84,7 +84,8 @@ def test_token_exhaustion_is_recorded_without_false_review_success():
 def test_invalid_proposals_retain_original_with_specific_reason(overrides,reason):
     service=EvidenceReviewService(provider(proposal(**overrides)))
     assert service.review('Question',SOURCES,DRAFT) is DRAFT
-    assert service.last_trace['status']=='rejected' and service.last_trace['reason_code']==reason
+    assert service.last_trace['status']=='rejected'
+    assert service.last_trace['rejected_issues'][0]['reason_code']==reason
     assert service.last_trace['accepted'] is False and service.last_trace['issues']
 
 
@@ -113,7 +114,25 @@ def test_invalid_revised_claim_does_not_trigger_primary_generation_retry():
     answer=service.answer('Question',8,.35)
     assert len(calls)==1 and len(validator.snapshot()['attempts'])==1
     assert answer.answer==CitationValidator().validate(DRAFT,SOURCES).answer
-    assert reviewer.last_trace['status']=='rejected' and reviewer.last_trace['citation_rule']=='inline_claim_reference'
+    assert reviewer.last_trace['status']=='rejected' and reviewer.last_trace['rejected_issues'][0]['citation_rule']=='inline_claim_reference'
+
+
+def test_one_noisy_quote_does_not_discard_an_independent_verified_edit():
+    p=proposal();bad=proposal(claim_index=1,basis=[dict(kind='text',ref='[1]',quote='An invented unavailable quote')]).issues[0]
+    p.issues.append(bad);service=EvidenceReviewService(provider(p))
+    result=service.review('Question',SOURCES,DRAFT)
+    assert result.claims[0].text.startswith('The effect might')
+    assert result.claims[1] is DRAFT.claims[1]
+    assert service.last_trace['accepted_issue_indexes']==[0]
+    assert service.last_trace['rejected_issues']==[dict(issue_index=1,reason_code='quote_not_in_actual_evidence')]
+
+
+def test_independently_valid_edits_that_conflict_together_retain_original():
+    first=proposal(replacement_claims=[dict(text='A shared replacement.',citation_refs=['[1]'])]).issues[0]
+    second=proposal(claim_index=1,replacement_claims=[dict(text='A shared replacement.',citation_refs=['[1]'])]).issues[0]
+    service=EvidenceReviewService(provider(ReviewPayload(issues=[first,second])))
+    assert service.review('Question',SOURCES,DRAFT) is DRAFT
+    assert service.last_trace['citation_rule']=='duplicate_claim' and service.last_trace['status']=='rejected'
 
 
 def test_provider_error_does_not_escape_or_mark_review_success():
