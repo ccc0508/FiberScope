@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     query_rewrite_enabled: bool = False
     query_rewrite_mode: Literal['dual', 'rewrite_only'] = 'dual'
     query_rewrite_timeout_seconds: float = Field(default=30, gt=0, le=60, allow_inf_nan=False)
+    query_rewrite_model: str | None = None
+    query_rewrite_api_key: SecretStr | None = None
+    query_rewrite_base_url: str | None = None
     rerank_enabled: bool = False
     rerank_provider: Literal['siliconflow'] = 'siliconflow'
     rerank_model: str = 'BAAI/bge-reranker-v2-m3'
@@ -60,8 +63,11 @@ class Settings(BaseSettings):
     llm_reasoning_effort: Literal['low', 'high', 'max'] | None = None
     llm_api_key: SecretStr | None = None
     llm_base_url: str | None = None
+    llm_actor_authorization: SecretStr | None = None
+    llm_timeout_seconds: float = Field(default=60, gt=0, le=300, allow_inf_nan=False)
+    llm_proxy_url: str | None = None
 
-    @field_validator("embedding_base_url", "llm_base_url", "rerank_base_url", mode="before")
+    @field_validator("embedding_base_url", "llm_base_url", "rerank_base_url", "query_rewrite_base_url", "llm_proxy_url", mode="before")
     @classmethod
     def validate_base_url(cls, value: object) -> object:
         if not isinstance(value, str):
@@ -128,8 +134,9 @@ class Settings(BaseSettings):
         if self.visual_retrieval_enabled:
             if self.embedding_provider!='dashscope' or self.embedding_model!='qwen3-vl-embedding':
                 raise ValueError('visual retrieval requires matching Qwen3-VL text and image embeddings')
-            if self.llm_provider!='deepseek' or self.llm_model!='deepseek-flash':
-                raise ValueError('visual evidence requires the configured DeepSeek Flash vision model')
+            if not ((self.llm_provider=='deepseek' and self.llm_model=='deepseek-flash') or
+                    (self.llm_provider=='openai' and self.llm_model=='gpt-6-astra')):
+                raise ValueError('visual evidence requires a supported DeepSeek Flash or GPT-6 Astra vision model')
             if self.context_expansion_strategy!='body_section':
                 raise ValueError('visual retrieval requires classified MinerU source parents')
         if self.table_retrieval_enabled and not self.context_expansion_enabled:
@@ -143,6 +150,12 @@ class Settings(BaseSettings):
         if self.query_rewrite_enabled:
             if not self.rerank_enabled:
                 raise ValueError('query rewrite requires configured reranking')
-            if self.llm_provider != 'deepseek' or not self.llm_model or not self.llm_api_key or not self.llm_api_key.get_secret_value().strip():
+            explicit = any((self.query_rewrite_model, self.query_rewrite_api_key, self.query_rewrite_base_url))
+            if explicit and not all((self.query_rewrite_model, self.query_rewrite_api_key,
+                                     self.query_rewrite_base_url)):
+                raise ValueError('independent query rewrite requires model, API key and base URL')
+            if explicit and (not self.query_rewrite_model.strip() or not self.query_rewrite_api_key.get_secret_value().strip()):
+                raise ValueError('independent query rewrite credentials must not be blank')
+            if not explicit and (self.llm_provider != 'deepseek' or not self.llm_model or not self.llm_api_key or not self.llm_api_key.get_secret_value().strip()):
                 raise ValueError('query rewrite requires configured DeepSeek credentials')
         return self
