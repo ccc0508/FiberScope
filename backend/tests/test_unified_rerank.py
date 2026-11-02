@@ -74,7 +74,8 @@ def test_combined_snapshot_reports_both_reranking_and_unified_context(tmp_path):
         verify(tmp_path/'missing-library',tmp_path/'missing-cache',tmp_path/'output.json',env)
 
 
-def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,monkeypatch,capsys):
+@pytest.mark.parametrize('rewrite_enabled', [False, True])
+def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,monkeypatch,capsys,rewrite_enabled):
     import literature_worker
     source,chunks=source_library(tmp_path);manifest=plan(source)
     manifest['embedding']=dict(provider='openai',model='fake',dimensions=3)
@@ -84,11 +85,14 @@ def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,
     settings=Settings(_env_file=None,context_expansion_enabled=True,context_expansion_strategy='body_section',
         table_retrieval_enabled=True,rerank_enabled=True,rerank_api_key='private-test-token',
         rerank_base_url='https://api.example/v1',embedding_model='fake',embedding_dimensions=3,
-        embedding_api_key='test-only',llm_provider='openai',llm_model='fake-generator',llm_api_key='test-only',top_k=1)
+        embedding_api_key='test-only',llm_provider='deepseek' if rewrite_enabled else 'openai',
+        llm_model='fake-generator',llm_api_key='test-only',top_k=1,query_rewrite_enabled=rewrite_enabled)
     calls=[]
     class Embedder:
         def __init__(self,*args):pass
-        def embed_query(self,text):return [1.,1.,1.]
+        def embed_query(self,text):
+            self.last_usage=dict(prompt_tokens=4,total_tokens=4)
+            return [1.,1.,1.]
     class Reranker:
         def __init__(self,*args):self.last_call=None
         def rerank(self,question,texts):
@@ -99,6 +103,7 @@ def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,
         model_name='fake-generator'
         def __init__(self,*args,**kwargs):pass
         def generate(self,question,evidence,feedback=None):
+            assert question=='Measured values?'
             assert evidence[0].chunk_id==chunks[2].id and chunks[1].text in evidence[0].text
             return GeneratedAnswer('The table reports measured values. [1]',
                 (GeneratedClaim('The table reports measured values.',('[1]',)),))
@@ -106,13 +111,24 @@ def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,
     monkeypatch.setattr('literature_rag.diagnostics.Settings',lambda **kwargs:settings)
     monkeypatch.setattr('literature_rag.adapters.providers.openai.OpenAIEmbedder',Embedder)
     monkeypatch.setattr('literature_rag.adapters.providers.openai.OpenAIGenerator',Generator)
+    monkeypatch.setattr('literature_rag.adapters.providers.deepseek.DeepSeekGenerator',Generator)
+    class Rewriter:
+        last_call=dict(status='completed',usage=dict(total_tokens=20))
+        def __init__(self,*args):pass
+        def rewrite(self,question):return 'Search measured values in the table'
+    monkeypatch.setattr('literature_rag.adapters.providers.query_rewrite.DeepSeekQueryRewriter',Rewriter)
     monkeypatch.setattr('literature_rag.adapters.providers.rerank.SiliconFlowReranker',Reranker)
     monkeypatch.setattr('literature_rag.adapters.chroma.vector_store.ChromaVectorStore',
         lambda *args:NS(search=lambda *_:[VectorMatch(chunks[1].id,.9)]))
     monkeypatch.setattr(sys,'stdin',StringIO(json.dumps(dict(data_dir=str(source),question='Measured values?'))))
     literature_worker.main();result=json.loads(capsys.readouterr().out)
     assert result['status']=='answered' and len(calls)==1 and len(result['rerank_calls'])==1
-    assert result['configuration']['pipeline_version']=='mineru-unified-rerank-v1'
+    assert result['configuration']['pipeline_version']==('mineru-dual-query-v1' if rewrite_enabled else 'mineru-unified-rerank-v1')
+    if rewrite_enabled:
+        assert result['embedding_usage']['total_tokens']==8 and len(result['query_embedding_calls'])==2
+        assert len(result['query_rewrite_calls'])==1
+        assert result['context_assembly']['query_rewrite']['shared_candidates']==2
+        assert result['context_assembly']['query_rewrite']['candidate_count_after_budget']==2
     assert result['retrieval_seed_evidence'][0]['chunk_id']==chunks[2].id
     assert result['context_assembly']['candidate_root_chunk_ids']==[chunks[2].id]
     assert result['context_assembly']['assembly_passes']==1

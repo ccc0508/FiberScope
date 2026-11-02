@@ -88,6 +88,12 @@ class Reranker(Protocol):
         raise NotImplementedError
 
 
+class QueryRewriter(Protocol):
+    def rewrite(self, question: str) -> str:
+        """Return one retrieval query; never replace the question used for answering."""
+        raise NotImplementedError
+
+
 class Generator(Protocol):
     @property
     def model_name(self) -> str:

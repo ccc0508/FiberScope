@@ -2,10 +2,10 @@ import logging
 from math import isfinite
 from time import perf_counter
 
-from literature_rag.domain.errors import InfrastructureError, InputError
+from literature_rag.domain.errors import InfrastructureError, InputError, ProviderError
 from literature_rag.domain.models import Evidence
 from literature_rag.application.context import ContextOptions, assemble
-from literature_rag.ports.protocols import Embedder, MetadataStore, VectorStore, Reranker
+from literature_rag.ports.protocols import Embedder, MetadataStore, VectorStore, Reranker, QueryRewriter
 
 logger = logging.getLogger(__name__)
 VECTOR_CANDIDATE_LIMIT = 50
@@ -30,6 +30,7 @@ class RetrievalService:
         table_relations=None,
         reranker: Reranker | None = None,
         body_context_catalog=None,
+        query_rewriter: QueryRewriter | None = None,
     ) -> None:
         self.metadata = metadata
         self.vectors = vectors
@@ -38,6 +39,9 @@ class RetrievalService:
         self.table_relations = table_relations
         self.reranker = reranker
         self.body_context_catalog = body_context_catalog
+        self.query_rewriter = query_rewriter
+        if query_rewriter is not None and reranker is None:
+            raise ValueError('dual query retrieval requires original-question reranking')
         if body_context_catalog is not None and not self.context_options.enabled:
             raise ValueError('body-section context requires enabled expansion')
         if body_context_catalog is not None and table_relations is not None:
@@ -45,6 +49,36 @@ class RetrievalService:
         self.last_rerank_diagnostics: dict = {}
         self.last_seed_evidences: list[Evidence] = []
         self.last_context_diagnostics: dict = {}
+        self.last_query_diagnostics: dict = {}
+        self.last_query_embedding_calls: list[dict] = []
+
+    def _search(self, question, min_score, branch):
+        started = perf_counter()
+        call = dict(branch=branch, status='failed', usage=None)
+        self.last_query_embedding_calls.append(call)
+        try:
+            query_embedding = self.embedder.embed_query(question)
+            call['status'] = 'completed'
+        finally:
+            call.update(usage=getattr(self.embedder, 'last_usage', None),
+                        latency_ms=int((perf_counter() - started) * 1000))
+        candidates = self.vectors.search(query_embedding, VECTOR_CANDIDATE_LIMIT)[:VECTOR_CANDIDATE_LIMIT]
+        for match in candidates:
+            if not _is_unit_interval_number(match.score):
+                raise InfrastructureError('vector search returned an invalid score')
+        ordered = sorted((m for m in candidates if m.score >= min_score), key=lambda m: -m.score)
+        matches, seen = [], set()
+        for match in ordered:
+            if match.chunk_id not in seen:
+                matches.append(match)
+                seen.add(match.chunk_id)
+        if self.query_rewriter is not None:
+            from copy import deepcopy
+            self.last_query_diagnostics['branches'].append(dict(branch=branch, query=question,
+                raw_candidates=len(candidates), eligible_candidates=len(matches),
+                candidates=[dict(chunk_id=m.chunk_id, score=m.score, rank=i+1) for i, m in enumerate(matches)],
+                table_retrieval=deepcopy(getattr(self.vectors, 'last_diagnostics', None))))
+        return matches
 
     def retrieve(
         self,
@@ -56,6 +90,8 @@ class RetrievalService:
         self.last_seed_evidences=[]
         self.last_context_diagnostics={}
         self.last_rerank_diagnostics={}
+        self.last_query_diagnostics={}
+        self.last_query_embedding_calls=[]
         if not isinstance(question, str):
             raise InputError("question must be a string")
         question = question.strip()
@@ -66,20 +102,42 @@ class RetrievalService:
         if not _is_unit_interval_number(min_score):
             raise InputError("min_score must be between 0 and 1")
 
-        query_embedding = self.embedder.embed_query(question)
-        candidates = self.vectors.search(query_embedding, VECTOR_CANDIDATE_LIMIT)[
-            :VECTOR_CANDIDATE_LIMIT
-        ]
-        matches = []
-        for match in candidates:
-            if not _is_unit_interval_number(match.score):
-                raise InfrastructureError("vector search returned an invalid score")
-            if match.score >= min_score:
-                matches.append(match)
-        matches.sort(key=lambda match: match.score, reverse=True)
+        rewritten = None
+        if self.query_rewriter is not None:
+            from literature_rag.application.query_rewrite import VERSION, validate_rewrite
+            self.last_query_diagnostics = dict(enabled=True, version=VERSION, status='started', branches=[],
+                fusion='reciprocal_rank_fusion_k60', max_candidates=VECTOR_CANDIDATE_LIMIT,
+                rerank_query='original', answer_query='original')
+            try:
+                rewritten = validate_rewrite(question, self.query_rewriter.rewrite(question))
+                self.last_query_diagnostics['status'] = 'unchanged' if rewritten == question else 'rewritten'
+                if rewritten == question:
+                    rewritten = None
+            except ProviderError:
+                self.last_query_diagnostics['status'] = 'rewrite_failed_original_only'
+            finally:
+                self.last_query_diagnostics['provider_call'] = getattr(self.query_rewriter, 'last_call', None)
 
-        chunks = self.metadata.get_chunks([match.chunk_id for match in matches])
+        branches = [self._search(question, min_score, 'original')]
+        if rewritten is not None:
+            branches.append(self._search(rewritten, min_score, 'rewritten'))
+        matches = branches[0]
+        all_ids = list(dict.fromkeys(m.chunk_id for branch in branches for m in branch))
+        chunks = self.metadata.get_chunks(all_ids)
         chunks_by_id = {chunk.id: chunk for chunk in chunks}
+        if self.query_rewriter is not None:
+            from literature_rag.application.query_rewrite import fuse_candidates
+            if len(branches) == 2:
+                matches, fused = fuse_candidates(branches, set(chunks_by_id), VECTOR_CANDIDATE_LIMIT)
+            else:
+                fused = []
+            original_ids = {m.chunk_id for m in branches[0]} & set(chunks_by_id)
+            rewritten_ids = ({m.chunk_id for m in branches[1]} & set(chunks_by_id)) if len(branches) == 2 else set()
+            self.last_query_diagnostics.update(original_candidates=len(original_ids),
+                rewritten_candidates=len(rewritten_ids), shared_candidates=len(original_ids & rewritten_ids),
+                rewrite_only_candidate_ids=sorted(rewritten_ids-original_ids),
+                unique_candidates=len(original_ids | rewritten_ids), fused_candidates=fused,
+                candidate_count_after_budget=sum(m.chunk_id in chunks_by_id for m in matches))
         evidences: list[Evidence] = []
         seen_chunk_ids: set[str] = set()
 
@@ -108,6 +166,10 @@ class RetrievalService:
             from literature_rag.application.rerank import rank_candidates
             self.last_rerank_diagnostics={'enabled':True,'status':'started','candidate_count':len(evidences)}
             evidences,self.last_rerank_diagnostics=rank_candidates(question,evidences,self.reranker,top_k)
+            if self.query_rewriter is not None:
+                self.last_rerank_diagnostics.update(candidate_order='RRF ranks after cross-query deduplication',
+                    input_policy='Unmodified user question and full source chunks; candidate pool includes a bounded query rewrite.',
+                    vector_rank_note='vector_rank denotes input position in the fused candidate pool, not original-query vector rank')
         evidences = evidences[:top_k]
         self.last_seed_evidences = list(evidences)
         if self.body_context_catalog is None:
@@ -124,6 +186,13 @@ class RetrievalService:
             self.last_context_diagnostics['table_retrieval']=self.vectors.last_diagnostics
         if self.reranker is not None:
             self.last_context_diagnostics['rerank']=self.last_rerank_diagnostics
+        if self.query_rewriter is not None:
+            added = set(self.last_query_diagnostics['rewrite_only_candidate_ids'])
+            selected = {e.chunk_id for e in self.last_seed_evidences}
+            final_ids = {s.chunk_id for e in evidences for s in e.source_chunks} | {e.chunk_id for e in evidences}
+            self.last_query_diagnostics.update(rewrite_only_selected_ids=sorted(added & selected),
+                rewrite_only_final_source_ids=sorted(added & final_ids))
+            self.last_context_diagnostics['query_rewrite'] = self.last_query_diagnostics
         logger.info(
             "retrieval_complete",
             extra={
