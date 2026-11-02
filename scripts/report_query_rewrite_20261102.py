@@ -22,6 +22,31 @@ def source_ids(response):
             for s in (e.get('source_chunks') or [e])}
 
 
+def score_label(metrics):
+    return pct(metrics['point_mean']) if metrics is not None else '评分缺失（不记零）'
+
+
+def failed_grade_diagnostics(arm, audit):
+    root=plan(arm)['study_dir']; study=judge.read_json(root/'study.json'); rows=[]
+    for entry in study['jobs']:
+        if entry['task_id'] in audit['metrics']:
+            continue
+        saved=judge.read_json(root/'inputs'/(entry['name']+'.json'))
+        attempts=[]
+        for path in sorted((root/'records'/entry['name']).glob('*.json')):
+            record=judge.read_json(path); error=None
+            if record.get('raw_response') is not None:
+                try: grading.decode('jev',record['raw_response'],saved['request'],saved['questions'],saved['targets'],saved['state'])
+                except (ValueError,KeyError,TypeError,IndexError) as exc: error=str(exc)
+            attempts.append(dict(attempt=record['attempt'],status=record['status'],validation_message=error,
+                request_sha256=record['request_sha256'],response_sha256=record.get('response_sha256'),
+                record_sha256=judge.digest(path),usage=record.get('usage')))
+        require(len(attempts)==3 and all(a['status'] not in {'pending','completed'} for a in attempts),
+                'Wait for all three invalid/API-failed attempts; do not discard an unattempted score')
+        rows.append(dict(arm=arm,task_id=entry['task_id'],attempts=attempts,score=None))
+    return rows
+
+
 def retrieval_diff(original, rewritten):
     diag = rewritten['context_assembly']['query_rewrite']
     original_candidates = {c['chunk_id'] for c in original['context_assembly']['rerank']['candidates']}
@@ -75,7 +100,7 @@ def publish():
     check_pair()
     data = {a:audit_one(plan(a)['import_dir'], plan(a)['study_dir']) for a in ARMS}
     for a in ARMS:
-        require(len(data[a]['metrics']) == 32, 'Wait for all valid Jev scorecards')
+        require(bool(data[a]['metrics']), 'No valid Jev scorecards')
         require(data[a]['study']['policy_sha256'] == grading.POLICY_SHA, 'Policy changed')
         require(data[a]['study']['requested_judges']['jev'] == data['original']['study']['requested_judges']['jev'], 'Judge settings changed')
     old, new = data['original'], data['rewrite']
@@ -90,7 +115,7 @@ def publish():
     changes = {k:[] for k in ['point_wins','point_losses','joint_wins','joint_losses']}
     rows=[]
     for tid in sorted(old['jobs']):
-        before=old['metrics'][tid]; after=new['metrics'][tid]
+        before=old['metrics'].get(tid); after=new['metrics'].get(tid)
         if tid in common:
             if after['point_mean'] > before['point_mean']: changes['point_wins'].append(tid)
             if after['point_mean'] < before['point_mean']: changes['point_losses'].append(tid)
@@ -109,7 +134,7 @@ def publish():
             key_points=case['key_points'],critical_errors=case['critical_errors'],
             capabilities=old['jobs'][tid]['task']['capabilities'],retrieval=diff)
         for a in ARMS:
-            row[a]=dict(candidate=data[a]['jobs'][tid]['candidate'],review=data[a]['reviews'][tid],metrics=data[a]['metrics'][tid])
+            row[a]=dict(candidate=data[a]['jobs'][tid]['candidate'],review=data[a]['reviews'].get(tid),metrics=data[a]['metrics'].get(tid))
         rows.append(row)
     retrieval=dict(rewrite_statuses=dict(Counter(r['retrieval']['status'] for r in rows)),
         original_candidates_unchanged=sum(r['retrieval']['original_candidates_unchanged'] for r in rows),
@@ -131,6 +156,8 @@ def publish():
     result=dict(version='query-rewrite-paired-20261102',common_task_ids=common,comparison=summaries,
         all_valid_summaries=all_summaries,valid_grades={a:len(data[a]['metrics']) for a in ARMS},
         excluded_task_ids=sorted(set(old['jobs'])-set(common)),changes=changes,retrieval=retrieval,runtime=runtime,
+        failed_grades=[row for a in ARMS for row in failed_grade_diagnostics(a,data[a])],
+        judge_statuses={a:data[a]['statuses'] for a in ARMS},
         judge_accounting={a:scoring.accounting(data[a]['records'],'jev') for a in ARMS},
         judge=data['original']['study']['requested_judges']['jev'],scoring_policy_sha256=grading.POLICY_SHA,
         probe_accounting=usage_summary([p['call'] for p in probes]),
@@ -154,6 +181,8 @@ def publish():
     lines += ['',f"有效评分：{result['valid_grades']}；共同题排除：{result['excluded_task_ids']}。无效不记零，不计算加权总分。",'',
         f"32题中有{retrieval['same_initial_generation_input']}题首次生成输入完全一致；改写新增独有候选累计{retrieval['rewrite_only_candidate_occurrences']}题次/块，但进入主命中的独有块仅{retrieval['rewrite_only_primary_occurrences']}题次/块。输入一致题的要点变化为{retrieval['point_changes_with_same_initial_generation_input']}，这些变化不能归因于改写补到新证据。",'',
         '## 逐题变化','',*[f"- {k}：{', '.join(v) or '无'}" for k,v in changes.items()],
+        '', '## 无效评分','', '```json',json.dumps(result['failed_grades'],ensure_ascii=False,indent=2),'```',
+        '单引与引用组判定矛盾属于裁判输出未通过一致性校验，不代表回答得零分。每份无效评分已尝试3次并封存，不改裁判原判；这些题的两组回答仍完整列出。',
         '', '## 检索实际变化','', '```json',json.dumps(retrieval,ensure_ascii=False,indent=2),'```','',
         '候选、主命中和最终原文是三个阶段；新增候选不等于补到必需证据。不同原文块的数量按题累计，同一块在多题出现会重复计数。完整两路query、候选预算、增减块和逐题回答在HTML与JSONL。','',
         '## 耗时和用量','']
@@ -187,7 +216,7 @@ def render(result,rows):
             '<h3>改写与检索变化</h3><pre>'+esc(json.dumps({k:v for k,v in row['retrieval'].items() if k!='full_query_diagnostics'},ensure_ascii=False,indent=2))+'</pre><div class="pair">']
         for a in ARMS:
             d=row[a]
-            html += ['<section><h3>'+LABELS[a]+' · 要点'+pct(d['metrics']['point_mean'])+'</h3><pre>'+esc(d['candidate']['answer'])+'</pre>',
+            html += ['<section><h3>'+LABELS[a]+' · 要点'+score_label(d['metrics'])+'</h3><pre>'+esc(d['candidate']['answer'])+'</pre>',
                 '<details><summary>Jev原判、五维指标与引用原文</summary><pre>'+esc(json.dumps(d,ensure_ascii=False,indent=2))+'</pre></details></section>']
         html += ['</div><details><summary>两路候选、RRF去重与预算完整记录</summary><pre>'+esc(json.dumps(row['retrieval']['full_query_diagnostics'],ensure_ascii=False,indent=2))+'</pre></details></details>']
     html += ['</main></html>']
