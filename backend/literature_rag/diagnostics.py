@@ -128,7 +128,7 @@ def configuration_snapshot(env_file: Path):
         result['evidence_review']=dict(enabled=True,version=VERSION,provider='deepseek',model=settings.llm_model,
             reasoning_effort=settings.llm_reasoning_effort,timeout_seconds=settings.evidence_review_timeout_seconds,
             max_review_calls=1,automatic_retries=0,max_issues=8,max_replacements_per_issue=3,
-            max_output_tokens=8192,
+            max_output_tokens=settings.evidence_review_max_output_tokens,
             input='question_same_evidence_same_images_validated_draft_claims',retrieval_calls=0,
             instructions_sha256=sha256(SYSTEM_PROMPT.encode()).hexdigest(),
             acceptance='verified_source_locations_minimal_edits_and_original_citation_validator',

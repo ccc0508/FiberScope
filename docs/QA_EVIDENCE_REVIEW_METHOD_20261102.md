@@ -10,9 +10,9 @@
 
 没有问题时原样保留草稿。API失败、格式无效、引文无法匹配或修订违反现有引用规则时，保留原已校验草稿，并记录审校失败/拒绝，不能标记为核验通过。不追加审校重试、不额外检索，引用校验规则也不在本轮调整。
 
-原稿、审校问题、依据、接受/拒绝原因、最终稿、调用用量和时长分别保存到问答结果。历史SQLite存储完整结果，无需改变表结构。DeepSeek审校使用独立请求，关闭SDK自动重试，最多8192输出Token和90秒请求超时；费用未知时不估算账单。
+原稿、审校问题、依据、接受/拒绝原因、最终稿、调用用量和时长分别保存到问答结果。历史SQLite存储完整结果，无需改变表结构。DeepSeek审校使用独立请求，关闭SDK自动重试，最多16384输出Token和120秒请求超时；费用未知时不估算账单。HTTP传递整次请求时间预算，若原生成后剩余时间不足以完成审校，则跳过审校并保留已验证草稿，记录skipped，避免为了审校丢失正常答案。
 
-配置：`RAG_EVIDENCE_REVIEW_ENABLED`默认false；`RAG_EVIDENCE_REVIEW_TIMEOUT_SECONDS`默认90。只有DeepSeek Flash可以启用。实验期间不改变网站配置，按结果决定是否启用。
+配置：`RAG_EVIDENCE_REVIEW_ENABLED`默认false；`RAG_EVIDENCE_REVIEW_TIMEOUT_SECONDS`默认120；`RAG_EVIDENCE_REVIEW_MAX_OUTPUT_TOKENS`默认16384。只有DeepSeek Flash可以启用。实验期间不改变网站配置，按结果决定是否启用。
 
 ## 固定对照
 
@@ -24,4 +24,10 @@
 
 报告必答要点、事实支持、单条引用、引用组覆盖、边界及全部达标题数，不计算加权总分。同时记录修改/原样/失败/拒绝数量，修好与改坏的具体题目，新增无依据陈述，以及审校增加的耗时和Token。此为已见开发题上的一次试验，不能证明跨论文泛化或稳定性。
 
-入口：`scripts/evaluate_evidence_review_20261102.py`依次prepare、run、prepare-grading、grade。原始实验目录 `.rag-data/evaluations/evidence-review-20261102-v1`，审校运行目录 `.rag-data/evaluations/pfi-evidence-review-20261102-v1`；均被Git忽略。
+## 试运行及正式设置
+
+最初v1只试运行前4题：第1–3题原样保留，第4题思考输出耗尽8192 Token上限而没有产生有效JSON，系统保留原稿。该失败的模型用量和全部输入均保留，不将其记为修复，也不重试挑选评分。由此将正式上限提高到16384、超时120秒，并补充明确的输出截断诊断。
+
+完整32题在新的v2封存目录独立执行，试运行4题不混入正式对照，也不隐藏其额外费用/用量。提示内容不改，只调整协议预算和诊断；仍不增加自动重试。
+
+正式入口：`scripts/evaluate_evidence_review_v2_20261102.py`依次prepare、run、prepare-grading、grade。原始实验目录 `.rag-data/evaluations/evidence-review-20261102-v2`，审校运行目录 `.rag-data/evaluations/pfi-evidence-review-20261102-v2`；均被Git忽略。v1试运行目录与脚本保留。

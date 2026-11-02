@@ -99,7 +99,8 @@ def run_answer(config: LiteratureSettings, question: str):
     try:
         result = subprocess.run(
             [sys.executable, '-I', '-X', 'utf8', str(BACKEND / 'literature_worker.py')],
-            input=json.dumps({'question': question, 'data_dir': str(config.library_root)}, ensure_ascii=False),
+            input=json.dumps({'question': question, 'data_dir': str(config.library_root),
+                              'request_timeout_seconds':config.timeout_seconds}, ensure_ascii=False),
             capture_output=True, text=True, encoding='utf-8', timeout=config.timeout_seconds,
             creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0),
         )

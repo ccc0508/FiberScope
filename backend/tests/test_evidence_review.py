@@ -55,6 +55,24 @@ def test_keep_is_byte_identical_and_does_not_expand_correct_answer():
     assert service.last_trace['status']=='unchanged' and service.last_trace['issues']==[]
 
 
+def test_insufficient_http_budget_skips_review_and_keeps_valid_answer():
+    p=NS(review=lambda *_:pytest.fail('no paid call'),timeout_seconds=120)
+    service=EvidenceReviewService(p,deadline=0)
+    assert service.review('Question',SOURCES,DRAFT) is DRAFT
+    assert service.last_trace['api_calls']==0 and service.last_trace['status']=='skipped'
+
+
+def test_token_exhaustion_is_recorded_without_false_review_success():
+    def create(**_):
+        return NS(model='deepseek-flash',usage=NS(prompt_tokens=10,completion_tokens=16384,total_tokens=16394),
+            choices=[NS(finish_reason='length',message=NS(content=''))])
+    p=DeepSeekEvidenceReviewer('deepseek-flash','PRIVATE',client=NS(chat=NS(completions=NS(create=create))))
+    service=EvidenceReviewService(p)
+    assert service.review('Question',SOURCES,DRAFT) is DRAFT
+    assert service.last_trace['reason_code']=='review_output_truncated'
+    assert service.last_trace['usage']['total_tokens']==16394
+
+
 @pytest.mark.parametrize('overrides,reason',[
     (dict(basis=[dict(kind='text',ref='[1]',quote='This passage does not exist')]),'quote_not_in_actual_evidence'),
     (dict(claim_index=20),'invalid_or_duplicate_claim_index'),

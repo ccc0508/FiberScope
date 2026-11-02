@@ -5,6 +5,7 @@ import html
 import json
 import re
 import unicodedata
+from time import perf_counter
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
@@ -158,18 +159,22 @@ def apply_edits(payload, draft, evidences, visual_root=None):
 
 
 class EvidenceReviewService:
-    def __init__(self,provider,*,visual_root=None):
+    def __init__(self,provider,*,visual_root=None,deadline=None):
         self.provider=provider;self.visual_root=visual_root
+        self.deadline=deadline
         self.last_trace=dict(enabled=True,version=VERSION,status='not_run',api_calls=0,
             guarantee='source-location-and-structure-checks-only; semantic judgment is fallible')
 
     def review(self,question,evidences,draft):
-        trace=dict(enabled=True,version=VERSION,status='started',api_calls=1,
+        trace=dict(enabled=True,version=VERSION,status='started',api_calls=0,
             draft=asdict(draft),draft_sha256=checksum(asdict(draft)),
             evidence_sha256=checksum([asdict(e) for e in evidences]),question_sha256=sha256(question.encode()).hexdigest(),
             issues=[],accepted=False,usage=None,model_info=None,
             guarantee='source-location-and-structure-checks-only; semantic judgment is fallible')
         self.last_trace=trace
+        if self.deadline is not None and self.deadline-perf_counter()<getattr(self.provider,'timeout_seconds',120)+5:
+            trace.update(status='skipped',reason_code='insufficient_request_time_budget')
+            return draft
         try:
             payload=self.provider.review(question,evidences,draft)
             trace['issues']=[i.model_dump(exclude_none=True) for i in payload.issues]
@@ -181,7 +186,7 @@ class EvidenceReviewService:
             trace.update(status='rejected',reason_code='invalid_revised_citations',citation_rule=error.rule_code)
             return draft
         except (ProviderError,InfrastructureError):
-            trace.update(status='failed',reason_code='review_provider_or_source_error')
+            trace.update(status='failed',reason_code=getattr(self.provider,'last_failure_code',None) or 'review_provider_or_source_error')
             return draft
         finally:
             trace.update(usage=getattr(self.provider,'last_usage',None),model_info=getattr(self.provider,'last_model_info',None),

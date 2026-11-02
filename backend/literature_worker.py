@@ -10,6 +10,8 @@ os.environ['ANONYMIZED_TELEMETRY'] = 'False'
 
 
 def main():
+    from time import perf_counter
+    worker_started=perf_counter()
     import sqlite3
     from dataclasses import asdict
     from literature_rag.config import Settings
@@ -80,8 +82,12 @@ def main():
         review_provider=DeepSeekEvidenceReviewer(settings.llm_model,settings.llm_api_key.get_secret_value(),
             settings.llm_base_url,thinking_enabled=settings.llm_thinking_enabled,
             reasoning_effort=settings.llm_reasoning_effort,timeout_seconds=settings.evidence_review_timeout_seconds,
+            max_output_tokens=settings.evidence_review_max_output_tokens,
             visual_root=root if settings.visual_retrieval_enabled else None)
-        evidence_reviewer=EvidenceReviewService(review_provider,visual_root=root if settings.visual_retrieval_enabled else None)
+        budget=body.get('request_timeout_seconds',300)
+        budget=budget if type(budget) is int and 5<=budget<=300 else 300
+        evidence_reviewer=EvidenceReviewService(review_provider,visual_root=root if settings.visual_retrieval_enabled else None,
+            deadline=worker_started+budget-5)
     query_rewriter=None
     if settings.query_rewrite_enabled:
         from literature_rag.adapters.providers.query_rewrite import DeepSeekQueryRewriter
