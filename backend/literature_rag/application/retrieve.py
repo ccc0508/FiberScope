@@ -31,6 +31,7 @@ class RetrievalService:
         reranker: Reranker | None = None,
         body_context_catalog=None,
         query_rewriter: QueryRewriter | None = None,
+        query_rewrite_mode: str = 'dual',
     ) -> None:
         self.metadata = metadata
         self.vectors = vectors
@@ -40,8 +41,13 @@ class RetrievalService:
         self.reranker = reranker
         self.body_context_catalog = body_context_catalog
         self.query_rewriter = query_rewriter
+        self.query_rewrite_mode = query_rewrite_mode
+        if query_rewrite_mode not in {'dual', 'rewrite_only'}:
+            raise ValueError('unsupported query rewrite mode')
+        if query_rewrite_mode == 'rewrite_only' and query_rewriter is None:
+            raise ValueError('rewrite-only retrieval requires a rewriter')
         if query_rewriter is not None and reranker is None:
-            raise ValueError('dual query retrieval requires original-question reranking')
+            raise ValueError('query rewrite retrieval requires reranking')
         if body_context_catalog is not None and not self.context_options.enabled:
             raise ValueError('body-section context requires enabled expansion')
         if body_context_catalog is not None and table_relations is not None:
@@ -103,24 +109,36 @@ class RetrievalService:
             raise InputError("min_score must be between 0 and 1")
 
         rewritten = None
+        rewrite_only = self.query_rewriter is not None and self.query_rewrite_mode == 'rewrite_only'
         if self.query_rewriter is not None:
             from literature_rag.application.query_rewrite import VERSION, validate_rewrite
             self.last_query_diagnostics = dict(enabled=True, version=VERSION, status='started', branches=[],
                 fusion='reciprocal_rank_fusion_k60', max_candidates=VECTOR_CANDIDATE_LIMIT,
                 rerank_query='original', answer_query='original')
+            if rewrite_only:
+                self.last_query_diagnostics.update(mode='rewrite_only',version='rewrite-only-retrieval-and-rerank-v1',
+                    fusion='none_single_query',original_query_searched=False,rerank_query='rewritten')
             try:
                 rewritten = validate_rewrite(question, self.query_rewriter.rewrite(question))
                 self.last_query_diagnostics['status'] = 'unchanged' if rewritten == question else 'rewritten'
-                if rewritten == question:
+                if rewritten == question and not rewrite_only:
                     rewritten = None
             except ProviderError:
-                self.last_query_diagnostics['status'] = 'rewrite_failed_original_only'
+                self.last_query_diagnostics['status'] = ('rewrite_failed_no_fallback' if rewrite_only else 'rewrite_failed_original_only')
+                if rewrite_only:
+                    raise
             finally:
                 self.last_query_diagnostics['provider_call'] = getattr(self.query_rewriter, 'last_call', None)
-
-        branches = [self._search(question, min_score, 'original')]
-        if rewritten is not None:
-            branches.append(self._search(rewritten, min_score, 'rewritten'))
+        rerank_question = rewritten if rewrite_only else question
+        if rewrite_only:
+            self.last_query_diagnostics.update(mode='rewrite_only', fusion='none_single_query',
+                original_query_searched=False, rerank_query='rewritten', rerank_query_text=rewritten,
+                uniqueness_comparison='not_applicable_without_original_query_search')
+            branches = [self._search(rewritten, min_score, 'rewritten')]
+        else:
+            branches = [self._search(question, min_score, 'original')]
+            if rewritten is not None:
+                branches.append(self._search(rewritten, min_score, 'rewritten'))
         matches = branches[0]
         all_ids = list(dict.fromkeys(m.chunk_id for branch in branches for m in branch))
         chunks = self.metadata.get_chunks(all_ids)
@@ -131,11 +149,12 @@ class RetrievalService:
                 matches, fused = fuse_candidates(branches, set(chunks_by_id), VECTOR_CANDIDATE_LIMIT)
             else:
                 fused = []
-            original_ids = {m.chunk_id for m in branches[0]} & set(chunks_by_id)
-            rewritten_ids = ({m.chunk_id for m in branches[1]} & set(chunks_by_id)) if len(branches) == 2 else set()
+            original_ids = set() if rewrite_only else {m.chunk_id for m in branches[0]} & set(chunks_by_id)
+            rewritten_ids = ({m.chunk_id for m in branches[0]} & set(chunks_by_id)) if rewrite_only else (
+                ({m.chunk_id for m in branches[1]} & set(chunks_by_id)) if len(branches) == 2 else set())
             self.last_query_diagnostics.update(original_candidates=len(original_ids),
                 rewritten_candidates=len(rewritten_ids), shared_candidates=len(original_ids & rewritten_ids),
-                rewrite_only_candidate_ids=sorted(rewritten_ids-original_ids),
+                rewrite_only_candidate_ids=[] if rewrite_only else sorted(rewritten_ids-original_ids),
                 unique_candidates=len(original_ids | rewritten_ids), fused_candidates=fused,
                 candidate_count_after_budget=sum(m.chunk_id in chunks_by_id for m in matches))
         evidences: list[Evidence] = []
@@ -165,11 +184,17 @@ class RetrievalService:
         if self.reranker is not None:
             from literature_rag.application.rerank import rank_candidates
             self.last_rerank_diagnostics={'enabled':True,'status':'started','candidate_count':len(evidences)}
-            evidences,self.last_rerank_diagnostics=rank_candidates(question,evidences,self.reranker,top_k)
+            evidences,self.last_rerank_diagnostics=rank_candidates(rerank_question,evidences,self.reranker,top_k)
             if self.query_rewriter is not None:
-                self.last_rerank_diagnostics.update(candidate_order='RRF ranks after cross-query deduplication',
-                    input_policy='Unmodified user question and full source chunks; candidate pool includes a bounded query rewrite.',
-                    vector_rank_note='vector_rank denotes input position in the fused candidate pool, not original-query vector rank')
+                if rewrite_only:
+                    self.last_rerank_diagnostics.update(candidate_order='rewritten-query cosine ranks',
+                        query_source='rewritten', query_text=rerank_question,
+                        input_policy='Rewritten query and full source chunks, followed by unchanged bounded context assembly.',
+                        vector_rank_note='vector_rank denotes the rewritten-query cosine ranking')
+                else:
+                    self.last_rerank_diagnostics.update(candidate_order='RRF ranks after cross-query deduplication',
+                        input_policy='Unmodified user question and full source chunks; candidate pool includes a bounded query rewrite.',
+                        vector_rank_note='vector_rank denotes input position in the fused candidate pool, not original-query vector rank')
         evidences = evidences[:top_k]
         self.last_seed_evidences = list(evidences)
         if self.body_context_catalog is None:
@@ -192,6 +217,9 @@ class RetrievalService:
             final_ids = {s.chunk_id for e in evidences for s in e.source_chunks} | {e.chunk_id for e in evidences}
             self.last_query_diagnostics.update(rewrite_only_selected_ids=sorted(added & selected),
                 rewrite_only_final_source_ids=sorted(added & final_ids))
+            if rewrite_only:
+                self.last_query_diagnostics.update(rewritten_selected_ids=[e.chunk_id for e in self.last_seed_evidences],
+                    rewritten_final_source_ids=sorted(final_ids))
             self.last_context_diagnostics['query_rewrite'] = self.last_query_diagnostics
         logger.info(
             "retrieval_complete",

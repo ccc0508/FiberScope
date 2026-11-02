@@ -86,6 +86,13 @@ def configuration_snapshot(env_file: Path):
                 failure_policy='record_failure_and_search_original_only', original_query_always=True,
                 rerank_query='original', answer_query='original',
                 endpoint_sha256=sha256((settings.llm_base_url or 'https://api.deepseek.com').encode()).hexdigest()))
+        if settings.query_rewrite_mode == 'rewrite_only':
+            result['pipeline_version'] = ('mineru-rewrite-only-v1' if settings.context_expansion_strategy == 'body_section'
+                                          else 'literature-rewrite-only-v1')
+            result['query_rewrite'].update(mode='rewrite_only',max_queries=1,fusion='none',rrf_k=None,
+                version='rewrite-only-retrieval-and-rerank-v1',failure_policy='fail_without_original_query_fallback',
+                original_query_always=False,rerank_query='rewritten',answer_query='original')
+            result['rerank']['query_source']='rewritten'
     return result
 
 

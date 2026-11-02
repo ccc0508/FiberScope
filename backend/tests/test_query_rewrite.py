@@ -17,7 +17,7 @@ from literature_rag.domain.models import Chunk, VectorMatch
 from tests.literature_fakes import InMemoryMetadataStore
 
 
-def make_service(original, rewritten, rewrite='Rewritten question'):
+def make_service(original, rewritten, rewrite='Rewritten question', mode='dual'):
     metadata = InMemoryMetadataStore()
     for i, cid in enumerate(dict.fromkeys(cid for cid, _ in original + rewritten)):
         metadata.chunks[cid] = Chunk(cid, 'doc', 'paper.pdf', 1, 1, i, 'Source '+cid, 5, 'fake')
@@ -39,7 +39,8 @@ def make_service(original, rewritten, rewrite='Rewritten question'):
     def rank(question, texts):
         calls.append((question, texts))
         return [.5] * len(texts)
-    s = RetrievalService(metadata, Vectors(), Embedder(), reranker=NS(rerank=rank), query_rewriter=Rewriter())
+    s = RetrievalService(metadata, Vectors(), Embedder(), reranker=NS(rerank=rank), query_rewriter=Rewriter(),
+                         query_rewrite_mode=mode)
     return s, calls
 
 
@@ -148,3 +149,38 @@ def test_config_and_unknown_cost_accounting(tmp_path):
     snap = configuration_snapshot(path)
     assert snap['query_rewrite']['merged_candidate_limit'] == 50 and 'private-test-key' not in json.dumps(snap)
     assert combined_usage([dict(usage={'total_tokens': 10}), dict(usage=None)]) is None
+    path.write_text(path.read_text(encoding='utf-8')+'RAG_QUERY_REWRITE_MODE=rewrite_only\n',encoding='utf-8')
+    pure=configuration_snapshot(path)
+    assert pure['query_rewrite']['mode']=='rewrite_only' and pure['query_rewrite']['max_queries']==1
+    assert pure['query_rewrite']['rerank_query']=='rewritten' and pure['query_rewrite']['fusion']=='none'
+    assert pure['query_rewrite']['failure_policy']=='fail_without_original_query_fallback'
+
+
+def test_rewrite_only_searches_once_and_reranks_with_rewritten_question():
+    s,calls=make_service([('rewritten-hit',.8)],[('unused',.9)],mode='rewrite_only')
+    result=s.retrieve('Original question',8,.35)
+    assert s.embedder.calls==['Rewritten question']
+    assert calls==[('Rewritten question',['Source rewritten-hit'])]
+    assert [e.chunk_id for e in result]==['rewritten-hit']
+    diag=s.last_context_diagnostics['query_rewrite']
+    assert len(diag['branches'])==1 and diag['branches'][0]['branch']=='rewritten'
+    assert not diag['original_query_searched'] and diag['rerank_query_text']=='Rewritten question'
+    assert diag['fusion']=='none_single_query' and diag['original_candidates']==0
+    assert s.last_rerank_diagnostics['query_source']=='rewritten'
+
+
+@pytest.mark.parametrize('rewrite',[ProviderError('unavailable'),''])
+def test_rewrite_only_failure_never_searches_original_or_reranks(rewrite):
+    s,calls=make_service([('a',.9)],[],rewrite,mode='rewrite_only')
+    with pytest.raises(ProviderError):s.retrieve('Original question',8,.35)
+    assert s.embedder.calls==[] and calls==[]
+    assert s.last_query_diagnostics['status']=='rewrite_failed_no_fallback'
+    assert s.last_query_diagnostics['mode']=='rewrite_only' and not s.last_query_diagnostics['branches']
+
+
+def test_unchanged_rewrite_is_still_one_rewritten_branch():
+    s,calls=make_service([('a',.9)],[],rewrite='Original question',mode='rewrite_only')
+    s.retrieve('Original question',8,.35)
+    assert s.last_query_diagnostics['status']=='unchanged'
+    assert [b['branch'] for b in s.last_query_diagnostics['branches']]==['rewritten']
+    assert s.embedder.calls==['Original question'] and len(calls)==1

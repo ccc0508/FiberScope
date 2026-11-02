@@ -74,8 +74,8 @@ def test_combined_snapshot_reports_both_reranking_and_unified_context(tmp_path):
         verify(tmp_path/'missing-library',tmp_path/'missing-cache',tmp_path/'output.json',env)
 
 
-@pytest.mark.parametrize('rewrite_enabled', [False, True])
-def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,monkeypatch,capsys,rewrite_enabled):
+@pytest.mark.parametrize('rewrite_enabled,rewrite_mode', [(False,'dual'),(True,'dual'),(True,'rewrite_only')])
+def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,monkeypatch,capsys,rewrite_enabled,rewrite_mode):
     import literature_worker
     source,chunks=source_library(tmp_path);manifest=plan(source)
     manifest['embedding']=dict(provider='openai',model='fake',dimensions=3)
@@ -86,7 +86,8 @@ def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,
         table_retrieval_enabled=True,rerank_enabled=True,rerank_api_key='private-test-token',
         rerank_base_url='https://api.example/v1',embedding_model='fake',embedding_dimensions=3,
         embedding_api_key='test-only',llm_provider='deepseek' if rewrite_enabled else 'openai',
-        llm_model='fake-generator',llm_api_key='test-only',top_k=1,query_rewrite_enabled=rewrite_enabled)
+        llm_model='fake-generator',llm_api_key='test-only',top_k=1,query_rewrite_enabled=rewrite_enabled,
+        query_rewrite_mode=rewrite_mode)
     calls=[]
     class Embedder:
         def __init__(self,*args):pass
@@ -123,12 +124,15 @@ def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,
     monkeypatch.setattr(sys,'stdin',StringIO(json.dumps(dict(data_dir=str(source),question='Measured values?'))))
     literature_worker.main();result=json.loads(capsys.readouterr().out)
     assert result['status']=='answered' and len(calls)==1 and len(result['rerank_calls'])==1
-    assert result['configuration']['pipeline_version']==('mineru-dual-query-v1' if rewrite_enabled else 'mineru-unified-rerank-v1')
+    assert result['configuration']['pipeline_version']==('mineru-rewrite-only-v1' if rewrite_mode=='rewrite_only'
+        else 'mineru-dual-query-v1' if rewrite_enabled else 'mineru-unified-rerank-v1')
     if rewrite_enabled:
-        assert result['embedding_usage']['total_tokens']==8 and len(result['query_embedding_calls'])==2
+        assert result['embedding_usage']['total_tokens']==(4 if rewrite_mode=='rewrite_only' else 8)
+        assert len(result['query_embedding_calls'])==(1 if rewrite_mode=='rewrite_only' else 2)
         assert len(result['query_rewrite_calls'])==1
-        assert result['context_assembly']['query_rewrite']['shared_candidates']==2
+        assert result['context_assembly']['query_rewrite']['shared_candidates']==(0 if rewrite_mode=='rewrite_only' else 2)
         assert result['context_assembly']['query_rewrite']['candidate_count_after_budget']==2
+        assert calls[0][0]==('Search measured values in the table' if rewrite_mode=='rewrite_only' else 'Measured values?')
     assert result['retrieval_seed_evidence'][0]['chunk_id']==chunks[2].id
     assert result['context_assembly']['candidate_root_chunk_ids']==[chunks[2].id]
     assert result['context_assembly']['assembly_passes']==1
