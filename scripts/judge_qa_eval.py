@@ -120,7 +120,9 @@ def read_result(run_dir, run, case, task):
             and result['case_id'] == case['id'] and result['question'] == case['question'], 'Source result identity mismatch')
     attempt = read_json(run_dir / 'attempts' / (task['id'] + '.json'))
     require(attempt.get('result_sha256') == digest(path), 'Source answer checksum mismatch')
-    require(result['status'] in {'answered', 'abstained', 'failed'}, 'Unknown source response status')
+    # The production worker calls a guarded refusal "refused"; keep the exact answer
+    # and let the unchanged rubric assess whether that refusal was appropriate.
+    require(result['status'] in {'answered', 'abstained', 'refused', 'failed'}, 'Unknown source response status')
     return path, result
 
 

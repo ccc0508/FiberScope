@@ -127,6 +127,9 @@ def publish():
             require(len(ctx['rerank']['candidates'])<=50 and len(r['retrieval_seed_evidence'])<=8,'Retrieval budget changed')
             require(all(len(e['text'])<=8000 for e in r['retrieved_evidence']) and diff['context_chars'][a]<=24000,'Character budget exceeded')
             row[a]=dict(candidate=jobs[a]['candidate'],review=data[a]['reviews'].get(tid),metrics=data[a]['metrics'].get(tid),
+                answer_runtime=dict(status=r['status'],reason_code=r.get('reason_code'),
+                    generation_calls=len(r['generation_calls']),
+                    generation_outcomes=[c.get('outcome') for c in r['generation_calls']]),
                 reference_coverage=reference_coverage(case,caps,r,library))
         if tid in common:
             b,q=row['bge']['metrics'],row['qwen']['metrics']
