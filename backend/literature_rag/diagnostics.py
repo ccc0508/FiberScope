@@ -42,6 +42,10 @@ def configuration_snapshot(env_file: Path):
     for key in ('llm_thinking_enabled', 'llm_reasoning_effort'):
         if getattr(settings, key) is not None:
             result[key] = getattr(settings, key)
+    if settings.llm_provider == 'openai':
+        result['generation_runtime'] = dict(wire_api='responses', store=False,
+            timeout_seconds=settings.llm_timeout_seconds,
+            actor_header_configured=bool(settings.llm_actor_authorization))
     if settings.context_expansion_enabled:
         result.update(pipeline_version='literature-context-v1',pipeline_source_files=sources,
                       context_expansion={key:getattr(settings,key) for key in (
@@ -91,7 +95,7 @@ def configuration_snapshot(env_file: Path):
         from .application.query_rewrite import VERSION, SYSTEM_PROMPT, MAX_QUERY_CHARS, RRF_K
         result.update(pipeline_version='mineru-dual-query-v1' if settings.context_expansion_strategy == 'body_section'
                       else 'literature-dual-query-v1', pipeline_source_files=sources,
-            query_rewrite=dict(enabled=True, version=VERSION, provider='deepseek', model=settings.llm_model,
+            query_rewrite=dict(enabled=True, version=VERSION, provider='deepseek', model=settings.query_rewrite_model or settings.llm_model,
                 thinking_enabled=False, temperature=0, max_output_tokens=768, retry_count=0,
                 timeout_seconds=settings.query_rewrite_timeout_seconds, max_query_chars=MAX_QUERY_CHARS,
                 instructions_sha256=sha256(SYSTEM_PROMPT.encode()).hexdigest(),
@@ -99,7 +103,7 @@ def configuration_snapshot(env_file: Path):
                 fusion='reciprocal_rank_fusion', rrf_k=RRF_K, min_score_per_query=settings.min_score,
                 failure_policy='record_failure_and_search_original_only', original_query_always=True,
                 rerank_query='original', answer_query='original',
-                endpoint_sha256=sha256((settings.llm_base_url or 'https://api.deepseek.com').encode()).hexdigest()))
+                endpoint_sha256=sha256((settings.query_rewrite_base_url or settings.llm_base_url or 'https://api.deepseek.com').encode()).hexdigest()))
         if settings.query_rewrite_mode == 'rewrite_only':
             result['pipeline_version'] = ('mineru-rewrite-only-v1' if settings.context_expansion_strategy == 'body_section'
                                           else 'literature-rewrite-only-v1')

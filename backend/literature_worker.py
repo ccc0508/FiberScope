@@ -64,15 +64,21 @@ def main():
     generator_type = DeepSeekGenerator if settings.llm_provider == 'deepseek' else OpenAIGenerator
     generation_options = ({'thinking_enabled': settings.llm_thinking_enabled,
                            'reasoning_effort': settings.llm_reasoning_effort}
-                          if settings.llm_provider == 'deepseek' else {})
+                          if settings.llm_provider == 'deepseek' else {
+                              'reasoning_effort': settings.llm_reasoning_effort,
+                              'timeout_seconds': settings.llm_timeout_seconds,
+                              'proxy_url': settings.llm_proxy_url,
+                              'actor_authorization': settings.llm_actor_authorization.get_secret_value()
+                                  if settings.llm_actor_authorization else None})
     if settings.visual_retrieval_enabled:generation_options['visual_root']=root
     generator = generator_type(settings.llm_model, settings.llm_api_key.get_secret_value(), settings.llm_base_url,
                                answer_guidance_enabled=settings.answer_guidance_enabled,**generation_options)
     query_rewriter=None
     if settings.query_rewrite_enabled:
         from literature_rag.adapters.providers.query_rewrite import DeepSeekQueryRewriter
-        query_rewriter=DeepSeekQueryRewriter(settings.llm_model,settings.llm_api_key.get_secret_value(),
-            settings.llm_base_url,settings.query_rewrite_timeout_seconds)
+        query_rewriter=DeepSeekQueryRewriter(settings.query_rewrite_model or settings.llm_model,
+            (settings.query_rewrite_api_key or settings.llm_api_key).get_secret_value(),
+            settings.query_rewrite_base_url or settings.llm_base_url,settings.query_rewrite_timeout_seconds)
     reranker=None
     rerank_calls=[]
     if settings.rerank_enabled:

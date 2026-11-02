@@ -40,18 +40,25 @@ def _finite_float(component: object) -> float | None:
     return converted if isfinite(converted) else None
 
 
-def _client(api_key: str, base_url: str | None) -> OpenAI:
+def _client(api_key: str, base_url: str | None, *, timeout: float = 60,
+            actor_authorization: str | None = None, proxy_url: str | None = None) -> OpenAI:
+    transport = {}
+    if proxy_url:
+        import httpx
+        transport['http_client'] = httpx.Client(proxy=proxy_url, timeout=timeout, trust_env=False)
     client = OpenAI(
         api_key=api_key,
         base_url=base_url or _OPENAI_API_BASE_URL,
         organization="",
         project="",
         max_retries=2,
-        timeout=60.0,
+        timeout=timeout,
+        **transport,
     )
     client.organization = None
     client.project = None
-    client._custom_headers = {}
+    client._custom_headers = ({'x-openai-actor-authorization': actor_authorization}
+                              if actor_authorization else {})
     return client
 
 
@@ -158,10 +165,20 @@ class OpenAIGenerator:
         client: OpenAI | None = None,
         *,
         answer_guidance_enabled: bool = False,
+        reasoning_effort: str | None = None,
+        actor_authorization: str | None = None,
+        timeout_seconds: float = 60,
+        proxy_url: str | None = None,
+        visual_root=None,
     ) -> None:
+        if reasoning_effort not in {None, 'low', 'high', 'max'}:
+            raise ValueError('unsupported reasoning effort')
         self._model = model
+        self.reasoning_effort = reasoning_effort
+        self.visual_root = visual_root
         self.system_prompt = system_prompt(answer_guidance_enabled)
-        self.client = client if client is not None else _client(api_key, base_url)
+        self.client = client if client is not None else _client(api_key, base_url,
+            timeout=timeout_seconds, actor_authorization=actor_authorization, proxy_url=proxy_url)
 
     @property
     def model_name(self) -> str:
@@ -175,11 +192,24 @@ class OpenAIGenerator:
     ) -> GeneratedAnswer:
         from literature_rag.diagnostics import provider_usage
         self.last_usage = None
+        self.last_model_info = None
         system = {"role": "system", "content": self.system_prompt}
         user = {
             "role": "user",
             "content": evidence_prompt(question, evidences, retry_feedback),
         }
+        sent_images = []
+        if any(e.visual_assets for e in evidences):
+            if self.visual_root is None:
+                raise ProviderResponseError('visual evidence requires its verified source directory')
+            from literature_rag.application.visual_evidence import visual_content, VISION_INSTRUCTION
+            blocks, sent_images = visual_content(evidences, self.visual_root, user['content'])
+            user['content'] = [
+                {'type': 'input_text', 'text': b['text']} if b['type'] == 'text' else
+                {'type': 'input_image', 'image_url': b['image_url']['url'],
+                 'detail': b['image_url']['detail']} for b in blocks
+            ]
+            system['content'] += '\n\n' + VISION_INSTRUCTION
         error_type: str | None = None
         response_failure = False
         try:
@@ -188,9 +218,16 @@ class OpenAIGenerator:
                 input=[system, user],
                 text_format=_AnswerPayload,
                 store=False,
+                **({'reasoning': {'effort': self.reasoning_effort}}
+                   if self.reasoning_effort is not None else {}),
             )
             self.last_usage = provider_usage(response)
-            self.last_usage = provider_usage(response)
+            self.last_model_info = dict(requested_model=self._model,
+                returned_model=getattr(response, 'model', None), wire_api='responses',
+                reasoning_effort=self.reasoning_effort, store=False)
+            if self.visual_root is not None:
+                self.last_model_info.update(image_count=len(sent_images), images=sent_images,
+                    input_modality='text_and_images' if sent_images else 'text')
         except ValidationError as error:
             error_type = type(error).__name__
             response_failure = True
