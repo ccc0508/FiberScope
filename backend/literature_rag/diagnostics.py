@@ -26,6 +26,8 @@ def configuration_snapshot(env_file: Path):
         sources += ['adapters/providers/dashscope.py']
     if settings.visual_retrieval_enabled:
         sources += ['application/visual_evidence.py','domain/models.py']
+    if settings.evidence_review_enabled:
+        sources += ['application/evidence_review.py','adapters/providers/evidence_review.py']
     sources=list(dict.fromkeys(sources))
     fingerprint = sha256(b'\n'.join((root / source).read_bytes() for source in sources)).hexdigest()
     result = {**{key: getattr(settings, key) for key in (
@@ -120,6 +122,18 @@ def configuration_snapshot(env_file: Path):
                 max_images=settings.visual_max_images,max_total_bytes=settings.visual_max_total_bytes,
                 instruction_sha256=sha256(VISION_INSTRUCTION.encode()).hexdigest(),
                 asset_snapshots='content_addressed_png_with_document_page_bbox_and_hash'))
+    if settings.evidence_review_enabled:
+        from .application.evidence_review import VERSION,SYSTEM_PROMPT
+        result['pipeline_source_files']=sources
+        result['evidence_review']=dict(enabled=True,version=VERSION,provider='deepseek',model=settings.llm_model,
+            reasoning_effort=settings.llm_reasoning_effort,timeout_seconds=settings.evidence_review_timeout_seconds,
+            max_review_calls=1,automatic_retries=0,max_issues=8,max_replacements_per_issue=3,
+            max_output_tokens=8192,
+            input='question_same_evidence_same_images_validated_draft_claims',retrieval_calls=0,
+            instructions_sha256=sha256(SYSTEM_PROMPT.encode()).hexdigest(),
+            acceptance='verified_source_locations_minimal_edits_and_original_citation_validator',
+            failure_policy='retain_validated_original_draft_and_record_failure',
+            guarantee='no_guarantee_of_semantic_correctness')
     return result
 
 

@@ -73,6 +73,15 @@ def main():
     if settings.visual_retrieval_enabled:generation_options['visual_root']=root
     generator = generator_type(settings.llm_model, settings.llm_api_key.get_secret_value(), settings.llm_base_url,
                                answer_guidance_enabled=settings.answer_guidance_enabled,**generation_options)
+    evidence_reviewer=None
+    if getattr(settings,'evidence_review_enabled',False):
+        from literature_rag.application.evidence_review import EvidenceReviewService
+        from literature_rag.adapters.providers.evidence_review import DeepSeekEvidenceReviewer
+        review_provider=DeepSeekEvidenceReviewer(settings.llm_model,settings.llm_api_key.get_secret_value(),
+            settings.llm_base_url,thinking_enabled=settings.llm_thinking_enabled,
+            reasoning_effort=settings.llm_reasoning_effort,timeout_seconds=settings.evidence_review_timeout_seconds,
+            visual_root=root if settings.visual_retrieval_enabled else None)
+        evidence_reviewer=EvidenceReviewService(review_provider,visual_root=root if settings.visual_retrieval_enabled else None)
     query_rewriter=None
     if settings.query_rewrite_enabled:
         from literature_rag.adapters.providers.query_rewrite import DeepSeekQueryRewriter
@@ -143,12 +152,13 @@ def main():
         if settings.context_expansion_strategy=='body_section':
             from literature_rag.application.body_context import BodySectionCatalog
             body_context_catalog=BodySectionCatalog.load(root,metadata)
-        answer = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options,table_relations,reranker,
+        service = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options,table_relations,reranker,
             body_context_catalog=body_context_catalog,query_rewriter=query_rewriter,
             query_rewrite_mode=settings.query_rewrite_mode if settings.query_rewrite_enabled else 'dual',
             visual_catalog=visual_catalog,visual_max_images=settings.visual_max_images,
-            visual_max_total_bytes=settings.visual_max_total_bytes), CapturedGenerator(), citation_validator).answer(
-            body['question'], settings.top_k, settings.min_score)
+            visual_max_total_bytes=settings.visual_max_total_bytes), CapturedGenerator(), citation_validator,
+            reviewer=evidence_reviewer)
+        answer = service.answer(body['question'], settings.top_k, settings.min_score)
     except (ProviderError, InfrastructureError) as error:
         print(json.dumps({'status': 'failed', 'answer': '', 'citations': [],
                           'reason_code': 'provider_error' if isinstance(error, ProviderError) else 'retrieval_error',
@@ -160,6 +170,7 @@ def main():
                               [query_rewriter.last_call] if query_rewriter.last_call else []} if settings.query_rewrite_enabled else {}),
                           **({'rerank_calls':rerank_calls} if settings.rerank_enabled else {}),
                           'generation_calls': generation_calls, 'citation_validation': citation_validator.snapshot(),
+                          **({'evidence_review':evidence_reviewer.last_trace} if evidence_reviewer is not None else {}),
                           'claims': [], 'latency_ms': 0}, ensure_ascii=False))
         return
     citations = []
@@ -170,11 +181,12 @@ def main():
                       'latency_ms': answer.latency_ms, 'reason_code': answer.reason_code,
                       'configuration': configuration, 'generation_calls': generation_calls,
                       'citation_validation': citation_validator.snapshot(),
+                      **({'evidence_review':evidence_reviewer.last_trace} if evidence_reviewer is not None else {}),
                       'embedding_usage': combined_usage(query_embedding_calls) if settings.query_rewrite_enabled else getattr(embedder, 'last_usage', None),
                       **({'query_embedding_calls':query_embedding_calls,'query_rewrite_calls':
                           [query_rewriter.last_call] if query_rewriter.last_call else []} if settings.query_rewrite_enabled else {}),
                       **({'rerank_calls':rerank_calls} if settings.rerank_enabled else {}),
-                      'claims': [asdict(claim) for claim in generated_answers[-1].claims] if answer.status.value == 'answered' else [],
+                      'claims': [asdict(claim) for claim in service.last_generated_answer.claims] if answer.status.value == 'answered' else [],
                       'retrieval_seed_evidence': seed_evidence, 'context_assembly': context_diagnostics,
                       'retrieved_evidence': [asdict(e) for e in evidence_by_chunk.values()]}, ensure_ascii=False))
 
