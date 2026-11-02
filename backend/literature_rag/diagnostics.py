@@ -9,7 +9,8 @@ def configuration_snapshot(env_file: Path):
     settings = Settings(_env_file=env_file)
     root = Path(__file__).resolve().parent
     sources = ['application/prompts.py', 'application/citations.py', 'application/answer_question.py',
-               'application/retrieve.py', 'adapters/providers/deepseek.py', 'adapters/providers/openai.py']
+               'application/retrieve.py', 'adapters/providers/deepseek.py', 'adapters/providers/openai.py',
+               'domain/errors.py']
     if settings.context_expansion_enabled:
         sources += ['application/context.py','domain/models.py','adapters/sqlite/metadata_store.py']
         if settings.context_expansion_strategy=='body_section':
