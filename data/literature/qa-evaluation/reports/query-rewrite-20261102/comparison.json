@@ -1,0 +1,470 @@
+{
+  "version": "query-rewrite-paired-20261102",
+  "common_task_ids": [
+    "PFI2-001",
+    "PFI2-002",
+    "PFI2-003",
+    "PFI2-004",
+    "PFI2-005",
+    "PFI2-006",
+    "PFI2-007",
+    "PFI2-008",
+    "PFI2-009",
+    "PFI2-010",
+    "PFI2-011",
+    "PFI2-012",
+    "PFI2-013",
+    "PFI2-014",
+    "PFI2-015",
+    "PFI2-016",
+    "PFI2-017",
+    "PFI2-018",
+    "PFI2-019",
+    "PFI2-020",
+    "PFI2-021",
+    "PFI2-022",
+    "PFI2-023",
+    "PFI2-024",
+    "PFI2-025",
+    "PFI2-028",
+    "PFI2-029",
+    "PFI2-030",
+    "PFI2-031",
+    "PFI2-032"
+  ],
+  "comparison": {
+    "original": {
+      "tasks": 30,
+      "point_macro_average": 0.9583333333333334,
+      "support_counts": {
+        "supported": 113,
+        "partially_supported": 2
+      },
+      "citation_precision": {
+        "numerator": 118,
+        "denominator": 123,
+        "value": 0.959349593495935
+      },
+      "citation_coverage": {
+        "numerator": 113,
+        "denominator": 115,
+        "value": 0.9826086956521739
+      },
+      "boundary_mean": 1.9,
+      "all_five_pass": 21
+    },
+    "rewrite": {
+      "tasks": 30,
+      "point_macro_average": 0.9611111111111111,
+      "support_counts": {
+        "supported": 115,
+        "partially_supported": 1
+      },
+      "citation_precision": {
+        "numerator": 120,
+        "denominator": 120,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 116,
+        "denominator": 116,
+        "value": 1.0
+      },
+      "boundary_mean": 1.8666666666666667,
+      "all_five_pass": 25
+    }
+  },
+  "all_valid_summaries": {
+    "original": {
+      "tasks": 31,
+      "point_macro_average": 0.9596774193548387,
+      "support_counts": {
+        "supported": 117,
+        "partially_supported": 2
+      },
+      "citation_precision": {
+        "numerator": 122,
+        "denominator": 127,
+        "value": 0.9606299212598425
+      },
+      "citation_coverage": {
+        "numerator": 115,
+        "denominator": 119,
+        "value": 0.9663865546218487
+      },
+      "boundary_mean": 1.903225806451613,
+      "all_five_pass": 21
+    },
+    "rewrite": {
+      "tasks": 31,
+      "point_macro_average": 0.9623655913978495,
+      "support_counts": {
+        "supported": 120,
+        "partially_supported": 1
+      },
+      "citation_precision": {
+        "numerator": 126,
+        "denominator": 126,
+        "value": 1.0
+      },
+      "citation_coverage": {
+        "numerator": 120,
+        "denominator": 121,
+        "value": 0.9917355371900827
+      },
+      "boundary_mean": 1.8709677419354838,
+      "all_five_pass": 25
+    }
+  },
+  "valid_grades": {
+    "original": 31,
+    "rewrite": 31
+  },
+  "excluded_task_ids": [
+    "PFI2-026",
+    "PFI2-027"
+  ],
+  "changes": {
+    "point_wins": [
+      "PFI2-004",
+      "PFI2-011"
+    ],
+    "point_losses": [
+      "PFI2-015",
+      "PFI2-022"
+    ],
+    "joint_wins": [
+      "PFI2-004",
+      "PFI2-011",
+      "PFI2-024",
+      "PFI2-029"
+    ],
+    "joint_losses": []
+  },
+  "retrieval": {
+    "rewrite_statuses": {
+      "rewritten": 32
+    },
+    "original_candidates_unchanged": 30,
+    "same_primary_order": 21,
+    "same_final_sources": 27,
+    "same_initial_generation_input": 27,
+    "shared_candidate_occurrences": 1382,
+    "rewrite_only_candidate_occurrences": 218,
+    "rewrite_only_primary_occurrences": 0,
+    "added_final_source_occurrences": 7,
+    "removed_final_source_occurrences": 24,
+    "changed_final_source_questions": [
+      "PFI2-006",
+      "PFI2-017",
+      "PFI2-021",
+      "PFI2-029",
+      "PFI2-032"
+    ],
+    "note": "Counts are question/source occurrences, not paper chunks deleted or proof that required evidence improved.",
+    "point_changes_with_same_initial_generation_input": [
+      "PFI2-004",
+      "PFI2-011",
+      "PFI2-015",
+      "PFI2-022"
+    ]
+  },
+  "runtime": {
+    "original": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 32
+      },
+      "median_end_to_end_seconds": 14.305,
+      "sum_end_to_end_seconds": 498.504,
+      "generation": {
+        "calls": 33,
+        "known_tokens": {
+          "input_tokens": 249090,
+          "output_tokens": 33401,
+          "total_tokens": 282491
+        },
+        "total_token_unknown_calls": 0
+      },
+      "rerank": {
+        "calls": 32,
+        "known_tokens": {
+          "input_tokens": 473744,
+          "output_tokens": 0
+        },
+        "total_token_unknown_calls": 32
+      },
+      "question_embedding": {
+        "calls": 32,
+        "known_tokens": {
+          "input_tokens": 1011,
+          "output_tokens": 0,
+          "total_tokens": 1011
+        },
+        "total_token_unknown_calls": 0
+      },
+      "query_rewrite": {
+        "calls": 0,
+        "known_tokens": {},
+        "total_token_unknown_calls": 0
+      },
+      "currency_costs": {
+        "generation": null,
+        "rerank": null,
+        "question_embedding": null,
+        "query_rewrite": null
+      },
+      "returned_generation_models": {
+        "deepseek-flash": 33
+      },
+      "returned_rewrite_models": {}
+    },
+    "rewrite": {
+      "questions": 32,
+      "outcomes": {
+        "answered": 32
+      },
+      "median_end_to_end_seconds": 17.759,
+      "sum_end_to_end_seconds": 572.453,
+      "generation": {
+        "calls": 33,
+        "known_tokens": {
+          "input_tokens": 239649,
+          "output_tokens": 34519,
+          "total_tokens": 274168
+        },
+        "total_token_unknown_calls": 0
+      },
+      "rerank": {
+        "calls": 32,
+        "known_tokens": {
+          "input_tokens": 470921,
+          "output_tokens": 0
+        },
+        "total_token_unknown_calls": 32
+      },
+      "question_embedding": {
+        "calls": 64,
+        "known_tokens": {
+          "input_tokens": 3229,
+          "output_tokens": 0,
+          "total_tokens": 3229
+        },
+        "total_token_unknown_calls": 0
+      },
+      "query_rewrite": {
+        "calls": 32,
+        "known_tokens": {
+          "input_tokens": 8054,
+          "output_tokens": 2073,
+          "total_tokens": 10127
+        },
+        "total_token_unknown_calls": 0
+      },
+      "currency_costs": {
+        "generation": null,
+        "rerank": null,
+        "question_embedding": null,
+        "query_rewrite": null
+      },
+      "returned_generation_models": {
+        "deepseek-flash": 33
+      },
+      "returned_rewrite_models": {
+        "deepseek-flash": 32
+      }
+    }
+  },
+  "failed_grades": [
+    {
+      "arm": "original",
+      "task_id": "PFI2-027",
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "invalid_scorecard",
+          "validation_message": "Group and citation decisions disagree",
+          "request_sha256": "6990c429ca549e5ef152c8dca94d933352bca33493a2081c4b669baaa72ca03f",
+          "response_sha256": "22958565db2f0bce8f9c6dfe59c85afc47e1b5d65040d1590cf4dfc49e6b7db4",
+          "record_sha256": "081029b431442d103891673f2811b755681ef72ce726514c207d6cba825cb593",
+          "usage": {
+            "input_tokens": 76463,
+            "output_tokens": 5268,
+            "total_tokens": 81731,
+            "reported_cost_usd": 0.003211446
+          }
+        },
+        {
+          "attempt": 2,
+          "status": "invalid_scorecard",
+          "validation_message": "Group and citation decisions disagree",
+          "request_sha256": "6990c429ca549e5ef152c8dca94d933352bca33493a2081c4b669baaa72ca03f",
+          "response_sha256": "ceb0a1cead2cb5441db828a2d1c3881ef0d7db029831db9f45da9366a7ef7b04",
+          "record_sha256": "9789899da32b605b3aebc0182356c609fc2b1e63392d236842c3520b41625092",
+          "usage": {
+            "input_tokens": 76463,
+            "output_tokens": 5268,
+            "total_tokens": 81731,
+            "reported_cost_usd": 0.003211446
+          }
+        },
+        {
+          "attempt": 3,
+          "status": "invalid_scorecard",
+          "validation_message": "Group and citation decisions disagree",
+          "request_sha256": "6990c429ca549e5ef152c8dca94d933352bca33493a2081c4b669baaa72ca03f",
+          "response_sha256": "d4db60edc713d62f8197df4c3071b3da794deb4aa42e8d96a2df258807afba0c",
+          "record_sha256": "4a5f1a80fa718fc0914baeb40ada4806298b83d608069e06e5c1630c70fd5f17",
+          "usage": {
+            "input_tokens": 76463,
+            "output_tokens": 5268,
+            "total_tokens": 81731,
+            "reported_cost_usd": 0.003211446
+          }
+        }
+      ],
+      "score": null
+    },
+    {
+      "arm": "rewrite",
+      "task_id": "PFI2-026",
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "invalid_scorecard",
+          "validation_message": "Group and citation decisions disagree",
+          "request_sha256": "54957a75c4bcfdfc4bf1b9a7f3e925543d8904714a4d7047435ce52c50e5d320",
+          "response_sha256": "1725bcc0db8bd18094b1a4ffbee9314289528025b7d478f93feb2ef1e4e5ec67",
+          "record_sha256": "9c8d78ac97d3092710634c76c100805ee708bbd72b8a8b114d00ff601ce066b6",
+          "usage": {
+            "input_tokens": 70597,
+            "output_tokens": 3590,
+            "total_tokens": 74187,
+            "reported_cost_usd": 0.002965074
+          }
+        },
+        {
+          "attempt": 2,
+          "status": "invalid_scorecard",
+          "validation_message": "Group and citation decisions disagree",
+          "request_sha256": "54957a75c4bcfdfc4bf1b9a7f3e925543d8904714a4d7047435ce52c50e5d320",
+          "response_sha256": "9573c6b71cd91659e95478724a1324fb1009fd2b46f072dac20072b03158da52",
+          "record_sha256": "dd6cc494f67ae9331a623732276e53d877aa804dabd0a9b219271a39ee202f45",
+          "usage": {
+            "input_tokens": 70597,
+            "output_tokens": 3593,
+            "total_tokens": 74190,
+            "reported_cost_usd": 0.002965074
+          }
+        },
+        {
+          "attempt": 3,
+          "status": "invalid_scorecard",
+          "validation_message": "Group and citation decisions disagree",
+          "request_sha256": "54957a75c4bcfdfc4bf1b9a7f3e925543d8904714a4d7047435ce52c50e5d320",
+          "response_sha256": "874e1eede2e446d7e27f015bae36d2ca9f55f64e7238cf419e28c46324fe0a81",
+          "record_sha256": "bd9020d517cb7e9dc7f189f5afce3f21875126537b90ccb09443335acc8fbcf6",
+          "usage": {
+            "input_tokens": 70597,
+            "output_tokens": 3590,
+            "total_tokens": 74187,
+            "reported_cost_usd": 0.002965074
+          }
+        }
+      ],
+      "score": null
+    }
+  ],
+  "judge_statuses": {
+    "original": [
+      {
+        "judge": "jev",
+        "system": "rag",
+        "status": "completed",
+        "count": 31
+      },
+      {
+        "judge": "jev",
+        "system": "rag",
+        "status": "invalid_scorecard",
+        "count": 1
+      }
+    ],
+    "rewrite": [
+      {
+        "judge": "jev",
+        "system": "rag",
+        "status": "completed",
+        "count": 31
+      },
+      {
+        "judge": "jev",
+        "system": "rag",
+        "status": "invalid_scorecard",
+        "count": 1
+      }
+    ]
+  },
+  "judge_accounting": {
+    "original": {
+      "calls": 34,
+      "known_tokens": {
+        "input_tokens": 2569757,
+        "output_tokens": 124434,
+        "total_tokens": 2694191
+      },
+      "usage_unknown_calls": 0,
+      "reported_cost_usd": "0.107929794",
+      "cost_unknown_calls": 0,
+      "invoice_cost_usd": null,
+      "request_time_ms": 123935
+    },
+    "rewrite": {
+      "calls": 34,
+      "known_tokens": {
+        "input_tokens": 2549727,
+        "output_tokens": 121984,
+        "total_tokens": 2671711
+      },
+      "usage_unknown_calls": 0,
+      "reported_cost_usd": "0.107088534",
+      "cost_unknown_calls": 0,
+      "invoice_cost_usd": null,
+      "request_time_ms": 124467
+    }
+  },
+  "judge": {
+    "base_url": "https://openrouter.ai/api",
+    "requested_model": "typesafe/jev-1.14",
+    "api": "openrouter_decisions",
+    "timeout_seconds": 120.0,
+    "automatic_retries": 0,
+    "previous_scores_provided": false,
+    "scope": [
+      "key_points",
+      "claim_support",
+      "citation_support",
+      "citation_group_coverage",
+      "answerability"
+    ],
+    "independent_requests": true,
+    "sampling": "Native typed decisions; no sampling overrides or conversation identifiers."
+  },
+  "scoring_policy_sha256": "a4e3e36d39de868a1148c8032cac206d5681baa627e3803aed82be734e965d8a",
+  "probe_accounting": {
+    "calls": 2,
+    "known_tokens": {
+      "input_tokens": 500,
+      "output_tokens": 113,
+      "total_tokens": 613
+    },
+    "total_token_unknown_calls": 0
+  },
+  "probe_note": "Two ungraded interface probes; the first suffered shell input encoding damage and is excluded from question results.",
+  "comparison_kind": "fresh_same_commit_same_corpus_configuration_switch_only",
+  "source_commit": "946b1cfa1c5fd448b05f5a8ac88e4620c2baca15",
+  "generated_questions": 64,
+  "new_luna_calls": 0,
+  "new_dsh_calls": 0,
+  "answer_guidance_enabled": false
+}

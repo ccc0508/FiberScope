@@ -3,13 +3,18 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'scripts'))
-from report_query_rewrite_20261102 import source_ids, retrieval_diff, runtime_summary
+from report_query_rewrite_20261102 import source_ids, retrieval_diff, runtime_summary, score_label
 
 
 def test_context_source_diff_does_not_count_references_or_shared_chunks_twice():
     response=dict(retrieved_evidence=[dict(chunk_id='a',source_chunks=[dict(chunk_id='a'),dict(chunk_id='b')]),
                                     dict(chunk_id='c',source_chunks=[])])
     assert source_ids(response)=={'a','b','c'}
+
+
+def test_missing_score_is_distinct_from_valid_zero():
+    assert '不记零' in score_label(None)
+    assert score_label({'point_mean':0})=='0.00%'
 
 
 def test_usage_counts_each_query_embedding_and_rewrite_once():
