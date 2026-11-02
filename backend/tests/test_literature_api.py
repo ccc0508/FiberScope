@@ -92,6 +92,7 @@ def test_worker_deadline_and_error_redaction(configured, monkeypatch):
         assert kwargs['timeout'] == 90
         assert 'shell' not in kwargs
         assert json.loads(kwargs['input'])['question'] == '打浆影响？'
+        assert json.loads(kwargs['input'])['request_timeout_seconds'] == 90
         raise subprocess.TimeoutExpired('worker', 90)
     monkeypatch.setattr(subprocess, 'run', timeout)
     with pytest.raises(HTTPException) as error:
