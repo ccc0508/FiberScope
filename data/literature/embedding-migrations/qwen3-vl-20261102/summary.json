@@ -1,0 +1,168 @@
+{
+  "version": "qwen3-vl-embedding-migration-20261102",
+  "embedding": {
+    "provider": "dashscope",
+    "model": "qwen3-vl-embedding",
+    "dimensions": 2560
+  },
+  "status": "verified_candidate",
+  "index": {
+    "chunks": 113,
+    "table_rows": 20,
+    "explicit_links": 10,
+    "images_indexed": 0,
+    "unchanged": [
+      "source_PDF",
+      "chunk_ids",
+      "source_text",
+      "page_numbers",
+      "section_mapping",
+      "content_roles",
+      "row_text",
+      "explicit_links"
+    ]
+  },
+  "active_candidate_config": ".rag-data/configs/mineru-body-tables-v1-20261031.env",
+  "strategy": {
+    "query": "original_and_rewritten",
+    "fusion": "RRF_k60",
+    "rerank_query": "original",
+    "answer_query": "original",
+    "vector_candidates_per_query": 50,
+    "merged_candidate_limit": 50,
+    "max_primary_hits": 8,
+    "min_score": 0.35,
+    "min_score_calibrated_for_qwen": false
+  },
+  "capabilities": {
+    "text_embedding_verified": true,
+    "image_embedding_verified": true,
+    "text_image_fusion_verified": true,
+    "qa_image_retrieval_enabled": false,
+    "qa_original_image_generation_enabled": false
+  },
+  "interface_probes": [
+    {
+      "mode": "text",
+      "status": "completed",
+      "dimensions": 2560
+    },
+    {
+      "mode": "image",
+      "status": "completed",
+      "dimensions": 2560
+    },
+    {
+      "mode": "fusion",
+      "status": "completed",
+      "dimensions": 2560
+    }
+  ],
+  "smoke_questions": [
+    {
+      "task_id": "PFI2-008",
+      "status": "answered",
+      "end_to_end_ms": 13903,
+      "query_branches": 2,
+      "generation_calls": 1,
+      "scored": false,
+      "evidence_contains_0888": false
+    },
+    {
+      "task_id": "PFI2-032",
+      "status": "answered",
+      "end_to_end_ms": 19483,
+      "query_branches": 2,
+      "generation_calls": 1,
+      "scored": false,
+      "evidence_contains_0888": false
+    }
+  ],
+  "accounting": {
+    "index_embedding": {
+      "calls": 7,
+      "usage": {
+        "input_tokens": 28601,
+        "image_tokens": 0,
+        "total_tokens": 28601
+      },
+      "currency_cost": null,
+      "unknown_usage_calls": 0
+    },
+    "interface_probes": {
+      "calls": 3,
+      "usage": {
+        "input_tokens": 95,
+        "image_tokens": 1584,
+        "total_tokens": 1679
+      },
+      "currency_cost": null,
+      "unknown_usage_calls": 0
+    },
+    "qa_embedding": {
+      "calls": 4,
+      "usage": {
+        "input_tokens": 343,
+        "image_tokens": 0,
+        "total_tokens": 343
+      },
+      "currency_cost": null,
+      "unknown_usage_calls": 0
+    },
+    "all_aliyun_embedding": {
+      "calls": 14,
+      "usage": {
+        "input_tokens": 29039,
+        "image_tokens": 1584,
+        "total_tokens": 30623
+      },
+      "currency_cost": null,
+      "unknown_usage_calls": 0
+    },
+    "qa_generation": {
+      "calls": 2,
+      "known_tokens": {
+        "input_tokens": 14380,
+        "output_tokens": 2386,
+        "total_tokens": 16766
+      },
+      "total_token_unknown_calls": 0
+    },
+    "qa_query_rewrite": {
+      "calls": 2,
+      "known_tokens": {
+        "input_tokens": 519,
+        "output_tokens": 181,
+        "total_tokens": 700
+      },
+      "total_token_unknown_calls": 0
+    },
+    "qa_rerank": {
+      "calls": 2,
+      "known_tokens": {
+        "input_tokens": 30269,
+        "output_tokens": 0
+      },
+      "total_token_unknown_calls": 2
+    }
+  },
+  "tests": {
+    "passed": 192
+  },
+  "new_jev_calls": 0,
+  "new_luna_calls": 0,
+  "quality_improvement_measured": false,
+  "website_configuration_changed": false,
+  "server_deployed": false,
+  "limitations": [
+    "The current QA index still contains text and table rows, not image vectors.",
+    "Image embedding interfaces are verified, but original image delivery to the answer model is not enabled.",
+    "Two smoke questions do not measure quality or stability; the 0.35 threshold remains uncalibrated for Qwen.",
+    "Question 32 still lacks the abstract value 0.888 in supplied evidence."
+  ],
+  "source_fingerprints": {
+    "index_structure_sha256": "e8bb7226b2868f727d3a4510da2484332bdf9e954bedbe97f74a76167f553875",
+    "migration_ledger_sha256": "7a0add4edb8a1bae4b2586582f84d383e01016959b005dc6ac6c027c71e56d70",
+    "smoke_manifest_sha256": "aada8674f0df1899a81fc12e93bb8e3b41fe65d0b941032595a911ff9fcc84a9"
+  }
+}

@@ -74,17 +74,20 @@ def test_combined_snapshot_reports_both_reranking_and_unified_context(tmp_path):
         verify(tmp_path/'missing-library',tmp_path/'missing-cache',tmp_path/'output.json',env)
 
 
-@pytest.mark.parametrize('rewrite_enabled,rewrite_mode', [(False,'dual'),(True,'dual'),(True,'rewrite_only')])
-def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,monkeypatch,capsys,rewrite_enabled,rewrite_mode):
+@pytest.mark.parametrize('rewrite_enabled,rewrite_mode,embedding_provider',
+    [(False,'dual','openai'),(True,'dual','openai'),(True,'rewrite_only','openai'),(True,'dual','dashscope')])
+def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,monkeypatch,capsys,rewrite_enabled,rewrite_mode,embedding_provider):
     import literature_worker
     source,chunks=source_library(tmp_path);manifest=plan(source)
-    manifest['embedding']=dict(provider='openai',model='fake',dimensions=3)
-    save(source/'table-row-vectors.json',dict(rows=[dict(id=r['id'],vector=[1.,0.,0.]) for r in manifest['rows']]))
+    dimensions=256 if embedding_provider=='dashscope' else 3
+    model='qwen3-vl-embedding' if embedding_provider=='dashscope' else 'fake'
+    manifest['embedding']=dict(provider=embedding_provider,model=model,dimensions=dimensions)
+    save(source/'table-row-vectors.json',dict(rows=[dict(id=r['id'],vector=[1.]+[0.]*(dimensions-1)) for r in manifest['rows']]))
     manifest['row_vectors_sha256']=digest(source/'table-row-vectors.json');save(source/'table-retrieval.json',manifest)
     (source/'chroma').mkdir();(source/'chroma/chroma.sqlite3').touch()
     settings=Settings(_env_file=None,context_expansion_enabled=True,context_expansion_strategy='body_section',
         table_retrieval_enabled=True,rerank_enabled=True,rerank_api_key='private-test-token',
-        rerank_base_url='https://api.example/v1',embedding_model='fake',embedding_dimensions=3,
+        rerank_base_url='https://api.example/v1',embedding_provider=embedding_provider,embedding_model=model,embedding_dimensions=dimensions,
         embedding_api_key='test-only',llm_provider='deepseek' if rewrite_enabled else 'openai',
         llm_model='fake-generator',llm_api_key='test-only',top_k=1,query_rewrite_enabled=rewrite_enabled,
         query_rewrite_mode=rewrite_mode)
@@ -93,7 +96,7 @@ def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,
         def __init__(self,*args):pass
         def embed_query(self,text):
             self.last_usage=dict(prompt_tokens=4,total_tokens=4)
-            return [1.,1.,1.]
+            return [1.,1.,1.]+[0.]*(dimensions-3)
     class Reranker:
         def __init__(self,*args):self.last_call=None
         def rerank(self,question,texts):
@@ -111,6 +114,7 @@ def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,
     monkeypatch.setattr('literature_rag.config.Settings',lambda **kwargs:settings)
     monkeypatch.setattr('literature_rag.diagnostics.Settings',lambda **kwargs:settings)
     monkeypatch.setattr('literature_rag.adapters.providers.openai.OpenAIEmbedder',Embedder)
+    monkeypatch.setattr('literature_rag.adapters.providers.dashscope.DashScopeEmbedder',Embedder)
     monkeypatch.setattr('literature_rag.adapters.providers.openai.OpenAIGenerator',Generator)
     monkeypatch.setattr('literature_rag.adapters.providers.deepseek.DeepSeekGenerator',Generator)
     class Rewriter:

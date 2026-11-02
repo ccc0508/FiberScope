@@ -117,6 +117,11 @@ class Settings(BaseSettings):
         """Ensure adjacent chunks do not completely overlap."""
         if self.chunk_overlap >= self.chunk_size:
             raise ValueError("chunk_overlap must be smaller than chunk_size")
+        if self.embedding_provider == 'dashscope':
+            if self.embedding_model != 'qwen3-vl-embedding' or self.embedding_dimensions not in {256,512,768,1024,1536,2048,2560}:
+                raise ValueError('DashScope requires qwen3-vl-embedding with a supported dimension')
+            if self.embedding_base_url and not self.embedding_base_url.rstrip('/').endswith('/api/v1'):
+                raise ValueError('DashScope requires its native /api/v1 base URL')
         if self.table_retrieval_enabled and not self.context_expansion_enabled:
             raise ValueError('table retrieval requires bounded context expansion')
         if self.context_expansion_strategy=='body_section':
