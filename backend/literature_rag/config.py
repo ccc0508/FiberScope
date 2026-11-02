@@ -39,7 +39,8 @@ class Settings(BaseSettings):
     visual_max_total_bytes: int = Field(default=12*1024*1024,ge=1024,le=24*1024*1024)
     answer_guidance_enabled: bool = False
     evidence_review_enabled: bool = False
-    evidence_review_timeout_seconds: float = Field(default=90, gt=0, le=180, allow_inf_nan=False)
+    evidence_review_timeout_seconds: float = Field(default=120, gt=0, le=180, allow_inf_nan=False)
+    evidence_review_max_output_tokens: int = Field(default=16384, ge=1024, le=32768)
     query_rewrite_enabled: bool = False
     query_rewrite_mode: Literal['dual', 'rewrite_only'] = 'dual'
     query_rewrite_timeout_seconds: float = Field(default=30, gt=0, le=60, allow_inf_nan=False)

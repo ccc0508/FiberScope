@@ -30,7 +30,8 @@ def main():
     root=Path(body['data_dir']).resolve()
     p=DeepSeekEvidenceReviewer(s.llm_model,s.llm_api_key.get_secret_value(),s.llm_base_url,
         thinking_enabled=s.llm_thinking_enabled,reasoning_effort=s.llm_reasoning_effort,
-        timeout_seconds=s.evidence_review_timeout_seconds,visual_root=root if s.visual_retrieval_enabled else None)
+        timeout_seconds=s.evidence_review_timeout_seconds,max_output_tokens=s.evidence_review_max_output_tokens,
+        visual_root=root if s.visual_retrieval_enabled else None)
     reviewer=EvidenceReviewService(p,visual_root=root if s.visual_retrieval_enabled else None)
     final=reviewer.review(body['question'],es,draft);validated=validator.validate(final,es)
     by_ref={e.ref:e for e in es};citations=[]
