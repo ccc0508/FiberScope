@@ -53,6 +53,23 @@ def config(mode='responses'):
     return judge.Config('https://judge.invalid/v1', 'independent-synthetic-judge', 'TEST_SECRET_NEVER_SAVE', mode)
 
 
+@pytest.mark.parametrize('status', ['answered', 'abstained', 'refused', 'failed'])
+def test_read_source_status_preserves_guarded_refusal_and_checksum(run_dir, status):
+    run, _, cases, _ = judge.verify_run(run_dir)
+    task = run['tasks'][0]
+    path = run_dir / 'results' / (task['id'] + '.json')
+    saved = judge.read_json(path)
+    saved['status'] = status
+    dump(path, saved)
+    dump(run_dir / 'attempts' / (task['id'] + '.json'), {'result_sha256': judge.digest(path)})
+    assert judge.read_result(run_dir, run, cases[task['case_id']], task)[1] == saved
+    saved['status'] = 'unrecognized'
+    dump(path, saved)
+    dump(run_dir / 'attempts' / (task['id'] + '.json'), {'result_sha256': judge.digest(path)})
+    with pytest.raises(ValueError, match='Unknown source response status'):
+        judge.read_result(run_dir, run, cases[task['case_id']], task)
+
+
 def scorecard(data):
     raw = deepcopy(data['output_shape'])
     raw.update(answerability_score=2, observed_behavior='answer',
