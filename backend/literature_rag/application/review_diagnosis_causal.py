@@ -1,7 +1,7 @@
 """Bounded multi-outcome/chain audit using complete sentences already in evidence."""
 import re
 from typing import Literal
-from pydantic import Field
+from pydantic import Field, PrivateAttr
 from . import review_diagnosis_comparison as comparison
 from . import review_diagnosis_relation_compact as compact
 from . import review_diagnosis_relation as relation
@@ -12,7 +12,6 @@ prioritize_supplement=True
 is_relation=compact.is_relation
 critical_claim_indexes=compact.critical_claim_indexes
 comparison_claim_indexes=comparison.comparison_claim_indexes
-prepare_payload=comparison.prepare_payload
 validate_edit_target=comparison.validate_edit_target
 LIMIT=3
 
@@ -56,6 +55,7 @@ class BasePayload(compact.DiagnosticPayload):
 
 class DiagnosticPayload(comparison.DiagnosticPayload):
     relation_checks: list[RelationCheck] = Field(max_length=64)
+    _relation_target_repairs: list[dict] = PrivateAttr(default_factory=list)
 
 
 DIAGNOSTIC_PROMPT=comparison.DIAGNOSTIC_PROMPT+'''
@@ -73,7 +73,34 @@ Do not weaken a source that directly supports multiple results. An unchanged cor
 no edit. If the complete source sentence is unavailable or more results exceed the limit, leave the check
 incomplete rather than fabricate context. All existing original-text, citation and comparison rules apply.
 For non-selected ordinary relation checks omit these extra fields. No extra retrieval or model call.
+Relation target IDs are mutually exclusive. All indexes are zero-based.
+Original claim 6 repaired by issue 2: claim_index=6, issue_index=null, replacement_index=null,
+repair_issue_indexes=[2]. NEVER copy 2 into issue_index in this original check.
+Checking the first replacement in issue 2: claim_index=null, issue_index=2, replacement_index=0,
+repair_issue_indexes=[]. These are TWO separate records, even when they quote the same source.
+Before returning, verify every original check has null issue_index AND null replacement_index;
+every replacement check has null claim_index AND empty repair_issue_indexes.
 '''
+
+
+def prepare_payload(payload,draft,evidences):
+    # Remove only a redundant, independently bound pointer. Never guess the target or verdict.
+    for n,check in enumerate(payload.relation_checks):
+        ci,ii=check.claim_index,check.issue_index
+        if (ci is None or ii is None or check.replacement_index is not None
+            or ci>=len(draft.claims) or ii>=len(payload.issues)
+            or check.verdict=='supported' or check.repair_issue_indexes!=[ii]):
+            continue
+        issue=payload.issues[ii]
+        if issue.claim_index!=ci or issue.original_text!=draft.claims[ci].text:
+            continue
+        candidate=check.model_copy(update={'issue_index':None})
+        if not relation._valid(candidate,payload,draft,evidences):
+            continue
+        payload._relation_target_repairs.append(dict(index=n,
+            reason_code='redundant_original_issue_index',before=check.model_dump(),after=candidate.model_dump()))
+        payload.relation_checks[n]=candidate
+    comparison.prepare_payload(payload,draft,evidences)
 
 
 def request_context(draft,evidences):
