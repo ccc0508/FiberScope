@@ -1,0 +1,887 @@
+{
+  "paid_calls": 0,
+  "quality_score": null,
+  "scope": "Offline historical assembly and compatible commit; second model answer not generated.",
+  "results": [
+    {
+      "attempt": "2-v3",
+      "source_sha256": "f321b8d9b54a6d480e7312d5a9d88bb2f11d8498752f83b30536da64f4147649",
+      "old_protected_chars": 22989,
+      "new_protected_chars": 12589,
+      "old_omissions": [
+        {
+          "chunk_id": "chk_fe625e14c33a8b51f13a",
+          "reason": "protected_evidence_budget"
+        }
+      ],
+      "added_refs": [
+        "[7]"
+      ],
+      "dropped_uncited_refs": [
+        "[6]"
+      ],
+      "final_context_chars": 17121,
+      "original_cited_sources_unchanged": true,
+      "second_review_draft": {
+        "answer": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\nO(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。 [2]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。 [4]\n论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。 [2] [4]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+        "claims": [
+          {
+            "text": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。",
+            "citation_refs": [
+              "[1]"
+            ]
+          },
+          {
+            "text": "O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。",
+            "citation_refs": [
+              "[2]"
+            ]
+          },
+          {
+            "text": "作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。",
+            "citation_refs": [
+              "[4]"
+            ]
+          },
+          {
+            "text": "论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。",
+            "citation_refs": [
+              "[2]",
+              "[4]"
+            ]
+          },
+          {
+            "text": "并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。",
+            "citation_refs": [
+              "[2]"
+            ]
+          }
+        ]
+      },
+      "second_review_evidence": [
+        {
+          "ref": "[1]",
+          "chunk_id": "chk_71880c857f6b26e63797",
+          "document_id": "doc_0fcf2a50cfa02d21",
+          "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+          "page_start": 5,
+          "page_end": 7,
+          "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nThe cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates <sup>The</sup> <sup>cellulose</sup> <sup>polymorph</sup> <sup>of</sup> <sup>these</sup> <sup>two</sup> <sup>fibers</sup> <sup>had</sup> <sup>no</sup> <sup>change</sup> <sup>during</sup> <sup>PFI</sup> <sup>treatment,</sup> <sup>which</sup>that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource The cellulose polymorph of these two fibers had no change during PFI treatment, which<sup>illustrates</sup> <sup>that</sup> <sup>the</sup> <sup>PFI</sup> <sup>refining</sup> <sup>is</sup> <sup>a</sup> <sup>relatively</sup> <sup>mild</sup> <sup>mechanical</sup> <sup>treatment,</sup> <sup>as</sup> <sup>the</sup> <sup>results</sup> <sup>of</sup> <sup>XRD</sup> <sup>in</sup>(Figures S1 and S2) show.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n In general, the CI-XI and the CI-XA of softwood fibers showed a reduction illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in <sup>Online</sup> <sup>Resource</sup> <sup>(Figures</sup> <sup>S1</sup> <sup>and</sup> <sup>S2)</sup> <sup>show.</sup> <sup>In</sup> <sup>general,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>of</sup> <sup>softwood</sup> <sup>fibers</sup> of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers<sup>showed</sup> <sup>a</sup> <sup>reduction</sup> <sup>of</sup> <sup>4.66%</sup> <sup>and</sup> <sup>15.47%,</sup> <sup>respectively,</sup> <sup>and</sup> <sup>those</sup> <sup>of</sup> <sup>hardwood</sup> <sup>fibers</sup> <sup>decreased</sup> <sup>by</sup>respectively, as can be seen in Figure 4 and Table 1.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n The value of the CI-XI was remarkably higher than showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by<sup>2.65%</sup> <sup>and</sup> <sup>19.4%,</sup> <sup>respectively,</sup> <sup>as</sup> <sup>can</sup> <sup>be</sup> <sup>seen</sup> <sup>in</sup> <sup>Figure</sup> <sup>4</sup> <sup>and</sup> <sup>Table</sup> <sup>1.</sup> <sup>The</sup> <sup>value</sup> <sup>of</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>was</sup>the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was<sup>remarkably</sup> <sup>higher</sup> <sup>than</sup> <sup>the</sup> <sup>CI-XA,</sup> <sup>which</sup> <sup>might</sup> <sup>be</sup> <sup>caused</sup> <sup>by</sup> <sup>the</sup> <sup>over-fitting</sup> <sup>of</sup> <sup>amorphous</sup>CI-XA.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous<sup>contribution</sup> <sup>in</sup> <sup>the</sup> <sup>analysis</sup> <sup>of</sup> <sup>CI-XA.</sup> <sup>However,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>were</sup> <sup>correlated</sup> <sup>significantly</sup>hardwood fibers, with a correlation coeficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated signif<sup>for</sup> <sup>both</sup> <sup>softwood</sup> <sup>fibers</sup> <sup>and</sup> <sup>hardwood</sup> <sup>fibers,</sup> <sup>with</sup> <sup>a</sup> <sup>correlation</sup> <sup>coefficient</sup> <sup>of</sup> <sup>0.919</sup> <sup>(p</sup> <sup><</sup> <sup>0.</sup>for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nFigure 4. The CI-XI (crystallinity index obtained by comparing intensity of X-ray difractometer (XRD) peaks) and CI-XA (crystallinity index obtained by comparing area of XRD peaks) for refined and unrefined samples: (a) softwood fiber and (b) hardwood fiber.\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nThe trends of CI (CI-XI and CI-XA) for softwood fibers and hardwood fibers were all similar, decreasing first and then increasing, along with a decline, as shown in Figure 4. The fluctuation of the CI was probably because of the mechanical action of PFI refining on the diferent regions of cellulose. In the first refining stage, the decrease of the CI showed that mechanical treatment may mainly act in the crystalline region. Subsequently, the growth of the CI could be interpreted as greater force acting on the amorphous region in which cocrystallization might occur upon drying under the mechanical and thermal action of PFI refining. The subsequent decrease might be the continuous destruction of crystalline region.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nRecently, researches indicated that plant cell walls commonly contained microfibrils with 18 cellulose chains [26]. Frequently adopted arrangements of the 18 cellulose chains are 234432, 34443, and 333333 [27]. Therein, 234432 arrangement was found to be more probable based on calculation [28]. Thus, according to the crystallite sizes (as Table 1 shows) and the unit cell parameters of cellulose Iβ, there was most likely to be an average of two-fibrils with an arrangement of 234,432 packed side-by-side for both softwood fibers and hardwood fibers (as seen in Figure 5, drawn with mercury\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n4.1.2 software). The result is consistent with the report of Haigler & Roberts [26], which shows that there might be two microfibrils associated along part of their length.\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nFigure 5. Cross-section model of cellulose crystallite for softwood fibers and hardwood fibers.\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nHowever, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some ate through the spaces between the hydrophilic (110) planes in paracrys<sub>crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30].</sub> nd then it made these planes suffer more mechanical actions, so theAdditionally, it was probably due to the weaker cleavage efect on (200) lattice planes that was hard for water molecules to penetrate.",
+          "score": 0.779321551322937,
+          "source_chunks": [
+            {
+              "chunk_id": "chk_2b09c046affdf81cff91",
+              "chunk_index": 39,
+              "page_start": 5,
+              "page_end": 5,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nThe cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates <sup>The</sup> <sup>cellulose</sup> <sup>polymorph</sup> <sup>of</sup> <sup>these</sup> <sup>two</sup> <sup>fibers</sup> <sup>had</sup> <sup>no</sup> <sup>change</sup> <sup>during</sup> <sup>PFI</sup> <sup>treatment,</sup> <sup>which</sup>that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource The cellulose polymorph of these two fibers had no change during PFI treatment, which<sup>illustrates</sup> <sup>that</sup> <sup>the</sup> <sup>PFI</sup> <sup>refining</sup> <sup>is</sup> <sup>a</sup> <sup>relatively</sup> <sup>mild</sup> <sup>mechanical</sup> <sup>treatment,</sup> <sup>as</sup> <sup>the</sup> <sup>results</sup> <sup>of</sup> <sup>XRD</sup> <sup>in</sup>(Figures S1 and S2) show.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_1ad7e5e397089f545978",
+              "chunk_index": 40,
+              "page_start": 5,
+              "page_end": 5,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n In general, the CI-XI and the CI-XA of softwood fibers showed a reduction illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in <sup>Online</sup> <sup>Resource</sup> <sup>(Figures</sup> <sup>S1</sup> <sup>and</sup> <sup>S2)</sup> <sup>show.</sup> <sup>In</sup> <sup>general,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>of</sup> <sup>softwood</sup> <sup>fibers</sup> of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers<sup>showed</sup> <sup>a</sup> <sup>reduction</sup> <sup>of</sup> <sup>4.66%</sup> <sup>and</sup> <sup>15.47%,</sup> <sup>respectively,</sup> <sup>and</sup> <sup>those</sup> <sup>of</sup> <sup>hardwood</sup> <sup>fibers</sup> <sup>decreased</sup> <sup>by</sup>respectively, as can be seen in Figure 4 and Table 1.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_43cdf887b7ecb297dc98",
+              "chunk_index": 41,
+              "page_start": 5,
+              "page_end": 5,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n The value of the CI-XI was remarkably higher than showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by<sup>2.65%</sup> <sup>and</sup> <sup>19.4%,</sup> <sup>respectively,</sup> <sup>as</sup> <sup>can</sup> <sup>be</sup> <sup>seen</sup> <sup>in</sup> <sup>Figure</sup> <sup>4</sup> <sup>and</sup> <sup>Table</sup> <sup>1.</sup> <sup>The</sup> <sup>value</sup> <sup>of</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>was</sup>the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was<sup>remarkably</sup> <sup>higher</sup> <sup>than</sup> <sup>the</sup> <sup>CI-XA,</sup> <sup>which</sup> <sup>might</sup> <sup>be</sup> <sup>caused</sup> <sup>by</sup> <sup>the</sup> <sup>over-fitting</sup> <sup>of</sup> <sup>amorphous</sup>CI-XA.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_71880c857f6b26e63797",
+              "chunk_index": 42,
+              "page_start": 5,
+              "page_end": 5,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous<sup>contribution</sup> <sup>in</sup> <sup>the</sup> <sup>analysis</sup> <sup>of</sup> <sup>CI-XA.</sup> <sup>However,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>were</sup> <sup>correlated</sup> <sup>significantly</sup>hardwood fibers, with a correlation coeficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated signif<sup>for</sup> <sup>both</sup> <sup>softwood</sup> <sup>fibers</sup> <sup>and</sup> <sup>hardwood</sup> <sup>fibers,</sup> <sup>with</sup> <sup>a</sup> <sup>correlation</sup> <sup>coefficient</sup> <sup>of</sup> <sup>0.919</sup> <sup>(p</sup> <sup><</sup> <sup>0.</sup>for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_c50ca9890325ed062bd1",
+              "chunk_index": 43,
+              "page_start": 6,
+              "page_end": 6,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nFigure 4. The CI-XI (crystallinity index obtained by comparing intensity of X-ray difractometer (XRD) peaks) and CI-XA (crystallinity index obtained by comparing area of XRD peaks) for refined and unrefined samples: (a) softwood fiber and (b) hardwood fiber.",
+              "kind": "figure_caption"
+            },
+            {
+              "chunk_id": "chk_c4b127f061c10edc9c02",
+              "chunk_index": 45,
+              "page_start": 6,
+              "page_end": 6,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nThe trends of CI (CI-XI and CI-XA) for softwood fibers and hardwood fibers were all similar, decreasing first and then increasing, along with a decline, as shown in Figure 4. The fluctuation of the CI was probably because of the mechanical action of PFI refining on the diferent regions of cellulose. In the first refining stage, the decrease of the CI showed that mechanical treatment may mainly act in the crystalline region. Subsequently, the growth of the CI could be interpreted as greater force acting on the amorphous region in which cocrystallization might occur upon drying under the mechanical and thermal action of PFI refining. The subsequent decrease might be the continuous destruction of crystalline region.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_316b7817824a0eaf739c",
+              "chunk_index": 46,
+              "page_start": 6,
+              "page_end": 6,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nRecently, researches indicated that plant cell walls commonly contained microfibrils with 18 cellulose chains [26]. Frequently adopted arrangements of the 18 cellulose chains are 234432, 34443, and 333333 [27]. Therein, 234432 arrangement was found to be more probable based on calculation [28]. Thus, according to the crystallite sizes (as Table 1 shows) and the unit cell parameters of cellulose Iβ, there was most likely to be an average of two-fibrils with an arrangement of 234,432 packed side-by-side for both softwood fibers and hardwood fibers (as seen in Figure 5, drawn with mercury",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_33cf3166246745afbc0a",
+              "chunk_index": 47,
+              "page_start": 7,
+              "page_end": 7,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n4.1.2 software). The result is consistent with the report of Haigler & Roberts [26], which shows that there might be two microfibrils associated along part of their length.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_8491d686a2f406536896",
+              "chunk_index": 49,
+              "page_start": 7,
+              "page_end": 7,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nFigure 5. Cross-section model of cellulose crystallite for softwood fibers and hardwood fibers.",
+              "kind": "figure_caption"
+            },
+            {
+              "chunk_id": "chk_c12e9a6ebd05df5fadf7",
+              "chunk_index": 51,
+              "page_start": 7,
+              "page_end": 7,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nHowever, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some ate through the spaces between the hydrophilic (110) planes in paracrys<sub>crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30].</sub> nd then it made these planes suffer more mechanical actions, so theAdditionally, it was probably due to the weaker cleavage efect on (200) lattice planes that was hard for water molecules to penetrate.",
+              "kind": "paragraph"
+            }
+          ],
+          "seed_chunk_ids": [
+            "chk_71880c857f6b26e63797",
+            "chk_43cdf887b7ecb297dc98"
+          ],
+          "context_status": "section_expanded",
+          "visual_assets": [
+            {
+              "id": "img_6b1648a1bc77413041ab",
+              "document_id": "doc_0fcf2a50cfa02d21",
+              "parent_chunk_id": "chk_c50ca9890325ed062bd1",
+              "label": "Figure 4",
+              "page": 6,
+              "bbox": [
+                156,
+                97,
+                838,
+                293
+              ],
+              "image_path": "visual-assets/3064d126094479f08e581c325eecffe27a4b806377371efe15cf0541f06f51c2.png",
+              "sha256": "3064d126094479f08e581c325eecffe27a4b806377371efe15cf0541f06f51c2",
+              "width": 1016,
+              "height": 413,
+              "byte_size": 47686,
+              "kind": "figure"
+            }
+          ]
+        },
+        {
+          "ref": "[2]",
+          "chunk_id": "chk_946da74d2259507d0623",
+          "document_id": "doc_0fcf2a50cfa02d21",
+          "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+          "page_start": 10,
+          "page_end": 11,
+          "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\nSimilar to the CI-XI, the content of O(6)H· · · O(3<sup>0</sup>) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coeficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 $( p < 0 . 0 5 )$ for hardwood fibers, respectively. The similar trends in the content of the O(6)H· · · O(3<sup>0</sup>) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H· · · O(3<sup>0</sup>) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\nFigure 9. The illustration of a two-phase structure of cellulose.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\npoor for the following reasons. The free OH groups are easier for forming the O(2)H⋯O(6) H-<sub>The correlation between the CI-XI and the O(2)H</sub>· · · <sub>O(6) H-bonds or the free OH(2) and OH(6)</sub> bonds as opposed to the O(6)H<sup>⋯</sup>O(3′) H-bonds in the amorphous region, because the distancewas poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose unitscorrelation between the CI-XI and the O(2)H⋯O(6) H-bonds or the free OH(2) and<sub>H-bonds as opposed to the O(6)H</sub>· · · <sub>O(3</sub>0<sub>) H-bonds in the amorphous region, because the distance</sub> in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content for the following reasons.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\n The free OH groups are easier for forming the O(2)H⋯between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units <sup>of</sup> <sup>O(6)H⋯O(3′)</sup> <sup>H-bonds,</sup> <sup>there</sup> <sup>was</sup> <sup>less</sup> <sup>difference</sup> <sup>in</sup> <sup>the</sup> <sup>content</sup> <sup>of</sup> <sup>the</sup> <sup>O(2)H⋯O(6)</sup> <sup>H-bonds</sup> <sup>or</sup> <sup>the</sup>⋯in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content free OH groups between the crystalline region and amorphous region, which sometimes made the<sub>of O(6)H</sub>· · · <sub>O(3</sub><sup>0</sup><sub>) H-bonds, there was less diference in the content of the O(2)H</sub>· · · <sub>O(6) H-bonds or the</sub> content of the two bonds not change much in regards to the crystallinity. The O(3)H⋯O(5) H-bonds<sub>free OH groups between the crystalline region and amorphous region, which sometimes made the</sub> is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI<sub>content of the two bonds not change much in regards to the crystallinity.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\n The O(3)H</sub>· · · <sub>O(5) H-bonds</sub> refining. Hence, the correlation between O(3)H⋯O(5) H-bonds and the CI-XI was not discussed in theO(3′) H-bonds, there was less difference in the content of the O(2)H⋯O(6) H-bonds<sub>is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI</sub> present study. groups between the crystalline region and amorphous region, which sometimes mrefining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.",
+          "score": 0.8322713375091553,
+          "source_chunks": [
+            {
+              "chunk_id": "chk_946da74d2259507d0623",
+              "chunk_index": 63,
+              "page_start": 10,
+              "page_end": 10,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\nSimilar to the CI-XI, the content of O(6)H· · · O(3<sup>0</sup>) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coeficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 $( p < 0 . 0 5 )$ for hardwood fibers, respectively. The similar trends in the content of the O(6)H· · · O(3<sup>0</sup>) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H· · · O(3<sup>0</sup>) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_aa885c8fecba9a1870fa",
+              "chunk_index": 65,
+              "page_start": 11,
+              "page_end": 11,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\nFigure 9. The illustration of a two-phase structure of cellulose.",
+              "kind": "figure_caption"
+            },
+            {
+              "chunk_id": "chk_c92301a276f264345c2f",
+              "chunk_index": 66,
+              "page_start": 11,
+              "page_end": 11,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\npoor for the following reasons. The free OH groups are easier for forming the O(2)H⋯O(6) H-<sub>The correlation between the CI-XI and the O(2)H</sub>· · · <sub>O(6) H-bonds or the free OH(2) and OH(6)</sub> bonds as opposed to the O(6)H<sup>⋯</sup>O(3′) H-bonds in the amorphous region, because the distancewas poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose unitscorrelation between the CI-XI and the O(2)H⋯O(6) H-bonds or the free OH(2) and<sub>H-bonds as opposed to the O(6)H</sub>· · · <sub>O(3</sub>0<sub>) H-bonds in the amorphous region, because the distance</sub> in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content for the following reasons.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_03b3a9563812b39f3cc4",
+              "chunk_index": 67,
+              "page_start": 11,
+              "page_end": 11,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\n The free OH groups are easier for forming the O(2)H⋯between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units <sup>of</sup> <sup>O(6)H⋯O(3′)</sup> <sup>H-bonds,</sup> <sup>there</sup> <sup>was</sup> <sup>less</sup> <sup>difference</sup> <sup>in</sup> <sup>the</sup> <sup>content</sup> <sup>of</sup> <sup>the</sup> <sup>O(2)H⋯O(6)</sup> <sup>H-bonds</sup> <sup>or</sup> <sup>the</sup>⋯in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content free OH groups between the crystalline region and amorphous region, which sometimes made the<sub>of O(6)H</sub>· · · <sub>O(3</sub><sup>0</sup><sub>) H-bonds, there was less diference in the content of the O(2)H</sub>· · · <sub>O(6) H-bonds or the</sub> content of the two bonds not change much in regards to the crystallinity. The O(3)H⋯O(5) H-bonds<sub>free OH groups between the crystalline region and amorphous region, which sometimes made the</sub> is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI<sub>content of the two bonds not change much in regards to the crystallinity.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_d72a66f485716aea7321",
+              "chunk_index": 68,
+              "page_start": 11,
+              "page_end": 11,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\n The O(3)H</sub>· · · <sub>O(5) H-bonds</sub> refining. Hence, the correlation between O(3)H⋯O(5) H-bonds and the CI-XI was not discussed in theO(3′) H-bonds, there was less difference in the content of the O(2)H⋯O(6) H-bonds<sub>is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI</sub> present study. groups between the crystalline region and amorphous region, which sometimes mrefining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.",
+              "kind": "paragraph"
+            }
+          ],
+          "seed_chunk_ids": [
+            "chk_946da74d2259507d0623",
+            "chk_d72a66f485716aea7321"
+          ],
+          "context_status": "section_expanded",
+          "visual_assets": []
+        },
+        {
+          "ref": "[3]",
+          "chunk_id": "chk_e82492522d94fb51614d",
+          "document_id": "doc_0fcf2a50cfa02d21",
+          "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+          "page_start": 6,
+          "page_end": 7,
+          "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nTable 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nIt is known that both the $( 1 \\overline { { 1 } } 0 )$ and the (110) lattice plane are hydrophilic, and the (200)lattice \\_plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) n that both the (110) and the (110) lattice plane are hydrophilic, and tplanes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (110) plane and (200) plane, which is consistent with the report of Duchemin et al., the highest theoretical roughness and accessibility to the hydrophi<sub>as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate</sub> ]. Throughout the refining of two pulp fibers, the sizes perpendicular through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then \\_it made these planes sufer more mechanical actions, so there was more adhesion (cocrystallization) latile than the (110) plane and (200) plane, which iand cleavage of cellulose chains created for (110) plane during PFI refining.",
+          "score": 0.7075249661799351,
+          "source_chunks": [
+            {
+              "chunk_id": "chk_e82492522d94fb51614d",
+              "chunk_index": 44,
+              "page_start": 6,
+              "page_end": 6,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nTable 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+              "kind": "table"
+            },
+            {
+              "chunk_id": "chk_904fac2b77f956e70306",
+              "chunk_index": 50,
+              "page_start": 7,
+              "page_end": 7,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nIt is known that both the $( 1 \\overline { { 1 } } 0 )$ and the (110) lattice plane are hydrophilic, and the (200)lattice \\_plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) n that both the (110) and the (110) lattice plane are hydrophilic, and tplanes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (110) plane and (200) plane, which is consistent with the report of Duchemin et al., the highest theoretical roughness and accessibility to the hydrophi<sub>as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate</sub> ]. Throughout the refining of two pulp fibers, the sizes perpendicular through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then \\_it made these planes sufer more mechanical actions, so there was more adhesion (cocrystallization) latile than the (110) plane and (200) plane, which iand cleavage of cellulose chains created for (110) plane during PFI refining.",
+              "kind": "paragraph"
+            }
+          ],
+          "seed_chunk_ids": [
+            "chk_e82492522d94fb51614d"
+          ],
+          "context_status": "section_expanded",
+          "visual_assets": [
+            {
+              "id": "img_03d297b96cf3fb22d405",
+              "document_id": "doc_0fcf2a50cfa02d21",
+              "parent_chunk_id": "chk_e82492522d94fb51614d",
+              "label": "Table 1",
+              "page": 6,
+              "bbox": [
+                179,
+                365,
+                816,
+                634
+              ],
+              "image_path": "visual-assets/0d0b1804ca2b3efbffa4d7d6bca21f0bdbda0b5cf0e501f15585f127119ac16f.png",
+              "sha256": "0d0b1804ca2b3efbffa4d7d6bca21f0bdbda0b5cf0e501f15585f127119ac16f",
+              "width": 949,
+              "height": 567,
+              "byte_size": 68014,
+              "kind": "table"
+            }
+          ]
+        },
+        {
+          "ref": "[4]",
+          "chunk_id": "chk_bc400aef70765d319e9e",
+          "document_id": "doc_0fcf2a50cfa02d21",
+          "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+          "page_start": 11,
+          "page_end": 12,
+          "text": "[章节标签（程序整理，非原文）] 4. Conclusions\n[原文]\nupramolecular structure, including crystallite size, crystallinity, and content of various H-bonds.PFI refining acts not only on the macro-level structure and mechanical properties, but also on The results indicated that the fibrillation and properties of fibers are related to the variation of thethe supramolecular structure, including crystallite size, crystallinity, and content of various H-bonds.\n\n[章节标签（程序整理，非原文）] 4. Conclusions\n[原文]\nThe results indicated that the fibrillation and properties of fibers are related to the variation of the supramolecular structure during PFI refining. It is noticeable that there was a significantly positive correlation between the CI-XI and content of O(6)H· · · O(3)’ H-bonds during PFI refining for softwood fibers and hardwood fibers. Thus, the trend of the content of O(6)H· · · O(3)’ H-bonds might be generally speculated based on CI-XI while refining. Besides, the crystallite size, crystallinity, and content of various H-bonds did not change much in general. It is assumed that PFI refining is an excellent mechanical treatment of fibrillation with relatively little destruction on the supramolecular structure.",
+          "score": 0.6666702032089233,
+          "source_chunks": [
+            {
+              "chunk_id": "chk_4071d94240de82982a42",
+              "chunk_index": 70,
+              "page_start": 11,
+              "page_end": 11,
+              "text": "[章节标签（程序整理，非原文）] 4. Conclusions\n[原文]\nupramolecular structure, including crystallite size, crystallinity, and content of various H-bonds.PFI refining acts not only on the macro-level structure and mechanical properties, but also on The results indicated that the fibrillation and properties of fibers are related to the variation of thethe supramolecular structure, including crystallite size, crystallinity, and content of various H-bonds.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_bc400aef70765d319e9e",
+              "chunk_index": 71,
+              "page_start": 12,
+              "page_end": 12,
+              "text": "[章节标签（程序整理，非原文）] 4. Conclusions\n[原文]\nThe results indicated that the fibrillation and properties of fibers are related to the variation of the supramolecular structure during PFI refining. It is noticeable that there was a significantly positive correlation between the CI-XI and content of O(6)H· · · O(3)’ H-bonds during PFI refining for softwood fibers and hardwood fibers. Thus, the trend of the content of O(6)H· · · O(3)’ H-bonds might be generally speculated based on CI-XI while refining. Besides, the crystallite size, crystallinity, and content of various H-bonds did not change much in general. It is assumed that PFI refining is an excellent mechanical treatment of fibrillation with relatively little destruction on the supramolecular structure.",
+              "kind": "paragraph"
+            }
+          ],
+          "seed_chunk_ids": [
+            "chk_bc400aef70765d319e9e"
+          ],
+          "context_status": "section_expanded",
+          "visual_assets": []
+        },
+        {
+          "ref": "[5]",
+          "chunk_id": "chk_823ef0af6d530619ca9b",
+          "document_id": "doc_0fcf2a50cfa02d21",
+          "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+          "page_start": 11,
+          "page_end": 11,
+          "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\nFigure 8. The trend of the CI-XI, the CI-XA, and the O(6)H· · · O(3<sup>0</sup>) H-bonds: (a) softwood fibers andd fibers. (b) hardwood fibers.",
+          "score": 0.8188902735710144,
+          "source_chunks": [
+            {
+              "chunk_id": "chk_823ef0af6d530619ca9b",
+              "chunk_index": 64,
+              "page_start": 11,
+              "page_end": 11,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\nFigure 8. The trend of the CI-XI, the CI-XA, and the O(6)H· · · O(3<sup>0</sup>) H-bonds: (a) softwood fibers andd fibers. (b) hardwood fibers.",
+              "kind": "figure_caption"
+            }
+          ],
+          "seed_chunk_ids": [
+            "chk_823ef0af6d530619ca9b"
+          ],
+          "context_status": "section_expanded",
+          "visual_assets": [
+            {
+              "id": "img_468925894a0c5df4d6a0",
+              "document_id": "doc_0fcf2a50cfa02d21",
+              "parent_chunk_id": "chk_823ef0af6d530619ca9b",
+              "label": "Figure 8",
+              "page": 11,
+              "bbox": [
+                154,
+                99,
+                838,
+                297
+              ],
+              "image_path": "visual-assets/821c91727be309b862532721d461d8e7e1044fdf933c0d44c3c6a7fd8d85453c.png",
+              "sha256": "821c91727be309b862532721d461d8e7e1044fdf933c0d44c3c6a7fd8d85453c",
+              "width": 1019,
+              "height": 418,
+              "byte_size": 78251,
+              "kind": "figure"
+            }
+          ]
+        },
+        {
+          "ref": "[7]",
+          "chunk_id": "chk_fe625e14c33a8b51f13a",
+          "document_id": "doc_0fcf2a50cfa02d21",
+          "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+          "page_start": 1,
+          "page_end": 1,
+          "text": "[章节标签（程序整理，非原文）] 未确定\n[原文]\nAbstract: Supramolecular structure is the critical factor that afects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H· · · O(3<sup>0</sup>) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coeficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.",
+          "score": 0.0,
+          "source_chunks": [
+            {
+              "chunk_id": "chk_fe625e14c33a8b51f13a",
+              "chunk_index": 4,
+              "page_start": 1,
+              "page_end": 1,
+              "text": "[章节标签（程序整理，非原文）] 未确定\n[原文]\nAbstract: Supramolecular structure is the critical factor that afects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H· · · O(3<sup>0</sup>) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coeficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.",
+              "kind": "paragraph"
+            }
+          ],
+          "seed_chunk_ids": [],
+          "context_status": "corrective_supplement",
+          "visual_assets": []
+        }
+      ],
+      "commit": {
+        "status": "committed_compatible_edits",
+        "accepted_issue_indexes": [],
+        "deferred_issues": [
+          {
+            "issue_index": 0,
+            "reason_code": "provisional_edit_source_not_retained",
+            "missing_refs": [
+              "[6]"
+            ]
+          }
+        ],
+        "final": {
+          "answer": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\nO(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。 [2]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。 [4]\n论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。 [2] [4]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+          "claims": [
+            {
+              "text": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。",
+              "citation_refs": [
+                "[1]"
+              ]
+            },
+            {
+              "text": "O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。",
+              "citation_refs": [
+                "[2]"
+              ]
+            },
+            {
+              "text": "作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。",
+              "citation_refs": [
+                "[4]"
+              ]
+            },
+            {
+              "text": "论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。",
+              "citation_refs": [
+                "[2]",
+                "[4]"
+              ]
+            },
+            {
+              "text": "并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。",
+              "citation_refs": [
+                "[2]"
+              ]
+            }
+          ]
+        },
+        "final_sha256": "fac169c4ed9019446aef24266845d007e13d7c2cb191c0a725bca12f6e129f0d",
+        "draft_sha256": "fac169c4ed9019446aef24266845d007e13d7c2cb191c0a725bca12f6e129f0d",
+        "evidence_sha256": "f73745eb8b685ff6ea679b0843d60be60cdf1e75d8b6dac50e4b423ab94cf752"
+      }
+    },
+    {
+      "attempt": "3-v3",
+      "source_sha256": "6a12215f36f871f1164c254866eaadfe9c51928807b6449e8d2400f23ece388d",
+      "old_protected_chars": 22989,
+      "new_protected_chars": 12589,
+      "old_omissions": [
+        {
+          "chunk_id": "chk_fe625e14c33a8b51f13a",
+          "reason": "protected_evidence_budget"
+        }
+      ],
+      "added_refs": [
+        "[7]"
+      ],
+      "dropped_uncited_refs": [
+        "[6]"
+      ],
+      "final_context_chars": 17121,
+      "original_cited_sources_unchanged": true,
+      "second_review_draft": {
+        "answer": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\nO(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。 [2]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。 [4]\n论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。 [2] [4]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+        "claims": [
+          {
+            "text": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。",
+            "citation_refs": [
+              "[1]"
+            ]
+          },
+          {
+            "text": "O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。",
+            "citation_refs": [
+              "[2]"
+            ]
+          },
+          {
+            "text": "作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。",
+            "citation_refs": [
+              "[4]"
+            ]
+          },
+          {
+            "text": "论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。",
+            "citation_refs": [
+              "[2]",
+              "[4]"
+            ]
+          },
+          {
+            "text": "并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。",
+            "citation_refs": [
+              "[2]"
+            ]
+          }
+        ]
+      },
+      "second_review_evidence": [
+        {
+          "ref": "[1]",
+          "chunk_id": "chk_71880c857f6b26e63797",
+          "document_id": "doc_0fcf2a50cfa02d21",
+          "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+          "page_start": 5,
+          "page_end": 7,
+          "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nThe cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates <sup>The</sup> <sup>cellulose</sup> <sup>polymorph</sup> <sup>of</sup> <sup>these</sup> <sup>two</sup> <sup>fibers</sup> <sup>had</sup> <sup>no</sup> <sup>change</sup> <sup>during</sup> <sup>PFI</sup> <sup>treatment,</sup> <sup>which</sup>that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource The cellulose polymorph of these two fibers had no change during PFI treatment, which<sup>illustrates</sup> <sup>that</sup> <sup>the</sup> <sup>PFI</sup> <sup>refining</sup> <sup>is</sup> <sup>a</sup> <sup>relatively</sup> <sup>mild</sup> <sup>mechanical</sup> <sup>treatment,</sup> <sup>as</sup> <sup>the</sup> <sup>results</sup> <sup>of</sup> <sup>XRD</sup> <sup>in</sup>(Figures S1 and S2) show.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n In general, the CI-XI and the CI-XA of softwood fibers showed a reduction illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in <sup>Online</sup> <sup>Resource</sup> <sup>(Figures</sup> <sup>S1</sup> <sup>and</sup> <sup>S2)</sup> <sup>show.</sup> <sup>In</sup> <sup>general,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>of</sup> <sup>softwood</sup> <sup>fibers</sup> of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers<sup>showed</sup> <sup>a</sup> <sup>reduction</sup> <sup>of</sup> <sup>4.66%</sup> <sup>and</sup> <sup>15.47%,</sup> <sup>respectively,</sup> <sup>and</sup> <sup>those</sup> <sup>of</sup> <sup>hardwood</sup> <sup>fibers</sup> <sup>decreased</sup> <sup>by</sup>respectively, as can be seen in Figure 4 and Table 1.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n The value of the CI-XI was remarkably higher than showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by<sup>2.65%</sup> <sup>and</sup> <sup>19.4%,</sup> <sup>respectively,</sup> <sup>as</sup> <sup>can</sup> <sup>be</sup> <sup>seen</sup> <sup>in</sup> <sup>Figure</sup> <sup>4</sup> <sup>and</sup> <sup>Table</sup> <sup>1.</sup> <sup>The</sup> <sup>value</sup> <sup>of</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>was</sup>the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was<sup>remarkably</sup> <sup>higher</sup> <sup>than</sup> <sup>the</sup> <sup>CI-XA,</sup> <sup>which</sup> <sup>might</sup> <sup>be</sup> <sup>caused</sup> <sup>by</sup> <sup>the</sup> <sup>over-fitting</sup> <sup>of</sup> <sup>amorphous</sup>CI-XA.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous<sup>contribution</sup> <sup>in</sup> <sup>the</sup> <sup>analysis</sup> <sup>of</sup> <sup>CI-XA.</sup> <sup>However,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>were</sup> <sup>correlated</sup> <sup>significantly</sup>hardwood fibers, with a correlation coeficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated signif<sup>for</sup> <sup>both</sup> <sup>softwood</sup> <sup>fibers</sup> <sup>and</sup> <sup>hardwood</sup> <sup>fibers,</sup> <sup>with</sup> <sup>a</sup> <sup>correlation</sup> <sup>coefficient</sup> <sup>of</sup> <sup>0.919</sup> <sup>(p</sup> <sup><</sup> <sup>0.</sup>for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nFigure 4. The CI-XI (crystallinity index obtained by comparing intensity of X-ray difractometer (XRD) peaks) and CI-XA (crystallinity index obtained by comparing area of XRD peaks) for refined and unrefined samples: (a) softwood fiber and (b) hardwood fiber.\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nThe trends of CI (CI-XI and CI-XA) for softwood fibers and hardwood fibers were all similar, decreasing first and then increasing, along with a decline, as shown in Figure 4. The fluctuation of the CI was probably because of the mechanical action of PFI refining on the diferent regions of cellulose. In the first refining stage, the decrease of the CI showed that mechanical treatment may mainly act in the crystalline region. Subsequently, the growth of the CI could be interpreted as greater force acting on the amorphous region in which cocrystallization might occur upon drying under the mechanical and thermal action of PFI refining. The subsequent decrease might be the continuous destruction of crystalline region.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nRecently, researches indicated that plant cell walls commonly contained microfibrils with 18 cellulose chains [26]. Frequently adopted arrangements of the 18 cellulose chains are 234432, 34443, and 333333 [27]. Therein, 234432 arrangement was found to be more probable based on calculation [28]. Thus, according to the crystallite sizes (as Table 1 shows) and the unit cell parameters of cellulose Iβ, there was most likely to be an average of two-fibrils with an arrangement of 234,432 packed side-by-side for both softwood fibers and hardwood fibers (as seen in Figure 5, drawn with mercury\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n4.1.2 software). The result is consistent with the report of Haigler & Roberts [26], which shows that there might be two microfibrils associated along part of their length.\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nFigure 5. Cross-section model of cellulose crystallite for softwood fibers and hardwood fibers.\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nHowever, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some ate through the spaces between the hydrophilic (110) planes in paracrys<sub>crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30].</sub> nd then it made these planes suffer more mechanical actions, so theAdditionally, it was probably due to the weaker cleavage efect on (200) lattice planes that was hard for water molecules to penetrate.",
+          "score": 0.779321551322937,
+          "source_chunks": [
+            {
+              "chunk_id": "chk_2b09c046affdf81cff91",
+              "chunk_index": 39,
+              "page_start": 5,
+              "page_end": 5,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nThe cellulose polymorph of these two fibers had no change during PFI treatment, which illustrates <sup>The</sup> <sup>cellulose</sup> <sup>polymorph</sup> <sup>of</sup> <sup>these</sup> <sup>two</sup> <sup>fibers</sup> <sup>had</sup> <sup>no</sup> <sup>change</sup> <sup>during</sup> <sup>PFI</sup> <sup>treatment,</sup> <sup>which</sup>that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in Online Resource The cellulose polymorph of these two fibers had no change during PFI treatment, which<sup>illustrates</sup> <sup>that</sup> <sup>the</sup> <sup>PFI</sup> <sup>refining</sup> <sup>is</sup> <sup>a</sup> <sup>relatively</sup> <sup>mild</sup> <sup>mechanical</sup> <sup>treatment,</sup> <sup>as</sup> <sup>the</sup> <sup>results</sup> <sup>of</sup> <sup>XRD</sup> <sup>in</sup>(Figures S1 and S2) show.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_1ad7e5e397089f545978",
+              "chunk_index": 40,
+              "page_start": 5,
+              "page_end": 5,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n In general, the CI-XI and the CI-XA of softwood fibers showed a reduction illustrates that the PFI refining is a relatively mild mechanical treatment, as the results of XRD in <sup>Online</sup> <sup>Resource</sup> <sup>(Figures</sup> <sup>S1</sup> <sup>and</sup> <sup>S2)</sup> <sup>show.</sup> <sup>In</sup> <sup>general,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>of</sup> <sup>softwood</sup> <sup>fibers</sup> of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by 2.65% and 19.4%, Online Resource (Figures S1 and S2) show. In general, the CI-XI and the CI-XA of softwood fibers<sup>showed</sup> <sup>a</sup> <sup>reduction</sup> <sup>of</sup> <sup>4.66%</sup> <sup>and</sup> <sup>15.47%,</sup> <sup>respectively,</sup> <sup>and</sup> <sup>those</sup> <sup>of</sup> <sup>hardwood</sup> <sup>fibers</sup> <sup>decreased</sup> <sup>by</sup>respectively, as can be seen in Figure 4 and Table 1.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_43cdf887b7ecb297dc98",
+              "chunk_index": 41,
+              "page_start": 5,
+              "page_end": 5,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n The value of the CI-XI was remarkably higher than showed a reduction of 4.66% and 15.47%, respectively, and those of hardwood fibers decreased by<sup>2.65%</sup> <sup>and</sup> <sup>19.4%,</sup> <sup>respectively,</sup> <sup>as</sup> <sup>can</sup> <sup>be</sup> <sup>seen</sup> <sup>in</sup> <sup>Figure</sup> <sup>4</sup> <sup>and</sup> <sup>Table</sup> <sup>1.</sup> <sup>The</sup> <sup>value</sup> <sup>of</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>was</sup>the CI-XA, which might be caused by the over-fitting of amorphous contribution in the analysis of 2.65% and 19.4%, respectively, as can be seen in Figure 4 and Table 1. The value of the CI-XI was<sup>remarkably</sup> <sup>higher</sup> <sup>than</sup> <sup>the</sup> <sup>CI-XA,</sup> <sup>which</sup> <sup>might</sup> <sup>be</sup> <sup>caused</sup> <sup>by</sup> <sup>the</sup> <sup>over-fitting</sup> <sup>of</sup> <sup>amorphous</sup>CI-XA.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_71880c857f6b26e63797",
+              "chunk_index": 42,
+              "page_start": 5,
+              "page_end": 5,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n However, the CI-XI and the CI-XA were correlated significantly for both softwood fibers and remarkably higher than the CI-XA, which might be caused by the over-fitting of amorphous<sup>contribution</sup> <sup>in</sup> <sup>the</sup> <sup>analysis</sup> <sup>of</sup> <sup>CI-XA.</sup> <sup>However,</sup> <sup>the</sup> <sup>CI-XI</sup> <sup>and</sup> <sup>the</sup> <sup>CI-XA</sup> <sup>were</sup> <sup>correlated</sup> <sup>significantly</sup>hardwood fibers, with a correlation coeficient of 0.919 (p < 0.05) for softwood fibers and 0.925 (p < 0.05) contribution in the analysis of CI-XA. However, the CI-XI and the CI-XA were correlated signif<sup>for</sup> <sup>both</sup> <sup>softwood</sup> <sup>fibers</sup> <sup>and</sup> <sup>hardwood</sup> <sup>fibers,</sup> <sup>with</sup> <sup>a</sup> <sup>correlation</sup> <sup>coefficient</sup> <sup>of</sup> <sup>0.919</sup> <sup>(p</sup> <sup><</sup> <sup>0.</sup>for hardwood fibers, respectively, which is consistent with the report of Ahvenainen et al. [25].",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_c50ca9890325ed062bd1",
+              "chunk_index": 43,
+              "page_start": 6,
+              "page_end": 6,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nFigure 4. The CI-XI (crystallinity index obtained by comparing intensity of X-ray difractometer (XRD) peaks) and CI-XA (crystallinity index obtained by comparing area of XRD peaks) for refined and unrefined samples: (a) softwood fiber and (b) hardwood fiber.",
+              "kind": "figure_caption"
+            },
+            {
+              "chunk_id": "chk_c4b127f061c10edc9c02",
+              "chunk_index": 45,
+              "page_start": 6,
+              "page_end": 6,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nThe trends of CI (CI-XI and CI-XA) for softwood fibers and hardwood fibers were all similar, decreasing first and then increasing, along with a decline, as shown in Figure 4. The fluctuation of the CI was probably because of the mechanical action of PFI refining on the diferent regions of cellulose. In the first refining stage, the decrease of the CI showed that mechanical treatment may mainly act in the crystalline region. Subsequently, the growth of the CI could be interpreted as greater force acting on the amorphous region in which cocrystallization might occur upon drying under the mechanical and thermal action of PFI refining. The subsequent decrease might be the continuous destruction of crystalline region.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_316b7817824a0eaf739c",
+              "chunk_index": 46,
+              "page_start": 6,
+              "page_end": 6,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nRecently, researches indicated that plant cell walls commonly contained microfibrils with 18 cellulose chains [26]. Frequently adopted arrangements of the 18 cellulose chains are 234432, 34443, and 333333 [27]. Therein, 234432 arrangement was found to be more probable based on calculation [28]. Thus, according to the crystallite sizes (as Table 1 shows) and the unit cell parameters of cellulose Iβ, there was most likely to be an average of two-fibrils with an arrangement of 234,432 packed side-by-side for both softwood fibers and hardwood fibers (as seen in Figure 5, drawn with mercury",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_33cf3166246745afbc0a",
+              "chunk_index": 47,
+              "page_start": 7,
+              "page_end": 7,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\n4.1.2 software). The result is consistent with the report of Haigler & Roberts [26], which shows that there might be two microfibrils associated along part of their length.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_8491d686a2f406536896",
+              "chunk_index": 49,
+              "page_start": 7,
+              "page_end": 7,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nFigure 5. Cross-section model of cellulose crystallite for softwood fibers and hardwood fibers.",
+              "kind": "figure_caption"
+            },
+            {
+              "chunk_id": "chk_c12e9a6ebd05df5fadf7",
+              "chunk_index": 51,
+              "page_start": 7,
+              "page_end": 7,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nHowever, the crystallite size that was perpendicular to (200) lattice plane of two fibers had an upward trend during PFI refining. It could be explained in terms of coalescence of chains or some ate through the spaces between the hydrophilic (110) planes in paracrys<sub>crystallographic stacking of adjacent microfibrils, where the (200) planes were aligned upon drying [30].</sub> nd then it made these planes suffer more mechanical actions, so theAdditionally, it was probably due to the weaker cleavage efect on (200) lattice planes that was hard for water molecules to penetrate.",
+              "kind": "paragraph"
+            }
+          ],
+          "seed_chunk_ids": [
+            "chk_71880c857f6b26e63797",
+            "chk_43cdf887b7ecb297dc98"
+          ],
+          "context_status": "section_expanded",
+          "visual_assets": [
+            {
+              "id": "img_6b1648a1bc77413041ab",
+              "document_id": "doc_0fcf2a50cfa02d21",
+              "parent_chunk_id": "chk_c50ca9890325ed062bd1",
+              "label": "Figure 4",
+              "page": 6,
+              "bbox": [
+                156,
+                97,
+                838,
+                293
+              ],
+              "image_path": "visual-assets/3064d126094479f08e581c325eecffe27a4b806377371efe15cf0541f06f51c2.png",
+              "sha256": "3064d126094479f08e581c325eecffe27a4b806377371efe15cf0541f06f51c2",
+              "width": 1016,
+              "height": 413,
+              "byte_size": 47686,
+              "kind": "figure"
+            }
+          ]
+        },
+        {
+          "ref": "[2]",
+          "chunk_id": "chk_946da74d2259507d0623",
+          "document_id": "doc_0fcf2a50cfa02d21",
+          "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+          "page_start": 10,
+          "page_end": 11,
+          "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\nSimilar to the CI-XI, the content of O(6)H· · · O(3<sup>0</sup>) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coeficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 $( p < 0 . 0 5 )$ for hardwood fibers, respectively. The similar trends in the content of the O(6)H· · · O(3<sup>0</sup>) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H· · · O(3<sup>0</sup>) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\nFigure 9. The illustration of a two-phase structure of cellulose.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\npoor for the following reasons. The free OH groups are easier for forming the O(2)H⋯O(6) H-<sub>The correlation between the CI-XI and the O(2)H</sub>· · · <sub>O(6) H-bonds or the free OH(2) and OH(6)</sub> bonds as opposed to the O(6)H<sup>⋯</sup>O(3′) H-bonds in the amorphous region, because the distancewas poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose unitscorrelation between the CI-XI and the O(2)H⋯O(6) H-bonds or the free OH(2) and<sub>H-bonds as opposed to the O(6)H</sub>· · · <sub>O(3</sub>0<sub>) H-bonds in the amorphous region, because the distance</sub> in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content for the following reasons.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\n The free OH groups are easier for forming the O(2)H⋯between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units <sup>of</sup> <sup>O(6)H⋯O(3′)</sup> <sup>H-bonds,</sup> <sup>there</sup> <sup>was</sup> <sup>less</sup> <sup>difference</sup> <sup>in</sup> <sup>the</sup> <sup>content</sup> <sup>of</sup> <sup>the</sup> <sup>O(2)H⋯O(6)</sup> <sup>H-bonds</sup> <sup>or</sup> <sup>the</sup>⋯in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content free OH groups between the crystalline region and amorphous region, which sometimes made the<sub>of O(6)H</sub>· · · <sub>O(3</sub><sup>0</sup><sub>) H-bonds, there was less diference in the content of the O(2)H</sub>· · · <sub>O(6) H-bonds or the</sub> content of the two bonds not change much in regards to the crystallinity. The O(3)H⋯O(5) H-bonds<sub>free OH groups between the crystalline region and amorphous region, which sometimes made the</sub> is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI<sub>content of the two bonds not change much in regards to the crystallinity.\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\n The O(3)H</sub>· · · <sub>O(5) H-bonds</sub> refining. Hence, the correlation between O(3)H⋯O(5) H-bonds and the CI-XI was not discussed in theO(3′) H-bonds, there was less difference in the content of the O(2)H⋯O(6) H-bonds<sub>is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI</sub> present study. groups between the crystalline region and amorphous region, which sometimes mrefining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.",
+          "score": 0.8322713375091553,
+          "source_chunks": [
+            {
+              "chunk_id": "chk_946da74d2259507d0623",
+              "chunk_index": 63,
+              "page_start": 10,
+              "page_end": 10,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\nSimilar to the CI-XI, the content of O(6)H· · · O(3<sup>0</sup>) H-bonds decreased first and then had an increase, followed by a decline for the two fibers (as shown in Figure 8a,b). Besides, the Pearson correlation coeficients were calculated between the content of H-bonds and the CI-XI. It was 0.912 (p < 0.05) for softwood fibers and 0.889 $( p < 0 . 0 5 )$ for hardwood fibers, respectively. The similar trends in the content of the O(6)H· · · O(3<sup>0</sup>) H-bonds and the CI-XI might be because that the crystalline region has a higher content of O(6)H· · · O(3<sup>0</sup>) H-bonds when compared with the amorphous regions, as illustrated in Figure 9 [35].",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_aa885c8fecba9a1870fa",
+              "chunk_index": 65,
+              "page_start": 11,
+              "page_end": 11,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\nFigure 9. The illustration of a two-phase structure of cellulose.",
+              "kind": "figure_caption"
+            },
+            {
+              "chunk_id": "chk_c92301a276f264345c2f",
+              "chunk_index": 66,
+              "page_start": 11,
+              "page_end": 11,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\npoor for the following reasons. The free OH groups are easier for forming the O(2)H⋯O(6) H-<sub>The correlation between the CI-XI and the O(2)H</sub>· · · <sub>O(6) H-bonds or the free OH(2) and OH(6)</sub> bonds as opposed to the O(6)H<sup>⋯</sup>O(3′) H-bonds in the amorphous region, because the distancewas poor for the following reasons. The free OH groups are easier for forming the O(2)H· · · O(6) between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose unitscorrelation between the CI-XI and the O(2)H⋯O(6) H-bonds or the free OH(2) and<sub>H-bonds as opposed to the O(6)H</sub>· · · <sub>O(3</sub>0<sub>) H-bonds in the amorphous region, because the distance</sub> in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content for the following reasons.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_03b3a9563812b39f3cc4",
+              "chunk_index": 67,
+              "page_start": 11,
+              "page_end": 11,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\n The free OH groups are easier for forming the O(2)H⋯between adjacent glucose units in a cellulosic molecular chain is closer than between the glucose units <sup>of</sup> <sup>O(6)H⋯O(3′)</sup> <sup>H-bonds,</sup> <sup>there</sup> <sup>was</sup> <sup>less</sup> <sup>difference</sup> <sup>in</sup> <sup>the</sup> <sup>content</sup> <sup>of</sup> <sup>the</sup> <sup>O(2)H⋯O(6)</sup> <sup>H-bonds</sup> <sup>or</sup> <sup>the</sup>⋯in the adjacent molecular chain (as shown in Figure 9). Accordingly, when compared with the content free OH groups between the crystalline region and amorphous region, which sometimes made the<sub>of O(6)H</sub>· · · <sub>O(3</sub><sup>0</sup><sub>) H-bonds, there was less diference in the content of the O(2)H</sub>· · · <sub>O(6) H-bonds or the</sub> content of the two bonds not change much in regards to the crystallinity. The O(3)H⋯O(5) H-bonds<sub>free OH groups between the crystalline region and amorphous region, which sometimes made the</sub> is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI<sub>content of the two bonds not change much in regards to the crystallinity.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_d72a66f485716aea7321",
+              "chunk_index": 68,
+              "page_start": 11,
+              "page_end": 11,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\n The O(3)H</sub>· · · <sub>O(5) H-bonds</sub> refining. Hence, the correlation between O(3)H⋯O(5) H-bonds and the CI-XI was not discussed in theO(3′) H-bonds, there was less difference in the content of the O(2)H⋯O(6) H-bonds<sub>is stable, as mentioned above. It was presumed to change little as crystallinity changed during PFI</sub> present study. groups between the crystalline region and amorphous region, which sometimes mrefining. Hence, the correlation between O(3)H· · · O(5) H-bonds and the CI-XI was not discussed in the present study.",
+              "kind": "paragraph"
+            }
+          ],
+          "seed_chunk_ids": [
+            "chk_946da74d2259507d0623",
+            "chk_d72a66f485716aea7321"
+          ],
+          "context_status": "section_expanded",
+          "visual_assets": []
+        },
+        {
+          "ref": "[3]",
+          "chunk_id": "chk_e82492522d94fb51614d",
+          "document_id": "doc_0fcf2a50cfa02d21",
+          "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+          "page_start": 6,
+          "page_end": 7,
+          "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nTable 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nIt is known that both the $( 1 \\overline { { 1 } } 0 )$ and the (110) lattice plane are hydrophilic, and the (200)lattice \\_plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) n that both the (110) and the (110) lattice plane are hydrophilic, and tplanes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (110) plane and (200) plane, which is consistent with the report of Duchemin et al., the highest theoretical roughness and accessibility to the hydrophi<sub>as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate</sub> ]. Throughout the refining of two pulp fibers, the sizes perpendicular through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then \\_it made these planes sufer more mechanical actions, so there was more adhesion (cocrystallization) latile than the (110) plane and (200) plane, which iand cleavage of cellulose chains created for (110) plane during PFI refining.",
+          "score": 0.7075249661799351,
+          "source_chunks": [
+            {
+              "chunk_id": "chk_e82492522d94fb51614d",
+              "chunk_index": 44,
+              "page_start": 6,
+              "page_end": 6,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nTable 1. (a) The CI of softwood fibers through refining. (b) The CI of hardwood fibers through refining.\n\n<sup>a</sup> The CI-XI value was obtained from the ratio of the difraction intensity. <sup>b</sup> The CI-XA value was obtained from the ratio of the peak areas.\n\n<table><tr><td colspan=\"6\">(a)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>73.23</td><td>40.46</td><td>3.2</td><td>3.5</td><td>4.5</td></tr><tr><td>4000</td><td>70.42</td><td>37.71</td><td>3.1</td><td>3.4</td><td>4.6</td></tr><tr><td>8000</td><td>72.54</td><td>39.65</td><td>3.2</td><td>3.4</td><td>4.6</td></tr><tr><td>12,000</td><td>70.93</td><td>36.22</td><td>3.1</td><td>3.7</td><td>4.7</td></tr><tr><td>16,000</td><td>69.82</td><td>34.20</td><td>3.2</td><td>3.5</td><td>4.7</td></tr><tr><td></td><td colspan=\"5\">(b)</td></tr><tr><td rowspan=\"2\">Revolutions</td><td colspan=\"2\">CI (%)</td><td colspan=\"3\">Crystallite Size (nm)</td></tr><tr><td> $CI-XI^a$ </td><td> $CI-XA^b$ </td><td>110</td><td>(110)</td><td>(200)</td></tr><tr><td>0</td><td>75.55</td><td>47.16</td><td>3.1</td><td>3.1</td><td>4.5</td></tr><tr><td>4000</td><td>73.01</td><td>36.26</td><td>3.1</td><td>3.3</td><td>4.7</td></tr><tr><td>8000</td><td>75.06</td><td>42.35</td><td>3.1</td><td>3.5</td><td>4.8</td></tr><tr><td>12,000</td><td>74.57</td><td>39.21</td><td>2.9</td><td>4.0</td><td>4.8</td></tr><tr><td>16,000</td><td>73.55</td><td>38.01</td><td>3.0</td><td>3.7</td><td>4.7</td></tr></table>",
+              "kind": "table"
+            },
+            {
+              "chunk_id": "chk_904fac2b77f956e70306",
+              "chunk_index": 50,
+              "page_start": 7,
+              "page_end": 7,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.2. Efect of PFI Refining on Crystalline Index and Crystallite Size\n[原文]\nIt is known that both the $( 1 \\overline { { 1 } } 0 )$ and the (110) lattice plane are hydrophilic, and the (200)lattice \\_plane is hydrophobic in cellulose Iβ (as Figure 5 shows). In addition, it is noticeable that the (110) n that both the (110) and the (110) lattice plane are hydrophilic, and tplanes possess the highest theoretical roughness and accessibility to the hydrophilic groups in cellulose Iβ [28]. Throughout the refining of two pulp fibers, the sizes perpendicular to (110) plane were more volatile than the (110) plane and (200) plane, which is consistent with the report of Duchemin et al., the highest theoretical roughness and accessibility to the hydrophi<sub>as shown in Table 1a,b [29]. It could be interpreted to be that water molecules were easier to permeate</sub> ]. Throughout the refining of two pulp fibers, the sizes perpendicular through the spaces between the hydrophilic (110) planes in paracrystalline region (hydration), and then \\_it made these planes sufer more mechanical actions, so there was more adhesion (cocrystallization) latile than the (110) plane and (200) plane, which iand cleavage of cellulose chains created for (110) plane during PFI refining.",
+              "kind": "paragraph"
+            }
+          ],
+          "seed_chunk_ids": [
+            "chk_e82492522d94fb51614d"
+          ],
+          "context_status": "section_expanded",
+          "visual_assets": [
+            {
+              "id": "img_03d297b96cf3fb22d405",
+              "document_id": "doc_0fcf2a50cfa02d21",
+              "parent_chunk_id": "chk_e82492522d94fb51614d",
+              "label": "Table 1",
+              "page": 6,
+              "bbox": [
+                179,
+                365,
+                816,
+                634
+              ],
+              "image_path": "visual-assets/0d0b1804ca2b3efbffa4d7d6bca21f0bdbda0b5cf0e501f15585f127119ac16f.png",
+              "sha256": "0d0b1804ca2b3efbffa4d7d6bca21f0bdbda0b5cf0e501f15585f127119ac16f",
+              "width": 949,
+              "height": 567,
+              "byte_size": 68014,
+              "kind": "table"
+            }
+          ]
+        },
+        {
+          "ref": "[4]",
+          "chunk_id": "chk_bc400aef70765d319e9e",
+          "document_id": "doc_0fcf2a50cfa02d21",
+          "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+          "page_start": 11,
+          "page_end": 12,
+          "text": "[章节标签（程序整理，非原文）] 4. Conclusions\n[原文]\nupramolecular structure, including crystallite size, crystallinity, and content of various H-bonds.PFI refining acts not only on the macro-level structure and mechanical properties, but also on The results indicated that the fibrillation and properties of fibers are related to the variation of thethe supramolecular structure, including crystallite size, crystallinity, and content of various H-bonds.\n\n[章节标签（程序整理，非原文）] 4. Conclusions\n[原文]\nThe results indicated that the fibrillation and properties of fibers are related to the variation of the supramolecular structure during PFI refining. It is noticeable that there was a significantly positive correlation between the CI-XI and content of O(6)H· · · O(3)’ H-bonds during PFI refining for softwood fibers and hardwood fibers. Thus, the trend of the content of O(6)H· · · O(3)’ H-bonds might be generally speculated based on CI-XI while refining. Besides, the crystallite size, crystallinity, and content of various H-bonds did not change much in general. It is assumed that PFI refining is an excellent mechanical treatment of fibrillation with relatively little destruction on the supramolecular structure.",
+          "score": 0.6666702032089233,
+          "source_chunks": [
+            {
+              "chunk_id": "chk_4071d94240de82982a42",
+              "chunk_index": 70,
+              "page_start": 11,
+              "page_end": 11,
+              "text": "[章节标签（程序整理，非原文）] 4. Conclusions\n[原文]\nupramolecular structure, including crystallite size, crystallinity, and content of various H-bonds.PFI refining acts not only on the macro-level structure and mechanical properties, but also on The results indicated that the fibrillation and properties of fibers are related to the variation of thethe supramolecular structure, including crystallite size, crystallinity, and content of various H-bonds.",
+              "kind": "paragraph"
+            },
+            {
+              "chunk_id": "chk_bc400aef70765d319e9e",
+              "chunk_index": 71,
+              "page_start": 12,
+              "page_end": 12,
+              "text": "[章节标签（程序整理，非原文）] 4. Conclusions\n[原文]\nThe results indicated that the fibrillation and properties of fibers are related to the variation of the supramolecular structure during PFI refining. It is noticeable that there was a significantly positive correlation between the CI-XI and content of O(6)H· · · O(3)’ H-bonds during PFI refining for softwood fibers and hardwood fibers. Thus, the trend of the content of O(6)H· · · O(3)’ H-bonds might be generally speculated based on CI-XI while refining. Besides, the crystallite size, crystallinity, and content of various H-bonds did not change much in general. It is assumed that PFI refining is an excellent mechanical treatment of fibrillation with relatively little destruction on the supramolecular structure.",
+              "kind": "paragraph"
+            }
+          ],
+          "seed_chunk_ids": [
+            "chk_bc400aef70765d319e9e"
+          ],
+          "context_status": "section_expanded",
+          "visual_assets": []
+        },
+        {
+          "ref": "[5]",
+          "chunk_id": "chk_823ef0af6d530619ca9b",
+          "document_id": "doc_0fcf2a50cfa02d21",
+          "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+          "page_start": 11,
+          "page_end": 11,
+          "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\nFigure 8. The trend of the CI-XI, the CI-XA, and the O(6)H· · · O(3<sup>0</sup>) H-bonds: (a) softwood fibers andd fibers. (b) hardwood fibers.",
+          "score": 0.8188902735710144,
+          "source_chunks": [
+            {
+              "chunk_id": "chk_823ef0af6d530619ca9b",
+              "chunk_index": 64,
+              "page_start": 11,
+              "page_end": 11,
+              "text": "[章节标签（程序整理，非原文）] 3. Results and Discussions > 3.4. Correlation between CI and Content of Inter-Molecular H-Bonds during PFI Refining\n[原文]\nFigure 8. The trend of the CI-XI, the CI-XA, and the O(6)H· · · O(3<sup>0</sup>) H-bonds: (a) softwood fibers andd fibers. (b) hardwood fibers.",
+              "kind": "figure_caption"
+            }
+          ],
+          "seed_chunk_ids": [
+            "chk_823ef0af6d530619ca9b"
+          ],
+          "context_status": "section_expanded",
+          "visual_assets": [
+            {
+              "id": "img_468925894a0c5df4d6a0",
+              "document_id": "doc_0fcf2a50cfa02d21",
+              "parent_chunk_id": "chk_823ef0af6d530619ca9b",
+              "label": "Figure 8",
+              "page": 11,
+              "bbox": [
+                154,
+                99,
+                838,
+                297
+              ],
+              "image_path": "visual-assets/821c91727be309b862532721d461d8e7e1044fdf933c0d44c3c6a7fd8d85453c.png",
+              "sha256": "821c91727be309b862532721d461d8e7e1044fdf933c0d44c3c6a7fd8d85453c",
+              "width": 1019,
+              "height": 418,
+              "byte_size": 78251,
+              "kind": "figure"
+            }
+          ]
+        },
+        {
+          "ref": "[7]",
+          "chunk_id": "chk_fe625e14c33a8b51f13a",
+          "document_id": "doc_0fcf2a50cfa02d21",
+          "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+          "page_start": 1,
+          "page_end": 1,
+          "text": "[章节标签（程序整理，非原文）] 未确定\n[原文]\nAbstract: Supramolecular structure is the critical factor that afects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H· · · O(3<sup>0</sup>) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coeficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.",
+          "score": 0.0,
+          "source_chunks": [
+            {
+              "chunk_id": "chk_fe625e14c33a8b51f13a",
+              "chunk_index": 4,
+              "page_start": 1,
+              "page_end": 1,
+              "text": "[章节标签（程序整理，非原文）] 未确定\n[原文]\nAbstract: Supramolecular structure is the critical factor that afects the properties of cellulosic fibers. This article studied the action of Papirindustriens forskningsinstitut (PFI) refining on the molecular aggregation and hydrogen bonding network, and tried to explore the relationship between the crystal packing and hydrogen-bonding network in cellulosic fibers. The results showed that the polymorph, H-bonding distance, and H-bonding energy of various H-bonds remained almost unchanged, while the crystalline index, crystallite size, and content of various H-bonds changed with refining. Therein, the content of the inter-molecular O(6)H· · · O(3<sup>0</sup>) H-bonds was significantly correlated with the crystalline index that was obtained in intensities of the XRD peaks. The Pearson correlation coeficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers, respectively. It can be concluded that the variations of accessibility, swelling, and fibrillation were closely related to the supramolecular structure and the intermolecular H-bonds play an important role in the crystal packing of cellulose.",
+              "kind": "paragraph"
+            }
+          ],
+          "seed_chunk_ids": [],
+          "context_status": "corrective_supplement",
+          "visual_assets": []
+        }
+      ],
+      "commit": {
+        "status": "committed_compatible_edits",
+        "accepted_issue_indexes": [],
+        "deferred_issues": [
+          {
+            "issue_index": 0,
+            "reason_code": "provisional_edit_source_not_retained",
+            "missing_refs": [
+              "[6]"
+            ]
+          }
+        ],
+        "final": {
+          "answer": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\nO(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。 [2]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。 [4]\n论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。 [2] [4]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+          "claims": [
+            {
+              "text": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。",
+              "citation_refs": [
+                "[1]"
+              ]
+            },
+            {
+              "text": "O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。",
+              "citation_refs": [
+                "[2]"
+              ]
+            },
+            {
+              "text": "作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。",
+              "citation_refs": [
+                "[4]"
+              ]
+            },
+            {
+              "text": "论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。",
+              "citation_refs": [
+                "[2]",
+                "[4]"
+              ]
+            },
+            {
+              "text": "并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。",
+              "citation_refs": [
+                "[2]"
+              ]
+            }
+          ]
+        },
+        "final_sha256": "fac169c4ed9019446aef24266845d007e13d7c2cb191c0a725bca12f6e129f0d",
+        "draft_sha256": "fac169c4ed9019446aef24266845d007e13d7c2cb191c0a725bca12f6e129f0d",
+        "evidence_sha256": "f73745eb8b685ff6ea679b0843d60be60cdf1e75d8b6dac50e4b423ab94cf752"
+      }
+    }
+  ]
+}

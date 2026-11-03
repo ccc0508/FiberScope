@@ -31,12 +31,14 @@ def configuration_snapshot(env_file: Path):
     if settings.corrective_review_enabled:
         sources += ['application/review_diagnosis.py','application/corrective_review.py',
                     'adapters/chroma/vector_store.py']
-        if settings.corrective_review_version in {'v2','v3','v2_bound'}:
+        if settings.corrective_review_version in {'v2','v3','v2_bound','v2_budget'}:
             sources += ['application/review_diagnosis_v2.py','application/numeric_crosscheck.py']
         if settings.corrective_review_version=='v3':
             sources += ['application/review_diagnosis_v3.py']
-        if settings.corrective_review_version=='v2_bound':
+        if settings.corrective_review_version in {'v2_bound','v2_budget'}:
             sources += ['application/review_diagnosis_bound.py']
+        if settings.corrective_review_version=='v2_budget':
+            sources += ['application/review_diagnosis_budget.py','application/review_commit.py']
     sources=list(dict.fromkeys(sources))
     fingerprint = sha256(b'\n'.join((root / source).read_bytes() for source in sources)).hexdigest()
     result = {**{key: getattr(settings, key) for key in (
@@ -154,10 +156,12 @@ def configuration_snapshot(env_file: Path):
             max_supplement_rounds=1,max_lookup_actions=2,max_new_sources_per_action=2,
             supplement_time_seconds=40,reference_policy='retain_existing_identity_append_new_refs',
             no_gold_at_runtime=True,corrective_review_enabled=True)
-        if settings.corrective_review_version in {'v2','v3','v2_bound'}:
+        if settings.corrective_review_version in {'v2','v3','v2_bound','v2_budget'}:
             result['evidence_review']['numeric_crosscheck']='numeric-region-crosscheck-v1; shared two-action budget'
-        if settings.corrective_review_version=='v2_bound':
+        if settings.corrective_review_version in {'v2_bound','v2_budget'}:
             result['evidence_review']['edit_binding']='exact original_text plus current draft index; conflicting claim checks block individual edit'
+        if settings.corrective_review_version=='v2_budget':
+            result['evidence_review']['supplement_policy']='protect original draft citations; commit compatible provisional edits after supplemental assembly; no source truncation'
         if settings.corrective_review_version=='v3':
             result['evidence_review']['revision_checks']='same-call self-check per proposed edit; fail closed per edit; not independent semantic verification'
     return result
