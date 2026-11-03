@@ -64,9 +64,13 @@ class CitationValidator:
         self,
         generated: GeneratedAnswer,
         evidences: Sequence[Evidence],
+        *, allow_sparse_refs: bool = False,
     ) -> ValidatedAnswer:
         expected_refs = [f"[{index}]" for index in range(1, len(evidences) + 1)]
-        if [evidence.ref for evidence in evidences] != expected_refs:
+        actual_refs = [evidence.ref for evidence in evidences]
+        if allow_sparse_refs and all(re.fullmatch(r'\[[1-9][0-9]*\]', ref) for ref in actual_refs):
+            expected_refs = sorted(set(actual_refs), key=lambda ref:int(ref[1:-1]))
+        if actual_refs != expected_refs:
             raise CitationValidationError("evidence references must be unique and sequential",
                 rule_code='evidence_reference_sequence', field='evidences.ref')
         if not generated.answer.strip() or not generated.claims:

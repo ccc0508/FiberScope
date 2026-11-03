@@ -44,6 +44,7 @@ class AnswerService:
         self.validator = validator
         self.reviewer = reviewer
         self.last_generated_answer = None
+        self.last_evidences = []
 
     def answer(
         self,
@@ -54,6 +55,7 @@ class AnswerService:
         started = perf_counter()
         self.last_generated_answer = None
         evidences = self.retriever.retrieve(question, top_k, min_score)
+        self.last_evidences = list(evidences)
         if not evidences:
             latency_ms = int((perf_counter() - started) * 1000)
             logger.info(
@@ -108,7 +110,12 @@ class AnswerService:
             if self.reviewer is not None:
                 # Separate from primary generation and its structural retry loop.
                 generated = self.reviewer.review(question, evidences, generated)
-                validated = CitationValidator().validate(generated, evidences)
+                evidences = getattr(self.reviewer, 'last_evidences', evidences)
+                validated = CitationValidator().validate(generated, evidences,
+                    allow_sparse_refs=getattr(self.reviewer,'preserve_reference_ids',False))
+                retrieved_chunk_ids = tuple(dict.fromkeys(cid for e in evidences
+                    for cid in ([s.chunk_id for s in e.source_chunks] or [e.chunk_id])))
+            self.last_evidences = list(evidences)
             self.last_generated_answer = generated
             latency_ms = int((perf_counter() - started) * 1000)
             logger.info(

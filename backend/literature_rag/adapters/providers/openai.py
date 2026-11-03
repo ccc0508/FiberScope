@@ -85,7 +85,7 @@ class OpenAIEmbedder:
     def dimensions(self) -> int:
         return self._dimensions
 
-    def embed_documents(self, texts: Sequence[str]) -> list[list[float]]:
+    def embed_documents(self, texts: Sequence[str], *, timeout_seconds=None) -> list[list[float]]:
         from literature_rag.diagnostics import provider_usage
         self.last_usage = None
         if not texts:
@@ -95,7 +95,8 @@ class OpenAIEmbedder:
         error_type: str | None = None
         response_failure = False
         try:
-            response = self.client.embeddings.create(
+            client=self.client.with_options(timeout=timeout_seconds,max_retries=0) if timeout_seconds is not None else self.client
+            response = client.embeddings.create(
                 model=self._model,
                 input=requested_texts,
             )
@@ -152,8 +153,8 @@ class OpenAIEmbedder:
             normalized_embeddings.append(normalized_embedding)
         return normalized_embeddings
 
-    def embed_query(self, text: str) -> list[float]:
-        return self.embed_documents([text])[0]
+    def embed_query(self, text: str, *, timeout_seconds=None) -> list[float]:
+        return self.embed_documents([text],timeout_seconds=timeout_seconds)[0]
 
 
 class OpenAIGenerator:

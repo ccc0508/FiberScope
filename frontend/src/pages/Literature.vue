@@ -325,6 +325,17 @@ load();
         }}</span>
       </div>
       <p class="submitted-question">{{ submitted }}</p>
+      <div v-if="answer.review_summary" class="review-summary" role="status">
+        <p>{{ answer.review_summary.notice }}</p>
+        <details v-if="answer.review_summary.unresolved.length">
+          <summary>查看尚未解决的问题（{{ answer.review_summary.unresolved.length }}）</summary>
+          <ul>
+            <li v-for="item in answer.review_summary.unresolved" :key="item.id">
+              <strong>{{ item.requirement }}</strong>：{{ item.reason }}
+            </li>
+          </ul>
+        </details>
+      </div>
       <div class="answer-content">
         <p v-for="(line, index) in lines" :key="index">
           <template v-for="(part, j) in line" :key="j"
@@ -653,6 +664,18 @@ load();
   margin: 0 3px;
   padding: 0 5px;
 }
+.review-summary {
+  margin: 12px 0;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.review-summary p { margin: 0; }
+.review-summary summary { margin-top: 8px; cursor: pointer; }
+.review-summary ul { padding-left: 20px; margin-bottom: 0; }
 .answer-note {
   font-size: 12px;
   color: var(--muted);

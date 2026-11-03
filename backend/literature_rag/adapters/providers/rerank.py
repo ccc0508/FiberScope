@@ -35,7 +35,7 @@ class SiliconFlowReranker:
         self.client=client
         self.last_call=None
 
-    def rerank(self,question:str,texts:Sequence[str])->list[float]:
+    def rerank(self,question:str,texts:Sequence[str],*,timeout_seconds=None)->list[float]:
         if not isinstance(question,str) or not question.strip() or not 1<=len(texts)<=50 or any(not isinstance(t,str) or not t.strip() for t in texts):
             raise ValueError('invalid rerank inputs')
         request=dict(model=self.model_name,query=question,documents=list(texts),top_n=len(texts),return_documents=False,
@@ -48,7 +48,7 @@ class SiliconFlowReranker:
             try:
                 def post(client):
                     return client.post(self.base_url+'/rerank',json=request,
-                        headers={'Authorization':'Bearer '+self._api_key},timeout=self.timeout)
+                        headers={'Authorization':'Bearer '+self._api_key},timeout=self.timeout if timeout_seconds is None else min(self.timeout,timeout_seconds))
                 if self.client is None:
                     with httpx.Client(trust_env=False,follow_redirects=False) as client:response=post(client)
                 else:response=post(self.client)

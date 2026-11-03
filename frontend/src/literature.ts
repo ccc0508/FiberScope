@@ -32,6 +32,13 @@ export interface Answer {
   answer: string;
   citations: Citation[];
   latency_ms: number;
+  review_summary?: {
+    status: "completed" | "unresolved" | "incomplete";
+    notice: string;
+    unresolved: { id: string; requirement: string; reason: string }[];
+    supplement_rounds: number;
+    review_rounds: number;
+  };
 }
 export interface Feedback {
   rating: "helpful" | "inaccurate";

@@ -103,16 +103,18 @@ class TableVectorSearch:
         self.base, self.relations = base, relations
         self.last_diagnostics = {}
 
-    def search(self, query_embedding: Sequence[float], top_k: int):
+    def search(self, query_embedding: Sequence[float], top_k: int, *, document_ids=None):
         if len(query_embedding) != self.relations.manifest['embedding']['dimensions'] or any(type(v) not in (int,float) or not isfinite(v) for v in query_embedding):
             raise InfrastructureError('invalid table query vector')
         norm = sqrt(fsum(v*v for v in query_embedding))
         if not norm:
             raise InfrastructureError('zero table query vector')
-        base = self.base.search(query_embedding, top_k)
+        base = self.base.search(query_embedding, top_k, **({'document_ids': document_ids} if document_ids is not None else {}))
         parents = {m.chunk_id:m.score for m in base}
         hits = []
         for row in self.relations.rows:
+            if document_ids is not None and self.relations.chunks[row['parent_chunk_id']].document_id not in document_ids:
+                continue
             vector = self.relations.vectors[row['id']]
             score = max(0.,min(1.,fsum(a*b for a,b in zip(query_embedding,vector,strict=True))/(norm*sqrt(fsum(x*x for x in vector)))))
             cid = row['parent_chunk_id']

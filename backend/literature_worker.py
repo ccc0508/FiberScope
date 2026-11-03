@@ -83,7 +83,8 @@ def main():
             settings.llm_base_url,thinking_enabled=settings.llm_thinking_enabled,
             reasoning_effort=settings.llm_reasoning_effort,timeout_seconds=settings.evidence_review_timeout_seconds,
             max_output_tokens=settings.evidence_review_max_output_tokens,
-            visual_root=root if settings.visual_retrieval_enabled else None)
+            visual_root=root if settings.visual_retrieval_enabled else None,
+            diagnostic=settings.corrective_review_enabled)
         budget=body.get('request_timeout_seconds',300)
         budget=budget if type(budget) is int and 5<=budget<=300 else 300
         evidence_reviewer=EvidenceReviewService(review_provider,visual_root=root if settings.visual_retrieval_enabled else None,
@@ -102,8 +103,11 @@ def main():
             settings.rerank_base_url,settings.rerank_timeout_seconds)
 
         class CapturedReranker:
-            def rerank(self,*args):
-                try:return provider_reranker.rerank(*args)
+            @property
+            def last_call(self):return provider_reranker.last_call
+
+            def rerank(self,*args,**kwargs):
+                try:return provider_reranker.rerank(*args,**kwargs)
                 finally:
                     if provider_reranker.last_call is not None:rerank_calls.append(provider_reranker.last_call)
         reranker=CapturedReranker()
@@ -148,6 +152,8 @@ def main():
                 if settings.query_rewrite_enabled:
                     context_diagnostics['query_rewrite']=self.last_query_diagnostics
                     query_embedding_calls.extend(self.last_query_embedding_calls)
+                elif settings.corrective_review_enabled:
+                    query_embedding_calls.extend(getattr(self,'last_query_embedding_calls',[]))
             evidence_by_chunk.update({e.chunk_id: e for e in evidences})
             return evidences
 
@@ -158,20 +164,29 @@ def main():
         if settings.context_expansion_strategy=='body_section':
             from literature_rag.application.body_context import BodySectionCatalog
             body_context_catalog=BodySectionCatalog.load(root,metadata)
-        service = AnswerService(CapturedRetriever(metadata, vectors, embedder,context_options,table_relations,reranker,
+        retriever = CapturedRetriever(metadata, vectors, embedder,context_options,table_relations,reranker,
             body_context_catalog=body_context_catalog,query_rewriter=query_rewriter,
             query_rewrite_mode=settings.query_rewrite_mode if settings.query_rewrite_enabled else 'dual',
             visual_catalog=visual_catalog,visual_max_images=settings.visual_max_images,
-            visual_max_total_bytes=settings.visual_max_total_bytes), CapturedGenerator(), citation_validator,
+            visual_max_total_bytes=settings.visual_max_total_bytes)
+        if settings.corrective_review_enabled:
+            from literature_rag.application.corrective_review import CorrectiveReviewService,TargetedEvidenceReader
+            evidence_reviewer=CorrectiveReviewService(evidence_reviewer,TargetedEvidenceReader(retriever),
+                deadline=evidence_reviewer.deadline)
+        service = AnswerService(retriever, CapturedGenerator(), citation_validator,
             reviewer=evidence_reviewer)
         answer = service.answer(body['question'], settings.top_k, settings.min_score)
+        evidence_by_chunk = {e.chunk_id:e for e in service.last_evidences}
+        if settings.corrective_review_enabled:
+            query_embedding_calls.extend(evidence_reviewer.last_trace.get('supplement',{}).get('query_embedding_calls',[]))
     except (ProviderError, InfrastructureError) as error:
         print(json.dumps({'status': 'failed', 'answer': '', 'citations': [],
                           'reason_code': 'provider_error' if isinstance(error, ProviderError) else 'retrieval_error',
                           'error_status': 503, 'configuration': configuration,
                           'retrieved_evidence': [asdict(e) for e in evidence_by_chunk.values()],
                           'retrieval_seed_evidence': seed_evidence, 'context_assembly': context_diagnostics,
-                          'embedding_usage': combined_usage(query_embedding_calls) if settings.query_rewrite_enabled else getattr(embedder, 'last_usage', None),
+                          'embedding_usage': combined_usage(query_embedding_calls) if (settings.query_rewrite_enabled or settings.corrective_review_enabled) else getattr(embedder, 'last_usage', None),
+                          **({'query_embedding_calls':query_embedding_calls} if settings.corrective_review_enabled else {}),
                           **({'query_embedding_calls':query_embedding_calls,'query_rewrite_calls':
                               [query_rewriter.last_call] if query_rewriter.last_call else []} if settings.query_rewrite_enabled else {}),
                           **({'rerank_calls':rerank_calls} if settings.rerank_enabled else {}),
@@ -188,7 +203,9 @@ def main():
                       'configuration': configuration, 'generation_calls': generation_calls,
                       'citation_validation': citation_validator.snapshot(),
                       **({'evidence_review':evidence_reviewer.last_trace} if evidence_reviewer is not None else {}),
-                      'embedding_usage': combined_usage(query_embedding_calls) if settings.query_rewrite_enabled else getattr(embedder, 'last_usage', None),
+                      **({'review_summary':evidence_reviewer.last_summary} if settings.corrective_review_enabled else {}),
+                      'embedding_usage': combined_usage(query_embedding_calls) if (settings.query_rewrite_enabled or settings.corrective_review_enabled) else getattr(embedder, 'last_usage', None),
+                      **({'query_embedding_calls':query_embedding_calls} if settings.corrective_review_enabled else {}),
                       **({'query_embedding_calls':query_embedding_calls,'query_rewrite_calls':
                           [query_rewriter.last_call] if query_rewriter.last_call else []} if settings.query_rewrite_enabled else {}),
                       **({'rerank_calls':rerank_calls} if settings.rerank_enabled else {}),

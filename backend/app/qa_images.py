@@ -11,8 +11,14 @@ from literature_rag.domain.models import VisualAsset
 from literature_rag.domain.errors import InfrastructureError
 
 
+def evidence_snapshots(result):
+    review=result.get('evidence_review') or {}
+    return [*result.get('citations',[]),*result.get('retrieved_evidence',[]),
+        *review.get('initial_evidence',[]),*review.get('final_evidence',[])]
+
+
 def cache_answer_images(result,library,history_root):
-    assets={a['sha256']:a for citation in [*result.get('citations',[]),*result.get('retrieved_evidence',[])]
+    assets={a['sha256']:a for citation in evidence_snapshots(result)
             for a in citation.get('visual_assets',[])}
     if not assets:return
     cache=Path(history_root).resolve()/'qa-images'
@@ -48,7 +54,7 @@ def backup_answer_images(database,history_root,output):
     with sqlite3.connect(Path(database).resolve().as_uri()+'?mode=ro',uri=True) as connection:
         for (payload,) in connection.execute('SELECT result_json FROM questions WHERE result_json IS NOT NULL'):
             result=json.loads(payload)
-            checksums.update(a['sha256'] for e in [*result.get('citations',[]),*result.get('retrieved_evidence',[])]
+            checksums.update(a['sha256'] for e in evidence_snapshots(result)
                 for a in e.get('visual_assets',[]))
     if not checksums:return 0
     target=output/'qa-images';target.mkdir(parents=True)

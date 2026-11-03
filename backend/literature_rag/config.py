@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     visual_max_total_bytes: int = Field(default=12*1024*1024,ge=1024,le=24*1024*1024)
     answer_guidance_enabled: bool = False
     evidence_review_enabled: bool = False
+    corrective_review_enabled: bool = False
     evidence_review_timeout_seconds: float = Field(default=120, gt=0, le=180, allow_inf_nan=False)
     evidence_review_max_output_tokens: int = Field(default=32768, ge=1024, le=32768)
     query_rewrite_enabled: bool = False
@@ -129,6 +130,8 @@ class Settings(BaseSettings):
         """Ensure adjacent chunks do not completely overlap."""
         if self.chunk_overlap >= self.chunk_size:
             raise ValueError("chunk_overlap must be smaller than chunk_size")
+        if self.corrective_review_enabled and not (self.evidence_review_enabled and self.rerank_enabled):
+            raise ValueError('corrective review requires evidence review and reranking')
         if self.evidence_review_enabled and (self.llm_provider!='deepseek' or self.llm_model!='deepseek-flash'
                 or not self.llm_api_key or not self.llm_api_key.get_secret_value().strip()):
             raise ValueError('evidence review requires configured DeepSeek Flash credentials')

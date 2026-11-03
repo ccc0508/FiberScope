@@ -62,7 +62,7 @@ class VectorStore(Protocol):
     def delete_document(self, document_id: str) -> None:
         raise NotImplementedError
 
-    def search(self, query_embedding: Sequence[float], top_k: int) -> list[VectorMatch]:
+    def search(self, query_embedding: Sequence[float], top_k: int, *, document_ids: Sequence[str] | None = None) -> list[VectorMatch]:
         raise NotImplementedError
 
 
@@ -78,12 +78,12 @@ class Embedder(Protocol):
     def embed_documents(self, texts: Sequence[str]) -> list[list[float]]:
         raise NotImplementedError
 
-    def embed_query(self, text: str) -> list[float]:
+    def embed_query(self, text: str, *, timeout_seconds: float | None = None) -> list[float]:
         raise NotImplementedError
 
 
 class Reranker(Protocol):
-    def rerank(self, question: str, texts: Sequence[str]) -> list[float]:
+    def rerank(self, question: str, texts: Sequence[str], *, timeout_seconds: float | None = None) -> list[float]:
         """Return one finite relevance score per input, in original input order."""
         raise NotImplementedError
 

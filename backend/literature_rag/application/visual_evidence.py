@@ -132,15 +132,16 @@ class VisualVectorSearch:
     def __init__(self,base,catalog):
         self.base=base;self.catalog=catalog;self.last_diagnostics={};self.last_visual_diagnostics={}
 
-    def search(self,query_embedding,top_k):
+    def search(self,query_embedding,top_k,*,document_ids=None):
         dims=self.catalog.manifest['embedding']['dimensions']
         if len(query_embedding)!=dims or any(type(x) not in (int,float) or not isfinite(x) for x in query_embedding):
             raise InfrastructureError('invalid visual query vector')
         norm=sqrt(fsum(x*x for x in query_embedding))
         if not norm:raise InfrastructureError('zero visual query vector')
-        base=self.base.search(query_embedding,top_k)
+        base=self.base.search(query_embedding,top_k,**({'document_ids':document_ids} if document_ids is not None else {}))
         parents={m.chunk_id:m.score for m in base};hits=[]
         for a in self.catalog.assets:
+            if document_ids is not None and a.document_id not in document_ids:continue
             v=self.catalog.vectors[a.id]
             score=max(0.,min(1.,fsum(x*y for x,y in zip(query_embedding,v,strict=True))/(norm*sqrt(fsum(y*y for y in v)))))
             parents[a.parent_chunk_id]=max(score,parents.get(a.parent_chunk_id,0.))
