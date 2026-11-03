@@ -100,7 +100,7 @@ def test_worker_serializes_failed_drafts_even_after_success_refusal_or_provider_
         embedding_api_key=secret,llm_api_key=secret,llm_model='fixture',embedding_base_url='https://example.invalid',
         llm_base_url='https://example.invalid',llm_reasoning_effort=None,llm_timeout_seconds=60,
         llm_actor_authorization=None,llm_proxy_url=None,table_retrieval_enabled=False,visual_retrieval_enabled=False,
-        answer_guidance_enabled=False,query_rewrite_enabled=False,rerank_enabled=False,
+        answer_guidance_enabled=False,query_rewrite_enabled=False,rerank_enabled=False,corrective_review_enabled=False,
         context_expansion_enabled=False,context_neighbor_radius=1,context_max_evidence_chars=8000,
         context_max_total_chars=24000,context_expansion_strategy='neighbor',top_k=8,min_score=.35,
         visual_max_images=4,visual_max_total_bytes=12000000)
