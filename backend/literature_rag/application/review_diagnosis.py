@@ -130,4 +130,7 @@ def diagnosis_contract(version='v1'):
     if version=='v2_budget':
         from . import review_diagnosis_budget
         return review_diagnosis_budget
+    if version=='v2_relation':
+        from . import review_diagnosis_relation
+        return review_diagnosis_relation
     raise ValueError('Unknown corrective review version')

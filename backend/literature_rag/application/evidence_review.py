@@ -196,8 +196,10 @@ class EvidenceReviewService:
                     timeout_seconds=min(self.provider.timeout_seconds,remaining) if remaining is not None else None)
                 trace['issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
                 trace['requirements']=[r.model_dump(exclude_none=True) for r in payload.requirements]
-                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound','v2_budget'}:
+                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound','v2_budget','v2_relation'}:
                     trace['claim_checks']=[r.model_dump() for r in payload.claim_checks]
+                    if hasattr(payload,'relation_checks'):
+                        trace['relation_checks']=[r.model_dump() for r in payload.relation_checks]
                     if hasattr(payload,'revision_checks'):
                         trace['revision_checks']=[r.model_dump() for r in payload.revision_checks]
                     trace['raw_requirements']=trace['requirements']
@@ -215,6 +217,8 @@ class EvidenceReviewService:
             accepted=[];rejected=[];seen=set()
             for index,issue in enumerate(payload.issues):
                 try:
+                    if diagnostic and hasattr(contract,'validate_edit_semantics'):
+                        contract.validate_edit_semantics(payload,index,draft,evidences)
                     if diagnostic and hasattr(contract,'validate_edit_target'):
                         contract.validate_edit_target(payload,index,draft)
                     if diagnostic and hasattr(contract,'validate_revision'):
