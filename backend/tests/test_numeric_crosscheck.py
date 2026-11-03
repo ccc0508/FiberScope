@@ -18,7 +18,7 @@ def test_default_protocol_preserves_v1_and_v2_requires_explicit_selection():
     assert Settings(_env_file=None).corrective_review_version == 'v1'
     assert diagnosis_contract().VERSION == 'bounded-corrective-review-v1'
     assert 'claim_checks' not in diagnosis_contract().DiagnosticPayload.model_fields
-    assert diagnosis_contract('v2').VERSION == 'bounded-corrective-review-v2'
+    assert diagnosis_contract('v2').VERSION == 'bounded-corrective-review-v2.1'
     assert 'claim_checks' in diagnosis_contract('v2').DiagnosticPayload.model_fields
     with pytest.raises(ValueError):
         diagnosis_contract('unknown')
@@ -39,7 +39,7 @@ def test_numeric_policy_is_only_activated_in_experimental_controller(monkeypatch
     provider.diagnosis_version='v2'
     new.review('请核实0.9这个系数。',SOURCES,DRAFT)
     assert len(calls)==1
-    assert new.last_trace['version']=='bounded-corrective-review-v2'
+    assert new.last_trace['version']=='bounded-corrective-review-v2.1'
 
 
 def test_provider_v2_requests_and_parses_the_experimental_contract():

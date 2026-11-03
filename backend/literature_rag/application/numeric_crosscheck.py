@@ -41,7 +41,7 @@ def plan_crosscheck(question,evidences,requirements,catalog):
         if existing:
             priority.append(existing);continue
         used={r['id'] for r in ledger}
-        rid=next('R'+str(i) for i in range(90,100) if 'R'+str(i) not in used)
+        rid=next('R'+str(i) for i in [*range(90,100),*range(1,90)] if 'R'+str(i) not in used)
         region='摘要' if target=='abstract' else '结果与讨论'
         item=dict(id=rid,requirement=f'核对同篇论文{region}与已提供材料中涉及用户问题的数值及统计口径。',
             status='lookup',evidence_refs=[anchor.ref],claim_indexes=[],issue_indexes=[],

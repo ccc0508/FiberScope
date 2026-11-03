@@ -1,0 +1,60 @@
+{
+  "version": "corrective-recovery-check-v1",
+  "evaluated_version": "bounded-corrective-review-v2.1",
+  "selected_tasks": [
+    "PFI2-014",
+    "PFI2-023",
+    "PFI2-024",
+    "PFI2-032"
+  ],
+  "first_attempt_only": true,
+  "initial_inputs_identical": true,
+  "primary_generation_calls": 0,
+  "judge_calls": 0,
+  "aggregate_32_score": null,
+  "reviewer": "Codex source inspection",
+  "limitations": [
+    "Four selected regression questions, one attempt each; not full quality evaluation.",
+    "Source inspection is not an independent model judge or a human expert score."
+  ],
+  "findings": {
+    "PFI2-014": {
+      "conclusion": "目标结构层级问题已修正，同时补入FTIR相对含量与作者推测限定。",
+      "evidence_checked": [
+        "实际[1]3.3 relative content / cleavage among cellulose molecular chains",
+        "实际[2]3.1 WRV与纤维间结合",
+        "最终C4、首轮接受修订记录"
+      ],
+      "limitation": "链之间的断裂仍是对作者文字的直译，不能据此认为已独立证明机理；仅一次运行。"
+    },
+    "PFI2-023": {
+      "conclusion": "目标引用缺失已修正：冲突句同时引用正文[1]与摘要[2]，同一陈述两来源检查正常通过。",
+      "evidence_checked": [
+        "实际[1]正文3.4: softwood 0.912",
+        "实际[2]摘要: softwood 0.888",
+        "最终C2引用[1][2]；claim_checks同一claim_index=1分别核对两来源"
+      ],
+      "limitation": "验证单句来源齐全，不等于论文中的两个数值已被科学解释或纠正。"
+    },
+    "PFI2-024": {
+      "conclusion": "仍未完成：审校耗尽32768 Token输出上限，原回答保留，未伪装为修订成功。",
+      "evidence_checked": [
+        "round1 reason_code=review_output_truncated",
+        "returned finish_reason=length；completion_tokens=32768",
+        "最终C7仍称氢键总量，C9仍有最直接的比较"
+      ],
+      "limitation": "这次是模型输出截断，与原先诊断位置拒绝不同；未重试或挑选更好答案。"
+    },
+    "PFI2-032": {
+      "conclusion": "目标漏答已修正：补入同篇摘要[7]，第二轮写明摘要0.888与正文0.912不一致，并保留相关不等于直接换算。",
+      "evidence_checked": [
+        "supplement.added_refs=[7]，同篇摘要原文0.888/0.889",
+        "实际[2]正文3.4: 0.912/0.889",
+        "最终C2明确两位置并引用[2][7]；C4限制定量换算",
+        "second claim_checks同一claim_index=1分别核对[2]与[7]且无诊断错误"
+      ],
+      "limitation": "仅一次验证，未由Jev评分；未额外显式强调FTIR峰面积相对含量，不能将目标冲突修复等同于所有表述均完善。"
+    }
+  },
+  "after_manifest_sha256": "e2b4da61fb6ad6116f455816de5e53ae3592a2b72a5ab1613a1567c54c7ca405"
+}
