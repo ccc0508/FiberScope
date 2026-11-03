@@ -130,6 +130,9 @@ def diagnosis_contract(version='v1'):
     if version=='v2_budget':
         from . import review_diagnosis_budget
         return review_diagnosis_budget
+    if version=='v2_causal':
+        from . import review_diagnosis_causal
+        return review_diagnosis_causal
     if version=='v2_comparison':
         from . import review_diagnosis_comparison
         return review_diagnosis_comparison

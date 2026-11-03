@@ -185,6 +185,8 @@ class EvidenceReviewService:
             from literature_rag.application.review_diagnosis import diagnosis_contract
             contract=diagnosis_contract(getattr(self.provider,'diagnosis_version','v1'))
             trace['version']=contract.VERSION
+            if hasattr(contract,'request_context'):
+                trace['causal_detail_context']=contract.request_context(draft,evidences)
         remaining=self.deadline-perf_counter()-5 if self.deadline is not None else None
         required=15 if diagnostic else getattr(self.provider,'timeout_seconds',120)
         if remaining is not None and remaining<required:
@@ -201,7 +203,7 @@ class EvidenceReviewService:
                     trace['citation_only_repair_indexes']=sorted(payload._citation_repairs)
                 trace['issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
                 trace['requirements']=[r.model_dump(exclude_none=True) for r in payload.requirements]
-                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison'}:
+                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal'}:
                     trace['claim_checks']=[r.model_dump() for r in payload.claim_checks]
                     if hasattr(payload,'relation_checks'):
                         trace['relation_checks']=[r.model_dump() for r in payload.relation_checks]
