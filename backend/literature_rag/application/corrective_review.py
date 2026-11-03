@@ -5,7 +5,7 @@ from time import perf_counter
 import re
 
 from literature_rag.application.evidence_review import checksum, normalized_quote
-from literature_rag.application.review_diagnosis import VERSION
+from literature_rag.application.review_diagnosis import diagnosis_contract
 from literature_rag.diagnostics import combined_usage
 from literature_rag.domain.errors import InfrastructureError, ProviderError
 from literature_rag.domain.models import Evidence, EvidenceSource
@@ -211,7 +211,8 @@ class CorrectiveReviewService:
     def review(self, question, evidences, draft):
         started = perf_counter()
         self.last_evidences = list(evidences)
-        trace = self.last_trace = dict(enabled=True, version=VERSION, status='started', rounds=[],
+        version=getattr(self.reviewer.provider,'diagnosis_version','v1')
+        trace = self.last_trace = dict(enabled=True, version=diagnosis_contract(version).VERSION, status='started', rounds=[],
             api_calls=0, supplement_rounds=0, original_draft=asdict(draft),
             initial_evidence=[asdict(e) for e in evidences], monetary_cost=None,
             guarantee='source-location-and-structure-checks-only; semantic judgment is fallible')
@@ -220,6 +221,11 @@ class CorrectiveReviewService:
         trace['rounds'].append(first)
         requirements = first.get('requirements', [])
         gaps = [r for r in requirements if r['status'] == 'lookup'] if first.get('diagnosis_valid') else []
+        if version=='v2' and first.get('diagnosis_valid'):
+            from literature_rag.application.numeric_crosscheck import plan_crosscheck
+            catalog=getattr(getattr(self.reader,'retriever',None),'body_context_catalog',None)
+            requirements,gaps,trace['numeric_crosscheck']=plan_crosscheck(question,evidences,requirements,catalog)
+            trace['action_requirements']=deepcopy(requirements)
         reason = 'diagnosis_complete' if first.get('diagnosis_valid') else 'diagnosis_incomplete'
         if gaps:
             remaining = 300 if self.deadline is None else self.deadline-perf_counter()
@@ -246,7 +252,7 @@ class CorrectiveReviewService:
         rejected = {r['issue_index'] for r in last.get('rejected_issues', [])}
         accepted = set(last.get('accepted_issue_indexes', [])) if last.get('accepted') else set()
         # Keep first-round gaps if the second review could not finish or validate its ledger.
-        ledger = last.get('requirements', []) if last.get('diagnosis_valid') else requirements
+        ledger = last.get('requirements', []) if len(trace['rounds'])>1 and last.get('diagnosis_valid') else requirements
         unresolved = []
         for r in ledger:
             if (r['status'] in {'lookup', 'unresolved'} or rejected.intersection(r['issue_indexes'])

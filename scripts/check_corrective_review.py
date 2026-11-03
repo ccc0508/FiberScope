@@ -27,6 +27,7 @@ def main():
     parser.add_argument('--case-ids', nargs='+', required=True)
     parser.add_argument('--library', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--version', choices=['v1','v2'], default='v1')
     args = parser.parse_args()
     if args.output.exists():
         raise ValueError('Attempt directory already exists; never automatically repeat a paid attempt')
@@ -38,6 +39,8 @@ def main():
     from literature_rag.adapters.providers.rerank import SiliconFlowReranker
     from literature_rag.adapters.providers.evidence_review import DeepSeekEvidenceReviewer
     from literature_rag.application.evidence_review import EvidenceReviewService, checksum
+    from literature_rag.application.review_diagnosis import diagnosis_contract
+    VERSION=diagnosis_contract(args.version).VERSION
     from literature_rag.application.corrective_review import CorrectiveReviewService, TargetedEvidenceReader
     from literature_rag.application.retrieve import RetrievalService
     from literature_rag.application.context import ContextOptions
@@ -47,7 +50,7 @@ def main():
     from literature_rag.application.citations import CitationValidator
     from literature_rag.domain.models import Evidence, GeneratedAnswer, GeneratedClaim
 
-    settings = Settings(_env_file=ROOT/'backend/.env.literature')
+    settings = Settings(_env_file=ROOT/'backend/.env.literature',corrective_review_version=args.version)
     if settings.embedding_provider != 'dashscope' or not settings.rerank_enabled:
         raise ValueError('This replay checks the existing Qwen + reranker pipeline')
 
@@ -85,8 +88,14 @@ def main():
             candidate_ids=[c['chunk_id'] for c in response['context_assembly'].get('rerank', {}).get('candidates', [])]))
     args.output.mkdir(parents=True)
     write(args.output/'inputs.json', inputs)
-    configuration = configuration_snapshot(ROOT/'backend/.env.literature')
-    write(args.output/'manifest.json', dict(status='started', mode='bounded-corrective-review-v1',
+    import os
+    prior_version=os.environ.get('RAG_CORRECTIVE_REVIEW_VERSION')
+    os.environ['RAG_CORRECTIVE_REVIEW_VERSION']=args.version
+    try:configuration = configuration_snapshot(ROOT/'backend/.env.literature')
+    finally:
+        if prior_version is None:os.environ.pop('RAG_CORRECTIVE_REVIEW_VERSION',None)
+        else:os.environ['RAG_CORRECTIVE_REVIEW_VERSION']=prior_version
+    write(args.output/'manifest.json', dict(status='started', mode=VERSION,
         initial_drafts_frozen=True, initial_retrieval_calls=0, primary_generation_calls=0, judge_calls=0,
         gold_loaded=False, paid_calls_authorized_by='implementation verification',
         configuration=configuration, input_sha256=checksum(inputs),
@@ -117,7 +126,7 @@ def main():
         p = DeepSeekEvidenceReviewer(settings.llm_model, settings.llm_api_key.get_secret_value(),
             settings.llm_base_url, thinking_enabled=settings.llm_thinking_enabled,
             reasoning_effort=settings.llm_reasoning_effort, timeout_seconds=settings.evidence_review_timeout_seconds,
-            max_output_tokens=settings.evidence_review_max_output_tokens, visual_root=args.library, diagnostic=True)
+            max_output_tokens=settings.evidence_review_max_output_tokens, visual_root=args.library, diagnostic=True,diagnosis_version=args.version)
         deadline = started+295
         service = CorrectiveReviewService(EvidenceReviewService(p, visual_root=args.library, deadline=deadline),
             TargetedEvidenceReader(retriever), deadline=deadline)

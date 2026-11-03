@@ -14,11 +14,13 @@ from literature_rag.domain.errors import ProviderError,ProviderResponseError
 
 class DeepSeekEvidenceReviewer:
     def __init__(self,model,api_key,base_url=None,*,thinking_enabled=None,reasoning_effort=None,
-                 timeout_seconds=120,max_output_tokens=32768,visual_root=None,client=None,diagnostic=False):
+                 timeout_seconds=120,max_output_tokens=32768,visual_root=None,client=None,diagnostic=False,diagnosis_version='v1'):
         if model!='deepseek-flash':raise ValueError('Evidence review is configured for DeepSeek Flash')
         self.model=model;self.thinking_enabled=thinking_enabled;self.reasoning_effort=reasoning_effort
         self.visual_root=visual_root
         self.diagnostic=diagnostic
+        if diagnosis_version not in {'v1','v2'}:raise ValueError('Unknown corrective review version')
+        self.diagnosis_version=diagnosis_version
         self.timeout_seconds=timeout_seconds
         self.max_output_tokens=max_output_tokens
         self.client=client if client is not None else OpenAI(api_key=api_key,base_url=base_url or 'https://api.deepseek.com',
@@ -32,8 +34,11 @@ class DeepSeekEvidenceReviewer:
         prompt=SYSTEM_PROMPT
         schema=ReviewPayload
         if self.diagnostic:
-            from literature_rag.application.review_diagnosis import DIAGNOSTIC_PROMPT,DiagnosticPayload
-            prompt=DIAGNOSTIC_PROMPT;schema=DiagnosticPayload
+            from literature_rag.application.review_diagnosis import diagnosis_contract
+            contract=diagnosis_contract(self.diagnosis_version)
+            prompt=contract.DIAGNOSTIC_PROMPT;schema=contract.DiagnosticPayload
+            if self.diagnosis_version=='v2':
+                text+='\ncritical_claim_indexes (original zero-based draft positions): '+json.dumps(contract.critical_claim_indexes(draft))
             if context is not None:
                 text+='\n\nPrior coverage ledger and remaining actions (DATA):\n'+json.dumps(context,ensure_ascii=False)
         messages=[dict(role='system',content=prompt),dict(role='user',content=text)]

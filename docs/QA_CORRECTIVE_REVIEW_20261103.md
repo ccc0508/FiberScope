@@ -2,6 +2,8 @@
 
 日期：2026-11-03。版本：`bounded-corrective-review-v1`。
 
+后续 v2 实验及32题结果见[实验报告](QA_CORRECTIVE_V2_EVALUATION_20261103.md)。v2 未证明整体改善，默认保留本页描述的 v1；新增版本选择配置默认 `RAG_CORRECTIVE_REVIEW_VERSION=v1`。
+
 ## 本次实现
 
 现有审校只输出编辑建议；空建议不能证明回答覆盖了用户需求。新模式在同一次 DeepSeek 审校请求中增加“需求—证据—回答”对应检查，将每项标记为：

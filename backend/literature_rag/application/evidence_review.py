@@ -180,8 +180,9 @@ class EvidenceReviewService:
         self.last_trace=trace
         diagnostic=getattr(self.provider,'diagnostic',False)
         if diagnostic:
-            from literature_rag.application.review_diagnosis import VERSION as DIAGNOSIS_VERSION
-            trace['version']=DIAGNOSIS_VERSION
+            from literature_rag.application.review_diagnosis import diagnosis_contract
+            contract=diagnosis_contract(getattr(self.provider,'diagnosis_version','v1'))
+            trace['version']=contract.VERSION
         remaining=self.deadline-perf_counter()-5 if self.deadline is not None else None
         required=15 if diagnostic else getattr(self.provider,'timeout_seconds',120)
         if remaining is not None and remaining<required:
@@ -191,9 +192,10 @@ class EvidenceReviewService:
             if diagnostic:
                 payload=self.provider.review(question,evidences,draft,context=context,
                     timeout_seconds=min(self.provider.timeout_seconds,remaining) if remaining is not None else None)
-                from literature_rag.application.review_diagnosis import validate_diagnosis
                 trace['requirements']=[r.model_dump(exclude_none=True) for r in payload.requirements]
-                validate_diagnosis(payload,draft,evidences,context)
+                if getattr(self.provider,'diagnosis_version','v1')=='v2':
+                    trace['claim_checks']=[r.model_dump() for r in payload.claim_checks]
+                contract.validate_diagnosis(payload,draft,evidences,context)
                 trace['diagnosis_valid']=True
             else:
                 payload=self.provider.review(question,evidences,draft)
