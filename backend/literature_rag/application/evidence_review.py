@@ -194,8 +194,10 @@ class EvidenceReviewService:
                     timeout_seconds=min(self.provider.timeout_seconds,remaining) if remaining is not None else None)
                 trace['issues']=[i.model_dump(exclude_none=True) for i in payload.issues]
                 trace['requirements']=[r.model_dump(exclude_none=True) for r in payload.requirements]
-                if getattr(self.provider,'diagnosis_version','v1')=='v2':
+                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3'}:
                     trace['claim_checks']=[r.model_dump() for r in payload.claim_checks]
+                    if hasattr(payload,'revision_checks'):
+                        trace['revision_checks']=[r.model_dump() for r in payload.revision_checks]
                     trace['raw_requirements']=trace['requirements']
                     audit=contract.inspect_diagnosis(payload,draft,evidences,context)
                     trace.update(requirements=audit['requirements'],diagnosis_errors=audit['errors'],
@@ -211,6 +213,8 @@ class EvidenceReviewService:
             accepted=[];rejected=[];seen=set()
             for index,issue in enumerate(payload.issues):
                 try:
+                    if diagnostic and hasattr(contract,'validate_revision'):
+                        contract.validate_revision(payload,index)
                     if issue.claim_index is not None and issue.claim_index in seen:
                         raise ReviewRejected('duplicate_original_claim_target')
                     apply_edits(ReviewPayload(issues=[issue]),draft,evidences,self.visual_root,allow_sparse_refs=diagnostic)

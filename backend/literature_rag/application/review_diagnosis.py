@@ -121,4 +121,7 @@ def diagnosis_contract(version='v1'):
     if version=='v2':
         from . import review_diagnosis_v2
         return review_diagnosis_v2
+    if version=='v3':
+        from . import review_diagnosis_v3
+        return review_diagnosis_v3
     raise ValueError('Unknown corrective review version')
