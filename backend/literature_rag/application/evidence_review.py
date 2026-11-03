@@ -192,11 +192,17 @@ class EvidenceReviewService:
             if diagnostic:
                 payload=self.provider.review(question,evidences,draft,context=context,
                     timeout_seconds=min(self.provider.timeout_seconds,remaining) if remaining is not None else None)
+                trace['issues']=[i.model_dump(exclude_none=True) for i in payload.issues]
                 trace['requirements']=[r.model_dump(exclude_none=True) for r in payload.requirements]
                 if getattr(self.provider,'diagnosis_version','v1')=='v2':
                     trace['claim_checks']=[r.model_dump() for r in payload.claim_checks]
-                contract.validate_diagnosis(payload,draft,evidences,context)
-                trace['diagnosis_valid']=True
+                    trace['raw_requirements']=trace['requirements']
+                    audit=contract.inspect_diagnosis(payload,draft,evidences,context)
+                    trace.update(requirements=audit['requirements'],diagnosis_errors=audit['errors'],
+                        diagnosis_valid=audit['valid'],diagnosis_actions_validated=True)
+                else:
+                    contract.validate_diagnosis(payload,draft,evidences,context)
+                    trace['diagnosis_valid']=True
             else:
                 payload=self.provider.review(question,evidences,draft)
             trace['issues']=[i.model_dump(exclude_none=True) for i in payload.issues]

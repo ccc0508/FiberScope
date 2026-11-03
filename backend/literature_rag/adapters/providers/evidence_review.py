@@ -76,8 +76,10 @@ class DeepSeekEvidenceReviewer:
                     self.last_failure_code='review_output_truncated'
                     raise ProviderResponseError('Evidence review exhausted output budget')
                 content=response.choices[0].message.content
+                if self.diagnostic and self.diagnosis_version=='v2':
+                    return contract.parse_response(content)
                 return schema.model_validate_json(content)
-            except (ValidationError,TypeError,AttributeError,IndexError):
+            except (ValueError,TypeError,AttributeError,IndexError):
                 self.last_failure_code='review_response_invalid'
                 raise ProviderResponseError('Evidence review response failed its schema; provider details redacted') from None
         finally:self.last_latency_ms=round((perf_counter()-started)*1000)

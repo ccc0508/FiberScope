@@ -1,14 +1,16 @@
 """Question-derived coverage diagnosis. Evaluation answers never enter this contract."""
 from typing import Annotated, Literal
 import re
+import json
+from collections import Counter
 
-from pydantic import Field, StringConstraints, model_validator
+from pydantic import Field, StringConstraints, model_validator, PrivateAttr, ValidationError
 
 from literature_rag.application.evidence_review import (
     NonBlank, Ref, ReviewPayload, ReviewRejected, StrictModel, SYSTEM_PROMPT, normalized_quote,
 )
 
-VERSION = 'bounded-corrective-review-v2'
+VERSION = 'bounded-corrective-review-v2.1'
 Identifier = Annotated[str, StringConstraints(pattern=r'^R[1-9][0-9]?$')]
 
 
@@ -66,11 +68,7 @@ class DiagnosticPayload(ReviewPayload):
     requirements: list[Requirement] = Field(min_length=1, max_length=32)
     claim_checks: list[ClaimCheck] = Field(max_length=12)
 
-    @model_validator(mode='after')
-    def unique_ids(self):
-        if len({r.id for r in self.requirements}) != len(self.requirements):
-            raise ValueError('Duplicate requirement ID')
-        return self
+    _parse_errors: list[dict] = PrivateAttr(default_factory=list)
 
 
 DIAGNOSTIC_PROMPT = SYSTEM_PROMPT.replace(
@@ -112,6 +110,9 @@ For lookup replace null with {"query":"specific missing information, no invented
 Return issues plus requirements even when issues is empty. No scores or hidden reasoning.
 
 Also return claim_checks (up to 12): concise source/answer comparisons, NOT hidden reasoning.
+One draft claim MAY have multiple checks against different source refs or different quoted spans.
+For a source conflict, compare the SAME claim against BOTH sources; this is not a duplicate edit.
+Use short intact verbatim spans (prefer 8-120 characters), not reconstructed OCR sentences.
 The input lists critical_claim_indexes. Check EVERY listed original claim, and any other important
 mechanism/causal assertion that appears unsafe. For each, quote an actual supplied source and compare
 its OBJECT/STRUCTURAL LEVEL, CHANGE and CERTAINTY against the draft separately.
@@ -135,41 +136,89 @@ reconcile them. If one region lacks the number, say the check did not establish 
 '''
 
 
-def validate_diagnosis(payload, draft, evidences, context=None):
-    if not context and len(payload.requirements)>24:
-        raise ReviewRejected('too_many_initial_requirements')
-    refs = {e.ref for e in evidences}
-    by_ref={e.ref:e for e in evidences}
-    checked=set()
-    for c in payload.claim_checks:
-        if c.claim_index>=len(draft.claims) or c.claim_index in checked or c.source_ref not in refs:
-            raise ReviewRejected('invalid_claim_check_location')
-        checked.add(c.claim_index)
+
+def parse_response(content):
+    """Parse edit actions strictly; isolate malformed auxiliary diagnosis records."""
+    raw=json.loads(content)
+    if not isinstance(raw,dict) or set(raw)-{'issues','requirements','claim_checks'}:
+        raise ValueError('invalid_review_envelope')
+    # Never synthesize or renumber an edit. Invalid edit syntax still rejects the response.
+    edits=ReviewPayload.model_validate({'issues':raw.get('issues')})
+    errors=[];parts={}
+    for field,model,limit in [('requirements',Requirement,32),('claim_checks',ClaimCheck,12)]:
+        values=raw.get(field)
+        if not isinstance(values,list) or len(values)>limit:
+            errors.append(dict(component=field,reason_code='invalid_diagnosis_list'))
+            parts[field]=[];continue
+        parts[field]=[]
+        for index,value in enumerate(values):
+            try:parts[field].append(model.model_validate(value))
+            except ValidationError:
+                errors.append(dict(component=field,index=index,reason_code='invalid_diagnosis_item'))
+    payload=DiagnosticPayload.model_construct(issues=edits.issues,**parts)
+    payload._parse_errors=errors
+    return payload
+
+
+def inspect_diagnosis(payload,draft,evidences,context=None):
+    """Audit diagnostic records without authorizing edits; edits keep their own source checks."""
+    errors=list(payload._parse_errors)
+    by_ref={e.ref:e for e in evidences};checked=set();seen=set()
+    def error(component,code,**location):
+        errors.append(dict(component=component,reason_code=code,**location))
+    for index,c in enumerate(payload.claim_checks):
         quote=normalized_quote(c.source_quote)
-        if len(quote)<8 or quote not in normalized_quote(by_ref[c.source_ref].text):
-            raise ReviewRejected('claim_check_quote_not_in_evidence')
-        if any(i>=len(payload.issues) for i in c.issue_indexes):
-            raise ReviewRejected('invalid_claim_check_edit')
-        if any(payload.issues[i].claim_index not in (None,c.claim_index) for i in c.issue_indexes):
-            raise ReviewRejected('claim_check_edit_targets_different_claim')
-        if (c.verdict=='supported') != (not c.issue_indexes):
-            raise ReviewRejected('claim_check_needs_matching_action')
-    if not set(critical_claim_indexes(draft))<=checked:
-        raise ReviewRejected('critical_claim_check_missing')
+        key=(c.claim_index,c.source_ref,quote)
+        code=None
+        if c.claim_index>=len(draft.claims) or c.source_ref not in by_ref:
+            code='invalid_claim_check_location'
+        elif key in seen:code='duplicate_claim_check'
+        elif len(quote)<8 or quote not in normalized_quote(by_ref[c.source_ref].text):
+            code='claim_check_quote_not_in_evidence'
+        elif any(i>=len(payload.issues) for i in c.issue_indexes):code='invalid_claim_check_edit'
+        elif any(payload.issues[i].claim_index not in (None,c.claim_index) for i in c.issue_indexes):
+            code='claim_check_edit_targets_different_claim'
+        elif (c.verdict=='supported') != (not c.issue_indexes):code='claim_check_needs_matching_action'
+        if code:error('claim_checks',code,index=index,claim_index=c.claim_index)
+        else:checked.add(c.claim_index)
+        seen.add(key)
+    missing=sorted(set(critical_claim_indexes(draft))-checked)
+    if missing:error('claim_checks','critical_claim_check_missing',claim_indexes=missing)
+    if not payload.requirements:error('requirements','requirements_missing')
+    if not context and len(payload.requirements)>24:error('requirements','too_many_initial_requirements')
+    counts=Counter(r.id for r in payload.requirements)
+    expected={r['id']:r for r in (context or {}).get('requirements',[])}
+    ledger=[];used=set();lookups=0
     for r in payload.requirements:
-        if (not set(r.evidence_refs) <= refs or any(i >= len(draft.claims) for i in r.claim_indexes)
-                or any(i >= len(payload.issues) for i in r.issue_indexes)
-                or (r.lookup and r.lookup.document_ref not in refs)):
-            raise ReviewRejected('invalid_diagnosis_locations')
-    if sum(r.status == 'lookup' for r in payload.requirements) > 2:
-        raise ReviewRejected('too_many_lookup_requests')
-    linked = {i for r in payload.requirements for i in r.issue_indexes}
-    if linked != set(range(len(payload.issues))):
-        raise ReviewRejected('unmapped_diagnostic_edits')
-    if context:
-        expected = {r['id']: r['requirement'] for r in context['requirements']}
-        actual = {r.id: r.requirement for r in payload.requirements}
-        if any(actual.get(key) != value for key, value in expected.items()):
-            raise ReviewRejected('lost_prior_requirement')
-        if any(r.status == 'lookup' for r in payload.requirements):
-            raise ReviewRejected('second_review_cannot_request_lookup')
+        item=r.model_dump(exclude_none=True);code=None
+        if counts[r.id]>1:code='duplicate_requirement_id'
+        elif (not set(r.evidence_refs)<=set(by_ref) or any(i>=len(draft.claims) for i in r.claim_indexes)
+              or any(i>=len(payload.issues) for i in r.issue_indexes)
+              or (r.lookup and r.lookup.document_ref not in by_ref)):
+            code='invalid_diagnosis_locations'
+        elif r.id in expected and r.requirement!=expected[r.id]['requirement']:code='changed_prior_requirement'
+        elif context and r.status=='lookup':code='second_review_cannot_request_lookup'
+        elif r.status=='lookup' and lookups>=2:code='too_many_lookup_requests'
+        if code:
+            error('requirements',code,requirement_id=r.id)
+            item.update(status='unresolved',requirement=expected.get(r.id,{}).get('requirement',r.requirement),
+                evidence_refs=[v for v in r.evidence_refs if v in by_ref],
+                claim_indexes=[i for i in r.claim_indexes if i<len(draft.claims)],issue_indexes=[],
+                reason='该项诊断未通过结构或来源位置检查，尚未确认解决。')
+            item.pop('lookup',None)
+        elif r.status=='lookup':lookups+=1
+        if r.id not in used:ledger.append(item);used.add(r.id)
+    for rid,old in expected.items():
+        if rid not in used:
+            error('requirements','lost_prior_requirement',requirement_id=rid)
+            ledger.append(dict(id=rid,requirement=old['requirement'],status='unresolved',
+                evidence_refs=[],claim_indexes=[],issue_indexes=[],reason='后续审校未重新核对此项要求。'))
+    linked={i for r in ledger for i in r['issue_indexes']}
+    if linked!=set(range(len(payload.issues))):error('requirements','unmapped_diagnostic_edits')
+    return dict(valid=not errors,errors=errors,requirements=ledger)
+
+
+def validate_diagnosis(payload,draft,evidences,context=None):
+    """Strict audit for callers requiring completeness; the service uses the partial audit."""
+    audit=inspect_diagnosis(payload,draft,evidences,context)
+    if audit['errors']:raise ReviewRejected(audit['errors'][0]['reason_code'])

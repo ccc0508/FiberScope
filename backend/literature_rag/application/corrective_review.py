@@ -197,6 +197,37 @@ class TargetedEvidenceReader:
         return result
 
 
+
+def settled_requirements(round_trace):
+    """Carry accepted edits forward without claiming failed/partial edits were applied."""
+    requirements=deepcopy(round_trace.get('requirements',[]))
+    accepted=set(round_trace.get('accepted_issue_indexes',[])) if round_trace.get('accepted') else set()
+    issues=round_trace.get('issues',[])
+    edits={issues[i]['claim_index']:issues[i] for i in accepted if issues[i]['claim_index'] is not None}
+    mapping={};cursor=0
+    for old in range(len(round_trace['draft']['claims'])):
+        length=len(edits[old]['replacement_claims']) if old in edits else 1
+        mapping[old]=list(range(cursor,cursor+length));cursor+=length
+    appended={}
+    for index in sorted(accepted):
+        if issues[index]['claim_index'] is None:
+            size=len(issues[index]['replacement_claims'])
+            appended[index]=list(range(cursor,cursor+size));cursor+=size
+    for r in requirements:
+        original_issues=r['issue_indexes']
+        positions=[i for old in r['claim_indexes'] for i in mapping.get(old,[])]
+        positions += [i for idx in original_issues for i in appended.get(idx,[])]
+        r['claim_indexes']=sorted(set(positions))
+        if r['status']=='edit':
+            if original_issues and set(original_issues)<=accepted:
+                r.update(status='covered',reason='本轮已执行通过来源和引用检查的修订；语义正确性仍需核对。')
+            else:
+                r.update(status='unresolved',reason='该项修订未全部通过来源或引用检查，尚未确认解决。')
+        # Old edit indexes must never be interpreted as edits proposed by the next round.
+        r['issue_indexes']=[]
+    return requirements
+
+
 class CorrectiveReviewService:
     preserve_reference_ids = True
 
@@ -219,9 +250,10 @@ class CorrectiveReviewService:
         final = self.reviewer.review(question, evidences, draft)
         first = deepcopy(self.reviewer.last_trace)
         trace['rounds'].append(first)
-        requirements = first.get('requirements', [])
-        gaps = [r for r in requirements if r['status'] == 'lookup'] if first.get('diagnosis_valid') else []
-        if version=='v2' and first.get('diagnosis_valid'):
+        requirements = settled_requirements(first) if version=='v2' else first.get('requirements', [])
+        actions_valid=first.get('diagnosis_valid') or first.get('diagnosis_actions_validated')
+        gaps = [r for r in requirements if r['status'] == 'lookup'] if actions_valid else []
+        if version=='v2':
             from literature_rag.application.numeric_crosscheck import plan_crosscheck
             catalog=getattr(getattr(self.reader,'retriever',None),'body_context_catalog',None)
             requirements,gaps,trace['numeric_crosscheck']=plan_crosscheck(question,evidences,requirements,catalog)
@@ -252,7 +284,12 @@ class CorrectiveReviewService:
         rejected = {r['issue_index'] for r in last.get('rejected_issues', [])}
         accepted = set(last.get('accepted_issue_indexes', [])) if last.get('accepted') else set()
         # Keep first-round gaps if the second review could not finish or validate its ledger.
-        ledger = last.get('requirements', []) if len(trace['rounds'])>1 and last.get('diagnosis_valid') else requirements
+        if version=='v2':
+            ledger = settled_requirements(last) if len(trace['rounds'])>1 and last.get('diagnosis_actions_validated') else requirements
+            # This ledger is already settled; accepted indexes belong to different rounds.
+            rejected=set();accepted=set()
+        else:
+            ledger = last.get('requirements', []) if len(trace['rounds'])>1 and last.get('diagnosis_valid') else requirements
         unresolved = []
         for r in ledger:
             if (r['status'] in {'lookup', 'unresolved'} or rejected.intersection(r['issue_indexes'])
