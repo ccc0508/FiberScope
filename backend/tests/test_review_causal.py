@@ -1,10 +1,60 @@
 from dataclasses import replace
 import json
+import pytest
 from literature_rag.application import review_diagnosis_causal as c
 from tests.test_review_relation import relation
 from tests.test_review_relation_compact import shorten
 from tests.test_corrective_review import requirement
 from tests.test_evidence_review import DRAFT,SOURCES
+from tests.test_review_edit_binding import edit
+
+
+def mixed_target_payload(**changes):
+    check=shorten(relation(issue_index=0,verdict='overstated',repair_issue_indexes=[0]))
+    check.update(changes)
+    return c.parse_response(json.dumps(dict(issues=[edit()],requirements=[requirement('edit',issue_indexes=[0])],
+        claim_checks=[],relation_checks=[check],comparison_checks=[])))
+
+
+def test_redundant_original_pointer_is_bound_logged_and_idempotent():
+    p=mixed_target_payload()
+    before=p.relation_checks[0].model_dump()
+    c.prepare_payload(p,DRAFT,SOURCES)
+    after=p.relation_checks[0].model_dump()
+    assert after==dict(before,issue_index=None)
+    assert p._relation_target_repairs==[dict(index=0,reason_code='redundant_original_issue_index',before=before,after=after)]
+    c.prepare_payload(p,DRAFT,SOURCES)
+    assert len(p._relation_target_repairs)==1
+
+
+@pytest.mark.parametrize('changes',[
+    dict(replacement_index=0),dict(claim_index=None),dict(claim_index=999),dict(issue_index=999),
+    dict(repair_issue_indexes=[]),dict(repair_issue_indexes=[0,1]),dict(verdict='supported'),
+    dict(source_quote='An invented source quotation'),dict(source_ref='[99]'),
+])
+def test_ambiguous_or_invalid_targets_are_not_repaired(changes):
+    p=mixed_target_payload(**changes);before=p.relation_checks[0].model_dump()
+    c.prepare_payload(p,DRAFT,SOURCES)
+    assert p.relation_checks[0].model_dump()==before
+    assert not p._relation_target_repairs
+
+
+@pytest.mark.parametrize('field,value',[('original_text','wrong original'),('claim_index',1)])
+def test_pointer_repair_requires_exact_original_binding(field,value):
+    p=mixed_target_payload();setattr(p.issues[0],field,value)
+    c.prepare_payload(p,DRAFT,SOURCES)
+    assert p.relation_checks[0].issue_index==0 and not p._relation_target_repairs
+
+
+def test_repair_is_logged_in_service_without_new_call():
+    from tests.test_corrective_review import controller
+    p=mixed_target_payload()
+    service,provider,_=controller([p]);provider.diagnosis_version='v2_causal'
+    service.review('Q',SOURCES,DRAFT)
+    t=service.last_trace
+    assert t['api_calls']==1
+    assert t['rounds'][0]['relation_target_repairs'][0]['before']['issue_index']==0
+    assert t['rounds'][0]['relation_target_repairs'][0]['after']['issue_index'] is None
 
 
 def test_risk_targets_not_every_relation():

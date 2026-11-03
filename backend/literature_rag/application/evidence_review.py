@@ -201,6 +201,8 @@ class EvidenceReviewService:
                     contract.prepare_payload(payload,draft,evidences)
                     trace['comparison_checks']=[c.model_dump() for c in payload.comparison_checks]
                     trace['citation_only_repair_indexes']=sorted(payload._citation_repairs)
+                    if hasattr(payload,'_relation_target_repairs'):
+                        trace['relation_target_repairs']=payload._relation_target_repairs
                 trace['issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
                 trace['requirements']=[r.model_dump(exclude_none=True) for r in payload.requirements]
                 if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal'}:
