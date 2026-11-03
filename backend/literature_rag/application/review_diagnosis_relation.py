@@ -117,7 +117,7 @@ def validate_edit_semantics(payload,index,draft,evidences):
             raise ReviewRejected('replacement_relation_not_verified')
 
 
-def inspect_diagnosis(payload,draft,evidences,context=None):
+def inspect_diagnosis(payload,draft,evidences,context=None,*,edit_validator=None):
     audit=bound.inspect_diagnosis(payload,draft,evidences,context)
     checked=set()
     for i,c in enumerate(payload.relation_checks):
@@ -127,7 +127,7 @@ def inspect_diagnosis(payload,draft,evidences,context=None):
     missing=[i for i,c in enumerate(draft.claims) if is_relation(c.text) and i not in checked]
     if missing:audit['errors'].append(dict(component='relation_checks',reason_code='original_relation_check_missing',claim_indexes=missing))
     for i in range(len(payload.issues)):
-        try:validate_edit_semantics(payload,i,draft,evidences)
+        try:(edit_validator or validate_edit_semantics)(payload,i,draft,evidences)
         except ReviewRejected as e:audit['errors'].append(dict(component='relation_checks',issue_index=i,reason_code=e.code))
     audit['valid']=not audit['errors']
     return audit

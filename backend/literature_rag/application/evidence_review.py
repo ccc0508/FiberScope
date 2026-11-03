@@ -194,9 +194,14 @@ class EvidenceReviewService:
             if diagnostic:
                 payload=self.provider.review(question,evidences,draft,context=context,
                     timeout_seconds=min(self.provider.timeout_seconds,remaining) if remaining is not None else None)
+                if hasattr(contract,'prepare_payload'):
+                    trace['model_issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
+                    contract.prepare_payload(payload,draft,evidences)
+                    trace['comparison_checks']=[c.model_dump() for c in payload.comparison_checks]
+                    trace['citation_only_repair_indexes']=sorted(payload._citation_repairs)
                 trace['issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
                 trace['requirements']=[r.model_dump(exclude_none=True) for r in payload.requirements]
-                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact'}:
+                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison'}:
                     trace['claim_checks']=[r.model_dump() for r in payload.claim_checks]
                     if hasattr(payload,'relation_checks'):
                         trace['relation_checks']=[r.model_dump() for r in payload.relation_checks]
