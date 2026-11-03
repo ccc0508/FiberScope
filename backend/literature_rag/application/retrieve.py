@@ -63,6 +63,7 @@ class RetrievalService:
         self.last_context_diagnostics: dict = {}
         self.last_query_diagnostics: dict = {}
         self.last_query_embedding_calls: list[dict] = []
+        self.last_candidate_evidences: list[Evidence] = []
 
     def _search(self, question, min_score, branch):
         started = perf_counter()
@@ -107,6 +108,7 @@ class RetrievalService:
         self.last_rerank_diagnostics={}
         self.last_query_diagnostics={}
         self.last_query_embedding_calls=[]
+        self.last_candidate_evidences=[]
         if not isinstance(question, str):
             raise InputError("question must be a string")
         question = question.strip()
@@ -204,6 +206,7 @@ class RetrievalService:
                     self.last_rerank_diagnostics.update(candidate_order='RRF ranks after cross-query deduplication',
                         input_policy='Unmodified user question and full source chunks; candidate pool includes a bounded query rewrite.',
                         vector_rank_note='vector_rank denotes input position in the fused candidate pool, not original-query vector rank')
+        self.last_candidate_evidences = list(evidences)
         evidences = evidences[:top_k]
         self.last_seed_evidences = list(evidences)
         if self.body_context_catalog is None:

@@ -158,9 +158,12 @@ class ChromaVectorStore:
         self,
         query_embedding: Sequence[float],
         top_k: int,
+        *, document_ids: Sequence[str] | None = None,
     ) -> list[VectorMatch]:
         if top_k <= 0:
             raise ValueError("top_k must be positive")
+        if document_ids is not None and not document_ids:
+            return []
         normalized_query = _finite_vector(
             query_embedding,
             self.dimensions,
@@ -176,6 +179,7 @@ class ChromaVectorStore:
                 query_embeddings=[normalized_query],
                 n_results=min(top_k, count),
                 include=["distances"],
+                **({'where': {'document_id': {'$in': list(document_ids)}}} if document_ids is not None else {}),
             )
             ids = result["ids"][0]
             distances = (result["distances"] or [[]])[0]

@@ -117,7 +117,7 @@ class ReviewRejected(ValueError):
         super().__init__(code)
 
 
-def apply_edits(payload, draft, evidences, visual_root=None):
+def apply_edits(payload, draft, evidences, visual_root=None, *, allow_sparse_refs=False):
     """Mechanical provenance and edit checks; not a claim of semantic correctness."""
     by_ref={e.ref:e for e in evidences};edits={};appended=[];verified=[]
     for issue in payload.issues:
@@ -160,7 +160,7 @@ def apply_edits(payload, draft, evidences, visual_root=None):
     answer='\n'.join(c.text+' '+' '.join(c.citation_refs) for c in claims)
     candidate=GeneratedAnswer(answer,claims)
     # The original validator is retained, including its historical formula-bracket behavior.
-    CitationValidator().validate(candidate,evidences)
+    CitationValidator().validate(candidate,evidences,allow_sparse_refs=allow_sparse_refs)
     return candidate,verified
 
 
@@ -171,18 +171,32 @@ class EvidenceReviewService:
         self.last_trace=dict(enabled=True,version=VERSION,status='not_run',api_calls=0,
             guarantee='source-location-and-structure-checks-only; semantic judgment is fallible')
 
-    def review(self,question,evidences,draft):
+    def review(self,question,evidences,draft,*,context=None):
         trace=dict(enabled=True,version=VERSION,status='started',api_calls=0,
             draft=asdict(draft),draft_sha256=checksum(asdict(draft)),
             evidence_sha256=checksum([asdict(e) for e in evidences]),question_sha256=sha256(question.encode()).hexdigest(),
             issues=[],accepted=False,usage=None,model_info=None,
             guarantee='source-location-and-structure-checks-only; semantic judgment is fallible')
         self.last_trace=trace
-        if self.deadline is not None and self.deadline-perf_counter()<getattr(self.provider,'timeout_seconds',120)+5:
+        diagnostic=getattr(self.provider,'diagnostic',False)
+        if diagnostic:
+            from literature_rag.application.review_diagnosis import VERSION as DIAGNOSIS_VERSION
+            trace['version']=DIAGNOSIS_VERSION
+        remaining=self.deadline-perf_counter()-5 if self.deadline is not None else None
+        required=15 if diagnostic else getattr(self.provider,'timeout_seconds',120)
+        if remaining is not None and remaining<required:
             trace.update(status='skipped',reason_code='insufficient_request_time_budget')
             return draft
         try:
-            payload=self.provider.review(question,evidences,draft)
+            if diagnostic:
+                payload=self.provider.review(question,evidences,draft,context=context,
+                    timeout_seconds=min(self.provider.timeout_seconds,remaining) if remaining is not None else None)
+                from literature_rag.application.review_diagnosis import validate_diagnosis
+                trace['requirements']=[r.model_dump(exclude_none=True) for r in payload.requirements]
+                validate_diagnosis(payload,draft,evidences,context)
+                trace['diagnosis_valid']=True
+            else:
+                payload=self.provider.review(question,evidences,draft)
             trace['issues']=[i.model_dump(exclude_none=True) for i in payload.issues]
             # All edit targets refer to the original draft. Verify independent edits
             # separately so one noisy source quote does not discard unrelated fixes.
@@ -191,7 +205,7 @@ class EvidenceReviewService:
                 try:
                     if issue.claim_index is not None and issue.claim_index in seen:
                         raise ReviewRejected('duplicate_original_claim_target')
-                    apply_edits(ReviewPayload(issues=[issue]),draft,evidences,self.visual_root)
+                    apply_edits(ReviewPayload(issues=[issue]),draft,evidences,self.visual_root,allow_sparse_refs=diagnostic)
                 except ReviewRejected as error:
                     rejected.append(dict(issue_index=index,reason_code=error.code));continue
                 except CitationValidationError as error:
@@ -203,7 +217,7 @@ class EvidenceReviewService:
             if payload.issues and not accepted:
                 trace.update(status='rejected',reason_code='no_independent_edit_verified')
                 return draft
-            candidate,verified=apply_edits(ReviewPayload(issues=accepted),draft,evidences,self.visual_root)
+            candidate,verified=apply_edits(ReviewPayload(issues=accepted),draft,evidences,self.visual_root,allow_sparse_refs=diagnostic)
         except ReviewRejected as error:
             trace.update(status='rejected',reason_code=error.code)
             return draft

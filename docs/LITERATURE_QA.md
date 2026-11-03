@@ -13,7 +13,7 @@
 - 服务端长期保存问答历史及全部检索证据，所有访问者可查看与导出；用户评价仍限原提交浏览器修改。支持JSONL导出和独立备份，见[问答记录说明](QA_HISTORY.md)。
 - 文献数据页可直接解析上传的PDF并保存候选数据，支持原文对照、修改/确认/驳回、审核版本和已确认数据导出，不经过向量检索；见[提取与审核说明](LITERATURE_EXTRACTION.md)。
 
-当前本机默认配置（2026-11-02）：1篇论文、14页、113个MinerU原文块、20条表格行及11组图像（Figure 1—9、Table 1—2）；Embedding为Qwen3-VL-Embedding、2560维，DeepSeek Flash High接收文字与原图。正文/表格/公式小节补全、表格关联、原问题+改写双路查询、BGE文字重排均启用；回答指引关闭。已增加一次DeepSeek证据审校，记录原稿及有依据的最小修订；失败或时间不足时保留原稿，不能将审校视为准确性保证。原BGE与Qwen纯文本库保留，历史评测不覆盖。详见[证据审校结果与开销](QA_EVIDENCE_REVIEW_RESULT_20261102.md)、[默认图文启用记录](QA_VISUAL_ACTIVATION_20261102.md)和[图片链路实现](QA_VISUAL_INTEGRATION_20261102.md)。
+当前本机默认配置（2026-11-03）：1篇论文、14页、113个MinerU原文块、20条表格行及11组图像（Figure 1—9、Table 1—2）；Embedding为Qwen3-VL-Embedding、2560维，DeepSeek Flash High接收文字与原图。正文/表格/公式小节补全、表格关联、原问题+改写双路查询、BGE文字重排均启用；回答指引关闭。证据审校已扩展为有限纠正：先检查需求覆盖，对已有依据的问题直接修订，对明确的当前证据缺口最多补查一轮、再审校一次；失败或时间不足时保留最近的有效回答并显示未解决项。不能将流程完成视为准确性保证。原BGE与Qwen纯文本库保留，历史评测不覆盖。详见[有限纠正实现与验证](QA_CORRECTIVE_REVIEW_20261103.md)、[原证据审校结果与开销](QA_EVIDENCE_REVIEW_RESULT_20261102.md)、[默认图文启用记录](QA_VISUAL_ACTIVATION_20261102.md)和[图片链路实现](QA_VISUAL_INTEGRATION_20261102.md)。
 
 文献覆盖范围以页面列出的文件为准。引用可追溯不等于结论已通过独立语义审查。本机私有配置与服务器独立，Git推送不会自动更新服务器的索引和模型配置。
 
@@ -43,8 +43,9 @@
 | LITERATURE_TIMEOUT_SECONDS | 单次子进程总时限，5—300秒，默认90秒；当前本机300秒 |
 | RAG_EMBEDDING_* | 与索引一致的provider、模型、维度、密钥和服务地址 |
 | RAG_LLM_* | 回答模型及服务配置，支持已有openai/deepseek适配器 |
-| RAG_EVIDENCE_REVIEW_ENABLED | 可选DeepSeek一次证据审校，代码默认false，本地当前已启用；不重新检索 |
-| RAG_EVIDENCE_REVIEW_TIMEOUT_SECONDS | 审校请求时间上限，默认120秒；剩余整次请求预算不足则跳过并保留原稿 |
+| RAG_EVIDENCE_REVIEW_ENABLED | 可选DeepSeek证据审校，代码默认false，本地当前已启用 |
+| RAG_CORRECTIVE_REVIEW_ENABLED | 需求诊断及最多一轮同篇补查，最多两次审校；要求审校和重排已启用，代码默认false，本地当前true；关闭后回到原一次审校 |
+| RAG_EVIDENCE_REVIEW_TIMEOUT_SECONDS | 审校请求时间上限，默认120秒；新有限纠正模式会按剩余问答预算缩短请求超时，预算不足则停止并保留最近有效回答 |
 | RAG_EVIDENCE_REVIEW_MAX_OUTPUT_TOKENS | 审校输出上限，默认32768 Token，包含推理与最终审校结果；截断、无效结果或编辑校验失败均保留原稿并记录原因 |
 | RAG_TOP_K / RAG_MIN_SCORE | 检索上限与相似度阈值，沿用原RAG规则 |
 | RAG_VISUAL_RETRIEVAL_ENABLED | 开启同空间的Qwen图像召回和原图输入，要求已建好图像库及匹配的DeepSeek配置 |

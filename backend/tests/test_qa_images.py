@@ -51,3 +51,17 @@ def test_uncited_model_input_images_are_kept_and_included_in_database_snapshot_b
     assert backup_answer_images(database,history,destination)==1
     assert (destination/'qa-images'/(assets[0].sha256+'.png')).read_bytes()==PNG
     assert json.loads((destination/'images.json').read_text(encoding='utf-8'))['sha256']==[assets[0].sha256]
+
+
+def test_first_round_images_survive_when_uncited_evidence_is_evicted(tmp_path):
+    import json,sqlite3
+    source=tmp_path/'library';source.mkdir();_,_,assets=fixture(source)
+    result=dict(citations=[],retrieved_evidence=[],evidence_review=dict(
+        initial_evidence=[dict(visual_assets=[asdict(assets[0])])],final_evidence=[]))
+    history=tmp_path/'history';cache_answer_images(result,source,history)
+    database=tmp_path/'backup.sqlite3'
+    with sqlite3.connect(database) as conn:
+        conn.execute('CREATE TABLE questions(result_json TEXT)')
+        conn.execute('INSERT INTO questions VALUES (?)',(json.dumps(result),))
+    assert backup_answer_images(database,history,tmp_path/'backup.assets') == 1
+    assert cached_image_path(history,assets[0].sha256).read_bytes() == PNG

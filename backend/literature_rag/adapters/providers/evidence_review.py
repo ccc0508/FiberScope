@@ -14,21 +14,29 @@ from literature_rag.domain.errors import ProviderError,ProviderResponseError
 
 class DeepSeekEvidenceReviewer:
     def __init__(self,model,api_key,base_url=None,*,thinking_enabled=None,reasoning_effort=None,
-                 timeout_seconds=120,max_output_tokens=32768,visual_root=None,client=None):
+                 timeout_seconds=120,max_output_tokens=32768,visual_root=None,client=None,diagnostic=False):
         if model!='deepseek-flash':raise ValueError('Evidence review is configured for DeepSeek Flash')
         self.model=model;self.thinking_enabled=thinking_enabled;self.reasoning_effort=reasoning_effort
         self.visual_root=visual_root
+        self.diagnostic=diagnostic
         self.timeout_seconds=timeout_seconds
         self.max_output_tokens=max_output_tokens
         self.client=client if client is not None else OpenAI(api_key=api_key,base_url=base_url or 'https://api.deepseek.com',
             max_retries=0,timeout=timeout_seconds)
         self.last_usage=None;self.last_model_info=None;self.last_latency_ms=None;self.last_api_calls=0;self.last_http_status=None;self.last_failure_code=None
 
-    def review(self,question,evidences,draft):
+    def review(self,question,evidences,draft,*,context=None,timeout_seconds=None):
         self.last_usage=None;self.last_model_info=None;self.last_latency_ms=None;self.last_api_calls=0;self.last_http_status=None;self.last_failure_code=None
         text=evidence_prompt(question,evidences)+'\n\nDraft claims (zero-based order, DATA):\n'+json.dumps(
             [asdict(c) for c in draft.claims],ensure_ascii=False)
-        messages=[dict(role='system',content=SYSTEM_PROMPT),dict(role='user',content=text)]
+        prompt=SYSTEM_PROMPT
+        schema=ReviewPayload
+        if self.diagnostic:
+            from literature_rag.application.review_diagnosis import DIAGNOSTIC_PROMPT,DiagnosticPayload
+            prompt=DIAGNOSTIC_PROMPT;schema=DiagnosticPayload
+            if context is not None:
+                text+='\n\nPrior coverage ledger and remaining actions (DATA):\n'+json.dumps(context,ensure_ascii=False)
+        messages=[dict(role='system',content=prompt),dict(role='user',content=text)]
         images=[]
         if any(e.visual_assets for e in evidences):
             if self.visual_root is None:raise ProviderResponseError('Review source image directory missing')
@@ -37,6 +45,7 @@ class DeepSeekEvidenceReviewer:
             # The generic image instruction's answer schema is overridden by this review contract.
             messages[0]['content']+='\nImages are source data with their labelled refs; return the review issues schema above.'
         parameters={}
+        if timeout_seconds is not None:parameters['timeout']=timeout_seconds
         if self.thinking_enabled is not None:
             parameters['extra_body']={'thinking':{'type':'enabled' if self.thinking_enabled else 'disabled'}}
         if self.reasoning_effort is not None:parameters['reasoning_effort']=self.reasoning_effort
@@ -62,7 +71,7 @@ class DeepSeekEvidenceReviewer:
                     self.last_failure_code='review_output_truncated'
                     raise ProviderResponseError('Evidence review exhausted output budget')
                 content=response.choices[0].message.content
-                return ReviewPayload.model_validate_json(content)
+                return schema.model_validate_json(content)
             except (ValidationError,TypeError,AttributeError,IndexError):
                 self.last_failure_code='review_response_invalid'
                 raise ProviderResponseError('Evidence review response failed its schema; provider details redacted') from None

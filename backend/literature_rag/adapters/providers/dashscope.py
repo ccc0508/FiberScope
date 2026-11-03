@@ -48,7 +48,7 @@ class DashScopeEmbedder:
         self.last_usage = None
         self.last_calls = []
 
-    def _request(self, contents, fusion=False):
+    def _request(self, contents, fusion=False, *, timeout_seconds=None):
         started = perf_counter()
         request = dict(model=self.model_name, input=dict(contents=contents),
                        parameters=dict(dimension=self.dimensions, enable_fusion=fusion))
@@ -60,7 +60,8 @@ class DashScopeEmbedder:
         try:
             try:
                 response = self.client.post(self.endpoint, json=request,
-                    headers={'Authorization': 'Bearer '+self.api_key, 'Content-Type': 'application/json'})
+                    headers={'Authorization': 'Bearer '+self.api_key, 'Content-Type': 'application/json'},
+                    **({'timeout':timeout_seconds} if timeout_seconds is not None else {}))
             except Exception:
                 call['status'] = 'request_failed'
                 raise ProviderError('DashScope embedding transport failed; provider details redacted') from None
@@ -112,7 +113,10 @@ class DashScopeEmbedder:
             raise ValueError('embedding text must be nonempty')
         return self._embed([dict(text=t) for t in texts], 20)
 
-    def embed_query(self, text):
+    def embed_query(self, text, *, timeout_seconds=None):
+        if timeout_seconds is not None:
+            self.last_calls=[];self.last_usage=None
+            return self._request([dict(text=text)],timeout_seconds=timeout_seconds)[0]
         return self.embed_documents([text])[0]
 
     def embed_images(self, paths):
