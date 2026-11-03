@@ -111,3 +111,14 @@ def validate_diagnosis(payload, draft, evidences, context=None):
             raise ReviewRejected('lost_prior_requirement')
         if any(r.status == 'lookup' for r in payload.requirements):
             raise ReviewRejected('second_review_cannot_request_lookup')
+
+
+def diagnosis_contract(version='v1'):
+    """Keep the previously shipped protocol as default; v2 is an opt-in experiment."""
+    if version=='v1':
+        import sys
+        return sys.modules[__name__]
+    if version=='v2':
+        from . import review_diagnosis_v2
+        return review_diagnosis_v2
+    raise ValueError('Unknown corrective review version')

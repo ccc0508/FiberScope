@@ -31,6 +31,8 @@ def configuration_snapshot(env_file: Path):
     if settings.corrective_review_enabled:
         sources += ['application/review_diagnosis.py','application/corrective_review.py',
                     'adapters/chroma/vector_store.py']
+        if settings.corrective_review_version=='v2':
+            sources += ['application/review_diagnosis_v2.py','application/numeric_crosscheck.py']
     sources=list(dict.fromkeys(sources))
     fingerprint = sha256(b'\n'.join((root / source).read_bytes() for source in sources)).hexdigest()
     result = {**{key: getattr(settings, key) for key in (
@@ -139,14 +141,17 @@ def configuration_snapshot(env_file: Path):
             failure_policy='retain_validated_original_draft_and_record_failure',
             guarantee='no_guarantee_of_semantic_correctness')
     if settings.corrective_review_enabled:
-        from .application.review_diagnosis import VERSION,DIAGNOSTIC_PROMPT
-        result['evidence_review'].update(version=VERSION,max_review_calls=2,
-            instructions_sha256=sha256(DIAGNOSTIC_PROMPT.encode()).hexdigest(),
+        from .application.review_diagnosis import diagnosis_contract
+        contract=diagnosis_contract(settings.corrective_review_version)
+        result['evidence_review'].update(version=contract.VERSION,max_review_calls=2,
+            instructions_sha256=sha256(contract.DIAGNOSTIC_PROMPT.encode()).hexdigest(),
             input='question_requirement_coverage_draft_and_actual_evidence; bounded_same_document_supplement',
             retrieval_calls='at_most_two_targeted_actions_in_one_round',
             max_supplement_rounds=1,max_lookup_actions=2,max_new_sources_per_action=2,
             supplement_time_seconds=40,reference_policy='retain_existing_identity_append_new_refs',
             no_gold_at_runtime=True,corrective_review_enabled=True)
+        if settings.corrective_review_version=='v2':
+            result['evidence_review']['numeric_crosscheck']='numeric-region-crosscheck-v1; shared two-action budget'
     return result
 
 
