@@ -7,7 +7,19 @@ DiagnosticPayload = prior.DiagnosticPayload
 parse_response = prior.parse_response
 critical_claim_indexes = prior.critical_claim_indexes
 
-DIAGNOSTIC_PROMPT = prior.DIAGNOSTIC_PROMPT + '''
+# Update the primary example itself, rather than contradicting it with an addendum.
+_OLD_ISSUE_START = '{"issues": [{"claim_index": 0, "category":'
+_BOUND_ISSUE_START = ('{"issues": [{"claim_index": 0, '
+    '"original_text": "exact complete text of input draft claim 0", "category":')
+if prior.DIAGNOSTIC_PROMPT.count(_OLD_ISSUE_START) != 1:
+    raise RuntimeError('Review issue example changed; update the bound output contract')
+
+DIAGNOSTIC_PROMPT = prior.DIAGNOSTIC_PROMPT.replace(
+    _OLD_ISSUE_START, _BOUND_ISSUE_START,
+).replace(
+    'For issues return ONLY this JSON structure (max 8 issues):',
+    'The issues field uses this JSON structure (max 8 issues); also include the diagnostic fields below:',
+) + '''
 Edit target binding is mandatory for EVERY issue:
 For replacement, splitting or deletion, include "original_text": the EXACT complete text field of the
 claim at claim_index in THIS request's draft (zero-based). Copy it verbatim, including punctuation,
@@ -17,6 +29,12 @@ All indexes refer to the input draft, never to intermediate replacements or a pr
 When a claim_check links an issue, it must point to that same original claim, unless the issue appends
 a genuinely missing part. Conflicting indexes or a missing/mismatched original_text reject that edit.
 Example target fields: "claim_index":0,"original_text":"exact text of the first input claim".
+For deletion, keep both target fields and set replacement_claims to []. For splitting, keep both
+target fields and put all replacement sentences in that issue's replacement_claims.
+For append, the target fields are exactly "claim_index":null,"original_text":null.
+Before returning JSON, check EVERY issues item contains original_text (including explicit null for
+append), and every non-null original_text exactly matches the indexed input claim. Do not output this
+format checklist or invent an issue when none is needed. Never omit the field to save tokens.
 An unchanged claim needs no issue. Keep all existing source-basis and citation requirements.
 '''
 
