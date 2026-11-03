@@ -1,0 +1,231 @@
+{
+  "scope": "Functional smoke checks, includes every attempt; no Jev or quality score",
+  "results": [
+    {
+      "attempt": "comparison-citations-20261103-01",
+      "case_id": "PFI2-023",
+      "result_sha256": "86772425ad767afa6660a4007cdccbe61aeabbab8393c349b76ecd8fb6e86eb3",
+      "answer": "正文3.4报告，针叶木（softwood fibers）的O(6)H···O(3′)分子间氢键含量与CI-XI的Pearson相关系数为0.912（p<0.05）。 [1]\n该文摘要则报告针叶木的同一Pearson相关系数为0.888（p<0.05），与正文3.4的0.912不一致。 [2]",
+      "status": "incomplete",
+      "usage": {
+        "prompt_tokens": 12868,
+        "reasoning_tokens": 9909,
+        "total_tokens": 24197,
+        "cached_tokens": 2560,
+        "completion_tokens": 11329
+      },
+      "latency_ms": 63908,
+      "rounds": [
+        {
+          "status": "failed",
+          "reason_code": "review_response_invalid",
+          "comparison_checks": null,
+          "citation_only_repair_indexes": null,
+          "diagnosis_errors": null,
+          "rejected_issues": null,
+          "usage": {
+            "prompt_tokens": 12868,
+            "completion_tokens": 11329,
+            "total_tokens": 24197,
+            "reasoning_tokens": 9909,
+            "cached_tokens": 2560
+          }
+        }
+      ]
+    },
+    {
+      "attempt": "comparison-citations-20261103-01",
+      "case_id": "PFI2-032",
+      "result_sha256": "60d0d3db4f0bcc6c57ba2c11ba56756f9f0d2bb624636715eb5123f4da05f8bf",
+      "answer": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\n在PFI精磨过程中，O(6)H···O(3′)氢键相对含量（图8纵轴为%）与CI-XI的Pearson相关系数，结果部分报告针叶木0.912、阔叶木0.889（p < 0.05）；但同一论文摘要报告针叶木0.888、阔叶木0.889（p < 0.05），针叶木数值不一致，不能择一当作唯一值。 [2] [5] [7]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。 [4]\n所提供证据只支持基于CI-XI大致推测O(6)H···O(3′)氢键含量的趋势，未见由CI-XI直接计算氢键含量的公式或定量换算关系；相关分析不能等同于可直接计算。 [4]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+      "status": "incomplete",
+      "usage": {
+        "reasoning_tokens": 37983,
+        "prompt_tokens": 23625,
+        "total_tokens": 67908,
+        "cached_tokens": 10752,
+        "completion_tokens": 44283
+      },
+      "latency_ms": 225938,
+      "rounds": [
+        {
+          "status": "revised",
+          "reason_code": null,
+          "comparison_checks": [],
+          "citation_only_repair_indexes": [],
+          "diagnosis_errors": [
+            {
+              "component": "claim_checks",
+              "reason_code": "claim_check_quote_not_in_evidence",
+              "index": 0,
+              "claim_index": 0
+            },
+            {
+              "component": "claim_checks",
+              "reason_code": "claim_check_quote_not_in_evidence",
+              "index": 5,
+              "claim_index": 4
+            },
+            {
+              "component": "relation_checks",
+              "index": 0,
+              "reason_code": "invalid_relation_source_or_target"
+            },
+            {
+              "component": "relation_checks",
+              "reason_code": "original_relation_check_missing",
+              "claim_indexes": [
+                0
+              ]
+            }
+          ],
+          "rejected_issues": [],
+          "usage": {
+            "prompt_tokens": 12816,
+            "completion_tokens": 24335,
+            "total_tokens": 37151,
+            "reasoning_tokens": 20997,
+            "cached_tokens": 2560
+          }
+        },
+        {
+          "status": "revised",
+          "reason_code": null,
+          "comparison_checks": [
+            {
+              "claim_index": 1,
+              "original_text": "O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。",
+              "comparability": "same_scope",
+              "statement_supported": false,
+              "reason": "同一O(6)H···O(3′)含量–CI-XI关系、同类纤维与PFI精磨条件；结果0.912/0.889与摘要0.888/0.889在针叶木不一致。",
+              "facts": [
+                {
+                  "fact": "结果部分报告针叶木0.912、阔叶木0.889",
+                  "source_ref": "[2]",
+                  "source_quote": "It was 0.912 (p < 0.05) for softwood fibers and 0.889"
+                },
+                {
+                  "fact": "摘要报告针叶木0.888、阔叶木0.889",
+                  "source_ref": "[7]",
+                  "source_quote": "0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers"
+                }
+              ]
+            }
+          ],
+          "citation_only_repair_indexes": [],
+          "diagnosis_errors": [
+            {
+              "component": "requirements",
+              "index": 1,
+              "reason_code": "invalid_diagnosis_item"
+            },
+            {
+              "component": "requirements",
+              "reason_code": "lost_prior_requirement",
+              "requirement_id": "R2"
+            },
+            {
+              "component": "comparison_checks",
+              "claim_index": 1,
+              "reason_code": "comparison_statement_unsupported"
+            }
+          ],
+          "rejected_issues": [],
+          "usage": {
+            "prompt_tokens": 10809,
+            "completion_tokens": 19948,
+            "total_tokens": 30757,
+            "reasoning_tokens": 16986,
+            "cached_tokens": 8192
+          }
+        }
+      ]
+    },
+    {
+      "attempt": "comparison-citations-20261103-02",
+      "case_id": "PFI2-023",
+      "result_sha256": "16238587a4c084d481b439c1196ec2f4b59730babe3e7a3cdf3511a35ddb4639",
+      "answer": "正文3.4报告，针叶木（softwood fibers）的O(6)H···O(3′)分子间氢键含量与CI-XI的Pearson相关系数为0.912（p<0.05）。 [1]\n该文摘要则报告针叶木的同一Pearson相关系数为0.888（p<0.05），与正文3.4的0.912不一致。 [2]",
+      "status": "incomplete",
+      "usage": {
+        "completion_tokens": 7815,
+        "cached_tokens": 12672,
+        "total_tokens": 20683,
+        "prompt_tokens": 12868,
+        "reasoning_tokens": 6492
+      },
+      "latency_ms": 43260,
+      "rounds": [
+        {
+          "status": "failed",
+          "reason_code": "review_response_invalid",
+          "comparison_checks": null,
+          "citation_only_repair_indexes": null,
+          "diagnosis_errors": null,
+          "rejected_issues": null,
+          "usage": {
+            "prompt_tokens": 12868,
+            "completion_tokens": 7815,
+            "total_tokens": 20683,
+            "reasoning_tokens": 6492,
+            "cached_tokens": 12672
+          }
+        }
+      ]
+    },
+    {
+      "attempt": "comparison-citations-20261103-03",
+      "case_id": "PFI2-023",
+      "result_sha256": "57ebd6e601420eea0ec3829313903714bd0f62373d8f803cd86fe7fb90f88aac",
+      "answer": "正文3.4报告，针叶木（softwood fibers）的O(6)H···O(3′)分子间氢键含量与CI-XI的Pearson相关系数为0.912（p<0.05）。 [1]\n该文摘要则报告针叶木的同一Pearson相关系数为0.888（p<0.05），与正文3.4的0.912不一致。 [2] [1]",
+      "status": "completed",
+      "usage": {
+        "total_tokens": 31368,
+        "prompt_tokens": 12868,
+        "completion_tokens": 18500,
+        "cached_tokens": 12672,
+        "reasoning_tokens": 17211
+      },
+      "latency_ms": 106801,
+      "rounds": [
+        {
+          "status": "revised",
+          "reason_code": null,
+          "comparison_checks": [
+            {
+              "claim_index": 1,
+              "original_text": "该文摘要则报告针叶木的同一Pearson相关系数为0.888（p<0.05），与正文3.4的0.912不一致。",
+              "comparability": "same_scope",
+              "statement_supported": true,
+              "reason": "两处均针对针叶木的O(6)H···O(3′)氢键含量与CI-XI的Pearson相关并报告r与p<0.05，但正文0.912与摘要0.888不同，属同文内部数值冲突。",
+              "facts": [
+                {
+                  "fact": "正文3.4报告针叶木的Pearson相关系数为0.912（p<0.05）",
+                  "source_ref": "[1]",
+                  "source_quote": "It was 0.912 (p < 0.05) for softwood fibers"
+                },
+                {
+                  "fact": "摘要报告针叶木的同一Pearson相关系数为0.888（p<0.05）",
+                  "source_ref": "[2]",
+                  "source_quote": "The Pearson correlation coeficient between them was 0.888 (p < 0.05) for softwood fibers"
+                }
+              ]
+            }
+          ],
+          "citation_only_repair_indexes": [
+            0
+          ],
+          "diagnosis_errors": [],
+          "rejected_issues": [],
+          "usage": {
+            "prompt_tokens": 12868,
+            "completion_tokens": 18500,
+            "total_tokens": 31368,
+            "reasoning_tokens": 17211,
+            "cached_tokens": 12672
+          }
+        }
+      ]
+    }
+  ]
+}
