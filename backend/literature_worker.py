@@ -84,7 +84,8 @@ def main():
             reasoning_effort=settings.llm_reasoning_effort,timeout_seconds=settings.evidence_review_timeout_seconds,
             max_output_tokens=settings.evidence_review_max_output_tokens,
             visual_root=root if settings.visual_retrieval_enabled else None,
-            diagnostic=settings.corrective_review_enabled,diagnosis_version=settings.corrective_review_version)
+            diagnostic=settings.corrective_review_enabled,diagnosis_version=settings.corrective_review_version,
+            diagnostics_dir=Path(__file__).resolve().parents[1]/'.rag-data'/'review-diagnostics')
         budget=body.get('request_timeout_seconds',300)
         budget=budget if type(budget) is int and 5<=budget<=300 else 300
         evidence_reviewer=EvidenceReviewService(review_provider,visual_root=root if settings.visual_retrieval_enabled else None,

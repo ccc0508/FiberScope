@@ -1,0 +1,233 @@
+{
+  "version": "review-outcome-v1",
+  "rounds": [
+    {
+      "round": 1,
+      "status": "revised",
+      "stage": "diagnosis_validation",
+      "reason_code": null,
+      "response_validation": [],
+      "failure_artifact": null
+    },
+    {
+      "round": 2,
+      "status": "revised",
+      "stage": "diagnosis_validation",
+      "reason_code": null,
+      "response_validation": [],
+      "failure_artifact": null
+    }
+  ],
+  "findings": [
+    {
+      "round": 1,
+      "issue_index": 0,
+      "claim_index": 1,
+      "category": "measurement",
+      "status": "deferred",
+      "semantic_verification": "not_independently_verified"
+    },
+    {
+      "round": 1,
+      "issue_index": 1,
+      "claim_index": 3,
+      "category": "coverage",
+      "status": "applied_present",
+      "semantic_verification": "not_independently_verified"
+    },
+    {
+      "round": 1,
+      "kind": "diagnosis_error",
+      "scope": "historical",
+      "detail": {
+        "component": "claim_checks",
+        "reason_code": "claim_check_quote_not_in_evidence",
+        "index": 0,
+        "claim_index": 0
+      }
+    },
+    {
+      "round": 1,
+      "kind": "diagnosis_error",
+      "scope": "historical",
+      "detail": {
+        "component": "claim_checks",
+        "reason_code": "claim_check_quote_not_in_evidence",
+        "index": 5,
+        "claim_index": 4
+      }
+    },
+    {
+      "round": 1,
+      "kind": "diagnosis_error",
+      "scope": "historical",
+      "detail": {
+        "component": "relation_checks",
+        "index": 0,
+        "reason_code": "invalid_relation_source_or_target"
+      }
+    },
+    {
+      "round": 1,
+      "kind": "diagnosis_error",
+      "scope": "historical",
+      "detail": {
+        "component": "relation_checks",
+        "reason_code": "original_relation_check_missing",
+        "claim_indexes": [
+          0
+        ]
+      }
+    },
+    {
+      "round": 2,
+      "issue_index": 0,
+      "claim_index": 1,
+      "category": "coverage",
+      "status": "applied_present",
+      "semantic_verification": "not_independently_verified"
+    },
+    {
+      "round": 2,
+      "kind": "diagnosis_error",
+      "scope": "current_record",
+      "detail": {
+        "component": "requirements",
+        "index": 1,
+        "reason_code": "invalid_diagnosis_item"
+      }
+    },
+    {
+      "round": 2,
+      "kind": "diagnosis_error",
+      "scope": "current_record",
+      "detail": {
+        "component": "requirements",
+        "reason_code": "lost_prior_requirement",
+        "requirement_id": "R2"
+      }
+    },
+    {
+      "round": 2,
+      "kind": "diagnosis_error",
+      "scope": "original_claim_changed_needs_recheck",
+      "detail": {
+        "component": "comparison_checks",
+        "claim_index": 1,
+        "reason_code": "comparison_statement_unsupported"
+      }
+    }
+  ],
+  "requirement_history": [
+    {
+      "id": "R1",
+      "requirement": "纠正0.919/0.925的归属：它们是CI-XI与CI-XA的相关系数，针叶木0.919、阔叶木0.925（p < 0.05），不是氢键含量与CI-XI的相关系数。",
+      "history": [
+        {
+          "round": 1,
+          "reported_status": "covered",
+          "reason": "[1]明确把0.919/0.925报告为CI-XI与CI-XA的相关；草案归属正确。",
+          "issue_indexes": []
+        },
+        {
+          "round": 2,
+          "reported_status": "covered",
+          "reason": "[1]明确把0.919/0.925报告为CI-XI与CI-XA的相关；草案归属正确。",
+          "issue_indexes": []
+        }
+      ],
+      "final_state": "not_reported_unresolved",
+      "semantic_verification": "not_independently_verified"
+    },
+    {
+      "id": "R2",
+      "requirement": "给出论文中氢键含量与CI-XI的实际相关：O(6)H···O(3′)相对含量（由FT-IR谱带面积比例得到，不是绝对分子计数）在PFI精磨过程中与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。",
+      "history": [
+        {
+          "round": 1,
+          "reported_status": "edit",
+          "reason": "数值与对象有据，但草案缺少“相对含量/FT-IR面积比例”和PFI精磨条件的限定。",
+          "issue_indexes": [
+            0
+          ]
+        },
+        {
+          "round": 2,
+          "reported_status": "unresolved",
+          "reason": "后续审校未重新核对此项要求。",
+          "issue_indexes": []
+        }
+      ],
+      "final_state": "unresolved",
+      "semantic_verification": "not_independently_verified"
+    },
+    {
+      "id": "R3",
+      "requirement": "说明高相关不能推出可直接计算：作者只提出在PFI精磨中可基于CI-XI大致推测O(6)H···O(3′)氢键含量趋势，所给证据未见公式或定量换算关系。",
+      "history": [
+        {
+          "round": 1,
+          "reported_status": "edit",
+          "reason": "[4]支持趋势推测，草案的“论文没有给出”需限定为所提供证据。",
+          "issue_indexes": [
+            1
+          ]
+        },
+        {
+          "round": 2,
+          "reported_status": "covered",
+          "reason": "[4]只说该氢键含量趋势might be generally speculated，未给公式；草案保留推测并区分相关与计算。",
+          "issue_indexes": []
+        }
+      ],
+      "final_state": "not_reported_unresolved",
+      "semantic_verification": "not_independently_verified"
+    },
+    {
+      "id": "R4",
+      "requirement": "限定相关性不适用于所有氢键：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。",
+      "history": [
+        {
+          "round": 1,
+          "reported_status": "covered",
+          "reason": "[2]明确说O(2)H/游离OH相关差，并说O(3)H···O(5)与CI-XI未讨论。",
+          "issue_indexes": []
+        },
+        {
+          "round": 2,
+          "reported_status": "covered",
+          "reason": "[2]明确说O(2)H/游离OH的相关poor，并说O(3)H···O(5)与CI-XI未讨论。",
+          "issue_indexes": []
+        }
+      ],
+      "final_state": "not_reported_unresolved",
+      "semantic_verification": "not_independently_verified"
+    },
+    {
+      "id": "R90",
+      "requirement": "核对同篇论文摘要与已提供材料中涉及用户问题的数值及统计口径。",
+      "history": [
+        {
+          "round": 2,
+          "reported_status": "edit",
+          "reason": "摘要与结果对同一指标均为O(6)H···O(3′)含量–CI-XI相关、同类纤维和PFI精磨条件；针叶木0.888对0.912不一致，阔叶木均0.889，需并列而非择一。",
+          "issue_indexes": [
+            0
+          ]
+        }
+      ],
+      "final_state": "not_reported_unresolved",
+      "semantic_verification": "not_independently_verified"
+    }
+  ],
+  "remaining_requirements": [
+    {
+      "id": "R2",
+      "requirement": "给出论文中氢键含量与CI-XI的实际相关：O(6)H···O(3′)相对含量（由FT-IR谱带面积比例得到，不是绝对分子计数）在PFI精磨过程中与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。",
+      "reason": "后续审校未重新核对此项要求。"
+    }
+  ],
+  "pipeline_status": "incomplete",
+  "semantic_quality": "not_guaranteed",
+  "caution": "Applied edits and completed diagnostics are not independent semantic verification."
+}

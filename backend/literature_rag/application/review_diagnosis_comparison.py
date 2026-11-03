@@ -70,7 +70,9 @@ def parse_response(content):
     else:
         for i,c in enumerate(checks):
             try:valid.append(Comparison.model_validate(c))
-            except ValidationError:errors.append(dict(component='comparison_checks',index=i,reason_code='invalid_comparison_item'))
+            except ValidationError as error:
+                from .review_diagnostics import validation_details
+                errors.append(dict(component='comparison_checks',index=i,reason_code='invalid_comparison_item',fields=validation_details(error)))
     result=DiagnosticPayload.model_construct(issues=old.issues,requirements=old.requirements,
         claim_checks=old.claim_checks,relation_checks=old.relation_checks,comparison_checks=valid)
     result._parse_errors=errors

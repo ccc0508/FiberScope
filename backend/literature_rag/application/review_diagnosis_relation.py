@@ -84,7 +84,9 @@ def parse_checks(content, check_type, payload_type):
     else:
         for i,c in enumerate(checks):
             try:valid.append(check_type.model_validate(c))
-            except ValidationError:errors.append(dict(component='relation_checks',index=i,reason_code='invalid_relation_item'))
+            except ValidationError as error:
+                from .review_diagnostics import validation_details
+                errors.append(dict(component='relation_checks',index=i,reason_code='invalid_relation_item',fields=validation_details(error)))
     result=payload_type.model_construct(issues=old.issues,requirements=old.requirements,
         claim_checks=old.claim_checks,relation_checks=valid)
     result._parse_errors=errors
