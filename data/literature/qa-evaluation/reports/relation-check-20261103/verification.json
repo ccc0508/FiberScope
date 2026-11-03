@@ -1,0 +1,113 @@
+{
+  "quality_score": null,
+  "judge_calls": 0,
+  "review_requests": 5,
+  "results": [
+    {
+      "run": "relation-smoke-20261103",
+      "case_id": "PFI2-024",
+      "result_sha256": "e7e0bff49cd913d52156cf370747a466f2ecf447c2e621e8330fc5cf153ddf49",
+      "old_critical_indexes": [
+        2
+      ],
+      "relation_indexes": [
+        2,
+        3,
+        6
+      ],
+      "rounds": [
+        {
+          "status": "failed",
+          "reason": "review_request_failed",
+          "http_status": 503,
+          "usage": null
+        }
+      ],
+      "final_equals_original": true,
+      "supplement_added": []
+    },
+    {
+      "run": "relation-smoke-20261103",
+      "case_id": "PFI2-031",
+      "result_sha256": "29f0bda914e776e845726dd871debd478ea10a6f0fbffd8a5265376c2d686798",
+      "old_critical_indexes": [
+        4,
+        5
+      ],
+      "relation_indexes": [
+        1,
+        4,
+        5,
+        6,
+        7
+      ],
+      "rounds": [
+        {
+          "status": "failed",
+          "reason": "review_request_failed",
+          "http_status": 503,
+          "usage": null
+        }
+      ],
+      "final_equals_original": true,
+      "supplement_added": []
+    },
+    {
+      "run": "relation-smoke-20261103",
+      "case_id": "PFI2-032",
+      "result_sha256": "d272777cf43de7e5745e0d2346bc452e103bfc358a30477d01dfe42d28f3228a",
+      "old_critical_indexes": [],
+      "relation_indexes": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "rounds": [
+        {
+          "status": "failed",
+          "reason": "review_request_failed",
+          "http_status": 503,
+          "usage": null
+        },
+        {
+          "status": "failed",
+          "reason": "review_request_failed",
+          "http_status": 503,
+          "usage": null
+        }
+      ],
+      "final_equals_original": true,
+      "supplement_added": [
+        "[7]"
+      ]
+    },
+    {
+      "run": "relation-connectivity-retry-20261103",
+      "case_id": "PFI2-031",
+      "result_sha256": "7b11bd83cad41bccfa78e8474b160cf9b6b428ec477684a61721105e950ee81b",
+      "old_critical_indexes": [
+        4,
+        5
+      ],
+      "relation_indexes": [
+        1,
+        4,
+        5,
+        6,
+        7
+      ],
+      "rounds": [
+        {
+          "status": "failed",
+          "reason": "review_request_failed",
+          "http_status": 503,
+          "usage": null
+        }
+      ],
+      "final_equals_original": true,
+      "supplement_added": []
+    }
+  ]
+}
