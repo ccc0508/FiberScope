@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--case-ids', nargs='+', required=True)
     parser.add_argument('--library', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--version', choices=['v1','v2','v3','v2_bound'], default='v1')
+    parser.add_argument('--version', choices=['v1','v2','v3','v2_bound','v2_budget'], default='v1')
     args = parser.parse_args()
     if args.output.exists():
         raise ValueError('Attempt directory already exists; never automatically repeat a paid attempt')

@@ -73,6 +73,7 @@ class TargetedEvidenceReader:
         additions = []
         trace = self.last_trace = dict(actions=[], added_refs=[], dropped_uncited_refs=[],
             status='started', query_embedding_calls=[], rerank_calls=[], monetary_cost=None,
+            protected_refs=sorted(protected),protected_chars=sum(len(e.text) for e in original if e.ref in protected),
             limits=dict(max_actions=2, max_candidates=50, max_sources_per_action=2,
                 max_evidence_chars=options.max_evidence_chars, max_total_chars=options.max_total_chars))
         try:
@@ -243,6 +244,7 @@ class CorrectiveReviewService:
         started = perf_counter()
         self.last_evidences = list(evidences)
         version=getattr(self.reviewer.provider,'diagnosis_version','v1')
+        supplement_first=getattr(diagnosis_contract(version),'prioritize_supplement',False)
         trace = self.last_trace = dict(enabled=True, version=diagnosis_contract(version).VERSION, status='started', rounds=[],
             api_calls=0, supplement_rounds=0, original_draft=asdict(draft),
             initial_evidence=[asdict(e) for e in evidences], monetary_cost=None,
@@ -250,10 +252,10 @@ class CorrectiveReviewService:
         final = self.reviewer.review(question, evidences, draft)
         first = deepcopy(self.reviewer.last_trace)
         trace['rounds'].append(first)
-        requirements = settled_requirements(first) if version in {'v2','v3','v2_bound'} else first.get('requirements', [])
+        requirements = settled_requirements(first) if version in {'v2','v3','v2_bound','v2_budget'} else first.get('requirements', [])
         actions_valid=first.get('diagnosis_valid') or first.get('diagnosis_actions_validated')
         gaps = [r for r in requirements if r['status'] == 'lookup'] if actions_valid else []
-        if version in {'v2','v3','v2_bound'}:
+        if version in {'v2','v3','v2_bound','v2_budget'}:
             from literature_rag.application.numeric_crosscheck import plan_crosscheck
             catalog=getattr(getattr(self.reader,'retriever',None),'body_context_catalog',None)
             requirements,gaps,trace['numeric_crosscheck']=plan_crosscheck(question,evidences,requirements,catalog)
@@ -267,10 +269,29 @@ class CorrectiveReviewService:
                 # Keep time for the final review; HTTP worker's hard deadline remains the outer bound.
                 self.reader.deadline = min(perf_counter()+40,
                     self.deadline-20 if self.deadline is not None else perf_counter()+40)
-                augmented = self.reader.read(question, gaps, evidences, final)
+                # First-round edits are provisional in this mode; their new citations
+                # must not crowd out evidence needed to resolve an explicit gap.
+                augmented = self.reader.read(question, gaps, evidences, draft if supplement_first else final)
                 trace['supplement_rounds'] = 1
                 trace['supplement'] = deepcopy(self.reader.last_trace)
                 if self.reader.last_trace.get('added_refs'):
+                    if supplement_first:
+                        from literature_rag.application.review_commit import commit_compatible_edits
+                        final,committed,trace['first_round_commit']=commit_compatible_edits(
+                            first,draft,augmented,getattr(self.reviewer,'visual_root',None))
+                        settled={r['id']:r for r in settled_requirements(committed)}
+                        requirements=[settled.get(r['id'],r) for r in requirements]
+                        available={e.ref for e in augmented}
+                        deferred={r['issue_index'] for r in trace['first_round_commit']['deferred_issues']}
+                        for r in requirements:
+                            if any(old['id']==r['id'] and deferred.intersection(old['issue_indexes'])
+                                   for old in first.get('requirements',[])):
+                                r['reason']='首轮拟议修改所需来源未保留或重检未通过，尚未执行；请依据本轮原文重新核对。'
+                            lost=set(r['evidence_refs'])-available
+                            r['evidence_refs']=[ref for ref in r['evidence_refs'] if ref in available]
+                            if lost and r['status']=='covered':
+                                r.update(status='unresolved',reason='原诊断依赖的部分来源未保留，本轮需重新核对。')
+                        trace['committed_requirements']=deepcopy(requirements)
                     self.last_evidences = augmented
                     ledger = dict(requirements=requirements, remaining_lookup_actions=0,
                         added_refs=self.reader.last_trace['added_refs'],
@@ -280,11 +301,19 @@ class CorrectiveReviewService:
                     reason = 'bounded_correction_complete'
                 else:
                     reason = self.reader.last_trace['status']
+                    if supplement_first:
+                        blocked={a['requirement_id'] for a in self.reader.last_trace.get('actions',[])
+                            if any(o.get('reason') in {'protected_evidence_budget','single_source_budget'} for o in a.get('omissions',[]))}
+                        if blocked:
+                            reason='supplement_evidence_budget_blocked'
+                            for r in requirements:
+                                if r['id'] in blocked:
+                                    r['reason']='已找到补查候选，但无法在原回答引用保护及长度预算内加入；缺口尚未解决。'
         last = trace['rounds'][-1]
         rejected = {r['issue_index'] for r in last.get('rejected_issues', [])}
         accepted = set(last.get('accepted_issue_indexes', [])) if last.get('accepted') else set()
         # Keep first-round gaps if the second review could not finish or validate its ledger.
-        if version in {'v2','v3','v2_bound'}:
+        if version in {'v2','v3','v2_bound','v2_budget'}:
             ledger = settled_requirements(last) if len(trace['rounds'])>1 and last.get('diagnosis_actions_validated') else requirements
             # This ledger is already settled; accepted indexes belong to different rounds.
             rejected=set();accepted=set()
