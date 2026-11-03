@@ -4,12 +4,9 @@ import { useRoute, useRouter } from "vue-router";
 import {
   LayoutDashboard as LayoutIcon,
   ArrowDownAZ,
-  Check,
   ChevronLeft,
   ChevronRight,
   CircleHelp,
-  Database,
-  FlaskConical,
   Layers3,
   ListFilter,
   RefreshCw,
@@ -30,6 +27,7 @@ import {
 } from "../api";
 import SampleDetail from "../components/SampleDetail.vue";
 import FilterSelect from "../components/FilterSelect.vue";
+import OverviewDials from "../components/OverviewDials.vue";
 import { materialColors } from "../palette";
 
 const route = useRoute(),
@@ -79,14 +77,6 @@ const filterOptions = computed(() => [
     color: materialColors[type],
   })),
 ]);
-const points = computed(() =>
-  counts.value ? counts.value.beating + counts.value.blends : null,
-);
-const matched = computed(() =>
-  counts.value && counts.value.samples > 0
-    ? (counts.value["fiber-paper"] / counts.value.samples) * 100
-    : 0,
-);
 let timer: ReturnType<typeof setTimeout> | undefined;
 let controller: AbortController | undefined;
 let summaryController: AbortController | undefined;
@@ -194,8 +184,10 @@ function clearFilters() {
   search.value = "";
   update({ q: "", type: "", page: 1 });
 }
+const dials = ref<InstanceType<typeof OverviewDials>>();
 function refresh() {
   void loadSummary();
+  void dials.value?.load();
   void loadRows();
 }
 watch(
@@ -222,7 +214,7 @@ onBeforeUnmount(() => {
           <span class="blue-square"><LayoutIcon /></span>研究数据
         </div>
         <h1>数据总览</h1>
-        <p>从样本到实验，了解植物纤维数据的全貌。</p>
+        <p>选一组数据查看刻度盘，悬停清单行在盘上定位。</p>
       </div>
       <div class="heading-actions">
         <span
@@ -250,129 +242,7 @@ onBeforeUnmount(() => {
       <TriangleAlert :size="18" /><span>{{ summaryError }}</span
       ><button class="text-button" @click="loadSummary">重新读取统计</button>
     </div>
-    <section
-      class="metrics"
-      aria-label="全库数据统计"
-      :aria-busy="summaryLoading"
-    >
-      <article class="metric">
-        <div class="metric-label">唯一物理样本 <Layers3 :size="17" /></div>
-        <div class="metric-value" :class="{ skeleton: summaryLoading }">
-          {{ number(counts?.samples) }}<small>个</small>
-        </div>
-        <p>针叶木、阔叶木与针阔复配</p>
-      </article>
-      <article class="metric">
-        <div class="metric-label">
-          核心实验展示点 <FlaskConical :size="17" />
-        </div>
-        <div class="metric-value" :class="{ skeleton: summaryLoading }">
-          {{ number(points) }}<small>个</small>
-        </div>
-        <p>复配端点复用已有纯浆样本</p>
-      </article>
-      <article class="metric">
-        <div class="metric-label">再生纸浆原始观测 <Database :size="17" /></div>
-        <div class="metric-value" :class="{ skeleton: summaryLoading }">
-          {{ number(counts?.["recycled/details"]) }}<small>条</small>
-        </div>
-        <p>
-          {{ number(metadata?.blocks.length) }} 个数据块 ·
-          {{ number(counts?.["recycled/cycles"]) }} 个循环汇总点
-        </p>
-      </article>
-      <article class="metric">
-        <div class="metric-label">已收录指标 <ListFilter :size="17" /></div>
-        <div class="metric-value" :class="{ skeleton: summaryLoading }">
-          {{
-            number(
-              metadata
-                ? new Set(metadata.indicators.map((item) => item.key)).size
-                : undefined,
-            )
-          }}<small>项</small>
-        </div>
-        <p>纤维特性、纸张性能、长度分布</p>
-      </article>
-    </section>
-
-    <section class="summary-grid" aria-label="样本结构与覆盖情况">
-      <article class="card composition">
-        <div class="card-heading">
-          <div>
-            <h2>样本组成</h2>
-            <p>全库物理样本 · 点击类型筛选下方表格</p>
-          </div>
-          <span class="quiet-tag">3 种类型</span>
-        </div>
-        <div v-if="summaryLoading" class="chart-loading skeleton"></div>
-        <div v-else-if="!metadata" class="inline-empty">统计信息暂不可用</div>
-        <div v-else class="bars">
-          <button
-            v-for="type in typeKeys"
-            :key="type"
-            class="bar-row"
-            :class="[type, { chosen: kind === type }]"
-            :aria-pressed="kind === type"
-            @click="chooseType(kind === type ? '' : type)"
-          >
-            <span class="bar-label"
-              ><i :class="type"></i>{{ typeNames[type] }}</span
-            ><span class="bar-track"
-              ><span
-                class="bar-fill"
-                :class="type"
-                :style="{
-                  width: `${counts!.samples ? (typeCounts[type] / counts!.samples) * 100 : 0}%`,
-                }"
-              ></span></span
-            ><strong
-              >{{ number(typeCounts[type])
-              }}<small
-                >{{
-                  counts!.samples
-                    ? ((typeCounts[type] / counts!.samples) * 100).toFixed(1)
-                    : "0.0"
-                }}%</small
-              ></strong
-            >
-          </button>
-        </div>
-      </article>
-      <article class="card coverage">
-        <div class="card-heading">
-          <div>
-            <h2>核心数据覆盖</h2>
-            <p>按测量记录配对统计，不代表每项指标均有值</p>
-          </div>
-          <span class="coverage-icon"><Check :size="18" /></span>
-        </div>
-        <div class="coverage-main">
-          <div>
-            <strong :class="{ skeleton: summaryLoading }"
-              >{{ metadata ? number(matched, 0) : "—" }}<span>%</span></strong
-            >
-            <p>纤维与纸张测量记录配对率</p>
-          </div>
-          <span class="coverage-ratio"
-            >{{ number(counts?.["fiber-paper"]) }} /
-            {{ number(counts?.samples) }} 个样本</span
-          >
-        </div>
-        <div class="coverage-track">
-          <span
-            :style="{ width: `${metadata ? Math.min(matched, 100) : 0}%` }"
-          ></span>
-        </div>
-        <div class="coverage-details">
-          <span><strong>12</strong> 项纤维特性</span
-          ><span><strong>9</strong> 项纸张性能</span
-          ><span
-            ><strong>{{ number(counts?.sources) }}</strong> 条核心来源</span
-          >
-        </div>
-      </article>
-    </section>
+    <OverviewDials ref="dials" />
 
     <section class="card sample-card" aria-labelledby="samples-title">
       <div class="sample-title">
