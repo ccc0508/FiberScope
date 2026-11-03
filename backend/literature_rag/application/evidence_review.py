@@ -91,6 +91,8 @@ class Claim(StrictModel):
 
 class Issue(StrictModel):
     claim_index: int | None = Field(ge=0)
+    # Opt-in binding contract requires this verbatim; old protocols remain readable.
+    original_text: str | None = Field(default=None, max_length=20000)
     category: Literal['conditions','measurement','uncertainty','inference','coverage','citation']
     problem: NonBlank
     basis: list[Basis] = Field(min_length=1,max_length=6)
@@ -192,9 +194,9 @@ class EvidenceReviewService:
             if diagnostic:
                 payload=self.provider.review(question,evidences,draft,context=context,
                     timeout_seconds=min(self.provider.timeout_seconds,remaining) if remaining is not None else None)
-                trace['issues']=[i.model_dump(exclude_none=True) for i in payload.issues]
+                trace['issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
                 trace['requirements']=[r.model_dump(exclude_none=True) for r in payload.requirements]
-                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3'}:
+                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound'}:
                     trace['claim_checks']=[r.model_dump() for r in payload.claim_checks]
                     if hasattr(payload,'revision_checks'):
                         trace['revision_checks']=[r.model_dump() for r in payload.revision_checks]
@@ -207,12 +209,14 @@ class EvidenceReviewService:
                     trace['diagnosis_valid']=True
             else:
                 payload=self.provider.review(question,evidences,draft)
-            trace['issues']=[i.model_dump(exclude_none=True) for i in payload.issues]
+            trace['issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
             # All edit targets refer to the original draft. Verify independent edits
             # separately so one noisy source quote does not discard unrelated fixes.
             accepted=[];rejected=[];seen=set()
             for index,issue in enumerate(payload.issues):
                 try:
+                    if diagnostic and hasattr(contract,'validate_edit_target'):
+                        contract.validate_edit_target(payload,index,draft)
                     if diagnostic and hasattr(contract,'validate_revision'):
                         contract.validate_revision(payload,index)
                     if issue.claim_index is not None and issue.claim_index in seen:
