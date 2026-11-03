@@ -112,15 +112,17 @@ def test_correct_binding_still_requires_real_source():
     assert service.last_trace['rounds'][0]['rejected_issues'][0]['reason_code']=='quote_not_in_actual_evidence'
 
 
-def test_provider_explicit_indexes_and_no_v3_policy():
+@pytest.mark.parametrize('version',['v2_bound','v2_budget','v2_relation'])
+def test_provider_explicit_indexes_and_no_v3_policy(version):
     from literature_rag.adapters.providers.evidence_review import DeepSeekEvidenceReviewer
     calls=[]
     def create(**kwargs):
         calls.append(kwargs)
         return NS(model='deepseek-flash',usage=None,choices=[NS(finish_reason='stop',message=NS(content=json.dumps(dict(
-            issues=[edit()],requirements=[requirement('edit',issue_indexes=[0])],claim_checks=[]))))])
+            issues=[edit()],requirements=[requirement('edit',issue_indexes=[0])],claim_checks=[],
+            **({'relation_checks':[]} if version=='v2_relation' else {})))))])
     p=DeepSeekEvidenceReviewer('deepseek-flash','PRIVATE',client=NS(chat=NS(completions=NS(create=create))),
-        diagnostic=True,diagnosis_version='v2_bound')
+        diagnostic=True,diagnosis_version=version)
     result=p.review('Q',SOURCES,DRAFT)
     validate_edit_target(result,0,DRAFT)
     messages=calls[0]['messages']
@@ -128,6 +130,19 @@ def test_provider_explicit_indexes_and_no_v3_policy():
     assert 'original_text' in messages[0]['content']
     assert 'Minimal-revision policy' not in messages[0]['content']
     assert 'revision_checks' not in messages[0]['content']
+    prompt=messages[0]['content']
+    # Inspect the actual complete example delivered to the provider, not just a keyword
+    # in a late instruction: this was the conflicting template behind the Q31 failure.
+    example,_=json.JSONDecoder().raw_decode(prompt[prompt.index('{"issues": [{'):])
+    assert example['issues'][0]['original_text']=='exact complete text of input draft claim 0'
+    assert '"claim_index":null,"original_text":null' in prompt
+    assert 'check EVERY issues item contains original_text' in prompt
+
+
+def test_legacy_prompt_is_not_changed_by_binding_contract():
+    from literature_rag.application.review_diagnosis_v2 import DIAGNOSTIC_PROMPT
+    example,_=json.JSONDecoder().raw_decode(DIAGNOSTIC_PROMPT[DIAGNOSTIC_PROMPT.index('{"issues": [{'):])
+    assert 'original_text' not in example['issues'][0]
 
 
 def test_snapshot_records_binding_but_keeps_default(tmp_path):

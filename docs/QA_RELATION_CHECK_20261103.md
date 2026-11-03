@@ -21,3 +21,13 @@
 [验证摘要](../data/literature/qa-evaluation/reports/relation-check-20261103/verification.json)记录请求状态、原检查编号、新关系检查编号和来源哈希。完整本地记录位于`.rag-data/evaluations/relation-smoke-20261103`及`relation-connectivity-retry-20261103`。
 
 下一步在服务恢复后做定点真实模型验证，关注第31题关系能否纠正、正确解释是否被误弱化，以及24/32题和格式遵从情况。此前v2.1的98.96%不属于本版；本次不更新任何历史评测。
+
+## 原句字段输出模板修复
+
+随后第31题重试恢复响应（本地记录`relation-retry-user-20261103-02`），耗时约149秒、39887 Token。模型提出3项修改，却全部缺少`original_text`，因此被原句绑定检查拒绝，不能将接口恢复等同于审校完成。
+
+代码检查发现：继承的完整issues示例没有`original_text`，只有后续追加规则要求提供。现已直接更新绑定版本的完整示例，统一必填说明，明确删除/拆句保留原句、追加使用显式null，并增加输出前逐项格式检查指引。仅影响v2_bound、v2_budget、v2_relation；旧版和默认选项不变。不根据编号代填原句，不弱化原句一致性验证，不增加自动重试。接口仍使用JSON对象模式，未宣称已实现服务端严格Schema约束。
+
+230项相关测试通过。新增测试检查实际发送给模型的完整示例，而非仅检查提示词中是否出现字段名称；同时验证旧模板未改变。自动测试不能保证模型每次都遵循格式。
+
+修复后仅重放第31题一次：审校请求约118秒，34121 Token，返回2项修改，均带正确原句并通过检查，没有拒绝项或诊断错误，流程状态completed。本地完整记录`relation-binding-template-20261103-01`；[验证摘要](../data/literature/qa-evaluation/reports/relation-check-20261103/template-fix-verification.json)。未调用Jev，没有新的质量分数。模型仍将原第7句关系判为supported，因此流程完成不等于第31题全部语义问题解决，也不能据单次结果声称格式问题永不复现。

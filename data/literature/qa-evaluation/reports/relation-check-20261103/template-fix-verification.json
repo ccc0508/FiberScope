@@ -1,0 +1,23 @@
+{
+  "case_id": "PFI2-031",
+  "local_attempt": ".rag-data\\evaluations\\relation-binding-template-20261103-01",
+  "scope": "single saved-draft review; not a quality evaluation",
+  "status": "completed",
+  "accepted_issue_indexes": [
+    0,
+    1
+  ],
+  "rejected_issues": [],
+  "diagnosis_errors": [],
+  "all_issues_have_original_text": true,
+  "usage": {
+    "reasoning_tokens": 18722,
+    "cached_tokens": 512,
+    "total_tokens": 34121,
+    "completion_tokens": 21981,
+    "prompt_tokens": 12140
+  },
+  "latency_ms": 117823,
+  "judge_calls": 0,
+  "quality_score": null
+}
