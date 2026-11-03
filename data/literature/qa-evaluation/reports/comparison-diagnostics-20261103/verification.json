@@ -1,0 +1,379 @@
+{
+  "scope": "Two single functional replays; no Jev, no automatic retries, no quality score",
+  "results": [
+    {
+      "case_id": "PFI2-023",
+      "answer": "正文3.4报告，针叶木（softwood fibers）的O(6)H···O(3′)分子间氢键含量与CI-XI的Pearson相关系数为0.912（p<0.05）。 [1]\n该文摘要则报告针叶木的同一Pearson相关系数为0.888（p<0.05），与正文3.4的0.912不一致。 [2] [1]",
+      "result_sha256": "1e3d6fa4f72f3953fb3b8ac3b90c2aeda0881c5c63969eba64c68475165eb9e9",
+      "summary": {
+        "status": "completed",
+        "notice": "已完成证据审校；这不等于所有结论均已得到保证。",
+        "unresolved": [],
+        "supplement_rounds": 0,
+        "review_rounds": 1
+      },
+      "outcome": {
+        "version": "review-outcome-v1",
+        "rounds": [
+          {
+            "round": 1,
+            "status": "revised",
+            "stage": "completed",
+            "reason_code": null,
+            "response_validation": [],
+            "failure_artifact": null
+          }
+        ],
+        "findings": [
+          {
+            "round": 1,
+            "issue_index": 0,
+            "claim_index": 1,
+            "category": "citation",
+            "status": "applied_present",
+            "semantic_verification": "not_independently_verified"
+          }
+        ],
+        "requirement_history": [
+          {
+            "id": "R1",
+            "requirement": "给出正文3.4中针叶木O(6)H···O(3′)分子间氢键含量与CI-XI的Pearson相关系数",
+            "history": [
+              {
+                "round": 1,
+                "reported_status": "covered",
+                "reason": "正文3.4直接报告针叶木为0.912（p<0.05）。",
+                "issue_indexes": []
+              }
+            ],
+            "final_state": "not_reported_unresolved",
+            "semantic_verification": "not_independently_verified"
+          },
+          {
+            "id": "R2",
+            "requirement": "给出摘要中同一针叶木相关系数",
+            "history": [
+              {
+                "round": 1,
+                "reported_status": "covered",
+                "reason": "摘要报告针叶木为0.888（p<0.05）。",
+                "issue_indexes": []
+              }
+            ],
+            "final_state": "not_reported_unresolved",
+            "semantic_verification": "not_independently_verified"
+          },
+          {
+            "id": "R3",
+            "requirement": "明确指出摘要与正文3.4给出的这两个数值不一致，而不是只取一个或求平均",
+            "history": [
+              {
+                "round": 1,
+                "reported_status": "covered",
+                "reason": "正文为0.912，摘要为0.888，草稿正确指出两者不一致。",
+                "issue_indexes": []
+              }
+            ],
+            "final_state": "not_reported_unresolved",
+            "semantic_verification": "not_independently_verified"
+          },
+          {
+            "id": "R4",
+            "requirement": "保留对象限定（针叶木）和统计显著性（p<0.05）",
+            "history": [
+              {
+                "round": 1,
+                "reported_status": "covered",
+                "reason": "两处来源均限定softwood fibers并给出p<0.05。",
+                "issue_indexes": []
+              }
+            ],
+            "final_state": "not_reported_unresolved",
+            "semantic_verification": "not_independently_verified"
+          },
+          {
+            "id": "R89",
+            "requirement": "补齐比较句各事实的来源引用：该文摘要则报告针叶木的同一Pearson相关系数为0.888（p<0.05），与正文3.4的0.912不一致。",
+            "history": [
+              {
+                "round": 1,
+                "reported_status": "edit",
+                "reason": "同一论文、同一针叶木对象及同一变量/显著水平；摘要0.888与正文3.4的0.912不同，故不一致成立。",
+                "issue_indexes": [
+                  0
+                ]
+              }
+            ],
+            "final_state": "not_reported_unresolved",
+            "semantic_verification": "not_independently_verified"
+          }
+        ],
+        "remaining_requirements": [],
+        "pipeline_status": "completed",
+        "semantic_quality": "not_guaranteed",
+        "caution": "Applied edits and completed diagnostics are not independent semantic verification."
+      },
+      "usage": {
+        "prompt_tokens": 12868,
+        "cached_tokens": 12672,
+        "reasoning_tokens": 6487,
+        "completion_tokens": 7696,
+        "total_tokens": 20564
+      },
+      "latency_ms": 41432,
+      "rounds": [
+        {
+          "status": "revised",
+          "reason_code": null,
+          "comparison_checks": [
+            {
+              "claim_index": 1,
+              "original_text": "该文摘要则报告针叶木的同一Pearson相关系数为0.888（p<0.05），与正文3.4的0.912不一致。",
+              "comparability": "same_scope",
+              "statement_supported": true,
+              "reason": "同一论文、同一针叶木对象及同一变量/显著水平；摘要0.888与正文3.4的0.912不同，故不一致成立。",
+              "facts": [
+                {
+                  "fact": "摘要报告针叶木相关系数为0.888（p<0.05）",
+                  "source_ref": "[2]",
+                  "source_quote": "The Pearson correlation coeficient between them was 0.888 (p < 0.05) for softwood fibers"
+                },
+                {
+                  "fact": "正文3.4报告针叶木相关系数为0.912（p<0.05）",
+                  "source_ref": "[1]",
+                  "source_quote": "It was 0.912 (p < 0.05) for softwood fibers"
+                }
+              ]
+            }
+          ],
+          "citation_only_repair_indexes": [
+            0
+          ],
+          "diagnosis_errors": [],
+          "rejected_issues": []
+        }
+      ]
+    },
+    {
+      "case_id": "PFI2-032",
+      "answer": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\n结果部分报告O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05），而摘要报告针叶木0.888、阔叶木0.889（p < 0.05）；两处针叶木数值不一致。 [2] [7]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。 [4]\n在所给节选中，未给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。 [2] [4]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+      "result_sha256": "2ebf072112ae9a826db1fb8254f4841b22e6e5abc67856650be502080e26dfa9",
+      "summary": {
+        "status": "incomplete",
+        "notice": "本次审校未完整完成，以下保留最近一次通过引用格式检查的回答。",
+        "unresolved": [],
+        "supplement_rounds": 1,
+        "review_rounds": 2
+      },
+      "outcome": {
+        "version": "review-outcome-v1",
+        "rounds": [
+          {
+            "round": 1,
+            "status": "revised",
+            "stage": "completed",
+            "reason_code": null,
+            "response_validation": [],
+            "failure_artifact": null
+          },
+          {
+            "round": 2,
+            "status": "revised",
+            "stage": "diagnosis_validation",
+            "reason_code": null,
+            "response_validation": [],
+            "failure_artifact": null
+          }
+        ],
+        "findings": [
+          {
+            "round": 1,
+            "issue_index": 0,
+            "claim_index": 3,
+            "category": "coverage",
+            "status": "applied_present",
+            "semantic_verification": "not_independently_verified"
+          },
+          {
+            "round": 2,
+            "issue_index": 0,
+            "claim_index": 1,
+            "category": "measurement",
+            "status": "applied_present",
+            "semantic_verification": "not_independently_verified"
+          },
+          {
+            "round": 2,
+            "kind": "diagnosis_error",
+            "scope": "original_claim_changed_needs_recheck",
+            "detail": {
+              "component": "comparison_checks",
+              "claim_index": 1,
+              "reason_code": "comparison_statement_unsupported"
+            }
+          }
+        ],
+        "requirement_history": [
+          {
+            "id": "R1",
+            "requirement": "核实0.919和0.925是否真是氢键含量与CI-XI的相关系数，并说明它们对应的变量和树种。",
+            "history": [
+              {
+                "round": 1,
+                "reported_status": "covered",
+                "reason": "[1]明确这两个值是CI-XI与CI-XA的相关性，分属针叶木/阔叶木；草案纠正正确。",
+                "issue_indexes": []
+              },
+              {
+                "round": 2,
+                "reported_status": "covered",
+                "reason": "草案正确指出0.919/0.925是CI-XI与CI-XA的相关系数，分属针叶木/阔叶木。",
+                "issue_indexes": []
+              }
+            ],
+            "final_state": "not_reported_unresolved",
+            "semantic_verification": "not_independently_verified"
+          },
+          {
+            "id": "R2",
+            "requirement": "给出O(6)H···O(3′)氢键含量与CI-XI的实际相关系数及树种对应。",
+            "history": [
+              {
+                "round": 1,
+                "reported_status": "covered",
+                "reason": "[2]给出针叶木0.912、阔叶木0.889（p < 0.05）；草案数值一致。",
+                "issue_indexes": []
+              },
+              {
+                "round": 2,
+                "reported_status": "edit",
+                "reason": "结果部分为0.912/0.889，摘要为0.888/0.889；针叶木数值不一致，草案需并列而非只列0.912。",
+                "issue_indexes": [
+                  0
+                ]
+              }
+            ],
+            "final_state": "not_reported_unresolved",
+            "semantic_verification": "not_independently_verified"
+          },
+          {
+            "id": "R3",
+            "requirement": "回答高相关是否足以支持用CI-XI直接计算/定量换算氢键含量，并保留作者仅提出趋势推测的限定。",
+            "history": [
+              {
+                "round": 1,
+                "reported_status": "edit",
+                "reason": "结论只说趋势可被大致推测；草案对“论文没有给出公式”应限定到所给节选/相关分析。",
+                "issue_indexes": [
+                  0
+                ]
+              },
+              {
+                "round": 2,
+                "reported_status": "covered",
+                "reason": "草案明确作者只提出趋势推测，且相关分析不能等同于直接计算。",
+                "issue_indexes": []
+              }
+            ],
+            "final_state": "not_reported_unresolved",
+            "semantic_verification": "not_independently_verified"
+          },
+          {
+            "id": "R4",
+            "requirement": "说明并非所有氢键都与CI-XI强相关，并覆盖O(2)H···O(6)、游离OH及O(3)H···O(5)的情况。",
+            "history": [
+              {
+                "round": 1,
+                "reported_status": "covered",
+                "reason": "[2]称O(2)H···O(6)或游离OH与CI-XI相关性poor，且O(3)H···O(5)与CI-XI的相关未讨论；草案覆盖。",
+                "issue_indexes": []
+              },
+              {
+                "round": 2,
+                "reported_status": "covered",
+                "reason": "草案覆盖O(2)H···O(6)/游离OH相关性较差及O(3)H···O(5)未讨论。",
+                "issue_indexes": []
+              }
+            ],
+            "final_state": "not_reported_unresolved",
+            "semantic_verification": "not_independently_verified"
+          },
+          {
+            "id": "R90",
+            "requirement": "核对同篇论文摘要与已提供材料中涉及用户问题的数值及统计口径。",
+            "history": [
+              {
+                "round": 2,
+                "reported_status": "edit",
+                "reason": "已用摘要核对；摘要针叶木0.888与结果0.912不一致，草案未反映。",
+                "issue_indexes": [
+                  0
+                ]
+              }
+            ],
+            "final_state": "not_reported_unresolved",
+            "semantic_verification": "not_independently_verified"
+          }
+        ],
+        "remaining_requirements": [],
+        "pipeline_status": "incomplete",
+        "semantic_quality": "not_guaranteed",
+        "caution": "Applied edits and completed diagnostics are not independent semantic verification."
+      },
+      "usage": {
+        "reasoning_tokens": 41332,
+        "prompt_tokens": 23519,
+        "cached_tokens": 21376,
+        "completion_tokens": 46413,
+        "total_tokens": 69932
+      },
+      "latency_ms": 235518,
+      "rounds": [
+        {
+          "status": "revised",
+          "reason_code": null,
+          "comparison_checks": [],
+          "citation_only_repair_indexes": [],
+          "diagnosis_errors": [],
+          "rejected_issues": []
+        },
+        {
+          "status": "revised",
+          "reason_code": null,
+          "comparison_checks": [
+            {
+              "claim_index": 1,
+              "original_text": "O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。",
+              "comparability": "same_scope",
+              "statement_supported": false,
+              "reason": "两处均指同一O(6)H···O(3′)氢键含量与CI-XI的Pearson相关，但针叶木结果部分为0.912、摘要为0.888；草案只列0.912，未反映数值不一致。",
+              "facts": [
+                {
+                  "fact": "结果部分针叶木0.912、阔叶木0.889",
+                  "source_ref": "[2]",
+                  "source_quote": "It was 0.912 (p < 0.05) for softwood fibers and 0.889"
+                },
+                {
+                  "fact": "摘要针叶木0.888、阔叶木0.889",
+                  "source_ref": "[7]",
+                  "source_quote": "The Pearson correlation coeficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889"
+                }
+              ]
+            }
+          ],
+          "citation_only_repair_indexes": [],
+          "diagnosis_errors": [
+            {
+              "component": "comparison_checks",
+              "claim_index": 1,
+              "reason_code": "comparison_statement_unsupported"
+            }
+          ],
+          "rejected_issues": []
+        }
+      ]
+    }
+  ],
+  "total_tokens": 90496,
+  "judge_calls": 0
+}
