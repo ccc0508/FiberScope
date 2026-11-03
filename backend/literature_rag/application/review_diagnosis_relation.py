@@ -71,6 +71,10 @@ judgment; there is no external rubric or reference answer. Do not add unrelated 
 
 
 def parse_response(content):
+    return parse_checks(content, RelationCheck, DiagnosticPayload)
+
+
+def parse_checks(content, check_type, payload_type):
     raw=json.loads(content)
     if not isinstance(raw,dict):raise ValueError('invalid_review_envelope')
     checks=raw.pop('relation_checks',None)
@@ -79,9 +83,9 @@ def parse_response(content):
         errors.append(dict(component='relation_checks',reason_code='invalid_relation_list'))
     else:
         for i,c in enumerate(checks):
-            try:valid.append(RelationCheck.model_validate(c))
+            try:valid.append(check_type.model_validate(c))
             except ValidationError:errors.append(dict(component='relation_checks',index=i,reason_code='invalid_relation_item'))
-    result=DiagnosticPayload.model_construct(issues=old.issues,requirements=old.requirements,
+    result=payload_type.model_construct(issues=old.issues,requirements=old.requirements,
         claim_checks=old.claim_checks,relation_checks=valid)
     result._parse_errors=errors
     return result
