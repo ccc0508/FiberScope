@@ -61,9 +61,13 @@ comparison same_scope just to get citations attached. At most 32 comparison chec
 
 
 def parse_response(content):
+    return parse_with(content, prior.parse_response, DiagnosticPayload)
+
+
+def parse_with(content, parse_base, payload_type):
     raw=json.loads(content)
     checks=raw.pop('comparison_checks',None)
-    old=prior.parse_response(json.dumps(raw,ensure_ascii=False))
+    old=parse_base(json.dumps(raw,ensure_ascii=False))
     errors=list(old._parse_errors);valid=[]
     if not isinstance(checks,list) or len(checks)>32:
         errors.append(dict(component='comparison_checks',reason_code='invalid_comparison_list'))
@@ -73,7 +77,7 @@ def parse_response(content):
             except ValidationError as error:
                 from .review_diagnostics import validation_details
                 errors.append(dict(component='comparison_checks',index=i,reason_code='invalid_comparison_item',fields=validation_details(error)))
-    result=DiagnosticPayload.model_construct(issues=old.issues,requirements=old.requirements,
+    result=payload_type.model_construct(issues=old.issues,requirements=old.requirements,
         claim_checks=old.claim_checks,relation_checks=old.relation_checks,comparison_checks=valid)
     result._parse_errors=errors
     return result
