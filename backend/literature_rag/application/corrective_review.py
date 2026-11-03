@@ -337,4 +337,6 @@ class CorrectiveReviewService:
             api_calls=sum(r.get('api_calls', 0) for r in trace['rounds']),
             usage=combined_usage(trace['rounds']), summary=self.last_summary,
             latency_ms=round((perf_counter()-started)*1000))
+        from .review_diagnostics import review_outcome
+        trace['outcome']=review_outcome(trace,asdict(final))
         return final

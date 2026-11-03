@@ -10,11 +10,13 @@ from literature_rag.application.evidence_review import ReviewPayload,SYSTEM_PROM
 from literature_rag.application.prompts import evidence_prompt
 from literature_rag.diagnostics import provider_usage
 from literature_rag.domain.errors import ProviderError,ProviderResponseError
+from literature_rag.application.review_diagnostics import validation_details,archive_response
 
 
 class DeepSeekEvidenceReviewer:
     def __init__(self,model,api_key,base_url=None,*,thinking_enabled=None,reasoning_effort=None,
-                 timeout_seconds=120,max_output_tokens=32768,visual_root=None,client=None,diagnostic=False,diagnosis_version='v1'):
+                 timeout_seconds=120,max_output_tokens=32768,visual_root=None,client=None,diagnostic=False,diagnosis_version='v1',diagnostics_dir=None):
+        self.diagnostics_dir=diagnostics_dir
         if model!='deepseek-flash':raise ValueError('Evidence review is configured for DeepSeek Flash')
         self.model=model;self.thinking_enabled=thinking_enabled;self.reasoning_effort=reasoning_effort
         self.visual_root=visual_root
@@ -77,20 +79,29 @@ class DeepSeekEvidenceReviewer:
                 thinking_enabled=self.thinking_enabled,reasoning_effort=self.reasoning_effort,wire_api='chat_completions',
                 image_count=len(images),images=images,request_sha256=checksum(messages),automatic_retries=0)
             try:
+                content=response.choices[0].message.content
                 finish=getattr(response.choices[0],'finish_reason',None)
                 self.last_model_info['finish_reason']=finish if finish in {'stop','length','content_filter'} else None
                 if finish=='length':
+                    self.last_model_info['failure_artifact']=archive_response(self.diagnostics_dir,content,
+                        dict(protocol=self.diagnosis_version,request_sha256=checksum(messages),stage='output_limit'))
                     self.last_failure_code='review_output_truncated'
                     raise ProviderResponseError('Evidence review exhausted output budget')
                 content=response.choices[0].message.content
                 if self.diagnostic and self.diagnosis_version in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison'}:
-                    return contract.parse_response(content)
+                    result=contract.parse_response(content)
+                    if result._parse_errors:
+                        self.last_model_info['response_validation']=result._parse_errors
+                        self.last_model_info['failure_artifact']=archive_response(self.diagnostics_dir,content,
+                            dict(protocol=self.diagnosis_version,request_sha256=checksum(messages),stage='partial_diagnosis_parse'))
+                    return result
                 return schema.model_validate_json(content)
             except (ValueError,TypeError,AttributeError,IndexError) as error:
                 # Field locations/types only: never persist rejected values or provider error text.
-                self.last_model_info['response_validation'] = (
-                    [{'type':e['type'],'location':list(e['loc'])} for e in error.errors(include_input=False,include_url=False)][:20]
-                    if isinstance(error,ValidationError) else [{'type':type(error).__name__}])
+                self.last_model_info['response_validation']=validation_details(error)
+                self.last_model_info['failure_artifact']=archive_response(self.diagnostics_dir,locals().get('content'),
+                    dict(protocol=self.diagnosis_version,request_sha256=checksum(messages),stage='response_parse',
+                         errors=self.last_model_info['response_validation']))
                 self.last_failure_code='review_response_invalid'
                 raise ProviderResponseError('Evidence review response failed its schema; provider details redacted') from None
         finally:self.last_latency_ms=round((perf_counter()-started)*1000)

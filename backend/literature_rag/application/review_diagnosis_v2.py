@@ -153,8 +153,9 @@ def parse_response(content):
         parts[field]=[]
         for index,value in enumerate(values):
             try:parts[field].append(model.model_validate(value))
-            except ValidationError:
-                errors.append(dict(component=field,index=index,reason_code='invalid_diagnosis_item'))
+            except ValidationError as error:
+                from .review_diagnostics import validation_details
+                errors.append(dict(component=field,index=index,reason_code='invalid_diagnosis_item',fields=validation_details(error)))
     payload=DiagnosticPayload.model_construct(issues=edits.issues,**parts)
     payload._parse_errors=errors
     return payload

@@ -27,7 +27,7 @@ def configuration_snapshot(env_file: Path):
     if settings.visual_retrieval_enabled:
         sources += ['application/visual_evidence.py','domain/models.py']
     if settings.evidence_review_enabled:
-        sources += ['application/evidence_review.py','adapters/providers/evidence_review.py']
+        sources += ['application/evidence_review.py','adapters/providers/evidence_review.py','application/review_diagnostics.py']
     if settings.corrective_review_enabled:
         sources += ['application/review_diagnosis.py','application/corrective_review.py',
                     'adapters/chroma/vector_store.py']

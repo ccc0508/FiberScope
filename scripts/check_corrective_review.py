@@ -126,7 +126,8 @@ def main():
         p = DeepSeekEvidenceReviewer(settings.llm_model, settings.llm_api_key.get_secret_value(),
             settings.llm_base_url, thinking_enabled=settings.llm_thinking_enabled,
             reasoning_effort=settings.llm_reasoning_effort, timeout_seconds=settings.evidence_review_timeout_seconds,
-            max_output_tokens=settings.evidence_review_max_output_tokens, visual_root=args.library, diagnostic=True,diagnosis_version=args.version)
+            max_output_tokens=settings.evidence_review_max_output_tokens, visual_root=args.library, diagnostic=True,diagnosis_version=args.version,
+            diagnostics_dir=args.output/'private-diagnostics')
         deadline = started+295
         service = CorrectiveReviewService(EvidenceReviewService(p, visual_root=args.library, deadline=deadline),
             TargetedEvidenceReader(retriever), deadline=deadline)
