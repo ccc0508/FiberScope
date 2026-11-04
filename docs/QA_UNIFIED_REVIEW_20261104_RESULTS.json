@@ -1,0 +1,1067 @@
+{
+  "scope": "fixed-input development verification; no judge score; no primary generation",
+  "money_cost": null,
+  "latency_scope": "sum of review API latency, excludes retrieval and harness overhead",
+  "runs": [
+    {
+      "run": "control-r1",
+      "version": "bounded-corrective-review-v2.9-ranking",
+      "source_sha256": {
+        "backend\\literature_rag\\config.py": "ea3ff7b87a05726af57dba28f2831397809fa0955782ee459bf563a6f4052929",
+        "backend\\literature_rag\\diagnostics.py": "07d1597d2eb039d1ee242f53e8f9b8802d24914a42ec0f2063b4c50018890873",
+        "backend\\literature_rag\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\adapters\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\application\\answer_question.py": "ee479eb9318b5c6eaa6e0701ed212dc0195f72b8794152eebc9434dcd548c8a1",
+        "backend\\literature_rag\\application\\body_context.py": "43fbc6479f90fa4286d9ece65b2c174efd74fa955fd0b10ab6dece4686c6cba9",
+        "backend\\literature_rag\\application\\citations.py": "0e26e83fc304f495bf45e292f4c885bbdfc47bafcc89affba16ab70688d82cd5",
+        "backend\\literature_rag\\application\\context.py": "ae0d372d286dbb2137d45145b3e2308ca483842d4e0d0ebc7f2503153b62205c",
+        "backend\\literature_rag\\application\\corrective_review.py": "dde58958861359e7f2c76f36b12d3d753c637855e240626b0ddf80776ae255a2",
+        "backend\\literature_rag\\application\\evidence_review.py": "73ecc942e465fe12a4d02312ac700244f9051ff3dfe015de9cdf84f321b89c0c",
+        "backend\\literature_rag\\application\\fallback_ablation.py": "3176c9df7d40ba0ab8d61f269df66bdd8ce7aca2e002d77a3875c90bdde21e98",
+        "backend\\literature_rag\\application\\numeric_crosscheck.py": "ec4c64d4dc31364e623e64f9eda2c721de59f7d711f9921a81d143e715e2da63",
+        "backend\\literature_rag\\application\\prompts.py": "90150e353c4f06a561fb46181e77b961ef0e6a647b21fd592cc5ba3737359407",
+        "backend\\literature_rag\\application\\query_rewrite.py": "4cc193656143c2b4db1980a7c267e678ec4d4631e4d88bfe1c241bf13d6d6eb6",
+        "backend\\literature_rag\\application\\rerank.py": "59a2e44502c21ace03638cd1972df79682f541f9e1405fdf4929ae9ebb2a453f",
+        "backend\\literature_rag\\application\\retrieve.py": "ee65220155fed0e15bb3ac26e0980902e4c4f49fbca1bc0daee55a9e198aaba7",
+        "backend\\literature_rag\\application\\review_commit.py": "031a0b4be52f1774503c1db81ed1ea07b877211f8b96f3a4716ee1906fd1e6da",
+        "backend\\literature_rag\\application\\review_diagnosis.py": "08395099a7a40941f94c5c476bac898fefe17e4af23c76d6de288290d1ad3e82",
+        "backend\\literature_rag\\application\\review_diagnosis_bound.py": "d6331b88b5e11c144f7b78674e7f1a0aad72e1e25cdd1073914e6b48d57e8d7e",
+        "backend\\literature_rag\\application\\review_diagnosis_budget.py": "b9e85f9f510a056a36077971d14a3f401e64d1f8ee13958c9be3e7f699fc5471",
+        "backend\\literature_rag\\application\\review_diagnosis_causal.py": "7e24253208b526abc98682eee2f1d078d09b3647413a94116eeb97b4700b4c70",
+        "backend\\literature_rag\\application\\review_diagnosis_comparison.py": "55b07cd79fe8380b9a0370a36bfdf2b2c9583cfd67f87464c580a589a5c09a1f",
+        "backend\\literature_rag\\application\\review_diagnosis_measurement.py": "28ffcf57b4b8a681fe08278f5d6b1c5d99c74205eafae0a1191a9b349f39570c",
+        "backend\\literature_rag\\application\\review_diagnosis_ranking.py": "d7aecc310afcc45d7d18f47f3cb6bcfc45f635704e2238ef42d80f57ed390a97",
+        "backend\\literature_rag\\application\\review_diagnosis_relation.py": "fd9458359eb16d3e084b7eb252099459848882d065da45fefa8d59baa7c287a8",
+        "backend\\literature_rag\\application\\review_diagnosis_relation_compact.py": "b5db09e5afb0caa1bb63830ea8e53b9f86495875b77cfa3deb73c64191d4a509",
+        "backend\\literature_rag\\application\\review_diagnosis_unified.py": "55a30f4df33d334952c1349a0cd904a6c7e8e9f56d75520dd53a4818dae82790",
+        "backend\\literature_rag\\application\\review_diagnosis_v2.py": "8c991297d0b6b0a24729609f09f9ce6dd779d0530f87ffbab3945df0b82c85ca",
+        "backend\\literature_rag\\application\\review_diagnosis_v3.py": "1c8d1022a08434634afca63e7db174c8584c9de2d42e6b60c442479cf0b5a28a",
+        "backend\\literature_rag\\application\\review_diagnostics.py": "938050aac7f7b8c67eb7bb398948e444f22d1f9c816372b2a3406a662b8249bb",
+        "backend\\literature_rag\\application\\role_context.py": "166838804b5c8d4551f80405f2203af1d98cb95a1cc838c0a051e779d1b7a879",
+        "backend\\literature_rag\\application\\section_context.py": "bb1d7e111cf09e6273cea9b06d92996ed8c627220bbd97d3abfc3ce863f302e5",
+        "backend\\literature_rag\\application\\structure.py": "9a3439e3562692f8ba578d0a18ddc0ad52b134d7900508ff3f25bcbf54773e7d",
+        "backend\\literature_rag\\application\\table_evidence.py": "62a4acc31434435fa3b4254746010c79ed7b2f33826aaf58a8a7531a9e8046ba",
+        "backend\\literature_rag\\application\\unified_context.py": "a5483bd4eaf0550993b0f397da65789a0524891a774fc4b06205e35434379bb7",
+        "backend\\literature_rag\\application\\visual_evidence.py": "f2c78386e683ff3b57a3797abbee30ac4b42ccd3583cdcd86b8cc1c23ff6b786",
+        "backend\\literature_rag\\application\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\domain\\errors.py": "eefee5cfe3180f6e625eea2c66ef5ab2c2e8fc8b1d5dfcddfc085689ae32302b",
+        "backend\\literature_rag\\domain\\models.py": "b570a83e543c908c2ca137827e62c4ed914d84bff7fe8fa50f26c9cfb2e1ea88",
+        "backend\\literature_rag\\domain\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\ports\\protocols.py": "4f5cf0cbef40f65361eaf29d6bf2f71fbb6d49404f46f09bc53722215248be35",
+        "backend\\literature_rag\\ports\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\adapters\\chroma\\vector_store.py": "8e40c7c9b7429568e3796c38efeb8d7d0ea5d297b94a7e8fd519296ccafcd7fe",
+        "backend\\literature_rag\\adapters\\chroma\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\adapters\\providers\\dashscope.py": "a1456b9dd7bd7a032fa3f399e22a63bf07472197206f4e8fd37e751bea842927",
+        "backend\\literature_rag\\adapters\\providers\\deepseek.py": "e7f0527140448f8d18f1646647648cfebff226bb56a8de82bd47a818fd196845",
+        "backend\\literature_rag\\adapters\\providers\\evidence_review.py": "c1317927a44fa6944323b95464e3ae7a2a9131da3a637025e267dc296745da99",
+        "backend\\literature_rag\\adapters\\providers\\openai.py": "823dc942c86b422b7260197012b4619d159279d25acd3ffd795bb544180d8549",
+        "backend\\literature_rag\\adapters\\providers\\query_rewrite.py": "0f71a900e18f8c0969dd6700e222d556588b03b08c5e849ce14b7e22c5d40998",
+        "backend\\literature_rag\\adapters\\providers\\rerank.py": "7f4463f683676ae67a11488f5b6b359b9ecf2452a98830ea638495d7735b1ba4",
+        "backend\\literature_rag\\adapters\\providers\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\adapters\\sqlite\\metadata_store.py": "d0c6e9acbd6562faf8d8595cced9609ddbc19997b04e0911b08f96e744cddcb9",
+        "backend\\literature_rag\\adapters\\sqlite\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cases": [
+        {
+          "case_id": "PFI2-018",
+          "input_sha256": "c2705fab222a4e5dc4591abcca5d9c488179640d6299fd2050c4a39950a58a35",
+          "question": "这篇论文如何从FT-IR获得不同氢键的相对含量？请说明拟合波段、函数和含量口径。",
+          "answer": "FT-IR谱以KBr压片、透射模式采集4000–400 cm⁻¹，分辨率4 cm⁻¹，64次扫描平均，并以五次记录的平均谱分析；光谱在1016 cm⁻¹归一化。 [1]\n用Savitzky–Golay算法获得导数曲线，并按不同氢键所属波数区间从二阶导数谱确定各氢键组分的峰位。 [1]\n对3000–3700 cm⁻¹的羟基伸缩振动区进行非线性拟合，采用Gaussian函数，软件为Peakfit 4.12。 [1]\n峰位归属为：3580–3550 cm⁻¹为free OH(2)和OH(6)；3455–3410 cm⁻¹为O(2)H···O(6)分子内氢键；3375–3340 cm⁻¹为O(3)H···O(5)分子内氢键；3310–3230 cm⁻¹为O(6)H···O(3′)分子间氢键（cellulose I）。 [3]\n结果中将3000–3700 cm⁻¹羟基带反卷积为四个主要分峰（三类氢键与free OH）；各氢键的“相对含量”是相应分峰面积占这四个分峰总面积的归一化比例，并非氢键的绝对数量或浓度。 [3]\nFigure 7显示每个样品拟合出四个Gaussian分峰：三类氢键与free OH(2)/OH(6)；Table 2以百分比列出这些组分的相对含量，四项合计约为100%，并给出r²约0.999。 [3]",
+          "summary": {
+            "status": "completed",
+            "notice": "已完成证据审校；这不等于所有结论均已得到保证。",
+            "unresolved": [],
+            "supplement_rounds": 0,
+            "review_rounds": 1
+          },
+          "total_tokens": 25487,
+          "review_latency_ms": 82013,
+          "rounds": [
+            {
+              "status": "revised",
+              "usage": {
+                "prompt_tokens": 10796,
+                "completion_tokens": 14691,
+                "total_tokens": 25487,
+                "reasoning_tokens": 13337,
+                "cached_tokens": 8960
+              },
+              "latency_ms": 82013,
+              "reason_code": null,
+              "diagnosis_errors": [],
+              "accepted_issue_indexes": [
+                0
+              ],
+              "rejected_issues": []
+            }
+          ]
+        },
+        {
+          "case_id": "PFI2-024",
+          "input_sha256": "36dbec27beb21dbd19411629a75f32adbea29aa851ad30b5c5e3d1ed315960c2",
+          "question": "PFI打浆是怎么一步步让纸变结实的？纤维长度、细小纤维、WRV这几个因素里哪个贡献最大？",
+          "answer": "PFI打浆对纤维的主要作用包括内部细纤维化（细胞壁分层、松弛和润胀）、外部细纤维化（表面微细纤维剥离但仍附着）、纤维切断和细小纤维生成。 [2]\n这些作用会提高纤维的可及性、润胀性、柔顺性和纤维间结合能力，从而为成纸强度提高提供基础。 [2]\n随PFI转数增加，打浆度和WRV显著升高；文中归因于细纤维化产生新的表面和更多孔隙。 [1]\nWRV表征的润胀增加使纤维在横向更柔顺，这有助于提高纤维网络的纤维间结合强度。 [1]\nFigure 1显示，PFI打浆后软木浆的纤维长度下降，而细小纤维含量上升，同时宏观细纤维化指数上升。 [1]\nPFI打浆提高了细纤维化程度（尤其是内部细纤维化）、纤维润胀和纸页拉伸强度，且零-span结果说明未降低单根纤维强度。 [1]\n分子层面，FT-IR分峰得到的O(6)H···O(3′)分子间氢键相对含量在打浆中总体下降（软木浆降16.54%、硬木浆降5.91%）；作者认为这种相对减少和较低结晶指数有利于提高纤维柔顺性、可及性和WRV，但该相对含量并非绝对氢键数。 [3]\n湿纸幅强度方面，软木浆的增加比硬木浆更显著，作者强调纤维长度对湿纸幅强度起重要作用。 [1]\n就所给证据而言，无法给出纤维长度、细小纤维和WRV三者对成纸强度贡献的定量比较或排序，因此不能确定哪一个贡献最大。 [1]",
+          "summary": {
+            "status": "incomplete",
+            "notice": "本次审校未完整完成，以下保留最近一次通过引用格式检查的回答。",
+            "unresolved": [],
+            "supplement_rounds": 0,
+            "review_rounds": 1
+          },
+          "total_tokens": 43609,
+          "review_latency_ms": 177987,
+          "rounds": [
+            {
+              "status": "revised",
+              "usage": {
+                "prompt_tokens": 13364,
+                "completion_tokens": 30245,
+                "total_tokens": 43609,
+                "reasoning_tokens": 27205,
+                "cached_tokens": 13184
+              },
+              "latency_ms": 177987,
+              "reason_code": null,
+              "diagnosis_errors": [
+                {
+                  "component": "causal_detail",
+                  "claim_index": 2,
+                  "reason_code": "complete_sentence_or_outcomes_missing"
+                }
+              ],
+              "accepted_issue_indexes": [
+                0,
+                1
+              ],
+              "rejected_issues": []
+            }
+          ]
+        },
+        {
+          "case_id": "PFI2-031",
+          "input_sha256": "2dac9f8f57d4af27a47c7a9fb2d94471796638f4c6a00d50638fb75e287ac8b9",
+          "question": "PFI打浆把纤维素从I型变成II型以后，结晶度为什么还会下降？",
+          "answer": "XRD结果表明，两种浆料纤维在PFI处理过程中纤维素晶型没有发生变化，说明PFI打浆是相对温和的机械处理 [2]\n因此“PFI打浆把纤维素从I型变成II型”这一前提与所给证据不符，结晶度下降不能用I型向II型转变来解释 [2]\n随打浆进行，软木浆的CI-XI和CI-XA分别下降4.66%和15.47%，硬木浆分别下降2.65%和19.4% [2]\n表1中软木纤维从0转到16,000转，CI-XI由73.23%降至69.82%、CI-XA由40.46%降至34.20%；硬木纤维CI-XI由75.55%降至73.55%、CI-XA由47.16%降至38.01% [3]\nCI随打浆先降后升再降的波动，作者推测可能与PFI机械作用作用于不同区域有关：初期下降可能是机械作用主要作用于结晶区，随后上升可能是较大作用力作用于无定形区，并在PFI机械和热作用下干燥时可能发生共结晶，后续下降可能是结晶区被持续破坏 [2]\n结晶度下降的同时，FT-IR去卷积得到的O(6)H···O(3′)分子间氢键相对含量在软木和硬木纤维中分别减少16.54%和5.91%；这些百分比是相对含量的变化，不等同于绝对氢键数 [4] [1]\n作者认为，这种下降可能归因于PFI机械作用下纤维素分子链之间的断裂，并与内、外细纤维化密切相关 [4]\n较少的分子间氢键和较低的结晶度会进一步提高纤维素纤维的柔顺性；作者将这一效应与分子链活动性更高以及纤维的可及性和保水值（WRV）联系起来 [4]\n结晶尺寸方面，两种纤维垂直于(200)面的尺寸呈上升趋势（软木4.5 nm升至4.7 nm，硬木4.5 nm升至4.7 nm），而(110)面尺寸波动更大，被解释为水分子更易沿亲水的(110)面渗入，使这些晶面承受更多机械作用 [3] [2]",
+          "summary": {
+            "status": "incomplete",
+            "notice": "本次审校未完整完成，以下保留最近一次通过引用格式检查的回答。",
+            "unresolved": [
+              {
+                "id": "R6",
+                "requirement": "核对(200)/(110)晶面尺寸数值及水分子渗入解释的推测性质",
+                "reason": "该项修订未全部通过来源或引用检查，尚未确认解决。"
+              }
+            ],
+            "supplement_rounds": 0,
+            "review_rounds": 1
+          },
+          "total_tokens": 40272,
+          "review_latency_ms": 145950,
+          "rounds": [
+            {
+              "status": "revised",
+              "usage": {
+                "prompt_tokens": 13622,
+                "completion_tokens": 26650,
+                "total_tokens": 40272,
+                "reasoning_tokens": 22794,
+                "cached_tokens": 3712
+              },
+              "latency_ms": 145950,
+              "reason_code": null,
+              "diagnosis_errors": [
+                {
+                  "component": "claim_checks",
+                  "index": 3,
+                  "reason_code": "invalid_diagnosis_item",
+                  "fields": [
+                    {
+                      "type": "string_too_short",
+                      "location": [
+                        "source_quote"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "component": "relation_checks",
+                  "index": 8,
+                  "reason_code": "invalid_relation_source_or_target"
+                },
+                {
+                  "component": "relation_checks",
+                  "issue_index": 3,
+                  "reason_code": "replacement_relation_not_verified"
+                }
+              ],
+              "accepted_issue_indexes": [
+                0,
+                1,
+                2
+              ],
+              "rejected_issues": [
+                {
+                  "issue_index": 3,
+                  "reason_code": "replacement_relation_not_verified"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "PFI2-032",
+          "input_sha256": "1a1e69414222ace36b9a021e42a144d27706251baf268539628bdecc2d31a6c5",
+          "question": "论文里氢键含量和CI-XI的相关系数是针叶木0.919、阔叶木0.925吧？这么高是不是就能用CI-XI直接算出氢键含量了？",
+          "answer": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\n结果部分给出O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）；但摘要写为针叶木0.888、阔叶木0.889（p < 0.05），两处针叶木数值不一致。 [2] [7]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，并认为在PFI精磨过程中或可基于CI-XI大致推测该氢键含量的趋势。 [4]\nCI-XI是由XRD峰强度比得到的结晶度指数；所给结果与结论只报告其与氢键含量的相关系数，并仅提出或可据CI-XI推测趋势，未给出直接计算氢键含量的公式或定量换算；图8中的O(6)H···O(3′)氢键以百分比趋势表示，而非绝对分子数，相关不等于可直接换算。 [1] [4] [5]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+          "summary": {
+            "status": "incomplete",
+            "notice": "本次审校未完整完成，以下保留最近一次通过引用格式检查的回答。",
+            "unresolved": [],
+            "supplement_rounds": 1,
+            "review_rounds": 2
+          },
+          "total_tokens": 69097,
+          "review_latency_ms": 223995,
+          "rounds": [
+            {
+              "status": "revised",
+              "usage": {
+                "prompt_tokens": 13816,
+                "completion_tokens": 16142,
+                "total_tokens": 29958,
+                "reasoning_tokens": 13809,
+                "cached_tokens": 12160
+              },
+              "latency_ms": 85541,
+              "reason_code": null,
+              "diagnosis_errors": [],
+              "accepted_issue_indexes": [
+                0
+              ],
+              "rejected_issues": []
+            },
+            {
+              "status": "revised",
+              "usage": {
+                "prompt_tokens": 11859,
+                "completion_tokens": 27280,
+                "total_tokens": 39139,
+                "reasoning_tokens": 22570,
+                "cached_tokens": 9728
+              },
+              "latency_ms": 138454,
+              "reason_code": null,
+              "diagnosis_errors": [
+                {
+                  "component": "claim_checks",
+                  "reason_code": "claim_check_quote_not_in_evidence",
+                  "index": 5,
+                  "claim_index": 4
+                },
+                {
+                  "component": "claim_checks",
+                  "reason_code": "claim_check_quote_not_in_evidence",
+                  "index": 6,
+                  "claim_index": 4
+                },
+                {
+                  "component": "relation_checks",
+                  "index": 6,
+                  "reason_code": "invalid_relation_source_or_target"
+                },
+                {
+                  "component": "comparison_checks",
+                  "claim_index": 1,
+                  "reason_code": "comparison_statement_unsupported"
+                }
+              ],
+              "accepted_issue_indexes": [
+                0,
+                1,
+                2
+              ],
+              "rejected_issues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run": "unified-r1",
+      "version": "bounded-corrective-review-v3.0-unified",
+      "source_sha256": {
+        "backend\\literature_rag\\config.py": "ea3ff7b87a05726af57dba28f2831397809fa0955782ee459bf563a6f4052929",
+        "backend\\literature_rag\\diagnostics.py": "07d1597d2eb039d1ee242f53e8f9b8802d24914a42ec0f2063b4c50018890873",
+        "backend\\literature_rag\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\adapters\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\application\\answer_question.py": "ee479eb9318b5c6eaa6e0701ed212dc0195f72b8794152eebc9434dcd548c8a1",
+        "backend\\literature_rag\\application\\body_context.py": "43fbc6479f90fa4286d9ece65b2c174efd74fa955fd0b10ab6dece4686c6cba9",
+        "backend\\literature_rag\\application\\citations.py": "0e26e83fc304f495bf45e292f4c885bbdfc47bafcc89affba16ab70688d82cd5",
+        "backend\\literature_rag\\application\\context.py": "ae0d372d286dbb2137d45145b3e2308ca483842d4e0d0ebc7f2503153b62205c",
+        "backend\\literature_rag\\application\\corrective_review.py": "dde58958861359e7f2c76f36b12d3d753c637855e240626b0ddf80776ae255a2",
+        "backend\\literature_rag\\application\\evidence_review.py": "73ecc942e465fe12a4d02312ac700244f9051ff3dfe015de9cdf84f321b89c0c",
+        "backend\\literature_rag\\application\\fallback_ablation.py": "3176c9df7d40ba0ab8d61f269df66bdd8ce7aca2e002d77a3875c90bdde21e98",
+        "backend\\literature_rag\\application\\numeric_crosscheck.py": "ec4c64d4dc31364e623e64f9eda2c721de59f7d711f9921a81d143e715e2da63",
+        "backend\\literature_rag\\application\\prompts.py": "90150e353c4f06a561fb46181e77b961ef0e6a647b21fd592cc5ba3737359407",
+        "backend\\literature_rag\\application\\query_rewrite.py": "4cc193656143c2b4db1980a7c267e678ec4d4631e4d88bfe1c241bf13d6d6eb6",
+        "backend\\literature_rag\\application\\rerank.py": "59a2e44502c21ace03638cd1972df79682f541f9e1405fdf4929ae9ebb2a453f",
+        "backend\\literature_rag\\application\\retrieve.py": "ee65220155fed0e15bb3ac26e0980902e4c4f49fbca1bc0daee55a9e198aaba7",
+        "backend\\literature_rag\\application\\review_commit.py": "031a0b4be52f1774503c1db81ed1ea07b877211f8b96f3a4716ee1906fd1e6da",
+        "backend\\literature_rag\\application\\review_diagnosis.py": "08395099a7a40941f94c5c476bac898fefe17e4af23c76d6de288290d1ad3e82",
+        "backend\\literature_rag\\application\\review_diagnosis_bound.py": "d6331b88b5e11c144f7b78674e7f1a0aad72e1e25cdd1073914e6b48d57e8d7e",
+        "backend\\literature_rag\\application\\review_diagnosis_budget.py": "b9e85f9f510a056a36077971d14a3f401e64d1f8ee13958c9be3e7f699fc5471",
+        "backend\\literature_rag\\application\\review_diagnosis_causal.py": "7e24253208b526abc98682eee2f1d078d09b3647413a94116eeb97b4700b4c70",
+        "backend\\literature_rag\\application\\review_diagnosis_comparison.py": "55b07cd79fe8380b9a0370a36bfdf2b2c9583cfd67f87464c580a589a5c09a1f",
+        "backend\\literature_rag\\application\\review_diagnosis_measurement.py": "28ffcf57b4b8a681fe08278f5d6b1c5d99c74205eafae0a1191a9b349f39570c",
+        "backend\\literature_rag\\application\\review_diagnosis_ranking.py": "d7aecc310afcc45d7d18f47f3cb6bcfc45f635704e2238ef42d80f57ed390a97",
+        "backend\\literature_rag\\application\\review_diagnosis_relation.py": "fd9458359eb16d3e084b7eb252099459848882d065da45fefa8d59baa7c287a8",
+        "backend\\literature_rag\\application\\review_diagnosis_relation_compact.py": "b5db09e5afb0caa1bb63830ea8e53b9f86495875b77cfa3deb73c64191d4a509",
+        "backend\\literature_rag\\application\\review_diagnosis_unified.py": "55a30f4df33d334952c1349a0cd904a6c7e8e9f56d75520dd53a4818dae82790",
+        "backend\\literature_rag\\application\\review_diagnosis_v2.py": "8c991297d0b6b0a24729609f09f9ce6dd779d0530f87ffbab3945df0b82c85ca",
+        "backend\\literature_rag\\application\\review_diagnosis_v3.py": "1c8d1022a08434634afca63e7db174c8584c9de2d42e6b60c442479cf0b5a28a",
+        "backend\\literature_rag\\application\\review_diagnostics.py": "938050aac7f7b8c67eb7bb398948e444f22d1f9c816372b2a3406a662b8249bb",
+        "backend\\literature_rag\\application\\role_context.py": "166838804b5c8d4551f80405f2203af1d98cb95a1cc838c0a051e779d1b7a879",
+        "backend\\literature_rag\\application\\section_context.py": "bb1d7e111cf09e6273cea9b06d92996ed8c627220bbd97d3abfc3ce863f302e5",
+        "backend\\literature_rag\\application\\structure.py": "9a3439e3562692f8ba578d0a18ddc0ad52b134d7900508ff3f25bcbf54773e7d",
+        "backend\\literature_rag\\application\\table_evidence.py": "62a4acc31434435fa3b4254746010c79ed7b2f33826aaf58a8a7531a9e8046ba",
+        "backend\\literature_rag\\application\\unified_context.py": "a5483bd4eaf0550993b0f397da65789a0524891a774fc4b06205e35434379bb7",
+        "backend\\literature_rag\\application\\visual_evidence.py": "f2c78386e683ff3b57a3797abbee30ac4b42ccd3583cdcd86b8cc1c23ff6b786",
+        "backend\\literature_rag\\application\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\domain\\errors.py": "eefee5cfe3180f6e625eea2c66ef5ab2c2e8fc8b1d5dfcddfc085689ae32302b",
+        "backend\\literature_rag\\domain\\models.py": "b570a83e543c908c2ca137827e62c4ed914d84bff7fe8fa50f26c9cfb2e1ea88",
+        "backend\\literature_rag\\domain\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\ports\\protocols.py": "4f5cf0cbef40f65361eaf29d6bf2f71fbb6d49404f46f09bc53722215248be35",
+        "backend\\literature_rag\\ports\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\adapters\\chroma\\vector_store.py": "8e40c7c9b7429568e3796c38efeb8d7d0ea5d297b94a7e8fd519296ccafcd7fe",
+        "backend\\literature_rag\\adapters\\chroma\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\adapters\\providers\\dashscope.py": "a1456b9dd7bd7a032fa3f399e22a63bf07472197206f4e8fd37e751bea842927",
+        "backend\\literature_rag\\adapters\\providers\\deepseek.py": "e7f0527140448f8d18f1646647648cfebff226bb56a8de82bd47a818fd196845",
+        "backend\\literature_rag\\adapters\\providers\\evidence_review.py": "c1317927a44fa6944323b95464e3ae7a2a9131da3a637025e267dc296745da99",
+        "backend\\literature_rag\\adapters\\providers\\openai.py": "823dc942c86b422b7260197012b4619d159279d25acd3ffd795bb544180d8549",
+        "backend\\literature_rag\\adapters\\providers\\query_rewrite.py": "0f71a900e18f8c0969dd6700e222d556588b03b08c5e849ce14b7e22c5d40998",
+        "backend\\literature_rag\\adapters\\providers\\rerank.py": "7f4463f683676ae67a11488f5b6b359b9ecf2452a98830ea638495d7735b1ba4",
+        "backend\\literature_rag\\adapters\\providers\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\adapters\\sqlite\\metadata_store.py": "d0c6e9acbd6562faf8d8595cced9609ddbc19997b04e0911b08f96e744cddcb9",
+        "backend\\literature_rag\\adapters\\sqlite\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cases": [
+        {
+          "case_id": "PFI2-018",
+          "input_sha256": "c2705fab222a4e5dc4591abcca5d9c488179640d6299fd2050c4a39950a58a35",
+          "question": "这篇论文如何从FT-IR获得不同氢键的相对含量？请说明拟合波段、函数和含量口径。",
+          "answer": "FT-IR谱以KBr压片、透射模式采集4000–400 cm⁻¹，分辨率4 cm⁻¹，64次扫描平均，并以五次记录的平均谱分析；光谱在1016 cm⁻¹归一化。 [1]\n用Savitzky–Golay算法获得导数曲线，并按不同氢键所属波数区间从二阶导数谱确定各氢键组分的峰位。 [1]\n对3000–3700 cm⁻¹的羟基伸缩振动区进行非线性拟合，采用Gaussian函数，软件为Peakfit 4.12。 [1]\n峰位归属为：3580–3550 cm⁻¹为free OH(2)和OH(6)；3455–3410 cm⁻¹为O(2)H···O(6)分子内氢键；3375–3340 cm⁻¹为O(3)H···O(5)分子内氢键；3310–3230 cm⁻¹为O(6)H···O(3′)分子间氢键（cellulose I）。 [3]\n结果中将3000–3700 cm⁻¹羟基带反卷积为四个主要分峰，各氢键的相对含量按对应分峰面积占四个分峰总面积的比例计算。 [3]\nFigure 7显示每个样品拟合出四个Gaussian分峰：三类氢键与free OH(2)/OH(6)；Table 2以百分比列出这些组分的相对含量，四项合计约为100%，并给出r²约0.999。 [3]",
+          "summary": {
+            "status": "incomplete",
+            "notice": "本次审校未完整完成，以下保留最近一次通过引用格式检查的回答。",
+            "unresolved": [
+              {
+                "id": "R80",
+                "requirement": "核对实际测量量、回答推断量及回答该问题所必需的解释边界",
+                "reason": "该项修订未全部通过来源或引用检查，尚未确认解决。"
+              }
+            ],
+            "supplement_rounds": 0,
+            "review_rounds": 1
+          },
+          "total_tokens": 17972,
+          "review_latency_ms": 54331,
+          "rounds": [
+            {
+              "status": "rejected",
+              "usage": {
+                "prompt_tokens": 8385,
+                "completion_tokens": 9587,
+                "total_tokens": 17972,
+                "reasoning_tokens": 7738,
+                "cached_tokens": 0
+              },
+              "latency_ms": 54331,
+              "reason_code": "no_independent_edit_verified",
+              "diagnosis_errors": [
+                {
+                  "component": "units",
+                  "index": 2,
+                  "reason_code": "unit_quote_not_in_evidence"
+                },
+                {
+                  "component": "units",
+                  "issue_index": 0,
+                  "reason_code": "replacement_unit_not_verified"
+                }
+              ],
+              "accepted_issue_indexes": [],
+              "rejected_issues": [
+                {
+                  "issue_index": 0,
+                  "reason_code": "replacement_unit_not_verified"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "PFI2-024",
+          "input_sha256": "36dbec27beb21dbd19411629a75f32adbea29aa851ad30b5c5e3d1ed315960c2",
+          "question": "PFI打浆是怎么一步步让纸变结实的？纤维长度、细小纤维、WRV这几个因素里哪个贡献最大？",
+          "answer": "PFI打浆对纤维的主要作用包括内部细纤维化（细胞壁分层、松弛和润胀）、外部细纤维化（表面微细纤维剥离但仍附着）、纤维切断和细小纤维生成。 [2]\n这些作用会提高纤维的可及性、润胀性、柔顺性和纤维间结合能力，从而为成纸强度提高提供基础。 [2]\n随PFI转数增加，打浆度和WRV显著升高；文中归因于细纤维化产生新的表面和更多孔隙。 [1]\nWRV表征的润胀增加使纤维在横向更柔顺，这有助于提高纤维网络的纤维间结合强度。 [1]\nFigure 1显示，PFI打浆后软木浆的纤维长度下降，而细小纤维含量上升，同时宏观细纤维化指数上升。 [1]\nPFI打浆提高了细纤维化程度（尤其是内部细纤维化）、纤维润胀和纸页拉伸强度，且零-span结果说明未降低单根纤维强度。 [1]\n分子层面，O(6)H···O(3′)分子间氢键总量在打浆中下降，且更少的分子间氢键和较低结晶指数有利于提高纤维柔顺性、可及性和WRV。 [3]\n湿纸幅强度方面，软木浆的增加比硬木浆更显著，作者强调纤维长度对湿纸幅强度起重要作用。 [1]\n所给证据没有给出纤维长度、细小纤维和WRV三者对成纸强度贡献的定量排序；从直接论述看，WRV/润胀（内部细纤维化）与纤维间结合强度的联系最直接，而纤维长度主要被强调为湿纸幅强度的关键因素。 [1] [2]",
+          "summary": {
+            "status": "incomplete",
+            "notice": "本次审校未完整完成，以下保留最近一次通过引用格式检查的回答。",
+            "unresolved": [
+              {
+                "id": "R7",
+                "requirement": "回答三因素中哪个对成纸强度贡献最大；若证据不足须明确不能判定最大贡献。",
+                "reason": "该项修订未全部通过来源或引用检查，尚未确认解决。"
+              },
+              {
+                "id": "R80",
+                "requirement": "核对实际测量量、回答推断量及回答该问题所必需的解释边界",
+                "reason": "该项修订未全部通过来源或引用检查，尚未确认解决。"
+              },
+              {
+                "id": "R81",
+                "requirement": "核对因素强弱或贡献排名的证据、比较口径及回答边界",
+                "reason": "该项修订未全部通过来源或引用检查，尚未确认解决。"
+              }
+            ],
+            "supplement_rounds": 0,
+            "review_rounds": 1
+          },
+          "total_tokens": 36487,
+          "review_latency_ms": 138354,
+          "rounds": [
+            {
+              "status": "rejected",
+              "usage": {
+                "prompt_tokens": 11070,
+                "completion_tokens": 25417,
+                "total_tokens": 36487,
+                "reasoning_tokens": 20901,
+                "cached_tokens": 0
+              },
+              "latency_ms": 138354,
+              "reason_code": "no_independent_edit_verified",
+              "diagnosis_errors": [
+                {
+                  "component": "units",
+                  "index": 2,
+                  "reason_code": "unit_detail_sentence_invalid"
+                },
+                {
+                  "component": "units",
+                  "index": 7,
+                  "reason_code": "unit_quote_not_in_evidence"
+                },
+                {
+                  "component": "units",
+                  "index": 9,
+                  "reason_code": "unit_relation_missing"
+                },
+                {
+                  "component": "units",
+                  "index": 10,
+                  "reason_code": "unit_relation_missing"
+                },
+                {
+                  "component": "units",
+                  "claim_index": 2,
+                  "reason_code": "required_unit_or_aspect_missing"
+                },
+                {
+                  "component": "units",
+                  "issue_index": 0,
+                  "reason_code": "replacement_unit_not_verified"
+                },
+                {
+                  "component": "units",
+                  "issue_index": 1,
+                  "reason_code": "replacement_unit_not_verified"
+                }
+              ],
+              "accepted_issue_indexes": [],
+              "rejected_issues": [
+                {
+                  "issue_index": 0,
+                  "reason_code": "replacement_unit_not_verified"
+                },
+                {
+                  "issue_index": 1,
+                  "reason_code": "replacement_unit_not_verified"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "PFI2-031",
+          "input_sha256": "2dac9f8f57d4af27a47c7a9fb2d94471796638f4c6a00d50638fb75e287ac8b9",
+          "question": "PFI打浆把纤维素从I型变成II型以后，结晶度为什么还会下降？",
+          "answer": "XRD结果表明，两种浆料纤维在PFI处理过程中纤维素晶型没有发生变化，说明PFI打浆是相对温和的机械处理 [2]\n因此“PFI打浆把纤维素从I型变成II型”这一前提与所给证据不符，结晶度下降不能用I型向II型转变来解释 [2]\n随打浆进行，软木浆的CI-XI和CI-XA分别下降4.66%和15.47%，硬木浆分别下降2.65%和19.4% [2]\n表1中软木纤维从0转到16,000转，CI-XI由73.23%降至69.82%、CI-XA由40.46%降至34.20%；硬木纤维CI-XI由75.55%降至73.55%、CI-XA由47.16%降至38.01% [3]\nCI随打浆先降后升再降的波动，被解释为机械作用先主要作用于结晶区，随后作用于无定形区并可能发生共结晶，之后结晶区被持续破坏 [2]\n结晶度下降的同时，O(6)H···O(3′)分子间氢键总量在软木和硬木纤维中分别减少16.54%和5.91%，归因于PFI机械作用下纤维素分子链之间的断裂，与内、外细纤维化密切相关 [4]\n较少的分子间氢键和较低的结晶度会因分子链活动性提高而进一步提升纤维素纤维的柔顺性、可及性和保水值 [4]\n结晶尺寸方面，两种纤维垂直于(200)面的尺寸呈上升趋势（软木4.5 nm升至4.7 nm，硬木4.5 nm升至4.7 nm），而(110)面尺寸波动更大，被解释为水分子更易沿亲水的(110)面渗入，使这些晶面承受更多机械作用 [3] [2]",
+          "summary": {
+            "status": "incomplete",
+            "notice": "本次审校未完整完成，以下保留最近一次通过引用格式检查的回答。",
+            "unresolved": [],
+            "supplement_rounds": 0,
+            "review_rounds": 1
+          },
+          "total_tokens": 44112,
+          "review_latency_ms": 184949,
+          "rounds": [
+            {
+              "status": "failed",
+              "usage": {
+                "prompt_tokens": 11344,
+                "completion_tokens": 32768,
+                "total_tokens": 44112,
+                "reasoning_tokens": 29261,
+                "cached_tokens": 0
+              },
+              "latency_ms": 184949,
+              "reason_code": "review_output_truncated",
+              "diagnosis_errors": null,
+              "accepted_issue_indexes": null,
+              "rejected_issues": null
+            }
+          ]
+        },
+        {
+          "case_id": "PFI2-032",
+          "input_sha256": "1a1e69414222ace36b9a021e42a144d27706251baf268539628bdecc2d31a6c5",
+          "question": "论文里氢键含量和CI-XI的相关系数是针叶木0.919、阔叶木0.925吧？这么高是不是就能用CI-XI直接算出氢键含量了？",
+          "answer": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\nO(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。 [2]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。 [4]\n论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。 [2] [4]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+          "summary": {
+            "status": "incomplete",
+            "notice": "本次审校未完整完成，以下保留最近一次通过引用格式检查的回答。",
+            "unresolved": [
+              {
+                "id": "R4",
+                "requirement": "回答能否由CI-XI直接计算/定量换算氢键含量：相关系数不等于计算公式或换算关系。",
+                "reason": "该项修订未全部通过来源或引用检查，尚未确认解决。"
+              },
+              {
+                "id": "R80",
+                "requirement": "核对实际测量量、回答推断量及回答该问题所必需的解释边界",
+                "reason": "该项修订未全部通过来源或引用检查，尚未确认解决。"
+              },
+              {
+                "id": "R90",
+                "requirement": "核对同篇论文摘要与已提供材料中涉及用户问题的数值及统计口径。",
+                "reason": "该项修订未全部通过来源或引用检查，尚未确认解决。"
+              }
+            ],
+            "supplement_rounds": 1,
+            "review_rounds": 2
+          },
+          "total_tokens": 68833,
+          "review_latency_ms": 244141,
+          "rounds": [
+            {
+              "status": "rejected",
+              "usage": {
+                "prompt_tokens": 11532,
+                "completion_tokens": 24551,
+                "total_tokens": 36083,
+                "reasoning_tokens": 21441,
+                "cached_tokens": 1408
+              },
+              "latency_ms": 132191,
+              "reason_code": "no_independent_edit_verified",
+              "diagnosis_errors": [
+                {
+                  "component": "units",
+                  "index": 3,
+                  "reason_code": "invalid_unit",
+                  "fields": [
+                    {
+                      "type": "literal_error",
+                      "location": [
+                        "checked",
+                        3
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "component": "units",
+                  "index": 5,
+                  "reason_code": "invalid_unit",
+                  "fields": [
+                    {
+                      "type": "literal_error",
+                      "location": [
+                        "checked",
+                        3
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "component": "units",
+                  "index": 6,
+                  "reason_code": "invalid_unit",
+                  "fields": [
+                    {
+                      "type": "literal_error",
+                      "location": [
+                        "checked",
+                        3
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "component": "units",
+                  "claim_index": 3,
+                  "reason_code": "required_unit_or_aspect_missing"
+                },
+                {
+                  "component": "units",
+                  "issue_index": 0,
+                  "reason_code": "replacement_unit_not_verified"
+                },
+                {
+                  "component": "units",
+                  "issue_index": 1,
+                  "reason_code": "original_unit_not_verified"
+                }
+              ],
+              "accepted_issue_indexes": [],
+              "rejected_issues": [
+                {
+                  "issue_index": 0,
+                  "reason_code": "replacement_unit_not_verified"
+                },
+                {
+                  "issue_index": 1,
+                  "reason_code": "original_unit_not_verified"
+                }
+              ]
+            },
+            {
+              "status": "rejected",
+              "usage": {
+                "prompt_tokens": 9591,
+                "completion_tokens": 23159,
+                "total_tokens": 32750,
+                "reasoning_tokens": 19427,
+                "cached_tokens": 6784
+              },
+              "latency_ms": 111950,
+              "reason_code": "no_independent_edit_verified",
+              "diagnosis_errors": [
+                {
+                  "component": "units",
+                  "index": 1,
+                  "reason_code": "invalid_unit",
+                  "fields": [
+                    {
+                      "type": "literal_error",
+                      "location": [
+                        "checked",
+                        3
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "component": "units",
+                  "index": 3,
+                  "reason_code": "invalid_unit",
+                  "fields": [
+                    {
+                      "type": "literal_error",
+                      "location": [
+                        "checked",
+                        3
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "component": "units",
+                  "index": 5,
+                  "reason_code": "invalid_unit",
+                  "fields": [
+                    {
+                      "type": "literal_error",
+                      "location": [
+                        "checked",
+                        2
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "component": "units",
+                  "index": 6,
+                  "reason_code": "invalid_unit",
+                  "fields": [
+                    {
+                      "type": "literal_error",
+                      "location": [
+                        "checked",
+                        2
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "component": "units",
+                  "index": 0,
+                  "reason_code": "unit_quote_not_in_evidence"
+                },
+                {
+                  "component": "units",
+                  "index": 0,
+                  "reason_code": "unit_quote_not_in_evidence"
+                },
+                {
+                  "component": "units",
+                  "claim_index": 0,
+                  "reason_code": "required_unit_or_aspect_missing"
+                },
+                {
+                  "component": "units",
+                  "claim_index": 1,
+                  "reason_code": "required_unit_or_aspect_missing"
+                },
+                {
+                  "component": "units",
+                  "claim_index": 3,
+                  "reason_code": "required_unit_or_aspect_missing"
+                },
+                {
+                  "component": "units",
+                  "issue_index": 0,
+                  "reason_code": "original_unit_not_verified"
+                },
+                {
+                  "component": "units",
+                  "issue_index": 1,
+                  "reason_code": "original_unit_not_verified"
+                }
+              ],
+              "accepted_issue_indexes": [],
+              "rejected_issues": [
+                {
+                  "issue_index": 0,
+                  "reason_code": "original_unit_not_verified"
+                },
+                {
+                  "issue_index": 1,
+                  "reason_code": "original_unit_not_verified"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run": "unified-r2",
+      "version": "bounded-corrective-review-v3.0-unified",
+      "source_sha256": {
+        "backend\\literature_rag\\config.py": "ea3ff7b87a05726af57dba28f2831397809fa0955782ee459bf563a6f4052929",
+        "backend\\literature_rag\\diagnostics.py": "07d1597d2eb039d1ee242f53e8f9b8802d24914a42ec0f2063b4c50018890873",
+        "backend\\literature_rag\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\adapters\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\application\\answer_question.py": "ee479eb9318b5c6eaa6e0701ed212dc0195f72b8794152eebc9434dcd548c8a1",
+        "backend\\literature_rag\\application\\body_context.py": "43fbc6479f90fa4286d9ece65b2c174efd74fa955fd0b10ab6dece4686c6cba9",
+        "backend\\literature_rag\\application\\citations.py": "0e26e83fc304f495bf45e292f4c885bbdfc47bafcc89affba16ab70688d82cd5",
+        "backend\\literature_rag\\application\\context.py": "ae0d372d286dbb2137d45145b3e2308ca483842d4e0d0ebc7f2503153b62205c",
+        "backend\\literature_rag\\application\\corrective_review.py": "dde58958861359e7f2c76f36b12d3d753c637855e240626b0ddf80776ae255a2",
+        "backend\\literature_rag\\application\\evidence_review.py": "73ecc942e465fe12a4d02312ac700244f9051ff3dfe015de9cdf84f321b89c0c",
+        "backend\\literature_rag\\application\\fallback_ablation.py": "3176c9df7d40ba0ab8d61f269df66bdd8ce7aca2e002d77a3875c90bdde21e98",
+        "backend\\literature_rag\\application\\numeric_crosscheck.py": "ec4c64d4dc31364e623e64f9eda2c721de59f7d711f9921a81d143e715e2da63",
+        "backend\\literature_rag\\application\\prompts.py": "90150e353c4f06a561fb46181e77b961ef0e6a647b21fd592cc5ba3737359407",
+        "backend\\literature_rag\\application\\query_rewrite.py": "4cc193656143c2b4db1980a7c267e678ec4d4631e4d88bfe1c241bf13d6d6eb6",
+        "backend\\literature_rag\\application\\rerank.py": "59a2e44502c21ace03638cd1972df79682f541f9e1405fdf4929ae9ebb2a453f",
+        "backend\\literature_rag\\application\\retrieve.py": "ee65220155fed0e15bb3ac26e0980902e4c4f49fbca1bc0daee55a9e198aaba7",
+        "backend\\literature_rag\\application\\review_commit.py": "031a0b4be52f1774503c1db81ed1ea07b877211f8b96f3a4716ee1906fd1e6da",
+        "backend\\literature_rag\\application\\review_diagnosis.py": "08395099a7a40941f94c5c476bac898fefe17e4af23c76d6de288290d1ad3e82",
+        "backend\\literature_rag\\application\\review_diagnosis_bound.py": "d6331b88b5e11c144f7b78674e7f1a0aad72e1e25cdd1073914e6b48d57e8d7e",
+        "backend\\literature_rag\\application\\review_diagnosis_budget.py": "b9e85f9f510a056a36077971d14a3f401e64d1f8ee13958c9be3e7f699fc5471",
+        "backend\\literature_rag\\application\\review_diagnosis_causal.py": "7e24253208b526abc98682eee2f1d078d09b3647413a94116eeb97b4700b4c70",
+        "backend\\literature_rag\\application\\review_diagnosis_comparison.py": "55b07cd79fe8380b9a0370a36bfdf2b2c9583cfd67f87464c580a589a5c09a1f",
+        "backend\\literature_rag\\application\\review_diagnosis_measurement.py": "28ffcf57b4b8a681fe08278f5d6b1c5d99c74205eafae0a1191a9b349f39570c",
+        "backend\\literature_rag\\application\\review_diagnosis_ranking.py": "d7aecc310afcc45d7d18f47f3cb6bcfc45f635704e2238ef42d80f57ed390a97",
+        "backend\\literature_rag\\application\\review_diagnosis_relation.py": "fd9458359eb16d3e084b7eb252099459848882d065da45fefa8d59baa7c287a8",
+        "backend\\literature_rag\\application\\review_diagnosis_relation_compact.py": "b5db09e5afb0caa1bb63830ea8e53b9f86495875b77cfa3deb73c64191d4a509",
+        "backend\\literature_rag\\application\\review_diagnosis_unified.py": "bc6e69f31adab30a3baf822752c343f0b728b1659d818f56cb5d568810f8236c",
+        "backend\\literature_rag\\application\\review_diagnosis_v2.py": "8c991297d0b6b0a24729609f09f9ce6dd779d0530f87ffbab3945df0b82c85ca",
+        "backend\\literature_rag\\application\\review_diagnosis_v3.py": "1c8d1022a08434634afca63e7db174c8584c9de2d42e6b60c442479cf0b5a28a",
+        "backend\\literature_rag\\application\\review_diagnostics.py": "938050aac7f7b8c67eb7bb398948e444f22d1f9c816372b2a3406a662b8249bb",
+        "backend\\literature_rag\\application\\role_context.py": "166838804b5c8d4551f80405f2203af1d98cb95a1cc838c0a051e779d1b7a879",
+        "backend\\literature_rag\\application\\section_context.py": "bb1d7e111cf09e6273cea9b06d92996ed8c627220bbd97d3abfc3ce863f302e5",
+        "backend\\literature_rag\\application\\structure.py": "9a3439e3562692f8ba578d0a18ddc0ad52b134d7900508ff3f25bcbf54773e7d",
+        "backend\\literature_rag\\application\\table_evidence.py": "62a4acc31434435fa3b4254746010c79ed7b2f33826aaf58a8a7531a9e8046ba",
+        "backend\\literature_rag\\application\\unified_context.py": "a5483bd4eaf0550993b0f397da65789a0524891a774fc4b06205e35434379bb7",
+        "backend\\literature_rag\\application\\visual_evidence.py": "f2c78386e683ff3b57a3797abbee30ac4b42ccd3583cdcd86b8cc1c23ff6b786",
+        "backend\\literature_rag\\application\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\domain\\errors.py": "eefee5cfe3180f6e625eea2c66ef5ab2c2e8fc8b1d5dfcddfc085689ae32302b",
+        "backend\\literature_rag\\domain\\models.py": "b570a83e543c908c2ca137827e62c4ed914d84bff7fe8fa50f26c9cfb2e1ea88",
+        "backend\\literature_rag\\domain\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\ports\\protocols.py": "4f5cf0cbef40f65361eaf29d6bf2f71fbb6d49404f46f09bc53722215248be35",
+        "backend\\literature_rag\\ports\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\adapters\\chroma\\vector_store.py": "8e40c7c9b7429568e3796c38efeb8d7d0ea5d297b94a7e8fd519296ccafcd7fe",
+        "backend\\literature_rag\\adapters\\chroma\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\adapters\\providers\\dashscope.py": "a1456b9dd7bd7a032fa3f399e22a63bf07472197206f4e8fd37e751bea842927",
+        "backend\\literature_rag\\adapters\\providers\\deepseek.py": "e7f0527140448f8d18f1646647648cfebff226bb56a8de82bd47a818fd196845",
+        "backend\\literature_rag\\adapters\\providers\\evidence_review.py": "c1317927a44fa6944323b95464e3ae7a2a9131da3a637025e267dc296745da99",
+        "backend\\literature_rag\\adapters\\providers\\openai.py": "823dc942c86b422b7260197012b4619d159279d25acd3ffd795bb544180d8549",
+        "backend\\literature_rag\\adapters\\providers\\query_rewrite.py": "0f71a900e18f8c0969dd6700e222d556588b03b08c5e849ce14b7e22c5d40998",
+        "backend\\literature_rag\\adapters\\providers\\rerank.py": "7f4463f683676ae67a11488f5b6b359b9ecf2452a98830ea638495d7735b1ba4",
+        "backend\\literature_rag\\adapters\\providers\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backend\\literature_rag\\adapters\\sqlite\\metadata_store.py": "d0c6e9acbd6562faf8d8595cced9609ddbc19997b04e0911b08f96e744cddcb9",
+        "backend\\literature_rag\\adapters\\sqlite\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cases": [
+        {
+          "case_id": "PFI2-024",
+          "input_sha256": "36dbec27beb21dbd19411629a75f32adbea29aa851ad30b5c5e3d1ed315960c2",
+          "question": "PFI打浆是怎么一步步让纸变结实的？纤维长度、细小纤维、WRV这几个因素里哪个贡献最大？",
+          "answer": "PFI打浆对纤维的主要作用包括内部细纤维化（细胞壁分层、松弛和润胀）、外部细纤维化（表面微细纤维剥离但仍附着）、纤维切断和细小纤维生成。 [2]\n这些作用会提高纤维的可及性、润胀性、柔顺性和纤维间结合能力，从而为成纸强度提高提供基础。 [2]\n随PFI转数增加，打浆度和WRV显著升高；文中归因于细纤维化产生新的表面和更多孔隙。 [1]\nWRV表征的润胀增加使纤维在横向更柔顺，这有助于提高纤维网络的纤维间结合强度。 [1]\nFigure 1显示，PFI打浆后软木浆的纤维长度下降，而细小纤维含量上升，同时宏观细纤维化指数上升。 [1]\nPFI打浆提高了细纤维化程度（尤其是内部细纤维化）、纤维润胀和纸页拉伸强度，且零-span结果说明未降低单根纤维强度。 [1]\n分子层面，O(6)H···O(3′)分子间氢键的相对含量（FT-IR去卷积所得相对值，不代表绝对氢键数量）在打浆中下降；较低的该相对含量和较低结晶指数有利于提高纤维柔顺性、可及性和WRV。 [3]\n湿纸幅强度方面，软木浆的增加比硬木浆更显著，作者强调纤维长度对湿纸幅强度起重要作用。 [1]\n所给证据没有给出纤维长度、细小纤维和WRV三者对成纸强度贡献的定量排序；从直接论述看，WRV/润胀（内部细纤维化）与纤维间结合强度的联系最直接，而纤维长度主要被强调为湿纸幅强度的关键因素。 [1] [2]",
+          "summary": {
+            "status": "incomplete",
+            "notice": "本次审校未完整完成，以下保留最近一次通过引用格式检查的回答。",
+            "unresolved": [
+              {
+                "id": "R3",
+                "requirement": "比较纤维长度、细小纤维和WRV对成纸强度的贡献，并回答哪一个贡献最大；若证据不足须明确不能确定最大贡献",
+                "reason": "该项修订未全部通过来源或引用检查，尚未确认解决。"
+              },
+              {
+                "id": "R81",
+                "requirement": "核对因素强弱或贡献排名的证据、比较口径及回答边界",
+                "reason": "该项修订未全部通过来源或引用检查，尚未确认解决。"
+              }
+            ],
+            "supplement_rounds": 0,
+            "review_rounds": 1
+          },
+          "total_tokens": 32790,
+          "review_latency_ms": 126746,
+          "rounds": [
+            {
+              "status": "revised",
+              "usage": {
+                "prompt_tokens": 11163,
+                "completion_tokens": 21627,
+                "total_tokens": 32790,
+                "reasoning_tokens": 18619,
+                "cached_tokens": 256
+              },
+              "latency_ms": 126746,
+              "reason_code": null,
+              "diagnosis_errors": [
+                {
+                  "component": "units",
+                  "index": 0,
+                  "reason_code": "unit_detail_sentence_invalid"
+                },
+                {
+                  "component": "units",
+                  "index": 4,
+                  "reason_code": "context_cannot_certify_claim"
+                },
+                {
+                  "component": "units",
+                  "claim_index": 2,
+                  "reason_code": "required_unit_or_aspect_missing"
+                },
+                {
+                  "component": "units",
+                  "issue_index": 0,
+                  "reason_code": "replacement_unit_not_verified"
+                }
+              ],
+              "accepted_issue_indexes": [
+                1
+              ],
+              "rejected_issues": [
+                {
+                  "issue_index": 0,
+                  "reason_code": "replacement_unit_not_verified"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "PFI2-032",
+          "input_sha256": "1a1e69414222ace36b9a021e42a144d27706251baf268539628bdecc2d31a6c5",
+          "question": "论文里氢键含量和CI-XI的相关系数是针叶木0.919、阔叶木0.925吧？这么高是不是就能用CI-XI直接算出氢键含量了？",
+          "answer": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\n结果部分报告O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）；但同篇摘要对针叶木报告0.888、阔叶木0.889，两个位置的数值不完全一致。 [2] [7]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。 [4]\n在所提供的相关分析与结论中，作者只报告了CI-XI与O(6)H···O(3′)氢键含量的相关系数，并称可基于CI-XI大致推测该氢键含量的趋势；未给出由CI-XI直接计算氢键含量的公式或定量换算。这里的氢键含量是相对含量（%），不是绝对键数或浓度，相关分析不能等同于定量换算。 [2] [4] [5]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+          "summary": {
+            "status": "completed",
+            "notice": "已完成证据审校；这不等于所有结论均已得到保证。",
+            "unresolved": [],
+            "supplement_rounds": 1,
+            "review_rounds": 2
+          },
+          "total_tokens": 55260,
+          "review_latency_ms": 179323,
+          "rounds": [
+            {
+              "status": "revised",
+              "usage": {
+                "prompt_tokens": 11625,
+                "completion_tokens": 16922,
+                "total_tokens": 28547,
+                "reasoning_tokens": 13728,
+                "cached_tokens": 256
+              },
+              "latency_ms": 89097,
+              "reason_code": null,
+              "diagnosis_errors": [
+                {
+                  "component": "units",
+                  "index": 4,
+                  "reason_code": "unit_quote_not_in_evidence"
+                },
+                {
+                  "component": "units",
+                  "claim_index": 4,
+                  "reason_code": "required_unit_or_aspect_missing"
+                }
+              ],
+              "accepted_issue_indexes": [
+                0,
+                1
+              ],
+              "rejected_issues": []
+            },
+            {
+              "status": "revised",
+              "usage": {
+                "prompt_tokens": 9738,
+                "completion_tokens": 16975,
+                "total_tokens": 26713,
+                "reasoning_tokens": 13385,
+                "cached_tokens": 6784
+              },
+              "latency_ms": 90226,
+              "reason_code": null,
+              "diagnosis_errors": [],
+              "accepted_issue_indexes": [
+                0,
+                1
+              ],
+              "rejected_issues": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "synthetic_controls": [
+    {
+      "synthetic": true,
+      "question": "这个结论适用于哪些材料？",
+      "source": "The observations were obtained only from bleached softwood kraft pulp under the stated experimental conditions. No other materials were tested.",
+      "draft": {
+        "answer": "这一结论适用于所有植物纤维材料。 [1]",
+        "claims": [
+          {
+            "text": "这一结论适用于所有植物纤维材料。",
+            "citation_refs": [
+              "[1]"
+            ]
+          }
+        ]
+      },
+      "final": {
+        "answer": "这一结论仅适用于漂白软木硫酸盐浆（bleached softwood kraft pulp），且限于所述实验条件；未测试其他材料。 [1]",
+        "claims": [
+          {
+            "text": "这一结论仅适用于漂白软木硫酸盐浆（bleached softwood kraft pulp），且限于所述实验条件；未测试其他材料。",
+            "citation_refs": [
+              "[1]"
+            ]
+          }
+        ]
+      },
+      "status": "revised",
+      "usage": {
+        "prompt_tokens": 1181,
+        "completion_tokens": 4611,
+        "total_tokens": 5792,
+        "reasoning_tokens": 3940,
+        "cached_tokens": 768
+      },
+      "diagnosis_errors": []
+    },
+    {
+      "synthetic": true,
+      "question": "哪个样本长度更大？",
+      "source": "Sample A has a length of 3 mm. Sample B has a length of 2 mm.",
+      "draft": {
+        "answer": "样本A为3 mm，样本B为2 mm，A的长度更大。 [1]",
+        "claims": [
+          {
+            "text": "样本A为3 mm，样本B为2 mm，A的长度更大。",
+            "citation_refs": [
+              "[1]"
+            ]
+          }
+        ]
+      },
+      "final": {
+        "answer": "样本A为3 mm，样本B为2 mm，A的长度更大。 [1]",
+        "claims": [
+          {
+            "text": "样本A为3 mm，样本B为2 mm，A的长度更大。",
+            "citation_refs": [
+              "[1]"
+            ]
+          }
+        ]
+      },
+      "status": "unchanged",
+      "usage": {
+        "prompt_tokens": 1184,
+        "completion_tokens": 600,
+        "total_tokens": 1784,
+        "reasoning_tokens": 505,
+        "cached_tokens": 768
+      },
+      "diagnosis_errors": []
+    },
+    {
+      "synthetic": true,
+      "question": "请解释加热的两个结果。",
+      "source": "Under the tested conditions, heating causes expansion and softening.",
+      "draft": {
+        "answer": "在该实验条件下，加热导致膨胀和软化。 [1]",
+        "claims": [
+          {
+            "text": "在该实验条件下，加热导致膨胀和软化。",
+            "citation_refs": [
+              "[1]"
+            ]
+          }
+        ]
+      },
+      "final": {
+        "answer": "在该实验条件下，加热导致膨胀和软化。 [1]",
+        "claims": [
+          {
+            "text": "在该实验条件下，加热导致膨胀和软化。",
+            "citation_refs": [
+              "[1]"
+            ]
+          }
+        ]
+      },
+      "status": "unchanged",
+      "usage": {
+        "prompt_tokens": 1376,
+        "completion_tokens": 2414,
+        "total_tokens": 3790,
+        "reasoning_tokens": 1948,
+        "cached_tokens": 896
+      },
+      "diagnosis_errors": []
+    }
+  ]
+}

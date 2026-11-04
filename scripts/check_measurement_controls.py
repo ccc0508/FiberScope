@@ -12,7 +12,7 @@ sys.path.insert(0,str(ROOT/'backend'))
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output',type=Path,required=True)
-    parser.add_argument('--suite',choices=['measurement','ranking'],default='measurement')
+    parser.add_argument('--suite',choices=['measurement','ranking','unified'],default='measurement')
     args=parser.parse_args()
     if args.output.exists():raise ValueError('Use a new output directory; no implicit paid retry')
     from literature_rag.config import Settings
@@ -41,6 +41,18 @@ def main():
              'A had the strongest correlation. These correlations do not establish causal contribution.',
              '本实验按Pearson相关系数比较，A为0.8、B为0.5、C为0.2，A与Y的相关性最强；这不代表A的因果贡献最大。'),
         ]
+    if args.suite=='unified':
+        cases=[
+            ('numeric','哪个样本长度更大？','Sample A has a length of 3 mm. Sample B has a length of 2 mm.',
+             '样本A为3 mm，样本B为2 mm，A的长度更大。'),
+            ('implicit_scope','这个结论适用于哪些材料？',
+             'The observations were obtained only from bleached softwood kraft pulp under the stated experimental conditions. '
+             'No other materials were tested.',
+             '这一结论适用于所有植物纤维材料。'),
+            ('supported_cause','请解释加热的两个结果。',
+             'Under the tested conditions, heating causes expansion and softening.',
+             '在该实验条件下，加热导致膨胀和软化。'),
+        ]
     args.output.mkdir(parents=True)
     for name,question,source,text in cases:
         es=[Evidence('[1]','synthetic','synthetic','synthetic-control.txt',1,1,source,1.)]
@@ -48,7 +60,7 @@ def main():
         p=DeepSeekEvidenceReviewer(settings.llm_model,settings.llm_api_key.get_secret_value(),settings.llm_base_url,
             thinking_enabled=settings.llm_thinking_enabled,reasoning_effort=settings.llm_reasoning_effort,
             timeout_seconds=settings.evidence_review_timeout_seconds,max_output_tokens=settings.evidence_review_max_output_tokens,
-            diagnostic=True,diagnosis_version='v2_ranking' if args.suite=='ranking' else 'v2_measurement',
+            diagnostic=True,diagnosis_version={'ranking':'v2_ranking','measurement':'v2_measurement','unified':'v3_unified'}[args.suite],
             diagnostics_dir=args.output/'private-diagnostics')
         service=EvidenceReviewService(p)
         final=service.review(question,es,draft)

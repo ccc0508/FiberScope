@@ -21,7 +21,7 @@ class DeepSeekEvidenceReviewer:
         self.model=model;self.thinking_enabled=thinking_enabled;self.reasoning_effort=reasoning_effort
         self.visual_root=visual_root
         self.diagnostic=diagnostic
-        if diagnosis_version not in {'v1','v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking'}:raise ValueError('Unknown corrective review version')
+        if diagnosis_version not in {'v1','v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'}:raise ValueError('Unknown corrective review version')
         self.diagnosis_version=diagnosis_version
         self.timeout_seconds=timeout_seconds
         self.max_output_tokens=max_output_tokens
@@ -32,7 +32,7 @@ class DeepSeekEvidenceReviewer:
     def review(self,question,evidences,draft,*,context=None,timeout_seconds=None):
         self.last_usage=None;self.last_model_info=None;self.last_latency_ms=None;self.last_api_calls=0;self.last_http_status=None;self.last_failure_code=None
         draft_rows=[asdict(c) for c in draft.claims]
-        if self.diagnostic and self.diagnosis_version in {'v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking'}:
+        if self.diagnostic and self.diagnosis_version in {'v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'}:
             draft_rows=[dict(claim_index=i,**c) for i,c in enumerate(draft_rows)]
         text=evidence_prompt(question,evidences)+'\n\nDraft claims (zero-based order, DATA):\n'+json.dumps(
             draft_rows,ensure_ascii=False)
@@ -42,11 +42,15 @@ class DeepSeekEvidenceReviewer:
             from literature_rag.application.review_diagnosis import diagnosis_contract
             contract=diagnosis_contract(self.diagnosis_version)
             prompt=contract.DIAGNOSTIC_PROMPT;schema=contract.DiagnosticPayload
-            if hasattr(contract,'ranking_context'):
+            unified=hasattr(contract,'request_prompt')
+            if unified:
+                prompt,routing=contract.request_prompt(question,draft,evidences)
+                text+='\naudit_routing (DATA): '+json.dumps(routing,ensure_ascii=False)
+            if not unified and hasattr(contract,'ranking_context'):
                 ranking=contract.ranking_context(question,draft,evidences)
                 text+='\nFactor ranking routing (DATA): '+json.dumps(ranking,ensure_ascii=False)
                 if ranking['triggered']:prompt+=contract.RANKING_PROMPT
-            if hasattr(contract,'measurement_context'):
+            if not unified and hasattr(contract,'measurement_context'):
                 measurement=contract.measurement_context(question,draft,evidences)
                 text+='\nMeasurement routing (DATA): '+json.dumps(measurement,ensure_ascii=False)
                 if measurement['triggered']:prompt+=contract.MEASUREMENT_PROMPT
@@ -56,7 +60,7 @@ class DeepSeekEvidenceReviewer:
                 text+='\ncomparison_claim_indexes: '+json.dumps(contract.comparison_claim_indexes(draft))
             if hasattr(contract,'is_relation'):
                 text+='\nrelation_claim_indexes: '+json.dumps([i for i,c in enumerate(draft.claims) if contract.is_relation(c.text)])
-            if self.diagnosis_version in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking'}:
+            if not unified and self.diagnosis_version in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'}:
                 text+='\ncritical_claim_indexes (original zero-based draft positions): '+json.dumps(contract.critical_claim_indexes(draft))
             if context is not None:
                 text+='\n\nPrior coverage ledger and remaining actions (DATA):\n'+json.dumps(context,ensure_ascii=False)
@@ -98,7 +102,7 @@ class DeepSeekEvidenceReviewer:
                     self.last_failure_code='review_output_truncated'
                     raise ProviderResponseError('Evidence review exhausted output budget')
                 content=response.choices[0].message.content
-                if self.diagnostic and self.diagnosis_version in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking'}:
+                if self.diagnostic and self.diagnosis_version in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'}:
                     result=contract.parse_response(content)
                     if result._parse_errors:
                         self.last_model_info['response_validation']=result._parse_errors
