@@ -1,4 +1,5 @@
 """One source-grounded audit unit per original or replacement claim; opt-in."""
+from copy import deepcopy
 import json
 import re
 from collections import Counter
@@ -10,9 +11,9 @@ from . import review_diagnosis_v2 as ledger
 from . import review_diagnosis_comparison as comparison
 from . import review_diagnosis_causal as causal
 from . import review_diagnosis_bound as bound
-from .evidence_review import StrictModel, NonBlank, Basis, ReviewPayload, ReviewRejected, normalized_quote
+from .evidence_review import StrictModel, NonBlank, Basis, ReviewPayload, ReviewRejected, normalized_quote, Issue, checksum
 
-VERSION='bounded-corrective-review-v3.1-unified'
+VERSION='bounded-corrective-review-v3.2-unified'
 prioritize_supplement=True
 measurement_context=prior.measurement_context
 measurement_errors=prior.measurement_errors
@@ -60,6 +61,7 @@ class Unit(StrictModel):
 
 class DiagnosticPayload(causal.DiagnosticPayload):
     units: list[Unit] = Field(max_length=48)
+    _invalid_issue_indexes: set[int] = PrivateAttr(default_factory=set)
     _unit_errors: list[dict] = PrivateAttr(default_factory=list)
     _mechanical_repairs: list[dict] = PrivateAttr(default_factory=list)
 
@@ -83,6 +85,8 @@ Unit shape:
 "contribution":"specific fact or relation this source supports"}],"verdict":"supported|overstated|unclear",
 "reason":"decisive comparison of source and answer; include relevant object, change and certainty",
 "repair_issue_indexes":[],"comparison_scope":null,"detail":null}
+Original text/original_text may be omitted: the program binds it by the supplied zero-based claim_index.
+If text is supplied it must match that indexed target; never copy a different sentence.
 Original units: claim_index is zero-based, issue_index/replacement_index null. Non-supported original units
 link repair_issue_indexes to issues targeting exactly that original. Supported originals have no repairs.
 Replacement units: claim_index=null, issue_index and replacement_index identify the proposed text, text
@@ -170,22 +174,73 @@ def request_prompt(question,draft,evidences):
     return prompt,ctx
 
 
-def parse_response(content):
+def bind_display(value,expected):
+    # Exact ID is authoritative. A supplied conflicting anchor is never retargeted.
+    return value is None or (isinstance(value,str) and normalized_quote(value)==normalized_quote(expected))
+
+
+def parse_response(content,*,draft=None):
     raw=json.loads(content)
-    if not isinstance(raw,dict) or set(raw)!={'issues','requirements','units'}:raise ValueError('invalid_unified_envelope')
-    old=ledger.parse_response(json.dumps(dict(issues=raw['issues'],requirements=raw['requirements'],claim_checks=[]),ensure_ascii=False))
-    errors=list(old._parse_errors);units=[]
+    if not isinstance(raw,dict) or not {'issues','requirements','units'}<=set(raw) or set(raw)-{'issues','requirements','units','type'}:
+        raise ValueError('invalid_unified_envelope')
+    repairs=[]
+    if 'type' in raw:
+        if not isinstance(raw['type'],str) or len(raw['type'])>100:raise ValueError('invalid_envelope_metadata')
+        repairs.append(dict(field='envelope.type',action='ignored_metadata',value_sha256=checksum(raw['type'])))
+    if not isinstance(raw['issues'],list) or len(raw['issues'])>8:raise ValueError('invalid_issue_list')
+    old=ledger.parse_response(json.dumps(dict(issues=[],requirements=raw['requirements'],claim_checks=[]),ensure_ascii=False))
+    errors=list(old._parse_errors);units=[];issues=[];invalid=set()
+    for i,item in enumerate(raw['issues']):
+        row=deepcopy(item)
+        try:
+            if isinstance(row,dict):
+                if row.get('category')=='certainty':
+                    row['category']='uncertainty';repairs.append(dict(issue_index=i,field='category',before='certainty',after='uncertainty'))
+                ci=row.get('claim_index')
+                if draft is not None and type(ci) is int and 0<=ci<len(draft.claims):
+                    expected=draft.claims[ci].text
+                    if bind_display(row.get('original_text'),expected) and row.get('original_text')!=expected:
+                        repairs.append(dict(issue_index=i,field='original_text',action='bound_to_original_id'))
+                        row['original_text']=expected
+                for j,c in enumerate(row.get('replacement_claims',[])):
+                    if not isinstance(c,dict) or not isinstance(c.get('text'),str):continue
+                    tokens=re.findall(r'\[[1-9][0-9]*\]',c['text'])
+                    # Do not move unknown refs into the citation list or erase mathematical brackets.
+                    if tokens and all(t in c.get('citation_refs',[]) for t in tokens) and not re.search(r'\$|\\(?:frac|begin)',c['text']):
+                        c['text']=re.sub(r'\[[1-9][0-9]*\]','',c['text']).strip()
+                        repairs.append(dict(issue_index=i,replacement_index=j,field='inline_citations',action='deduplicated_explicit_refs'))
+            issues.append(Issue.model_validate(row))
+        except (ValidationError,TypeError,ValueError) as error:
+            from .review_diagnostics import validation_details
+            errors.append(dict(component='issues',index=i,reason_code='invalid_issue',fields=validation_details(error)))
+            invalid.add(i)
+            # A non-executable slot preserves all model issue indexes. Never compress or renumber edits.
+            issues.append(Issue.model_construct(claim_index=None,original_text=None,category='coverage',
+                problem='Invalid edit slot; execution forbidden.',basis=[],replacement_claims=[]))
     if not isinstance(raw['units'],list) or len(raw['units'])>48:
         errors.append(dict(component='units',reason_code='invalid_unit_list'))
     else:
-        for i,u in enumerate(raw['units']):
-            try:units.append(Unit.model_validate(u))
+        for i,item in enumerate(raw['units']):
+            row=deepcopy(item)
+            if isinstance(row,dict):
+                ci=row.get('claim_index');ii=row.get('issue_index');ri=row.get('replacement_index');expected=None
+                if draft is not None and type(ci) is int and 0<=ci<len(draft.claims):expected=draft.claims[ci].text
+                elif ci is None and type(ii) is int and ii not in invalid and 0<=ii<len(issues) and type(ri) is int and 0<=ri<len(issues[ii].replacement_claims):
+                    expected=issues[ii].replacement_claims[ri].text
+                    text=row.get('text')
+                    if isinstance(text,str):
+                        refs=issues[ii].replacement_claims[ri].citation_refs
+                        tokens=re.findall(r'\[[1-9][0-9]*\]',text)
+                        if tokens and all(t in refs for t in tokens):row['text']=re.sub(r'\[[1-9][0-9]*\]','',text).strip()
+                if expected is not None and bind_display(row.get('text'),expected) and row.get('text')!=expected:
+                    row['text']=expected;repairs.append(dict(unit_index=i,field='text',action='bound_to_target_id'))
+            try:units.append(Unit.model_validate(row))
             except ValidationError as error:
                 from .review_diagnostics import validation_details
                 errors.append(dict(component='units',index=i,reason_code='invalid_unit',fields=validation_details(error)))
-    p=DiagnosticPayload.model_construct(issues=old.issues,requirements=old.requirements,claim_checks=[],
+    p=DiagnosticPayload.model_construct(issues=issues,requirements=old.requirements,claim_checks=[],
         relation_checks=[],comparison_checks=[],units=units)
-    p._parse_errors=errors
+    p._parse_errors=errors;p._invalid_issue_indexes=invalid;p._mechanical_repairs=repairs
     return p
 
 
@@ -195,6 +250,8 @@ def key(u):return (u.claim_index,u.issue_index,u.replacement_index)
 def global_absence_assertion(text):
     # Remove only explicit disclaimers, not a whole clause that could hide another assertion.
     text=re.sub(r'(?:不|不能|无法|并非)(?:据此)?(?:推断|断言|认定|声称)(?:全文|整篇论文)(?:绝无|没有|未提供|不存在)', '', text)
+    text=re.sub(r'不能据此证明全文其他部分没有', '', text)
+    text=re.sub(r'not (?:the )?(?:entire|whole) paper', '', text,flags=re.I)
     return bool(re.search(r'全文|整篇|entire paper|whole paper',text,re.I))
 
 
@@ -210,9 +267,9 @@ def local_evidence_limit(text):
 def measurement_limit(u,source,evidences):
     """Allow only a relative-to-absolute inference limit grounded in quoted method text."""
     if 'measurement' not in u.checked or global_absence_assertion(u.text) or global_absence_assertion(source.contribution):return False
-    if not re.search(r'(?:不等同|不等于|不能|无法)[^。；;]{0,60}绝对',u.text):return False
+    if not re.search(r'(?:不等同|不等于|并非|不能|无法)[^。；;]{0,60}绝对',u.text):return False
     if not re.search(r'相对|归一化|比例|分数',u.text):return False
-    if not re.search(r'(?:未|没有|不能|不等同|无法)[^。；;]{0,60}(?:绝对|校准)',source.contribution):return False
+    if not re.search(r'(?:未|没有|不能|不等同|无法)[^。；;]{0,60}(?:绝对|校准)|(?:cannot|not equivalent|not an?)[^.;]{0,80}absolute',source.contribution,re.I):return False
     refs={e.ref:e for e in evidences}
     for s in u.sources:
         b=s.basis;e=refs.get(b.ref)
@@ -300,6 +357,7 @@ validate_edit_target=bound.validate_edit_target
 
 
 def validate_edit_semantics(payload,index,draft,evidences):
+    if index in payload._invalid_issue_indexes:raise ReviewRejected('invalid_issue_slot')
     if index in payload._citation_repairs:return
     issue=payload.issues[index]
     if issue.claim_index is not None:
