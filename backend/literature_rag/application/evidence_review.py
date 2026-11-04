@@ -187,6 +187,8 @@ class EvidenceReviewService:
             trace['version']=contract.VERSION
             if hasattr(contract,'request_context'):
                 trace['causal_detail_context']=contract.request_context(draft,evidences)
+            if hasattr(contract,'measurement_context'):
+                trace['measurement_context']=contract.measurement_context(question,draft,evidences)
         remaining=self.deadline-perf_counter()-5 if self.deadline is not None else None
         required=15 if diagnostic else getattr(self.provider,'timeout_seconds',120)
         if remaining is not None and remaining<required:
@@ -205,7 +207,7 @@ class EvidenceReviewService:
                         trace['relation_target_repairs']=payload._relation_target_repairs
                 trace['issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
                 trace['requirements']=[r.model_dump(exclude_none=True) for r in payload.requirements]
-                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal'}:
+                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement'}:
                     trace['claim_checks']=[r.model_dump() for r in payload.claim_checks]
                     if hasattr(payload,'relation_checks'):
                         trace['relation_checks']=[r.model_dump() for r in payload.relation_checks]
@@ -213,6 +215,9 @@ class EvidenceReviewService:
                         trace['revision_checks']=[r.model_dump() for r in payload.revision_checks]
                     trace['raw_requirements']=trace['requirements']
                     audit=contract.inspect_diagnosis(payload,draft,evidences,context)
+                    if hasattr(contract,'measurement_context'):
+                        audit['errors'].extend(contract.measurement_errors(payload,question,draft,evidences))
+                        audit['valid']=not audit['errors']
                     trace.update(requirements=audit['requirements'],diagnosis_errors=audit['errors'],
                         diagnosis_valid=audit['valid'],diagnosis_actions_validated=True)
                 else:
