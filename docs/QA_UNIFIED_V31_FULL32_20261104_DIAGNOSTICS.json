@@ -1,0 +1,1077 @@
+{
+  "note": "Fresh fixed-draft review run; no merging from offline replay or old successful trials.",
+  "rows": [
+    {
+      "task_id": "PFI2-001",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-002",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "rejected",
+          "reason": "no_independent_edit_verified",
+          "accepted": [],
+          "rejected": [
+            {
+              "issue_index": 0,
+              "reason_code": "quote_not_in_actual_evidence"
+            }
+          ],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-003",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-004",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "rejected",
+          "reason": "no_independent_edit_verified",
+          "accepted": [],
+          "rejected": [
+            {
+              "issue_index": 0,
+              "reason_code": "replacement_unit_not_verified"
+            }
+          ],
+          "errors": [
+            {
+              "component": "units",
+              "index": 2,
+              "reason_code": "context_cannot_certify_claim"
+            },
+            {
+              "component": "units",
+              "issue_index": 0,
+              "reason_code": "replacement_unit_not_verified"
+            }
+          ],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        },
+        {
+          "round": 2,
+          "status": "rejected",
+          "reason": "no_independent_edit_verified",
+          "accepted": [],
+          "rejected": [
+            {
+              "issue_index": 0,
+              "reason_code": "replacement_unit_not_verified"
+            }
+          ],
+          "errors": [
+            {
+              "component": "requirements",
+              "index": 4,
+              "reason_code": "invalid_diagnosis_item",
+              "fields": [
+                {
+                  "type": "value_error",
+                  "location": []
+                }
+              ]
+            },
+            {
+              "component": "requirements",
+              "reason_code": "lost_prior_requirement",
+              "requirement_id": "R90"
+            },
+            {
+              "component": "units",
+              "index": 2,
+              "reason_code": "context_cannot_certify_claim"
+            },
+            {
+              "component": "units",
+              "issue_index": 0,
+              "reason_code": "replacement_unit_not_verified"
+            }
+          ],
+          "response_validation": [
+            {
+              "component": "requirements",
+              "index": 4,
+              "reason_code": "invalid_diagnosis_item",
+              "fields": [
+                {
+                  "type": "value_error",
+                  "location": []
+                }
+              ]
+            }
+          ],
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-005",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-006",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-007",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-008",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-009",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "revised",
+          "reason": null,
+          "accepted": [
+            0
+          ],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-010",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-011",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [
+            {
+              "component": "comparison_checks",
+              "claim_index": 0,
+              "reason_code": "comparison_scope_unresolved"
+            },
+            {
+              "component": "comparison_checks",
+              "claim_index": 2,
+              "reason_code": "comparison_sides_missing"
+            },
+            {
+              "component": "comparison_checks",
+              "claim_index": 4,
+              "reason_code": "comparison_sides_missing"
+            },
+            {
+              "component": "comparison_checks",
+              "claim_index": 0,
+              "reason_code": "comparison_check_missing"
+            },
+            {
+              "component": "comparison_checks",
+              "claim_index": 4,
+              "reason_code": "comparison_check_missing"
+            }
+          ],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-012",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "revised",
+          "reason": null,
+          "accepted": [
+            0
+          ],
+          "rejected": [],
+          "errors": [
+            {
+              "component": "comparison_checks",
+              "claim_index": 0,
+              "reason_code": "comparison_sides_missing"
+            },
+            {
+              "component": "comparison_checks",
+              "claim_index": 1,
+              "reason_code": "comparison_sides_missing"
+            },
+            {
+              "component": "comparison_checks",
+              "claim_index": 0,
+              "reason_code": "comparison_check_missing"
+            },
+            {
+              "component": "comparison_checks",
+              "claim_index": 1,
+              "reason_code": "comparison_check_missing"
+            }
+          ],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-013",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-014",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "rejected",
+          "reason": "no_independent_edit_verified",
+          "accepted": [],
+          "rejected": [
+            {
+              "issue_index": 0,
+              "reason_code": "replacement_unit_detail_missing"
+            }
+          ],
+          "errors": [
+            {
+              "component": "units",
+              "issue_index": 0,
+              "reason_code": "replacement_unit_detail_missing"
+            }
+          ],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": [
+            {
+              "unit_index": 0,
+              "field": "detail_span",
+              "before": [
+                2053,
+                2287
+              ],
+              "after": [
+                1614,
+                2052
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-015",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "failed",
+          "reason": "review_response_invalid",
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": [
+            {
+              "type": "literal_error",
+              "location": [
+                "issues",
+                0,
+                "category"
+              ]
+            }
+          ],
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-016",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "revised",
+          "reason": null,
+          "accepted": [
+            0
+          ],
+          "rejected": [],
+          "errors": [
+            {
+              "component": "units",
+              "index": 2,
+              "reason_code": "unit_quote_not_in_evidence"
+            }
+          ],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-017",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [
+            {
+              "component": "units",
+              "index": 0,
+              "reason_code": "invalid_unit",
+              "fields": [
+                {
+                  "type": "literal_error",
+                  "location": [
+                    "comparison_scope"
+                  ]
+                }
+              ]
+            }
+          ],
+          "response_validation": [
+            {
+              "component": "units",
+              "index": 0,
+              "reason_code": "invalid_unit",
+              "fields": [
+                {
+                  "type": "literal_error",
+                  "location": [
+                    "comparison_scope"
+                  ]
+                }
+              ]
+            }
+          ],
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-018",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "rejected",
+          "reason": "no_independent_edit_verified",
+          "accepted": [],
+          "rejected": [
+            {
+              "issue_index": 0,
+              "reason_code": "original_unit_not_verified"
+            },
+            {
+              "issue_index": 1,
+              "reason_code": "invalid_revised_citations",
+              "citation_rule": "inline_claim_reference"
+            }
+          ],
+          "errors": [
+            {
+              "component": "edit_binding",
+              "issue_index": 0,
+              "reason_code": "original_text_mismatch"
+            },
+            {
+              "component": "units",
+              "index": 0,
+              "reason_code": "unit_quote_not_in_evidence"
+            },
+            {
+              "component": "units",
+              "index": 4,
+              "reason_code": "unit_original_mismatch"
+            },
+            {
+              "component": "units",
+              "index": 6,
+              "reason_code": "context_cannot_certify_claim"
+            },
+            {
+              "component": "units",
+              "issue_index": 0,
+              "reason_code": "original_unit_not_verified"
+            }
+          ],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-019",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [
+            {
+              "component": "units",
+              "index": 0,
+              "reason_code": "unit_quote_not_in_evidence"
+            },
+            {
+              "component": "units",
+              "index": 1,
+              "reason_code": "unit_quote_not_in_evidence"
+            },
+            {
+              "component": "units",
+              "index": 2,
+              "reason_code": "unit_quote_not_in_evidence"
+            }
+          ],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-020",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "revised",
+          "reason": null,
+          "accepted": [
+            0,
+            2
+          ],
+          "rejected": [
+            {
+              "issue_index": 1,
+              "reason_code": "replacement_unit_not_verified"
+            }
+          ],
+          "errors": [
+            {
+              "component": "units",
+              "index": 3,
+              "reason_code": "invalid_unit",
+              "fields": [
+                {
+                  "type": "literal_error",
+                  "location": [
+                    "comparison_scope"
+                  ]
+                }
+              ]
+            },
+            {
+              "component": "units",
+              "issue_index": 1,
+              "reason_code": "replacement_unit_not_verified"
+            }
+          ],
+          "response_validation": [
+            {
+              "component": "units",
+              "index": 3,
+              "reason_code": "invalid_unit",
+              "fields": [
+                {
+                  "type": "literal_error",
+                  "location": [
+                    "comparison_scope"
+                  ]
+                }
+              ]
+            }
+          ],
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-021",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-022",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-023",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "revised",
+          "reason": null,
+          "accepted": [
+            0
+          ],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-024",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "rejected",
+          "reason": "no_independent_edit_verified",
+          "accepted": [],
+          "rejected": [
+            {
+              "issue_index": 0,
+              "reason_code": "original_unit_not_verified"
+            },
+            {
+              "issue_index": 1,
+              "reason_code": "original_unit_not_verified"
+            }
+          ],
+          "errors": [
+            {
+              "component": "requirements",
+              "index": 5,
+              "reason_code": "invalid_diagnosis_item",
+              "fields": [
+                {
+                  "type": "value_error",
+                  "location": []
+                }
+              ]
+            },
+            {
+              "component": "units",
+              "index": 3,
+              "reason_code": "invalid_unit",
+              "fields": [
+                {
+                  "type": "literal_error",
+                  "location": [
+                    "comparison_scope"
+                  ]
+                }
+              ]
+            },
+            {
+              "component": "units",
+              "index": 5,
+              "reason_code": "invalid_unit",
+              "fields": [
+                {
+                  "type": "literal_error",
+                  "location": [
+                    "comparison_scope"
+                  ]
+                }
+              ]
+            },
+            {
+              "component": "units",
+              "index": 0,
+              "reason_code": "unit_quote_not_in_evidence"
+            },
+            {
+              "component": "units",
+              "index": 0,
+              "reason_code": "unit_detail_sentence_invalid"
+            },
+            {
+              "component": "units",
+              "index": 2,
+              "reason_code": "unit_quote_not_in_evidence"
+            },
+            {
+              "component": "units",
+              "index": 3,
+              "reason_code": "unit_quote_not_in_evidence"
+            },
+            {
+              "component": "units",
+              "claim_index": 2,
+              "reason_code": "required_unit_or_aspect_missing"
+            },
+            {
+              "component": "units",
+              "claim_index": 6,
+              "reason_code": "required_unit_or_aspect_missing"
+            },
+            {
+              "component": "units",
+              "claim_index": 8,
+              "reason_code": "required_unit_or_aspect_missing"
+            },
+            {
+              "component": "units",
+              "issue_index": 0,
+              "reason_code": "original_unit_not_verified"
+            },
+            {
+              "component": "units",
+              "issue_index": 1,
+              "reason_code": "original_unit_not_verified"
+            }
+          ],
+          "response_validation": [
+            {
+              "component": "requirements",
+              "index": 5,
+              "reason_code": "invalid_diagnosis_item",
+              "fields": [
+                {
+                  "type": "value_error",
+                  "location": []
+                }
+              ]
+            },
+            {
+              "component": "units",
+              "index": 3,
+              "reason_code": "invalid_unit",
+              "fields": [
+                {
+                  "type": "literal_error",
+                  "location": [
+                    "comparison_scope"
+                  ]
+                }
+              ]
+            },
+            {
+              "component": "units",
+              "index": 5,
+              "reason_code": "invalid_unit",
+              "fields": [
+                {
+                  "type": "literal_error",
+                  "location": [
+                    "comparison_scope"
+                  ]
+                }
+              ]
+            }
+          ],
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-025",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "failed",
+          "reason": "review_response_invalid",
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": [
+            {
+              "type": "ValueError",
+              "code": "unspecified_parse_failure"
+            }
+          ],
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-026",
+      "status": "completed",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-027",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [
+            {
+              "component": "units",
+              "index": 3,
+              "reason_code": "context_cannot_certify_claim"
+            },
+            {
+              "component": "units",
+              "index": 4,
+              "reason_code": "context_cannot_certify_claim"
+            }
+          ],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        },
+        {
+          "round": 2,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [
+            {
+              "component": "units",
+              "index": 0,
+              "reason_code": "unit_quote_not_in_evidence"
+            },
+            {
+              "component": "units",
+              "index": 0,
+              "reason_code": "unit_detail_sentence_invalid"
+            },
+            {
+              "component": "units",
+              "index": 2,
+              "reason_code": "context_cannot_certify_claim"
+            },
+            {
+              "component": "units",
+              "claim_index": 1,
+              "reason_code": "required_unit_or_aspect_missing"
+            }
+          ],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-028",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [
+            {
+              "component": "units",
+              "index": 1,
+              "reason_code": "context_cannot_certify_claim"
+            }
+          ],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-029",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [
+            {
+              "component": "units",
+              "index": 0,
+              "reason_code": "context_cannot_certify_claim"
+            },
+            {
+              "component": "units",
+              "index": 2,
+              "reason_code": "context_cannot_certify_claim"
+            }
+          ],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-030",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "unchanged",
+          "reason": null,
+          "accepted": [],
+          "rejected": [],
+          "errors": [
+            {
+              "component": "comparison_checks",
+              "claim_index": 0,
+              "reason_code": "comparison_check_missing"
+            },
+            {
+              "component": "units",
+              "index": 0,
+              "reason_code": "unit_quote_not_in_evidence"
+            },
+            {
+              "component": "units",
+              "claim_index": 0,
+              "reason_code": "required_unit_or_aspect_missing"
+            }
+          ],
+          "response_validation": null,
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-031",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "failed",
+          "reason": "review_response_invalid",
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": [
+            {
+              "type": "ValueError",
+              "code": "unspecified_parse_failure"
+            }
+          ],
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-032",
+      "status": "incomplete",
+      "rounds": [
+        {
+          "round": 1,
+          "status": "failed",
+          "reason": "review_response_invalid",
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": [
+            {
+              "type": "ValueError",
+              "code": "unspecified_parse_failure"
+            }
+          ],
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        },
+        {
+          "round": 2,
+          "status": "failed",
+          "reason": "review_response_invalid",
+          "accepted": [],
+          "rejected": [],
+          "errors": [],
+          "response_validation": [
+            {
+              "type": "ValueError",
+              "code": "unspecified_parse_failure"
+            }
+          ],
+          "comparison_completion": null,
+          "mechanical_repairs": []
+        }
+      ]
+    }
+  ]
+}
