@@ -252,10 +252,10 @@ class CorrectiveReviewService:
         final = self.reviewer.review(question, evidences, draft)
         first = deepcopy(self.reviewer.last_trace)
         trace['rounds'].append(first)
-        requirements = settled_requirements(first) if version in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking'} else first.get('requirements', [])
+        requirements = settled_requirements(first) if version in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'} else first.get('requirements', [])
         actions_valid=first.get('diagnosis_valid') or first.get('diagnosis_actions_validated')
         gaps = [r for r in requirements if r['status'] == 'lookup'] if actions_valid else []
-        if version in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking'}:
+        if version in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'}:
             from literature_rag.application.numeric_crosscheck import plan_crosscheck
             catalog=getattr(getattr(self.reader,'retriever',None),'body_context_catalog',None)
             requirements,gaps,trace['numeric_crosscheck']=plan_crosscheck(question,evidences,requirements,catalog)
@@ -313,7 +313,7 @@ class CorrectiveReviewService:
         rejected = {r['issue_index'] for r in last.get('rejected_issues', [])}
         accepted = set(last.get('accepted_issue_indexes', [])) if last.get('accepted') else set()
         # Keep first-round gaps if the second review could not finish or validate its ledger.
-        if version in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking'}:
+        if version in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'}:
             ledger = settled_requirements(last) if len(trace['rounds'])>1 and last.get('diagnosis_actions_validated') else requirements
             # This ledger is already settled; accepted indexes belong to different rounds.
             rejected=set();accepted=set()
