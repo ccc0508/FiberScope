@@ -116,3 +116,38 @@ def test_provider_one_call_no_legacy_instructions():
     assert len(calls)==1 and calls[0]['max_tokens']==32768
     assert 'audit_routing' in calls[0]['messages'][1]['content']
     assert 'Also return claim_checks' not in calls[0]['messages'][0]['content']
+
+
+def test_display_normalization_preserves_scientific_differences():
+    from literature_rag.application.evidence_review import normalized_quote as n
+    source=r'The band (3 0 0 0 { - } 3 7 0 0 \mathrm { c m } ^ { - 1 })'
+    assert n('$'+source+'$')==n('the band (3000–3700 cm−1)')
+    for a,b in [('0.888','0.889'),('p<0.05','p>0.05'),('not increased','increased'),
+                ('cm−1','cm1'),('CI-XI','CI-XA'),('WRV','wrv'),('x^{2}','x2'),
+                (r'\frac{1}{2}','12')]:
+        assert n(a)!=n(b)
+
+
+@pytest.mark.parametrize('bad',['none','context_only','global','fact_as_context','invalid_quote'])
+def test_context_can_only_support_local_evidence_limit_with_real_fact_sources(bad):
+    text='所给证据无法确定因素排名；存在可能的水合作用解释。'
+    d=replace(DRAFT,claims=(replace(DRAFT.claims[0],text=text),))
+    sources=[dict(basis=dict(kind='text',ref='[1]',quote='might be explained by hydration'),contribution='水合作用的可能解释。'),
+             dict(basis=dict(kind='context'),contribution='所给证据没有因素排名。')]
+    if bad=='context_only':sources=sources[1:]
+    if bad=='global':sources[1]['contribution']='整篇论文没有因素排名。'
+    if bad=='fact_as_context':sources[1]['contribution']='水合作用导致所有因素增强。'
+    if bad=='invalid_quote':sources[0]['basis']['quote']='invented scientific fact'
+    row=unit(text=text,checked=['fact','citation','relation','certainty','ranking','comparison'],
+        comparison_scope='not_comparison',sources=sources,verdict='supported',repair_issue_indexes=[])
+    p=u.parse_response(json.dumps(dict(issues=[],requirements=[requirement()],units=[row])))
+    errors=u.unit_errors(p.units[0],p,d,SOURCES)
+    if bad=='none':assert not errors
+    else:assert errors
+
+
+def test_review_budget_accepts_64k_and_rejects_unbounded_output():
+    from literature_rag.config import Settings
+    from pydantic import ValidationError
+    assert Settings(_env_file=None,evidence_review_max_output_tokens=65536).evidence_review_max_output_tokens==65536
+    with pytest.raises(ValidationError):Settings(_env_file=None,evidence_review_max_output_tokens=65537)

@@ -41,8 +41,8 @@ class Settings(BaseSettings):
     evidence_review_enabled: bool = False
     corrective_review_enabled: bool = False
     corrective_review_version: Literal['v1', 'v2', 'v3', 'v2_bound', 'v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'] = 'v1'
-    evidence_review_timeout_seconds: float = Field(default=120, gt=0, le=180, allow_inf_nan=False)
-    evidence_review_max_output_tokens: int = Field(default=32768, ge=1024, le=32768)
+    evidence_review_timeout_seconds: float = Field(default=120, gt=0, le=360, allow_inf_nan=False)
+    evidence_review_max_output_tokens: int = Field(default=32768, ge=1024, le=65536)
     query_rewrite_enabled: bool = False
     query_rewrite_mode: Literal['dual', 'rewrite_only'] = 'dual'
     query_rewrite_timeout_seconds: float = Field(default=30, gt=0, le=60, allow_inf_nan=False)
