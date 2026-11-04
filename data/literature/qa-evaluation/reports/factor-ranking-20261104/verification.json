@@ -1,0 +1,259 @@
+{
+  "cases": [
+    {
+      "stage": "r1-control",
+      "case": "PFI2-024",
+      "question": "PFI打浆是怎么一步步让纸变结实的？纤维长度、细小纤维、WRV这几个因素里哪个贡献最大？",
+      "answer": "PFI打浆对纤维的主要作用包括内部细纤维化（细胞壁分层、松弛和润胀）、外部细纤维化（表面微细纤维剥离但仍附着）、纤维切断和细小纤维生成。 [2]\n这些作用会提高纤维的可及性、润胀性、柔顺性和纤维间结合能力，从而为成纸强度提高提供基础。 [2]\n随PFI转数增加，打浆度和WRV显著升高；文中归因于细纤维化产生新的表面和更多孔隙。 [1]\nWRV表征的润胀增加使纤维在横向更柔顺，这有助于提高纤维网络的纤维间结合强度。 [1]\nFigure 1显示，PFI打浆后软木浆的纤维长度下降，而细小纤维含量上升，同时宏观细纤维化指数上升。 [1]\nPFI打浆提高了细纤维化程度（尤其是内部细纤维化）、纤维润胀和纸页拉伸强度，且零-span结果说明未降低单根纤维强度。 [1]\n分子层面，O(6)H···O(3′)分子间氢键总量在打浆中下降，且更少的分子间氢键和较低结晶指数有利于提高纤维柔顺性、可及性和WRV。 [3]\n湿纸幅强度方面，软木浆的增加比硬木浆更显著，作者强调纤维长度对湿纸幅强度起重要作用。 [1]\n所给证据没有给出纤维长度、细小纤维和WRV三者对成纸强度贡献的定量排序；从直接论述看，WRV/润胀（内部细纤维化）与纤维间结合强度的联系最直接，而纤维长度主要被强调为湿纸幅强度的关键因素。 [1] [2]",
+      "status": "incomplete",
+      "usage": {
+        "reasoning_tokens": 32768,
+        "total_tokens": 45765,
+        "completion_tokens": 32768,
+        "prompt_tokens": 12997,
+        "cached_tokens": 3712
+      },
+      "latency_ms": 185090,
+      "calls": 1,
+      "rounds": [
+        {
+          "status": "failed",
+          "reason_code": "review_output_truncated",
+          "ranking_context": null,
+          "diagnosis_errors": null
+        }
+      ]
+    },
+    {
+      "stage": "r1-ranking",
+      "case": "PFI2-024",
+      "question": "PFI打浆是怎么一步步让纸变结实的？纤维长度、细小纤维、WRV这几个因素里哪个贡献最大？",
+      "answer": "PFI打浆对纤维的主要作用包括内部细纤维化（细胞壁分层、松弛和润胀）、外部细纤维化（表面微细纤维剥离但仍附着）、纤维切断和细小纤维生成。 [2]\n这些作用会提高纤维的可及性、润胀性、柔顺性和纤维间结合能力，从而为成纸强度提高提供基础。 [2]\n随PFI转数增加，打浆度和WRV显著升高；文中归因于细纤维化产生新的表面和更多孔隙。 [1]\nWRV表征的润胀增加使纤维在横向更柔顺，这有助于提高纤维网络的纤维间结合强度。 [1]\nFigure 1显示，PFI打浆后软木浆的纤维长度下降，而细小纤维含量上升，同时宏观细纤维化指数上升。 [1]\nPFI打浆提高了细纤维化程度（尤其是内部细纤维化）、纤维润胀和纸页拉伸强度，且零-span结果说明未降低单根纤维强度。 [1]\n分子层面，FT-IR分峰给出的O(6)H···O(3′)分子间氢键相对含量在打浆中总体下降；该相对含量不能换算为绝对氢键数，而更低的分子间氢键相对含量和较低结晶指数有利于提高纤维柔顺性、可及性和WRV。 [3]\n湿纸幅强度方面，软木浆的增加比硬木浆更显著，作者强调纤维长度对湿纸幅强度起重要作用。 [1]\n所给证据没有给出纤维长度、细小纤维和WRV对成纸强度贡献的定量排序，因此无法判断三者中谁的贡献最大；仅能说WRV/润胀被直接联系到横向柔顺性和纤维间结合强度，纤维长度则被强调为湿纸幅强度的关键因素。 [1]",
+      "status": "incomplete",
+      "usage": {
+        "completion_tokens": 26487,
+        "prompt_tokens": 13364,
+        "total_tokens": 39851,
+        "reasoning_tokens": 23254,
+        "cached_tokens": 3200
+      },
+      "latency_ms": 142365,
+      "calls": 1,
+      "rounds": [
+        {
+          "status": "revised",
+          "reason_code": null,
+          "ranking_context": {
+            "triggered": true,
+            "question_requests_ranking": true,
+            "ranking_claim_indexes": [
+              8
+            ],
+            "unchecked_claim_indexes": [],
+            "policy": "explicit-ranking-signals; heuristic-routing-not-semantic-verification"
+          },
+          "diagnosis_errors": [
+            {
+              "component": "claim_checks",
+              "reason_code": "claim_check_quote_not_in_evidence",
+              "index": 0,
+              "claim_index": 2
+            },
+            {
+              "component": "claim_checks",
+              "reason_code": "claim_check_quote_not_in_evidence",
+              "index": 3,
+              "claim_index": 5
+            },
+            {
+              "component": "claim_checks",
+              "reason_code": "claim_check_quote_not_in_evidence",
+              "index": 6,
+              "claim_index": 7
+            },
+            {
+              "component": "claim_checks",
+              "reason_code": "critical_claim_check_missing",
+              "claim_indexes": [
+                2
+              ]
+            },
+            {
+              "component": "relation_checks",
+              "index": 0,
+              "reason_code": "invalid_relation_source_or_target"
+            },
+            {
+              "component": "relation_checks",
+              "reason_code": "original_relation_check_missing",
+              "claim_indexes": [
+                2
+              ]
+            },
+            {
+              "component": "causal_detail",
+              "claim_index": 2,
+              "reason_code": "complete_sentence_or_outcomes_missing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "r2-ranking",
+      "case": "PFI2-024",
+      "question": "PFI打浆是怎么一步步让纸变结实的？纤维长度、细小纤维、WRV这几个因素里哪个贡献最大？",
+      "answer": "PFI打浆对纤维的主要作用包括内部细纤维化（细胞壁分层、松弛和润胀）、外部细纤维化（表面微细纤维剥离但仍附着）、纤维切断和细小纤维生成。 [2]\n这些作用会提高纤维的可及性、润胀性、柔顺性和纤维间结合能力，从而为成纸强度提高提供基础。 [2]\n随PFI转数增加，打浆度和WRV显著升高；文中归因于细纤维化产生新的表面和更多孔隙。 [1]\nWRV表征的润胀增加使纤维在横向更柔顺，这有助于提高纤维网络的纤维间结合强度。 [1]\nFigure 1显示，PFI打浆后软木浆的纤维长度下降，而细小纤维含量上升，同时宏观细纤维化指数上升。 [1]\nPFI打浆提高了细纤维化程度（尤其是内部细纤维化）、纤维润胀和纸页拉伸强度，且零-span结果说明未降低单根纤维强度。 [1]\n分子层面，O(6)H···O(3′)分子间氢键总量在打浆中下降，且更少的分子间氢键和较低结晶指数有利于提高纤维柔顺性、可及性和WRV。 [3]\n湿纸幅强度方面，软木浆的增加比硬木浆更显著，作者强调纤维长度对湿纸幅强度起重要作用。 [1]\n所给证据没有给出纤维长度、细小纤维和WRV三者对成纸强度贡献的定量排序；从直接论述看，WRV/润胀（内部细纤维化）与纤维间结合强度的联系最直接，而纤维长度主要被强调为湿纸幅强度的关键因素。 [1] [2]",
+      "status": "incomplete",
+      "usage": {
+        "prompt_tokens": 13364,
+        "reasoning_tokens": 32768,
+        "completion_tokens": 32768,
+        "cached_tokens": 13184,
+        "total_tokens": 46132
+      },
+      "latency_ms": 172576,
+      "calls": 1,
+      "rounds": [
+        {
+          "status": "failed",
+          "reason_code": "review_output_truncated",
+          "ranking_context": {
+            "triggered": true,
+            "question_requests_ranking": true,
+            "ranking_claim_indexes": [
+              8
+            ],
+            "unchecked_claim_indexes": [],
+            "policy": "explicit-ranking-signals; heuristic-routing-not-semantic-verification"
+          },
+          "diagnosis_errors": null
+        }
+      ]
+    },
+    {
+      "stage": "r2-control",
+      "case": "PFI2-024",
+      "question": "PFI打浆是怎么一步步让纸变结实的？纤维长度、细小纤维、WRV这几个因素里哪个贡献最大？",
+      "answer": "PFI打浆对纤维的主要作用包括内部细纤维化（细胞壁分层、松弛和润胀）、外部细纤维化（表面微细纤维剥离但仍附着）、纤维切断和细小纤维生成。 [2]\n这些作用会提高纤维的可及性、润胀性、柔顺性和纤维间结合能力，从而为成纸强度提高提供基础。 [2]\n随PFI转数增加，打浆度和WRV显著升高；文中归因于细纤维化产生新的表面和更多孔隙。 [1]\nWRV表征的润胀增加使纤维在横向更柔顺，这有助于提高纤维网络的纤维间结合强度。 [1]\nFigure 1显示，PFI打浆后软木浆的纤维长度下降，而细小纤维含量上升，同时宏观细纤维化指数上升。 [1]\nPFI打浆提高了细纤维化程度（尤其是内部细纤维化）、纤维润胀和纸页拉伸强度，且零-span结果说明未降低单根纤维强度。 [1]\n分子层面，FT-IR去卷积所得的O(6)H···O(3′)分子间氢键相对含量总体下降（软木16.54%、硬木5.91%）；该相对量不能等同于绝对氢键数量，作者认为其降低与较低结晶指数有利于提高纤维柔顺性、可及性和WRV。 [3]\n湿纸幅强度方面，软木浆的增加比硬木浆更显著，作者强调纤维长度对湿纸幅强度起重要作用。 [1]\n所给证据没有给出纤维长度、细小纤维和WRV三者对成纸强度贡献的定量排序；从直接论述看，WRV/润胀（内部细纤维化）与纤维间结合强度的联系最直接，而纤维长度主要被强调为湿纸幅强度的关键因素。 [1] [2]",
+      "status": "incomplete",
+      "usage": {
+        "prompt_tokens": 12997,
+        "completion_tokens": 28278,
+        "cached_tokens": 12800,
+        "reasoning_tokens": 25885,
+        "total_tokens": 41275
+      },
+      "latency_ms": 150255,
+      "calls": 1,
+      "rounds": [
+        {
+          "status": "revised",
+          "reason_code": null,
+          "ranking_context": null,
+          "diagnosis_errors": [
+            {
+              "component": "comparison_checks",
+              "claim_index": 8,
+              "reason_code": "comparison_scope_unresolved"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "controls",
+      "case": "association",
+      "question": "WRV和结合强度有什么联系？",
+      "answer": "本实验中WRV与结合强度正相关。 [1]",
+      "status": "unchanged",
+      "usage": {
+        "prompt_tokens": 3710,
+        "completion_tokens": 800,
+        "total_tokens": 4510,
+        "reasoning_tokens": 511,
+        "cached_tokens": 3328
+      },
+      "latency_ms": 5963,
+      "calls": 1,
+      "rounds": [
+        {
+          "status": "unchanged",
+          "reason_code": null,
+          "ranking_context": {
+            "triggered": false,
+            "question_requests_ranking": false,
+            "ranking_claim_indexes": [],
+            "unchecked_claim_indexes": [],
+            "policy": "explicit-ranking-signals; heuristic-routing-not-semantic-verification"
+          },
+          "diagnosis_errors": []
+        }
+      ]
+    },
+    {
+      "stage": "controls",
+      "case": "numeric",
+      "question": "哪个样本的长度数值更大？",
+      "answer": "样本A长度3 mm，样本B长度2 mm，A的长度数值更大。 [1]",
+      "status": "unchanged",
+      "usage": {
+        "prompt_tokens": 3719,
+        "completion_tokens": 820,
+        "total_tokens": 4539,
+        "reasoning_tokens": 586,
+        "cached_tokens": 3328
+      },
+      "latency_ms": 4931,
+      "calls": 1,
+      "rounds": [
+        {
+          "status": "unchanged",
+          "reason_code": null,
+          "ranking_context": {
+            "triggered": false,
+            "question_requests_ranking": false,
+            "ranking_claim_indexes": [],
+            "unchecked_claim_indexes": [],
+            "policy": "explicit-ranking-signals; heuristic-routing-not-semantic-verification"
+          },
+          "diagnosis_errors": []
+        }
+      ]
+    },
+    {
+      "stage": "controls",
+      "case": "supported",
+      "question": "这三个因素哪个与Y的相关性最强？",
+      "answer": "本实验按Pearson相关系数比较，A为0.8、B为0.5、C为0.2，A与Y的相关性最强；这不代表A的因果贡献最大。 [1]",
+      "status": "unchanged",
+      "usage": {
+        "prompt_tokens": 4086,
+        "completion_tokens": 2679,
+        "total_tokens": 6765,
+        "reasoning_tokens": 1867,
+        "cached_tokens": 3584
+      },
+      "latency_ms": 14022,
+      "calls": 1,
+      "rounds": [
+        {
+          "status": "unchanged",
+          "reason_code": null,
+          "ranking_context": {
+            "triggered": true,
+            "question_requests_ranking": true,
+            "ranking_claim_indexes": [
+              0
+            ],
+            "unchecked_claim_indexes": [],
+            "policy": "explicit-ranking-signals; heuristic-routing-not-semantic-verification"
+          },
+          "diagnosis_errors": []
+        }
+      ]
+    }
+  ],
+  "judge_calls": 0,
+  "monetary_cost": null
+}
