@@ -151,3 +151,100 @@ def test_review_budget_accepts_64k_and_rejects_unbounded_output():
     from pydantic import ValidationError
     assert Settings(_env_file=None,evidence_review_max_output_tokens=65536).evidence_review_max_output_tokens==65536
     with pytest.raises(ValidationError):Settings(_env_file=None,evidence_review_max_output_tokens=65537)
+
+
+@pytest.mark.parametrize('text',[
+    '所给摘录未给出共同口径的定量贡献。',
+    '现有结果未提供换算公式。',
+    '所给局部摘录未出现计算式；不推断全文绝无公式。',
+])
+def test_local_scope_variants(text):
+    assert u.local_evidence_limit(text)
+
+
+@pytest.mark.parametrize('text',[
+    '全文没有公式。', '所给摘录未给出公式，因此整篇论文没有公式。',
+    '所给摘录未给出公式；不推断全文绝无公式，但全文没有公式。',
+    '所给摘录说明处理导致强度增加。',
+])
+def test_scope_gate_does_not_license_global_or_positive_assertions(text):
+    assert not u.local_evidence_limit(text)
+
+
+def test_measurement_limit_requires_actual_method_quote_and_measurement_tag():
+    text='相对含量是归一化峰面积分数，不等同于绝对氢键数量。'
+    method='The relative content was calculated based on area proportion of the band.'
+    es=[replace(SOURCES[0],text=method)]
+    row=unit(text=text,checked=['fact','citation','measurement'],verdict='supported',repair_issue_indexes=[],
+        sources=[dict(basis=dict(kind='text',ref='[1]',quote=method),contribution='峰面积比例。'),
+                 dict(basis=dict(kind='context'),contribution='所供方法未提供绝对数量校准。')])
+    x=u.Unit.model_validate(row)
+    assert u.measurement_limit(x,x.sources[1],es)
+    assert not u.measurement_limit(x,x.sources[1],SOURCES)
+    x.checked.remove('measurement')
+    assert not u.measurement_limit(x,x.sources[1],es)
+
+
+def test_unique_sentence_relocation_preserves_outcomes_and_rejects_ambiguity():
+    text='Heating causes expansion and softening.'
+    d=replace(DRAFT,claims=(replace(DRAFT.claims[0],text=text),))
+    source='Introduction. '+text
+    row=unit(text=text,checked=['fact','citation','relation','certainty'],verdict='supported',repair_issue_indexes=[],
+        sources=[dict(basis=dict(kind='text',ref='[1]',quote=text),contribution='two effects')],
+        detail=dict(source_index=0,start=0,end=3,outcomes=[dict(effect='expansion',supported=False)]))
+    p=u.parse_response(json.dumps(dict(issues=[],requirements=[requirement()],units=[row])))
+    es=[replace(SOURCES[0],text=source)]
+    u.prepare_payload(p,d,es)
+    assert p._mechanical_repairs and p.units[0].detail.start==14
+    assert 'unit_outcome_contradiction' in u.unit_errors(p.units[0],p,d,es)
+    p.units[0].detail.start=0;p.units[0].detail.end=3
+    es=[replace(SOURCES[0],text=source+' '+text)]
+    u.prepare_payload(p,d,es)
+    assert 'unit_detail_sentence_invalid' in u.unit_errors(p.units[0],p,d,es)
+
+
+@pytest.mark.parametrize('scope', ['same_scope','unclear','different_scope','extra_field','bad_json','length','network'])
+def test_comparison_completion_is_bounded_and_never_rewrites_answer(scope):
+    from time import perf_counter
+    p=payload()
+    p.units[1].text='A is higher than B.'
+    p.issues[0].replacement_claims[0].text=p.units[1].text
+    calls=[]
+    def create(**kw):
+        calls.append(kw)
+        if scope=='network':raise RuntimeError('private')
+        patch=dict(unit_index=1,comparison_scope=scope if scope in {'same_scope','unclear','different_scope'} else 'same_scope',reason='Compared source scope.')
+        if scope=='extra_field':patch['text']='malicious rewrite'
+        content='bad' if scope=='bad_json' else json.dumps(dict(patches=[patch]))
+        return NS(usage=NS(prompt_tokens=4,completion_tokens=6,total_tokens=10),choices=[NS(finish_reason='length' if scope=='length' else 'stop',message=NS(content=content))])
+    provider=DeepSeekEvidenceReviewer('deepseek-flash','PRIVATE',client=NS(chat=NS(completions=NS(create=create))),diagnostic=True,diagnosis_version='v3_unified')
+    provider.last_model_info={};provider.last_usage=dict(total_tokens=5);provider.last_api_calls=1
+    before=[x.model_dump() for x in p.issues]
+    provider._complete_comparisons(p,u,DRAFT,SOURCES,[], '{}',{},perf_counter())
+    assert len(calls)==1 and provider.last_api_calls==2 and calls[0]['max_tokens']==8192
+    assert [x.model_dump() for x in p.issues]==before
+    if scope in {'same_scope','unclear','different_scope'}:
+        assert p.units[1].comparison_scope==scope
+        if scope!='same_scope':assert 'replacement_comparison_unresolved' in u.unit_errors(p.units[1],p,DRAFT,SOURCES)
+    else:assert p.units[1].comparison_scope is None
+
+
+def test_comparison_completion_skips_expired_budget():
+    from time import perf_counter
+    p=payload();p.units[1].text='A is higher than B.'
+    p.issues[0].replacement_claims[0].text=p.units[1].text
+    provider=DeepSeekEvidenceReviewer('deepseek-flash','PRIVATE',client=NS(),diagnostic=True,diagnosis_version='v3_unified')
+    provider.last_model_info={};provider.last_api_calls=1
+    provider._complete_comparisons(p,u,DRAFT,SOURCES,[], '{}',{'timeout':1},perf_counter())
+    assert provider.last_api_calls==1
+    assert provider.last_model_info['comparison_completion']['status']=='skipped_deadline'
+
+
+@pytest.mark.parametrize('text,expected',[
+    ('所给证据没有定量排序，因此不能判断谁最大。而纤维长度与湿纸幅强度有关，WRV与结合有关。',False),
+    ('因为处理而提高柔顺性和保水值。',True),
+    ('处理导致柔顺性和保水值提高。',True),
+    ('因为数据不足，不能排序。而长度和强度有关。',False),
+])
+def test_causal_detail_does_not_join_therefore_to_later_but(text,expected):
+    assert u.causal.risk(text) is expected

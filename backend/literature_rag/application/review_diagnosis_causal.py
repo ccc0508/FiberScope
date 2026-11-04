@@ -17,7 +17,7 @@ LIMIT=3
 
 
 def risk(text):
-    causal=re.search(r'导致|引起|使得|使.{0,30}(?:提高|降低)|因.{0,80}而|有助于|归因|源于|\b(?:causes?|because|leads? to|due to|results? in)\b',text,re.I)
+    causal=re.search(r'导致|引起|使得|使[^。！？;；\n]{0,30}(?:提高|降低)|因(?!此)[^。！？;；\n]{0,80}而|有助于|归因|源于|\b(?:causes?|because|leads? to|due to|results? in)\b',text,re.I)
     if not causal:return False
     tail=text[causal.start():]
     return bool(re.search(r'、|以及|和|及|\band\b|,',tail,re.I) or
