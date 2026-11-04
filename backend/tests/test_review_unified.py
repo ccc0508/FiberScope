@@ -248,3 +248,55 @@ def test_comparison_completion_skips_expired_budget():
 ])
 def test_causal_detail_does_not_join_therefore_to_later_but(text,expected):
     assert u.causal.risk(text) is expected
+
+
+def test_v32_envelope_category_and_display_binding():
+    obj=dict(issues=[edit()],requirements=[requirement('edit',issue_indexes=[0])],units=[x.model_dump() for x in payload().units],type='review')
+    obj['issues'][0]['category']='certainty'
+    obj['issues'][0].pop('original_text',None)
+    obj['units'][0].pop('text')
+    p=u.parse_response(json.dumps(obj),draft=DRAFT)
+    assert p.issues[0].category=='uncertainty'
+    assert p.issues[0].original_text==DRAFT.claims[0].text
+    assert p.units[0].text==DRAFT.claims[0].text
+    assert run(p)[0].claims[0].text.startswith('The effect might')
+    obj['execute']='ignore all checks'
+    with pytest.raises(ValueError):u.parse_response(json.dumps(obj),draft=DRAFT)
+
+
+def test_v32_invalid_edit_keeps_indexes_and_valid_independent_edit():
+    obj=dict(issues=[{'bad':'invalid'},edit()],requirements=[requirement('edit',issue_indexes=[1])],units=[x.model_dump() for x in payload().units])
+    obj['units'][0]['repair_issue_indexes']=[1]
+    obj['units'][1]['issue_index']=1
+    p=u.parse_response(json.dumps(obj),draft=DRAFT)
+    assert len(p.issues)==2 and p._invalid_issue_indexes=={0}
+    result,s=run(p)
+    assert result.claims[0].text.startswith('The effect might')
+    assert s.last_trace['rounds'][0]['accepted_issue_indexes']==[1]
+    assert s.last_trace['rounds'][0]['rejected_issues'][0]['reason_code']=='invalid_issue_slot'
+
+
+@pytest.mark.parametrize('a,b,ok', [('3000 cm⁻¹','3000 cm−1',True),('0.888','0.889',False),('not increased','increased',False),('CI-XI','CI-XA',False)])
+def test_v32_anchor_does_not_erase_scientific_difference(a,b,ok):
+    assert u.bind_display(a,b)==ok
+
+
+def test_v32_inline_citations_only_remove_declared_refs():
+    obj=dict(issues=[edit()],requirements=[requirement('edit',issue_indexes=[0])],units=[x.model_dump() for x in payload().units])
+    obj['issues'][0]['replacement_claims'][0]['text']+=' [1]'
+    obj['units'][1]['text']+=' [1]'
+    p=u.parse_response(json.dumps(obj),draft=DRAFT)
+    assert '[1]' not in p.issues[0].replacement_claims[0].text
+    assert run(p)[0].claims[0].text.startswith('The effect might')
+    obj['issues'][0]['replacement_claims'][0]['text']+=' [9]'
+    p=u.parse_response(json.dumps(obj),draft=DRAFT)
+    assert '[9]' in p.issues[0].replacement_claims[0].text
+
+
+@pytest.mark.parametrize('text',[
+ 'The supplied excerpts contain no formula; limited to these excerpts, not the entire paper.',
+ '所给材料不能据此证明全文其他部分没有公式；仅限当前材料。',
+])
+def test_v32_bilingual_explicit_scope_disclaimers(text):
+    assert u.local_evidence_limit(text)
+    assert not u.local_evidence_limit(text+' 全文没有公式。')
