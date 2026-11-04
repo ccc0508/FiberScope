@@ -218,6 +218,9 @@ class EvidenceReviewService:
                 if hasattr(contract,'prepare_payload'):
                     trace['model_issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
                     contract.prepare_payload(payload,draft,evidences)
+                    if hasattr(payload,'_mechanical_repairs'):
+                        trace['mechanical_repairs']=payload._mechanical_repairs
+                        trace['units']=[u.model_dump() for u in payload.units]
                     trace['comparison_checks']=[c.model_dump() for c in payload.comparison_checks]
                     trace['citation_only_repair_indexes']=sorted(payload._citation_repairs)
                     if hasattr(payload,'_relation_target_repairs'):

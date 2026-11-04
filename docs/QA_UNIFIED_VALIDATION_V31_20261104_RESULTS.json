@@ -1,0 +1,663 @@
+{
+  "version": "bounded-corrective-review-v3.1-unified",
+  "provider_calls": 1,
+  "note": "Fixed saved review proposals, no primary generation or grading. One real DeepSeek metadata-only completion on Q32 round2; other steps offline. Not a new final-answer or stability score.",
+  "totals": {
+    "proposals": 19,
+    "old_accepted": 10,
+    "accepted": 16
+  },
+  "rounds": [
+    {
+      "case_id": "PFI2-001",
+      "round": 1,
+      "input_sha256": "12bf621f7f0a70203e880933b5a14a8abe453ded9325adc66a970f32f107c3ad",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-002",
+      "round": 1,
+      "input_sha256": "54c4304f6cc13c57c23dc4c81b037e57b3257252c1d06378a7d163d78ab4c920",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-003",
+      "round": 1,
+      "input_sha256": "65d587b9599852a2129ab03e38e4cd148e1036cc5a479bcc29bfb3ce124c9e02",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-004",
+      "round": 1,
+      "input_sha256": "03fbd9619f8cf114416d06b27860166bd7c7d8e1c88053e5e48541d054bdc52f",
+      "completion": null,
+      "edits": [
+        {
+          "issue_index": 0,
+          "old_accepted": false,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "在该文的阔叶木浆PFI条件下，12000转时阔叶木浆为57 °SR。"
+          ]
+        },
+        {
+          "issue_index": 1,
+          "old_accepted": false,
+          "accepted": false,
+          "error": "original_unit_not_verified",
+          "replacements": [
+            "因此约63 °SR并非两种浆在12000转都能达到：针叶木浆在12000转为63 °SR，而阔叶木浆在12000转仅57 °SR；按该文序列，阔叶木浆达到约63 °SR应在12000与16000转之间，但原文未给出确切转数。"
+          ]
+        },
+        {
+          "issue_index": 2,
+          "old_accepted": false,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "原文给出的阔叶木浆序列为0、26、40、57、70 °SR（对应0、4000、8000、12000、16000转），其中12000转为57 °SR、16000转为70 °SR；在所给数据中未给出达到63 °SR所需的确切转数，且这些数值仅适用于该文的浆料与PFI条件。"
+          ]
+        }
+      ],
+      "mechanical_repairs": [
+        {
+          "unit_index": 3,
+          "field": "detail_span",
+          "before": [
+            0,
+            219
+          ],
+          "after": [
+            779,
+            998
+          ]
+        },
+        {
+          "unit_index": 4,
+          "field": "detail_span",
+          "before": [
+            0,
+            219
+          ],
+          "after": [
+            779,
+            998
+          ]
+        }
+      ],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-004",
+      "round": 2,
+      "skipped": "no_parsed_units",
+      "old_status": "failed"
+    },
+    {
+      "case_id": "PFI2-005",
+      "round": 1,
+      "input_sha256": "015d9c6f2dd3084ba483bcf646cbd869d27a50f2993e1f7a88ab2d0b51b42815",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-006",
+      "round": 1,
+      "input_sha256": "3dfbc0a0bbaf27e75fe730302e99b1035cbfe004f921e34a79235505f9d4ed57",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-007",
+      "round": 1,
+      "input_sha256": "a9fe174aa140a9b4fdedf63941887ec83baccddb45d64741cc7a9f7cc289af14",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-008",
+      "round": 1,
+      "input_sha256": "96d8f1337c353fe9776dfccfcd08788cf7352fc60efe3752fb13f9ea69562d85",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-009",
+      "round": 1,
+      "input_sha256": "b6b298bfa873877b87aabe402b9fd846d3027c677fc7fc9ac3588145a4e15285",
+      "completion": null,
+      "edits": [
+        {
+          "issue_index": 0,
+          "old_accepted": true,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "按表1(b)，阔叶木CI-XA从47.16%降至42.35%，绝对下降为47.16−42.35=4.81个百分点；CI-XA是按XRD峰面积占比得到的归一化结晶度指数，因此该差值是指数上的下降，不等同于绝对结晶度或绝对晶区含量的等量下降。"
+          ]
+        }
+      ],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-010",
+      "round": 1,
+      "input_sha256": "6c89d62508ea557e333040d3f289ed260dc2ea89c617a615bf2747085f3e456c",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-011",
+      "round": 1,
+      "input_sha256": "067e66edb025f541e77ac632477fdf14d74947ed58f22a4909de70370a806478",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-012",
+      "round": 1,
+      "input_sha256": "4322bbd4a47d4ab4c582f6a95928637135e0590db13eff9ca215cd9df1790465",
+      "completion": null,
+      "edits": [
+        {
+          "issue_index": 0,
+          "old_accepted": true,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "表1中各精磨转数下CI-XI均高于CI-XA，原文也指出CI-XI明显高于CI-XA。"
+          ]
+        }
+      ],
+      "mechanical_repairs": [],
+      "unit_errors": [
+        {
+          "index": 1,
+          "errors": [
+            "unit_comparison_missing"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "PFI2-013",
+      "round": 1,
+      "input_sha256": "fffd59cc30597692563ec1558ddd583bea59b7f222cce9508d9304c2d927420c",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-014",
+      "round": 1,
+      "input_sha256": "1b63f9b1c2e567f394694805a2cde00f01693b64f34df2331d51c24a27f284b4",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [
+        {
+          "unit_index": 0,
+          "field": "detail_span",
+          "before": [
+            2053,
+            2287
+          ],
+          "after": [
+            2152,
+            2287
+          ]
+        }
+      ],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-015",
+      "round": 1,
+      "input_sha256": "821d3a952d9d8b62dbe7d36b93775275d9fe5cd708c0f702e57dba17fe106cdd",
+      "completion": null,
+      "edits": [
+        {
+          "issue_index": 0,
+          "old_accepted": true,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "文献推测，阔叶木纤维相关参数无显著变化可能是因为其打浆时施加的 refining pressure 较低。"
+          ]
+        }
+      ],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-016",
+      "round": 1,
+      "input_sha256": "2879199a7754fba7b5a9abb33fd39ecf6320557f7f845be8c27eb216926d701a",
+      "completion": null,
+      "edits": [
+        {
+          "issue_index": 0,
+          "old_accepted": true,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "本文指出，PFI精磨过程中片材抗张强度的提高主要来自细纤维化和细组分的增加；零距抗张结果显示PFI精磨没有降低纤维强度，但这并不等于单根纤维强度提高。"
+          ]
+        }
+      ],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-017",
+      "round": 1,
+      "input_sha256": "c178a1a9e73217f8e90a9b00ecdfdc1641bd5f8055e42f5b05716916ad6e02c8",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": [
+        {
+          "index": 0,
+          "errors": [
+            "unit_quote_not_in_evidence"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "PFI2-018",
+      "round": 1,
+      "input_sha256": "d4dfa0dfc911f731f8037d4bb7dfb4bf78869d45ce49a866acaca24efb723979",
+      "completion": null,
+      "edits": [
+        {
+          "issue_index": 0,
+          "old_accepted": false,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "结果中将3000–3700 cm⁻¹羟基带反卷积为四个主要分峰，各氢键的相对含量按对应分峰面积占四个分峰总面积的比例计算；该数值是归一化峰面积分数，不等同于绝对氢键数量或浓度，峰面积分数的变化本身不能证明绝对氢键数目的增减。"
+          ]
+        }
+      ],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-019",
+      "round": 1,
+      "input_sha256": "1e4f87cccaa7ad2c06ec999ece877e60b7d3e8a7a5729a869512853523974c53",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-020",
+      "round": 1,
+      "input_sha256": "9efe37e888e45ccb2e4b8ebdf34396d87c2682dca8b82d75c32c10f2bf519c0b",
+      "completion": null,
+      "edits": [
+        {
+          "issue_index": 0,
+          "old_accepted": true,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "游离 OH(2) 和 OH(6) 的相对含量也随打浆呈阶段性变化：softwood 总体略增；hardwood 先降、后升、再降。作者对 softwood 游离 OH 增加的解释是氢键断裂导致更充分分层和更高比表面积/可及性；对 hardwood 的波动则解释为游离 OH 不稳定、易形成 O(2)H···O(6) 或 O(6)H···O(3′) 等新氢键，并提到干燥过程。"
+          ]
+        },
+        {
+          "issue_index": 1,
+          "old_accepted": false,
+          "accepted": false,
+          "error": "replacement_unit_not_verified",
+          "replacements": [
+            "正文 Section 3.4 报告 O(6)H···O(3′) 含量与 CI-XI 的 Pearson 相关系数为 softwood 0.912、hardwood 0.889（p<0.05），说明二者相关；但摘要给出 softwood 0.888、hardwood 0.889，softwood 数值在正文与摘要之间不一致。"
+          ]
+        }
+      ],
+      "mechanical_repairs": [],
+      "unit_errors": [
+        {
+          "index": 3,
+          "errors": [
+            "unit_comparison_missing"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "PFI2-021",
+      "round": 1,
+      "input_sha256": "90d9350657042a04467a20120d783d77ac403f7268c8027bdb48cdea68a2f723",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-022",
+      "round": 1,
+      "input_sha256": "9f93d94f9027b1ad9b07edc1078e6cf8f38fa67a4ccaad949e84a0c9c8d3406c",
+      "completion": null,
+      "edits": [
+        {
+          "issue_index": 0,
+          "old_accepted": true,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "同一16,000转条件下，O(6)H···O(3′)相对含量为23.56%、O(3)H···O(5)相对含量为34.92%；这两个数值来自表2(a）针叶木纤维氢键相对含量数据，是按去卷积FT-IR谱的峰面积比例得到的相对含量（归一化峰面积分数），并非绝对氢键数量或浓度。"
+          ]
+        }
+      ],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-023",
+      "round": 1,
+      "skipped": "no_parsed_units",
+      "old_status": "failed"
+    },
+    {
+      "case_id": "PFI2-024",
+      "round": 1,
+      "input_sha256": "63fe746994037e4dff24a5dbf24a50e6c06020654cf852583a077effe52faeec",
+      "completion": null,
+      "edits": [
+        {
+          "issue_index": 0,
+          "old_accepted": true,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "分子层面，FT-IR分峰得到的O(6)H···O(3′)分子间氢键相对含量在打浆中总体下降（软木和硬木分别约16.54%和5.91%），且更少的分子间氢键和较低结晶指数与纤维柔顺性提高相关；可及性和WRV是与这些结构变化相关的性质，不能据此推断绝对氢键数量或浓度同比例变化。"
+          ]
+        },
+        {
+          "issue_index": 1,
+          "old_accepted": false,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "所给证据没有给出纤维长度、细小纤维和WRV三者对成纸强度贡献的定量排序，因此不能据此判定三者中谁的贡献最大。就已有直接论述而言，WRV表征的润胀与纤维间结合强度有直接联系，纤维长度主要被强调为湿纸幅强度的关键因素；细小纤维的作用未给出可比较的定量贡献。"
+          ]
+        }
+      ],
+      "mechanical_repairs": [
+        {
+          "unit_index": 2,
+          "field": "detail_span",
+          "before": [
+            1349,
+            1506
+          ],
+          "after": [
+            2912,
+            3350
+          ]
+        }
+      ],
+      "unit_errors": [
+        {
+          "index": 7,
+          "errors": [
+            "unit_quote_not_in_evidence"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "PFI2-025",
+      "round": 1,
+      "skipped": "no_parsed_units",
+      "old_status": "failed"
+    },
+    {
+      "case_id": "PFI2-026",
+      "round": 1,
+      "input_sha256": "1c9e9477cdbe7c8581be2b279758bdbaa701512ce24fe2ed7288c54691e2926c",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": [
+        {
+          "index": 2,
+          "errors": [
+            "context_cannot_certify_claim"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "PFI2-027",
+      "round": 1,
+      "input_sha256": "7da1b381beaa57ae154a24b26a71784be65ababc0709819105cf7745b9aad2d3",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": [
+        {
+          "index": 1,
+          "errors": [
+            "unit_detail_sentence_invalid"
+          ]
+        },
+        {
+          "index": 4,
+          "errors": [
+            "context_cannot_certify_claim"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "PFI2-028",
+      "round": 1,
+      "input_sha256": "09907a007f66cb80d893446db3bb9635997175431c35eb02c63710416aac3cf4",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    },
+    {
+      "case_id": "PFI2-029",
+      "round": 1,
+      "input_sha256": "c642ab6293bb6d6cb3a8a9e2000916319a6e433b8f399809c1906463c00950bb",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": [
+        {
+          "index": 0,
+          "errors": [
+            "context_cannot_certify_claim"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "PFI2-030",
+      "round": 1,
+      "input_sha256": "c8df2b8f115cfbde73ce4eb4d418bf1e106754f5778dfd065c5d77e7f1a76224",
+      "completion": null,
+      "edits": [],
+      "mechanical_repairs": [],
+      "unit_errors": [
+        {
+          "index": 4,
+          "errors": [
+            "unit_quote_not_in_evidence"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "PFI2-031",
+      "round": 1,
+      "input_sha256": "e72a01ec8f304f6021e49f885f8289a710173df802af3b2b663a3370bf64ea31",
+      "completion": null,
+      "edits": [
+        {
+          "issue_index": 0,
+          "old_accepted": true,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "表1中软木纤维从0转到16,000转，CI-XI由73.23%降至69.82%、CI-XA由40.46%降至34.20%；硬木纤维CI-XI由75.55%降至73.55%、CI-XA由47.16%降至38.01%。其中CI-XI由衍射强度比、CI-XA由峰面积比得到，二者均为XRD相对结晶度指数，不等同于绝对结晶度。"
+          ]
+        },
+        {
+          "issue_index": 1,
+          "old_accepted": true,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "结晶度下降的同时，O(6)H···O(3′)分子间氢键的相对含量在软木和硬木纤维中分别减少16.54%和5.91%；作者认为这一减少可能源于PFI机械作用下纤维素分子链之间的断裂，并与内、外细纤维化密切相关。该氢键含量由FT-IR去卷积得到，是相对含量而非绝对键数。"
+          ]
+        }
+      ],
+      "mechanical_repairs": [],
+      "unit_errors": [
+        {
+          "index": 5,
+          "errors": [
+            "unit_quote_not_in_evidence"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "PFI2-032",
+      "round": 1,
+      "input_sha256": "0302bf929f8c5005748b94bb5ea437f557769a1ce688daa7b1104de82493b2ad",
+      "completion": null,
+      "edits": [
+        {
+          "issue_index": 0,
+          "old_accepted": true,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "O(6)H···O(3′)氢键的相对含量（由FT-IR峰面积比例得到，非绝对键数或浓度）与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。"
+          ]
+        },
+        {
+          "issue_index": 1,
+          "old_accepted": false,
+          "accepted": false,
+          "error": "replacement_unit_not_verified",
+          "replacements": [
+            "在所给相关分析结果与结论中，作者报告了相关系数并称可基于CI-XI大致推测O(6)H···O(3′)氢键相对含量的趋势，未见可直接由CI-XI计算该含量的公式或定量换算关系；因此相关分析不能等同于直接计算。"
+          ]
+        }
+      ],
+      "mechanical_repairs": [],
+      "unit_errors": [
+        {
+          "index": 4,
+          "errors": [
+            "unit_quote_not_in_evidence"
+          ]
+        },
+        {
+          "index": 6,
+          "errors": [
+            "unit_source_not_cited",
+            "context_cannot_certify_claim"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "PFI2-032",
+      "round": 2,
+      "input_sha256": "0302bf929f8c5005748b94bb5ea437f557769a1ce688daa7b1104de82493b2ad",
+      "completion": {
+        "comparison_completion": {
+          "targets": [
+            5
+          ],
+          "status": "metadata_completed",
+          "max_attempts": 1,
+          "request_sha256": "809af220e79f3b0b9d7eb8190be24d41b252064bb40693ba8182eb5b9f9bc575",
+          "usage": {
+            "prompt_tokens": 13042,
+            "completion_tokens": 209,
+            "total_tokens": 13251,
+            "reasoning_tokens": 103,
+            "cached_tokens": 512
+          },
+          "response_sha256": "85f896f3b7614b75342a9884c59884c026112c36131dbff7d2306b221b38a673",
+          "finish_reason": "stop",
+          "failure_artifact": {
+            "status": "saved",
+            "artifact_id": "59ab10b2e9634cc39bcdb4b80dc60ec6",
+            "response_sha256": "11e0cded6262d5e4eeffbaa320639c781206b63164bacf47286c418c764543d9"
+          },
+          "patches": [
+            {
+              "unit_index": 5,
+              "comparison_scope": "same_scope",
+              "reason": "[2]结果段与[7]摘要报告的是同一篇论文中同一组材料（针叶木、阔叶木）的O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数；统计量、变量和材料一致，仅针叶木数值0.912与0.888不同，因此可作同范围数值一致性比较。"
+            }
+          ]
+        }
+      },
+      "edits": [
+        {
+          "issue_index": 0,
+          "old_accepted": false,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "结果部分给出的O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）；但摘要中同一相关为针叶木0.888、阔叶木0.889（p < 0.05），针叶木数值在文中不一致。"
+          ]
+        },
+        {
+          "issue_index": 1,
+          "old_accepted": false,
+          "accepted": true,
+          "error": null,
+          "replacements": [
+            "就本问题而言，现有结果只报告以百分比表示的O(6)H···O(3′)氢键含量（相对量）及其与CI-XI的相关系数，并未提供由CI-XI直接计算该含量的公式或定量换算关系；相关分析只能支持趋势推测，不能等同于可直接计算，也不能据此推出绝对氢键数量。"
+          ]
+        }
+      ],
+      "mechanical_repairs": [],
+      "unit_errors": []
+    }
+  ],
+  "code_sha256": {
+    "backend\\literature_rag\\application\\review_diagnosis_unified.py": "312abd741808ff47fa687528d7893916e6044900b9347e6c1630b45b05d2e7cc",
+    "backend\\literature_rag\\application\\review_diagnosis_causal.py": "d055e9811914fdc372c557323e7b3875cafb83cb1e21ac3980b62c99e55dfd91",
+    "backend\\literature_rag\\adapters\\providers\\evidence_review.py": "12ffb3acb233f7d79ad8f940183e04eb70d8f4b89ac30d9447eac92cbc65ec54",
+    "backend\\literature_rag\\application\\evidence_review.py": "0c1de8f2045da691c89ab7767d1a5729b68a07f651b1fa8543751bd59073e333",
+    "scripts\\replay_unified_validation_20261104.py": "ce349b99116b99d60d987f3ac593e1bf9ff52279a5dc5c30467f9f2af4dc9f7d"
+  }
+}
