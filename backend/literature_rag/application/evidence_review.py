@@ -110,7 +110,18 @@ def checksum(value):
 def normalized_quote(text):
     # Display markup/line wrapping is not a scientific difference. Do not normalize numbers or words.
     text=html.unescape(re.sub(r'</?[A-Za-z][^>]*>','',text))
-    return re.sub(r'\s+','',unicodedata.normalize('NFKC',text))
+    text=unicodedata.normalize('NFKC',text)
+    # Whitelisted display wrappers only: retain unknown TeX, fractions, operators and words.
+    text=re.sub(r'\\(?:mathrm|textrm)\s*\{([A-Za-z\s]+)\}',r'\1',text)
+    text=re.sub(r'\{\s*([-−–])\s*\}',r'\1',text)
+    text=text.replace('−','-').replace('–','-')
+    # Paired TeX math delimiters are presentation; leave unmatched dollar signs intact.
+    text=re.sub(r'\$([^$]+)\$',r'\1',text)
+    # Sentence-initial articles may change case when a span is quoted; variables must not.
+    text=re.sub(r'\bThe\b','the',text)
+    text=re.sub(r'\s+','',text)
+    # Unit display forms such as cm^{-1} vs cm−1; do not erase arbitrary algebraic powers.
+    return re.sub(r'(?<![A-Za-z])(cm|mm|nm|m|s|kg)\^\{([+-]?\d+)\}',r'\1\2',text)
 
 
 class ReviewRejected(ValueError):
