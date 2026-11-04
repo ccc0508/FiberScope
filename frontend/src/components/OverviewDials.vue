@@ -14,6 +14,7 @@ import {
   type DialMaterial,
   type DialObservation,
   type DialSample,
+  type Spoke,
 } from "../overview";
 
 interface DetailRow {
@@ -37,6 +38,7 @@ const samples = ref<DialSample[]>([]),
 const loading = ref(true),
   error = ref("");
 const active = ref<SetKey>("A");
+const selectedObservation = ref<DialObservation | null>(null);
 
 /* ---------- 读取 ---------- */
 let controller: AbortController | undefined;
@@ -46,6 +48,8 @@ async function load() {
   controller = current;
   loading.value = true;
   error.value = "";
+  selectedObservation.value = null;
+  leave();
   try {
     const [s, d] = await Promise.all([
       get<ListResult<Sample>>("samples", { page_size: 500 }, current.signal),
@@ -155,6 +159,7 @@ const rowsB = computed<Row[]>(() => [
 const canvas = ref<HTMLCanvasElement>();
 const stage = ref<HTMLElement>();
 const tip = ref<HTMLElement>();
+const observationDetails = ref<HTMLElement>();
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const clock = () => performance.now() / 1000;
 let t0 = clock(),
@@ -166,7 +171,9 @@ const filter = {
   prev: null as string | null,
   at: -9,
 };
-let hover: { kind: SetKey; key: object } | null = null,
+type Dot = ReturnType<typeof buildDots>["dots"][number];
+type Hit = { kind: "A"; key: Spoke } | { kind: "B"; key: Dot };
+let hover: Hit | null = null,
   hoverAt = -9;
 const shown = ref({ A: 0, B: 0 });
 
@@ -286,7 +293,11 @@ function arcText(s: string, a: number, r: number, color: string, font: string) {
 }
 
 /* ---------- 样本盘 ---------- */
-const tips = new Map<object, [number, number]>();
+const spokeBounds = new Map<
+  Spoke,
+  { inner: number; outer: number; half: number }
+>();
+const dotPositions = new Map<Dot, [number, number]>();
 function drawA(T: number) {
   const c = ctx!;
   const { spokes, slots, step, sector, ordered } = spokeModel.value;
@@ -349,7 +360,7 @@ function drawA(T: number) {
       end = r0 + (len(p.sample.sr ?? 0) - r0) * k;
       wedge(r0, end, p.type === "softwood" ? C.sw : C.hw);
     }
-    tips.set(p, pol(p.angle, end));
+    if (end > r0) spokeBounds.set(p, { inner: r0, outer: end, half });
     if (on) {
       const [x, y] = pol(p.angle, end);
       c.globalAlpha = 1;
@@ -399,8 +410,7 @@ function drawA(T: number) {
     });
     c.globalAlpha = 1;
   }
-  const h =
-    hover?.kind === "A" ? (hover.key as (typeof spokes)[number]).sample : null;
+  const h = hover?.kind === "A" ? hover.key.sample : null;
   if (h) {
     text(
       h.type === "blend"
@@ -471,7 +481,7 @@ function drawB(T: number) {
   }
   const dr = Math.max(2.5, Math.min(band * 0.32, 6));
   let started = 0;
-  const hv = hover?.kind === "B" ? (hover.key as (typeof dots)[number]) : null;
+  const hv = hover?.kind === "B" ? hover.key : null;
   for (const d of dots) {
     const st = sweepStart(d.angle);
     if (T >= st || reduceMotion) started++;
@@ -489,7 +499,7 @@ function drawB(T: number) {
             : f.startsWith("g:") && f.slice(2).split(",").includes(o.block)),
       ) * (hv && !same ? 0.45 : 1);
     const [x, y] = pol(d.angle, ringR(d.ring));
-    tips.set(d, [x, y]);
+    dotPositions.set(d, [x, y]);
     c.fillStyle = o.review ? C.review : C.rc;
     c.beginPath();
     c.arc(x, y, dr * k * (on ? 1.6 : 1), 0, Math.PI * 2);
@@ -555,19 +565,21 @@ function loop() {
   if (!ctx || loading.value || error.value) return;
   ctx.clearRect(0, 0, W, H);
   const T = now();
-  tips.clear();
+  spokeBounds.clear();
+  dotPositions.clear();
   if (active.value === "A") drawA(T);
   else drawB(T);
   if (T < 2.6 || clock() < busyUntil) frame = requestAnimationFrame(loop);
 }
 function replay() {
+  spokeBounds.clear();
+  dotPositions.clear();
+  leave();
   t0 = clock();
-  kick();
 }
 function show(set: SetKey) {
   if (active.value !== set) {
     active.value = set;
-    hover = null;
     filter.on = filter.prev = null;
   }
   replay();
@@ -584,60 +596,86 @@ function enterRow(set: SetKey, key: string) {
   setFilter(key);
 }
 
-/* ---------- 悬停：辐条按角度命中，观测点按距离命中 ---------- */
-const tipHtml = ref("");
+/* ---------- 刻度盘命中与详情 ---------- */
+const tipContent = ref<ReturnType<typeof describe> | null>(null);
 const tipPos = ref({ x: 0, y: 0, on: false });
-function pick(x: number, y: number) {
+function pick(x: number, y: number): Hit | null {
   if (active.value === "A") {
-    const { spokes, step } = spokeModel.value;
     const r = Math.hypot(x - CX, y - CY);
-    if (r < RAD * 0.2 || r > RAD + 6) return null;
     const a = Math.atan2(y - CY, x - CX);
-    let best = null,
-      bd = step * 0.6;
-    for (const p of spokes) {
+    for (const [p, { inner, outer, half }] of spokeBounds) {
+      if (r < inner || r > outer) continue;
       const d = Math.abs(
         Math.atan2(Math.sin(a - p.angle), Math.cos(a - p.angle)),
       );
-      if (d < bd) {
-        bd = d;
-        best = p;
-      }
+      if (d <= half) return { kind: "A", key: p };
     }
-    return best ? { kind: "A" as SetKey, key: best } : null;
+    return null;
   }
   let best = null,
     bd = 9;
-  for (const d of dotModel.value.dots) {
-    const xy = tips.get(d);
-    if (!xy) continue;
+  for (const [d, xy] of dotPositions) {
     const dd = Math.hypot(xy[0] - x, xy[1] - y);
     if (dd < bd) {
       bd = dd;
       best = d;
     }
   }
-  return best ? { kind: "B" as SetKey, key: best } : null;
+  return best ? { kind: "B", key: best } : null;
 }
-function describe(h: { kind: SetKey; key: object }) {
+function observationTitle(o: DialObservation) {
+  return `${o.block}，第 ${o.cycle} 次循环，重复 ${o.replicate}`;
+}
+function describeObservation(o: DialObservation) {
+  return {
+    title: observationTitle(o),
+    subtitle: `${o.grade ?? "原料未注明"}，工作簿第 ${o.row} 行`,
+    label: "长度加权纤维长度",
+    value: `${number(o.fl, 3)} mm`,
+    review: o.review,
+  };
+}
+const selectedDetail = computed(() =>
+  selectedObservation.value ? describeObservation(selectedObservation.value) : null,
+);
+function describe(h: Hit) {
   if (h.kind === "A") {
-    const s = (h.key as ReturnType<typeof buildSpokes>["spokes"][number])
-      .sample;
-    return `<div class="t1">${s.code}</div><div>${s.name}</div><div class="t3"><span>${s.type === "blend" ? `针叶 ${number(s.sw)}%，阔叶 ${number(100 - s.sw)}%` : `打浆转数 ${number(s.revs)} r`}</span><b>${s.type === "blend" ? "端点按纯浆打浆条件" : `${number(s.sr, 1)} °SR`}</b></div>`;
+    const s = h.key.sample;
+    return {
+      title: s.code,
+      subtitle: s.name,
+      label:
+        s.type === "blend"
+          ? `针叶 ${number(s.sw)}%，阔叶 ${number(100 - s.sw)}%`
+          : `打浆转数 ${number(s.revs)} r`,
+      value: s.type === "blend" ? "端点按纯浆打浆条件" : `${number(s.sr, 1)} °SR`,
+      review: false,
+    };
   }
-  const o = (h.key as ReturnType<typeof buildDots>["dots"][number]).obs;
-  return `<div class="t1">${o.block}，第 ${o.cycle} 次循环，重复 ${o.replicate}</div><div>${o.grade ?? "原料未注明"}，工作簿第 ${o.row} 行</div><div class="t3"><span>长度加权纤维长度</span><b>${number(o.fl, 3)} mm</b></div>${o.review ? `<div class="t3 rev"><span>待复核</span><span>长度分布合计偏离 100%</span></div>` : ""}`;
+  return describeObservation(h.key.obs);
+}
+function pickAt(e: MouseEvent) {
+  if (loading.value || error.value || !canvas.value) return null;
+  const b = canvas.value.getBoundingClientRect();
+  return pick(e.clientX - b.left, e.clientY - b.top);
+}
+function selectDot(e: MouseEvent) {
+  const hit = pickAt(e);
+  if (hit?.kind !== "B") return;
+  selectedObservation.value = hit.key.obs;
+  leave();
+  observationDetails.value?.scrollIntoView({ block: "nearest" });
 }
 function move(e: PointerEvent) {
-  const b = canvas.value!.getBoundingClientRect();
-  const h = pick(e.clientX - b.left, e.clientY - b.top);
+  if (e.pointerType === "touch") return;
+  const h = pickAt(e);
   if ((h?.key ?? null) !== (hover?.key ?? null)) {
     hover = h;
+    tipContent.value = h ? describe(h) : null;
     hoverAt = clock();
     busy(1.2);
   }
   if (h) {
-    tipHtml.value = describe(h);
     tipPos.value = { x: e.clientX + 14, y: e.clientY - 12, on: true };
   } else tipPos.value.on = false;
 }
@@ -667,17 +705,24 @@ onMounted(() => {
   if (stage.value) observer.observe(stage.value);
   void load();
 });
-watch([samples, observations], () => {
-  layout();
-  replay();
-});
-watch(loading, (v) => {
-  if (!v)
-    requestAnimationFrame(() => {
+watch(
+  stage,
+  (current, previous) => {
+    if (previous) observer?.unobserve(previous);
+    if (current) observer?.observe(current);
+  },
+  { flush: "post" },
+);
+watch(
+  loading,
+  (pending) => {
+    if (!pending && !error.value) {
       layout();
       replay();
-    });
-});
+    }
+  },
+  { flush: "post" },
+);
 onBeforeUnmount(() => {
   controller?.abort();
   observer?.disconnect();
@@ -790,6 +835,7 @@ const blendNote = computed(() =>
           "
           @pointermove="move"
           @pointerleave="leave"
+          @click="selectDot"
         ></canvas>
         <div class="cap">
           <span
@@ -806,6 +852,34 @@ const blendNote = computed(() =>
           正在读取样本与观测…
         </p>
       </section>
+      <div
+        v-if="active === 'B' && !loading && observations.length"
+        ref="observationDetails"
+        class="card observation-details"
+      >
+        <label>
+          观测详情
+          <select v-model="selectedObservation">
+            <option :value="null" disabled>选择一条观测</option>
+            <option
+              v-for="o in observations"
+              :key="`${o.block}:${o.cycle}:${o.replicate}`"
+              :value="o"
+            >
+              {{ observationTitle(o) }}
+            </option>
+          </select>
+        </label>
+        <output>
+          <template v-if="selectedDetail">
+            <span>{{ selectedDetail.subtitle }}</span>
+            <span>{{ selectedDetail.label }} {{ selectedDetail.value }}</span>
+            <span v-if="selectedDetail.review" class="rev">
+              待复核：长度分布合计偏离 100%
+            </span>
+          </template>
+        </output>
+      </div>
     </template>
     <div
       ref="tip"
@@ -813,8 +887,18 @@ const blendNote = computed(() =>
       :class="{ on: tipPos.on }"
       :style="tipStyle"
       aria-hidden="true"
-      v-html="tipHtml"
-    ></div>
+    >
+      <template v-if="tipContent">
+        <div class="t1">{{ tipContent.title }}</div>
+        <div>{{ tipContent.subtitle }}</div>
+        <div class="t3">
+          <span>{{ tipContent.label }}</span><b>{{ tipContent.value }}</b>
+        </div>
+        <div v-if="tipContent.review" class="t3 rev">
+          <span>待复核</span><span>长度分布合计偏离 100%</span>
+        </div>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -1035,11 +1119,30 @@ const blendNote = computed(() =>
 .dial-tip.on {
   display: block;
 }
-.dial-tip :deep(.t1) {
+.observation-details {
+  padding: 12px 16px;
+}
+.observation-details label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.observation-details select {
+  max-width: 100%;
+}
+.observation-details output,
+.observation-details output span {
+  display: block;
+}
+.observation-details output:not(:empty) {
+  margin-top: 8px;
+}
+.dial-tip .t1 {
   font: 500 13px var(--font-mono);
   color: var(--ink);
 }
-.dial-tip :deep(.t3) {
+.dial-tip .t3 {
   margin-top: 6px;
   padding-top: 6px;
   border-top: 1px solid var(--border);
@@ -1047,11 +1150,11 @@ const blendNote = computed(() =>
   justify-content: space-between;
   gap: 12px;
 }
-.dial-tip :deep(.t3 b) {
+.dial-tip .t3 b {
   font: 500 12px var(--font-mono);
   color: var(--ink);
 }
-.dial-tip :deep(.rev) {
+.rev {
   color: var(--review);
 }
 @media (max-width: 1180px) {
