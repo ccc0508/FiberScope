@@ -72,3 +72,44 @@ def test_calculation_and_provenance(kit):
     assert float(result['relative_change_percent'])==pytest.approx(-10.1993214588)
     assert kit.call(dict(p,initial='0'),run_id='r')['result']['relative_change_percent'] is None
     assert kit.call(p,run_id='other')['status']=='failed'
+
+def test_ledger_dedup_content_change_and_run_isolation(kit):
+    p=dict(tool='search_literature',query='q',reason='search')
+    first=kit.call(p,run_id='r');second=kit.call(p,run_id='r')
+    assert first['result']['evidence'][0]['ref']==second['result']['evidence'][0]['ref']=='[1]'
+    assert len(kit.store.evidence('r')[0]['call_ids'])==2
+    kit.retriever.retrieve=lambda *a:[Evidence('[1]','0','doc','paper.pdf',1,1,'changed',.8)]
+    third=kit.call(p,run_id='r')
+    assert third['result']['evidence'][0]['ref']=='[2]'
+    assert kit.store.evidence('r',['[1]'])[0]['content']['text']=='x'*300
+    assert kit.call(p,run_id='other')['result']['evidence'][0]['ref']=='[1]'
+    with pytest.raises(LookupError):kit.store.evidence('other',['[2]'])
+    assert ToolTraceStore(kit.store.path).evidence('r')==kit.store.evidence('r')
+
+def test_same_full_text_cross_tool_reuses_identity(kit):
+    first=kit.call(dict(tool='search_literature',query='q',reason='s'),run_id='r')
+    second=kit.call(dict(tool='read_section',document_id='doc',section_id='s',max_chars=600,reason='read'),run_id='r')
+    assert first['result']['evidence'][0]['ref']==second['result']['sources'][0]['ref']
+    table=kit.call(dict(tool='read_table',document_id='doc',chunk_id='1',reason='table'),run_id='r')
+    assert table['result']['table']['ref']==second['result']['sources'][1]['ref']
+
+def test_ledger_concurrent_numbering(kit):
+    from concurrent.futures import ThreadPoolExecutor
+    def one(i):
+        record=dict(call_id=str(i),run_id='r',status='completed',input=dict(tool='view_image'),
+            result=dict(asset=dict(id=str(i),document_id='doc'),image_sha256=str(i),image_bytes=1))
+        kit.store.complete(record)
+        return record['result']['ref']
+    with ThreadPoolExecutor(max_workers=4) as pool:refs=list(pool.map(one,range(12)))
+    assert len(set(refs))==12
+    assert [r['ref'] for r in kit.store.evidence('r')]==[f'[{i}]' for i in range(1,13)]
+
+def test_failed_registration_rolls_back_snapshot_and_completion(kit):
+    r=dict(call_id='bad',run_id='r',status='started')
+    kit.store.save(r)
+    r.update(status='completed',input=dict(tool='search_literature'),result=dict(evidence=[
+        dict(ref='[1]',chunk_id='0',document_id='doc',filename='p',page_start=1,page_end=1,text='ok'),
+        dict(ref='[2]')]))
+    with pytest.raises(KeyError):kit.store.complete(r)
+    assert kit.store.evidence('r')==[]
+    assert kit.store.read('r')[0]['status']=='started'
