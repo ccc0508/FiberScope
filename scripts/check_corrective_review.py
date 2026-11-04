@@ -27,6 +27,9 @@ def main():
     parser.add_argument('--case-ids', nargs='+', required=True)
     parser.add_argument('--library', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--max-output-tokens',type=int,default=None)
+    parser.add_argument('--review-timeout',type=float,default=None)
+    parser.add_argument('--deadline',type=int,default=295,choices=range(60,601),metavar='SECONDS')
     parser.add_argument('--version', choices=['v1','v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'], default='v1')
     args = parser.parse_args()
     if args.output.exists():
@@ -50,7 +53,10 @@ def main():
     from literature_rag.application.citations import CitationValidator
     from literature_rag.domain.models import Evidence, GeneratedAnswer, GeneratedClaim
 
-    settings = Settings(_env_file=ROOT/'backend/.env.literature',corrective_review_version=args.version)
+    overrides=dict(corrective_review_version=args.version)
+    if args.max_output_tokens is not None:overrides['evidence_review_max_output_tokens']=args.max_output_tokens
+    if args.review_timeout is not None:overrides['evidence_review_timeout_seconds']=args.review_timeout
+    settings = Settings(_env_file=ROOT/'backend/.env.literature',**overrides)
     if settings.embedding_provider != 'dashscope' or not settings.rerank_enabled:
         raise ValueError('This replay checks the existing Qwen + reranker pipeline')
 
@@ -98,7 +104,10 @@ def main():
     write(args.output/'manifest.json', dict(status='started', mode=VERSION,
         initial_drafts_frozen=True, initial_retrieval_calls=0, primary_generation_calls=0, judge_calls=0,
         gold_loaded=False, paid_calls_authorized_by='implementation verification',
-        configuration=configuration, input_sha256=checksum(inputs),
+        configuration=configuration, replay_effective_limits=dict(
+            max_output_tokens=settings.evidence_review_max_output_tokens,
+            review_timeout_seconds=settings.evidence_review_timeout_seconds,deadline_seconds=args.deadline),
+        input_sha256=checksum(inputs),
         source_files={str(p.relative_to(ROOT)):sha256(p.read_bytes()).hexdigest()
             for p in (ROOT/'backend/literature_rag').rglob('*.py')}, monetary_cost=None))
 
@@ -128,7 +137,7 @@ def main():
             reasoning_effort=settings.llm_reasoning_effort, timeout_seconds=settings.evidence_review_timeout_seconds,
             max_output_tokens=settings.evidence_review_max_output_tokens, visual_root=args.library, diagnostic=True,diagnosis_version=args.version,
             diagnostics_dir=args.output/'private-diagnostics')
-        deadline = started+295
+        deadline = started+args.deadline
         service = CorrectiveReviewService(EvidenceReviewService(p, visual_root=args.library, deadline=deadline),
             TargetedEvidenceReader(retriever), deadline=deadline)
         final = service.review(item['question'], es, draft)

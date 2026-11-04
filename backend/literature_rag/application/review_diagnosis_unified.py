@@ -1,5 +1,6 @@
 """One source-grounded audit unit per original or replacement claim; opt-in."""
 import json
+import re
 from collections import Counter
 from typing import Literal
 
@@ -94,6 +95,9 @@ for qualification/inference, and comparison/ranking when applicable. Check their
 For text use short exact quotes (8-120 characters preferred); broken OCR needs intact spans, not reconstructed
 sentences. Image basis: {"kind":"image","ref":"[1]","asset_id":"actually attached ID","observation":"visible fact"}.
 Context basis {"kind":"context"} only supports an omission/unsupported inference, never a scientific fact.
+A supported unit may combine real sources for its facts with context for an explicit limitation of the
+SUPPLIED evidence only. Its context contribution must identify that local limitation, not absence from
+the entire paper. Context alone cannot certify a supported claim; source contributions must cover facts.
 No invented source or whole-paper absence conclusion from excerpts. Quote/image presence is not semantic proof.
 
 requirements: 1-24 items, derived from the question, necessary limits and material extra assertions.
@@ -182,6 +186,13 @@ def parse_response(content):
 def key(u):return (u.claim_index,u.issue_index,u.replacement_index)
 
 
+def local_evidence_limit(text):
+    """A narrow scope gate, not semantic verification of an absence claim."""
+    if re.search(r'全文|整篇|entire paper|whole paper',text,re.I):return False
+    return bool(re.search(r'(?:所给|提供|当前|现有).{0,8}证据.{0,80}(?:没有|未|不足|无法|不能)|'
+        r'(?:supplied|provided|available) evidence.{0,100}(?:does not|cannot|insufficient|no )',text,re.I))
+
+
 def unit_errors(u,payload,draft,evidences):
     errors=[];refs={e.ref:e for e in evidences}
     if u.claim_index is not None:
@@ -205,7 +216,10 @@ def unit_errors(u,payload,draft,evidences):
     for s in u.sources:
         b=s.basis;e=refs.get(b.ref)
         if b.kind=='context':
-            if u.verdict=='supported':errors.append('context_cannot_certify_claim')
+            if u.verdict=='supported' and not (
+                local_evidence_limit(u.text) and local_evidence_limit(s.contribution)
+                and any(x.basis.kind in {'text','image'} for x in u.sources)
+            ):errors.append('context_cannot_certify_claim')
         elif e is None:errors.append('unit_source_unknown')
         elif b.kind=='text':
             if len(normalized_quote(b.quote))<8 or normalized_quote(b.quote) not in normalized_quote(e.text):errors.append('unit_quote_not_in_evidence')
