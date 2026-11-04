@@ -52,7 +52,9 @@ build先执行严格TypeScript检查，再生成dist；preview在4173端口预�
 | src/components/ExtractionOriginal.vue | 原文页预览、缩放和数值/表头/行名证据定位 |
 | src/extraction.ts | 候选与审核类型、原料分组、初始审核口径及请求 |
 | src/sources.ts | 来源行合并、用途标签和检索 |
-| src/pages/Overview.vue | 全库统计、筛选分页、样本表格 |
+| src/pages/Overview.vue | 数据清单与刻度盘、筛选分页、样本表格 |
+| src/components/OverviewDials.vue | 数据总览的两组清单与刻度盘（样本盘、观测盘） |
+| src/overview.ts | 刻度盘的辐条角度、观测点位置、数据块分组和开场时间表 |
 | src/pages/Association.vue | 纤维与纸张指标散点图、分组相关系数及配对明细 |
 | src/analysis.ts | Pearson系数和坐标范围计算 |
 | src/pages/Blends.vue | 复配分析、配比趋势、端点说明与实验条件 |
@@ -79,6 +81,14 @@ build先执行严格TypeScript检查，再生成dist；preview在4173端口预�
 
 验证结果见 [前端验收记录](../docs/FRONTEND_VALIDATION.md)。
 全站回归命令及范围见 [全站验收记录](../docs/FULL_SITE_VALIDATION.md)，浏览器检查脚本位于 `scripts/browser-audit.js`。
+
+## 数据总览
+
+访问 `/`。上方两组清单：唯一物理样本（按原料）与再生纸浆观测（按数据块结构，另列待复核观测），数字由 `samples` 与 `recycled/details` 接口实时计算。点击大数字切换下方刻度盘，悬停清单行在盘上突出对应一组。
+
+- 样本盘：一根辐条一个物理样本，长度为打浆度（°SR），针叶、阔叶按打浆转数顺时针排列；复配辐条按针叶/阔叶质量比分段，长度表示配比而非打浆度。
+- 观测盘：一点一条观测；环为数据块（内 G01 → 外 G14），扇区为循环次数，虚线表示没有该次循环；待复核观测为锈红色。
+- 开场动画只播放一次，可用“重新演示”重播；开启“减少动态效果”时直接显示最终状态。下方样本库表格保持原有搜索、筛选、分页与来源抽屉。
 
 ## 打浆分析
 

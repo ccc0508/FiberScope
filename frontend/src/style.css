@@ -15,6 +15,8 @@
   --signal-tint: #dcebe7;
   --sw: #8a5604;
   --hw: #127a3a;
+  --rc: #5b6b72; /* 再生纸浆 */
+  --review: #b4532a; /* 待复核：长度分布合计偏离 100% */
   --bl: #7a3f98;
   --amber: #b77c2b;
   --radius: 2px;
