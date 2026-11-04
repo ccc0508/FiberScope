@@ -170,6 +170,15 @@ def main():
             query_rewrite_mode=settings.query_rewrite_mode if settings.query_rewrite_enabled else 'dual',
             visual_catalog=visual_catalog,visual_max_images=settings.visual_max_images,
             visual_max_total_bytes=settings.visual_max_total_bytes)
+        if 'tool_call' in body:
+            from literature_rag.application.tools import LiteratureTools, ToolTraceStore
+            store = ToolTraceStore(Path(__file__).resolve().parents[1]/'.rag-data/tool-traces.sqlite3')
+            toolset = LiteratureTools(retriever, root, store, top_k=settings.top_k, min_score=settings.min_score,
+                provenance=configuration)
+            result = toolset.call(body['tool_call'], run_id=body['run_id'],
+                parent_call_id=body.get('parent_call_id'))
+            print(json.dumps(result, ensure_ascii=False))
+            return
         if settings.corrective_review_enabled:
             from literature_rag.application.corrective_review import CorrectiveReviewService,TargetedEvidenceReader
             evidence_reviewer=CorrectiveReviewService(evidence_reviewer,TargetedEvidenceReader(retriever),
