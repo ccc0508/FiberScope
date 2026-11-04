@@ -185,6 +185,8 @@ class EvidenceReviewService:
             from literature_rag.application.review_diagnosis import diagnosis_contract
             contract=diagnosis_contract(getattr(self.provider,'diagnosis_version','v1'))
             trace['version']=contract.VERSION
+            if hasattr(contract,'routing'):
+                trace['audit_routing']=contract.routing(question,draft,evidences)
             if hasattr(contract,'ranking_context'):
                 trace['ranking_context']=contract.ranking_context(question,draft,evidences)
             if hasattr(contract,'request_context'):
@@ -200,6 +202,8 @@ class EvidenceReviewService:
             if diagnostic:
                 payload=self.provider.review(question,evidences,draft,context=context,
                     timeout_seconds=min(self.provider.timeout_seconds,remaining) if remaining is not None else None)
+                if hasattr(payload,'units'):
+                    trace['units']=[u.model_dump() for u in payload.units]
                 if hasattr(contract,'prepare_payload'):
                     trace['model_issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
                     contract.prepare_payload(payload,draft,evidences)
@@ -209,7 +213,7 @@ class EvidenceReviewService:
                         trace['relation_target_repairs']=payload._relation_target_repairs
                 trace['issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
                 trace['requirements']=[r.model_dump(exclude_none=True) for r in payload.requirements]
-                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking'}:
+                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'}:
                     trace['claim_checks']=[r.model_dump() for r in payload.claim_checks]
                     if hasattr(payload,'relation_checks'):
                         trace['relation_checks']=[r.model_dump() for r in payload.relation_checks]
