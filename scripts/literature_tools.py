@@ -11,16 +11,17 @@ from literature_rag.application.tools import SCHEMAS, ToolTraceStore
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('action',choices=['schemas','call','trace'])
+    p.add_argument('action',choices=['schemas','call','trace','evidence'])
     p.add_argument('--request',type=Path)
     p.add_argument('--library',type=Path)
     p.add_argument('--run-id')
     p.add_argument('--output',type=Path)
     a=p.parse_args()
     if a.action=='schemas':result=SCHEMAS
-    elif a.action=='trace':
+    elif a.action in ('trace','evidence'):
         if not a.run_id:p.error('--run-id required')
-        result=ToolTraceStore(ROOT/'.rag-data/tool-traces.sqlite3').read(a.run_id)
+        store=ToolTraceStore(ROOT/'.rag-data/tool-traces.sqlite3')
+        result=store.read(a.run_id) if a.action=='trace' else store.evidence(a.run_id)
     else:
         if not all([a.request,a.library,a.run_id]):p.error('--request, --library and --run-id required')
         body=dict(tool_call=json.loads(a.request.read_text('utf-8')),data_dir=str(a.library.resolve()),run_id=a.run_id)
