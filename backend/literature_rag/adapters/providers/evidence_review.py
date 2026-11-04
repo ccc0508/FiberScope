@@ -103,9 +103,13 @@ class DeepSeekEvidenceReviewer:
                     raise ProviderResponseError('Evidence review exhausted output budget')
                 content=response.choices[0].message.content
                 if self.diagnostic and self.diagnosis_version in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'}:
-                    result=contract.parse_response(content)
+                    result=contract.parse_response(content,draft=draft) if self.diagnosis_version=='v3_unified' else contract.parse_response(content)
                     if self.diagnosis_version=='v3_unified':
                         self._complete_comparisons(result,contract,draft,evidences,messages,content,parameters,started)
+                    if getattr(result,'_mechanical_repairs',None):
+                        self.last_model_info['normalization']=result._mechanical_repairs
+                        self.last_model_info['original_response_artifact']=archive_response(self.diagnostics_dir,content,
+                            dict(protocol=self.diagnosis_version,stage='before_normalization'))
                     if result._parse_errors:
                         self.last_model_info['response_validation']=result._parse_errors
                         self.last_model_info['failure_artifact']=archive_response(self.diagnostics_dir,content,
