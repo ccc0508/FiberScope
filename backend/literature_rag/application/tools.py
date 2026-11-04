@@ -69,6 +69,8 @@ class ToolTraceStore:
         with self.connect() as db:
             db.execute('CREATE TABLE IF NOT EXISTS tool_calls '
                 '(id TEXT PRIMARY KEY, run_id TEXT, status TEXT, record TEXT)')
+            from .evidence_ledger import create_schema
+            create_schema(db)
 
     def connect(self):
         return sqlite3.connect(self.path, timeout=30)
@@ -82,6 +84,20 @@ class ToolTraceStore:
         with self.connect() as db:
             return [json.loads(r[0]) for r in db.execute(
                 'SELECT record FROM tool_calls WHERE run_id=? ORDER BY rowid', (run_id,))]
+
+    def complete(self, record):
+        from .evidence_ledger import register_result
+        with self.connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            record['result'] = register_result(db, record)
+            record['result_sha256'] = sha256(encode(record['result']).encode()).hexdigest()
+            db.execute('INSERT OR REPLACE INTO tool_calls VALUES (?,?,?,?)',
+                (record['call_id'],record['run_id'],record['status'],encode(record)))
+
+    def evidence(self, run_id, refs=None):
+        from .evidence_ledger import read_ledger
+        with self.connect() as db:
+            return read_ledger(db,run_id,refs)
 
 
 class LiteratureTools:
@@ -144,7 +160,8 @@ class LiteratureTools:
                     rerank=getattr(getattr(r, 'reranker', None), 'last_call', None),
                     embedding=getattr(getattr(r, 'embedder', None), 'last_usage', None))
             record.update(finished_at=datetime.now(UTC).isoformat(), duration_ms=round((perf_counter()-start)*1000))
-            self.store.save(record)
+            if record['status']=='completed':self.store.complete(record)
+            else:self.store.save(record)
         output = dict(call_id=record['call_id'], status=record['status'])
         if record['status'] == 'completed':
             output['result'] = record['result']
