@@ -6,7 +6,7 @@
 
 | 名称 | 行为 | 边界 |
 | --- | --- | --- |
-| search_literature | 调用现有检索完整流程，包括查询改写、融合去重、重排、上下文补全；返回原文、来源块、章节标识、图片标识 | 引用编号仅在本次调用内有效；未来Agent需要统一引用编号 |
+| search_literature | 调用现有检索完整流程，包括查询改写、融合去重、重排、上下文补全；返回原文、来源块、章节标识、图片标识 | 返回run内统一编号，并保留本次局部编号到统一编号的映射 |
 | read_section | 按document_id和section_id读取小节，默认12000字符、最多24000，支持offset分页和exclude_chunk_ids排除已读块 | section_id使用检索返回值；next_offset为空才表示读完。继续分页必须使用同一排除列表；返回原页码、字符范围和完整原块哈希 |
 | read_table | 按文献和原始表格chunk_id返回完整存储表格及关联原图标识 | 不猜测缺失单元格/单位；不新生成结构化行列，也不自动读取所有讨论段落 |
 | view_image | 按asset_id交付已有PDF原图裁剪的PNG像素及图号、页码、bbox、哈希 | 不是只有图注；核对原文件路径、大小和哈希。不执行视觉理解，不新增局部放大/子图裁剪 |
@@ -32,6 +32,7 @@
 .\.venv\Scripts\python.exe -X utf8 scripts/literature_tools.py schemas
 .\.venv\Scripts\python.exe -X utf8 scripts/literature_tools.py call --library <现有文献库目录> --request <请求JSON文件> --run-id example --output .rag-data/tool-result.json
 .\.venv\Scripts\python.exe -X utf8 scripts/literature_tools.py trace --run-id example --output .rag-data/tool-trace.json
+.\.venv\Scripts\python.exe -X utf8 scripts/literature_tools.py evidence --run-id example --output .rag-data/evidence-ledger.json
 ```
 
 检索请求示例：
@@ -54,4 +55,17 @@
 
 已用当前MinerU/Qwen论文库完成五种工具的实际调用，私有记录run_id为`tool-smoke-20261104`。检索执行真实改写/向量化/重排；读取和计算未调用答题或审校模型。
 
-下一阶段：在这些工具上增加统一证据编号与会话证据账本，再接入有次数/费用上限的Agent循环和现有审校。不能直接把多个检索调用里的同名[1]当成同一来源。
+## 单次问答证据清单
+
+已实现：同一个run_id代表一次问答，工具返回的ref共用一套递增编号。下一次独立提问必须换run_id；run_id不是用户身份或访问凭证。
+
+- 检索返回统一ref及local_to_run_refs；内部检索诊断仍保留局部编号，不能直接拿它当最终引用。
+- 章节分页中的每个原文片段、完整表格、原图、计算结果均获得ref。计算明确标为calculation，不能冒充论文原文；source_refs指向来源调用取得的证据，不保证每个操作数都已核对。
+- 按内容及出处精确去重：原文、文献身份/可用的文件哈希、页码、原始块、字符范围、附带图片共同确定快照。不按语义相似合并，也不因同一个chunk_id就覆盖不同内容。
+- 相同的完整原文通过检索/章节/表格接口取得时，若实际快照一致，可复用编号；不同分页范围、补全窗口或图片附件视为不同证据。原图单独读取也独立编号，避免把仅获得图片标识说成已查看像素。
+- 重复获取时追加来源call_id，不修改原快照。单个ref可追溯到多个工具调用。
+- SQLite事务内完成编号分配、快照和最终调用记录保存，并发下无重复编号。重启不重置；失败调用不分配编号。进程提交后、响应送达前中断时，记录表示执行完成，不表示调用方已收到。
+- `ToolTraceStore.evidence(run_id, refs)`可解析指定引用；不存在或格式非法的编号明确失败，不借用其他run的同名编号。
+- 历史工具记录不自动回填或改写。新调用才进入证据清单；图片base64仍不写入SQLite。
+
+已验证实际论文同表两次读取复用编号，图像得到独立编号，并保存完整来源调用关系。下一阶段接入有预算上限的Agent循环，将这份证据清单同时提供给回答和审校；当前线上回答调度尚未切换。
