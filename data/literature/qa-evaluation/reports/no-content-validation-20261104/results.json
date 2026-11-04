@@ -1,0 +1,2293 @@
+{
+  "summary": {
+    "mode": "saved-output unchecked execution, independent round replay",
+    "questions": 32,
+    "rounds": 35,
+    "proposals": 22,
+    "applied": 22,
+    "changed_rounds": 15,
+    "provider_calls": 0,
+    "limitations": [
+      "Not fresh generation or a full counterfactual multi-round run; later model outputs depend on historical inputs.",
+      "No content gates and no citation cleanup. Structural execution failures are reported, not silently fixed.",
+      "No new Jev scores; old grades must not be assigned to these answers."
+    ]
+  },
+  "rounds": [
+    {
+      "task_id": "PFI2-001",
+      "round": 1,
+      "question": "这篇PFI打浆论文研究的是哪两类纸浆？原料是否经过漂白，采用什么制浆方法？",
+      "input_sha256": "7c284c0c2e54732c9842a57c94a90ee3e7bd65527d04738b57f25dedc447e40c",
+      "evidence_sha256": "b00f91c9b909f9c34e58ce92409d9e410a19cb45429a2c8d88a60ba9cebff1d8",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "研究使用两类纸浆：漂白针叶木硫酸盐浆和漂白阔叶木硫酸盐浆。 [1]\n所用原料为商业漂白浆，即经过漂白处理。 [1]\n制浆方法为硫酸盐法（kraft pulping）。 [1]",
+      "after": "研究使用两类纸浆：漂白针叶木硫酸盐浆和漂白阔叶木硫酸盐浆。 [1]\n所用原料为商业漂白浆，即经过漂白处理。 [1]\n制浆方法为硫酸盐法（kraft pulping）。 [1]",
+      "claims": [
+        {
+          "text": "研究使用两类纸浆：漂白针叶木硫酸盐浆和漂白阔叶木硫酸盐浆。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "所用原料为商业漂白浆，即经过漂白处理。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "制浆方法为硫酸盐法（kraft pulping）。",
+          "citation_refs": [
+            "[1]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-002",
+      "round": 1,
+      "question": "本文PFI打浆时浆浓、磨盘间隙和单位刀长作用力分别是多少？请区分针叶木和阔叶木并给出单位。",
+      "input_sha256": "2f117cb47a577951ee8fa322d7a65257628a941c83b3ad88fa9f18ca9410a94a",
+      "evidence_sha256": "cafa6aeb3a335ed4922d0c470690e5d0adeaa85fe93206cbf352a7c990e461f3",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [
+        {
+          "claim_index": 0,
+          "original_text": "PFI打浆时浆浓为10%，磨盘间隙为0.2 mm。",
+          "category": "coverage",
+          "problem": "原文给出两项共同打浆条件，但未明确它们同时适用于针叶木和阔叶木，未完全满足题干按树种说明的要求。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "Two pulp were treated with a PFI refiner ... with a pulp consistency of 10%, the gap between the opposite refining plates was 0.2 mm"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "针叶木和阔叶木浆的PFI打浆浆浓均为10%，磨盘间隙均为0.2 mm。",
+              "citation_refs": [
+                "[1]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 0
+        }
+      ],
+      "before": "PFI打浆时浆浓为10%，磨盘间隙为0.2 mm。 [1]\n针叶木的单位刀长作用力为3.33 N/mm。 [1]\n阔叶木的单位刀长作用力为1.77 N/mm。 [1]",
+      "after": "针叶木和阔叶木浆的PFI打浆浆浓均为10%，磨盘间隙均为0.2 mm。 [1]\n针叶木的单位刀长作用力为3.33 N/mm。 [1]\n阔叶木的单位刀长作用力为1.77 N/mm。 [1]",
+      "claims": [
+        {
+          "text": "针叶木和阔叶木浆的PFI打浆浆浓均为10%，磨盘间隙均为0.2 mm。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "针叶木的单位刀长作用力为3.33 N/mm。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "阔叶木的单位刀长作用力为1.77 N/mm。",
+          "citation_refs": [
+            "[1]"
+          ]
+        }
+      ],
+      "old_status": "rejected",
+      "old_accepted": [],
+      "old_rejections": [
+        {
+          "issue_index": 0,
+          "reason_code": "quote_not_in_actual_evidence"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-003",
+      "round": 1,
+      "question": "这篇研究为两类纸浆设置了哪些PFI打浆转数？每类有几个转数水平？",
+      "input_sha256": "a10b5c77a0886501b85b6a1c0d7f077ccb6e4887c1b64f579a06d66adb9571f2",
+      "evidence_sha256": "057d29d62358e772cdb1d378fb58ab8c5c3b6bd09d97752ff6f7667c045ac5d2",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "研究对软木硫酸盐浆和硬木硫酸盐浆分别进行PFI打浆，转数均为0、4000、8000、12,000和16,000转。 [1]\n因此，两类纸浆各设置5个PFI打浆转数水平。 [1]",
+      "after": "研究对软木硫酸盐浆和硬木硫酸盐浆分别进行PFI打浆，转数均为0、4000、8000、12,000和16,000转。 [1]\n因此，两类纸浆各设置5个PFI打浆转数水平。 [1]",
+      "claims": [
+        {
+          "text": "研究对软木硫酸盐浆和硬木硫酸盐浆分别进行PFI打浆，转数均为0、4000、8000、12,000和16,000转。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "因此，两类纸浆各设置5个PFI打浆转数水平。",
+          "citation_refs": [
+            "[1]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-004",
+      "round": 1,
+      "question": "PFI打到12000转的时候，针叶木浆和阔叶木浆的打浆度各是多少？那我们以后想要63 °SR左右的浆，是不是直接打12000转就行了？",
+      "input_sha256": "896665fcc59d177e144d75621a2ff732194494beaee7bef63359ae259437398d",
+      "evidence_sha256": "812abbdd030fff74fc018e1357e9d888d251e0aef0aa7be5565d3c27985e9d7d",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [
+        {
+          "claim_index": 3,
+          "original_text": "原文只给出阔叶木浆12000转为57 °SR、16000转为70 °SR，未给出达到63 °SR所需的确切转数，且这些数值仅适用于该文的浆料与PFI条件。",
+          "category": "coverage",
+          "problem": "“只给出……12000……16000” misstates the source: [1] reports a full five-point hardwood series 0, 26, 40, 57, 70 °SR at 0, 4000, 8000, 12000, 16000 r. The lack of an exact 63 °SR revolution and the local condition limit should be retained, but not by implying only two hardwood data points exist.",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "such as 16, 20, 40, 63, and 79<sup>◦</sup> SR, were obtained for softwood fibers and 0, 26, 40, 57, and 70<sup>◦</sup> SR were obtained for hardwood fibers."
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "在给出的原文片段中，阔叶木浆打浆度序列为0、26、40、57、70 °SR（12000转为57 °SR、16000转为70 °SR），未给出达到63 °SR对应的确切转数；这些数值仅适用于该文的浆料与PFI条件。",
+              "citation_refs": [
+                "[1]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 3
+        }
+      ],
+      "before": "按文中0、4000、8000、12000、16000转对应的打浆度序列，12000转时针叶木浆为63 °SR。 [1]\n同一条件下，12000转时阔叶木浆为57 °SR。 [1]\n因此想要约63 °SR的浆，不能对针叶木浆和阔叶木浆都直接固定打12000转；针叶木浆在12000转可达63 °SR，而阔叶木浆在12000转仅57 °SR，需要提高转数。 [1]\n原文只给出阔叶木浆12000转为57 °SR、16000转为70 °SR，未给出达到63 °SR所需的确切转数，且这些数值仅适用于该文的浆料与PFI条件。 [1]",
+      "after": "按文中0、4000、8000、12000、16000转对应的打浆度序列，12000转时针叶木浆为63 °SR。 [1]\n同一条件下，12000转时阔叶木浆为57 °SR。 [1]\n因此想要约63 °SR的浆，不能对针叶木浆和阔叶木浆都直接固定打12000转；针叶木浆在12000转可达63 °SR，而阔叶木浆在12000转仅57 °SR，需要提高转数。 [1]\n在给出的原文片段中，阔叶木浆打浆度序列为0、26、40、57、70 °SR（12000转为57 °SR、16000转为70 °SR），未给出达到63 °SR对应的确切转数；这些数值仅适用于该文的浆料与PFI条件。 [1]",
+      "claims": [
+        {
+          "text": "按文中0、4000、8000、12000、16000转对应的打浆度序列，12000转时针叶木浆为63 °SR。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "同一条件下，12000转时阔叶木浆为57 °SR。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "因此想要约63 °SR的浆，不能对针叶木浆和阔叶木浆都直接固定打12000转；针叶木浆在12000转可达63 °SR，而阔叶木浆在12000转仅57 °SR，需要提高转数。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "在给出的原文片段中，阔叶木浆打浆度序列为0、26、40、57、70 °SR（12000转为57 °SR、16000转为70 °SR），未给出达到63 °SR对应的确切转数；这些数值仅适用于该文的浆料与PFI条件。",
+          "citation_refs": [
+            "[1]"
+          ]
+        }
+      ],
+      "old_status": "rejected",
+      "old_accepted": [],
+      "old_rejections": [
+        {
+          "issue_index": 0,
+          "reason_code": "replacement_unit_not_verified"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-004",
+      "round": 2,
+      "question": "PFI打到12000转的时候，针叶木浆和阔叶木浆的打浆度各是多少？那我们以后想要63 °SR左右的浆，是不是直接打12000转就行了？",
+      "input_sha256": "896665fcc59d177e144d75621a2ff732194494beaee7bef63359ae259437398d",
+      "evidence_sha256": "e1423e1d17dcec017547041b6aa4bf8c09fe2ba815f4f4beefdf62e984cc02b0",
+      "proposal_origin": "archived_raw_response",
+      "issues": [
+        {
+          "claim_index": 3,
+          "original_text": "原文只给出阔叶木浆12000转为57 °SR、16000转为70 °SR，未给出达到63 °SR所需的确切转数，且这些数值仅适用于该文的浆料与PFI条件。",
+          "category": "coverage",
+          "problem": "“只给出…12000…16000…”不准确地概括了来源覆盖：[1]还列出阔叶木浆在0、4000、8000转对应的0、26、40 °SR；应保留完整序列或说明这里只列63 °SR两侧相邻点。“仅适用于”也应改为这些数据来自该文特定浆料与PFI条件，不能无条件外推。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "0, 26, 40, 57, and 70<sup>◦</sup> SR were obtained for hardwood fibers"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "原文列出阔叶木浆在0、4000、8000、12000、16000转对应的打浆度分别为0、26、40、57、70 °SR；其中12000转为57 °SR、16000转为70 °SR，但没有给出达到63 °SR所需的确切转数。上述数值来自该文特定浆料与PFI条件，不能无条件外推到其他浆料或设备。",
+              "citation_refs": [
+                "[1]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 3
+        }
+      ],
+      "before": "按文中0、4000、8000、12000、16000转对应的打浆度序列，12000转时针叶木浆为63 °SR。 [1]\n同一条件下，12000转时阔叶木浆为57 °SR。 [1]\n因此想要约63 °SR的浆，不能对针叶木浆和阔叶木浆都直接固定打12000转；针叶木浆在12000转可达63 °SR，而阔叶木浆在12000转仅57 °SR，需要提高转数。 [1]\n原文只给出阔叶木浆12000转为57 °SR、16000转为70 °SR，未给出达到63 °SR所需的确切转数，且这些数值仅适用于该文的浆料与PFI条件。 [1]",
+      "after": "按文中0、4000、8000、12000、16000转对应的打浆度序列，12000转时针叶木浆为63 °SR。 [1]\n同一条件下，12000转时阔叶木浆为57 °SR。 [1]\n因此想要约63 °SR的浆，不能对针叶木浆和阔叶木浆都直接固定打12000转；针叶木浆在12000转可达63 °SR，而阔叶木浆在12000转仅57 °SR，需要提高转数。 [1]\n原文列出阔叶木浆在0、4000、8000、12000、16000转对应的打浆度分别为0、26、40、57、70 °SR；其中12000转为57 °SR、16000转为70 °SR，但没有给出达到63 °SR所需的确切转数。上述数值来自该文特定浆料与PFI条件，不能无条件外推到其他浆料或设备。 [1]",
+      "claims": [
+        {
+          "text": "按文中0、4000、8000、12000、16000转对应的打浆度序列，12000转时针叶木浆为63 °SR。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "同一条件下，12000转时阔叶木浆为57 °SR。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "因此想要约63 °SR的浆，不能对针叶木浆和阔叶木浆都直接固定打12000转；针叶木浆在12000转可达63 °SR，而阔叶木浆在12000转仅57 °SR，需要提高转数。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "原文列出阔叶木浆在0、4000、8000、12000、16000转对应的打浆度分别为0、26、40、57、70 °SR；其中12000转为57 °SR、16000转为70 °SR，但没有给出达到63 °SR所需的确切转数。上述数值来自该文特定浆料与PFI条件，不能无条件外推到其他浆料或设备。",
+          "citation_refs": [
+            "[1]"
+          ]
+        }
+      ],
+      "old_status": "rejected",
+      "old_accepted": [],
+      "old_rejections": [
+        {
+          "issue_index": 0,
+          "reason_code": "replacement_unit_not_verified"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-005",
+      "round": 1,
+      "question": "论文用什么仪器测量纤维形态，明确列出了哪三个形态指标？",
+      "input_sha256": "f47e18bf955413b302b00b4ac78dbcb171c59abef2a7ef6a0af26a24311f4983",
+      "evidence_sha256": "9a0de837830ccd27fbfe2f16b5b87c96a22cb25bfd8c5ba55e70b81281e5eeb3",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "论文使用 MORFI LB 分析仪（Techpap SAS, Grenoble, France）测量纤维形态。 [1]\n论文明确列出的三个形态指标是 fines content、weighted mean length 和 macro-fibrillation index。 [1]",
+      "after": "论文使用 MORFI LB 分析仪（Techpap SAS, Grenoble, France）测量纤维形态。 [1]\n论文明确列出的三个形态指标是 fines content、weighted mean length 和 macro-fibrillation index。 [1]",
+      "claims": [
+        {
+          "text": "论文使用 MORFI LB 分析仪（Techpap SAS, Grenoble, France）测量纤维形态。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "论文明确列出的三个形态指标是 fines content、weighted mean length 和 macro-fibrillation index。",
+          "citation_refs": [
+            "[1]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-006",
+      "round": 1,
+      "question": "WRV在本文中如何测定和计算？请解释公式中两个质量的含义。",
+      "input_sha256": "27b410351ebca9ae6aa1633f822cc3e83beba4dc58ec8992156467f86cd59a7a",
+      "evidence_sha256": "32184466fe6740ffccd8b0c20333311bcf489ebf4c29725e7a5b9b3bddc32ca4",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "WRV 按 ISO 23714 测定，所用试样为 0.5 g（o.d.，绝干计）。 [2]\nWRV 的计算公式为 WRV(%) = (m1 − m2)/m2 × 100%。 [1]\n公式中的 m1 是离心后试样的质量（即含水试样质量）。 [2]\n公式中的 m2 是烘干试样的质量（绝干质量）。 [2]\nm1 与 m2 之差对应试样经离心后仍保持的水的质量，因此该比值表示每单位绝干质量所保持的水量。 [1] [2]",
+      "after": "WRV 按 ISO 23714 测定，所用试样为 0.5 g（o.d.，绝干计）。 [2]\nWRV 的计算公式为 WRV(%) = (m1 − m2)/m2 × 100%。 [1]\n公式中的 m1 是离心后试样的质量（即含水试样质量）。 [2]\n公式中的 m2 是烘干试样的质量（绝干质量）。 [2]\nm1 与 m2 之差对应试样经离心后仍保持的水的质量，因此该比值表示每单位绝干质量所保持的水量。 [1] [2]",
+      "claims": [
+        {
+          "text": "WRV 按 ISO 23714 测定，所用试样为 0.5 g（o.d.，绝干计）。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "WRV 的计算公式为 WRV(%) = (m1 − m2)/m2 × 100%。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "公式中的 m1 是离心后试样的质量（即含水试样质量）。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "公式中的 m2 是烘干试样的质量（绝干质量）。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "m1 与 m2 之差对应试样经离心后仍保持的水的质量，因此该比值表示每单位绝干质量所保持的水量。",
+          "citation_refs": [
+            "[1]",
+            "[2]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-007",
+      "round": 1,
+      "question": "CI-XI与CI-XA有什么区别？请给出本文CI-XI的公式，并说明CI-XA依据什么计算。",
+      "input_sha256": "67865f05089c0190a5b53933975c39a430030d0fae3494f9474c57de8f7bf8d9",
+      "evidence_sha256": "e5a690b32c06d01af21b2d8da8da86733fe033d86bbbfb27d7f610aa32412c8f",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "本文中两类CI值分别由峰强度法（CI-XI）和峰拟合（CI-XA）获得。 [2]\n本文CI-XI的计算公式为 CI-XI = (I200 − Iam)/I200 × 100%。 [2]\n公式中I200是2θ=22°–23°之间(200)晶面的最大衍射强度，Iam是2θ=18°–19°之间无定形部分的最小衍射强度。 [2]\nCI-XA等于结晶峰面积占整个衍射图谱总面积的百分比，其分析中基线校正后的衍射图用Pearson VII函数进行解卷积。 [2]\nFigure 4的图注将CI-XI定义为比较XRD峰强度得到的结晶度指数，将CI-XA定义为比较XRD峰面积得到的结晶度指数。 [4]\nTable 1的脚注同样说明CI-XI由衍射强度之比获得，CI-XA由峰面积之比获得。 [1]\n文中指出CI-XI值明显高于CI-XA，可能是由于CI-XA分析中无定形贡献被过拟合。 [3]",
+      "after": "本文中两类CI值分别由峰强度法（CI-XI）和峰拟合（CI-XA）获得。 [2]\n本文CI-XI的计算公式为 CI-XI = (I200 − Iam)/I200 × 100%。 [2]\n公式中I200是2θ=22°–23°之间(200)晶面的最大衍射强度，Iam是2θ=18°–19°之间无定形部分的最小衍射强度。 [2]\nCI-XA等于结晶峰面积占整个衍射图谱总面积的百分比，其分析中基线校正后的衍射图用Pearson VII函数进行解卷积。 [2]\nFigure 4的图注将CI-XI定义为比较XRD峰强度得到的结晶度指数，将CI-XA定义为比较XRD峰面积得到的结晶度指数。 [4]\nTable 1的脚注同样说明CI-XI由衍射强度之比获得，CI-XA由峰面积之比获得。 [1]\n文中指出CI-XI值明显高于CI-XA，可能是由于CI-XA分析中无定形贡献被过拟合。 [3]",
+      "claims": [
+        {
+          "text": "本文中两类CI值分别由峰强度法（CI-XI）和峰拟合（CI-XA）获得。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "本文CI-XI的计算公式为 CI-XI = (I200 − Iam)/I200 × 100%。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "公式中I200是2θ=22°–23°之间(200)晶面的最大衍射强度，Iam是2θ=18°–19°之间无定形部分的最小衍射强度。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "CI-XA等于结晶峰面积占整个衍射图谱总面积的百分比，其分析中基线校正后的衍射图用Pearson VII函数进行解卷积。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "Figure 4的图注将CI-XI定义为比较XRD峰强度得到的结晶度指数，将CI-XA定义为比较XRD峰面积得到的结晶度指数。",
+          "citation_refs": [
+            "[4]"
+          ]
+        },
+        {
+          "text": "Table 1的脚注同样说明CI-XI由衍射强度之比获得，CI-XA由峰面积之比获得。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "文中指出CI-XI值明显高于CI-XA，可能是由于CI-XA分析中无定形贡献被过拟合。",
+          "citation_refs": [
+            "[3]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-008",
+      "round": 1,
+      "question": "不打浆和打到16000转的时候，针叶木和阔叶木的CI-XI、CI-XA分别是多少？",
+      "input_sha256": "b694330a3f0c0ca624135254fd925877dac052d96460bbb55806c6cf0eae5262",
+      "evidence_sha256": "1fce39e672a391b6e109452737a8e93d872de094146828e8d3d08283cdaafd90",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "针叶木不打浆（0 转）时，CI-XI 为 73.23%，CI-XA 为 40.46%。 [1]\n针叶木打到 16000 转时，CI-XI 为 69.82%，CI-XA 为 34.20%。 [1]\n阔叶木不打浆（0 转）时，CI-XI 为 75.55%，CI-XA 为 47.16%。 [1]\n阔叶木打到 16000 转时，CI-XI 为 73.55%，CI-XA 为 38.01%。 [1]",
+      "after": "针叶木不打浆（0 转）时，CI-XI 为 73.23%，CI-XA 为 40.46%。 [1]\n针叶木打到 16000 转时，CI-XI 为 69.82%，CI-XA 为 34.20%。 [1]\n阔叶木不打浆（0 转）时，CI-XI 为 75.55%，CI-XA 为 47.16%。 [1]\n阔叶木打到 16000 转时，CI-XI 为 73.55%，CI-XA 为 38.01%。 [1]",
+      "claims": [
+        {
+          "text": "针叶木不打浆（0 转）时，CI-XI 为 73.23%，CI-XA 为 40.46%。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "针叶木打到 16000 转时，CI-XI 为 69.82%，CI-XA 为 34.20%。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "阔叶木不打浆（0 转）时，CI-XI 为 75.55%，CI-XA 为 47.16%。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "阔叶木打到 16000 转时，CI-XI 为 73.55%，CI-XA 为 38.01%。",
+          "citation_refs": [
+            "[1]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-009",
+      "round": 1,
+      "question": "阔叶木的CI-XA从不打浆到打到8000转降了多少个百分点？相对降了百分之几？把算式写出来。",
+      "input_sha256": "53fab26f66915c46f0e861505199caccb4d912a942fdb2dd9b1ffe108eff75ef",
+      "evidence_sha256": "ab255bbc009f6476a2afb38df92944c1843822532742da1a971813b1ebb77c93",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [
+        {
+          "claim_index": 1,
+          "original_text": "绝对下降为47.16−42.35=4.81个百分点。",
+          "category": "measurement",
+          "problem": "计算本身正确，但未说明CI-XA是XRD峰面积归一化指数；4.81个百分点是该指数的差，不能直接读作绝对结晶度或键数量的绝对变化。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[5]",
+              "quote": "area percentage occupied by crystalline peaks over the total area"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "绝对下降为47.16−42.35=4.81个百分点；这里的CI-XA是XRD峰面积中结晶峰面积占总衍射面积的百分比（归一化指数），所以4.81个百分点仅指该CI-XA指数的下降，不代表绝对结晶度或键数量的绝对减少。",
+              "citation_refs": [
+                "[1]",
+                "[5]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 1
+        }
+      ],
+      "before": "表1(b)显示，阔叶木的CI-XA在0转时为47.16%，在8000转时为42.35%。 [1]\n绝对下降为47.16−42.35=4.81个百分点。 [1]\n相对降幅为(4.81/47.16)×100%≈10.20%。 [1]",
+      "after": "表1(b)显示，阔叶木的CI-XA在0转时为47.16%，在8000转时为42.35%。 [1]\n绝对下降为47.16−42.35=4.81个百分点；这里的CI-XA是XRD峰面积中结晶峰面积占总衍射面积的百分比（归一化指数），所以4.81个百分点仅指该CI-XA指数的下降，不代表绝对结晶度或键数量的绝对减少。 [1] [5]\n相对降幅为(4.81/47.16)×100%≈10.20%。 [1]",
+      "claims": [
+        {
+          "text": "表1(b)显示，阔叶木的CI-XA在0转时为47.16%，在8000转时为42.35%。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "绝对下降为47.16−42.35=4.81个百分点；这里的CI-XA是XRD峰面积中结晶峰面积占总衍射面积的百分比（归一化指数），所以4.81个百分点仅指该CI-XA指数的下降，不代表绝对结晶度或键数量的绝对减少。",
+          "citation_refs": [
+            "[1]",
+            "[5]"
+          ]
+        },
+        {
+          "text": "相对降幅为(4.81/47.16)×100%≈10.20%。",
+          "citation_refs": [
+            "[1]"
+          ]
+        }
+      ],
+      "old_status": "revised",
+      "old_accepted": [
+        0
+      ],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-010",
+      "round": 1,
+      "question": "打浆前后，两种纤维垂直于(200)晶面的晶粒尺寸是怎么变的？从不打浆到16000转分别是多少？",
+      "input_sha256": "e577b4ec6f5ce81abbac9d99d9cb4e330421c3eebb11ab1f7028473133526979",
+      "evidence_sha256": "734477e53915fdc7c9cef3c9024386be2630547547b6a7e6965ce4716596662a",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "两种纤维垂直于(200)晶面的晶粒尺寸在PFI打浆过程中总体呈上升趋势。 [2]\n针叶木纤维从不打浆到16000转，垂直于(200)晶面的晶粒尺寸依次为4.5、4.6、4.6、4.7、4.7 nm。 [1]\n阔叶木纤维从不打浆到16000转，垂直于(200)晶面的晶粒尺寸依次为4.5、4.7、4.8、4.8、4.7 nm。 [1]\n阔叶木纤维在16000转时垂直于(200)晶面的晶粒尺寸较12000转时的4.8 nm略降至4.7 nm。 [1]",
+      "after": "两种纤维垂直于(200)晶面的晶粒尺寸在PFI打浆过程中总体呈上升趋势。 [2]\n针叶木纤维从不打浆到16000转，垂直于(200)晶面的晶粒尺寸依次为4.5、4.6、4.6、4.7、4.7 nm。 [1]\n阔叶木纤维从不打浆到16000转，垂直于(200)晶面的晶粒尺寸依次为4.5、4.7、4.8、4.8、4.7 nm。 [1]\n阔叶木纤维在16000转时垂直于(200)晶面的晶粒尺寸较12000转时的4.8 nm略降至4.7 nm。 [1]",
+      "claims": [
+        {
+          "text": "两种纤维垂直于(200)晶面的晶粒尺寸在PFI打浆过程中总体呈上升趋势。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "针叶木纤维从不打浆到16000转，垂直于(200)晶面的晶粒尺寸依次为4.5、4.6、4.6、4.7、4.7 nm。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "阔叶木纤维从不打浆到16000转，垂直于(200)晶面的晶粒尺寸依次为4.5、4.7、4.8、4.8、4.7 nm。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "阔叶木纤维在16000转时垂直于(200)晶面的晶粒尺寸较12000转时的4.8 nm略降至4.7 nm。",
+          "citation_refs": [
+            "[1]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-011",
+      "round": 1,
+      "question": "是不是打浆转数越高，纤维素结晶度就越低？",
+      "input_sha256": "b74bdd38990e8df61b0bd84421fadf8e502a4d8f62039938f70e004aeedcfd4e",
+      "evidence_sha256": "051fad7b5692a1ce650c898ae687791578ba1671cae945e4942f936affab1038",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "关于PFI精磨对纤维素结晶度的影响，已有研究结论并不一致，并未确认结晶度会随打浆程度提高而单调降低。 [1]\n本研究中软木浆和硬木浆的CI-XI与CI-XA随PFI打浆转数总体呈先下降、后上升、再下降的波动趋势。 [2]\n软木浆的CI-XA在0、4,000、8,000、12,000和16,000转时分别为40.46%、37.71%、39.65%、36.22%和34.20%，显示4,000转下降后8,000转回升。 [4]\n硬木浆的CI-XA在0、4,000、8,000、12,000和16,000转时分别为47.16%、36.26%、42.35%、39.21%和38.01%，同样不是单调下降。 [4]\n因此，打浆转数提高在本研究中使16,000转的结晶度指数低于未打浆，但中间存在回升，不能概括为转数越高结晶度越低。 [2] [4]",
+      "after": "关于PFI精磨对纤维素结晶度的影响，已有研究结论并不一致，并未确认结晶度会随打浆程度提高而单调降低。 [1]\n本研究中软木浆和硬木浆的CI-XI与CI-XA随PFI打浆转数总体呈先下降、后上升、再下降的波动趋势。 [2]\n软木浆的CI-XA在0、4,000、8,000、12,000和16,000转时分别为40.46%、37.71%、39.65%、36.22%和34.20%，显示4,000转下降后8,000转回升。 [4]\n硬木浆的CI-XA在0、4,000、8,000、12,000和16,000转时分别为47.16%、36.26%、42.35%、39.21%和38.01%，同样不是单调下降。 [4]\n因此，打浆转数提高在本研究中使16,000转的结晶度指数低于未打浆，但中间存在回升，不能概括为转数越高结晶度越低。 [2] [4]",
+      "claims": [
+        {
+          "text": "关于PFI精磨对纤维素结晶度的影响，已有研究结论并不一致，并未确认结晶度会随打浆程度提高而单调降低。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "本研究中软木浆和硬木浆的CI-XI与CI-XA随PFI打浆转数总体呈先下降、后上升、再下降的波动趋势。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "软木浆的CI-XA在0、4,000、8,000、12,000和16,000转时分别为40.46%、37.71%、39.65%、36.22%和34.20%，显示4,000转下降后8,000转回升。",
+          "citation_refs": [
+            "[4]"
+          ]
+        },
+        {
+          "text": "硬木浆的CI-XA在0、4,000、8,000、12,000和16,000转时分别为47.16%、36.26%、42.35%、39.21%和38.01%，同样不是单调下降。",
+          "citation_refs": [
+            "[4]"
+          ]
+        },
+        {
+          "text": "因此，打浆转数提高在本研究中使16,000转的结晶度指数低于未打浆，但中间存在回升，不能概括为转数越高结晶度越低。",
+          "citation_refs": [
+            "[2]",
+            "[4]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-012",
+      "round": 1,
+      "question": "本文CI-XI和CI-XA的大小关系如何？两种方法的结果相关吗？请分别给出两类浆的相关系数及显著性。",
+      "input_sha256": "566572ec6b993cfc81fa35260f30aeadd50414aff20f4a8fb45ec736325f6a78",
+      "evidence_sha256": "96dc3eac0803370bcefd633360d5de87aae7ba8d9188e7dfd23cf0b85e0f1062",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [
+        {
+          "claim_index": 0,
+          "original_text": "表1中各精磨转数下CI-XI均高于CI-XA，原文也指出CI-XI显著高于CI-XA。",
+          "category": "uncertainty",
+          "problem": "原文只用“remarkably higher”描述CI-XI高于CI-XA，未提供两者差异的统计检验；将其写成“显著高于”容易被理解为统计显著。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "The value of the CI-XI was remarkably higher than"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "表1中各精磨转数下CI-XI均高于CI-XA，原文也指出CI-XI明显高于CI-XA。",
+              "citation_refs": [
+                "[1]",
+                "[2]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 0
+        }
+      ],
+      "before": "表1中各精磨转数下CI-XI均高于CI-XA，原文也指出CI-XI显著高于CI-XA。 [1] [2]\nCI-XI高于CI-XA可能与CI-XA分析中非晶贡献过拟合有关。 [1]\nCI-XI与CI-XA在软木纤维和硬木纤维中均显著相关。 [1]\n软木纤维的CI-XI与CI-XA相关系数为0.919（p < 0.05）。 [1]\n硬木纤维的CI-XI与CI-XA相关系数为0.925（p < 0.05）。 [1]",
+      "after": "表1中各精磨转数下CI-XI均高于CI-XA，原文也指出CI-XI明显高于CI-XA。 [1] [2]\nCI-XI高于CI-XA可能与CI-XA分析中非晶贡献过拟合有关。 [1]\nCI-XI与CI-XA在软木纤维和硬木纤维中均显著相关。 [1]\n软木纤维的CI-XI与CI-XA相关系数为0.919（p < 0.05）。 [1]\n硬木纤维的CI-XI与CI-XA相关系数为0.925（p < 0.05）。 [1]",
+      "claims": [
+        {
+          "text": "表1中各精磨转数下CI-XI均高于CI-XA，原文也指出CI-XI明显高于CI-XA。",
+          "citation_refs": [
+            "[1]",
+            "[2]"
+          ]
+        },
+        {
+          "text": "CI-XI高于CI-XA可能与CI-XA分析中非晶贡献过拟合有关。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "CI-XI与CI-XA在软木纤维和硬木纤维中均显著相关。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "软木纤维的CI-XI与CI-XA相关系数为0.919（p < 0.05）。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "硬木纤维的CI-XI与CI-XA相关系数为0.925（p < 0.05）。",
+          "citation_refs": [
+            "[1]"
+          ]
+        }
+      ],
+      "old_status": "revised",
+      "old_accepted": [
+        0
+      ],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-013",
+      "round": 1,
+      "question": "PFI打浆过程中结晶度为什么会先降、再升、再降？",
+      "input_sha256": "5ba49f79c2c7e74c0e8a41ecb367ad30e7f086f7173e7aa4467dbdfa1730cda0",
+      "evidence_sha256": "c1d1192c4dda3ba0087c92991f115600cf406f84699cbdefff977904c56d3c4d",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "两种浆的CI-XI和CI-XA随PFI打浆均呈先下降、再上升、随后下降的相似波动趋势。 [2] [4]\n第一阶段的结晶度下降表明，PFI机械处理可能主要作用于纤维素的结晶区。 [2]\n随后的结晶度上升可解释为更强的机械力作用于无定形区，并在PFI的机械和热作用下干燥时可能发生共结晶。 [2]\n最后的结晶度下降可能是结晶区被持续破坏所致。 [2]\nCI-XI与O(6)H···O(3′)分子间氢键含量的变化趋势相似且显著相关（软木纤维0.912、硬木纤维0.889，p<0.05），而结晶区该氢键含量高于无定形区。 [3]",
+      "after": "两种浆的CI-XI和CI-XA随PFI打浆均呈先下降、再上升、随后下降的相似波动趋势。 [2] [4]\n第一阶段的结晶度下降表明，PFI机械处理可能主要作用于纤维素的结晶区。 [2]\n随后的结晶度上升可解释为更强的机械力作用于无定形区，并在PFI的机械和热作用下干燥时可能发生共结晶。 [2]\n最后的结晶度下降可能是结晶区被持续破坏所致。 [2]\nCI-XI与O(6)H···O(3′)分子间氢键含量的变化趋势相似且显著相关（软木纤维0.912、硬木纤维0.889，p<0.05），而结晶区该氢键含量高于无定形区。 [3]",
+      "claims": [
+        {
+          "text": "两种浆的CI-XI和CI-XA随PFI打浆均呈先下降、再上升、随后下降的相似波动趋势。",
+          "citation_refs": [
+            "[2]",
+            "[4]"
+          ]
+        },
+        {
+          "text": "第一阶段的结晶度下降表明，PFI机械处理可能主要作用于纤维素的结晶区。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "随后的结晶度上升可解释为更强的机械力作用于无定形区，并在PFI的机械和热作用下干燥时可能发生共结晶。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "最后的结晶度下降可能是结晶区被持续破坏所致。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "CI-XI与O(6)H···O(3′)分子间氢键含量的变化趋势相似且显著相关（软木纤维0.912、硬木纤维0.889，p<0.05），而结晶区该氢键含量高于无定形区。",
+          "citation_refs": [
+            "[3]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-014",
+      "round": 1,
+      "question": "按照作者的解释，PFI打浆为什么会提高WRV，又如何与纤维间结合联系起来？",
+      "input_sha256": "bfa365b71e9da3b9c413c91a7960fb270b9a729d98a5da1eb211bcc5e53ff444",
+      "evidence_sha256": "3d8583bdf13ebf81a0b48b5a945181503f6aec9ab44ac758572db24563232752",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [
+        {
+          "claim_index": 4,
+          "original_text": "较少的分子间氢键和较低的结晶指数会通过提高分子链运动性、可及性和WRV来进一步提高纤维素纤维的柔性。",
+          "category": "inference",
+          "problem": "原句把作者并列列出的较高分子链运动性、可及性和WRV改写成“通过提高……WRV”的因果路径；原文只说较少的分子间氢键和较低的CI会进一步提高柔性，并将此归因于这些较高性质，并未说氢键/CI变化提高WRV。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "will further improve the flexibility of cellulosic fibers, due to the higher mobility"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "作者指出，较少的分子间氢键和较低的结晶指数会进一步提高纤维素纤维的柔性；作者将这种柔性提高归因于较高的分子链运动性、可及性和WRV（见Section 3.1）。",
+              "citation_refs": [
+                "[1]",
+                "[4]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 4
+        }
+      ],
+      "before": "PFI打浆的主要作用包括内部细纤维化（纤维壁分层、疏松和润胀）、外部细纤维化、纤维切断和细小组分形成，并提高纤维的可及性、润胀、柔性和纤维间结合能力。 [3]\n作者将打浆度和WRV随PFI转数增加而显著增加归因于更高程度的细纤维化产生了新的表面和更多孔隙。 [2]\nWRV表征的润胀增加使纤维在横向更柔顺，从而有助于提高纤维网络的纤维间结合强度。 [2]\n在分子层面，PFI的机械作用可能使纤维素分子链断裂，减少O(6)H···O(3′)分子间氢键，并与内部和外部细纤维化密切相关。 [1]\n较少的分子间氢键和较低的结晶指数会通过提高分子链运动性、可及性和WRV来进一步提高纤维素纤维的柔性。 [1] [4]",
+      "after": "PFI打浆的主要作用包括内部细纤维化（纤维壁分层、疏松和润胀）、外部细纤维化、纤维切断和细小组分形成，并提高纤维的可及性、润胀、柔性和纤维间结合能力。 [3]\n作者将打浆度和WRV随PFI转数增加而显著增加归因于更高程度的细纤维化产生了新的表面和更多孔隙。 [2]\nWRV表征的润胀增加使纤维在横向更柔顺，从而有助于提高纤维网络的纤维间结合强度。 [2]\n在分子层面，PFI的机械作用可能使纤维素分子链断裂，减少O(6)H···O(3′)分子间氢键，并与内部和外部细纤维化密切相关。 [1]\n作者指出，较少的分子间氢键和较低的结晶指数会进一步提高纤维素纤维的柔性；作者将这种柔性提高归因于较高的分子链运动性、可及性和WRV（见Section 3.1）。 [1] [4]",
+      "claims": [
+        {
+          "text": "PFI打浆的主要作用包括内部细纤维化（纤维壁分层、疏松和润胀）、外部细纤维化、纤维切断和细小组分形成，并提高纤维的可及性、润胀、柔性和纤维间结合能力。",
+          "citation_refs": [
+            "[3]"
+          ]
+        },
+        {
+          "text": "作者将打浆度和WRV随PFI转数增加而显著增加归因于更高程度的细纤维化产生了新的表面和更多孔隙。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "WRV表征的润胀增加使纤维在横向更柔顺，从而有助于提高纤维网络的纤维间结合强度。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "在分子层面，PFI的机械作用可能使纤维素分子链断裂，减少O(6)H···O(3′)分子间氢键，并与内部和外部细纤维化密切相关。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "作者指出，较少的分子间氢键和较低的结晶指数会进一步提高纤维素纤维的柔性；作者将这种柔性提高归因于较高的分子链运动性、可及性和WRV（见Section 3.1）。",
+          "citation_refs": [
+            "[1]",
+            "[4]"
+          ]
+        }
+      ],
+      "old_status": "rejected",
+      "old_accepted": [],
+      "old_rejections": [
+        {
+          "issue_index": 0,
+          "reason_code": "replacement_unit_detail_missing"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-015",
+      "round": 1,
+      "question": "针叶木和阔叶木打浆后纤维长度的变化一样吗？为什么会有差别？",
+      "input_sha256": "27cd347cdaed292db356622e427db1ac47d203c91e2c525a0a4e2efe2e65bf9e",
+      "evidence_sha256": "55d3ba9a3baa436ed8bb2ec4c8ceaa40479dee1bd50c0d9083ae13747a7047be",
+      "proposal_origin": "archived_raw_response",
+      "issues": [
+        {
+          "claim_index": 2,
+          "original_text": "文献将阔叶木纤维相关参数无显著变化归因于其打浆时施加的较低 refining pressure。",
+          "category": "certainty",
+          "problem": "原文用“might be because”仅提出可能原因，草案改为确定的“归因于”，把推测性解释提升为已建立的因果关系。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "It might be because of the lower refining pressure that was applied in hardwood fibers."
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "文献推测，阔叶木纤维相关参数无显著变化可能是因为其打浆时施加的 refining pressure 较低。",
+              "citation_refs": [
+                "[1]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 2
+        }
+      ],
+      "before": "PFI打浆后针叶木纤维长度显著下降，而阔叶木纤维长度无显著变化。 [1]\n从 Figure 1 近似读取，针叶木的平均长度加权纤维长度由约2000 μm降至约1600 μm，阔叶木约900 μm且基本持平。 [1]\n文献将阔叶木纤维相关参数无显著变化归因于其打浆时施加的较低 refining pressure。 [1]\n方法中每单位棒长作用力为3.33 N/mm（针叶木）和1.77 N/mm（阔叶木）。 [5]",
+      "after": "PFI打浆后针叶木纤维长度显著下降，而阔叶木纤维长度无显著变化。 [1]\n从 Figure 1 近似读取，针叶木的平均长度加权纤维长度由约2000 μm降至约1600 μm，阔叶木约900 μm且基本持平。 [1]\n文献推测，阔叶木纤维相关参数无显著变化可能是因为其打浆时施加的 refining pressure 较低。 [1]\n方法中每单位棒长作用力为3.33 N/mm（针叶木）和1.77 N/mm（阔叶木）。 [5]",
+      "claims": [
+        {
+          "text": "PFI打浆后针叶木纤维长度显著下降，而阔叶木纤维长度无显著变化。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "从 Figure 1 近似读取，针叶木的平均长度加权纤维长度由约2000 μm降至约1600 μm，阔叶木约900 μm且基本持平。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "文献推测，阔叶木纤维相关参数无显著变化可能是因为其打浆时施加的 refining pressure 较低。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "方法中每单位棒长作用力为3.33 N/mm（针叶木）和1.77 N/mm（阔叶木）。",
+          "citation_refs": [
+            "[5]"
+          ]
+        }
+      ],
+      "old_status": "failed",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-016",
+      "round": 1,
+      "question": "为什么本文认为纸张抗张性能提高，并不意味着单根纤维本身的强度也一定提高？零距抗张在这里有什么用？",
+      "input_sha256": "4806abd7326873ca7e7abf36e10149d4df8af25668594719077d90a3effa4f81",
+      "evidence_sha256": "ba0a1c9fffc76d7c6b6ca5813528c0b85fdfc714dc47b2c457f8d1a3f0e41367",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [
+        {
+          "claim_index": 0,
+          "original_text": "本文指出，PFI精磨过程中片材抗张强度的提高主要来自细纤维化和细组分的增加，而不是直接来自单根纤维强度的提高。",
+          "category": "inference",
+          "problem": "源文只支持片材抗张强度增量“主要”来自细纤维化和细组分，并称零距抗张显示纤维强度“没有降低”；草稿却写成“不是直接来自单根纤维强度的提高”，把“未降低”加强为排除纤维强度提高，超出证据。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "fibrillation and fines during PFI refining"
+            },
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "PFI refining did not reduce fiber strength"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "本文指出，PFI精磨中片材抗张强度的提高主要来自细纤维化和细组分的增加；零距抗张结果表明纤维强度没有降低，因此不能据此推定单根纤维强度本身一定提高。",
+              "citation_refs": [
+                "[1]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 0
+        }
+      ],
+      "before": "本文指出，PFI精磨过程中片材抗张强度的提高主要来自细纤维化和细组分的增加，而不是直接来自单根纤维强度的提高。 [1]\n细纤维化产生新的表面和更多孔隙，并提高纤维润胀（WRV），使纤维横向更柔顺，从而改善纤维间结合强度。 [1]\n零距抗张指数通常用于表征纤维的拉伸强度，因此可用于检查精磨对纤维本体强度的影响。 [1]\n本文零距抗张结果表明PFI精磨没有降低纤维强度，这与Kouko等的报道一致。 [1]\n因此，本文结论是PFI精磨提高了细纤维化程度、纤维润胀和片材抗张强度，但没有出现纤维拉伸强度的下降。 [1]\n零距抗张强度按ISO 15361用Z-Span 2400仪器测定。 [2]",
+      "after": "本文指出，PFI精磨中片材抗张强度的提高主要来自细纤维化和细组分的增加；零距抗张结果表明纤维强度没有降低，因此不能据此推定单根纤维强度本身一定提高。 [1]\n细纤维化产生新的表面和更多孔隙，并提高纤维润胀（WRV），使纤维横向更柔顺，从而改善纤维间结合强度。 [1]\n零距抗张指数通常用于表征纤维的拉伸强度，因此可用于检查精磨对纤维本体强度的影响。 [1]\n本文零距抗张结果表明PFI精磨没有降低纤维强度，这与Kouko等的报道一致。 [1]\n因此，本文结论是PFI精磨提高了细纤维化程度、纤维润胀和片材抗张强度，但没有出现纤维拉伸强度的下降。 [1]\n零距抗张强度按ISO 15361用Z-Span 2400仪器测定。 [2]",
+      "claims": [
+        {
+          "text": "本文指出，PFI精磨中片材抗张强度的提高主要来自细纤维化和细组分的增加；零距抗张结果表明纤维强度没有降低，因此不能据此推定单根纤维强度本身一定提高。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "细纤维化产生新的表面和更多孔隙，并提高纤维润胀（WRV），使纤维横向更柔顺，从而改善纤维间结合强度。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "零距抗张指数通常用于表征纤维的拉伸强度，因此可用于检查精磨对纤维本体强度的影响。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "本文零距抗张结果表明PFI精磨没有降低纤维强度，这与Kouko等的报道一致。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "因此，本文结论是PFI精磨提高了细纤维化程度、纤维润胀和片材抗张强度，但没有出现纤维拉伸强度的下降。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "零距抗张强度按ISO 15361用Z-Span 2400仪器测定。",
+          "citation_refs": [
+            "[2]"
+          ]
+        }
+      ],
+      "old_status": "revised",
+      "old_accepted": [
+        0
+      ],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-017",
+      "round": 1,
+      "question": "本文中哪类浆的湿纸幅强度增幅更明显？作者如何解释？",
+      "input_sha256": "33a2496fc65705d6ce39eef1fc731f885f5bd7ccbb7c6958d8fdbcd698bf29fe",
+      "evidence_sha256": "99b838b4f1cde6df4b5d846be1ea5c1caa2551e1fc48c0382b002d4d826bfac8",
+      "proposal_origin": "archived_raw_response",
+      "issues": [],
+      "events": [],
+      "before": "针叶木浆（softwood fibers）的湿纸幅强度增幅比阔叶木浆（hardwood fibers）更明显。 [1]\n作者将其解释为纤维长度在湿纸幅强度中起关键作用。 [1]",
+      "after": "针叶木浆（softwood fibers）的湿纸幅强度增幅比阔叶木浆（hardwood fibers）更明显。 [1]\n作者将其解释为纤维长度在湿纸幅强度中起关键作用。 [1]",
+      "claims": [
+        {
+          "text": "针叶木浆（softwood fibers）的湿纸幅强度增幅比阔叶木浆（hardwood fibers）更明显。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "作者将其解释为纤维长度在湿纸幅强度中起关键作用。",
+          "citation_refs": [
+            "[1]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-018",
+      "round": 1,
+      "question": "这篇论文如何从FT-IR获得不同氢键的相对含量？请说明拟合波段、函数和含量口径。",
+      "input_sha256": "715b258e9b9495bacb2d17a386d42d872ff9dbe16cf23c17adb419e902d74cf7",
+      "evidence_sha256": "5c978c9a796734d72051a83f9088d4cdb00235033abc5c4ab8cd236eeb1c0e7e",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [
+        {
+          "claim_index": 4,
+          "original_text": "结果中将3000–3700 cm−1羟基带反卷积为四个主要分峰，各氢键的相对含量按对应分峰面积占四个分峰总面积的比例计算。",
+          "category": "measurement",
+          "problem": "The source reports a normalized peak-area proportion, but the draft does not explicitly state that this relative content is not an absolute H-bond count or concentration. For the question asking content scope, this necessary measurement boundary is missing; the added boundary is a methodological inference from the area-fraction definition, not an author-claimed absolute quantity.",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[3]",
+              "quote": "relative content of various H-bonds was calculated based on area proportion of the band"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "结果中将3000–3700 cm−1羟基带反卷积为四个主要分峰，各氢键的相对含量按对应分峰面积占四个分峰总面积的比例计算；该“相对含量”是归一化的峰面积分数，并非绝对氢键数量或浓度。",
+              "citation_refs": [
+                "[3]"
+              ]
+            }
+          ]
+        },
+        {
+          "claim_index": 5,
+          "original_text": "Figure 7显示每个样品拟合出四个Gaussian分峰：三类氢键与free OH(2)/OH(6)；Table 2以百分比列出这些组分的相对含量，四项合计约为100%，并给出r²约0.999。",
+          "category": "coverage",
+          "problem": "Figure 7 is restricted to softwood fibers at various revolutions, not every sample, and its caption does not establish the Gaussian function; Gaussian fitting is stated in Methods [1]. The draft therefore overstates Figure 7's coverage and attributes the Gaussian function to [3] rather than [1].",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[3]",
+              "quote": "Figure 7. The deconvoluted FT-IR spectra of softwood fibers at various revolutions"
+            },
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "Gaussian function in Peakfit 4.12 software"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "Figure 7展示软木浆各精磨样品（a–e）的四个拟合分峰，拟合采用Gaussian函数[1]；三类氢键与free OH(2)/OH(6)；Table 2a,b以百分比列出软木和硬木各组分的相对含量，四项合计约为100%，并给出r²约0.999。",
+              "citation_refs": [
+                "[1]",
+                "[3]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 4
+        },
+        {
+          "issue": 1,
+          "status": "applied",
+          "claim_index": 5
+        }
+      ],
+      "before": "FT-IR谱以KBr压片、透射模式采集4000–400 cm⁻¹，分辨率4 cm⁻¹，64次扫描平均，并以五次记录的平均谱分析；光谱在1016 cm⁻¹归一化。 [1]\n用Savitzky–Golay算法获得导数曲线，并按不同氢键所属波数区间从二阶导数谱确定各氢键组分的峰位。 [1]\n对3000–3700 cm⁻¹的羟基伸缩振动区进行非线性拟合，采用Gaussian函数，软件为Peakfit 4.12。 [1]\n峰位归属为：3580–3550 cm⁻¹为free OH(2)和OH(6)；3455–3410 cm⁻¹为O(2)H···O(6)分子内氢键；3375–3340 cm⁻¹为O(3)H···O(5)分子内氢键；3310–3230 cm⁻¹为O(6)H···O(3′)分子间氢键（cellulose I）。 [3]\n结果中将3000–3700 cm⁻¹羟基带反卷积为四个主要分峰，各氢键的相对含量按对应分峰面积占四个分峰总面积的比例计算。 [3]\nFigure 7显示每个样品拟合出四个Gaussian分峰：三类氢键与free OH(2)/OH(6)；Table 2以百分比列出这些组分的相对含量，四项合计约为100%，并给出r²约0.999。 [3]",
+      "after": "FT-IR谱以KBr压片、透射模式采集4000–400 cm⁻¹，分辨率4 cm⁻¹，64次扫描平均，并以五次记录的平均谱分析；光谱在1016 cm⁻¹归一化。 [1]\n用Savitzky–Golay算法获得导数曲线，并按不同氢键所属波数区间从二阶导数谱确定各氢键组分的峰位。 [1]\n对3000–3700 cm⁻¹的羟基伸缩振动区进行非线性拟合，采用Gaussian函数，软件为Peakfit 4.12。 [1]\n峰位归属为：3580–3550 cm⁻¹为free OH(2)和OH(6)；3455–3410 cm⁻¹为O(2)H···O(6)分子内氢键；3375–3340 cm⁻¹为O(3)H···O(5)分子内氢键；3310–3230 cm⁻¹为O(6)H···O(3′)分子间氢键（cellulose I）。 [3]\n结果中将3000–3700 cm−1羟基带反卷积为四个主要分峰，各氢键的相对含量按对应分峰面积占四个分峰总面积的比例计算；该“相对含量”是归一化的峰面积分数，并非绝对氢键数量或浓度。 [3]\nFigure 7展示软木浆各精磨样品（a–e）的四个拟合分峰，拟合采用Gaussian函数[1]；三类氢键与free OH(2)/OH(6)；Table 2a,b以百分比列出软木和硬木各组分的相对含量，四项合计约为100%，并给出r²约0.999。 [1] [3]",
+      "claims": [
+        {
+          "text": "FT-IR谱以KBr压片、透射模式采集4000–400 cm⁻¹，分辨率4 cm⁻¹，64次扫描平均，并以五次记录的平均谱分析；光谱在1016 cm⁻¹归一化。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "用Savitzky–Golay算法获得导数曲线，并按不同氢键所属波数区间从二阶导数谱确定各氢键组分的峰位。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "对3000–3700 cm⁻¹的羟基伸缩振动区进行非线性拟合，采用Gaussian函数，软件为Peakfit 4.12。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "峰位归属为：3580–3550 cm⁻¹为free OH(2)和OH(6)；3455–3410 cm⁻¹为O(2)H···O(6)分子内氢键；3375–3340 cm⁻¹为O(3)H···O(5)分子内氢键；3310–3230 cm⁻¹为O(6)H···O(3′)分子间氢键（cellulose I）。",
+          "citation_refs": [
+            "[3]"
+          ]
+        },
+        {
+          "text": "结果中将3000–3700 cm−1羟基带反卷积为四个主要分峰，各氢键的相对含量按对应分峰面积占四个分峰总面积的比例计算；该“相对含量”是归一化的峰面积分数，并非绝对氢键数量或浓度。",
+          "citation_refs": [
+            "[3]"
+          ]
+        },
+        {
+          "text": "Figure 7展示软木浆各精磨样品（a–e）的四个拟合分峰，拟合采用Gaussian函数[1]；三类氢键与free OH(2)/OH(6)；Table 2a,b以百分比列出软木和硬木各组分的相对含量，四项合计约为100%，并给出r²约0.999。",
+          "citation_refs": [
+            "[1]",
+            "[3]"
+          ]
+        }
+      ],
+      "old_status": "rejected",
+      "old_accepted": [],
+      "old_rejections": [
+        {
+          "issue_index": 0,
+          "reason_code": "original_unit_not_verified"
+        },
+        {
+          "issue_index": 1,
+          "reason_code": "invalid_revised_citations",
+          "citation_rule": "inline_claim_reference"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-019",
+      "round": 1,
+      "question": "O(6)H···O(3′)、O(3)H···O(5)、O(2)H···O(6)这三种氢键的红外峰大概在多少波数？",
+      "input_sha256": "b92f3bdd7bdb6487ad4c551eb6eca4e46e5934396fb485b523899ee19a145784",
+      "evidence_sha256": "6fd145155def37366e8f2b6a6f69f33133422fe77ed926c13445646d4691b3c2",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "O(6)H···O(3′) 分子间氢键的红外吸收大致在3310–3230 cm−1，峰值约3227 cm−1。 [2]\nO(3)H···O(5) 分子内氢键的红外吸收大致在3375–3340 cm−1，峰值约3346 cm−1。 [2]\nO(2)H···O(6) 分子内氢键的红外吸收大致在3455–3410 cm−1，峰值约3452 cm−1。 [2]",
+      "after": "O(6)H···O(3′) 分子间氢键的红外吸收大致在3310–3230 cm−1，峰值约3227 cm−1。 [2]\nO(3)H···O(5) 分子内氢键的红外吸收大致在3375–3340 cm−1，峰值约3346 cm−1。 [2]\nO(2)H···O(6) 分子内氢键的红外吸收大致在3455–3410 cm−1，峰值约3452 cm−1。 [2]",
+      "claims": [
+        {
+          "text": "O(6)H···O(3′) 分子间氢键的红外吸收大致在3310–3230 cm−1，峰值约3227 cm−1。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "O(3)H···O(5) 分子内氢键的红外吸收大致在3375–3340 cm−1，峰值约3346 cm−1。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "O(2)H···O(6) 分子内氢键的红外吸收大致在3455–3410 cm−1，峰值约3452 cm−1。",
+          "citation_refs": [
+            "[2]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-020",
+      "round": 1,
+      "question": "论文说打浆后氢键能量和距离基本不变，那是不是说明打浆对氢键网络基本没影响？",
+      "input_sha256": "b10fcad32848d99fe0ed411e6d42721c119ec01a11496a28cbda4421826df883",
+      "evidence_sha256": "d5e99fab81e0f405141719056a71274cf9a42816e010c023a0753e4b4f481b32",
+      "proposal_origin": "archived_raw_response",
+      "issues": [
+        {
+          "claim_index": 4,
+          "original_text": "游离 OH(2) 和 OH(6) 的含量也随打浆变化，作者将其归因于氢键断裂以及新氢键（如 O(2)H···O(6) 或 O(6)H···O(3′)）的形成。",
+          "category": "uncertainty",
+          "problem": "原文分别用氢键断裂解释 softwood 游离 OH 增加、用 “could be explained” 和 “easy to form new H-bonds” 解释 hardwood 游离 OH 波动；草稿把两者合并为确定的共同归因，未保留纤维差异和不确定性。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[3]",
+              "quote": "because there was the breakage of H-bonds among cellulosic molecules"
+            },
+            {
+              "kind": "text",
+              "ref": "[3]",
+              "quote": "It could be explained by the instability of free OH groups, which makes it easy to form new H-bonds"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "游离 OH(2) 和 OH(6) 的相对含量也随打浆变化；对 softwood 纤维，作者把游离 OH 的增加理解为氢键断裂以及由此带来的更充分分层和更高比表面积所致；对 hardwood 纤维，作者则用游离 OH 基团不稳定、可能形成 O(2)H···O(6) 或 O(6)H···O(3′) 等新氢键来解释其含量波动（原文用“could be explained”等不确定措辞）。",
+              "citation_refs": [
+                "[3]"
+              ]
+            }
+          ]
+        },
+        {
+          "claim_index": 5,
+          "original_text": "O(6)H···O(3′) 含量与 CI-XI 的 Pearson 相关系数为 softwood 0.912、hardwood 0.889（p<0.05），表明氢键含量变化与结晶度变化相关。",
+          "category": "citation",
+          "problem": "论文结果部分报告 softwood 0.912，但同一论文摘要报告 softwood 0.888；草稿只采用 0.912，未说明该处数值不一致。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[5]",
+              "quote": "It was 0.912 (p < 0.05) for softwood fibers and 0.889"
+            },
+            {
+              "kind": "text",
+              "ref": "[2]",
+              "quote": "Pearson correlation coeficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "结果部分报告 O(6)H···O(3′) 含量与 CI-XI 的 Pearson 相关系数为 softwood 0.912、hardwood 0.889（p<0.05），并认为二者相关；但同一论文摘要给出的 softwood 系数为 0.888、hardwood 为 0.889（p<0.05），两处 softwood 数值不一致。",
+              "citation_refs": [
+                "[5]",
+                "[2]"
+              ]
+            }
+          ]
+        },
+        {
+          "claim_index": null,
+          "original_text": null,
+          "category": "coverage",
+          "problem": "草稿列举了氢键能量/距离不变与含量变化的事实，但未明确回答用户的是/否问题，缺少直接结论。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "The results showed that PFI refining did not change the H-bonding energies and H-bonding distances"
+            },
+            {
+              "kind": "text",
+              "ref": "[2]",
+              "quote": "while the crystalline index, crystallite size, and content of various H-bonds changed with refining"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "因此，氢键能量和距离基本不变不能说明打浆对氢键网络基本没有影响；打浆还会改变各类氢键的相对含量，从而改变氢键网络的组成。",
+              "citation_refs": [
+                "[1]",
+                "[2]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 4
+        },
+        {
+          "issue": 1,
+          "status": "applied",
+          "claim_index": 5
+        },
+        {
+          "issue": 2,
+          "status": "applied",
+          "claim_index": null
+        }
+      ],
+      "before": "PFI 打浆过程中，O(6)H···O(3′)、O(3)H···O(5) 和 O(2)H···O(6) 三种氢键的峰位几乎不变，因此由峰位计算出的氢键能量和氢键距离基本不变。 [1]\n但这只说明各类型氢键的局部能量和距离参数稳定；论文摘要同时指出，打浆后各种氢键的含量会发生变化。 [2]\nTable 2 显示 softwood 纤维的 O(6)H···O(3′) 相对含量从 0 r 的 28.23% 降至 16,000 r 的 23.56%，而 O(3)H···O(5) 从 28.44% 升至 34.92%。 [3]\n总体而言，softwood 和 hardwood 纤维的 O(6)H···O(3′) 含量分别下降 16.54% 和 5.91%，O(3)H···O(5) 含量分别增加 22.78% 和 8.8%。 [1]\n游离 OH(2) 和 OH(6) 的含量也随打浆变化，作者将其归因于氢键断裂以及新氢键（如 O(2)H···O(6) 或 O(6)H···O(3′)）的形成。 [3]\nO(6)H···O(3′) 含量与 CI-XI 的 Pearson 相关系数为 softwood 0.912、hardwood 0.889（p<0.05），表明氢键含量变化与结晶度变化相关。 [5]",
+      "after": "PFI 打浆过程中，O(6)H···O(3′)、O(3)H···O(5) 和 O(2)H···O(6) 三种氢键的峰位几乎不变，因此由峰位计算出的氢键能量和氢键距离基本不变。 [1]\n但这只说明各类型氢键的局部能量和距离参数稳定；论文摘要同时指出，打浆后各种氢键的含量会发生变化。 [2]\nTable 2 显示 softwood 纤维的 O(6)H···O(3′) 相对含量从 0 r 的 28.23% 降至 16,000 r 的 23.56%，而 O(3)H···O(5) 从 28.44% 升至 34.92%。 [3]\n总体而言，softwood 和 hardwood 纤维的 O(6)H···O(3′) 含量分别下降 16.54% 和 5.91%，O(3)H···O(5) 含量分别增加 22.78% 和 8.8%。 [1]\n游离 OH(2) 和 OH(6) 的相对含量也随打浆变化；对 softwood 纤维，作者把游离 OH 的增加理解为氢键断裂以及由此带来的更充分分层和更高比表面积所致；对 hardwood 纤维，作者则用游离 OH 基团不稳定、可能形成 O(2)H···O(6) 或 O(6)H···O(3′) 等新氢键来解释其含量波动（原文用“could be explained”等不确定措辞）。 [3]\n结果部分报告 O(6)H···O(3′) 含量与 CI-XI 的 Pearson 相关系数为 softwood 0.912、hardwood 0.889（p<0.05），并认为二者相关；但同一论文摘要给出的 softwood 系数为 0.888、hardwood 为 0.889（p<0.05），两处 softwood 数值不一致。 [5] [2]\n因此，氢键能量和距离基本不变不能说明打浆对氢键网络基本没有影响；打浆还会改变各类氢键的相对含量，从而改变氢键网络的组成。 [1] [2]",
+      "claims": [
+        {
+          "text": "PFI 打浆过程中，O(6)H···O(3′)、O(3)H···O(5) 和 O(2)H···O(6) 三种氢键的峰位几乎不变，因此由峰位计算出的氢键能量和氢键距离基本不变。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "但这只说明各类型氢键的局部能量和距离参数稳定；论文摘要同时指出，打浆后各种氢键的含量会发生变化。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "Table 2 显示 softwood 纤维的 O(6)H···O(3′) 相对含量从 0 r 的 28.23% 降至 16,000 r 的 23.56%，而 O(3)H···O(5) 从 28.44% 升至 34.92%。",
+          "citation_refs": [
+            "[3]"
+          ]
+        },
+        {
+          "text": "总体而言，softwood 和 hardwood 纤维的 O(6)H···O(3′) 含量分别下降 16.54% 和 5.91%，O(3)H···O(5) 含量分别增加 22.78% 和 8.8%。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "游离 OH(2) 和 OH(6) 的相对含量也随打浆变化；对 softwood 纤维，作者把游离 OH 的增加理解为氢键断裂以及由此带来的更充分分层和更高比表面积所致；对 hardwood 纤维，作者则用游离 OH 基团不稳定、可能形成 O(2)H···O(6) 或 O(6)H···O(3′) 等新氢键来解释其含量波动（原文用“could be explained”等不确定措辞）。",
+          "citation_refs": [
+            "[3]"
+          ]
+        },
+        {
+          "text": "结果部分报告 O(6)H···O(3′) 含量与 CI-XI 的 Pearson 相关系数为 softwood 0.912、hardwood 0.889（p<0.05），并认为二者相关；但同一论文摘要给出的 softwood 系数为 0.888、hardwood 为 0.889（p<0.05），两处 softwood 数值不一致。",
+          "citation_refs": [
+            "[5]",
+            "[2]"
+          ]
+        },
+        {
+          "text": "因此，氢键能量和距离基本不变不能说明打浆对氢键网络基本没有影响；打浆还会改变各类氢键的相对含量，从而改变氢键网络的组成。",
+          "citation_refs": [
+            "[1]",
+            "[2]"
+          ]
+        }
+      ],
+      "old_status": "revised",
+      "old_accepted": [
+        0,
+        2
+      ],
+      "old_rejections": [
+        {
+          "issue_index": 1,
+          "reason_code": "replacement_unit_not_verified"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-021",
+      "round": 1,
+      "question": "阔叶木的O(3)H···O(5)分子内氢键相对含量，从4000转到12000转变化了多少个百分点？相对变化是百分之几？",
+      "input_sha256": "41f67e3d3963492b42f917660d4b21b5844e42810a1e4a247d88ca5e61081a4d",
+      "evidence_sha256": "67690c9b6fc2957438b2622d1d4c34c6fa8b27a7dae731884523c0e848e219fa",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "表2b显示，阔叶木O(3)H···O(5)的相对含量在4000 r为33.06%，在12000 r为29.28%。 [2]\n因此从4000 r到12000 r下降了3.78个百分点；以4000 r为基准的相对变化约为−11.43%，即相对下降约11.4%。 [2]",
+      "after": "表2b显示，阔叶木O(3)H···O(5)的相对含量在4000 r为33.06%，在12000 r为29.28%。 [2]\n因此从4000 r到12000 r下降了3.78个百分点；以4000 r为基准的相对变化约为−11.43%，即相对下降约11.4%。 [2]",
+      "claims": [
+        {
+          "text": "表2b显示，阔叶木O(3)H···O(5)的相对含量在4000 r为33.06%，在12000 r为29.28%。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "因此从4000 r到12000 r下降了3.78个百分点；以4000 r为基准的相对变化约为−11.43%，即相对下降约11.4%。",
+          "citation_refs": [
+            "[2]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-022",
+      "round": 1,
+      "question": "请把针叶木16000转的CI-XI、CI-XA、O(6)H···O(3′)相对含量、O(3)H···O(5)相对含量整合到一起，并说明各数值来自哪张表。",
+      "input_sha256": "c707f1a9534626cd81e60b7d209cfab0d10de59fcaa5b3358e1e6c3c648f6bca",
+      "evidence_sha256": "d837ed68319b3e22501e343adf8a32d0d0a52c89db76e4d2fb5297f0ba16109a",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "针叶木在16,000转时，CI-XI为69.82%、CI-XA为34.20%，这两个数值来自表1(a）针叶木纤维的CI数据。 [1]\n同一16,000转条件下，O(6)H···O(3′)相对含量为23.56%、O(3)H···O(5)相对含量为34.92%，这两个数值来自表2(a）针叶木纤维氢键相对含量数据。 [4]",
+      "after": "针叶木在16,000转时，CI-XI为69.82%、CI-XA为34.20%，这两个数值来自表1(a）针叶木纤维的CI数据。 [1]\n同一16,000转条件下，O(6)H···O(3′)相对含量为23.56%、O(3)H···O(5)相对含量为34.92%，这两个数值来自表2(a）针叶木纤维氢键相对含量数据。 [4]",
+      "claims": [
+        {
+          "text": "针叶木在16,000转时，CI-XI为69.82%、CI-XA为34.20%，这两个数值来自表1(a）针叶木纤维的CI数据。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "同一16,000转条件下，O(6)H···O(3′)相对含量为23.56%、O(3)H···O(5)相对含量为34.92%，这两个数值来自表2(a）针叶木纤维氢键相对含量数据。",
+          "citation_refs": [
+            "[4]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-023",
+      "round": 1,
+      "question": "针叶木的O(6)H···O(3′)分子间氢键含量和CI-XI的Pearson相关系数是多少？",
+      "input_sha256": "fe21cec9c2a4006451811e8fdadc22b4d804b67e9194927f238afd99dd13c403",
+      "evidence_sha256": "3c7167966318c361ef554da6dec0c31920ff6d7ae55a2af2ea0011c8da8bd8b5",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "正文3.4报告，针叶木（softwood fibers）的O(6)H···O(3′)分子间氢键含量与CI-XI的Pearson相关系数为0.912（p<0.05）。 [1]\n该文摘要则报告针叶木的同一Pearson相关系数为0.888（p<0.05），与正文3.4的0.912不一致。 [2]",
+      "after": "正文3.4报告，针叶木（softwood fibers）的O(6)H···O(3′)分子间氢键含量与CI-XI的Pearson相关系数为0.912（p<0.05）。 [1]\n该文摘要则报告针叶木的同一Pearson相关系数为0.888（p<0.05），与正文3.4的0.912不一致。 [2]",
+      "claims": [
+        {
+          "text": "正文3.4报告，针叶木（softwood fibers）的O(6)H···O(3′)分子间氢键含量与CI-XI的Pearson相关系数为0.912（p<0.05）。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "该文摘要则报告针叶木的同一Pearson相关系数为0.888（p<0.05），与正文3.4的0.912不一致。",
+          "citation_refs": [
+            "[2]"
+          ]
+        }
+      ],
+      "old_status": "revised",
+      "old_accepted": [
+        0
+      ],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-024",
+      "round": 1,
+      "question": "PFI打浆是怎么一步步让纸变结实的？纤维长度、细小纤维、WRV这几个因素里哪个贡献最大？",
+      "input_sha256": "fde2bc6ee80da60261056f32a3c5bba9bbb9406c1debe1cd335cf4472c487451",
+      "evidence_sha256": "97fbb560be84fede25916aea979c1e96edd750f6e0a9334200a9c7764058caa3",
+      "proposal_origin": "archived_raw_response",
+      "issues": [
+        {
+          "claim_index": 6,
+          "original_text": "分子层面，O(6)H···O(3′)分子间氢键总量在打浆中下降，且更少的分子间氢键和较低结晶指数有利于提高纤维柔顺性、可及性和WRV。",
+          "category": "measurement",
+          "problem": "Table 2给出的是FT-IR分峰所得三类氢键和自由OH的“相对含量”，不是绝对总量或绝对键数；草稿写成“总量”会把归一化比例误作绝对量。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[3]",
+              "quote": "The relative content of three H-bonds and the free OH for softwood fibers through refining."
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "分子层面，O(6)H···O(3′)分子间氢键的相对含量（FT-IR分峰所得，非绝对键数）在打浆中下降；文中认为更少的分子间氢键和较低结晶指数有利于提高纤维柔顺性、可及性和WRV。",
+              "citation_refs": [
+                "[3]"
+              ]
+            }
+          ]
+        },
+        {
+          "claim_index": 8,
+          "original_text": "所给证据没有给出纤维长度、细小纤维和WRV三者对成纸强度贡献的定量排序；从直接论述看，WRV/润胀（内部细纤维化）与纤维间结合强度的联系最直接，而纤维长度主要被强调为湿纸幅强度的关键因素。",
+          "category": "inference",
+          "problem": "原文只给出WRV/润胀与纤维间结合强度、纤维长度与湿纸幅强度的定性关联，没有比较三者对成纸强度的贡献；“联系最直接”仍是在缺少比较口径时暗示贡献排序。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "makes the fibers more compliant in transverse [1], which contributes to improving the inter-fiber bonding strength"
+            },
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "fiber length plays an essential role in wet–web strength."
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "所给证据没有给出纤维长度、细小纤维和WRV三者对成纸强度贡献的定量或因果排序，因此不能判断哪个贡献最大。可直接支持的是：WRV/润胀与纤维间结合强度相关，纤维长度被强调为湿纸幅强度的关键因素。",
+              "citation_refs": [
+                "[1]",
+                "[2]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 6
+        },
+        {
+          "issue": 1,
+          "status": "applied",
+          "claim_index": 8
+        }
+      ],
+      "before": "PFI打浆对纤维的主要作用包括内部细纤维化（细胞壁分层、松弛和润胀）、外部细纤维化（表面微细纤维剥离但仍附着）、纤维切断和细小纤维生成。 [2]\n这些作用会提高纤维的可及性、润胀性、柔顺性和纤维间结合能力，从而为成纸强度提高提供基础。 [2]\n随PFI转数增加，打浆度和WRV显著升高；文中归因于细纤维化产生新的表面和更多孔隙。 [1]\nWRV表征的润胀增加使纤维在横向更柔顺，这有助于提高纤维网络的纤维间结合强度。 [1]\nFigure 1显示，PFI打浆后软木浆的纤维长度下降，而细小纤维含量上升，同时宏观细纤维化指数上升。 [1]\nPFI打浆提高了细纤维化程度（尤其是内部细纤维化）、纤维润胀和纸页拉伸强度，且零-span结果说明未降低单根纤维强度。 [1]\n分子层面，O(6)H···O(3′)分子间氢键总量在打浆中下降，且更少的分子间氢键和较低结晶指数有利于提高纤维柔顺性、可及性和WRV。 [3]\n湿纸幅强度方面，软木浆的增加比硬木浆更显著，作者强调纤维长度对湿纸幅强度起重要作用。 [1]\n所给证据没有给出纤维长度、细小纤维和WRV三者对成纸强度贡献的定量排序；从直接论述看，WRV/润胀（内部细纤维化）与纤维间结合强度的联系最直接，而纤维长度主要被强调为湿纸幅强度的关键因素。 [1] [2]",
+      "after": "PFI打浆对纤维的主要作用包括内部细纤维化（细胞壁分层、松弛和润胀）、外部细纤维化（表面微细纤维剥离但仍附着）、纤维切断和细小纤维生成。 [2]\n这些作用会提高纤维的可及性、润胀性、柔顺性和纤维间结合能力，从而为成纸强度提高提供基础。 [2]\n随PFI转数增加，打浆度和WRV显著升高；文中归因于细纤维化产生新的表面和更多孔隙。 [1]\nWRV表征的润胀增加使纤维在横向更柔顺，这有助于提高纤维网络的纤维间结合强度。 [1]\nFigure 1显示，PFI打浆后软木浆的纤维长度下降，而细小纤维含量上升，同时宏观细纤维化指数上升。 [1]\nPFI打浆提高了细纤维化程度（尤其是内部细纤维化）、纤维润胀和纸页拉伸强度，且零-span结果说明未降低单根纤维强度。 [1]\n分子层面，O(6)H···O(3′)分子间氢键的相对含量（FT-IR分峰所得，非绝对键数）在打浆中下降；文中认为更少的分子间氢键和较低结晶指数有利于提高纤维柔顺性、可及性和WRV。 [3]\n湿纸幅强度方面，软木浆的增加比硬木浆更显著，作者强调纤维长度对湿纸幅强度起重要作用。 [1]\n所给证据没有给出纤维长度、细小纤维和WRV三者对成纸强度贡献的定量或因果排序，因此不能判断哪个贡献最大。可直接支持的是：WRV/润胀与纤维间结合强度相关，纤维长度被强调为湿纸幅强度的关键因素。 [1] [2]",
+      "claims": [
+        {
+          "text": "PFI打浆对纤维的主要作用包括内部细纤维化（细胞壁分层、松弛和润胀）、外部细纤维化（表面微细纤维剥离但仍附着）、纤维切断和细小纤维生成。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "这些作用会提高纤维的可及性、润胀性、柔顺性和纤维间结合能力，从而为成纸强度提高提供基础。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "随PFI转数增加，打浆度和WRV显著升高；文中归因于细纤维化产生新的表面和更多孔隙。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "WRV表征的润胀增加使纤维在横向更柔顺，这有助于提高纤维网络的纤维间结合强度。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "Figure 1显示，PFI打浆后软木浆的纤维长度下降，而细小纤维含量上升，同时宏观细纤维化指数上升。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "PFI打浆提高了细纤维化程度（尤其是内部细纤维化）、纤维润胀和纸页拉伸强度，且零-span结果说明未降低单根纤维强度。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "分子层面，O(6)H···O(3′)分子间氢键的相对含量（FT-IR分峰所得，非绝对键数）在打浆中下降；文中认为更少的分子间氢键和较低结晶指数有利于提高纤维柔顺性、可及性和WRV。",
+          "citation_refs": [
+            "[3]"
+          ]
+        },
+        {
+          "text": "湿纸幅强度方面，软木浆的增加比硬木浆更显著，作者强调纤维长度对湿纸幅强度起重要作用。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "所给证据没有给出纤维长度、细小纤维和WRV三者对成纸强度贡献的定量或因果排序，因此不能判断哪个贡献最大。可直接支持的是：WRV/润胀与纤维间结合强度相关，纤维长度被强调为湿纸幅强度的关键因素。",
+          "citation_refs": [
+            "[1]",
+            "[2]"
+          ]
+        }
+      ],
+      "old_status": "rejected",
+      "old_accepted": [],
+      "old_rejections": [
+        {
+          "issue_index": 0,
+          "reason_code": "original_unit_not_verified"
+        },
+        {
+          "issue_index": 1,
+          "reason_code": "original_unit_not_verified"
+        }
+      ]
+    },
+    {
+      "task_id": "PFI2-025",
+      "round": 1,
+      "question": "针叶木打浆到8000转的时候，BET比表面积具体是多少？",
+      "input_sha256": "213f96dd694126bbfc1ed209a972730cec36869e43a65f8df9db68834f6af986",
+      "evidence_sha256": "ab460aec0517885051ba1fee393699f57fda653e60c248bc2fe6fd35b4b668b8",
+      "proposal_origin": "archived_raw_response",
+      "issues": [
+        {
+          "claim_index": null,
+          "original_text": null,
+          "category": "coverage",
+          "problem": "The question asks for the numeric BET specific surface area at 8000 PFI revolutions for softwood. The draft only says the data are in Table S1 and that the main text does not list the value; it never explicitly states that the supplied evidence lacks the Table S1 numeric cells and that the requested value therefore cannot be determined, so the question remains unresolved.",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[1]",
+              "quote": "Table S1: Cumulative pore volume, average pore size and specific surface area of softwood pulp fiber through refining"
+            },
+            {
+              "kind": "text",
+              "ref": "[7]",
+              "quote": "increasing specific surface area (as shown in Table S1 in Online Resource)"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "所提供证据中没有Table S1的具体数值，因此无法确定8000转时针叶木浆纤维的BET比表面积。",
+              "citation_refs": [
+                "[1]",
+                "[7]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": null
+        }
+      ],
+      "before": "针叶木浆纤维经PFI打浆后的比表面积数据列于Online Resource的Table S1中。 [1]\n正文仅提到比表面积随打浆而增加并指向Table S1，未列出8000转时对应的BET比表面积具体数值。 [1] [7]",
+      "after": "针叶木浆纤维经PFI打浆后的比表面积数据列于Online Resource的Table S1中。 [1]\n正文仅提到比表面积随打浆而增加并指向Table S1，未列出8000转时对应的BET比表面积具体数值。 [1] [7]\n所提供证据中没有Table S1的具体数值，因此无法确定8000转时针叶木浆纤维的BET比表面积。 [1] [7]",
+      "claims": [
+        {
+          "text": "针叶木浆纤维经PFI打浆后的比表面积数据列于Online Resource的Table S1中。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "正文仅提到比表面积随打浆而增加并指向Table S1，未列出8000转时对应的BET比表面积具体数值。",
+          "citation_refs": [
+            "[1]",
+            "[7]"
+          ]
+        },
+        {
+          "text": "所提供证据中没有Table S1的具体数值，因此无法确定8000转时针叶木浆纤维的BET比表面积。",
+          "citation_refs": [
+            "[1]",
+            "[7]"
+          ]
+        }
+      ],
+      "old_status": "failed",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-026",
+      "round": 1,
+      "question": "针叶木8000转那组的干纸抗张指数，每次平行实验的原始数据能给我列一下吗？",
+      "input_sha256": "09a178d5421dee29f281b6b57d0b865128c384af6475b46badca76d06dc1948d",
+      "evidence_sha256": "2ddee8ff5a3662c2f71105a6360474598f36bddbc6fb1cabed2191000ccc5e11",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "方法部分只说明干纸抗张强度按TAPPI T494测定，未给出该组平行实验的逐次原始值或重复次数。 [6]\n图3a展示针叶木的湿纸抗张指数、干纸抗张指数和零距抗张指数随PFI转数的变化；8000转处只有汇总数据点和误差棒。 [8]\n因此，仅凭所给文献无法还原针叶木8000转组干纸抗张指数每次平行实验的原始数据。 [6] [8]",
+      "after": "方法部分只说明干纸抗张强度按TAPPI T494测定，未给出该组平行实验的逐次原始值或重复次数。 [6]\n图3a展示针叶木的湿纸抗张指数、干纸抗张指数和零距抗张指数随PFI转数的变化；8000转处只有汇总数据点和误差棒。 [8]\n因此，仅凭所给文献无法还原针叶木8000转组干纸抗张指数每次平行实验的原始数据。 [6] [8]",
+      "claims": [
+        {
+          "text": "方法部分只说明干纸抗张强度按TAPPI T494测定，未给出该组平行实验的逐次原始值或重复次数。",
+          "citation_refs": [
+            "[6]"
+          ]
+        },
+        {
+          "text": "图3a展示针叶木的湿纸抗张指数、干纸抗张指数和零距抗张指数随PFI转数的变化；8000转处只有汇总数据点和误差棒。",
+          "citation_refs": [
+            "[8]"
+          ]
+        },
+        {
+          "text": "因此，仅凭所给文献无法还原针叶木8000转组干纸抗张指数每次平行实验的原始数据。",
+          "citation_refs": [
+            "[6]",
+            "[8]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-027",
+      "round": 1,
+      "question": "这篇论文对干纸抗张性能有什么结论？另外请给出同一批样品的耐破指数和撕裂指数精确数据。",
+      "input_sha256": "33f63b7bdae92b6ecf27cbb0f9254a8a2f788476ebb4fd675f2f0d0eb24d8333",
+      "evidence_sha256": "a379998787b8e9ce4dfbad102a6f9ab03bab5346e745f9534ad0aaaa2d0856f3",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "论文的结论是：PFI精炼提高了纤维细纤维化（尤其是内部细纤维化）、纤维润胀和纸页抗张强度，且未降低纤维本身的抗张强度。 [4]\n论文将干纸页抗张强度的提高主要归因于PFI精炼过程中细纤维化和细组分（fines）的增加。 [4]\nFigure 3显示，随PFI精炼转数增加，软木和硬木样品的干纸页抗张指数均呈上升趋势。 [2]\n所提供证据中的力学性能图仅包含干纸页抗张指数、零-span抗张指数和湿纸幅强度，没有耐破指数或撕裂指数数据。 [1] [2]\n因此，无法根据所给证据给出同一批样品的耐破指数和撕裂指数精确数值。 [1] [2]",
+      "after": "论文的结论是：PFI精炼提高了纤维细纤维化（尤其是内部细纤维化）、纤维润胀和纸页抗张强度，且未降低纤维本身的抗张强度。 [4]\n论文将干纸页抗张强度的提高主要归因于PFI精炼过程中细纤维化和细组分（fines）的增加。 [4]\nFigure 3显示，随PFI精炼转数增加，软木和硬木样品的干纸页抗张指数均呈上升趋势。 [2]\n所提供证据中的力学性能图仅包含干纸页抗张指数、零-span抗张指数和湿纸幅强度，没有耐破指数或撕裂指数数据。 [1] [2]\n因此，无法根据所给证据给出同一批样品的耐破指数和撕裂指数精确数值。 [1] [2]",
+      "claims": [
+        {
+          "text": "论文的结论是：PFI精炼提高了纤维细纤维化（尤其是内部细纤维化）、纤维润胀和纸页抗张强度，且未降低纤维本身的抗张强度。",
+          "citation_refs": [
+            "[4]"
+          ]
+        },
+        {
+          "text": "论文将干纸页抗张强度的提高主要归因于PFI精炼过程中细纤维化和细组分（fines）的增加。",
+          "citation_refs": [
+            "[4]"
+          ]
+        },
+        {
+          "text": "Figure 3显示，随PFI精炼转数增加，软木和硬木样品的干纸页抗张指数均呈上升趋势。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "所提供证据中的力学性能图仅包含干纸页抗张指数、零-span抗张指数和湿纸幅强度，没有耐破指数或撕裂指数数据。",
+          "citation_refs": [
+            "[1]",
+            "[2]"
+          ]
+        },
+        {
+          "text": "因此，无法根据所给证据给出同一批样品的耐破指数和撕裂指数精确数值。",
+          "citation_refs": [
+            "[1]",
+            "[2]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-027",
+      "round": 2,
+      "question": "这篇论文对干纸抗张性能有什么结论？另外请给出同一批样品的耐破指数和撕裂指数精确数据。",
+      "input_sha256": "33f63b7bdae92b6ecf27cbb0f9254a8a2f788476ebb4fd675f2f0d0eb24d8333",
+      "evidence_sha256": "8d9066ebdd10f0038657392b8271a6859420e35cdb937741bac850f364c8190e",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "论文的结论是：PFI精炼提高了纤维细纤维化（尤其是内部细纤维化）、纤维润胀和纸页抗张强度，且未降低纤维本身的抗张强度。 [4]\n论文将干纸页抗张强度的提高主要归因于PFI精炼过程中细纤维化和细组分（fines）的增加。 [4]\nFigure 3显示，随PFI精炼转数增加，软木和硬木样品的干纸页抗张指数均呈上升趋势。 [2]\n所提供证据中的力学性能图仅包含干纸页抗张指数、零-span抗张指数和湿纸幅强度，没有耐破指数或撕裂指数数据。 [1] [2]\n因此，无法根据所给证据给出同一批样品的耐破指数和撕裂指数精确数值。 [1] [2]",
+      "after": "论文的结论是：PFI精炼提高了纤维细纤维化（尤其是内部细纤维化）、纤维润胀和纸页抗张强度，且未降低纤维本身的抗张强度。 [4]\n论文将干纸页抗张强度的提高主要归因于PFI精炼过程中细纤维化和细组分（fines）的增加。 [4]\nFigure 3显示，随PFI精炼转数增加，软木和硬木样品的干纸页抗张指数均呈上升趋势。 [2]\n所提供证据中的力学性能图仅包含干纸页抗张指数、零-span抗张指数和湿纸幅强度，没有耐破指数或撕裂指数数据。 [1] [2]\n因此，无法根据所给证据给出同一批样品的耐破指数和撕裂指数精确数值。 [1] [2]",
+      "claims": [
+        {
+          "text": "论文的结论是：PFI精炼提高了纤维细纤维化（尤其是内部细纤维化）、纤维润胀和纸页抗张强度，且未降低纤维本身的抗张强度。",
+          "citation_refs": [
+            "[4]"
+          ]
+        },
+        {
+          "text": "论文将干纸页抗张强度的提高主要归因于PFI精炼过程中细纤维化和细组分（fines）的增加。",
+          "citation_refs": [
+            "[4]"
+          ]
+        },
+        {
+          "text": "Figure 3显示，随PFI精炼转数增加，软木和硬木样品的干纸页抗张指数均呈上升趋势。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "所提供证据中的力学性能图仅包含干纸页抗张指数、零-span抗张指数和湿纸幅强度，没有耐破指数或撕裂指数数据。",
+          "citation_refs": [
+            "[1]",
+            "[2]"
+          ]
+        },
+        {
+          "text": "因此，无法根据所给证据给出同一批样品的耐破指数和撕裂指数精确数值。",
+          "citation_refs": [
+            "[1]",
+            "[2]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-028",
+      "round": 1,
+      "question": "请比较这篇PFI论文与《Non-Wood Fibers: Relationships of Fiber Properties with Pulp Properties》的全部实验数据，给出两篇共同结论。",
+      "input_sha256": "bdb3265fdddb3c432466846a78aaed3bd415ed726fc891b8ebde0df776483379",
+      "evidence_sha256": "8d1989b85b7a24f9cfc653dd36828e701bddf7a5efe6d9496acd3759f6de6b50",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "当前提供的证据仅涉及 Li-2020 的 PFI 精磨研究，未包含《Non-Wood Fibers: Relationships of Fiber Properties with Pulp Properties》的实验数据。 [1] [2] [3] [4] [5] [6] [7]\n因此，基于现有证据无法比较两篇论文的全部实验数据，也无法可靠归纳两篇论文的共同结论。 [1] [2] [3] [4] [5] [6] [7]",
+      "after": "当前提供的证据仅涉及 Li-2020 的 PFI 精磨研究，未包含《Non-Wood Fibers: Relationships of Fiber Properties with Pulp Properties》的实验数据。 [1] [2] [3] [4] [5] [6] [7]\n因此，基于现有证据无法比较两篇论文的全部实验数据，也无法可靠归纳两篇论文的共同结论。 [1] [2] [3] [4] [5] [6] [7]",
+      "claims": [
+        {
+          "text": "当前提供的证据仅涉及 Li-2020 的 PFI 精磨研究，未包含《Non-Wood Fibers: Relationships of Fiber Properties with Pulp Properties》的实验数据。",
+          "citation_refs": [
+            "[1]",
+            "[2]",
+            "[3]",
+            "[4]",
+            "[5]",
+            "[6]",
+            "[7]"
+          ]
+        },
+        {
+          "text": "因此，基于现有证据无法比较两篇论文的全部实验数据，也无法可靠归纳两篇论文的共同结论。",
+          "citation_refs": [
+            "[1]",
+            "[2]",
+            "[3]",
+            "[4]",
+            "[5]",
+            "[6]",
+            "[7]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-029",
+      "round": 1,
+      "question": "本文已经训练好的纸张抗张预测模型，其验证集R²和RMSE是多少？请给出最佳模型名称。",
+      "input_sha256": "ff20f82858adf7e2852f1e1fa3eb4d7410fea81705578ce530c31a2972a905b5",
+      "evidence_sha256": "d5740b562e458a4465cb19fec643e3691fc41cfad9c13e71f17965936286b270",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "提供的文献证据主要讨论 PFI 磨浆对纤维形态、抗张强度、结晶度及氢键的影响，而非纸张抗张预测建模。 [1] [2] [4]\n表 2 中的 r²（约 0.9989–0.9996）是氢键分峰/非线性拟合的拟合优度，不是预测模型在验证集上的 R²。 [1]\n所给证据中未出现验证集 RMSE，也未给出任何已训练纸张抗张预测模型及其最佳模型名称。 [1] [2] [4]",
+      "after": "提供的文献证据主要讨论 PFI 磨浆对纤维形态、抗张强度、结晶度及氢键的影响，而非纸张抗张预测建模。 [1] [2] [4]\n表 2 中的 r²（约 0.9989–0.9996）是氢键分峰/非线性拟合的拟合优度，不是预测模型在验证集上的 R²。 [1]\n所给证据中未出现验证集 RMSE，也未给出任何已训练纸张抗张预测模型及其最佳模型名称。 [1] [2] [4]",
+      "claims": [
+        {
+          "text": "提供的文献证据主要讨论 PFI 磨浆对纤维形态、抗张强度、结晶度及氢键的影响，而非纸张抗张预测建模。",
+          "citation_refs": [
+            "[1]",
+            "[2]",
+            "[4]"
+          ]
+        },
+        {
+          "text": "表 2 中的 r²（约 0.9989–0.9996）是氢键分峰/非线性拟合的拟合优度，不是预测模型在验证集上的 R²。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "所给证据中未出现验证集 RMSE，也未给出任何已训练纸张抗张预测模型及其最佳模型名称。",
+          "citation_refs": [
+            "[1]",
+            "[2]",
+            "[4]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-030",
+      "round": 1,
+      "question": "为什么阔叶木打浆后湿纸幅强度涨得比针叶木还多？",
+      "input_sha256": "8309b1a6552267f0b87287e5f86c146f5f466d1c50415ac0f7f0cb5b1421cf4e",
+      "evidence_sha256": "bf14bdc89de5a180d549b5d6d64dc93ce4f671f3c441d7ce2407e944413a262a",
+      "proposal_origin": "saved_parsed_issues",
+      "issues": [],
+      "events": [],
+      "before": "所给证据并不支持“阔叶木打浆后湿纸幅强度增幅高于针叶木”；原文明确说针叶木湿纸幅强度的增加比阔叶木更显著。 [1]\n作者将这种差异归因于纤维长度：纤维长度对湿纸幅强度起关键作用。 [1]\n阔叶木的 macro-fibrillation index 和纤维长度相对针叶木没有显著变化，原因可能是阔叶木打浆时施加的 refining pressure 较低。 [1]\n方法部分给出的 PFI 每 bar 长度作用力为针叶木 3.33 N/mm、阔叶木 1.77 N/mm，表明阔叶木受到的打浆作用较弱。 [2]\n打浆会提高 beating degree 和 WRV，细纤维化产生新表面和更多孔隙，并改善纤维网络的 inter-fiber bonding；但这些变化在该研究中未使阔叶木湿纸幅强度增幅超过针叶木。 [1]",
+      "after": "所给证据并不支持“阔叶木打浆后湿纸幅强度增幅高于针叶木”；原文明确说针叶木湿纸幅强度的增加比阔叶木更显著。 [1]\n作者将这种差异归因于纤维长度：纤维长度对湿纸幅强度起关键作用。 [1]\n阔叶木的 macro-fibrillation index 和纤维长度相对针叶木没有显著变化，原因可能是阔叶木打浆时施加的 refining pressure 较低。 [1]\n方法部分给出的 PFI 每 bar 长度作用力为针叶木 3.33 N/mm、阔叶木 1.77 N/mm，表明阔叶木受到的打浆作用较弱。 [2]\n打浆会提高 beating degree 和 WRV，细纤维化产生新表面和更多孔隙，并改善纤维网络的 inter-fiber bonding；但这些变化在该研究中未使阔叶木湿纸幅强度增幅超过针叶木。 [1]",
+      "claims": [
+        {
+          "text": "所给证据并不支持“阔叶木打浆后湿纸幅强度增幅高于针叶木”；原文明确说针叶木湿纸幅强度的增加比阔叶木更显著。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "作者将这种差异归因于纤维长度：纤维长度对湿纸幅强度起关键作用。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "阔叶木的 macro-fibrillation index 和纤维长度相对针叶木没有显著变化，原因可能是阔叶木打浆时施加的 refining pressure 较低。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "方法部分给出的 PFI 每 bar 长度作用力为针叶木 3.33 N/mm、阔叶木 1.77 N/mm，表明阔叶木受到的打浆作用较弱。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "打浆会提高 beating degree 和 WRV，细纤维化产生新表面和更多孔隙，并改善纤维网络的 inter-fiber bonding；但这些变化在该研究中未使阔叶木湿纸幅强度增幅超过针叶木。",
+          "citation_refs": [
+            "[1]"
+          ]
+        }
+      ],
+      "old_status": "unchanged",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-031",
+      "round": 1,
+      "question": "PFI打浆把纤维素从I型变成II型以后，结晶度为什么还会下降？",
+      "input_sha256": "5ee78c774a825664b66eec56a4037923751bda26bcfc130a72a436d4046850ac",
+      "evidence_sha256": "56ec6c5eaf3492ad2dcf9ef3b1541ba5b9f24fdfea0b231802565a3c00090751",
+      "proposal_origin": "archived_raw_response",
+      "issues": [
+        {
+          "claim_index": 2,
+          "original_text": "随打浆进行，软木浆的CI-XI和CI-XA分别下降4.66%和15.47%，硬木浆分别下降2.65%和19.4%",
+          "category": "measurement",
+          "problem": "未说明CI-XI/CI-XA是XRD强度比与峰面积比得到的结晶度指数（相对量），也未说明4.66%/15.47%/2.65%/19.4%是相对未打浆样的相对降幅而非百分点或绝对结晶度，读者会误读为绝对结晶度下降的幅度",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[3]",
+              "quote": "The CI-XI value was obtained from the ratio of the difraction intensity"
+            },
+            {
+              "kind": "text",
+              "ref": "[2]",
+              "quote": "showed a reduction of 4.66% and 15.47%"
+            },
+            {
+              "kind": "image",
+              "ref": "[3]",
+              "asset_id": "img_03d297b96cf3fb22d405",
+              "observation": "表1：软木 CI-XI 73.23→69.82、CI-XA 40.46→34.20，硬木 75.55→73.55、47.16→38.01"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "随打浆进行，软木浆的CI-XI和CI-XA相对未打浆样分别下降4.66%和15.47%，硬木浆分别下降2.65%和19.4%；表中CI-XI由衍射峰强度比、CI-XA由峰面积比算得，均为相对结晶度指数，上述百分数为相对降幅而非百分点，也不等于绝对结晶度",
+              "citation_refs": [
+                "[2]",
+                "[3]"
+              ]
+            }
+          ]
+        },
+        {
+          "claim_index": 5,
+          "original_text": "结晶度下降的同时，O(6)H···O(3′)分子间氢键总量在软木和硬木纤维中分别减少16.54%和5.91%，归因于PFI机械作用下纤维素分子链之间的断裂，与内、外细纤维化密切相关",
+          "category": "measurement",
+          "problem": "把FT-IR分峰得到的“相对含量”（归一化峰面积分数）写成“氢键总量”减少，相对分数下降不能证明绝对氢键数减少；同时把来源的推测性归因（might be due to）表述为确定归因",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[4]",
+              "quote": "The relative content of three H-bonds and the free OH"
+            },
+            {
+              "kind": "text",
+              "ref": "[4]",
+              "quote": "decreased by 16.54% and 5.91% altogether"
+            },
+            {
+              "kind": "text",
+              "ref": "[4]",
+              "quote": "The decrease might be due to the cleavage among cellulose molecular chains"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "结晶度下降的同时，FT-IR分峰所得O(6)H···O(3′)分子间氢键的相对含量（相对峰面积分数，不等于绝对氢键数量）在软木和硬木纤维中合计分别减少16.54%和5.91%（相对降幅）；作者推测这可能与PFI机械作用下纤维素分子链之间的断裂有关，并与内、外细纤维化密切相关",
+              "citation_refs": [
+                "[4]"
+              ]
+            }
+          ]
+        },
+        {
+          "claim_index": 6,
+          "original_text": "较少的分子间氢键和较低的结晶度会因分子链活动性提高而进一步提升纤维素纤维的柔顺性、可及性和保水值",
+          "category": "inference",
+          "problem": "来源把分子链活动性、可及性和WRV放在“due to”从句中作为并列的影响因素，草稿把它们改写成较低CI/较少氢键额外带来的结果，改动了因果结构",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[4]",
+              "quote": "will further improve the flexibility of cellulosic fibers"
+            },
+            {
+              "kind": "text",
+              "ref": "[4]",
+              "quote": "due to the higher mobility of molecular chains, the accessibility, and the WRV of fibers"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "原文认为，较少的分子间氢键和较低的结晶度将进一步提高纤维素纤维的柔顺性，并把这一效应与分子链活动性提高、可及性和保水值（WRV）的提高联系起来（后两者在原文中作并列的相关因素，而非该句所述的额外结果）",
+              "citation_refs": [
+                "[4]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 2
+        },
+        {
+          "issue": 1,
+          "status": "applied",
+          "claim_index": 5
+        },
+        {
+          "issue": 2,
+          "status": "applied",
+          "claim_index": 6
+        }
+      ],
+      "before": "XRD结果表明，两种浆料纤维在PFI处理过程中纤维素晶型没有发生变化，说明PFI打浆是相对温和的机械处理 [2]\n因此“PFI打浆把纤维素从I型变成II型”这一前提与所给证据不符，结晶度下降不能用I型向II型转变来解释 [2]\n随打浆进行，软木浆的CI-XI和CI-XA分别下降4.66%和15.47%，硬木浆分别下降2.65%和19.4% [2]\n表1中软木纤维从0转到16,000转，CI-XI由73.23%降至69.82%、CI-XA由40.46%降至34.20%；硬木纤维CI-XI由75.55%降至73.55%、CI-XA由47.16%降至38.01% [3]\nCI随打浆先降后升再降的波动，被解释为机械作用先主要作用于结晶区，随后作用于无定形区并可能发生共结晶，之后结晶区被持续破坏 [2]\n结晶度下降的同时，O(6)H···O(3′)分子间氢键总量在软木和硬木纤维中分别减少16.54%和5.91%，归因于PFI机械作用下纤维素分子链之间的断裂，与内、外细纤维化密切相关 [4]\n较少的分子间氢键和较低的结晶度会因分子链活动性提高而进一步提升纤维素纤维的柔顺性、可及性和保水值 [4]\n结晶尺寸方面，两种纤维垂直于(200)面的尺寸呈上升趋势（软木4.5 nm升至4.7 nm，硬木4.5 nm升至4.7 nm），而(110)面尺寸波动更大，被解释为水分子更易沿亲水的(110)面渗入，使这些晶面承受更多机械作用 [3] [2]",
+      "after": "XRD结果表明，两种浆料纤维在PFI处理过程中纤维素晶型没有发生变化，说明PFI打浆是相对温和的机械处理 [2]\n因此“PFI打浆把纤维素从I型变成II型”这一前提与所给证据不符，结晶度下降不能用I型向II型转变来解释 [2]\n随打浆进行，软木浆的CI-XI和CI-XA相对未打浆样分别下降4.66%和15.47%，硬木浆分别下降2.65%和19.4%；表中CI-XI由衍射峰强度比、CI-XA由峰面积比算得，均为相对结晶度指数，上述百分数为相对降幅而非百分点，也不等于绝对结晶度 [2] [3]\n表1中软木纤维从0转到16,000转，CI-XI由73.23%降至69.82%、CI-XA由40.46%降至34.20%；硬木纤维CI-XI由75.55%降至73.55%、CI-XA由47.16%降至38.01% [3]\nCI随打浆先降后升再降的波动，被解释为机械作用先主要作用于结晶区，随后作用于无定形区并可能发生共结晶，之后结晶区被持续破坏 [2]\n结晶度下降的同时，FT-IR分峰所得O(6)H···O(3′)分子间氢键的相对含量（相对峰面积分数，不等于绝对氢键数量）在软木和硬木纤维中合计分别减少16.54%和5.91%（相对降幅）；作者推测这可能与PFI机械作用下纤维素分子链之间的断裂有关，并与内、外细纤维化密切相关 [4]\n原文认为，较少的分子间氢键和较低的结晶度将进一步提高纤维素纤维的柔顺性，并把这一效应与分子链活动性提高、可及性和保水值（WRV）的提高联系起来（后两者在原文中作并列的相关因素，而非该句所述的额外结果） [4]\n结晶尺寸方面，两种纤维垂直于(200)面的尺寸呈上升趋势（软木4.5 nm升至4.7 nm，硬木4.5 nm升至4.7 nm），而(110)面尺寸波动更大，被解释为水分子更易沿亲水的(110)面渗入，使这些晶面承受更多机械作用 [3] [2]",
+      "claims": [
+        {
+          "text": "XRD结果表明，两种浆料纤维在PFI处理过程中纤维素晶型没有发生变化，说明PFI打浆是相对温和的机械处理",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "因此“PFI打浆把纤维素从I型变成II型”这一前提与所给证据不符，结晶度下降不能用I型向II型转变来解释",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "随打浆进行，软木浆的CI-XI和CI-XA相对未打浆样分别下降4.66%和15.47%，硬木浆分别下降2.65%和19.4%；表中CI-XI由衍射峰强度比、CI-XA由峰面积比算得，均为相对结晶度指数，上述百分数为相对降幅而非百分点，也不等于绝对结晶度",
+          "citation_refs": [
+            "[2]",
+            "[3]"
+          ]
+        },
+        {
+          "text": "表1中软木纤维从0转到16,000转，CI-XI由73.23%降至69.82%、CI-XA由40.46%降至34.20%；硬木纤维CI-XI由75.55%降至73.55%、CI-XA由47.16%降至38.01%",
+          "citation_refs": [
+            "[3]"
+          ]
+        },
+        {
+          "text": "CI随打浆先降后升再降的波动，被解释为机械作用先主要作用于结晶区，随后作用于无定形区并可能发生共结晶，之后结晶区被持续破坏",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "结晶度下降的同时，FT-IR分峰所得O(6)H···O(3′)分子间氢键的相对含量（相对峰面积分数，不等于绝对氢键数量）在软木和硬木纤维中合计分别减少16.54%和5.91%（相对降幅）；作者推测这可能与PFI机械作用下纤维素分子链之间的断裂有关，并与内、外细纤维化密切相关",
+          "citation_refs": [
+            "[4]"
+          ]
+        },
+        {
+          "text": "原文认为，较少的分子间氢键和较低的结晶度将进一步提高纤维素纤维的柔顺性，并把这一效应与分子链活动性提高、可及性和保水值（WRV）的提高联系起来（后两者在原文中作并列的相关因素，而非该句所述的额外结果）",
+          "citation_refs": [
+            "[4]"
+          ]
+        },
+        {
+          "text": "结晶尺寸方面，两种纤维垂直于(200)面的尺寸呈上升趋势（软木4.5 nm升至4.7 nm，硬木4.5 nm升至4.7 nm），而(110)面尺寸波动更大，被解释为水分子更易沿亲水的(110)面渗入，使这些晶面承受更多机械作用",
+          "citation_refs": [
+            "[3]",
+            "[2]"
+          ]
+        }
+      ],
+      "old_status": "failed",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-032",
+      "round": 1,
+      "question": "论文里氢键含量和CI-XI的相关系数是针叶木0.919、阔叶木0.925吧？这么高是不是就能用CI-XI直接算出氢键含量了？",
+      "input_sha256": "7d09a0951fe2c472f52bed44d458e6d5666dec5137559ab6a7edbdd20528a5f6",
+      "evidence_sha256": "b0dda5ff4e8e2fcd4aa25ec7e2ff19ed2b182426ca416fa3ed3dbc1f7b4ac8f4",
+      "proposal_origin": "archived_raw_response",
+      "issues": [
+        {
+          "claim_index": 3,
+          "original_text": "论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。",
+          "category": "measurement",
+          "problem": "The draft converts a supplied-evidence gap into the whole-paper assertion '论文没有给出' and calls FT-IR-derived hydrogen-bond content simply '氢键含量', omitting that the measured quantity is a relative peak-area proportion rather than an absolute bond count or concentration.",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[6]",
+              "quote": "the relative content of various H-bonds was calculated based on area proportion of the band"
+            },
+            {
+              "kind": "text",
+              "ref": "[4]",
+              "quote": "the trend of the content of O(6)H· · · O(3)’ H-bonds might be generally speculated based on CI-XI"
+            },
+            {
+              "kind": "text",
+              "ref": "[2]",
+              "quote": "Pearson correlation coeficients were calculated between the content of H-bonds and the CI-XI"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "就所给证据而言，论文中的氢键含量是FT-IR峰面积比例得到的相对含量，未给出由CI-XI直接计算该相对含量或绝对氢键数量/浓度的公式或定量换算关系；相关分析不能等同于可直接计算。",
+              "citation_refs": [
+                "[2]",
+                "[4]",
+                "[6]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 3
+        }
+      ],
+      "before": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\nO(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。 [2]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。 [4]\n论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。 [2] [4]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+      "after": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\nO(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。 [2]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。 [4]\n就所给证据而言，论文中的氢键含量是FT-IR峰面积比例得到的相对含量，未给出由CI-XI直接计算该相对含量或绝对氢键数量/浓度的公式或定量换算关系；相关分析不能等同于可直接计算。 [2] [4] [6]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+      "claims": [
+        {
+          "text": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。",
+          "citation_refs": [
+            "[2]"
+          ]
+        },
+        {
+          "text": "作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。",
+          "citation_refs": [
+            "[4]"
+          ]
+        },
+        {
+          "text": "就所给证据而言，论文中的氢键含量是FT-IR峰面积比例得到的相对含量，未给出由CI-XI直接计算该相对含量或绝对氢键数量/浓度的公式或定量换算关系；相关分析不能等同于可直接计算。",
+          "citation_refs": [
+            "[2]",
+            "[4]",
+            "[6]"
+          ]
+        },
+        {
+          "text": "并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。",
+          "citation_refs": [
+            "[2]"
+          ]
+        }
+      ],
+      "old_status": "failed",
+      "old_accepted": [],
+      "old_rejections": []
+    },
+    {
+      "task_id": "PFI2-032",
+      "round": 2,
+      "question": "论文里氢键含量和CI-XI的相关系数是针叶木0.919、阔叶木0.925吧？这么高是不是就能用CI-XI直接算出氢键含量了？",
+      "input_sha256": "7d09a0951fe2c472f52bed44d458e6d5666dec5137559ab6a7edbdd20528a5f6",
+      "evidence_sha256": "f73745eb8b685ff6ea679b0843d60be60cdf1e75d8b6dac50e4b423ab94cf752",
+      "proposal_origin": "archived_raw_response",
+      "issues": [
+        {
+          "claim_index": 1,
+          "original_text": "O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。",
+          "category": "uncertainty",
+          "problem": "只取正文的针叶木0.912而忽略摘要的0.888，未说明针叶木数值在文内不一致，作为定值表述过强。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[2]",
+              "quote": "It was 0.912 (p < 0.05) for softwood fibers and 0.889"
+            },
+            {
+              "kind": "text",
+              "ref": "[7]",
+              "quote": "The Pearson correlation coeficient between them was 0.888 (p < 0.05) for softwood fibers and 0.889 (p < 0.05) for hardwood fibers"
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "正文报告的O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）；但摘要报告针叶木0.888、阔叶木0.889，因此针叶木数值在文内不一致。",
+              "citation_refs": [
+                "[2]",
+                "[7]"
+              ]
+            }
+          ]
+        },
+        {
+          "claim_index": 3,
+          "original_text": "论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。",
+          "category": "measurement",
+          "problem": "把所给摘录中未见公式扩大为整篇论文无公式，且未说明图8的氢键含量为百分含量，不能据此推得绝对键数/浓度或直接换算。",
+          "basis": [
+            {
+              "kind": "text",
+              "ref": "[2]",
+              "quote": "the Pearson correlation coeficients were calculated between the content of H-bonds and the CI-XI"
+            },
+            {
+              "kind": "text",
+              "ref": "[4]",
+              "quote": "the trend of the content of O(6)H· · · O(3)’ H-bonds might be generally speculated based on CI-XI while refining."
+            }
+          ],
+          "replacement_claims": [
+            {
+              "text": "就CI-XI与O(6)H···O(3′)氢键含量的关系，所给材料只报告相关分析和趋势推测（图8中的氢键含量以%表示），未见由CI-XI直接计算氢键含量的公式或定量换算关系；相关分析不能等同于直接计算，也不能由该百分含量推得绝对氢键数量或浓度。",
+              "citation_refs": [
+                "[2]",
+                "[4]",
+                "[5]"
+              ]
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "issue": 0,
+          "status": "applied",
+          "claim_index": 1
+        },
+        {
+          "issue": 1,
+          "status": "applied",
+          "claim_index": 3
+        }
+      ],
+      "before": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\nO(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）。 [2]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。 [4]\n论文没有给出由CI-XI直接计算氢键含量的公式或定量换算关系，相关分析不能等同于可直接计算。 [2] [4]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+      "after": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。 [1]\n正文报告的O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）；但摘要报告针叶木0.888、阔叶木0.889，因此针叶木数值在文内不一致。 [2] [7]\n作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。 [4]\n就CI-XI与O(6)H···O(3′)氢键含量的关系，所给材料只报告相关分析和趋势推测（图8中的氢键含量以%表示），未见由CI-XI直接计算氢键含量的公式或定量换算关系；相关分析不能等同于直接计算，也不能由该百分含量推得绝对氢键数量或浓度。 [2] [4] [5]\n并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。 [2]",
+      "claims": [
+        {
+          "text": "0.919和0.925不是氢键含量与CI-XI的相关系数，而是CI-XI与CI-XA的相关系数：针叶木0.919、阔叶木0.925（p < 0.05）。",
+          "citation_refs": [
+            "[1]"
+          ]
+        },
+        {
+          "text": "正文报告的O(6)H···O(3′)氢键含量与CI-XI的Pearson相关系数为针叶木0.912、阔叶木0.889（p < 0.05）；但摘要报告针叶木0.888、阔叶木0.889，因此针叶木数值在文内不一致。",
+          "citation_refs": [
+            "[2]",
+            "[7]"
+          ]
+        },
+        {
+          "text": "作者结论仅指出CI-XI与O(6)H···O(3′)氢键含量显著正相关，认为在PFI精磨过程中可基于CI-XI大致推测该氢键含量的趋势。",
+          "citation_refs": [
+            "[4]"
+          ]
+        },
+        {
+          "text": "就CI-XI与O(6)H···O(3′)氢键含量的关系，所给材料只报告相关分析和趋势推测（图8中的氢键含量以%表示），未见由CI-XI直接计算氢键含量的公式或定量换算关系；相关分析不能等同于直接计算，也不能由该百分含量推得绝对氢键数量或浓度。",
+          "citation_refs": [
+            "[2]",
+            "[4]",
+            "[5]"
+          ]
+        },
+        {
+          "text": "并非所有氢键都与CI-XI强相关：O(2)H···O(6)或游离OH与CI-XI的相关性较差，O(3)H···O(5)与CI-XI的相关性未在文中讨论。",
+          "citation_refs": [
+            "[2]"
+          ]
+        }
+      ],
+      "old_status": "failed",
+      "old_accepted": [],
+      "old_rejections": []
+    }
+  ]
+}
