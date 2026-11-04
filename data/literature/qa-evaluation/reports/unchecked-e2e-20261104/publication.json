@@ -1,0 +1,9 @@
+{
+  "files": {
+    "comparison.json": "3cd1f05073be5690940bfb7599822960d789fed8470fd3388f9ed16ed9ba716d",
+    "adjudication.json": "4880c05241e95a6075ad0acd4671ead733799683182feb207d888b838636ce4a",
+    "comparison.html": "3f430041eb042aef0a836608cfc21be2caf09aae6eac2195fa0c1218a592cf0d",
+    "questions-answers-reviews.jsonl": "e103f06760ab5f689f41d415b10b12a53cc0db03a9f2317c3314d6d0956b7475"
+  },
+  "manifest_sha256": "7d3f7f8366c1d0610d89816bc5b0b149642ffe83cbdd7c978d8815781257901a"
+}
