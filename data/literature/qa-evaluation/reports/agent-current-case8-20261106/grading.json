@@ -1,0 +1,483 @@
+{
+  "jev": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": 1
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "**不能据此承诺真实材料预测同样准确。** 作者本人把 R²≈0.9975 界定为“理想化合成条件下可达到的理论上限”，而不是对真实材料预测精度的承诺。[5]",
+        "citation_refs": [
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B020"
+      },
+      {
+        "id": "C2",
+        "text": "**一、作者对高分原因的解释（3.2.7 节，第 12–13 页）**\n\n与文献 [45–47] 中 R² 约 0.82–0.94 的实验数据研究相比，作者把高分的来源归结为三点：[5]",
+        "citation_refs": [
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B018"
+      },
+      {
+        "id": "C3",
+        "text": "1. **数据来源不同（最关键）**：被比较的研究使用实验数据，这些数据“自然包含测量不确定性和批次间波动”；本研究的数据则依据复合材料力学原理，通过参数化关系合成生成，因此信噪比更清晰，预测精度也更高。[5]\n2. **特征覆盖充分**：输入特征包括纤维类型、树脂类型、纤维体积分数、孔隙含量、层数、固化温度和密度；作者称这些特征按既有复合理论已涵盖抗拉强度的主要决定因素，使模型能够解释“几乎全部相关方差”。[5]\n3. **模型结构**：ANN 与 stacking 集成能够捕捉更简单的模型可能遗漏的复杂非线性交互。[5]",
+        "citation_refs": [
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B020"
+      },
+      {
+        "id": "C4",
+        "text": "作者还指出，由于 [45–47] 使用的是含真实测量噪声与材料变异性的实验数据，**直接比较 R² 的绝对值意义不大**，并建议后续在实验数据集上验证真实泛化能力。[5] 上述内容属于作者对差异来源的解释，作者并未用实验验证这一因果关系。",
+        "citation_refs": [
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B020"
+      },
+      {
+        "id": "C5",
+        "text": "**二、作者列出的局限（3.3 节，第 13–14 页）**[3]",
+        "citation_refs": [
+          "[3]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B021"
+      },
+      {
+        "id": "C6",
+        "text": "- 模型只以成分与工艺参数为输入，**遗漏了微观结构描述量**（纤维取向分布、界面结合特征、空洞形貌），而这些量通常对拉伸性能影响显著；\n- **未考虑环境因素**（湿度、服役温度、加载速率），限制了模型在不同服役条件下的适用性；\n- 只给出**确定性点预测、无不确定性量化**，这削弱了模型在风险敏感工程应用中的可解释性与可靠性；\n- 作者提出，未来工作应当“先用实验数据集验证该框架，并将预测值与实测力学性能比较”，并引入基于图像的特征提取、贝叶斯神经网络或高斯过程回归以给出预测区间。[3]",
+        "citation_refs": [
+          "[3]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B021"
+      },
+      {
+        "id": "C7",
+        "text": "**三、需注意的限定**\n\n- 0.9975 是**测试集**（2,000 个样本）上的结果，Stacking (LR) 与 ANN (MLP) 并列最高；但该测试集来自同一合成数据分布，不能等同于模型在跨分布或外推到真实材料时的表现。[2][4]\n- 交叉验证 R² 均值约为 0.9973、标准差约为 0.0002 [4]，这只能说明模型对**同一合成生成过程**高度稳定，并不改变数据来源这一根本限制。\n- 作者未报告任何实验验证结果 [3][5]；因此本文结果属于“合成数据上的演示以及尚待实验验证的框架”，而非已验证的工程预测精度。",
+        "citation_refs": [
+          "[2]",
+          "[4]",
+          "[3]",
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C1",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C2",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C5",
+        "ref": "[3]",
+        "score": 1
+      },
+      {
+        "claim_id": "C6",
+        "ref": "[3]",
+        "score": 1
+      },
+      {
+        "claim_id": "C7",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C7",
+        "ref": "[4]",
+        "score": 1
+      },
+      {
+        "claim_id": "C7",
+        "ref": "[3]",
+        "score": 1
+      },
+      {
+        "claim_id": "C7",
+        "ref": "[5]",
+        "score": 1
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C5",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C6",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C7",
+        "coverage": "complete"
+      }
+    ],
+    "answerability_score": 2,
+    "reference_concern": false,
+    "decisions": {
+      "boundary": "appropriate",
+      "reference_check": "sound",
+      "point_K1": "complete",
+      "point_K2": "complete",
+      "point_K3": "complete",
+      "point_K4": "complete",
+      "kind_C1": "fact",
+      "support_C1": "supported",
+      "basis_C1": "B020",
+      "group_C1": "complete",
+      "citation_C1_1": "supported",
+      "kind_C2": "fact",
+      "support_C2": "supported",
+      "basis_C2": "B018",
+      "group_C2": "complete",
+      "citation_C2_1": "supported",
+      "kind_C3": "fact",
+      "support_C3": "supported",
+      "basis_C3": "B020",
+      "group_C3": "complete",
+      "citation_C3_1": "supported",
+      "kind_C4": "fact",
+      "support_C4": "supported",
+      "basis_C4": "B020",
+      "group_C4": "complete",
+      "citation_C4_1": "supported",
+      "kind_C5": "fact",
+      "support_C5": "supported",
+      "basis_C5": "B021",
+      "group_C5": "complete",
+      "citation_C5_1": "supported",
+      "kind_C6": "fact",
+      "support_C6": "supported",
+      "basis_C6": "B021",
+      "group_C6": "complete",
+      "citation_C6_1": "supported",
+      "kind_C7": "fact",
+      "support_C7": "supported",
+      "basis_C7": "NONE",
+      "group_C7": "complete",
+      "citation_C7_1": "supported",
+      "citation_C7_2": "supported",
+      "citation_C7_3": "supported",
+      "citation_C7_4": "supported"
+    }
+  },
+  "calibrated": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": 1
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "**不能据此承诺真实材料预测同样准确。** 作者本人把 R²≈0.9975 界定为“理想化合成条件下可达到的理论上限”，而不是对真实材料预测精度的承诺。[5]",
+        "citation_refs": [
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B020"
+      },
+      {
+        "id": "C2",
+        "text": "**一、作者对高分原因的解释（3.2.7 节，第 12–13 页）**\n\n与文献 [45–47] 中 R² 约 0.82–0.94 的实验数据研究相比，作者把高分的来源归结为三点：[5]",
+        "citation_refs": [
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B018"
+      },
+      {
+        "id": "C3",
+        "text": "1. **数据来源不同（最关键）**：被比较的研究使用实验数据，这些数据“自然包含测量不确定性和批次间波动”；本研究的数据则依据复合材料力学原理，通过参数化关系合成生成，因此信噪比更清晰，预测精度也更高。[5]\n2. **特征覆盖充分**：输入特征包括纤维类型、树脂类型、纤维体积分数、孔隙含量、层数、固化温度和密度；作者称这些特征按既有复合理论已涵盖抗拉强度的主要决定因素，使模型能够解释“几乎全部相关方差”。[5]\n3. **模型结构**：ANN 与 stacking 集成能够捕捉更简单的模型可能遗漏的复杂非线性交互。[5]",
+        "citation_refs": [
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "B020"
+      },
+      {
+        "id": "C4",
+        "text": "作者还指出，由于 [45–47] 使用的是含真实测量噪声与材料变异性的实验数据，**直接比较 R² 的绝对值意义不大**，并建议后续在实验数据集上验证真实泛化能力。[5] 上述内容属于作者对差异来源的解释，作者并未用实验验证这一因果关系。",
+        "citation_refs": [
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B020"
+      },
+      {
+        "id": "C5",
+        "text": "**二、作者列出的局限（3.3 节，第 13–14 页）**[3]",
+        "citation_refs": [
+          "[3]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B021"
+      },
+      {
+        "id": "C6",
+        "text": "- 模型只以成分与工艺参数为输入，**遗漏了微观结构描述量**（纤维取向分布、界面结合特征、空洞形貌），而这些量通常对拉伸性能影响显著；\n- **未考虑环境因素**（湿度、服役温度、加载速率），限制了模型在不同服役条件下的适用性；\n- 只给出**确定性点预测、无不确定性量化**，这削弱了模型在风险敏感工程应用中的可解释性与可靠性；\n- 作者提出，未来工作应当“先用实验数据集验证该框架，并将预测值与实测力学性能比较”，并引入基于图像的特征提取、贝叶斯神经网络或高斯过程回归以给出预测区间。[3]",
+        "citation_refs": [
+          "[3]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B021"
+      },
+      {
+        "id": "C7",
+        "text": "**三、需注意的限定**\n\n- 0.9975 是**测试集**（2,000 个样本）上的结果，Stacking (LR) 与 ANN (MLP) 并列最高；但该测试集来自同一合成数据分布，不能等同于模型在跨分布或外推到真实材料时的表现。[2][4]\n- 交叉验证 R² 均值约为 0.9973、标准差约为 0.0002 [4]，这只能说明模型对**同一合成生成过程**高度稳定，并不改变数据来源这一根本限制。\n- 作者未报告任何实验验证结果 [3][5]；因此本文结果属于“合成数据上的演示以及尚待实验验证的框架”，而非已验证的工程预测精度。",
+        "citation_refs": [
+          "[2]",
+          "[4]",
+          "[3]",
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C1",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C2",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C5",
+        "ref": "[3]",
+        "score": 1
+      },
+      {
+        "claim_id": "C6",
+        "ref": "[3]",
+        "score": 1
+      },
+      {
+        "claim_id": "C7",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C7",
+        "ref": "[4]",
+        "score": 1
+      },
+      {
+        "claim_id": "C7",
+        "ref": "[3]",
+        "score": 1
+      },
+      {
+        "claim_id": "C7",
+        "ref": "[5]",
+        "score": 1
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C5",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C6",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C7",
+        "coverage": "complete"
+      }
+    ],
+    "answerability_score": 2,
+    "reference_concern": false,
+    "decisions": {
+      "boundary": "appropriate",
+      "reference_check": "sound",
+      "point_K1": "complete",
+      "point_K2": "complete",
+      "point_K3": "complete",
+      "point_K4": "complete",
+      "kind_C1": "fact",
+      "support_C1": "supported",
+      "basis_C1": "B020",
+      "group_C1": "complete",
+      "citation_C1_1": "supported",
+      "kind_C2": "fact",
+      "support_C2": "supported",
+      "basis_C2": "B018",
+      "group_C2": "complete",
+      "citation_C2_1": "supported",
+      "kind_C3": "fact",
+      "support_C3": "supported",
+      "basis_C3": "B020",
+      "group_C3": "complete",
+      "citation_C3_1": "supported",
+      "kind_C4": "fact",
+      "support_C4": "supported",
+      "basis_C4": "B020",
+      "group_C4": "complete",
+      "citation_C4_1": "supported",
+      "kind_C5": "fact",
+      "support_C5": "supported",
+      "basis_C5": "B021",
+      "group_C5": "complete",
+      "citation_C5_1": "supported",
+      "kind_C6": "fact",
+      "support_C6": "supported",
+      "basis_C6": "B021",
+      "group_C6": "complete",
+      "citation_C6_1": "supported",
+      "kind_C7": "fact",
+      "support_C7": "supported",
+      "basis_C7": "NONE",
+      "group_C7": "complete",
+      "citation_C7_1": "supported",
+      "citation_C7_2": "supported",
+      "citation_C7_3": "supported",
+      "citation_C7_4": "supported"
+    }
+  },
+  "changes": [
+    {
+      "target": "C3 fact support and citation group",
+      "reason": "原文First/Second/Third列举三个因素，没有明确证明数据来源最关键；删除最关键即可避免该无依据排名。"
+    }
+  ],
+  "model": "deepseek-flash",
+  "budget": {
+    "max_model_calls": 6,
+    "max_tool_calls": 8,
+    "max_search_calls": 2,
+    "total_seconds": 240.0,
+    "reserve_seconds": 45,
+    "max_output_tokens": 8192,
+    "max_context_chars": 160000
+  },
+  "tools": [
+    {
+      "query": "Ayaliew 2026 R2 0.9975 machine learning prediction material properties limitations",
+      "reason": "需要定位 Ayaliew 等（2026）论文，并找到其中关于高 R²=0.9975 的来源解释与模型局限性的讨论。",
+      "tool": "search_literature"
+    }
+  ],
+  "evidence_map": [
+    {
+      "ref": "[1]",
+      "filename": "04_2026_复合材料拉伸强度预测_Ayaliew.pdf",
+      "page_start": 1,
+      "page_end": 3
+    },
+    {
+      "ref": "[2]",
+      "filename": "04_2026_复合材料拉伸强度预测_Ayaliew.pdf",
+      "page_start": 12,
+      "page_end": 12
+    },
+    {
+      "ref": "[3]",
+      "filename": "04_2026_复合材料拉伸强度预测_Ayaliew.pdf",
+      "page_start": 13,
+      "page_end": 14
+    },
+    {
+      "ref": "[4]",
+      "filename": "04_2026_复合材料拉伸强度预测_Ayaliew.pdf",
+      "page_start": 9,
+      "page_end": 10
+    },
+    {
+      "ref": "[5]",
+      "filename": "04_2026_复合材料拉伸强度预测_Ayaliew.pdf",
+      "page_start": 12,
+      "page_end": 13
+    }
+  ]
+}
