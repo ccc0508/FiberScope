@@ -40,8 +40,8 @@
       &quot;denominator&quot;: 124
     },
     &quot;citation_precision&quot;: {
-      &quot;percent&quot;: 80.24691358024691,
-      &quot;numerator&quot;: 195,
+      &quot;percent&quot;: 80.65843621399176,
+      &quot;numerator&quot;: 196,
       &quot;denominator&quot;: 243
     },
     &quot;citation_coverage&quot;: {
@@ -62,8 +62,8 @@
         &quot;denominator&quot;: 73
       },
       &quot;citation_precision&quot;: {
-        &quot;percent&quot;: 72.97297297297297,
-        &quot;numerator&quot;: 108,
+        &quot;percent&quot;: 73.64864864864865,
+        &quot;numerator&quot;: 109,
         &quot;denominator&quot;: 148
       },
       &quot;citation_coverage&quot;: {
@@ -3247,7 +3247,7 @@ Morais与Curto（2022，PDF第4页，3.2节）在ANN方法部分统一说明：�
       &quot;citation_C7_6&quot;: &quot;unsupported&quot;
     }
   }
-}</pre></details></article><article><h2>FS8-009 · Uddin等（2024）的纤维质量预测研究用了多少个观测，训练/验证比例是多少？输入有哪些，输出是哪三项纸张指标？</h2><p><b>Jev：</b>100.00 / 100.00 / 83.33 / 75.00 / 2 / 未通过<br><b>校准：</b>100.00 / 100.00 / 83.33 / 75.00 / 2 / 未通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>21观测、81/19、七输入三输出齐全。17/4明确为比例换算，未冒充原文。额外材料与R²说明保留来源覆盖不足的Jev结果。</p><ul><li>维持Jev评分，理由见下。</li></ul><p>状态：completed · 复核：completed · 工具：search_literature · 22.3秒</p><details><summary>完整回答</summary><pre>Uddin等（2024）的研究情况如下：
+}</pre></details></article><article><h2>FS8-009 · Uddin等（2024）的纤维质量预测研究用了多少个观测，训练/验证比例是多少？输入有哪些，输出是哪三项纸张指标？</h2><p><b>Jev：</b>100.00 / 100.00 / 83.33 / 75.00 / 2 / 未通过<br><b>校准：</b>100.00 / 100.00 / 100.00 / 75.00 / 2 / 未通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>21观测、81/19、七输入三输出齐全，17/4明确为换算。摘要[4]直接支持额外R²子事实，修正该单引有效性为1；整组材料、分组比较和明细缺失说明的完整覆盖仍保留partial，未因单引有效就推定整组全部覆盖。</p><ul><li>citation_assessments.C4.[4].score → 1：2026-11-06复查实际返回摘要[4]，明确含MLR调整R²=.85/.97/.91及ANN R²&gt;.95，直接支持C4对应子事实。按单引实质支持口径不应扣0分。</li></ul><p>状态：completed · 复核：completed · 工具：search_literature · 22.3秒</p><details><summary>完整回答</summary><pre>Uddin等（2024）的研究情况如下：
 
 **观测数与划分**
 - 共 **21 个观测**；数据集分为两组：**81% 作为训练数据，19% 用于模型验证**（摘要，第1页）[4]。
@@ -3474,7 +3474,7 @@ Morais与Curto（2022，PDF第4页，3.2节）在ANN方法部分统一说明：�
       {
         &quot;claim_id&quot;: &quot;C4&quot;,
         &quot;ref&quot;: &quot;[4]&quot;,
-        &quot;score&quot;: 0
+        &quot;score&quot;: 1
       }
     ],
     &quot;citation_group_assessments&quot;: [

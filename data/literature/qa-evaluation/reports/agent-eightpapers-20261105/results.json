@@ -3956,7 +3956,7 @@
         {
           "claim_id": "C4",
           "ref": "[4]",
-          "score": 0
+          "score": 1
         }
       ],
       "citation_group_assessments": [
@@ -4037,12 +4037,12 @@
         "fact_count": 4,
         "supported_facts": 4,
         "pair_count": 6,
-        "supported_pairs": 5,
+        "supported_pairs": 6,
         "group_count": 4,
         "covered_groups": 3,
         "boundary": 2,
         "fact_support": 100.0,
-        "citation_precision": 83.33333333333333,
+        "citation_precision": 100.0,
         "citation_coverage": 75.0,
         "strict_pass": false,
         "format_ok": true
@@ -4052,8 +4052,14 @@
       ],
       "routing_ok": true,
       "elapsed_ms": 22320,
-      "changes": [],
-      "reason": "21观测、81/19、七输入三输出齐全。17/4明确为比例换算，未冒充原文。额外材料与R²说明保留来源覆盖不足的Jev结果。"
+      "changes": [
+        {
+          "path": "citation_assessments.C4.[4].score",
+          "value": 1,
+          "reason": "2026-11-06复查实际返回摘要[4]，明确含MLR调整R²=.85/.97/.91及ANN R²>.95，直接支持C4对应子事实。按单引实质支持口径不应扣0分。"
+        }
+      ],
+      "reason": "21观测、81/19、七输入三输出齐全，17/4明确为换算。摘要[4]直接支持额外R²子事实，修正该单引有效性为1；整组材料、分组比较和明细缺失说明的完整覆盖仍保留partial，未因单引有效就推定整组全部覆盖。"
     },
     "result_sha256": "cd8583ba243b9a191bcc35b5078a7bff1a0ccc2f66220d4878630dd9fb582fc5",
     "judge_input_sha256": "072a521c531a0e8315809cbe0c841755c50ad1cfc7d9de954d607ee6458199de"
