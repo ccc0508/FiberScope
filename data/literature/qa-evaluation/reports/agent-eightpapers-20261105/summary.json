@@ -40,8 +40,8 @@
       "denominator": 124
     },
     "citation_precision": {
-      "percent": 80.24691358024691,
-      "numerator": 195,
+      "percent": 80.65843621399176,
+      "numerator": 196,
       "denominator": 243
     },
     "citation_coverage": {
@@ -62,8 +62,8 @@
         "denominator": 73
       },
       "citation_precision": {
-        "percent": 72.97297297297297,
-        "numerator": 108,
+        "percent": 73.64864864864865,
+        "numerator": 109,
         "denominator": 148
       },
       "citation_coverage": {
