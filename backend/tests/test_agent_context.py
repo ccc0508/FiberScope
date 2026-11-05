@@ -23,7 +23,7 @@ def test_exact_overlap_keeps_ref_provenance_and_reconstructs_all_text():
     raw=payload('[1]',a+b);original=deepcopy(raw)
     first=projector.project(raw)['result']['evidence'][0]
     assert raw==original and 'source_chunks' not in first and 'source_locators' not in first
-    assert first['locator']['section_id']=='s' and first['visual_assets'][0]['id']=='img'
+    assert first['locator']['section_id']=='s' and first['visual_assets'][0]['asset_id']=='img'
     assert 'image_path' not in first['visual_assets'][0]
     assert restore(first,cache)==a+b
     second=projector.project(payload('[2]',b+c))['result']['evidence'][0]

@@ -44,6 +44,14 @@ class ViewImage(Request):
     asset_id: str = Field(min_length=1, max_length=200)
 
 
+class FindFigure(Request):
+    """Locate a figure by paper and number; returns handles, not viewed pixels."""
+    tool: Literal['find_figure']
+    document_id: str = Field(min_length=1, max_length=200)
+    figure_number: str = Field(pattern=r'^[1-9]\d*(?:[.-]\d+)*$')
+    offset: int = Field(default=0, ge=0)
+
+
 class Calculate(Request):
     tool: Literal['calculate_change']
     initial: str = Field(pattern=r'^-?\d{1,15}(\.\d{1,15})?$')
@@ -52,9 +60,9 @@ class Calculate(Request):
     source_call_ids: list[str] = Field(min_length=1, max_length=20)
 
 
-INPUT = TypeAdapter(Annotated[Search | ReadSection | ReadTable | ViewImage | Calculate, Field(discriminator='tool')])
+INPUT = TypeAdapter(Annotated[Search | ReadSection | ReadTable | ViewImage | FindFigure | Calculate, Field(discriminator='tool')])
 SCHEMAS = {c.model_fields['tool'].annotation.__args__[0]: c.model_json_schema()
-           for c in (Search, ReadSection, ReadTable, ViewImage, Calculate)}
+           for c in (Search, ReadSection, ReadTable, ViewImage, FindFigure, Calculate)}
 
 
 def encode(x):
@@ -172,6 +180,18 @@ class LiteratureTools:
         return output
 
     def execute(self, p):
+        if isinstance(p, FindFigure):
+            from .visual_evidence import locate_figures
+            catalog = self.retriever.visual_catalog
+            exact, uncertain = locate_figures(getattr(catalog, 'assets', []), p.document_id, p.figure_number)
+            rows = [(a, 'exact_label') for a in exact] + [(a, 'unconfirmed_number') for a in uncertain]
+            end = min(p.offset + 20, len(rows))
+            return dict(document_id=p.document_id, figure_number=p.figure_number,
+                status='matched' if exact else 'no_exact_label',
+                assets=[dict(asset_id=a.id, document_id=a.document_id, label=a.label,
+                    page=a.page, kind=a.kind, match_status=status) for a,status in rows[p.offset:end]],
+                next_offset=end if end < len(rows) else None,
+                notice='Handles only, not viewed pixels. Unconfirmed candidates may be unrelated; inspect with view_image. Never infer a missing figure number from ordering.'), None
         if isinstance(p, Calculate):
             from decimal import Decimal, localcontext
             with localcontext() as ctx:

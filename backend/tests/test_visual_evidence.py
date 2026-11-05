@@ -88,3 +88,23 @@ def test_changed_original_image_fails_before_any_model_call(tmp_path):
     generator=DeepSeekGenerator('deepseek-flash','PRIVATE',visual_root=tmp_path,
         client=NS(chat=NS(completions=NS(create=lambda **_:pytest.fail('must not send changed image')))))
     with pytest.raises(InfrastructureError):generator.generate('Question',es)
+
+
+def test_body_figure_reference_attaches_without_caption_hit(tmp_path):
+    cat, es, assets = fixture(tmp_path)
+    body = replace(es[0], chunk_id='body', text='Results are shown in Fig. 9.', source_chunks=())
+    result, info = cat.attach([body], [body], 'Explain results')
+    assert [a.id for a in result[0].visual_assets] == ['img9']
+    other = replace(body, document_id='other')
+    assert not cat.attach([other], [other], 'Figure 9')[0][0].visual_assets
+    assert not cat.attach([body], [body], 'results', max_images=0)[0][0].visual_assets
+
+
+def test_figure_lookup_does_not_guess_missing_number(tmp_path):
+    from literature_rag.application.visual_evidence import locate_figures
+    cat, _, assets = fixture(tmp_path)
+    unnumbered = replace(assets[0], id='sub', label='(a) tensile strength')
+    exact, uncertain = locate_figures([*assets, unnumbered], 'doc', '9')
+    assert [a.id for a in exact] == ['img9']
+    assert [a.id for a in uncertain] == ['sub']
+    assert locate_figures(assets, 'other', '9') == ([], [])
