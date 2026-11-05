@@ -1,0 +1,61 @@
+{
+  "case_id": "FS8-004",
+  "run_id": "agent-figure-discovery-case4-20261106",
+  "status": "completed",
+  "review_status": "completed",
+  "model": "deepseek-flash",
+  "budget": {
+    "max_model_calls": 6,
+    "max_tool_calls": 8,
+    "max_search_calls": 2,
+    "total_seconds": 240.0,
+    "reserve_seconds": 45,
+    "max_output_tokens": 8192,
+    "max_context_chars": 160000
+  },
+  "tool_calls": [
+    {
+      "request": {
+        "reason": "定位《纸张三维结构的CLSM表征及纸张特性研究》(2020)这篇论文，以便查看其图3关于棉浆配比对蔗渣浆纸张抗张与耐破强度的影响",
+        "query": "纸张三维结构的CLSM表征及纸张特性研究 棉浆 蔗渣浆 抗张 耐破",
+        "tool": "search_literature"
+      },
+      "status": "completed"
+    },
+    {
+      "request": {
+        "reason": "需要查看图3的像素以判断棉浆配比增加时蔗渣浆纸张抗张与耐破指数的走势，并与马尾松浆对比",
+        "document_id": "doc_fc10c27084432887",
+        "figure_number": "3",
+        "tool": "find_figure"
+      },
+      "status": "completed"
+    },
+    {
+      "request": {
+        "reason": "需确认图3(a)抗张强度随配抄比例的变化：棉浆曲线是否为先升后降，马尾松浆曲线走势如何",
+        "document_id": "doc_fc10c27084432887",
+        "asset_id": "img_c28013b94774cd7e2957",
+        "tool": "view_image"
+      },
+      "status": "completed"
+    },
+    {
+      "request": {
+        "asset_id": "img_d3d031d211114f24044d",
+        "document_id": "doc_fc10c27084432887",
+        "reason": "需确认图3(c)耐破度随配抄比例的变化：棉浆是否先升后降，马尾松浆是否单调上升",
+        "tool": "view_image"
+      },
+      "status": "completed"
+    }
+  ],
+  "calibration": {
+    "core_trends": "Cotton tensile and burst rise then fall; pine both rise in plotted range. Answer covers these.",
+    "errors": [
+      "Cotton tensile peak is near 40%, not 20%.",
+      "Cotton burst at 50% (~1.5) remains above 0% (~1.2), not below."
+    ],
+    "scope": "Manual image check, not a new Jev evaluation; previous 30-case results unchanged"
+  }
+}
