@@ -42,7 +42,8 @@ class EvidenceProjection:
 
     @staticmethod
     def asset(a):
-        return {k: a[k] for k in ('id','document_id','parent_chunk_id','label','page','kind') if k in a}
+        return dict(asset_id=a.get('asset_id', a.get('id')),
+            **{k: a[k] for k in ('document_id','parent_chunk_id','label','page','kind','match_status') if k in a})
 
     def project(self, result):
         output = {k: deepcopy(v) for k,v in result.items() if k not in ('result','image')}
