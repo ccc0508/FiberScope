@@ -46,7 +46,7 @@ def main():
         print(json.dumps(dict(run_id=run_id,state_file=str(state_path)),ensure_ascii=False));return
     settings=Settings(_env_file=ROOT/'backend/.env.literature')
     def checkpoint(state):
-        payload=dict(state,budget=asdict(b),model=settings.llm_model,mode='native-tools-agent-v1',
+        payload=dict(state,budget=asdict(b),model=settings.llm_model,mode='native-tools-agent-v2',
             review_policy='one full-answer review, no content gate; not legacy structured corrective review')
         tmp=state_path.with_suffix('.tmp');tmp.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding='utf-8');tmp.replace(state_path)
     def execute(request,rid,timeout):
