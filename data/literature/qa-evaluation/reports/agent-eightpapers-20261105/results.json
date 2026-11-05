@@ -10975,7 +10975,7 @@
     "calibrated": {
       "key_point_scores": {
         "K1": 1,
-        "K2": 0.5
+        "K2": 1
       },
       "claim_assessments": [
         {
@@ -11024,7 +11024,7 @@
         "format_ok": true
       },
       "final": {
-        "point_score": 75.0,
+        "point_score": 100,
         "point_count": 2,
         "fact_count": 0,
         "supported_facts": 0,
@@ -11036,20 +11036,14 @@
         "fact_support": null,
         "citation_precision": null,
         "citation_coverage": null,
-        "strict_pass": false,
+        "strict_pass": true,
         "format_ok": true
       },
       "tools": [],
       "routing_ok": true,
       "elapsed_ms": 8316,
-      "changes": [
-        {
-          "path": "key_point_scores.K2",
-          "value": 0.5,
-          "reason": "简短但并非一句，且有多余论文话题。"
-        }
-      ],
-      "reason": "没有调用论文工具，问候适当；但用户只要一句，实际三句并额外引入查论文话题，Jev遗漏了格式/简洁要求。"
+      "changes": [],
+      "reason": "按用户确认的评分口径：核心任务完成且补充无害，不因超出一句或附加简短说明扣分。保留Jev满分。"
     },
     "result_sha256": "cb78d2cc66bc81d4e7a1e4928fb59e3cf12b65d827793703dd217618f17706e9",
     "judge_input_sha256": "996b8b4f23b223c68215f8f9482d757f7a1e7dc83390c0904801dea114276f48"
@@ -11126,7 +11120,7 @@
       "key_point_scores": {
         "K1": 1,
         "K2": 1,
-        "K3": 0.5,
+        "K3": 1,
         "K4": 1
       },
       "claim_assessments": [
@@ -11189,7 +11183,7 @@
         "format_ok": true
       },
       "final": {
-        "point_score": 87.5,
+        "point_score": 100,
         "point_count": 4,
         "fact_count": 0,
         "supported_facts": 0,
@@ -11201,20 +11195,14 @@
         "fact_support": null,
         "citation_precision": null,
         "citation_coverage": null,
-        "strict_pass": false,
+        "strict_pass": true,
         "format_ok": true
       },
       "tools": [],
       "routing_ok": true,
       "elapsed_ms": 8951,
-      "changes": [
-        {
-          "path": "key_point_scores.K3",
-          "value": 0.5,
-          "reason": "改写句本身可用，但完整输出不止一句。"
-        }
-      ],
-      "reason": "改写保留原意且未编造验证结果，但用户要求一句正式表述，回答额外附了一段说明；Jev遗漏输出要求。"
+      "changes": [],
+      "reason": "按用户确认的评分口径：核心任务完成且补充无害，不因超出一句或附加简短说明扣分。保留Jev满分。"
     },
     "result_sha256": "8ced9475edc09ac3a7c080746909e2dd5074166c371147d06c5c3f0873f6b2e1",
     "judge_input_sha256": "24a572c18af4ee728759e4202e79b0ced3ab4f7d802a0791e51f8965106aac94"
