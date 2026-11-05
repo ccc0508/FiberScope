@@ -226,7 +226,7 @@
       "citation_group_assessments": [
         {
           "claim_id": "C1",
-          "coverage": "partial"
+          "coverage": "complete"
         },
         {
           "claim_id": "C2",
@@ -296,12 +296,12 @@
         "pair_count": 6,
         "supported_pairs": 6,
         "group_count": 3,
-        "covered_groups": 2,
+        "covered_groups": 3,
         "boundary": 2,
         "fact_support": 100.0,
         "citation_precision": 100.0,
-        "citation_coverage": 66.66666666666667,
-        "strict_pass": false,
+        "citation_coverage": 100.0,
+        "strict_pass": true,
         "format_ok": true
       },
       "tools": [
@@ -309,8 +309,14 @@
       ],
       "routing_ok": true,
       "elapsed_ms": 26710,
-      "changes": [],
-      "reason": "70/30与三类预测结论答全。C1扩大到未报告随机种子/交叉验证等额外范围，所附局部来源不全，保留引用覆盖partial。"
+      "changes": [
+        {
+          "path": "citation_group_assessments.C1.coverage",
+          "value": "complete",
+          "reason": "用户确认的宽容范围口径；所附引用支持核心事实，接受局部信息不足说明。"
+        }
+      ],
+      "reason": "用户确认第1题无实质问题，应给满分；接受回答末尾“从所给证据确定”的局部范围限定，不再因前面的原文未报告措辞扣引用完整覆盖。"
     },
     "result_sha256": "8df9b496a649ce59f46195baa31981b42809858e090ba179d6c4b911571d9fb5",
     "judge_input_sha256": "ddcc7552ef5bd767d3e4cb7f01aa7f633b46f1ae2aae9d20cafcf281aabdae9e"

@@ -32,7 +32,7 @@
   "calibrated": {
     "count": 30,
     "point_score": 92.5,
-    "strict_pass_count": 6,
+    "strict_pass_count": 7,
     "boundary_mean": 1.8,
     "fact_support": {
       "percent": 68.54838709677419,
@@ -45,8 +45,8 @@
       "denominator": 243
     },
     "citation_coverage": {
-      "percent": 43.10344827586207,
-      "numerator": 50,
+      "percent": 43.96551724137931,
+      "numerator": 51,
       "denominator": 116
     }
   },
@@ -54,7 +54,7 @@
     "single": {
       "count": 16,
       "point_score": 95.3125,
-      "strict_pass_count": 0,
+      "strict_pass_count": 1,
       "boundary_mean": 1.8125,
       "fact_support": {
         "percent": 69.86301369863014,
@@ -67,8 +67,8 @@
         "denominator": 148
       },
       "citation_coverage": {
-        "percent": 47.945205479452056,
-        "numerator": 35,
+        "percent": 49.31506849315068,
+        "numerator": 36,
         "denominator": 73
       }
     },
