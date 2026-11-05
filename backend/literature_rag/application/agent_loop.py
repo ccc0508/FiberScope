@@ -20,6 +20,29 @@ conditions and uncertainties are supported. If sufficient, answer now. Otherwise
 remaining gap in the next tool's reason. Do not search merely for extra background.
 Tool evidence may reuse exact text parts via T IDs; cite only the corresponding [n] evidence refs.'''
 
+PROMPT += '''\nAnswer the question first, then only the evidence, conditions, limitations and uncertainty needed
+to interpret that answer. Do not summarize the whole paper or add unrelated numerical/mechanistic background.
+Keep necessary qualifications even in short answers. Cite each factual statement with sources that cover its
+material, conditions and result. Split compound claims when their evidence differs. Multiple refs may jointly
+support a statement. If a requested fact is unavailable, say so; do not fill the gap with speculative detail.'''
+
+REVIEW_VERSION='focused-evidence-review-v1'
+REVIEW_PROMPT='''Review the draft against the user's question and the actual supplied evidence and images.
+First preserve the direct answer, required facts, relevant experimental conditions, limitations and uncertainty.
+Then check every retained factual claim, especially optional additions. Remove tangential background rather
+than expanding the paper summary. Do not remove a supported answer merely to shorten it or turn it into a refusal.
+Check numerical material/condition/unit mappings; endpoints versus monotonic trends; correlation versus cause;
+possible author explanations versus proven causes; contribution rankings and exclusions; and reported sample
+size versus number of treatment levels. A result not decreasing does not prove it did not increase or had no role.
+Do not extrapolate mechanisms to a material or transformation the evidence did not study. Adding 'possibly'
+does not make an unsupported claim supported. Correct errors supported by evidence, delete unsupported optional
+claims, and explicitly state inability to determine unsupported facts needed to answer the question.
+For each retained factual claim, ensure attached run-local citations jointly cover its facts and conditions.
+Add a missing citation only if that supplied source actually supports the claim. Split compound statements as
+needed, update refs after edits, and remove irrelevant refs. Do not invent sources or cite a relevant topic as
+proof of a different assertion. Preserve supported conclusions and the original degree of uncertainty.
+Return only the complete corrected Chinese answer, not a review log. No tools or new evidence.'''
+
 
 def trace_messages(messages):
     snapshot=json.loads(json.dumps(messages))
@@ -59,7 +82,7 @@ class AgentLoop:
     def run(self,question,run_id):
         b=self.budget;deadline=self.clock()+b.total_seconds
         state=dict(run_id=run_id,question=question,status='running',model_calls=[],tool_calls=[],
-            answer='',draft='',stop_reason=None,review_status='not_started')
+            answer='',draft='',stop_reason=None,review_status='not_started',review_version=REVIEW_VERSION)
         messages=[dict(role='system',content=PROMPT+f'\nYou may execute search_literature at most {b.max_search_calls} times per question, including failed searches. After that use acquired evidence or other available reading/calculation tools; state unresolved gaps.'),dict(role='user',content=question)]
         seen=set();tool_count=0;search_count=0
         state['search_calls']=0
@@ -167,7 +190,7 @@ class AgentLoop:
                 if d.calls or not d.text.strip():raise ValueError('Invalid draft')
             state['answer']=state['draft'];save()
             if len(state['model_calls'])<b.max_model_calls and deadline-self.clock()>2:
-                review=dict(role='user',content='Review this draft against the actual supplied evidence and images. Correct wrong values, missing conditions, unjustified causal/ranking claims and uncertainty. Preserve valid claims and source refs. Return only the complete corrected final answer; no tools. If a gap cannot be resolved, state it.')
+                review=dict(role='user',content=REVIEW_PROMPT)
                 if size(messages+[review])>b.max_context_chars:
                     state.update(review_status='skipped_context_budget',stop_reason='context_budget')
                 else:
