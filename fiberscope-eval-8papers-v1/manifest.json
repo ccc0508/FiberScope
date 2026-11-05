@@ -1,0 +1,22 @@
+{
+  "id": "FS8-v1",
+  "created": "2026-11-05",
+  "status": "authored_source_checked_not_evaluated",
+  "corpus_version": "paper-collection-20261105",
+  "counts": {
+    "single": 16,
+    "cross": 8,
+    "no_paper": 6
+  },
+  "files_sha256": {
+    "gold.jsonl": "3f43bd2952aee6d981890494ca865a658c7e6e5871b88861cf0f5b1751a98496",
+    "sources.json": "2589df958101bb807836aa4cb9d0584cf19317649ff5a943c87f3cd7ae4d963b",
+    "rubric.json": "b72750e7c0cb6a299d58ff15e2936d0887749f9603851dee7556d9a950794263",
+    "answer-instructions.md": "e7bdf588096bdb95ff47a9203883edb94b4fbb770fdee538f17708a63c1d7cf6",
+    "questions.jsonl": "2f6cb3513db48c34cab6565768a4e060c929e649b4596b316c489154c1735dd6"
+  },
+  "source_validation": "8 original PDF hashes and physical page counts verified",
+  "independent_expert_review": false,
+  "model_evaluation_run": false,
+  "file_hash_encoding": "UTF-8 with LF line endings"
+}
