@@ -37,6 +37,7 @@ def trace_messages(messages):
 class AgentBudget:
     max_model_calls: int=6
     max_tool_calls: int=8
+    max_search_calls: int=2
     total_seconds: float=240
     reserve_seconds: float=45
     max_output_tokens: int=8192
@@ -44,6 +45,7 @@ class AgentBudget:
 
     def __post_init__(self):
         if not (3<=self.max_model_calls<=12 and 1<=self.max_tool_calls<=20 and
+                1<=self.max_search_calls<=2 and
                 30<=self.total_seconds<=600 and 5<=self.reserve_seconds<self.total_seconds and
                 1024<=self.max_output_tokens<=65536 and 1000<=self.max_context_chars<=500000):
             raise ValueError('Invalid agent budget')
@@ -58,8 +60,10 @@ class AgentLoop:
         b=self.budget;deadline=self.clock()+b.total_seconds
         state=dict(run_id=run_id,question=question,status='running',model_calls=[],tool_calls=[],
             answer='',draft='',stop_reason=None,review_status='not_started')
-        messages=[dict(role='system',content=PROMPT),dict(role='user',content=question)]
-        seen=set();tool_count=0
+        messages=[dict(role='system',content=PROMPT+f'\nYou may execute search_literature at most {b.max_search_calls} times per question, including failed searches. After that use acquired evidence or other available reading/calculation tools; state unresolved gaps.'),dict(role='user',content=question)]
+        seen=set();tool_count=0;search_count=0
+        state['search_calls']=0
+        state['max_search_calls']=b.max_search_calls
         projection=EvidenceProjection()
         # Reserve space for a draft and review instruction; do not spend the
         # entire input budget on evidence. Review has a second explicit check.
@@ -101,7 +105,8 @@ class AgentLoop:
             while len(state['model_calls'])<b.max_model_calls-2 and tool_count<b.max_tool_calls and deadline-self.clock()>b.reserve_seconds:
                 if size(messages)>=stop_threshold:
                     state['stop_reason']='context_budget';break
-                d=model('decide',SCHEMAS);messages.append(d.message)
+                schemas={name:schema for name,schema in SCHEMAS.items() if name!='search_literature' or search_count<b.max_search_calls}
+                d=model('decide',schemas);messages.append(d.message)
                 if not d.calls:
                     if not d.text.strip():raise ValueError('Empty draft')
                     state['draft']=d.text;break
@@ -119,10 +124,16 @@ class AgentLoop:
                         state['stop_reason']='context_budget';stop_collection=True
                     elif tool_count>=b.max_tool_calls or deadline-self.clock()<=b.reserve_seconds:
                         result=dict(status='blocked',error_code='tool_budget');state['stop_reason']='tool_budget'
+                    elif c.name=='search_literature' and search_count>=b.max_search_calls:
+                        tool_count+=1
+                        result=dict(status='blocked',error_code='search_budget',notice='Search limit reached. Use previously acquired evidence or other available tools; state unresolved gaps.')
                     elif semantic in seen:
                         tool_count+=1;result=dict(status='blocked',error_code='duplicate_call')
                     else:
-                        tool_count+=1;seen.add(semantic);save()
+                        tool_count+=1;seen.add(semantic)
+                        if c.name=='search_literature':
+                            search_count+=1;state['search_calls']=search_count
+                        save()
                         result=self.executor(request,run_id,max(.01,deadline-self.clock()-b.reserve_seconds))
                     event.update(status=result['status'],result={k:v for k,v in result.items() if k!='image'});save()
                     trial=deepcopy(projection)
