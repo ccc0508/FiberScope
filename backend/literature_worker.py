@@ -31,6 +31,9 @@ def main():
     if not (root / 'chroma/chroma.sqlite3').is_file():
         raise FileNotFoundError('missing vector index')
     settings = Settings(_env_file=Path(__file__).resolve().parent / '.env.literature')
+    if 'tool_call' in body:
+        # The Agent already constructs its search query. Do not rewrite it again.
+        settings = settings.model_copy(update={'query_rewrite_enabled': False, 'query_rewrite_mode': 'dual'})
     if settings.embedding_provider not in ('openai', 'dashscope') or settings.llm_provider not in ('openai', 'deepseek'):
         raise ValueError('unsupported provider')
     if not all((settings.embedding_api_key, settings.embedding_model, settings.embedding_dimensions, settings.llm_api_key, settings.llm_model)):
@@ -116,7 +119,10 @@ def main():
     generation_calls = []
     generated_answers = []
     citation_validator = RecordingCitationValidator(attempt_number=lambda: len(generation_calls))
-    configuration = configuration_snapshot(Path(__file__).resolve().parent / '.env.literature')
+    configuration = configuration_snapshot(Path(__file__).resolve().parent / '.env.literature', settings=settings)
+    if 'tool_call' in body:
+        configuration['query_rewrite'] = dict(enabled=False, reason='agent_supplies_query')
+        configuration['tool_query_policy'] = 'agent_query_single_search_and_rerank_v1'
     configuration['documents'] = [
         {'document_id': doc.id, 'filename': doc.filename, 'file_hash': doc.file_hash}
         for doc in metadata.list_documents() if doc.status.value == 'completed'

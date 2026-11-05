@@ -59,6 +59,21 @@ def test_duplicate_sources_are_reranked_once_using_original_question():
     assert combined_usage(s.last_query_embedding_calls)['total_tokens'] == sum(map(len, s.embedder.calls))
 
 
+def test_agent_query_without_internal_rewriter_searches_and_reranks_once():
+    service, calls = make_service([('a', .8)], [('b', .9)], ProviderError('must not rewrite'))
+    service.query_rewriter = None
+    result = service.retrieve('  Agent search query  ', 8, .35)
+    assert service.embedder.calls == ['Agent search query']
+    assert len(calls) == 1 and calls[0][0] == 'Agent search query'
+    assert [e.chunk_id for e in result] == ['a']
+
+
+def test_snapshot_uses_effective_settings_without_reloading_env(tmp_path):
+    effective = Settings(_env_file=None, query_rewrite_enabled=False)
+    snapshot = configuration_snapshot(tmp_path/'nonexistent.env', settings=effective)
+    assert not snapshot.get('query_rewrite', {}).get('enabled', False)
+
+
 def test_rank_fusion_budget_and_threshold_do_not_double_candidate_count():
     s, calls = make_service([(f'c{i:02}', .7) for i in range(50)], [(f'c{i:02}', .8) for i in range(25, 75)])
     result = s.retrieve('Original question', 8, .35)

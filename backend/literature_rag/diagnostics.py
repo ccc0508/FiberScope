@@ -5,8 +5,8 @@ from pathlib import Path
 from .config import Settings
 
 
-def configuration_snapshot(env_file: Path):
-    settings = Settings(_env_file=env_file)
+def configuration_snapshot(env_file: Path, *, settings: Settings | None = None):
+    settings = settings if settings is not None else Settings(_env_file=env_file)
     root = Path(__file__).resolve().parent
     sources = ['application/prompts.py', 'application/citations.py', 'application/answer_question.py',
                'application/retrieve.py', 'adapters/providers/deepseek.py', 'adapters/providers/openai.py',
