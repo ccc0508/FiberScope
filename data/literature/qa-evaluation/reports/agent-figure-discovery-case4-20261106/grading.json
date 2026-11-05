@@ -1,0 +1,328 @@
+{
+  "jev": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": 1
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "**结论：不是一直上升。**《纸张三维结构的CLSM表征及纸张特性研究》(2020) 的图3 中，随着棉浆配比增加，蔗渣浆纸张的抗张指数和耐破指数都表现为先升后降；马尾松浆在图3 所示的 0%–50% 配比范围内则随配比单调上升，而且指标峰值明显更高。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "B008"
+      },
+      {
+        "id": "C2",
+        "text": "**图3 读到的走势（仅依据像素目视读图，只用于判断趋势，不是精确数据）**\n\n- 抗张指数，图3(a) [9]：横轴是配抄纤维比例 0%–50%，纵轴是抗张指数 (N·m·g⁻¹)。棉浆（三角）从 0% 处上升，约在 20% 达到图中最高位置；到 40% 时虽高于 20% 以下区间但已低于 20% 的峰值；到 50% 时回落到接近 0% 处的水平。马尾松浆（圆圈）从 0% 起持续上升，到 50% 时为整条曲线最高，且高于棉浆曲线。可见棉浆超过约 20% 后抗张指数转为下降，而马尾松浆仍在上升。\n- 耐破指数，图3(c) [10]：纵轴是耐破指数 (kPa·m²·g⁻¹)。棉浆同样在约 20% 附近最高，40% 时低于峰值，50% 时降至图中最低、约 1.5 kPa·m²·g⁻¹，低于 0% 的水平。马尾松浆在 0%–20% 与其他浆种一同上升，其后继续抬升，50% 时为图中最高位置。所以耐破指数也是“棉浆先升后降，马尾松浆持续上升”。",
+        "citation_refs": [
+          "[9]",
+          "[10]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C3",
+        "text": "**原文文字对趋势的表述及其性质**\n\n- 原文明确写道：“配抄棉浆会使蔗渣浆纸张抗张强度有一个先上升后下降的趋势”[7]。原文给出的解释是：棉纤维与马尾松形态相似，但自身结合性能较差，少量加入改善结合，配比增大后棉纤维自身特性成为主导，并据此“推论”纸张孔隙率先降后升、纤维间相对结合面积先升后降 [7]。该机制属于作者的推论性解释，并非实测证实的因果。\n- 原文正文称：在蔗渣浆中分别配抄马尾松浆、竹浆、桉木浆、棉浆时，耐破指数的最大提高幅度分别为 99.3%、77.6%、77.6%、47.3% [8]。摘要另称配抄马尾松浆后抗张指数、耐破指数、撕裂指数分别提高 56.8%、99.3%、108.1% [1]。这些是原文报出的数值；图3 为曲线图，各点仍应视为近似读数。",
+        "citation_refs": [
+          "[7]",
+          "[8]",
+          "[1]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B008"
+      },
+      {
+        "id": "C4",
+        "text": "**限制与不确定**\n\n- 上升、下降及峰值位置的判断来自对图3(a)(c) [9][10] 的目视读图：图中没有误差棒，也没有数据点数值标签，因此“约 20%”“约 1.5 kPa·m²·g⁻¹”等只能作近似，不能当作精确测量值引用。\n- 图3 的配抄比例只到 50%，故“马尾松浆一直上升”仅限图中 0%–50% 范围，不可外推到更高配比。\n- 检索未返回带确切“图3”题注的图块，仅返回标注为“图 配抄纤维对蔗渣浆抄造纸张性能的影响”的分图；我据 (a) 抗张强度、(c) 耐破度的轴标签、图例与单位和正文对图3(c) 的引用，判断其为图3 对应分图，但无法直接以题注核实图号。\n- 同一复合图中的透气度、撕裂度分图未用于本题结论，故未纳入。",
+        "citation_refs": [
+          "[9]",
+          "[10]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C2",
+        "ref": "[9]",
+        "score": 0
+      },
+      {
+        "claim_id": "C2",
+        "ref": "[10]",
+        "score": 0
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[7]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[8]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[9]",
+        "score": 0
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[10]",
+        "score": 0
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "missing"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "partial"
+      }
+    ],
+    "answerability_score": 2,
+    "reference_concern": false,
+    "decisions": {
+      "boundary": "appropriate",
+      "reference_check": "sound",
+      "point_K1": "complete",
+      "point_K2": "complete",
+      "point_K3": "complete",
+      "point_K4": "complete",
+      "kind_C1": "fact",
+      "support_C1": "partially_supported",
+      "basis_C1": "B008",
+      "group_C1": "missing",
+      "kind_C2": "fact",
+      "support_C2": "partially_supported",
+      "basis_C2": "NONE",
+      "group_C2": "partial",
+      "citation_C2_1": "unsupported",
+      "citation_C2_2": "unsupported",
+      "kind_C3": "fact",
+      "support_C3": "supported",
+      "basis_C3": "B008",
+      "group_C3": "complete",
+      "citation_C3_1": "supported",
+      "citation_C3_2": "supported",
+      "citation_C3_3": "supported",
+      "kind_C4": "fact",
+      "support_C4": "partially_supported",
+      "basis_C4": "NONE",
+      "group_C4": "partial",
+      "citation_C4_1": "unsupported",
+      "citation_C4_2": "unsupported"
+    }
+  },
+  "calibrated": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": 1
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "**结论：不是一直上升。**《纸张三维结构的CLSM表征及纸张特性研究》(2020) 的图3 中，随着棉浆配比增加，蔗渣浆纸张的抗张指数和耐破指数都表现为先升后降；马尾松浆在图3 所示的 0%–50% 配比范围内则随配比单调上升，而且指标峰值明显更高。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B008"
+      },
+      {
+        "id": "C2",
+        "text": "**图3 读到的走势（仅依据像素目视读图，只用于判断趋势，不是精确数据）**\n\n- 抗张指数，图3(a) [9]：横轴是配抄纤维比例 0%–50%，纵轴是抗张指数 (N·m·g⁻¹)。棉浆（三角）从 0% 处上升，约在 20% 达到图中最高位置；到 40% 时虽高于 20% 以下区间但已低于 20% 的峰值；到 50% 时回落到接近 0% 处的水平。马尾松浆（圆圈）从 0% 起持续上升，到 50% 时为整条曲线最高，且高于棉浆曲线。可见棉浆超过约 20% 后抗张指数转为下降，而马尾松浆仍在上升。\n- 耐破指数，图3(c) [10]：纵轴是耐破指数 (kPa·m²·g⁻¹)。棉浆同样在约 20% 附近最高，40% 时低于峰值，50% 时降至图中最低、约 1.5 kPa·m²·g⁻¹，低于 0% 的水平。马尾松浆在 0%–20% 与其他浆种一同上升，其后继续抬升，50% 时为图中最高位置。所以耐破指数也是“棉浆先升后降，马尾松浆持续上升”。",
+        "citation_refs": [
+          "[9]",
+          "[10]"
+        ],
+        "claim_type": "fact",
+        "support": "contradicted",
+        "basis": "NONE"
+      },
+      {
+        "id": "C3",
+        "text": "**原文文字对趋势的表述及其性质**\n\n- 原文明确写道：“配抄棉浆会使蔗渣浆纸张抗张强度有一个先上升后下降的趋势”[7]。原文给出的解释是：棉纤维与马尾松形态相似，但自身结合性能较差，少量加入改善结合，配比增大后棉纤维自身特性成为主导，并据此“推论”纸张孔隙率先降后升、纤维间相对结合面积先升后降 [7]。该机制属于作者的推论性解释，并非实测证实的因果。\n- 原文正文称：在蔗渣浆中分别配抄马尾松浆、竹浆、桉木浆、棉浆时，耐破指数的最大提高幅度分别为 99.3%、77.6%、77.6%、47.3% [8]。摘要另称配抄马尾松浆后抗张指数、耐破指数、撕裂指数分别提高 56.8%、99.3%、108.1% [1]。这些是原文报出的数值；图3 为曲线图，各点仍应视为近似读数。",
+        "citation_refs": [
+          "[7]",
+          "[8]",
+          "[1]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B008"
+      },
+      {
+        "id": "C4",
+        "text": "**限制与不确定**\n\n- 上升、下降及峰值位置的判断来自对图3(a)(c) [9][10] 的目视读图：图中没有误差棒，也没有数据点数值标签，因此“约 20%”“约 1.5 kPa·m²·g⁻¹”等只能作近似，不能当作精确测量值引用。\n- 图3 的配抄比例只到 50%，故“马尾松浆一直上升”仅限图中 0%–50% 范围，不可外推到更高配比。\n- 检索未返回带确切“图3”题注的图块，仅返回标注为“图 配抄纤维对蔗渣浆抄造纸张性能的影响”的分图；我据 (a) 抗张强度、(c) 耐破度的轴标签、图例与单位和正文对图3(c) 的引用，判断其为图3 对应分图，但无法直接以题注核实图号。\n- 同一复合图中的透气度、撕裂度分图未用于本题结论，故未纳入。",
+        "citation_refs": [
+          "[9]",
+          "[10]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C2",
+        "ref": "[9]",
+        "score": 1
+      },
+      {
+        "claim_id": "C2",
+        "ref": "[10]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[7]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[8]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[9]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[10]",
+        "score": 1
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "missing"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "complete"
+      }
+    ],
+    "answerability_score": 2,
+    "reference_concern": false,
+    "decisions": {
+      "boundary": "appropriate",
+      "reference_check": "sound",
+      "point_K1": "complete",
+      "point_K2": "complete",
+      "point_K3": "complete",
+      "point_K4": "complete",
+      "kind_C1": "fact",
+      "support_C1": "partially_supported",
+      "basis_C1": "B008",
+      "group_C1": "missing",
+      "kind_C2": "fact",
+      "support_C2": "partially_supported",
+      "basis_C2": "NONE",
+      "group_C2": "partial",
+      "citation_C2_1": "unsupported",
+      "citation_C2_2": "unsupported",
+      "kind_C3": "fact",
+      "support_C3": "supported",
+      "basis_C3": "B008",
+      "group_C3": "complete",
+      "citation_C3_1": "supported",
+      "citation_C3_2": "supported",
+      "citation_C3_3": "supported",
+      "kind_C4": "fact",
+      "support_C4": "partially_supported",
+      "basis_C4": "NONE",
+      "group_C4": "partial",
+      "citation_C4_1": "unsupported",
+      "citation_C4_2": "unsupported"
+    }
+  },
+  "calibration_notes": [
+    {
+      "target": "K1–K4",
+      "decision": "保留1/1/1/1，总要点100%",
+      "reason": "原评分规则要求主要趋势、实验范围、近似读数标记；峰值并非必答项。额外错误在事实及覆盖项扣，不把要点齐全当作全文正确。"
+    },
+    {
+      "target": "C1",
+      "from": "partially_supported",
+      "to": "supported",
+      "reason": "两张原图支持棉浆先升后降和马尾松图示范围内上升及峰值较高。该段未附引用，引用组仍missing。"
+    },
+    {
+      "target": "C2",
+      "from": "partially_supported",
+      "to": "contradicted",
+      "reason": "抗张棉浆已测点峰值40%非20%；耐破50%约1.5高于0%约1.2，既非图中最低也非低于起点。"
+    },
+    {
+      "target": "C4",
+      "from": "partially_supported",
+      "to": "supported",
+      "reason": "原图支持范围、缺误差棒/点值标签和近似性；轨迹支持看图与未核实总图号的声明。约20%可用于耐破峰位，不能用此免责声明消除C2错误。"
+    },
+    {
+      "target": "C2-[9]/[10], C4-[9]/[10]",
+      "from": 0,
+      "to": 1,
+      "reason": "沿用单条引用是否有实质支持的口径：图像确实支持该段的部分对应事实。并不意味着整段全对；C2引用组保持partial。Jev只有图片元数据，相关判定由人工查看原图补上。"
+    },
+    {
+      "target": "C4引用组",
+      "from": "partial",
+      "to": "complete",
+      "reason": "两张图与可见工具轨迹共同支持这些范围及读取限制说明。"
+    }
+  ],
+  "metrics": {
+    "key_points": 100,
+    "fully_supported_facts": "3/4 = 75%",
+    "substantive_citation_pairs": "7/7 = 100%",
+    "complete_citation_groups": "2/4 = 50%",
+    "answerability": "2/2",
+    "strict_pass": false
+  },
+  "scope": "one original low-resolution end-to-end answer, not resolution comparison repetitions; no change to original 30-case report"
+}
