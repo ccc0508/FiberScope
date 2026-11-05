@@ -26,8 +26,38 @@ def test_duplicate_and_batch_limit():
     a=Fake([decision(calls=calls),decision('draft'),decision('final')]);executed=[]
     def execute(*args):executed.append(args);return dict(status='completed')
     r=AgentLoop(a,execute,lambda s:None,AgentBudget(max_tool_calls=2)).run('q','r')
-    assert len(executed)==1 and r['tool_attempts']==2
+    assert len(executed)==1 and r['tool_attempts']==1
     assert len([m for m in a.requests[1][0] if m['role']=='tool'])==4
+    assert [e['result'].get('error_code') for e in r['tool_calls'][1:]]==['one_tool_per_turn']*3
+
+
+def test_duplicate_in_later_turn_is_still_blocked():
+    call=ToolCall('a','search_literature',dict(query='q',reason='find'))
+    again=ToolCall('b','search_literature',dict(query='q',reason='other reason'))
+    a=Fake([decision(calls=[call]),decision(calls=[again]),decision('draft'),decision('final')])
+    executed=[]
+    r=AgentLoop(a,lambda *args:executed.append(args) or dict(status='completed'),lambda s:None).run('q','r')
+    assert len(executed)==1 and r['tool_attempts']==2
+    assert r['tool_calls'][1]['result']['error_code']=='duplicate_call'
+
+
+def test_oversized_tool_result_is_saved_but_not_sent_and_finalizes():
+    call=ToolCall('a','search_literature',dict(query='q',reason='find'))
+    raw=dict(status='completed',call_id='stored',result=dict(evidence=[dict(ref='[1]',document_id='d',text='x'*50000)]))
+    a=Fake([decision(calls=[call]),decision('Evidence unavailable; cannot conclude.'),decision('Evidence unavailable; cannot conclude.')])
+    r=AgentLoop(a,lambda *args:raw,lambda s:None,AgentBudget(max_context_chars=12000)).run('q','r')
+    assert r['status']=='completed' and r['stop_reason']=='context_budget'
+    assert r['tool_calls'][0]['result']==raw
+    assert r['tool_calls'][0]['model_delivery']['status']=='withheld'
+    assert not a.requests[1][1]  # Forced final answer, not another tool decision.
+    assert 'x'*100 not in str(a.requests[1][0])
+
+
+def test_large_draft_survives_when_review_cannot_fit():
+    a=Fake([decision('d'*15000)])
+    r=AgentLoop(a,lambda *args:None,lambda s:None,AgentBudget(max_context_chars=12000)).run('q','r')
+    assert r['answer']=='d'*15000 and r['status']=='partial'
+    assert r['review_status']=='skipped_context_budget' and len(a.requests)==1
 
 def test_failed_review_retains_draft():
     a=Fake([decision('draft'),Decision('cut',[],dict(role='assistant',content='cut'),None,'length')])
@@ -47,6 +77,8 @@ def test_adapter_conversion_and_no_retry_options():
     def create(**kwargs):captured.update(kwargs);return SimpleNamespace(choices=[SimpleNamespace(message=message,finish_reason='tool_calls')],usage=None)
     settings=SimpleNamespace(llm_provider='deepseek',llm_model='deepseek-flash',llm_thinking_enabled=True,llm_reasoning_effort='high')
     adapter=ChatAgentAdapter(settings,SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create))))
-    d=adapter.decide([],{},10,1000)
+    from literature_rag.application.tools import SCHEMAS
+    d=adapter.decide([],SCHEMAS,10,1000)
     assert d.calls[0].arguments=={'chunk_id':'x'} and d.message['reasoning_content']=='continuation'
     assert captured['timeout']==10
+    assert captured['parallel_tool_calls'] is False
