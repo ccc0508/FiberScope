@@ -1,0 +1,406 @@
+{
+  "raw_jev": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": 0
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "## 结论\n\n**三种工具的分工（Morais & Curto 2022, *Tissue prediction*）**\n\n- **MLR 与 ANN**：两者都是数据驱动的统计模型，目的是把纤维形态、悬浮性能和纸张结构性能与最终使用性能关联起来，包括 softness HF、softness TS7、tensile index、吸水能力和毛细上升。模型使用实验设计所收集的数据建立，覆盖纤维配比、机械与酶处理、助剂加入以及工业 base tissue 纸等工艺步骤 [1][9]。MLR 中每个加入的自变量在统计上均显著（p<0.05）[9]。\n- **3D 纤维模拟器（voxelfiber）**：这是一个基于元胞自动机的开源模拟器，它把每根纤维表示为体素序列，输入参数包括长度/宽度比、纤维柔顺性、纤维壁厚、腔径和分辨率等；它在三维基体中随机沉积纤维，并避免不同纤维之间发生空间重叠，从而生成平面随机网络 [2][4]。该模拟器用于考察纤维对**结构**性能的影响，并输出有效厚度、bulk 和表观孔隙率；这些结构量也可以回代到统计模型中，用来预测功能性能 [2][11]。",
+        "citation_refs": [
+          "[1]",
+          "[9]",
+          "[2]",
+          "[4]",
+          "[11]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C2",
+        "text": "**验证样品：不是建模（拟合）时用过的样品**\n\n- 4.3 节的验证使用漂白桉木硫酸盐浆、生物聚合物助剂和工业 base tissue 纸，原文明确说明 “these samples were not used to build the models” [11]。桉木浆按 PFI 500、1000、1500 转、打浆强度 3.33 N/mm 处理，并制备 20 g/m² 各向同性实验室结构，用于结构性能与功能性能测试 [11]。\n- 验证展示共涉及六个对象：0、500、1000、1500 PFI 转的桉木浆样品，加入生物聚合物的样品，以及工业 base tissue 纸 [11]。其中后两者的样品标签出自 Figure 7 图注 [11]。\n- 3D 模拟器的验证同样使用这批新样品：在四个打浆水平下，将模拟结构与实测结构的厚度、bulk 和表观孔隙率进行对比（0 转：实测 101 μm、4.89 cm³/g、86.37% 对应模拟 99、4.81、86；1500 转：实测 77 μm、3.90、82.89% 对应模拟 76、3.84、82）[11]。",
+        "citation_refs": [
+          "[11]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B030"
+      },
+      {
+        "id": "C3",
+        "text": "**限制与不确定性**\n\n- “未用于建模”是作者在正文中的声明 [11]。现有收录材料未包含补充材料（Tables S1–S3），因此无法核对训练集的具体样品清单，也无法核对 ANN 是否另有训练/测试划分；ANN 的这一细节在本次检索范围内未取得 [1][9]。\n- Table 3 的模拟与实测对比引用原文表格数值，未做独立统计检验；“吻合”是作者的判断 [11]。\n- 结论部分指出，MLR 与 ANN 的预测整体“令人满意”，但工业 base tissue 纸的柔软度和毛细上升性能除外 [13]。\n- 3D 模拟器使用的纤维尺寸取自这批样品的 MorFi 实测，因而其验证方式是“以实测纤维参数为输入、再与同一批结构的实测结构性能比对” [2][11]。",
+        "citation_refs": [
+          "[11]",
+          "[1]",
+          "[9]",
+          "[13]",
+          "[2]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C4",
+        "text": "依据文献：Morais, Carta, Amaral, Curto (2022) *Tissue prediction*（01_Morais_2022_Tissue_prediction.pdf），摘要 p.1、2.2 节 p.3、3.3 节 p.4、4.1 节 p.4、4.3 节及 Table 3、Figure 7 p.9–10、结论 p.10–11。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C1",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[9]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[4]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[11]",
+        "score": 1
+      },
+      {
+        "claim_id": "C2",
+        "ref": "[11]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[11]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[1]",
+        "score": 0
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[9]",
+        "score": 0
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[13]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[2]",
+        "score": 0
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "missing"
+      }
+    ],
+    "answerability_score": 1,
+    "reference_concern": false,
+    "decisions": {
+      "boundary": "partial",
+      "reference_check": "sound",
+      "point_K1": "complete",
+      "point_K2": "complete",
+      "point_K3": "complete",
+      "point_K4": "missing",
+      "kind_C1": "fact",
+      "support_C1": "partially_supported",
+      "basis_C1": "NONE",
+      "group_C1": "partial",
+      "citation_C1_1": "supported",
+      "citation_C1_2": "supported",
+      "citation_C1_3": "supported",
+      "citation_C1_4": "supported",
+      "citation_C1_5": "supported",
+      "kind_C2": "fact",
+      "support_C2": "supported",
+      "basis_C2": "B030",
+      "group_C2": "complete",
+      "citation_C2_1": "supported",
+      "kind_C3": "fact",
+      "support_C3": "partially_supported",
+      "basis_C3": "NONE",
+      "group_C3": "partial",
+      "citation_C3_1": "supported",
+      "citation_C3_2": "unsupported",
+      "citation_C3_3": "unsupported",
+      "citation_C3_4": "supported",
+      "citation_C3_5": "unsupported",
+      "kind_C4": "fact",
+      "support_C4": "supported",
+      "basis_C4": "NONE",
+      "group_C4": "missing"
+    }
+  },
+  "calibrated": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": null
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "## 结论\n\n**三种工具的分工（Morais & Curto 2022, *Tissue prediction*）**\n\n- **MLR 与 ANN**：两者都是数据驱动的统计模型，目的是把纤维形态、悬浮性能和纸张结构性能与最终使用性能关联起来，包括 softness HF、softness TS7、tensile index、吸水能力和毛细上升。模型使用实验设计所收集的数据建立，覆盖纤维配比、机械与酶处理、助剂加入以及工业 base tissue 纸等工艺步骤 [1][9]。MLR 中每个加入的自变量在统计上均显著（p<0.05）[9]。\n- **3D 纤维模拟器（voxelfiber）**：这是一个基于元胞自动机的开源模拟器，它把每根纤维表示为体素序列，输入参数包括长度/宽度比、纤维柔顺性、纤维壁厚、腔径和分辨率等；它在三维基体中随机沉积纤维，并避免不同纤维之间发生空间重叠，从而生成平面随机网络 [2][4]。该模拟器用于考察纤维对**结构**性能的影响，并输出有效厚度、bulk 和表观孔隙率；这些结构量也可以回代到统计模型中，用来预测功能性能 [2][11]。",
+        "citation_refs": [
+          "[1]",
+          "[9]",
+          "[2]",
+          "[4]",
+          "[11]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C2",
+        "text": "**验证样品：不是建模（拟合）时用过的样品**\n\n- 4.3 节的验证使用漂白桉木硫酸盐浆、生物聚合物助剂和工业 base tissue 纸，原文明确说明 “these samples were not used to build the models” [11]。桉木浆按 PFI 500、1000、1500 转、打浆强度 3.33 N/mm 处理，并制备 20 g/m² 各向同性实验室结构，用于结构性能与功能性能测试 [11]。\n- 验证展示共涉及六个对象：0、500、1000、1500 PFI 转的桉木浆样品，加入生物聚合物的样品，以及工业 base tissue 纸 [11]。其中后两者的样品标签出自 Figure 7 图注 [11]。\n- 3D 模拟器的验证同样使用这批新样品：在四个打浆水平下，将模拟结构与实测结构的厚度、bulk 和表观孔隙率进行对比（0 转：实测 101 μm、4.89 cm³/g、86.37% 对应模拟 99、4.81、86；1500 转：实测 77 μm、3.90、82.89% 对应模拟 76、3.84、82）[11]。",
+        "citation_refs": [
+          "[11]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B030"
+      },
+      {
+        "id": "C3",
+        "text": "**限制与不确定性**\n\n- “未用于建模”是作者在正文中的声明 [11]。现有收录材料未包含补充材料（Tables S1–S3），因此无法核对训练集的具体样品清单，也无法核对 ANN 是否另有训练/测试划分；ANN 的这一细节在本次检索范围内未取得 [1][9]。\n- Table 3 的模拟与实测对比引用原文表格数值，未做独立统计检验；“吻合”是作者的判断 [11]。\n- 结论部分指出，MLR 与 ANN 的预测整体“令人满意”，但工业 base tissue 纸的柔软度和毛细上升性能除外 [13]。\n- 3D 模拟器使用的纤维尺寸取自这批样品的 MorFi 实测，因而其验证方式是“以实测纤维参数为输入、再与同一批结构的实测结构性能比对” [2][11]。",
+        "citation_refs": [
+          "[11]",
+          "[1]",
+          "[9]",
+          "[13]",
+          "[2]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C4",
+        "text": "依据文献：Morais, Carta, Amaral, Curto (2022) *Tissue prediction*（01_Morais_2022_Tissue_prediction.pdf），摘要 p.1、2.2 节 p.3、3.3 节 p.4、4.1 节 p.4、4.3 节及 Table 3、Figure 7 p.9–10、结论 p.10–11。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "contradicted",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C1",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[9]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[4]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[11]",
+        "score": 1
+      },
+      {
+        "claim_id": "C2",
+        "ref": "[11]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[11]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[1]",
+        "score": 0
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[9]",
+        "score": 0
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[13]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[2]",
+        "score": 1
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "missing"
+      }
+    ],
+    "answerability_score": 2,
+    "reference_concern": false,
+    "decisions": {
+      "boundary": "partial",
+      "reference_check": "sound",
+      "point_K1": "complete",
+      "point_K2": "complete",
+      "point_K3": "complete",
+      "point_K4": "missing",
+      "kind_C1": "fact",
+      "support_C1": "partially_supported",
+      "basis_C1": "NONE",
+      "group_C1": "partial",
+      "citation_C1_1": "supported",
+      "citation_C1_2": "supported",
+      "citation_C1_3": "supported",
+      "citation_C1_4": "supported",
+      "citation_C1_5": "supported",
+      "kind_C2": "fact",
+      "support_C2": "supported",
+      "basis_C2": "B030",
+      "group_C2": "complete",
+      "citation_C2_1": "supported",
+      "kind_C3": "fact",
+      "support_C3": "partially_supported",
+      "basis_C3": "NONE",
+      "group_C3": "partial",
+      "citation_C3_1": "supported",
+      "citation_C3_2": "unsupported",
+      "citation_C3_3": "unsupported",
+      "citation_C3_4": "supported",
+      "citation_C3_5": "unsupported",
+      "kind_C4": "fact",
+      "support_C4": "supported",
+      "basis_C4": "NONE",
+      "group_C4": "missing"
+    }
+  },
+  "calibration": {
+    "reason": "主问题三项均答全。继续排除题目未要求的泛化K4。核对[2]、[9]、[11]后，方法分工C1受支持；C3的[2]对实测纤维输入有实质支持。C3仍有关于补充材料/训练清单的范围推断。C4把两作者论文写成四作者，是明确事实错误。",
+    "changes": [
+      {
+        "path": "key_point_scores.K4",
+        "value": null,
+        "reason": "沿用上轮校准：原题未要求泛化讨论。"
+      },
+      {
+        "path": "claim_assessments.C1.support",
+        "value": "supported",
+        "reason": "方法、输入输出和p<0.05可由原文对应段落及图1说明支持。"
+      },
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "[1][9][2][4][11]共同覆盖方法说明。"
+      },
+      {
+        "path": "citation_assessments.C3.[2].score",
+        "value": 1,
+        "reason": "[2]直接支持基于实验纤维尺寸进行模拟这一子事实，不要求单个来源证明全部段落。"
+      },
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "contradicted",
+        "reason": "原PDF第1页作者为Flávia P. Morais与Joana M.R. Curto，答案额外列入Carta、Amaral。"
+      },
+      {
+        "path": "answerability_score",
+        "value": 2,
+        "reason": "所问方法分工与是否使用建模样品答对；未问泛化不扣边界分，署名错误记事实维度。"
+      }
+    ]
+  },
+  "raw_metrics": {
+    "point_score": 75.0,
+    "point_count": 4,
+    "fact_count": 4,
+    "supported_facts": 2,
+    "pair_count": 11,
+    "supported_pairs": 8,
+    "group_count": 4,
+    "covered_groups": 1,
+    "boundary": 1,
+    "fact_support": 50.0,
+    "citation_precision": 72.72727272727273,
+    "citation_coverage": 25.0,
+    "strict_pass": false,
+    "format_ok": true
+  },
+  "final_metrics": {
+    "point_score": 100,
+    "point_count": 3,
+    "fact_count": 4,
+    "supported_facts": 2,
+    "pair_count": 11,
+    "supported_pairs": 9,
+    "group_count": 4,
+    "covered_groups": 2,
+    "boundary": 2,
+    "fact_support": 50.0,
+    "citation_precision": 81.81818181818181,
+    "citation_coverage": 50.0,
+    "strict_pass": false,
+    "format_ok": true
+  },
+  "replaces_original_30_case_result": false
+}
