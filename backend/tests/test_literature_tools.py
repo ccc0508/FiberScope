@@ -60,6 +60,20 @@ def test_image_integrity_and_delivery(kit):
     path.write_bytes(b'changed')
     assert kit.call(p,run_id='r')['status']=='failed'
 
+
+def test_find_figure_handles_and_model_projection(kit):
+    from literature_rag.application.agent_context import EvidenceProjection
+    a=VisualAsset('image','doc','1','Figure 3. Strength',2,(0,0,10,10),'unused','unused',10,10,1)
+    kit.retriever.visual_catalog.assets=[a]
+    out=kit.call(dict(tool='find_figure',document_id='doc',figure_number='3',reason='locate'),run_id='r')
+    assert out['status']=='completed'
+    assert out['result']['status']=='matched'
+    projected=EvidenceProjection().project(out)
+    assert projected['result']['assets'][0]['asset_id']=='image'
+    assert 'id' not in projected['result']['assets'][0]
+    assert not kit.store.evidence('r')  # Discovery is not inspected-image evidence.
+    assert EvidenceProjection.asset(dict(id='legacy',document_id='doc'))['asset_id']=='legacy'
+
 def test_interrupted_record_remains_visible(kit):
     kit.store.save(dict(call_id='c',run_id='r',status='started'))
     assert kit.store.read('r')[0]['status']=='started'

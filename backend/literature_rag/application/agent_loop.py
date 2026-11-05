@@ -15,6 +15,11 @@ viewed via view_image before making visual claims; identify axes, material and c
 relative quantities, uncertainty, correlation and causation. If evidence is missing say so, do not guess.
 Return a concise Chinese answer with [n] citations when ready. Tool arguments require a reason.
 For calculations source_call_ids are the executor call_id values returned in tool results.'''
+PROMPT += '''\nImage handles use asset_id. If text mentions a figure needed to answer but no suitable image handle
+is available, call find_figure with document_id and figure_number (e.g. "3"), then view_image with
+the returned asset_id. Finding a figure is not viewing it. unconfirmed_number candidates are not
+verified matches; inspect their pixels and do not assume the requested number. Do not say you are
+viewing a figure while only calling read_section.'''
 PROMPT += '''\nRequest at most ONE tool per turn. After each result, check whether the question's required facts,
 conditions and uncertainties are supported. If sufficient, answer now. Otherwise identify the specific
 remaining gap in the next tool's reason. Do not search merely for extra background.
