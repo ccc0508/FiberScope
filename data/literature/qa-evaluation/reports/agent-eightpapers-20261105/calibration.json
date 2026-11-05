@@ -1,0 +1,267 @@
+{
+  "FS8-001": {
+    "reason": "70/30与三类预测结论答全。C1扩大到未报告随机种子/交叉验证等额外范围，所附局部来源不全，保留引用覆盖partial。",
+    "changes": []
+  },
+  "FS8-002": {
+    "reason": "3D/MLR/ANN分工和未参与建模样品答对。原题未问跨浆种泛化，gold K4属额外要求，本次校准不将该项遗漏扣作必答分。20g/m²实验室结构不能直接覆盖工业原纸；保留相应部分支持。",
+    "changes": [
+      {
+        "path": "key_point_scores.K4",
+        "value": null,
+        "reason": "参考标准修订：未在题目提出的额外泛化限制不作为必答要点。"
+      }
+    ]
+  },
+  "FS8-003": {
+    "reason": "数值出现不等于条件答对：答案两次否定耐破/撕裂对应50%可确定性，原PDF第7页结论明确。所给MinerU片段恰好丢失50%，是解析/证据缺损参与造成；不将所有问题归因模型。",
+    "changes": [
+      {
+        "path": "key_point_scores.K1",
+        "value": 0.5,
+        "reason": "只确认抗张的50%条件，否认另外两项可确定。"
+      },
+      {
+        "path": "key_point_scores.K2",
+        "value": 0.5,
+        "reason": "三值正确但问题要求50%对应关系，回答附加否定限制。"
+      },
+      {
+        "path": "answerability_score",
+        "value": 1,
+        "reason": "本题可答条件被过度保留，未完整回答。"
+      }
+    ]
+  },
+  "FS8-004": {
+    "reason": "棉浆抗张答对，但明确拒绝判断棉浆耐破，马尾松两项随配比趋势也未给出；不能以最大提升代替曲线趋势。原PDF第6页正文和图3可答。",
+    "changes": [
+      {
+        "path": "key_point_scores.K2",
+        "value": 0,
+        "reason": "明确不判断耐破趋势，不属于部分答出先升后降。"
+      },
+      {
+        "path": "key_point_scores.K3",
+        "value": 0,
+        "reason": "只比较增强幅度，未说明马尾松随配比趋势。"
+      }
+    ]
+  },
+  "FS8-005": {
+    "reason": "两个特征与D到T的主链条答全。额外加入WRV五次和公式排版误差等内容，无法由已附可靠原文完整证明，保留C5部分支持。",
+    "changes": []
+  },
+  "FS8-006": {
+    "reason": "四个RMSE及任务边界正确，但“训练数据重复使用因此曲线拟合占优”缺乏受控比较证明，两类模型均用训练数据做estimation；额外因果解释不能算充分支持。",
+    "changes": [
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "partially_supported",
+        "reason": "训练集复用不足以独立解释曲线拟合优于LSTM。"
+      }
+    ]
+  },
+  "FS8-007": {
+    "reason": "数据量、合成来源与划分答全。公开可获得与合成数据并不冲突，C3声称口径不一致是错误推断；Kaggle[27]是复述原文参考文献编号而非新引用，不当虚构工具引用计分。",
+    "changes": [
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "partially_supported",
+        "reason": "publicly accessible与synthetic兼容，不能据此判原文冲突。"
+      },
+      {
+        "path": "citation_assessments.C1.[27].score",
+        "value": null,
+        "reason": "原论文参考文献编号，排除与本轮证据编号的混淆。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "partial",
+        "reason": "来源各自成立，但没有证明两者逻辑冲突。"
+      },
+      {
+        "path": "citation_assessments.C3.[7].score",
+        "value": 1,
+        "reason": "该来源直接证明合成数据这一子事实；不必独立证明整个复合陈述。"
+      }
+    ]
+  },
+  "FS8-008": {
+    "reason": "高分原因与泛化限制答全，但答案自己重编引用编号，[6]实际是Uddin而非其声称Ayaliew结论，大量引用错配。事实与引用分别评价，不能因错引把已正确阐明的边界全判0。",
+    "changes": [
+      {
+        "path": "answerability_score",
+        "value": 2,
+        "reason": "清楚区分合成与实测泛化，已提出必要限制；错引单独记引用缺陷。"
+      }
+    ]
+  },
+  "FS8-009": {
+    "reason": "21观测、81/19、七输入三输出齐全。17/4明确为比例换算，未冒充原文。额外材料与R²说明保留来源覆盖不足的Jev结果。",
+    "changes": []
+  },
+  "FS8-010": {
+    "reason": "归一化重要性与因果边界答全。额外把硬木撕裂R²=.34当单一结论，没有同时说明结论写.94的冲突；Jev已将C3判部分支持，保留。回归显著性“0%”仅为文中报告，不应解释为真实p严格为零。",
+    "changes": []
+  },
+  "FS8-011": {
+    "reason": "表5与表7四个抗张NRMSE及优劣关系正确。正文额外称表5抗张是首列，实际是首行，属于图表布局叙述错误；不影响核心数值但影响额外事实充分支持。",
+    "changes": [
+      {
+        "path": "claim_assessments.C5.support",
+        "value": "partially_supported",
+        "reason": "表5按性能行组织，抗张指数是首行，不是与表7同类意义的首列。"
+      }
+    ]
+  },
+  "FS8-012": {
+    "reason": "检测不到全部纳米纤维及5µm限制答全。额外将100到10µm作为纤维区间是错误的单位/范围复述，原文涉及100µm到10mm；并把代理假设讲成无法可靠验证过强，保留部分支持。",
+    "changes": []
+  },
+  "FS8-013": {
+    "reason": "转数、浓度、间隙与两种作用力正确。额外把CI-XI/CI-XA间的0.919/0.925写成CI与氢键含量相关，是对象错配；保留C3部分支持。只按°SR对齐也不能消除浆种与处理混杂。",
+    "changes": []
+  },
+  "FS8-014": {
+    "reason": "非单调反例、晶型未变及数值均正确。额外把统计不确定性推为小波动不宜当确定物理变化缺乏明确误差估计，按有界推断看待，保留Jev部分支持与引用不足。",
+    "changes": []
+  },
+  "FS8-015": {
+    "reason": "R1000/SR1000、25kg/t与转数含义均正确。原PDF第7页表6确实印SR(mL)，不是模型擅自编造该单位；这是一处源表单位问题，不能据此将整题边界判0。附加单位仍宜标明源文写法，引用不足保持。",
+    "changes": [
+      {
+        "path": "answerability_score",
+        "value": 2,
+        "reason": "正确拒绝1000°SR误读，并区分命名与测量；源表自身标mL不构成模型接受错误主前提。"
+      }
+    ]
+  },
+  "FS8-016": {
+    "reason": "200µm工作定义、非筛分标准与仪器差异答全。额外“并非直接对比实测”等范围判断仍欠充分限定，保留Jev部分支持。",
+    "changes": []
+  },
+  "FS8-017": {
+    "reason": "只检索一次；Morais实际命中的是参考文献条目，未取得其表1粗度单位，答案明确说不能确认。Jev把K1判全对过宽。真实的“现有材料未提供”不能用裁判看得到的原文反驳为虚假。",
+    "changes": [
+      {
+        "path": "key_point_scores.K1",
+        "value": 0.5,
+        "reason": "仅确认Uddin mg/m；未确认Morais mg/100m。"
+      },
+      {
+        "path": "claim_assessments.C5.support",
+        "value": "supported",
+        "reason": "核查实际工具证据，Morais仅有参考文献条目；这是诚实的局部证据限制，不是原文不存在该数据。"
+      }
+    ]
+  },
+  "FS8-018": {
+    "reason": "两篇定义与检测限制核心答全。但5µm长度检测下限与74µm筛孔不能直接比较并推出粒群必然更细，混淆长度阈值和筛孔口径，Jev漏检该额外推断。",
+    "changes": [
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "partially_supported",
+        "reason": "5µm长度下限小于74µm筛孔并不能独立证明所覆盖粒群更细。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "partial",
+        "reason": "所引论文不证明上述跨定义粒群比较。"
+      }
+    ]
+  },
+  "FS8-019": {
+    "reason": "将Ayaliew论文替换为Uddin：本轮一次搜索未命中Ayaliew，未补查身份就按错误对象展开；新增验证抗张1.62/1.72也遗漏。维持要点0/0.5/0/1，不能因最终“不能比较”方向正确而给高分。",
+    "changes": []
+  },
+  "FS8-020": {
+    "reason": "两条预测链与输入/输出基本答全，但训练数据建议没有明确保留论文/样品来源追溯，K4仅部分满足。额外把特征完全不能合并说得过强，又先断定D链条后说无法确认；保留Jev的C4/C5部分支持。",
+    "changes": [
+      {
+        "path": "key_point_scores.K4",
+        "value": 0.5,
+        "reason": "说明条件、单位和标签，但未提出保留来源追溯这一必答部分。"
+      }
+    ]
+  },
+  "FS8-021": {
+    "reason": "正确区分转数范围、CTMP与添加剂，明确不能按转数统一；但未说明Li所用漂白硫酸盐浆条件，K1保留0.5。额外等效水平建议不构成已验证控制方案，保留部分支持。",
+    "changes": []
+  },
+  "FS8-022": {
+    "reason": "模拟与成像两种方式、孔隙率8%和不可直接替代均答全；但将Morais bulk译成紧度，bulk是松厚度，不能与密度/紧度互换。Jev将该段全支持过宽。",
+    "changes": [
+      {
+        "path": "claim_assessments.C2.support",
+        "value": "partially_supported",
+        "reason": "bulk=松厚度，非紧度；表3是cm³/g而非g/cm³。"
+      },
+      {
+        "path": "citation_group_assessments.C2.coverage",
+        "value": "partial",
+        "reason": "所引来源支持松厚度，不能支持改成紧度的陈述。"
+      }
+    ]
+  },
+  "FS8-023": {
+    "reason": "重要性、测量假象、HPH共同因素及非普适因果的四要点齐全。保留局限段额外范围断言的部分支持和首尾无附引用的覆盖扣分。",
+    "changes": []
+  },
+  "FS8-024": {
+    "reason": "解释了不能无单位合并，但没有说明Li损伤D/T₀关系，没有确认Uddin抗张Nm/g，且遗漏Ayaliew合成数据属性。Jev对后两项给满分过宽。数据整合建议多数合理，不能整段算无依据，只对“只用无量纲比较”的过强限制扣分。",
+    "changes": [
+      {
+        "path": "key_point_scores.K2",
+        "value": 0.5,
+        "reason": "讨论Nm/g与MPa但明确无法核查Uddin的单位，未完成所问来源对应。"
+      },
+      {
+        "path": "key_point_scores.K3",
+        "value": 0.5,
+        "reason": "说明复合材料，却未说明合成数据。"
+      },
+      {
+        "path": "claim_assessments.C10.support",
+        "value": "partially_supported",
+        "reason": "来源/单位等元数据建议合理；只允许无量纲比较这一绝对限制没有被证明。"
+      }
+    ]
+  },
+  "FS8-025": {
+    "reason": "没有调用论文工具，问候适当；但用户只要一句，实际三句并额外引入查论文话题，Jev遗漏了格式/简洁要求。",
+    "changes": [
+      {
+        "path": "key_point_scores.K2",
+        "value": 0.5,
+        "reason": "简短但并非一句，且有多余论文话题。"
+      }
+    ]
+  },
+  "FS8-026": {
+    "reason": "改写保留原意且未编造验证结果，但用户要求一句正式表述，回答额外附了一段说明；Jev遗漏输出要求。",
+    "changes": [
+      {
+        "path": "key_point_scores.K3",
+        "value": 0.5,
+        "reason": "改写句本身可用，但完整输出不止一句。"
+      }
+    ]
+  },
+  "FS8-027": {
+    "reason": "10与25%及公式正确，附加百分比/百分点解释明确为假设，未把题目改写为百分数，无需论文引用。",
+    "changes": []
+  },
+  "FS8-028": {
+    "reason": "两项换算均正确，没有检索，附加说明没有改变答案。",
+    "changes": []
+  },
+  "FS8-029": {
+    "reason": "识别缺少前文并询问指标和比较条件，没有虚构原因、没有调用论文。措辞偏向论文场景但未断言具体论文事实，维持评分。",
+    "changes": []
+  },
+  "FS8-030": {
+    "reason": "合法JSON、字段与数值正确，未测保留null；样本A/样本B与A/B语义一致，不以字符串差异扣分。",
+    "changes": []
+  }
+}

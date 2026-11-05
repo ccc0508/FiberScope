@@ -1,0 +1,136 @@
+{
+  "suite": "FS8-v1",
+  "runtime": "frozen latest Agentic RAG, 2026-11-05",
+  "answer_model": "deepseek-flash",
+  "thinking": false,
+  "judge": "typesafe/jev-1.14",
+  "final_authority": "Codex source-based calibration, not independent human expert review",
+  "completed": 30,
+  "review_completed": 30,
+  "count": 30,
+  "raw_jev": {
+    "count": 30,
+    "point_score": 95.0,
+    "strict_pass_count": 6,
+    "boundary_mean": 1.7,
+    "fact_support": {
+      "percent": 72.58064516129032,
+      "numerator": 90,
+      "denominator": 124
+    },
+    "citation_precision": {
+      "percent": 79.50819672131148,
+      "numerator": 194,
+      "denominator": 244
+    },
+    "citation_coverage": {
+      "percent": 45.689655172413794,
+      "numerator": 53,
+      "denominator": 116
+    }
+  },
+  "calibrated": {
+    "count": 30,
+    "point_score": 91.25,
+    "strict_pass_count": 4,
+    "boundary_mean": 1.8,
+    "fact_support": {
+      "percent": 68.54838709677419,
+      "numerator": 85,
+      "denominator": 124
+    },
+    "citation_precision": {
+      "percent": 80.24691358024691,
+      "numerator": 195,
+      "denominator": 243
+    },
+    "citation_coverage": {
+      "percent": 43.10344827586207,
+      "numerator": 50,
+      "denominator": 116
+    }
+  },
+  "groups": {
+    "single": {
+      "count": 16,
+      "point_score": 95.3125,
+      "strict_pass_count": 0,
+      "boundary_mean": 1.8125,
+      "fact_support": {
+        "percent": 69.86301369863014,
+        "numerator": 51,
+        "denominator": 73
+      },
+      "citation_precision": {
+        "percent": 72.97297297297297,
+        "numerator": 108,
+        "denominator": 148
+      },
+      "citation_coverage": {
+        "percent": 47.945205479452056,
+        "numerator": 35,
+        "denominator": 73
+      }
+    },
+    "cross": {
+      "count": 8,
+      "point_score": 81.25,
+      "strict_pass_count": 0,
+      "boundary_mean": 1.625,
+      "fact_support": {
+        "percent": 60.46511627906977,
+        "numerator": 26,
+        "denominator": 43
+      },
+      "citation_precision": {
+        "percent": 91.57894736842105,
+        "numerator": 87,
+        "denominator": 95
+      },
+      "citation_coverage": {
+        "percent": 34.883720930232556,
+        "numerator": 15,
+        "denominator": 43
+      }
+    },
+    "no_paper": {
+      "count": 6,
+      "point_score": 93.75,
+      "strict_pass_count": 4,
+      "boundary_mean": 2,
+      "fact_support": {
+        "percent": 100.0,
+        "numerator": 8,
+        "denominator": 8
+      },
+      "citation_precision": {
+        "percent": null,
+        "numerator": 0,
+        "denominator": 0
+      },
+      "citation_coverage": {
+        "percent": null,
+        "numerator": 0,
+        "denominator": 0
+      }
+    }
+  },
+  "usage": {
+    "answer_input_tokens": 653223,
+    "answer_output_tokens": 42206,
+    "answer_total_tokens": 695429,
+    "answer_usage_missing_calls": 0,
+    "jev_cost_usd": 0.060114138,
+    "jev_cost_missing_attempts": 0
+  },
+  "elapsed_seconds": 808.956,
+  "routing_ok": 29,
+  "limitations": [
+    "one run per question, no stability estimate",
+    "new suite: not directly comparable to old 32-question scores",
+    "claims are frozen Markdown semantic blocks, not atomic sentences; compound blocks can contain multiple facts",
+    "Jev receives original source text pages and image metadata, not pixels",
+    "FS8-002 K4 excluded after reference-standard review because question does not request generic transferability",
+    "routing document-coverage proxy is separate from correctness and actual evidence utilization"
+  ]
+}
