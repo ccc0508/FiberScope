@@ -18,7 +18,8 @@ For calculations source_call_ids are the executor call_id values returned in too
 PROMPT += '''\nRequest at most ONE tool per turn. After each result, check whether the question's required facts,
 conditions and uncertainties are supported. If sufficient, answer now. Otherwise identify the specific
 remaining gap in the next tool's reason. Do not search merely for extra background.
-Tool evidence may reuse exact text parts via T IDs; cite only the corresponding [n] evidence refs.'''
+Tool evidence may reuse exact text parts via internal txt_<hash> keys; these are NOT citation IDs.
+Cite only the enclosing evidence ref [n].'''
 
 PROMPT += '''\nAnswer the question first, then only the evidence, conditions, limitations and uncertainty needed
 to interpret that answer. Do not summarize the whole paper or add unrelated numerical/mechanistic background.

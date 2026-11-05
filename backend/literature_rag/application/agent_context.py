@@ -1,6 +1,7 @@
 """Lossless model-facing evidence projection; full tool records stay in storage."""
 from copy import deepcopy
 from hashlib import sha256
+import json
 import re
 
 
@@ -28,7 +29,7 @@ class EvidenceProjection:
                 if len(part) >= 80 and key in self.parts:
                     parts.append(dict(reuse_text_id=self.parts[key]))
                 elif len(part) >= 80:
-                    tid = f'T{len(self.parts)+1}'
+                    tid = 'txt_' + sha256(json.dumps(key, ensure_ascii=False).encode('utf-8')).hexdigest()[:24]
                     self.parts[key] = tid
                     parts.append(dict(text_id=tid, text=part))
                 else:
@@ -55,6 +56,7 @@ class EvidenceProjection:
         if 'asset' in r:r['asset'] = self.asset(r['asset'])
         r['text_protocol'] = ('Concatenate text_parts in order; reuse_text_id references exact text previously supplied '
             'in this run. already_provided means this same evidence was supplied earlier. '
-            'Cite evidence [n], never text IDs Tn. Image captions are not viewed pixels.')
+            'text_id and reuse_text_id are internal text reuse keys (txt_<hash>), NOT citation IDs. '
+            'Cite only the enclosing evidence ref [n]. Image captions are not viewed pixels.')
         output['result'] = r
         return output
