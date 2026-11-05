@@ -82,3 +82,26 @@ def test_adapter_conversion_and_no_retry_options():
     assert d.calls[0].arguments=={'chunk_id':'x'} and d.message['reasoning_content']=='continuation'
     assert captured['timeout']==10
     assert captured['parallel_tool_calls'] is False
+
+
+def test_search_cap_blocks_third_but_allows_reading():
+    calls=[ToolCall(str(i),'search_literature',dict(query=str(i),reason='gap')) for i in range(3)]
+    read=ToolCall('read','read_section',dict(document_id='d',section_id='s',reason='read known section'))
+    a=Fake([decision(calls=[c]) for c in calls]+[decision(calls=[read]),decision('draft'),decision('review')])
+    executed=[]
+    r=AgentLoop(a,lambda request,*args:executed.append(request) or dict(status='completed'),lambda s:None,AgentBudget(max_model_calls=8)).run('q','r')
+    assert [c['tool'] for c in executed]==['search_literature','search_literature','read_section']
+    assert r['search_calls']==2 and r['status']=='completed'
+    assert r['tool_calls'][2]['result']['error_code']=='search_budget'
+    assert 'search_literature' in a.requests[1][1]
+    assert 'search_literature' not in a.requests[2][1]
+    assert 'read_section' in a.requests[2][1]
+
+
+def test_failed_search_consumes_search_budget():
+    calls=[ToolCall(str(i),'search_literature',dict(query=str(i),reason='gap')) for i in range(3)]
+    a=Fake([decision(calls=[c]) for c in calls]+[decision('draft'),decision('review')])
+    executed=[]
+    r=AgentLoop(a,lambda request,*args:executed.append(request) or dict(status='failed',error_code='worker_failed'),lambda s:None,AgentBudget(max_model_calls=8)).run('q','r')
+    assert len(executed)==2 and r['search_calls']==2
+    assert r['tool_calls'][2]['result']['error_code']=='search_budget'
