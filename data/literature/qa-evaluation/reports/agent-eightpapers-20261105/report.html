@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>八篇论文 Agentic RAG 30题评测</title><style>body{font:16px/1.7 system-ui,"Microsoft YaHei";background:#f3f6fa;color:#22334a;margin:0}main{max-width:1100px;margin:auto;padding:28px}article{background:white;border:1px solid #d8e1ec;border-radius:10px;padding:22px;margin:20px 0}h2{font-size:19px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.7 system-ui}summary{cursor:pointer;color:#25639a}details{margin:12px 0}table{border-collapse:collapse}td,th{padding:8px;border:1px solid #ccd7e3}</style><main><h1>八篇论文 · Agentic RAG 30题评测</h1><p>完成30/30；完整复核30/30。校准后要点分91.25，严格通过4/30。</p><p>同一最新版运行时，每题独立上下文、首次作答，不挑最佳答案。Jev独立评分后由Codex逐题校准；这不是独立人类专家审核。没有重跑答得差的题。非论文题引用指标为N/A。</p><details><summary>总体分组指标、资源用量与限制</summary><pre>{
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>八篇论文 Agentic RAG 30题评测</title><style>body{font:16px/1.7 system-ui,"Microsoft YaHei";background:#f3f6fa;color:#22334a;margin:0}main{max-width:1100px;margin:auto;padding:28px}article{background:white;border:1px solid #d8e1ec;border-radius:10px;padding:22px;margin:20px 0}h2{font-size:19px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.7 system-ui}summary{cursor:pointer;color:#25639a}details{margin:12px 0}table{border-collapse:collapse}td,th{padding:8px;border:1px solid #ccd7e3}</style><main><h1>八篇论文 · Agentic RAG 30题评测</h1><p>完成30/30；完整复核30/30。校准后要点分92.50，严格通过6/30。</p><p>同一最新版运行时，每题独立上下文、首次作答，不挑最佳答案。Jev独立评分后由Codex逐题校准；这不是独立人类专家审核。没有重跑答得差的题。非论文题引用指标为N/A。</p><details><summary>总体分组指标、资源用量与限制</summary><pre>{
   &quot;suite&quot;: &quot;FS8-v1&quot;,
   &quot;runtime&quot;: &quot;frozen latest Agentic RAG, 2026-11-05&quot;,
   &quot;answer_model&quot;: &quot;deepseek-flash&quot;,
@@ -31,8 +31,8 @@
   },
   &quot;calibrated&quot;: {
     &quot;count&quot;: 30,
-    &quot;point_score&quot;: 91.25,
-    &quot;strict_pass_count&quot;: 4,
+    &quot;point_score&quot;: 92.5,
+    &quot;strict_pass_count&quot;: 6,
     &quot;boundary_mean&quot;: 1.8,
     &quot;fact_support&quot;: {
       &quot;percent&quot;: 68.54838709677419,
@@ -95,8 +95,8 @@
     },
     &quot;no_paper&quot;: {
       &quot;count&quot;: 6,
-      &quot;point_score&quot;: 93.75,
-      &quot;strict_pass_count&quot;: 4,
+      &quot;point_score&quot;: 100,
+      &quot;strict_pass_count&quot;: 6,
       &quot;boundary_mean&quot;: 2,
       &quot;fact_support&quot;: {
         &quot;percent&quot;: 100.0,
@@ -9355,7 +9355,7 @@ Uddin 等（2024）建模的目标是 **tensile index**，与 tear index、burst
       &quot;citation_C11_4&quot;: &quot;supported&quot;
     }
   }
-}</pre></details></article><article><h2>FS8-025 · 你好！请用一句简短的话回应我。</h2><p><b>Jev：</b>100.00 / N/A / N/A / N/A / 2 / 通过<br><b>校准：</b>75.00 / N/A / N/A / N/A / 2 / 未通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>没有调用论文工具，问候适当；但用户只要一句，实际三句并额外引入查论文话题，Jev遗漏了格式/简洁要求。</p><ul><li>key_point_scores.K2 → 0.5：简短但并非一句，且有多余论文话题。</li></ul><p>状态：completed · 复核：completed · 工具：无 · 8.3秒</p><details><summary>完整回答</summary><pre>你好！有什么可以帮你的吗？需要查阅论文相关问题的话，请随时告诉我。</pre></details><details><summary>参考答案、必答要点与证据</summary><p>你好！很高兴和你交流。</p><ol><li>礼貌回应问候</li><li>遵守一句简短话，不展开论文或平台事实</li></ol><p>用户输入/计算，无论文要求</p></details><details><summary>Jev原始决定与最终核查记录</summary><pre>{
+}</pre></details></article><article><h2>FS8-025 · 你好！请用一句简短的话回应我。</h2><p><b>Jev：</b>100.00 / N/A / N/A / N/A / 2 / 通过<br><b>校准：</b>100.00 / N/A / N/A / N/A / 2 / 通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>按用户确认的评分口径：核心任务完成且补充无害，不因超出一句或附加简短说明扣分。保留Jev满分。</p><ul><li>维持Jev评分，理由见下。</li></ul><p>状态：completed · 复核：completed · 工具：无 · 8.3秒</p><details><summary>完整回答</summary><pre>你好！有什么可以帮你的吗？需要查阅论文相关问题的话，请随时告诉我。</pre></details><details><summary>参考答案、必答要点与证据</summary><p>你好！很高兴和你交流。</p><ol><li>礼貌回应问候</li><li>遵守一句简短话，不展开论文或平台事实</li></ol><p>用户输入/计算，无论文要求</p></details><details><summary>Jev原始决定与最终核查记录</summary><pre>{
   &quot;Jev&quot;: {
     &quot;key_point_scores&quot;: {
       &quot;K1&quot;: 1,
@@ -9388,7 +9388,7 @@ Uddin 等（2024）建模的目标是 **tensile index**，与 tear index、burst
   &quot;校准后&quot;: {
     &quot;key_point_scores&quot;: {
       &quot;K1&quot;: 1,
-      &quot;K2&quot;: 0.5
+      &quot;K2&quot;: 1
     },
     &quot;claim_assessments&quot;: [
       {
@@ -9414,7 +9414,7 @@ Uddin 等（2024）建模的目标是 **tensile index**，与 tear index、burst
       &quot;basis_C1&quot;: &quot;NONE&quot;
     }
   }
-}</pre></details></article><article><h2>FS8-026 · 把“我们这个平台能把论文里面的数据拿出来，之后可以给别人做模型用”改成一句适合向导师汇报的正式表述，保持原意，不增加已经验证准确率等新信息。</h2><p><b>Jev：</b>100.00 / N/A / N/A / N/A / 2 / 通过<br><b>校准：</b>87.50 / N/A / N/A / N/A / 2 / 未通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>改写保留原意且未编造验证结果，但用户要求一句正式表述，回答额外附了一段说明；Jev遗漏输出要求。</p><ul><li>key_point_scores.K3 → 0.5：改写句本身可用，但完整输出不止一句。</li></ul><p>状态：completed · 复核：completed · 工具：无 · 9.0秒</p><details><summary>完整回答</summary><pre>“老师，我们这个平台能够把论文中的数据提取出来，后续可供他人用于模型训练等用途。”
+}</pre></details></article><article><h2>FS8-026 · 把“我们这个平台能把论文里面的数据拿出来，之后可以给别人做模型用”改成一句适合向导师汇报的正式表述，保持原意，不增加已经验证准确率等新信息。</h2><p><b>Jev：</b>100.00 / N/A / N/A / N/A / 2 / 通过<br><b>校准：</b>100.00 / N/A / N/A / N/A / 2 / 通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>按用户确认的评分口径：核心任务完成且补充无害，不因超出一句或附加简短说明扣分。保留Jev满分。</p><ul><li>维持Jev评分，理由见下。</li></ul><p>状态：completed · 复核：completed · 工具：无 · 9.0秒</p><details><summary>完整回答</summary><pre>“老师，我们这个平台能够把论文中的数据提取出来，后续可供他人用于模型训练等用途。”
 
 说明：以上仅根据您原句改写，保留“可提取数据、可供他人用于模型”的原意；“能够”是否已有验证、提取范围与准确率、适用论文类型及模型用途均未说明，也不宜在汇报中补充。</pre></details><details><summary>参考答案、必答要点与证据</summary><p>本平台支持从论文中提取数据，为后续建模提供数据基础。</p><ol><li>保持论文数据提取的原意</li><li>保留后续建模用途</li><li>一句正式表述</li><li>不新增准确率、自动审核或已获验证等事实</li></ol><p>用户输入/计算，无论文要求</p></details><details><summary>Jev原始决定与最终核查记录</summary><pre>{
   &quot;Jev&quot;: {
@@ -9465,7 +9465,7 @@ Uddin 等（2024）建模的目标是 **tensile index**，与 tear index、burst
     &quot;key_point_scores&quot;: {
       &quot;K1&quot;: 1,
       &quot;K2&quot;: 1,
-      &quot;K3&quot;: 0.5,
+      &quot;K3&quot;: 1,
       &quot;K4&quot;: 1
     },
     &quot;claim_assessments&quot;: [
