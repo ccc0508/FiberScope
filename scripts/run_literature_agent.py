@@ -12,6 +12,7 @@ from literature_rag.application.agent_loop import AgentLoop,AgentBudget
 from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter
 from literature_rag.config import Settings
 from literature_rag.application.tools import ToolTraceStore
+from literature_rag.application.paper_directory import load_paper_directory
 
 
 def main():
@@ -57,7 +58,8 @@ def main():
                 creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
             return json.loads(r.stdout) if r.returncode==0 else dict(status='failed',error_code='worker_failed')
         except subprocess.TimeoutExpired:return dict(status='failed',error_code='tool_timeout')
-    result=AgentLoop(ChatAgentAdapter(settings),execute,checkpoint,b).run(a.question,run_id)
+    directory=load_paper_directory(a.library)
+    result=AgentLoop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory).run(a.question,run_id)
     store=ToolTraceStore(ROOT/'.rag-data/tool-traces.sqlite3')
     (out/'evidence.json').write_text(json.dumps(store.evidence(run_id),ensure_ascii=False,indent=2),encoding='utf-8')
     print(json.dumps(dict(status=result['status'],run_id=run_id)))
