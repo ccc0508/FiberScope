@@ -18,7 +18,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--question',required=True);p.add_argument('--library',type=Path,required=True)
     p.add_argument('--seconds',type=float,default=240);p.add_argument('--max-tools',type=int,default=8)
-    p.add_argument('--max-model-calls',type=int,default=6);p.add_argument('--run-id',default=None)
+    p.add_argument('--max-model-calls',type=int,default=10);p.add_argument('--run-id',default=None)
     p.add_argument('--child',action='store_true',help=argparse.SUPPRESS)
     a=p.parse_args();run_id=a.run_id or str(uuid4())
     if not run_id.replace('-','').replace('_','').isalnum() or len(run_id)>100:raise ValueError('Invalid run ID')
