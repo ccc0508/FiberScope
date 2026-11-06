@@ -4,6 +4,8 @@ from dataclasses import asdict
 import json
 from pathlib import Path
 import subprocess
+import os
+import signal
 import sys
 from uuid import uuid4
 ROOT=Path(__file__).resolve().parents[1]
@@ -33,13 +35,15 @@ def main():
             '--library',str(a.library.resolve()),'--seconds',str(a.seconds),'--max-tools',str(a.max_tools),
             '--max-model-calls',str(a.max_model_calls)]
         proc=subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+            start_new_session=os.name!='nt',
             creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
         try:
             stdout,stderr=proc.communicate(timeout=a.seconds+5)
             if proc.returncode:raise RuntimeError('Agent worker failed; inspect saved state')
         except subprocess.TimeoutExpired:
             # Kill the process tree on Windows, including any outstanding tool worker.
-            subprocess.run(['taskkill','/PID',str(proc.pid),'/T','/F'],capture_output=True)
+            if os.name=='nt':subprocess.run(['taskkill','/PID',str(proc.pid),'/T','/F'],capture_output=True)
+            else:os.killpg(proc.pid,signal.SIGKILL)
             proc.wait()
             state=json.loads(state_path.read_text('utf-8')) if state_path.exists() else dict(run_id=run_id,answer='')
             state.update(status='partial' if state.get('answer') else 'failed',stop_reason='hard_deadline')

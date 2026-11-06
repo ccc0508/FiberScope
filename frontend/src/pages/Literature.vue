@@ -299,8 +299,8 @@ load();
       aria-live="polite"
     >
       <BookOpen :size="26" />
-      <h2>正在检索文献并核对引用</h2>
-      <p>回答可能需要几十秒。已接收的问题会在后台继续处理，刷新后可从历史记录查看。</p>
+      <h2>正在查阅与分析</h2>
+      <p>系统会按问题需要检索、阅读文献并复核答案，可能需要数分钟。已接收的问题会在后台继续处理，刷新后可从历史记录查看。</p>
     </section>
     <section v-if="error" class="card literature-state" role="alert">
       <p>{{ error }}</p>
@@ -315,7 +315,7 @@ load();
       <div class="answer-heading">
         <h2 id="answer-title">
           {{
-            answer.status === "answered" ? "文献中的回答" : "暂时无法可靠回答"
+            answer.status === "answered" ? "回答" : "暂时无法可靠回答"
           }}
         </h2>
         <span>{{
@@ -403,7 +403,7 @@ load();
           <span class="evidence-number">{{ c.ref }}</span>
           <div>
             <h3>{{ c.filename }}</h3>
-            <small
+            <small v-if="c.kind !== 'calculation'"
               >PDF 第 {{ c.page_start
               }}{{
                 c.page_end !== c.page_start ? `–${c.page_end}` : ""
@@ -412,6 +412,7 @@ load();
             >
           </div>
           <a
+            v-if="c.kind !== 'calculation'"
             class="text-link"
             :href="pdf(c.document_id, c.page_start)"
             target="_blank"
