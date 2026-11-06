@@ -42,6 +42,9 @@ Use search_literature without document_ids for broad discovery, or with document
 within known papers. Filtering occurs before candidate selection. For a known table number, use find_table
 with document_id and table_number, then read_table with the returned chunk_id. Directory/table handles
 are not evidence until read. Do not guess IDs or resolve ambiguous papers/tables silently.
+Use list_sections with document_id to obtain real section IDs before read_section when no section handle
+is available. A chapter number is not a section ID. On unknown_section use the returned directory to
+correct the ID and retry when budget permits; paginate list_sections if needed.
 """
 
 REVIEW_PROMPT='''Review the draft against the user's question and the actual supplied evidence and images.
@@ -75,7 +78,7 @@ def trace_messages(messages):
 
 @dataclass(frozen=True)
 class AgentBudget:
-    max_model_calls: int=6
+    max_model_calls: int=10
     max_tool_calls: int=8
     max_search_calls: int=2
     total_seconds: float=240

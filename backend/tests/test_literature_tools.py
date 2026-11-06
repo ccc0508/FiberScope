@@ -32,6 +32,33 @@ def test_section_pagination_and_dedup(kit):
     assert len(''.join(texts))==600
     assert len(kit.store.read('run'))==3
 
+
+def test_section_discovery_recovery_and_document_isolation(kit):
+    from literature_rag.application.agent_context import EvidenceProjection
+    listing=kit.call(dict(tool='list_sections',document_id='doc',reason='discover'),run_id='r')
+    assert listing['result']['sections'][0]['section_id']=='s'
+    assert listing['result']['sections'][0]['page_end']==3
+    bad=kit.call(dict(tool='read_section',document_id='doc',section_id='sec_1',reason='read'),run_id='r')
+    assert bad['status']=='failed' and bad['error_code']=='unknown_section'
+    projected=EvidenceProjection().project(bad)
+    sid=projected['result']['sections'][0]['section_id']
+    good=kit.call(dict(tool='read_section',document_id='doc',section_id=sid,reason='retry'),run_id='r')
+    assert good['status']=='completed' and good['result']['sources']
+    assert kit.store.read('r')[1]['recovery']==bad['result']
+    other=kit.call(dict(tool='list_sections',document_id='other',reason='discover'),run_id='r')
+    assert other['error_code']=='unknown_document' and not other['result']['sections']
+
+
+def test_section_directory_pagination(kit):
+    c=kit.catalog.chunks['0']
+    from dataclasses import replace
+    kit.catalog.chunks={str(i):replace(c,id=str(i),chunk_index=i) for i in range(23)}
+    kit.catalog.mapping={str(i):dict(section_id='s'+str(i),section_path=['Section '+str(i)]) for i in range(23)}
+    first=kit.call(dict(tool='list_sections',document_id='doc',reason='list'),run_id='r')['result']
+    second=kit.call(dict(tool='list_sections',document_id='doc',offset=first['next_offset'],reason='more'),run_id='r')['result']
+    assert len(first['sections'])==20 and len(second['sections'])==3
+    assert second['next_offset'] is None
+
 def test_table_checks_document_and_role(kit):
     p=dict(tool='read_table',document_id='doc',chunk_id='1',reason='table')
     assert kit.call(p,run_id='r')['result']['table']['text']=='x'*300
