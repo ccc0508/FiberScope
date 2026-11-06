@@ -7890,7 +7890,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "5448b051af95c9b0813cac7ed08cee5c0f046299586cbf7af15078060a785fa9"
@@ -8570,7 +8570,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "65e537be7b966fa3654bc3966cbef156ed4017a34732bc7566897d14ba726598"
@@ -8605,8 +8605,8 @@
       "tool_expectation": "从所涉论文取得证据；可一次检索覆盖多篇，不规定固定调用次数。需要可追溯的文献与页码/表图定位。",
       "citation_applicable": true
     },
-    "answer": "**区别（表1，第4页）**：R1000与SR1000的打浆条件相同，都是1000转PFI磨打浆。两者区别在于是否添加增强剂：R1000不含增强剂，SR1000含25 kg/t增强剂（马铃薯基阳离子淀粉 Avebe Amlofax HS）[1]。文中说明，“S”表示添加了enhancement剂（strength additive），数字表示PFI磨转数[1]。\n\n表1全部六组材料[1]：\n\n| 材料 | 增强剂 (kg/t) | 打浆 (PFI转) |\n|---|---|---|\n| R0 / R1000 / R2000 | 0 | 0 / 1000 / 2000 |\n| SR0 / SR1000 / SR2000 | 25 | 0 / 1000 / 2000 |\n\n**SR1000中的“1000”是指PFI磨转数，不是打浆度1000 °SR**。表1把该数字列在“Refining (PFI revolutions)”一栏[1]。\n\n另外，文中单独用SR（Schopper-Riegler，ISO 5267-1）方法测了排水性能，结果见第7页表6[2][3]：R0 = 20.8 mL、R1000 = 25.6 mL、R2000 = 30.8 mL，随打浆增加只从约21升到约31。表6仅测了R系三组，没有列出SR系（加了增强剂的三组）的°SR数值[2][3]。因此，SR1000若按“1000 °SR”理解属于误读；论文中该标签里的“SR”是材料命名的一部分（在R前加S表示加增强剂），与Schopper-Riegler的缩写同形，容易混淆[1]。\n\n补充：表8（第8页）实测SR1000的密度为362.7 kg/m³，R1000为345.2 kg/m³，即加增强剂的试样密度更高[4]。这里只报告实测差异，不推断其原因。",
-    "draft": "## 回答\n\n**区别（表1，p.4）**：R1000与SR1000的打浆条件相同，都是1000转PFI磨；两者的差别在于是否添加增强剂：R1000不含增强剂，SR1000含25 kg/t增强剂（马铃薯基阳离子淀粉Avebe Amlofax HS）[2][3]。也就是“S”表示加了strength additive，数字表示PFI磨转数[2]。\n\n表1全部六组[2]：\n\n| 材料 | 增强剂 (kg/t) | 打浆 (PFI转) |\n|---|---|---|\n| R0 / R1000 / R2000 | 0 | 0 / 1000 / 2000 |\n| SR0 / SR1000 / SR2000 | 25 | 0 / 1000 / 2000 |\n\n**SR1000不是打浆度1000 °SR**。文中SR1000的“1000”是**PFI磨转数**，不是Schopper-Riegler值。文中另外单独给出了SR（Schopper-Riegler，ISO 5267-1）排水性能实测（表6，p.7）：R0 = 20.8、R1000 = 25.6、R2000 = 30.8 °SR；随打浆增加，°SR只从约21升到约31，远非1000[3][5]（表6仅测了R系三组，SR系未列数值）。因此，SR1000若按°SR解读属误读；论文中该材料标号的“SR”是材料命名（R+增强剂），与Schopper-Riegler缩写同形易混淆。\n\n补充：SR1000的密度为362.7 kg/m³，高于R1000的345.2 kg/m³（表8，p.8），这是添加增强剂后的实测差异，不是打浆度差异[1]。",
+    "answer": "## 结论\n\n**区别**：R1000 与 SR1000 的唯一差别在于是否加入增强剂（阳离子马铃薯淀粉）；两者的打浆程度相同。\n\n- 表1（s10570-019-02349-5.pdf，第4页，Table 1）中，R 系列（R0/R1000/R2000）的增强剂添加量为 0 kg/t，SR 系列（SR0/SR1000/SR2000）为 25 kg/t；两者的打浆（PFI 磨转数）分别对应 0、1000、2000 转 [1]。因此，R1000 = 不加增强剂 + 1000 转 PFI 打浆；SR1000 = 加入 25 kg/t 淀粉增强剂 + 同样 1000 转 PFI 打浆 [1]。原文说明该表给出的是“strength additive 与 refining level 各种组合的命名约定”，即名称中的“S”指增强剂（strength additive），而不是打浆度 [1]。\n\n**SR1000 不是打浆度 1000 °SR**：\n\n1. 名称中的“1000”对应 PFI 磨的 1000 转，属于打浆水平标号；原文打浆水平只有 0、1000、2000 PFI 转三档 [1]。\n2. 论文确实另测了 SR（Schopper-Riegler，打浆度/°SR）与 CSF 两种滤水性能，但表6只给出 R 系列的数值：R0 = 20.8 mL、R1000 = 25.6 mL、R2000 = 30.8 mL（对应 CSF 590、500、410 mL）[4][8]。这些数值与“1000 °SR”完全不在一个量级，而且表中没有 SR1000 样品的 Schopper-Riegler 值。\n\n**需要注意的限制**：论文正文没有提示“SR”作为样品名前缀与 Schopper-Riegler 缩写为同一形式可能引起混淆。表6表头“SR (mL)”指 Schopper-Riegler 滤水值 [4][8]；表9则用 SR0/SR1000/SR2000 指含增强剂样品，给出其淀粉留着率依次为 1.1%、1.12%、1.21%，作者据此认为不同打浆水平间差异不显著 [5]。因此文中“SR”需按语境区分。至于 SR1000 样品的 °SR 具体数值，论文未报道，无法确定。",
+    "draft": "## 结论\n\n**区别**：这两组代码的唯一区别是是否加入了增强剂（阳离子马铃薯淀粉），两者打浆程度相同。\n\n- 表1（s10570-019-02349-5.pdf，第4页，Table 1）中，R系列（R0/R1000/R2000）的强度添加剂为 0 kg/t，SR系列（SR0/SR1000/SR2000）为 25 kg/t；两者的打浆（PFI 磨转数）分别对应 0、1000、2000 转 [1]。因此，**R1000 = 未加增强剂 + 1000 转 PFI 打浆；SR1000 = 加入 25 kg/t 淀粉增强剂 + 同样 1000 转 PFI 打浆**，即“S”表示 Strength additive（增强剂），而不是打浆度 [1]。原文也明确说明表中给出的是“strength additive 与 refining level 各种组合的命名约定” [1]。\n\n**SR1000 不是 1000 °SR**。理由：\n\n1. SR1000 名称中的“1000”来自 PFI 磨转数（1000 PFI mill revolutions），属于打浆强度的等级标号，不是打浆度数值。原文的打浆水平只有 0、1000、2000 PFI 转三档 [1]。\n2. 论文确实测量了 SR（Schopper-Riegler，即“打浆度/°SR”）和 CSF 两种滤水性能，但数值范围与 1000 相差极大：R0 = 20.8 mL、R1000 = 25.6 mL、R2000 = 30.8 mL（对应 CSF 590/500/410 mL），而且表6只测了 R 系列 [4][8]。Schopper-Riegler 值本身是有限的滤水指标（°SR 上限约 100 量级），1000 °SR 在物理上不合理。\n\n**需要注意的限制**：论文没有在正文中说明“SR”缩写在此用作样品名与 Schopper-Riegler 缩写重合的潜在混淆；且表6与表9分别使用 SR 表示“打浆度单位”和“样品名前缀”（表9为 SR0/SR1000/SR2000 的淀粉留着率约 1.1–1.21%，差异不显著）[5]。因此，论文中 SR 的含义需按语境区分：在“SR (mL)”表头中为 Schopper-Riegler 滤水值，在样品名中为含增强剂系列。",
     "raw_jev": {
       "key_point_scores": {
         "K1": 1,
@@ -8617,17 +8617,15 @@
       "claim_assessments": [
         {
           "id": "C1",
-          "text": "**区别（表1，第4页）**：R1000与SR1000的打浆条件相同，都是1000转PFI磨打浆。两者区别在于是否添加增强剂：R1000不含增强剂，SR1000含25 kg/t增强剂（马铃薯基阳离子淀粉 Avebe Amlofax HS）[1]。文中说明，“S”表示添加了enhancement剂（strength additive），数字表示PFI磨转数[1]。",
-          "citation_refs": [
-            "[1]"
-          ],
+          "text": "## 结论\n\n**区别**：R1000 与 SR1000 的唯一差别在于是否加入增强剂（阳离子马铃薯淀粉）；两者的打浆程度相同。",
+          "citation_refs": [],
           "claim_type": "fact",
           "support": "supported",
           "basis": "B004"
         },
         {
           "id": "C2",
-          "text": "表1全部六组材料[1]：\n\n| 材料 | 增强剂 (kg/t) | 打浆 (PFI转) |\n|---|---|---|\n| R0 / R1000 / R2000 | 0 | 0 / 1000 / 2000 |\n| SR0 / SR1000 / SR2000 | 25 | 0 / 1000 / 2000 |",
+          "text": "- 表1（s10570-019-02349-5.pdf，第4页，Table 1）中，R 系列（R0/R1000/R2000）的增强剂添加量为 0 kg/t，SR 系列（SR0/SR1000/SR2000）为 25 kg/t；两者的打浆（PFI 磨转数）分别对应 0、1000、2000 转 [1]。因此，R1000 = 不加增强剂 + 1000 转 PFI 打浆；SR1000 = 加入 25 kg/t 淀粉增强剂 + 同样 1000 转 PFI 打浆 [1]。原文说明该表给出的是“strength additive 与 refining level 各种组合的命名约定”，即名称中的“S”指增强剂（strength additive），而不是打浆度 [1]。",
           "citation_refs": [
             "[1]"
           ],
@@ -8637,78 +8635,70 @@
         },
         {
           "id": "C3",
-          "text": "**SR1000中的“1000”是指PFI磨转数，不是打浆度1000 °SR**。表1把该数字列在“Refining (PFI revolutions)”一栏[1]。",
+          "text": "**SR1000 不是打浆度 1000 °SR**：\n\n1. 名称中的“1000”对应 PFI 磨的 1000 转，属于打浆水平标号；原文打浆水平只有 0、1000、2000 PFI 转三档 [1]。\n2. 论文确实另测了 SR（Schopper-Riegler，打浆度/°SR）与 CSF 两种滤水性能，但表6只给出 R 系列的数值：R0 = 20.8 mL、R1000 = 25.6 mL、R2000 = 30.8 mL（对应 CSF 590、500、410 mL）[4][8]。这些数值与“1000 °SR”完全不在一个量级，而且表中没有 SR1000 样品的 Schopper-Riegler 值。",
           "citation_refs": [
-            "[1]"
+            "[1]",
+            "[4]",
+            "[8]"
           ],
           "claim_type": "fact",
           "support": "supported",
-          "basis": "B004"
+          "basis": "B010"
         },
         {
           "id": "C4",
-          "text": "另外，文中单独用SR（Schopper-Riegler，ISO 5267-1）方法测了排水性能，结果见第7页表6[2][3]：R0 = 20.8 mL、R1000 = 25.6 mL、R2000 = 30.8 mL，随打浆增加只从约21升到约31。表6仅测了R系三组，没有列出SR系（加了增强剂的三组）的°SR数值[2][3]。因此，SR1000若按“1000 °SR”理解属于误读；论文中该标签里的“SR”是材料命名的一部分（在R前加S表示加增强剂），与Schopper-Riegler的缩写同形，容易混淆[1]。",
+          "text": "**需要注意的限制**：论文正文没有提示“SR”作为样品名前缀与 Schopper-Riegler 缩写为同一形式可能引起混淆。表6表头“SR (mL)”指 Schopper-Riegler 滤水值 [4][8]；表9则用 SR0/SR1000/SR2000 指含增强剂样品，给出其淀粉留着率依次为 1.1%、1.12%、1.21%，作者据此认为不同打浆水平间差异不显著 [5]。因此文中“SR”需按语境区分。至于 SR1000 样品的 °SR 具体数值，论文未报道，无法确定。",
           "citation_refs": [
-            "[2]",
-            "[3]",
-            "[1]"
+            "[4]",
+            "[8]",
+            "[5]"
           ],
           "claim_type": "fact",
           "support": "partially_supported",
           "basis": "NONE"
-        },
-        {
-          "id": "C5",
-          "text": "补充：表8（第8页）实测SR1000的密度为362.7 kg/m³，R1000为345.2 kg/m³，即加增强剂的试样密度更高[4]。这里只报告实测差异，不推断其原因。",
-          "citation_refs": [
-            "[4]"
-          ],
-          "claim_type": "fact",
-          "support": "supported",
-          "basis": "B016"
         }
       ],
       "citation_assessments": [
         {
-          "claim_id": "C1",
-          "ref": "[1]",
-          "score": 0
-        },
-        {
           "claim_id": "C2",
           "ref": "[1]",
-          "score": 0
+          "score": 1
         },
         {
           "claim_id": "C3",
           "ref": "[1]",
-          "score": 0
-        },
-        {
-          "claim_id": "C4",
-          "ref": "[2]",
           "score": 1
         },
         {
-          "claim_id": "C4",
-          "ref": "[3]",
-          "score": 1
-        },
-        {
-          "claim_id": "C4",
-          "ref": "[1]",
-          "score": 0
-        },
-        {
-          "claim_id": "C5",
+          "claim_id": "C3",
           "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[8]",
           "score": 0
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[5]",
+          "score": 1
         }
       ],
       "citation_group_assessments": [
         {
           "claim_id": "C1",
-          "coverage": "partial"
+          "coverage": "missing"
         },
         {
           "claim_id": "C2",
@@ -8721,16 +8711,12 @@
         {
           "claim_id": "C4",
           "coverage": "partial"
-        },
-        {
-          "claim_id": "C5",
-          "coverage": "missing"
         }
       ],
-      "answerability_score": 0,
+      "answerability_score": 2,
       "reference_concern": false,
       "decisions": {
-        "boundary": "incorrect",
+        "boundary": "appropriate",
         "reference_check": "sound",
         "point_K1": "complete",
         "point_K2": "complete",
@@ -8739,30 +8725,26 @@
         "kind_C1": "fact",
         "support_C1": "supported",
         "basis_C1": "B004",
-        "group_C1": "partial",
-        "citation_C1_1": "unsupported",
+        "group_C1": "missing",
         "kind_C2": "fact",
         "support_C2": "supported",
         "basis_C2": "B004",
         "group_C2": "complete",
-        "citation_C2_1": "unsupported",
+        "citation_C2_1": "supported",
         "kind_C3": "fact",
         "support_C3": "supported",
-        "basis_C3": "B004",
+        "basis_C3": "B010",
         "group_C3": "complete",
-        "citation_C3_1": "unsupported",
+        "citation_C3_1": "supported",
+        "citation_C3_2": "supported",
+        "citation_C3_3": "unsupported",
         "kind_C4": "fact",
         "support_C4": "partially_supported",
         "basis_C4": "NONE",
         "group_C4": "partial",
         "citation_C4_1": "supported",
         "citation_C4_2": "supported",
-        "citation_C4_3": "unsupported",
-        "kind_C5": "fact",
-        "support_C5": "supported",
-        "basis_C5": "B016",
-        "group_C5": "missing",
-        "citation_C5_1": "unsupported"
+        "citation_C4_3": "supported"
       }
     },
     "calibrated": {
@@ -8775,17 +8757,15 @@
       "claim_assessments": [
         {
           "id": "C1",
-          "text": "**区别（表1，第4页）**：R1000与SR1000的打浆条件相同，都是1000转PFI磨打浆。两者区别在于是否添加增强剂：R1000不含增强剂，SR1000含25 kg/t增强剂（马铃薯基阳离子淀粉 Avebe Amlofax HS）[1]。文中说明，“S”表示添加了enhancement剂（strength additive），数字表示PFI磨转数[1]。",
-          "citation_refs": [
-            "[1]"
-          ],
+          "text": "## 结论\n\n**区别**：R1000 与 SR1000 的唯一差别在于是否加入增强剂（阳离子马铃薯淀粉）；两者的打浆程度相同。",
+          "citation_refs": [],
           "claim_type": "fact",
           "support": "supported",
           "basis": "B004"
         },
         {
           "id": "C2",
-          "text": "表1全部六组材料[1]：\n\n| 材料 | 增强剂 (kg/t) | 打浆 (PFI转) |\n|---|---|---|\n| R0 / R1000 / R2000 | 0 | 0 / 1000 / 2000 |\n| SR0 / SR1000 / SR2000 | 25 | 0 / 1000 / 2000 |",
+          "text": "- 表1（s10570-019-02349-5.pdf，第4页，Table 1）中，R 系列（R0/R1000/R2000）的增强剂添加量为 0 kg/t，SR 系列（SR0/SR1000/SR2000）为 25 kg/t；两者的打浆（PFI 磨转数）分别对应 0、1000、2000 转 [1]。因此，R1000 = 不加增强剂 + 1000 转 PFI 打浆；SR1000 = 加入 25 kg/t 淀粉增强剂 + 同样 1000 转 PFI 打浆 [1]。原文说明该表给出的是“strength additive 与 refining level 各种组合的命名约定”，即名称中的“S”指增强剂（strength additive），而不是打浆度 [1]。",
           "citation_refs": [
             "[1]"
           ],
@@ -8795,78 +8775,70 @@
         },
         {
           "id": "C3",
-          "text": "**SR1000中的“1000”是指PFI磨转数，不是打浆度1000 °SR**。表1把该数字列在“Refining (PFI revolutions)”一栏[1]。",
+          "text": "**SR1000 不是打浆度 1000 °SR**：\n\n1. 名称中的“1000”对应 PFI 磨的 1000 转，属于打浆水平标号；原文打浆水平只有 0、1000、2000 PFI 转三档 [1]。\n2. 论文确实另测了 SR（Schopper-Riegler，打浆度/°SR）与 CSF 两种滤水性能，但表6只给出 R 系列的数值：R0 = 20.8 mL、R1000 = 25.6 mL、R2000 = 30.8 mL（对应 CSF 590、500、410 mL）[4][8]。这些数值与“1000 °SR”完全不在一个量级，而且表中没有 SR1000 样品的 Schopper-Riegler 值。",
           "citation_refs": [
-            "[1]"
+            "[1]",
+            "[4]",
+            "[8]"
           ],
           "claim_type": "fact",
           "support": "supported",
-          "basis": "B004"
+          "basis": "B010"
         },
         {
           "id": "C4",
-          "text": "另外，文中单独用SR（Schopper-Riegler，ISO 5267-1）方法测了排水性能，结果见第7页表6[2][3]：R0 = 20.8 mL、R1000 = 25.6 mL、R2000 = 30.8 mL，随打浆增加只从约21升到约31。表6仅测了R系三组，没有列出SR系（加了增强剂的三组）的°SR数值[2][3]。因此，SR1000若按“1000 °SR”理解属于误读；论文中该标签里的“SR”是材料命名的一部分（在R前加S表示加增强剂），与Schopper-Riegler的缩写同形，容易混淆[1]。",
+          "text": "**需要注意的限制**：论文正文没有提示“SR”作为样品名前缀与 Schopper-Riegler 缩写为同一形式可能引起混淆。表6表头“SR (mL)”指 Schopper-Riegler 滤水值 [4][8]；表9则用 SR0/SR1000/SR2000 指含增强剂样品，给出其淀粉留着率依次为 1.1%、1.12%、1.21%，作者据此认为不同打浆水平间差异不显著 [5]。因此文中“SR”需按语境区分。至于 SR1000 样品的 °SR 具体数值，论文未报道，无法确定。",
           "citation_refs": [
-            "[2]",
-            "[3]",
-            "[1]"
+            "[4]",
+            "[8]",
+            "[5]"
           ],
           "claim_type": "fact",
           "support": "partially_supported",
           "basis": "NONE"
-        },
-        {
-          "id": "C5",
-          "text": "补充：表8（第8页）实测SR1000的密度为362.7 kg/m³，R1000为345.2 kg/m³，即加增强剂的试样密度更高[4]。这里只报告实测差异，不推断其原因。",
-          "citation_refs": [
-            "[4]"
-          ],
-          "claim_type": "fact",
-          "support": "supported",
-          "basis": "B016"
         }
       ],
       "citation_assessments": [
         {
-          "claim_id": "C1",
-          "ref": "[1]",
-          "score": 0
-        },
-        {
           "claim_id": "C2",
           "ref": "[1]",
-          "score": 0
+          "score": 1
         },
         {
           "claim_id": "C3",
           "ref": "[1]",
-          "score": 0
-        },
-        {
-          "claim_id": "C4",
-          "ref": "[2]",
           "score": 1
         },
         {
-          "claim_id": "C4",
-          "ref": "[3]",
-          "score": 1
-        },
-        {
-          "claim_id": "C4",
-          "ref": "[1]",
-          "score": 0
-        },
-        {
-          "claim_id": "C5",
+          "claim_id": "C3",
           "ref": "[4]",
-          "score": 0
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[5]",
+          "score": 1
         }
       ],
       "citation_group_assessments": [
         {
           "claim_id": "C1",
-          "coverage": "partial"
+          "coverage": "complete"
         },
         {
           "claim_id": "C2",
@@ -8879,10 +8851,6 @@
         {
           "claim_id": "C4",
           "coverage": "partial"
-        },
-        {
-          "claim_id": "C5",
-          "coverage": "missing"
         }
       ],
       "answerability_score": 2,
@@ -8893,55 +8861,58 @@
       "group": "single",
       "status": "completed",
       "review_status": "completed",
-      "stop_reason": null,
-      "jev": {
-        "point_score": 100,
-        "point_count": 4,
-        "fact_count": 5,
-        "supported_facts": 4,
-        "pair_count": 7,
-        "supported_pairs": 2,
-        "group_count": 5,
-        "covered_groups": 2,
-        "boundary": 0,
-        "fact_support": 80.0,
-        "citation_precision": 28.571428571428573,
-        "citation_coverage": 40.0,
-        "strict_pass": false,
-        "format_ok": true
-      },
-      "final": {
-        "point_score": 100,
-        "point_count": 4,
-        "fact_count": 5,
-        "supported_facts": 4,
-        "pair_count": 7,
-        "supported_pairs": 2,
-        "group_count": 5,
-        "covered_groups": 2,
-        "boundary": 2,
-        "fact_support": 80.0,
-        "citation_precision": 28.571428571428573,
-        "citation_coverage": 40.0,
-        "strict_pass": false,
-        "format_ok": true
-      },
       "tools": [
         "search_literature"
       ],
-      "routing_ok": true,
-      "elapsed_ms": 24170,
-      "changes": [
-        {
-          "path": "answerability_score",
-          "value": 2,
-          "reason": "正确拒绝1000°SR误读，并区分命名与测量；源表自身标mL不构成模型接受错误主前提。"
-        }
-      ],
-      "reason": "R1000/SR1000、25kg/t与转数含义均正确。原PDF第7页表6确实印SR(mL)，不是模型擅自编造该单位；这是一处源表单位问题，不能据此将整题边界判0。附加单位仍宜标明源文写法，引用不足保持。"
+      "reason": "采用当前版本重跑及最新校准：开头结论承接[1]，[8]支持SR/CSF测量方法。保留末段仅凭表9引用作者差异不显著判断的支持不足；不是编号错配。",
+      "final": {
+        "point_score": 100,
+        "point_count": 4,
+        "fact_count": 4,
+        "supported_facts": 3,
+        "pair_count": 7,
+        "supported_pairs": 7,
+        "group_count": 4,
+        "covered_groups": 3,
+        "boundary": 2,
+        "fact_support": 75.0,
+        "citation_precision": 100.0,
+        "citation_coverage": 75.0,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "jev": {
+        "point_score": 100,
+        "point_count": 4,
+        "fact_count": 4,
+        "supported_facts": 3,
+        "pair_count": 7,
+        "supported_pairs": 6,
+        "group_count": 4,
+        "covered_groups": 2,
+        "boundary": 2,
+        "fact_support": 75.0,
+        "citation_precision": 85.71428571428571,
+        "citation_coverage": 50.0,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "changes": []
     },
-    "result_sha256": "7669bb492c21c1f743c2f30b5c9cf2d632d534574788a0f1bd7bd2dcf0f93b9b",
-    "judge_input_sha256": "95b0afc34347a2c594071d8674ccdb84d68777bec4e17f3f4cf10419ec183a5d",
+    "result_sha256": "546a43b8c670beee6a448cf2daae01b8b0ef9492884c81ccc07bf8cac7e0da3c",
+    "judge_input_sha256": "705782f2f78f4e7fd2da50bf9cb48609a8f4dc220ef2f49d0ce30217afaba32a",
+    "source_calibration": [
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "开头实验条件总结承接后文[1]表1，无需重复引用。"
+      },
+      {
+        "path": "citation_assessments.C3.[8].score",
+        "value": 1,
+        "reason": "[8]明确说明SR与CSF两种滤水方法及Table 6，对该段方法陈述有实质支持；不要求每个引用独立提供全部数值。"
+      }
+    ],
     "source_calibrated": {
       "key_point_scores": {
         "K1": 1,
@@ -8952,17 +8923,15 @@
       "claim_assessments": [
         {
           "id": "C1",
-          "text": "**区别（表1，第4页）**：R1000与SR1000的打浆条件相同，都是1000转PFI磨打浆。两者区别在于是否添加增强剂：R1000不含增强剂，SR1000含25 kg/t增强剂（马铃薯基阳离子淀粉 Avebe Amlofax HS）[1]。文中说明，“S”表示添加了enhancement剂（strength additive），数字表示PFI磨转数[1]。",
-          "citation_refs": [
-            "[1]"
-          ],
+          "text": "## 结论\n\n**区别**：R1000 与 SR1000 的唯一差别在于是否加入增强剂（阳离子马铃薯淀粉）；两者的打浆程度相同。",
+          "citation_refs": [],
           "claim_type": "fact",
           "support": "supported",
           "basis": "B004"
         },
         {
           "id": "C2",
-          "text": "表1全部六组材料[1]：\n\n| 材料 | 增强剂 (kg/t) | 打浆 (PFI转) |\n|---|---|---|\n| R0 / R1000 / R2000 | 0 | 0 / 1000 / 2000 |\n| SR0 / SR1000 / SR2000 | 25 | 0 / 1000 / 2000 |",
+          "text": "- 表1（s10570-019-02349-5.pdf，第4页，Table 1）中，R 系列（R0/R1000/R2000）的增强剂添加量为 0 kg/t，SR 系列（SR0/SR1000/SR2000）为 25 kg/t；两者的打浆（PFI 磨转数）分别对应 0、1000、2000 转 [1]。因此，R1000 = 不加增强剂 + 1000 转 PFI 打浆；SR1000 = 加入 25 kg/t 淀粉增强剂 + 同样 1000 转 PFI 打浆 [1]。原文说明该表给出的是“strength additive 与 refining level 各种组合的命名约定”，即名称中的“S”指增强剂（strength additive），而不是打浆度 [1]。",
           "citation_refs": [
             "[1]"
           ],
@@ -8972,78 +8941,70 @@
         },
         {
           "id": "C3",
-          "text": "**SR1000中的“1000”是指PFI磨转数，不是打浆度1000 °SR**。表1把该数字列在“Refining (PFI revolutions)”一栏[1]。",
+          "text": "**SR1000 不是打浆度 1000 °SR**：\n\n1. 名称中的“1000”对应 PFI 磨的 1000 转，属于打浆水平标号；原文打浆水平只有 0、1000、2000 PFI 转三档 [1]。\n2. 论文确实另测了 SR（Schopper-Riegler，打浆度/°SR）与 CSF 两种滤水性能，但表6只给出 R 系列的数值：R0 = 20.8 mL、R1000 = 25.6 mL、R2000 = 30.8 mL（对应 CSF 590、500、410 mL）[4][8]。这些数值与“1000 °SR”完全不在一个量级，而且表中没有 SR1000 样品的 Schopper-Riegler 值。",
           "citation_refs": [
-            "[1]"
+            "[1]",
+            "[4]",
+            "[8]"
           ],
           "claim_type": "fact",
           "support": "supported",
-          "basis": "B004"
+          "basis": "B010"
         },
         {
           "id": "C4",
-          "text": "另外，文中单独用SR（Schopper-Riegler，ISO 5267-1）方法测了排水性能，结果见第7页表6[2][3]：R0 = 20.8 mL、R1000 = 25.6 mL、R2000 = 30.8 mL，随打浆增加只从约21升到约31。表6仅测了R系三组，没有列出SR系（加了增强剂的三组）的°SR数值[2][3]。因此，SR1000若按“1000 °SR”理解属于误读；论文中该标签里的“SR”是材料命名的一部分（在R前加S表示加增强剂），与Schopper-Riegler的缩写同形，容易混淆[1]。",
+          "text": "**需要注意的限制**：论文正文没有提示“SR”作为样品名前缀与 Schopper-Riegler 缩写为同一形式可能引起混淆。表6表头“SR (mL)”指 Schopper-Riegler 滤水值 [4][8]；表9则用 SR0/SR1000/SR2000 指含增强剂样品，给出其淀粉留着率依次为 1.1%、1.12%、1.21%，作者据此认为不同打浆水平间差异不显著 [5]。因此文中“SR”需按语境区分。至于 SR1000 样品的 °SR 具体数值，论文未报道，无法确定。",
           "citation_refs": [
-            "[2]",
-            "[3]",
-            "[1]"
+            "[4]",
+            "[8]",
+            "[5]"
           ],
           "claim_type": "fact",
           "support": "partially_supported",
           "basis": "NONE"
-        },
-        {
-          "id": "C5",
-          "text": "补充：表8（第8页）实测SR1000的密度为362.7 kg/m³，R1000为345.2 kg/m³，即加增强剂的试样密度更高[4]。这里只报告实测差异，不推断其原因。",
-          "citation_refs": [
-            "[4]"
-          ],
-          "claim_type": "fact",
-          "support": "supported",
-          "basis": "B016"
         }
       ],
       "citation_assessments": [
         {
-          "claim_id": "C1",
-          "ref": "[1]",
-          "score": 0
-        },
-        {
           "claim_id": "C2",
           "ref": "[1]",
-          "score": 0
+          "score": 1
         },
         {
           "claim_id": "C3",
           "ref": "[1]",
-          "score": 0
-        },
-        {
-          "claim_id": "C4",
-          "ref": "[2]",
           "score": 1
         },
         {
-          "claim_id": "C4",
-          "ref": "[3]",
-          "score": 1
-        },
-        {
-          "claim_id": "C4",
-          "ref": "[1]",
-          "score": 0
-        },
-        {
-          "claim_id": "C5",
+          "claim_id": "C3",
           "ref": "[4]",
-          "score": 0
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[5]",
+          "score": 1
         }
       ],
       "citation_group_assessments": [
         {
           "claim_id": "C1",
-          "coverage": "partial"
+          "coverage": "complete"
         },
         {
           "claim_id": "C2",
@@ -9056,51 +9017,12 @@
         {
           "claim_id": "C4",
           "coverage": "partial"
-        },
-        {
-          "claim_id": "C5",
-          "coverage": "missing"
         }
       ],
       "answerability_score": 2,
-      "reference_concern": false,
-      "decisions": {
-        "boundary": "incorrect",
-        "reference_check": "sound",
-        "point_K1": "complete",
-        "point_K2": "complete",
-        "point_K3": "complete",
-        "point_K4": "complete",
-        "kind_C1": "fact",
-        "support_C1": "supported",
-        "basis_C1": "B004",
-        "group_C1": "partial",
-        "citation_C1_1": "unsupported",
-        "kind_C2": "fact",
-        "support_C2": "supported",
-        "basis_C2": "B004",
-        "group_C2": "complete",
-        "citation_C2_1": "unsupported",
-        "kind_C3": "fact",
-        "support_C3": "supported",
-        "basis_C3": "B004",
-        "group_C3": "complete",
-        "citation_C3_1": "unsupported",
-        "kind_C4": "fact",
-        "support_C4": "partially_supported",
-        "basis_C4": "NONE",
-        "group_C4": "partial",
-        "citation_C4_1": "supported",
-        "citation_C4_2": "supported",
-        "citation_C4_3": "unsupported",
-        "kind_C5": "fact",
-        "support_C5": "supported",
-        "basis_C5": "B016",
-        "group_C5": "missing",
-        "citation_C5_1": "unsupported"
-      }
+      "reference_concern": false
     },
-    "source_run": "agent-eightpapers-20261105",
+    "source_run": "agent-current-case15-20261106",
     "baseline_metrics": {
       "point_score": 100,
       "point_count": 4,
@@ -9120,25 +9042,25 @@
     "pre_audit_metrics": {
       "point_score": 100,
       "point_count": 4,
-      "fact_count": 5,
-      "supported_facts": 4,
+      "fact_count": 4,
+      "supported_facts": 3,
       "pair_count": 7,
-      "supported_pairs": 2,
-      "group_count": 5,
-      "covered_groups": 2,
+      "supported_pairs": 7,
+      "group_count": 4,
+      "covered_groups": 3,
       "boundary": 2,
-      "fact_support": 80.0,
-      "citation_precision": 28.571428571428573,
-      "citation_coverage": 40.0,
+      "fact_support": 75.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 75.0,
       "strict_pass": false,
       "format_ok": true
     },
     "latest_audit": {
-      "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reviewed": true,
+      "reason": "采用当前版本重跑及最新校准：开头结论承接[1]，[8]支持SR/CSF测量方法。保留末段仅凭表9引用作者差异不显著判断的支持不足；不是编号错配。",
       "changes": []
     },
-    "answer_sha256": "694a09e126b82666d47f7189f62baa7d2a6efc9c942e81bc44413a9f7c31c55b"
+    "answer_sha256": "9e5912ff8d7714e964a935b02e996114369900bc0d8cc6ab99ba0cf3b1dadc0c"
   },
   {
     "case": {
@@ -9378,7 +9300,7 @@
             "[7]"
           ],
           "claim_type": "fact",
-          "support": "partially_supported",
+          "support": "supported",
           "basis": "NONE"
         }
       ],
@@ -9421,12 +9343,12 @@
         {
           "claim_id": "C4",
           "ref": "[6]",
-          "score": 0
+          "score": 1
         },
         {
           "claim_id": "C4",
           "ref": "[7]",
-          "score": 0
+          "score": 1
         }
       ],
       "citation_group_assessments": [
@@ -9444,7 +9366,7 @@
         },
         {
           "claim_id": "C4",
-          "coverage": "partial"
+          "coverage": "complete"
         }
       ],
       "answerability_score": 2,
@@ -9476,16 +9398,16 @@
         "point_score": 100,
         "point_count": 4,
         "fact_count": 4,
-        "supported_facts": 3,
+        "supported_facts": 4,
         "pair_count": 9,
-        "supported_pairs": 7,
+        "supported_pairs": 9,
         "group_count": 4,
-        "covered_groups": 3,
+        "covered_groups": 4,
         "boundary": 2,
-        "fact_support": 75.0,
-        "citation_precision": 77.77777777777777,
-        "citation_coverage": 75.0,
-        "strict_pass": false,
+        "fact_support": 100.0,
+        "citation_precision": 100.0,
+        "citation_coverage": 100.0,
+        "strict_pass": true,
         "format_ok": true
       },
       "tools": [
@@ -9493,8 +9415,29 @@
       ],
       "routing_ok": true,
       "elapsed_ms": 26705,
-      "changes": [],
-      "reason": "200µm工作定义、非筛分标准与仪器差异答全。额外“并非直接对比实测”等范围判断仍欠充分限定，保留Jev部分支持。"
+      "changes": [
+        {
+          "path": "claim_assessments.C4.support",
+          "value": "supported",
+          "reason": "完整上下文明确有两仪器测量；非直接对比实测指形态解释及检测限制的推论，不能误读成否认实验。所引证据未显示校正关系是限定范围的说明。"
+        },
+        {
+          "path": "citation_assessments.C4.[6].score",
+          "value": 1,
+          "reason": "Table 3直接支持Kajaani测量均值，承担实质子事实。"
+        },
+        {
+          "path": "citation_assessments.C4.[7].score",
+          "value": 1,
+          "reason": "Table 4直接支持L&W测量均值，承担实质子事实。"
+        },
+        {
+          "path": "citation_group_assessments.C4.coverage",
+          "value": "complete",
+          "reason": "[1]方法与检测限制及[6][7]表格联合支持；不要求推论在论文中逐字重述。"
+        }
+      ],
+      "reason": "接受有界仪器差异及不能直接换算的谨慎说明；[6][7]直接支持两台仪器各自的测量均值，结合[1]检测限制共同覆盖末段，恢复满分。"
     },
     "result_sha256": "6a62368fa0f341a4c72deb48510b92d245304111c8788952442fc3c6afb0c8da",
     "judge_input_sha256": "d9d4cc49fabd19c8375b5ed7f3ab91b3c3800d88efad212809ae333c1dcd86b8",
@@ -9687,9 +9630,30 @@
       "format_ok": true
     },
     "latest_audit": {
-      "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
-      "changes": []
+      "reviewed": true,
+      "reason": "接受有界仪器差异及不能直接换算的谨慎说明；[6][7]直接支持两台仪器各自的测量均值，结合[1]检测限制共同覆盖末段，恢复满分。",
+      "changes": [
+        {
+          "path": "claim_assessments.C4.support",
+          "value": "supported",
+          "reason": "完整上下文明确有两仪器测量；非直接对比实测指形态解释及检测限制的推论，不能误读成否认实验。所引证据未显示校正关系是限定范围的说明。"
+        },
+        {
+          "path": "citation_assessments.C4.[6].score",
+          "value": 1,
+          "reason": "Table 3直接支持Kajaani测量均值，承担实质子事实。"
+        },
+        {
+          "path": "citation_assessments.C4.[7].score",
+          "value": 1,
+          "reason": "Table 4直接支持L&W测量均值，承担实质子事实。"
+        },
+        {
+          "path": "citation_group_assessments.C4.coverage",
+          "value": "complete",
+          "reason": "[1]方法与检测限制及[6][7]表格联合支持；不要求推论在论文中逐字重述。"
+        }
+      ]
     },
     "answer_sha256": "52fa68d2a33ec3357546c6f7a0d31e641e08bbf90c61a797c4e6fcb259cdaeaa"
   },
@@ -10177,7 +10141,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "7360909749000998adaf0136872087777ecfc28fc71118090b9fd93493f128de"
@@ -10974,7 +10938,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "4e681c11f32d885d9a16caac8608fb168a9394beb2fa89f56b3f507d924ee8de"
@@ -11706,7 +11670,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "7e3704055c3130964e2fc235e4762a22b01021ef8dc2fd49e106cc265b1fab2a"
@@ -12379,7 +12343,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "d4ebec54dbf74ec43e0fdf86b39eeb09dfceb8e49bec2d1935726f86bd9f2084"
@@ -12889,7 +12853,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "7a1aa92aaf0fe210d51de0fb959e4fce320d1eb51b60a1e4d8901676e0224701"
@@ -13518,7 +13482,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "3fce601c299ebb566a1ac2fbdc2696ce9bec78e227f46ba398195e02e48a5a5a"
@@ -14206,7 +14170,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "726b97eb64c34ad7f20f810fd9085ff2e87f32a9d13f4ea88ea558dba2d0c2a1"
@@ -15265,7 +15229,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "07912c26487dd56bffb1adb8bbae3d20ad058570d9fd069acc244dd905f100f3"
@@ -15451,7 +15415,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "8fcc64401543ac19da983ef519faaf12c6ef93da26da7f02d90094a6f4b12e38"
@@ -15679,7 +15643,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "5c5161892b72559bbd2289cab4eb3ba0189085d81fe02631d7d57b4ed10ffbd2"
@@ -15997,7 +15961,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "c8373c7e46ebf35f4b7f8e31fe8b088d448031f3eafbe45e64a15d659f58bc13"
@@ -16213,7 +16177,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "4f3430d4dd56aef2412423214051c90ca4ff0987208db4102ebe32658f4f3294"
@@ -16465,7 +16429,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "706f6392634760720d8e4bfecd7edf5c9ca44652e0c69db9fd1ffa2d76573626"
@@ -16663,7 +16627,7 @@
     },
     "latest_audit": {
       "reviewed": false,
-      "reason": "第13—30题沿用原报告最新校准，本次未重审。",
+      "reason": "未列入本轮复查的题目沿用此前校准。",
       "changes": []
     },
     "answer_sha256": "0fc9f22791ac9746e84981f656bdce0304da284461190dbcda79ce020f8eb0cb"

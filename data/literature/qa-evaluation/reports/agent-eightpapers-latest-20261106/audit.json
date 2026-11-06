@@ -538,5 +538,104 @@
       "strict_pass": true,
       "format_ok": true
     }
+  },
+  {
+    "case_id": "FS8-015",
+    "source_run": "agent-current-case15-20261106",
+    "reviewed": true,
+    "reason": "采用当前版本重跑及最新校准：开头结论承接[1]，[8]支持SR/CSF测量方法。保留末段仅凭表9引用作者差异不显著判断的支持不足；不是编号错配。",
+    "changes": [],
+    "before": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 3,
+      "pair_count": 7,
+      "supported_pairs": 7,
+      "group_count": 4,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 75.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 75.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 3,
+      "pair_count": 7,
+      "supported_pairs": 7,
+      "group_count": 4,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 75.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 75.0,
+      "strict_pass": false,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-016",
+    "source_run": "agent-eightpapers-20261105",
+    "reviewed": true,
+    "reason": "接受有界仪器差异及不能直接换算的谨慎说明；[6][7]直接支持两台仪器各自的测量均值，结合[1]检测限制共同覆盖末段，恢复满分。",
+    "changes": [
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "supported",
+        "reason": "完整上下文明确有两仪器测量；非直接对比实测指形态解释及检测限制的推论，不能误读成否认实验。所引证据未显示校正关系是限定范围的说明。"
+      },
+      {
+        "path": "citation_assessments.C4.[6].score",
+        "value": 1,
+        "reason": "Table 3直接支持Kajaani测量均值，承担实质子事实。"
+      },
+      {
+        "path": "citation_assessments.C4.[7].score",
+        "value": 1,
+        "reason": "Table 4直接支持L&W测量均值，承担实质子事实。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "complete",
+        "reason": "[1]方法与检测限制及[6][7]表格联合支持；不要求推论在论文中逐字重述。"
+      }
+    ],
+    "before": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 3,
+      "pair_count": 9,
+      "supported_pairs": 7,
+      "group_count": 4,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 75.0,
+      "citation_precision": 77.77777777777777,
+      "citation_coverage": 75.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 4,
+      "pair_count": 9,
+      "supported_pairs": 9,
+      "group_count": 4,
+      "covered_groups": 4,
+      "boundary": 2,
+      "fact_support": 100.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 100.0,
+      "strict_pass": true,
+      "format_ok": true
+    }
   }
 ]
