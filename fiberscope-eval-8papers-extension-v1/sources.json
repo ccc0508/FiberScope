@@ -1,0 +1,82 @@
+[
+  {
+    "id": "D1",
+    "document_id": "doc_cec3e2f8b5abaa89",
+    "title": "Challenges in computational materials modelling and simulation: A case-study to predict tissue paper properties",
+    "year": 2022,
+    "filename": "01_Morais_2022_Tissue_prediction.pdf",
+    "sha256": "cec3e2f8b5abaa89bc7e660731bc343cd5d35b7be5ebc8e39c8f78e229c0f7aa",
+    "pdf_pages": 12,
+    "library_relative_path": "papers/cec3e2f8b5abaa89bc7e660731bc343cd5d35b7be5ebc8e39c8f78e229c0f7aa.pdf"
+  },
+  {
+    "id": "D2",
+    "document_id": "doc_fc10c27084432887",
+    "title": "纸张三维结构的CLSM表征及纸张特性研究",
+    "year": 2020,
+    "filename": "02_2020_纸张三维结构的CLSM表征及纸张特性研究.pdf",
+    "sha256": "fc10c2708443288753194dcd4d00b5182bea67a126fe33f230d6ffca2f07850c",
+    "pdf_pages": 7,
+    "library_relative_path": "papers/fc10c2708443288753194dcd4d00b5182bea67a126fe33f230d6ffca2f07850c.pdf"
+  },
+  {
+    "id": "D3",
+    "document_id": "doc_347aacf900c9ab36",
+    "title": "Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning",
+    "year": 2023,
+    "filename": "03_2023_回收纤维纸页抗张性能预测_Li.pdf",
+    "sha256": "347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93",
+    "pdf_pages": 20,
+    "library_relative_path": "papers/347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93.pdf"
+  },
+  {
+    "id": "D4",
+    "document_id": "doc_f499d471c51c051a",
+    "title": "Predicting tensile strength in fiber-reinforced composites using machine learning and deep learning models",
+    "year": 2026,
+    "filename": "04_2026_复合材料拉伸强度预测_Ayaliew.pdf",
+    "sha256": "f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0",
+    "pdf_pages": 17,
+    "library_relative_path": "papers/f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0.pdf"
+  },
+  {
+    "id": "D5",
+    "document_id": "doc_8234f8075c2e184f",
+    "title": "Effect of fibre-quality parameters on pulp properties by using multiple linear regression and artificial neural network",
+    "year": 2024,
+    "filename": "05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf",
+    "sha256": "8234f8075c2e184f7b34df5b6336578b325a510d7dc6a78cad42868f00f9be96",
+    "pdf_pages": 9,
+    "library_relative_path": "papers/8234f8075c2e184f7b34df5b6336578b325a510d7dc6a78cad42868f00f9be96.pdf"
+  },
+  {
+    "id": "D6",
+    "document_id": "doc_99f8d919ba6bf8bc",
+    "title": "Assessing cellulose micro/nanofibre morphology using a high throughput fibre analysis device to predict nanopaper performance",
+    "year": 2022,
+    "filename": "06_2022_纤维形态与纳米纸性能_Pennells.pdf",
+    "sha256": "99f8d919ba6bf8bc293dcf969169305e73e575771694b6be198768895e45ecdc",
+    "pdf_pages": 18,
+    "library_relative_path": "papers/99f8d919ba6bf8bc293dcf969169305e73e575771694b6be198768895e45ecdc.pdf"
+  },
+  {
+    "id": "D7",
+    "document_id": "doc_0fcf2a50cfa02d21",
+    "title": "Probing Effect of Papirindustriens Forskningsinstitut (PFI) Refining on Aggregation Structure of Cellulose: Crystal Packing and Hydrogen-Bonding Network",
+    "year": 2020,
+    "filename": "Li-2020-PFI-refining-aggregation-structure-cellulose.pdf",
+    "sha256": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4",
+    "pdf_pages": 14,
+    "library_relative_path": "papers/0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4.pdf"
+  },
+  {
+    "id": "D8",
+    "document_id": "doc_95f63c52fdb78ea6",
+    "title": "Mechanisms of strength and stiffness improvement of paper after PFI refining with a focus on the effect of fines",
+    "year": 2019,
+    "filename": "s10570-019-02349-5.pdf",
+    "sha256": "95f63c52fdb78ea6acad05b2b2bf3b2d3493679ac8834afd603a00f86485b735",
+    "pdf_pages": 26,
+    "library_relative_path": "papers/95f63c52fdb78ea6acad05b2b2bf3b2d3493679ac8834afd603a00f86485b735.pdf"
+  }
+]
