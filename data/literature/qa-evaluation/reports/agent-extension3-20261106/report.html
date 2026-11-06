@@ -1,0 +1,2357 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>新增三题评测</title><style>body{font:16px/1.7 system-ui;background:#f3f6fa;color:#24364b}main{max-width:1100px;margin:auto;padding:25px}article{background:white;padding:24px;margin:20px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.7 system-ui}</style><main><pre># 新增三题：首次独立评测
+
+六维顺序：要点 / 事实支持% / 单引有效% / 引用覆盖% / 边界0–2 / 严格通过。
+
+## FSX-001 · single
+
+Li、Hu与Shao（2023）表2中，芦苇浆从第0次到第4次回收，纸页抗张指数和零距抗张指数各降低了百分之多少？请列出起止值与单位，并判断能否把纸页抗张指数的降幅直接当作单纤维强度的降幅。
+
+Jev：100 / 100.0 / 90.91 / 60.0 / 2 / 未通过
+
+校准：100 / 80.0 / 100.0 / 80.0 / 2 / 未通过
+
+四要点齐全，100分。但额外段落错误否认两项抗张指数逐次下降，保留事实与组覆盖扣分；Jev漏检了此矛盾。恢复其对正确计算来源[14]及局部表格范围说明的过严扣分。
+
+## FSX-002 · cross
+
+Li、Hu与Shao（2023）摘要报告曲线拟合模型prediction的RMSE为0.1667；Ayaliew等（2026）报告ANN的RMSE约31.6 MPa。有人据此说前者预测更准。请核对两篇论文各自预测什么、这些误差对应什么数据，并判断能否仅按这两个RMSE数值排名。
+
+Jev：100 / 100.0 / 73.91 / 40.0 / 2 / 未通过
+
+校准：87.5 / 100.0 / 100.0 / 100.0 / 2 / 未通过
+
+校准要点87.5：遗漏Ayaliew使用合成数据，虽正确拒绝直接排名，仍未完整回答数据背景。其余实际回答的单位、预测链条、误差及有界缺口说明接受；摘要对树脂类型的列举有原文依据，不把正文与摘要差异直接算作模型编造。修正Jev对多条正确引文的误判。达到10次模型调用预算，未取得数据准备章节；不因此认定答案所述事实错误。
+
+## FSX-003 · no_paper
+
+只根据我提供的数据计算，不查论文：A的抗张指数为40 N·m/g，B未测，C为50 N·m/g。请输出已测样本均值、参与计算的样本数和缺失数，并说明把B当0计算会得到多少，以及为什么这个处理不合适。
+
+Jev：100 / 100.0 / N/A / N/A / 2 / 通过
+
+校准：100 / 100.0 / N/A / N/A / 2 / 通过
+
+均值45、有效2、缺失1及补0后30均正确，明确未测不等于零；没有调用论文工具，六维适用项通过，引用不适用。
+
+
+- 每类仅一题且仅首次运行，不能推断稳定性或总体泛化。
+- 新三题独立报告，不替换或混入原30题。
+- 按既有宽严口径校准；不是独立人工专家评审。
+- 非论文题引用N/A，不按满分填充。
+</pre><article><h2>FSX-001</h2><p>Li、Hu与Shao（2023）表2中，芦苇浆从第0次到第4次回收，纸页抗张指数和零距抗张指数各降低了百分之多少？请列出起止值与单位，并判断能否把纸页抗张指数的降幅直接当作单纤维强度的降幅。</p><p>校准：100 / 80.0 / 100.0 / 80.0 / 2 / 未通过</p><p>四要点齐全，100分。但额外段落错误否认两项抗张指数逐次下降，保留事实与组覆盖扣分；Jev漏检了此矛盾。恢复其对正确计算来源[14]及局部表格范围说明的过严扣分。</p><h3>完整回答</h3><pre>## 结论
+
+**表2数据（Li、Hu &amp; Shao 2023，表2，PDF第10页）**[9]：
+
+| 指标 | 第0次回收 | 第4次回收 | 变化（依据表值计算） |
+|---|---|---|---|
+| 纸页抗张指数 Tensile index | 28.14 Nm/g | 20.22 Nm/g | −7.92 Nm/g，即约 **−28.1%** [14] |
+| 零距抗张指数 Zero-span tensile index | 808.7 Nm/g | 748.6 Nm/g | −60.1 Nm/g，即约 **−7.4%** [15] |
+
+同表中还列出零距抗张强度 7.95→7.58 kg/15 mm[9]。上述百分比由表中数值计算得出，并不来自原文引文；表2也未标注标准差或重复次数。
+
+需要说明，这些数据并非单调下降：零距抗张强度在表中依次为 7.95、7.63、7.80、7.69、7.58 kg/15 mm，零距抗张指数依次为 808.7、793.0、775.1、760.2、748.6 Nm/g，纸页抗张指数依次为 28.14、25.35、23.12、21.95、20.22 Nm/g[9]。本表只显示零距抗张指数和纸页抗张指数这两项在第0次到第4次之间整体下降，不能说明每一次回收都下降。
+
+**不能把纸页抗张指数的降幅（约28%）直接当作单纤维强度的降幅。** 原文依据如下：
+
+1. 作者以零距抗张强度表征单纤维强度，并明确指出：回收对纸页抗张强度的影响远大于对单纤维强度的影响；芦苇浆单纤维强度在一次回收后约损失 2%，三次回收后约损失 6%[3]。
+2. 按照作者的说明，纸页强度下降主要与纤维间结合能力下降有关：回收使纤维溶胀能力和湿柔性下降，进而降低氢键结合能力；RBA 在回收四次后下降 10%–40%，芦苇浆变化最大[11]。作者将其归因于角质化（hornification）与结晶度升高[4][11]。这些属于作者给出的解释，本文并未证明其因果机制。
+3. 表2中定量（basis weight）也随回收变化，从 73.57 降到 63.69 g/m²[9]，说明纸页抗张指数并非单纯反映单纤维强度。
+
+**注意事项**：第3.1节“一次回收约2%、三次回收约6%”的表述[3]，与表2零距抗张指数序列（808.7→793.0，降约1.9%；808.7→760.2，降约6.0%）[9]大致一致，但原文没有给出这两处百分比的具体算式，因此本次未逐一核对；表2给出的只是点值，不含误差信息。</pre><details><summary>参考答案、评分及依据、调用轨迹与引用</summary><pre>{
+  &quot;case&quot;: {
+    &quot;id&quot;: &quot;FSX-001&quot;,
+    &quot;group&quot;: &quot;single&quot;,
+    &quot;question&quot;: &quot;Li、Hu与Shao（2023）表2中，芦苇浆从第0次到第4次回收，纸页抗张指数和零距抗张指数各降低了百分之多少？请列出起止值与单位，并判断能否把纸页抗张指数的降幅直接当作单纤维强度的降幅。&quot;,
+    &quot;reference_answer&quot;: &quot;纸页抗张指数28.14→20.22 Nm/g，下降(28.14−20.22)/28.14≈28.14%；零距抗张指数808.7→748.6 Nm/g，下降约7.43%。两者不是同一测量对象；不能把纸页降幅当作单纤维强度降幅。零距指标与单纤维强度有关，但本题用的是零距抗张指数，不是表中的kg/15 mm零距抗张强度。&quot;,
+    &quot;key_points&quot;: [
+      &quot;纸页抗张指数0→4次28.14→20.22 Nm/g&quot;,
+      &quot;零距抗张指数0→4次808.7→748.6 Nm/g，不误用7.95→7.58&quot;,
+      &quot;按各自初值计算，降幅约28.14%与7.43%，接受合理舍入&quot;,
+      &quot;不能把纸页抗张指数降幅等同单纤维强度降幅，区分对象/指标&quot;
+    ],
+    &quot;critical_errors&quot;: [
+      &quot;混淆零距强度与零距指数&quot;,
+      &quot;把两种降幅认为同一物理变化&quot;
+    ],
+    &quot;evidence&quot;: [
+      {
+        &quot;document&quot;: &quot;D3&quot;,
+        &quot;pages&quot;: [
+          9,
+          10
+        ],
+        &quot;locator&quot;: &quot;3.1及Table 2&quot;
+      }
+    ],
+    &quot;checks&quot;: &quot;表格取值、百分比计算、对象区分&quot;,
+    &quot;grading_notes&quot;: &quot;允许等价表述、合理舍入；不强制参考答案之外的背景、重复引用或特定工具顺序。&quot;,
+    &quot;tool_expectation&quot;: &quot;检索原论文依据并区分计算与原文事实，不要求固定工具顺序。&quot;,
+    &quot;citation_applicable&quot;: true
+  },
+  &quot;answer&quot;: &quot;## 结论\n\n**表2数据（Li、Hu &amp; Shao 2023，表2，PDF第10页）**[9]：\n\n| 指标 | 第0次回收 | 第4次回收 | 变化（依据表值计算） |\n|---|---|---|---|\n| 纸页抗张指数 Tensile index | 28.14 Nm/g | 20.22 Nm/g | −7.92 Nm/g，即约 **−28.1%** [14] |\n| 零距抗张指数 Zero-span tensile index | 808.7 Nm/g | 748.6 Nm/g | −60.1 Nm/g，即约 **−7.4%** [15] |\n\n同表中还列出零距抗张强度 7.95→7.58 kg/15 mm[9]。上述百分比由表中数值计算得出，并不来自原文引文；表2也未标注标准差或重复次数。\n\n需要说明，这些数据并非单调下降：零距抗张强度在表中依次为 7.95、7.63、7.80、7.69、7.58 kg/15 mm，零距抗张指数依次为 808.7、793.0、775.1、760.2、748.6 Nm/g，纸页抗张指数依次为 28.14、25.35、23.12、21.95、20.22 Nm/g[9]。本表只显示零距抗张指数和纸页抗张指数这两项在第0次到第4次之间整体下降，不能说明每一次回收都下降。\n\n**不能把纸页抗张指数的降幅（约28%）直接当作单纤维强度的降幅。** 原文依据如下：\n\n1. 作者以零距抗张强度表征单纤维强度，并明确指出：回收对纸页抗张强度的影响远大于对单纤维强度的影响；芦苇浆单纤维强度在一次回收后约损失 2%，三次回收后约损失 6%[3]。\n2. 按照作者的说明，纸页强度下降主要与纤维间结合能力下降有关：回收使纤维溶胀能力和湿柔性下降，进而降低氢键结合能力；RBA 在回收四次后下降 10%–40%，芦苇浆变化最大[11]。作者将其归因于角质化（hornification）与结晶度升高[4][11]。这些属于作者给出的解释，本文并未证明其因果机制。\n3. 表2中定量（basis weight）也随回收变化，从 73.57 降到 63.69 g/m²[9]，说明纸页抗张指数并非单纯反映单纤维强度。\n\n**注意事项**：第3.1节“一次回收约2%、三次回收约6%”的表述[3]，与表2零距抗张指数序列（808.7→793.0，降约1.9%；808.7→760.2，降约6.0%）[9]大致一致，但原文没有给出这两处百分比的具体算式，因此本次未逐一核对；表2给出的只是点值，不含误差信息。&quot;,
+  &quot;draft&quot;: &quot;## 结论\n\n**表2实测值（Li、Hu &amp; Shao 2023，表2，PDF第10页）**[9]：\n\n| 指标 | 第0次回收 | 第4次回收 | 变化（计算） |\n|---|---|---|---|\n| 纸页抗张指数 Tensile index | 28.14 Nm/g | 20.22 Nm/g | −7.92 Nm/g，即约 **−28.1%** [14] |\n| 零距抗张指数 Zero-span tensile index | 808.7 Nm/g | 748.6 Nm/g | −60.1 Nm/g，即约 **−7.4%** [15] |\n\n（同类表中还列有零距抗张强度 7.95→7.58 kg/15 mm[9]；百分比为按表中数值的算术计算，非原文引文。）\n\n**不能把纸页抗张指数的降幅（约28%）直接当作单纤维强度的降幅。** 理由与原文依据：\n\n1. 作者以零距抗张强度表征“单纤维强度”，并指出回收对纸页抗张强度的影响“远大于”对单纤维强度的影响；芦苇浆每回收一次单纤维强度只轻微下降，一次回收约损失 2%，三次回收后约 6%[3]。\n2. 纸页抗张强度还取决于纤维间结合：回收使纤维溶胀能力、湿柔性与氢键结合能力下降（这是角质化/hornification 与结晶度升高所致），RBA 在回收四次后下降 10%–40%，芦苇浆变化最大[4][11]。因此纸页强度损失主要来自结合能力损失，而非纤维本身强度。\n3. 表中还可看到定量（73.57→63.69 g/m²）等参数随回收变化[9]，说明纸页指标并非单纤维强度的纯粹度量。\n\n**注意事项**：两点比较应分别看待——表2的零距抗张指数降幅（−7.4%）与第3.1节叙述的“一次回收2%、三次回收约6%”[3]是作者对不同表述（后者按零距抗张强度/指数序列的近似描述），本次未逐一核对两者算式；百分数为按表值计算的相对降幅，不含原文给出的误差范围或重复次数（表2未标注标准差）。&quot;,
+  &quot;raw_jev&quot;: {
+    &quot;key_point_scores&quot;: {
+      &quot;K1&quot;: 1,
+      &quot;K2&quot;: 1,
+      &quot;K3&quot;: 1,
+      &quot;K4&quot;: 1
+    },
+    &quot;claim_assessments&quot;: [
+      {
+        &quot;id&quot;: &quot;C1&quot;,
+        &quot;text&quot;: &quot;## 结论\n\n**表2数据（Li、Hu &amp; Shao 2023，表2，PDF第10页）**[9]：\n\n| 指标 | 第0次回收 | 第4次回收 | 变化（依据表值计算） |\n|---|---|---|---|\n| 纸页抗张指数 Tensile index | 28.14 Nm/g | 20.22 Nm/g | −7.92 Nm/g，即约 **−28.1%** [14] |\n| 零距抗张指数 Zero-span tensile index | 808.7 Nm/g | 748.6 Nm/g | −60.1 Nm/g，即约 **−7.4%** [15] |&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[9]&quot;,
+          &quot;[14]&quot;,
+          &quot;[15]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B008&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C2&quot;,
+        &quot;text&quot;: &quot;同表中还列出零距抗张强度 7.95→7.58 kg/15 mm[9]。上述百分比由表中数值计算得出，并不来自原文引文；表2也未标注标准差或重复次数。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[9]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B008&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C3&quot;,
+        &quot;text&quot;: &quot;需要说明，这些数据并非单调下降：零距抗张强度在表中依次为 7.95、7.63、7.80、7.69、7.58 kg/15 mm，零距抗张指数依次为 808.7、793.0、775.1、760.2、748.6 Nm/g，纸页抗张指数依次为 28.14、25.35、23.12、21.95、20.22 Nm/g[9]。本表只显示零距抗张指数和纸页抗张指数这两项在第0次到第4次之间整体下降，不能说明每一次回收都下降。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[9]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B008&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C4&quot;,
+        &quot;text&quot;: &quot;**不能把纸页抗张指数的降幅（约28%）直接当作单纤维强度的降幅。** 原文依据如下：\n\n1. 作者以零距抗张强度表征单纤维强度，并明确指出：回收对纸页抗张强度的影响远大于对单纤维强度的影响；芦苇浆单纤维强度在一次回收后约损失 2%，三次回收后约损失 6%[3]。\n2. 按照作者的说明，纸页强度下降主要与纤维间结合能力下降有关：回收使纤维溶胀能力和湿柔性下降，进而降低氢键结合能力；RBA 在回收四次后下降 10%–40%，芦苇浆变化最大[11]。作者将其归因于角质化（hornification）与结晶度升高[4][11]。这些属于作者给出的解释，本文并未证明其因果机制。\n3. 表2中定量（basis weight）也随回收变化，从 73.57 降到 63.69 g/m²[9]，说明纸页抗张指数并非单纯反映单纤维强度。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[3]&quot;,
+          &quot;[11]&quot;,
+          &quot;[4]&quot;,
+          &quot;[9]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B004&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C5&quot;,
+        &quot;text&quot;: &quot;**注意事项**：第3.1节“一次回收约2%、三次回收约6%”的表述[3]，与表2零距抗张指数序列（808.7→793.0，降约1.9%；808.7→760.2，降约6.0%）[9]大致一致，但原文没有给出这两处百分比的具体算式，因此本次未逐一核对；表2给出的只是点值，不含误差信息。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[3]&quot;,
+          &quot;[9]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      }
+    ],
+    &quot;citation_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;ref&quot;: &quot;[14]&quot;,
+        &quot;score&quot;: 0
+      },
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;ref&quot;: &quot;[15]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[11]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[4]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      }
+    ],
+    &quot;citation_group_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      }
+    ],
+    &quot;answerability_score&quot;: 2,
+    &quot;reference_concern&quot;: false,
+    &quot;decisions&quot;: {
+      &quot;boundary&quot;: &quot;appropriate&quot;,
+      &quot;reference_check&quot;: &quot;sound&quot;,
+      &quot;point_K1&quot;: &quot;complete&quot;,
+      &quot;point_K2&quot;: &quot;complete&quot;,
+      &quot;point_K3&quot;: &quot;complete&quot;,
+      &quot;point_K4&quot;: &quot;complete&quot;,
+      &quot;kind_C1&quot;: &quot;fact&quot;,
+      &quot;support_C1&quot;: &quot;supported&quot;,
+      &quot;basis_C1&quot;: &quot;B008&quot;,
+      &quot;group_C1&quot;: &quot;complete&quot;,
+      &quot;citation_C1_1&quot;: &quot;supported&quot;,
+      &quot;citation_C1_2&quot;: &quot;unsupported&quot;,
+      &quot;citation_C1_3&quot;: &quot;supported&quot;,
+      &quot;kind_C2&quot;: &quot;fact&quot;,
+      &quot;support_C2&quot;: &quot;supported&quot;,
+      &quot;basis_C2&quot;: &quot;B008&quot;,
+      &quot;group_C2&quot;: &quot;partial&quot;,
+      &quot;citation_C2_1&quot;: &quot;supported&quot;,
+      &quot;kind_C3&quot;: &quot;fact&quot;,
+      &quot;support_C3&quot;: &quot;supported&quot;,
+      &quot;basis_C3&quot;: &quot;B008&quot;,
+      &quot;group_C3&quot;: &quot;complete&quot;,
+      &quot;citation_C3_1&quot;: &quot;supported&quot;,
+      &quot;kind_C4&quot;: &quot;fact&quot;,
+      &quot;support_C4&quot;: &quot;supported&quot;,
+      &quot;basis_C4&quot;: &quot;B004&quot;,
+      &quot;group_C4&quot;: &quot;complete&quot;,
+      &quot;citation_C4_1&quot;: &quot;supported&quot;,
+      &quot;citation_C4_2&quot;: &quot;supported&quot;,
+      &quot;citation_C4_3&quot;: &quot;supported&quot;,
+      &quot;citation_C4_4&quot;: &quot;supported&quot;,
+      &quot;kind_C5&quot;: &quot;fact&quot;,
+      &quot;support_C5&quot;: &quot;supported&quot;,
+      &quot;basis_C5&quot;: &quot;NONE&quot;,
+      &quot;group_C5&quot;: &quot;partial&quot;,
+      &quot;citation_C5_1&quot;: &quot;supported&quot;,
+      &quot;citation_C5_2&quot;: &quot;supported&quot;
+    }
+  },
+  &quot;calibrated&quot;: {
+    &quot;key_point_scores&quot;: {
+      &quot;K1&quot;: 1,
+      &quot;K2&quot;: 1,
+      &quot;K3&quot;: 1,
+      &quot;K4&quot;: 1
+    },
+    &quot;claim_assessments&quot;: [
+      {
+        &quot;id&quot;: &quot;C1&quot;,
+        &quot;text&quot;: &quot;## 结论\n\n**表2数据（Li、Hu &amp; Shao 2023，表2，PDF第10页）**[9]：\n\n| 指标 | 第0次回收 | 第4次回收 | 变化（依据表值计算） |\n|---|---|---|---|\n| 纸页抗张指数 Tensile index | 28.14 Nm/g | 20.22 Nm/g | −7.92 Nm/g，即约 **−28.1%** [14] |\n| 零距抗张指数 Zero-span tensile index | 808.7 Nm/g | 748.6 Nm/g | −60.1 Nm/g，即约 **−7.4%** [15] |&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[9]&quot;,
+          &quot;[14]&quot;,
+          &quot;[15]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B008&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C2&quot;,
+        &quot;text&quot;: &quot;同表中还列出零距抗张强度 7.95→7.58 kg/15 mm[9]。上述百分比由表中数值计算得出，并不来自原文引文；表2也未标注标准差或重复次数。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[9]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B008&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C3&quot;,
+        &quot;text&quot;: &quot;需要说明，这些数据并非单调下降：零距抗张强度在表中依次为 7.95、7.63、7.80、7.69、7.58 kg/15 mm，零距抗张指数依次为 808.7、793.0、775.1、760.2、748.6 Nm/g，纸页抗张指数依次为 28.14、25.35、23.12、21.95、20.22 Nm/g[9]。本表只显示零距抗张指数和纸页抗张指数这两项在第0次到第4次之间整体下降，不能说明每一次回收都下降。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[9]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;partially_supported&quot;,
+        &quot;basis&quot;: &quot;B008&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C4&quot;,
+        &quot;text&quot;: &quot;**不能把纸页抗张指数的降幅（约28%）直接当作单纤维强度的降幅。** 原文依据如下：\n\n1. 作者以零距抗张强度表征单纤维强度，并明确指出：回收对纸页抗张强度的影响远大于对单纤维强度的影响；芦苇浆单纤维强度在一次回收后约损失 2%，三次回收后约损失 6%[3]。\n2. 按照作者的说明，纸页强度下降主要与纤维间结合能力下降有关：回收使纤维溶胀能力和湿柔性下降，进而降低氢键结合能力；RBA 在回收四次后下降 10%–40%，芦苇浆变化最大[11]。作者将其归因于角质化（hornification）与结晶度升高[4][11]。这些属于作者给出的解释，本文并未证明其因果机制。\n3. 表2中定量（basis weight）也随回收变化，从 73.57 降到 63.69 g/m²[9]，说明纸页抗张指数并非单纯反映单纤维强度。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[3]&quot;,
+          &quot;[11]&quot;,
+          &quot;[4]&quot;,
+          &quot;[9]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B004&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C5&quot;,
+        &quot;text&quot;: &quot;**注意事项**：第3.1节“一次回收约2%、三次回收约6%”的表述[3]，与表2零距抗张指数序列（808.7→793.0，降约1.9%；808.7→760.2，降约6.0%）[9]大致一致，但原文没有给出这两处百分比的具体算式，因此本次未逐一核对；表2给出的只是点值，不含误差信息。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[3]&quot;,
+          &quot;[9]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      }
+    ],
+    &quot;citation_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;ref&quot;: &quot;[14]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;ref&quot;: &quot;[15]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[11]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[4]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      }
+    ],
+    &quot;citation_group_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      }
+    ],
+    &quot;answerability_score&quot;: 2,
+    &quot;reference_concern&quot;: false
+  },
+  &quot;calibration&quot;: {
+    &quot;changes&quot;: [
+      {
+        &quot;path&quot;: &quot;claim_assessments.C3.support&quot;,
+        &quot;value&quot;: &quot;partially_supported&quot;,
+        &quot;reason&quot;: &quot;列出的零距抗张指数和纸页抗张指数均逐次下降，却断言表格不能说明每次下降；不是误差显著性问题。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_group_assessments.C3.coverage&quot;,
+        &quot;value&quot;: &quot;partial&quot;,
+        &quot;reason&quot;: &quot;[9]支持数值但不支持否定已列点值的逐次下降。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_assessments.C1.[14].score&quot;,
+        &quot;value&quot;: 1,
+        &quot;reason&quot;: &quot;[14]是实际计算结果，明确给出-7.92和-28.144989%，答案也明确标注计算而非论文引文。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_group_assessments.C2.coverage&quot;,
+        &quot;value&quot;: &quot;complete&quot;,
+        &quot;reason&quot;: &quot;[9]给出零距强度，表内未列标准差的局部说明可核查；计算性质不要求另引论文。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_group_assessments.C5.coverage&quot;,
+        &quot;value&quot;: &quot;complete&quot;,
+        &quot;reason&quot;: &quot;[3][9]联合支持原文百分比与表值的对照，局部未列误差与算式的说明不要求额外引用。&quot;
+      }
+    ],
+    &quot;reason&quot;: &quot;四要点齐全，100分。但额外段落错误否认两项抗张指数逐次下降，保留事实与组覆盖扣分；Jev漏检了此矛盾。恢复其对正确计算来源[14]及局部表格范围说明的过严扣分。&quot;
+  },
+  &quot;final&quot;: {
+    &quot;point_score&quot;: 100,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 5,
+    &quot;supported_facts&quot;: 4,
+    &quot;pair_count&quot;: 11,
+    &quot;supported_pairs&quot;: 11,
+    &quot;group_count&quot;: 5,
+    &quot;covered_groups&quot;: 4,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 80.0,
+    &quot;citation_precision&quot;: 100.0,
+    &quot;citation_coverage&quot;: 80.0,
+    &quot;strict_pass&quot;: false,
+    &quot;format_ok&quot;: true
+  },
+  &quot;jev&quot;: {
+    &quot;point_score&quot;: 100,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 5,
+    &quot;supported_facts&quot;: 5,
+    &quot;pair_count&quot;: 11,
+    &quot;supported_pairs&quot;: 10,
+    &quot;group_count&quot;: 5,
+    &quot;covered_groups&quot;: 3,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 100.0,
+    &quot;citation_precision&quot;: 90.9090909090909,
+    &quot;citation_coverage&quot;: 60.0,
+    &quot;strict_pass&quot;: false,
+    &quot;format_ok&quot;: true
+  },
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;review_status&quot;: &quot;completed&quot;,
+  &quot;tools&quot;: [
+    {
+      &quot;request&quot;: {
+        &quot;query&quot;: &quot;Li Hu Shao 2023 reed pulp recycling&quot;,
+        &quot;reason&quot;: &quot;Locate the Li, Hu &amp; Shao (2023) paper on reed pulp recycling to read its Table 2.&quot;,
+        &quot;tool&quot;: &quot;find_documents&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;reason&quot;: &quot;List all available papers in the library to identify the Li, Hu &amp; Shao (2023) reed pulp recycling paper.&quot;,
+        &quot;tool&quot;: &quot;find_documents&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;reason&quot;: &quot;Retrieve Table 2 of Li, Hu &amp; Shao (2023) which lists tensile and zero-span tensile index values for reed pulp over recycling cycles.&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;table_number&quot;: &quot;2&quot;,
+        &quot;tool&quot;: &quot;find_table&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;reason&quot;: &quot;find_table returned nothing; list sections to locate the Table 2 content within the paper.&quot;,
+        &quot;tool&quot;: &quot;list_sections&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;reason&quot;: &quot;Section 3.1 on recycling effects likely contains or cites Table 2 with reed pulp tensile and zero-span tensile index data.&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;section_id&quot;: &quot;sec_7240c3f7aa65f92b&quot;,
+        &quot;max_chars&quot;: 24000,
+        &quot;tool&quot;: &quot;read_section&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;initial&quot;: &quot;28.14&quot;,
+        &quot;final&quot;: &quot;20.22&quot;,
+        &quot;unit&quot;: &quot;Nm/g&quot;,
+        &quot;source_call_ids&quot;: [
+          &quot;a3198aa2-4e65-4682-9a03-15e1a22ef114&quot;,
+          &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+        ],
+        &quot;reason&quot;: &quot;Compute the percent decrease of reed pulp sheet tensile index from recycle 0 (28.14 Nm/g) to recycle 4 (20.22 Nm/g) from Table 2.&quot;,
+        &quot;tool&quot;: &quot;calculate_change&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;final&quot;: &quot;748.6&quot;,
+        &quot;initial&quot;: &quot;808.7&quot;,
+        &quot;reason&quot;: &quot;Compute the percent decrease of reed pulp zero-span tensile index from recycle 0 (808.7 Nm/g) to recycle 4 (748.6 Nm/g) from Table 2.&quot;,
+        &quot;source_call_ids&quot;: [
+          &quot;a3198aa2-4e65-4682-9a03-15e1a22ef114&quot;,
+          &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+        ],
+        &quot;unit&quot;: &quot;Nm/g&quot;,
+        &quot;tool&quot;: &quot;calculate_change&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    }
+  ],
+  &quot;model_calls&quot;: 9,
+  &quot;elapsed_seconds&quot;: 89.997,
+  &quot;result_sha256&quot;: &quot;0c8fb90d000f21d5ffffc9698f131b1a609781e5eacb0a3fb51f216bb0c51898&quot;,
+  &quot;judge_input_sha256&quot;: &quot;c4229cc059351a21acdb322eb048e0fff4931d6cf9c1f56af0ea33acef3d0269&quot;,
+  &quot;evidence&quot;: [
+    {
+      &quot;ref&quot;: &quot;[1]&quot;,
+      &quot;sha256&quot;: &quot;ef93c891f64da87c6807b0c0853abab3b407ecfcdb447ada0eb4284b157a408f&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 934,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 8,
+        &quot;page_start&quot;: 8,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_85f13e7fb1472e22bdfb&quot;,
+            &quot;page_end&quot;: 8,
+            &quot;page_start&quot;: 8,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nThe experimental results show that the properties responded to recycling negatively. In most of the cases, the deterioration of the properties after the first recycling was much worse than that of any other recycling (Hubbe, 2014). This is because hornification, the collapsing of internal pore structures of fibers during drying processes, is irreversible or partially reversible (Kumar et al., 2020). Usually, after four or five recycling processes, the properties of fibers did not change much. Among these properties, some deteriorated much more during recycling, while others were not affected significantly, e.g., fiber length (Yamauchi, 2018). As Table 1 shows, fiber length did not reduce dramatically because during recycling fibers were not further shortened by pulping, and handsheets were not calendered (Howard &amp; Bichard, 1992).&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nThe experimental results show that the properties responded to recycling negatively. In most of the cases, the deterioration of the properties after the first recycling was much worse than that of any other recycling (Hubbe, 2014). This is because hornification, the collapsing of internal pore structures of fibers during drying processes, is irreversible or partially reversible (Kumar et al., 2020). Usually, after four or five recycling processes, the properties of fibers did not change much. Among these properties, some deteriorated much more during recycling, while others were not affected significantly, e.g., fiber length (Yamauchi, 2018). As Table 1 shows, fiber length did not reduce dramatically because during recycling fibers were not further shortened by pulping, and handsheets were not calendered (Howard &amp; Bichard, 1992).&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[2]&quot;,
+      &quot;sha256&quot;: &quot;9bf13f661e47b93e0d15cc8cfdbe5f6cca0c612e87a144b2a73bed31e5640b17&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 125,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 8,
+        &quot;page_start&quot;: 8,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_ed04a6a262db058dc90a&quot;,
+            &quot;page_end&quot;: 8,
+            &quot;page_start&quot;: 8,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 3. Methodology flowchart.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 3. Methodology flowchart.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[3]&quot;,
+      &quot;sha256&quot;: &quot;3bf367de794258f30eb14391882e6e819fa9ebaef7db402bd03cffef314fc546&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 1237,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 9,
+        &quot;page_start&quot;: 9,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_8269db53dfea02b7e947&quot;,
+            &quot;page_end&quot;: 9,
+            &quot;page_start&quot;: 9,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 2 lists the change of properties of reed fibers during successive recycling processes. The zero-span tensile strength was used to indicate the single fiber strength in this study. The results illustrate that after each time of the recycling, the fiber strength of the reed pulp decreased slightly. Because fibers were subjected to various hydraulic and mechanical shear forces during a recycling process, the scission of the macromolecules of celluloses took place. The decrease in DP of fibers after recycling processes also supports this conclusion. However, the effect of recycling on the single fiber strength was far less than that on the tensile strength of paper sheets. It was as expected that fiber recycling would have a negative effect on the single fiber strength. But the loss of the single fiber strength after one recycle was only 2% for the reed pulp. Interestingly, the loss of single fiber strength was only about 6% after as many as three recycles. The increase in the degree of crystallinity within fibers would compensate for the single fiber strength loss caused by the scission of cellulose chains during recycling.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 2 lists the change of properties of reed fibers during successive recycling processes. The zero-span tensile strength was used to indicate the single fiber strength in this study. The results illustrate that after each time of the recycling, the fiber strength of the reed pulp decreased slightly. Because fibers were subjected to various hydraulic and mechanical shear forces during a recycling process, the scission of the macromolecules of celluloses took place. The decrease in DP of fibers after recycling processes also supports this conclusion. However, the effect of recycling on the single fiber strength was far less than that on the tensile strength of paper sheets. It was as expected that fiber recycling would have a negative effect on the single fiber strength. But the loss of the single fiber strength after one recycle was only 2% for the reed pulp. Interestingly, the loss of single fiber strength was only about 6% after as many as three recycles. The increase in the degree of crystallinity within fibers would compensate for the single fiber strength loss caused by the scission of cellulose chains during recycling.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[4]&quot;,
+      &quot;sha256&quot;: &quot;c00dedbd72817fe39014a3678483716b3a9032e8cb66819dfa068d5c3e95fbd3&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 602,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 9,
+        &quot;page_start&quot;: 9,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_c50099e486933dae21ae&quot;,
+            &quot;page_end&quot;: 9,
+            &quot;page_start&quot;: 9,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\n However, the effect was little, compared with other factors, including the change in the swelling capacity of fibers. The degree of crystallinity of fibers increased as they were subjected to each successive recycling. It is obvious that the area of the crystalline region in the fibers expanded and the crystalline indices increased gradually. Such changes led to a decrease in the swelling capacity and the hydrogen bonding capacity of fibers, which in turn caused the loss of the strength of paper sheets.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\n However, the effect was little, compared with other factors, including the change in the swelling capacity of fibers. The degree of crystallinity of fibers increased as they were subjected to each successive recycling. It is obvious that the area of the crystalline region in the fibers expanded and the crystalline indices increased gradually. Such changes led to a decrease in the swelling capacity and the hydrogen bonding capacity of fibers, which in turn caused the loss of the strength of paper sheets.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[5]&quot;,
+      &quot;sha256&quot;: &quot;4837b33eb15b2bf07ba67f389e34d23e38e4161099cb9173c845b48e7bc52f02&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 1110,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 9,
+        &quot;page_start&quot;: 9,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_d5a47c402d12cf4d2388&quot;,
+            &quot;page_end&quot;: 9,
+            &quot;page_start&quot;: 9,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTensile strength is one of the most important properties of paper products. It is a concern of using recycled fibers since the deterioration of tensile strength during recycling lower the quality of paper products. In order to ensure paper products have acceptable quality, it is imperative to estimate and predict the deterioration of tensile strength during recycling processes. Figure 4 shows the impact of recycling on the tensile strength of paper sheets made from recycled wood pulps and reed pulps. The results indicate that the tensile strength of paper sheets made of both wood pulps and non-wood pulps responded to recycling negatively. The tensile strength of paper sheets dropped 15% to 35% after four recycling processes, and the highest loss of tensile strength occurred after the first recycling. Additionally, the decrease in the tensile strength of unrefined pulps was less than that of refined pulps, and the decrease in the tensile strength of high yield pulps was less than that of chemical pulps.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTensile strength is one of the most important properties of paper products. It is a concern of using recycled fibers since the deterioration of tensile strength during recycling lower the quality of paper products. In order to ensure paper products have acceptable quality, it is imperative to estimate and predict the deterioration of tensile strength during recycling processes. Figure 4 shows the impact of recycling on the tensile strength of paper sheets made from recycled wood pulps and reed pulps. The results indicate that the tensile strength of paper sheets made of both wood pulps and non-wood pulps responded to recycling negatively. The tensile strength of paper sheets dropped 15% to 35% after four recycling processes, and the highest loss of tensile strength occurred after the first recycling. Additionally, the decrease in the tensile strength of unrefined pulps was less than that of refined pulps, and the decrease in the tensile strength of high yield pulps was less than that of chemical pulps.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[6]&quot;,
+      &quot;sha256&quot;: &quot;b1a858dd0e8888d512dbdcfaf4f5978c45d7379598de1b1173c3fd7638222b32&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 285,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 9,
+        &quot;page_start&quot;: 9,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_bfa6b56da8daed2409ce&quot;,
+            &quot;page_end&quot;: 9,
+            &quot;page_start&quot;: 9,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 5 shows the effect of fiber recycling on the WRV of different pulps. The decrease of the WRV typically fell in the range from 20% to 40% after having been recycled five times, depending&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 5 shows the effect of fiber recycling on the WRV of different pulps. The decrease of the WRV typically fell in the range from 20% to 40% after having been recycled five times, depending&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[7]&quot;,
+      &quot;sha256&quot;: &quot;b5c85d9445bfc16991e4bf37f306d290947b97af5eaedac9a33d983b408155d7&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 840,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 9,
+        &quot;page_start&quot;: 9,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_9600081785c52a6a429f&quot;,
+            &quot;page_end&quot;: 9,
+            &quot;page_start&quot;: 9,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 1. Fiber length during recycling processes (mm)\n\n&lt;table&gt;&lt;tr&gt;&lt;td colspan=\&quot;2\&quot;&gt;Recycling times&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;5&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td rowspan=\&quot;3\&quot;&gt;Reed Pulp&lt;/td&gt;&lt;td&gt;Arithmetic mean&lt;/td&gt;&lt;td&gt;0.30&lt;/td&gt;&lt;td&gt;0.31&lt;/td&gt;&lt;td&gt;0.31&lt;/td&gt;&lt;td&gt;0.30&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted average&lt;/td&gt;&lt;td&gt;0.59&lt;/td&gt;&lt;td&gt;0.55&lt;/td&gt;&lt;td&gt;0.55&lt;/td&gt;&lt;td&gt;0.56&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted Weighted average&lt;/td&gt;&lt;td&gt;0.91&lt;/td&gt;&lt;td&gt;0.84&lt;/td&gt;&lt;td&gt;0.80&lt;/td&gt;&lt;td&gt;0.85&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td rowspan=\&quot;3\&quot;&gt;Wood Pulp&lt;/td&gt;&lt;td&gt;Arithmetic mean&lt;/td&gt;&lt;td&gt;1.52&lt;/td&gt;&lt;td&gt;1.49&lt;/td&gt;&lt;td&gt;1.48&lt;/td&gt;&lt;td&gt;1.50&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted average&lt;/td&gt;&lt;td&gt;2.28&lt;/td&gt;&lt;td&gt;2.25&lt;/td&gt;&lt;td&gt;2.20&lt;/td&gt;&lt;td&gt;2.26&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted Weighted average&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;td&gt;0.68&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 1. Fiber length during recycling processes (mm)\n\n&lt;table&gt;&lt;tr&gt;&lt;td colspan=\&quot;2\&quot;&gt;Recycling times&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;5&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td rowspan=\&quot;3\&quot;&gt;Reed Pulp&lt;/td&gt;&lt;td&gt;Arithmetic mean&lt;/td&gt;&lt;td&gt;0.30&lt;/td&gt;&lt;td&gt;0.31&lt;/td&gt;&lt;td&gt;0.31&lt;/td&gt;&lt;td&gt;0.30&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted average&lt;/td&gt;&lt;td&gt;0.59&lt;/td&gt;&lt;td&gt;0.55&lt;/td&gt;&lt;td&gt;0.55&lt;/td&gt;&lt;td&gt;0.56&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted Weighted average&lt;/td&gt;&lt;td&gt;0.91&lt;/td&gt;&lt;td&gt;0.84&lt;/td&gt;&lt;td&gt;0.80&lt;/td&gt;&lt;td&gt;0.85&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td rowspan=\&quot;3\&quot;&gt;Wood Pulp&lt;/td&gt;&lt;td&gt;Arithmetic mean&lt;/td&gt;&lt;td&gt;1.52&lt;/td&gt;&lt;td&gt;1.49&lt;/td&gt;&lt;td&gt;1.48&lt;/td&gt;&lt;td&gt;1.50&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted average&lt;/td&gt;&lt;td&gt;2.28&lt;/td&gt;&lt;td&gt;2.25&lt;/td&gt;&lt;td&gt;2.20&lt;/td&gt;&lt;td&gt;2.26&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted Weighted average&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;td&gt;0.68&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[8]&quot;,
+      &quot;sha256&quot;: &quot;88c2a156f559a7fa918ad845002acbf6bcaa2c7f17952253ca176fc4c4fa2f4f&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 159,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 10,
+        &quot;page_start&quot;: 10,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_9e478343dd69c40124c1&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 2. Properties of reed fibers during recycling Recycle Number&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 2. Properties of reed fibers during recycling Recycle Number&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[9]&quot;,
+      &quot;sha256&quot;: &quot;a2e342215a6ac89404e69722f23b0395e3ba12a649a63dbb99c11d70104d02e6&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 1308,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 10,
+        &quot;page_start&quot;: 10,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_8928177addb946dc454a&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\n&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;4&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Properties&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Zero-span tensile strength (kg/15 mm)&lt;/td&gt;&lt;td&gt;7.95&lt;/td&gt;&lt;td&gt;7.63&lt;/td&gt;&lt;td&gt;7.80&lt;/td&gt;&lt;td&gt;7.69&lt;/td&gt;&lt;td&gt;7.58&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Zero-span tensile index (Nm/g)&lt;/td&gt;&lt;td&gt;808.7&lt;/td&gt;&lt;td&gt;793.0&lt;/td&gt;&lt;td&gt;775.1&lt;/td&gt;&lt;td&gt;760.2&lt;/td&gt;&lt;td&gt;748.6&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Basis weight (g/m2)&lt;/td&gt;&lt;td&gt;73.57&lt;/td&gt;&lt;td&gt;64.33&lt;/td&gt;&lt;td&gt;65.61&lt;/td&gt;&lt;td&gt;64.65&lt;/td&gt;&lt;td&gt;63.69&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Degree of polymerization&lt;/td&gt;&lt;td&gt;644&lt;/td&gt;&lt;td&gt;549&lt;/td&gt;&lt;td&gt;545&lt;/td&gt;&lt;td&gt;542&lt;/td&gt;&lt;td&gt;536&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fiber length (mm)&lt;/td&gt;&lt;td&gt;0.91&lt;/td&gt;&lt;td&gt;0.84&lt;/td&gt;&lt;td&gt;0.81&lt;/td&gt;&lt;td&gt;0.80&lt;/td&gt;&lt;td&gt;0.82&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Degree of crystallinity (%)&lt;/td&gt;&lt;td&gt;77.34&lt;/td&gt;&lt;td&gt;77.89&lt;/td&gt;&lt;td&gt;79.91&lt;/td&gt;&lt;td&gt;80.62&lt;/td&gt;&lt;td&gt;81.33&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Crystalline indices (%)&lt;/td&gt;&lt;td&gt;70.71&lt;/td&gt;&lt;td&gt;71.62&lt;/td&gt;&lt;td&gt;74.86&lt;/td&gt;&lt;td&gt;75.97&lt;/td&gt;&lt;td&gt;77.08&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;WRV (g/g)&lt;/td&gt;&lt;td&gt;2.02&lt;/td&gt;&lt;td&gt;1.80&lt;/td&gt;&lt;td&gt;1.65&lt;/td&gt;&lt;td&gt;1.60&lt;/td&gt;&lt;td&gt;1.56&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;RBA&lt;/td&gt;&lt;td&gt;0.23&lt;/td&gt;&lt;td&gt;0.20&lt;/td&gt;&lt;td&gt;0.18&lt;/td&gt;&lt;td&gt;0.18&lt;/td&gt;&lt;td&gt;0.16&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tensile index (Nm/g)&lt;/td&gt;&lt;td&gt;28.14&lt;/td&gt;&lt;td&gt;25.35&lt;/td&gt;&lt;td&gt;23.12&lt;/td&gt;&lt;td&gt;21.95&lt;/td&gt;&lt;td&gt;20.22&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\n&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;4&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Properties&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Zero-span tensile strength (kg/15 mm)&lt;/td&gt;&lt;td&gt;7.95&lt;/td&gt;&lt;td&gt;7.63&lt;/td&gt;&lt;td&gt;7.80&lt;/td&gt;&lt;td&gt;7.69&lt;/td&gt;&lt;td&gt;7.58&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Zero-span tensile index (Nm/g)&lt;/td&gt;&lt;td&gt;808.7&lt;/td&gt;&lt;td&gt;793.0&lt;/td&gt;&lt;td&gt;775.1&lt;/td&gt;&lt;td&gt;760.2&lt;/td&gt;&lt;td&gt;748.6&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Basis weight (g/m2)&lt;/td&gt;&lt;td&gt;73.57&lt;/td&gt;&lt;td&gt;64.33&lt;/td&gt;&lt;td&gt;65.61&lt;/td&gt;&lt;td&gt;64.65&lt;/td&gt;&lt;td&gt;63.69&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Degree of polymerization&lt;/td&gt;&lt;td&gt;644&lt;/td&gt;&lt;td&gt;549&lt;/td&gt;&lt;td&gt;545&lt;/td&gt;&lt;td&gt;542&lt;/td&gt;&lt;td&gt;536&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fiber length (mm)&lt;/td&gt;&lt;td&gt;0.91&lt;/td&gt;&lt;td&gt;0.84&lt;/td&gt;&lt;td&gt;0.81&lt;/td&gt;&lt;td&gt;0.80&lt;/td&gt;&lt;td&gt;0.82&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Degree of crystallinity (%)&lt;/td&gt;&lt;td&gt;77.34&lt;/td&gt;&lt;td&gt;77.89&lt;/td&gt;&lt;td&gt;79.91&lt;/td&gt;&lt;td&gt;80.62&lt;/td&gt;&lt;td&gt;81.33&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Crystalline indices (%)&lt;/td&gt;&lt;td&gt;70.71&lt;/td&gt;&lt;td&gt;71.62&lt;/td&gt;&lt;td&gt;74.86&lt;/td&gt;&lt;td&gt;75.97&lt;/td&gt;&lt;td&gt;77.08&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;WRV (g/g)&lt;/td&gt;&lt;td&gt;2.02&lt;/td&gt;&lt;td&gt;1.80&lt;/td&gt;&lt;td&gt;1.65&lt;/td&gt;&lt;td&gt;1.60&lt;/td&gt;&lt;td&gt;1.56&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;RBA&lt;/td&gt;&lt;td&gt;0.23&lt;/td&gt;&lt;td&gt;0.20&lt;/td&gt;&lt;td&gt;0.18&lt;/td&gt;&lt;td&gt;0.18&lt;/td&gt;&lt;td&gt;0.16&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tensile index (Nm/g)&lt;/td&gt;&lt;td&gt;28.14&lt;/td&gt;&lt;td&gt;25.35&lt;/td&gt;&lt;td&gt;23.12&lt;/td&gt;&lt;td&gt;21.95&lt;/td&gt;&lt;td&gt;20.22&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[10]&quot;,
+      &quot;sha256&quot;: &quot;d07c69739c093f134072a7cf385013e7c33f2de5cd3a212a5f14a4740d576942&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 162,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 10,
+        &quot;page_start&quot;: 10,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_e749fa4adbfaa3279eb5&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 4. Effect of recycling on tensile strength of different pulps.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 4. Effect of recycling on tensile strength of different pulps.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[11]&quot;,
+      &quot;sha256&quot;: &quot;a3a81a522a2e69791bd9f9ddb41a302e732582839b2910b692e8fa80c00fb3a5&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 1057,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 10,
+        &quot;page_start&quot;: 10,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_e223fad15cc3e1e06975&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\non different pulps. For all pulp samples, the magnitude of the change in WRV after the first recycling was greater than that of the subsequent recycling processes. Experiments showed that the WRV of pulps reflected the wet flexibility and contributed directly to the hydrogen bonding capacity (Hubbe et al., 2007). In order to further investiaate the relationship between fiber recycling and tensile strength, the effect of recycling on the RBA of paper sheets was also examined. As shown in Figure $^ { 6 , }$ after having been recycled four times, the RBA of paper sheets made from different pulps was reduced from 10% to 40%. The maximum change occurred within the sheets made from reed pulp. During recycling, the fiber hornification took place, which resulted in the loss of fiber swelling capacity and wet flexibility (Somwang et al., 2002). These changes in turn led to the reduction of the hydrogen bonding capacity of fibers. Hydrogen bonding is generally&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\non different pulps. For all pulp samples, the magnitude of the change in WRV after the first recycling was greater than that of the subsequent recycling processes. Experiments showed that the WRV of pulps reflected the wet flexibility and contributed directly to the hydrogen bonding capacity (Hubbe et al., 2007). In order to further investiaate the relationship between fiber recycling and tensile strength, the effect of recycling on the RBA of paper sheets was also examined. As shown in Figure $^ { 6 , }$ after having been recycled four times, the RBA of paper sheets made from different pulps was reduced from 10% to 40%. The maximum change occurred within the sheets made from reed pulp. During recycling, the fiber hornification took place, which resulted in the loss of fiber swelling capacity and wet flexibility (Somwang et al., 2002). These changes in turn led to the reduction of the hydrogen bonding capacity of fibers. Hydrogen bonding is generally&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[12]&quot;,
+      &quot;sha256&quot;: &quot;6e12cb3b697691c1a702c2b89796c508157e98ef43bdbc3916d6507317689325&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 130,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 11,
+        &quot;page_start&quot;: 11,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_76eca09d4f2c69970126&quot;,
+            &quot;page_end&quot;: 11,
+            &quot;page_start&quot;: 11,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 5. Effect of recycling on WRV.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 5. Effect of recycling on WRV.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[13]&quot;,
+      &quot;sha256&quot;: &quot;31c9d803e94c9e639b22ab89c66774f237eda1eaae6f99013dc345d1e1991fb7&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 267,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 11,
+        &quot;page_start&quot;: 11,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_b6088c63350a9e4d0d3b&quot;,
+            &quot;page_end&quot;: 11,
+            &quot;page_start&quot;: 11,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 6. Effect of recycling on RBA.\n\nconsidered as the bonding mechanism between fibers, though it was observed to be less important than expected (Hirn &amp; Schennach, 2015).&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 6. Effect of recycling on RBA.\n\nconsidered as the bonding mechanism between fibers, though it was observed to be less important than expected (Hirn &amp; Schennach, 2015).&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[14]&quot;,
+      &quot;sha256&quot;: &quot;e96377910a9d4eeed21366509efd2e86f9807995fabce0801704a58fae99824e&quot;,
+      &quot;content&quot;: {
+        &quot;difference&quot;: &quot;-7.92&quot;,
+        &quot;final&quot;: &quot;20.22&quot;,
+        &quot;formula&quot;: &quot;difference=final-initial; relative=(final-initial)/initial*100&quot;,
+        &quot;initial&quot;: &quot;28.14&quot;,
+        &quot;notice&quot;: &quot;Arithmetic only; source call existence is verified, but operand extraction and scientific comparability are not.&quot;,
+        &quot;relative_change_percent&quot;: &quot;-28.14498933901918976545842217484008528785&quot;,
+        &quot;source_call_ids&quot;: [
+          &quot;a3198aa2-4e65-4682-9a03-15e1a22ef114&quot;,
+          &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+        ],
+        &quot;source_refs&quot;: [
+          &quot;[1]&quot;,
+          &quot;[2]&quot;,
+          &quot;[3]&quot;,
+          &quot;[4]&quot;,
+          &quot;[5]&quot;,
+          &quot;[6]&quot;,
+          &quot;[7]&quot;,
+          &quot;[8]&quot;,
+          &quot;[9]&quot;,
+          &quot;[10]&quot;,
+          &quot;[11]&quot;,
+          &quot;[12]&quot;,
+          &quot;[13]&quot;
+        ],
+        &quot;undefined_reason&quot;: null,
+        &quot;unit&quot;: &quot;Nm/g&quot;
+      },
+      &quot;kind&quot;: &quot;calculation&quot;,
+      &quot;call_ids&quot;: [
+        &quot;f1389910-1dcb-4dc0-9423-203ab6ac3035&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[15]&quot;,
+      &quot;sha256&quot;: &quot;ff27aa58e31b0956ef69377014abf6c36054f2cd8fe0e453ee487af95f8fc56d&quot;,
+      &quot;content&quot;: {
+        &quot;difference&quot;: &quot;-60.1&quot;,
+        &quot;final&quot;: &quot;748.6&quot;,
+        &quot;formula&quot;: &quot;difference=final-initial; relative=(final-initial)/initial*100&quot;,
+        &quot;initial&quot;: &quot;808.7&quot;,
+        &quot;notice&quot;: &quot;Arithmetic only; source call existence is verified, but operand extraction and scientific comparability are not.&quot;,
+        &quot;relative_change_percent&quot;: &quot;-7.431680474836156794855941634722393965624&quot;,
+        &quot;source_call_ids&quot;: [
+          &quot;a3198aa2-4e65-4682-9a03-15e1a22ef114&quot;,
+          &quot;f74fa6e1-ea43-45fe-974a-120d17b9efcb&quot;
+        ],
+        &quot;source_refs&quot;: [
+          &quot;[1]&quot;,
+          &quot;[2]&quot;,
+          &quot;[3]&quot;,
+          &quot;[4]&quot;,
+          &quot;[5]&quot;,
+          &quot;[6]&quot;,
+          &quot;[7]&quot;,
+          &quot;[8]&quot;,
+          &quot;[9]&quot;,
+          &quot;[10]&quot;,
+          &quot;[11]&quot;,
+          &quot;[12]&quot;,
+          &quot;[13]&quot;
+        ],
+        &quot;undefined_reason&quot;: null,
+        &quot;unit&quot;: &quot;Nm/g&quot;
+      },
+      &quot;kind&quot;: &quot;calculation&quot;,
+      &quot;call_ids&quot;: [
+        &quot;48453b9b-89a7-4fc4-a0dc-6297617b768e&quot;
+      ]
+    }
+  ]
+}</pre></details></article><article><h2>FSX-002</h2><p>Li、Hu与Shao（2023）摘要报告曲线拟合模型prediction的RMSE为0.1667；Ayaliew等（2026）报告ANN的RMSE约31.6 MPa。有人据此说前者预测更准。请核对两篇论文各自预测什么、这些误差对应什么数据，并判断能否仅按这两个RMSE数值排名。</p><p>校准：87.5 / 100.0 / 100.0 / 100.0 / 2 / 未通过</p><p>校准要点87.5：遗漏Ayaliew使用合成数据，虽正确拒绝直接排名，仍未完整回答数据背景。其余实际回答的单位、预测链条、误差及有界缺口说明接受；摘要对树脂类型的列举有原文依据，不把正文与摘要差异直接算作模型编造。修正Jev对多条正确引文的误判。达到10次模型调用预算，未取得数据准备章节；不因此认定答案所述事实错误。</p><h3>完整回答</h3><pre>## 结论
+
+不能仅凭 0.1667 与 31.6 MPa 这两个数值来排名：二者对应不同材料、不同目标量与不同评估条件，因此无法直接按大小比较优劣。
+
+## Li, Hu &amp; Shao (2023)：0.1667 是&quot;损伤指数 D&quot;的（无量纲）预测误差
+
+- 研究对象是再生木材纤维与非木材纤维手抄片的抗张强度随回用（回用 4 次）的劣化；保水值与相对结合面积因与抗张强度强相关而被选为特征 [2]。
+- 摘要给出：曲线拟合模型（基于纸浆性能双曲理论）与 LSTM 神经网络均以保水值和相对结合面积为输入；曲线拟合模型的 RMSE 为估计 0.0278、预测 0.1667，神经网络为估计 0.2445、预测 0.2206 [3]。
+- 0.1667 对应的是损伤指数 D 的误差，而 D 由摘要给出的表达式确定；抗张强度随后才由 T = T₀(1−D) 换算得到 [3]。因此 0.1667 不是以 MPa 为单位的强度误差，不能与&quot;强度 RMSE&quot;直接比较。
+- 摘要未说明 0.1667 所对应预测数据的具体划分（如是否留出某次回用）及样本量，也未给出与之对应的强度尺度误差。
+
+## Ayaliew et al. (2026)：31.67 MPa 是复合材料抗张强度的测试集 RMSE
+
+- 研究对象是纤维增强聚合物复合材料（玻璃、碳、芳纶、玄武岩纤维；环氧、聚酯、乙烯基酯、酚醛树脂等），特征包括纤维类型、树脂体系、密度、层数、固化温度、纤维体积分数与孔隙含量等组成与工艺参数 [5]。
+- 表 1（表头为&quot;RMSE (MPa)&quot;）中 ANN (MLP) 为 R² = 0.9975、RMSE = 31.67 MPa、MAE = 25.14 MPa；Stacking(LR) 为 31.58 MPa [9]。正文亦称 ANN 的 RMSE 为 31.67 MPa [11]，3.2.6 节表述为&quot;≈ 31.6 MPa&quot; [7]；摘要在 3.2.6 综述与结论中写作&quot;约 31 MPa&quot;，属四舍五入表述差异 [6][12]。
+- 评估条件：上述指标在独立测试集上计算，另用训练数据做 5 折交叉验证（ANN 的 CV R² 均值 0.9973、标准差 0.0002）[8][9][10]。
+- 同文对强度尺度提供了参照：Rule of Mixtures 理论模型在测试集（2,000 样本）上 R² = 0.842、RMSE = 312.5 MPa [7]。
+
+## 为何不能只按这两个数值排名
+
+1. 目标量不同：一边是损伤指数 D 的误差 [3]，一边是抗张强度（MPa）的误差 [9]，两者量纲与量级基准都不可比。
+2. 材料体系不同：一边是再生纤维纸页 [2]，一边是纤维增强树脂复合材料 [5]。
+3. 评估协议不同：Li 等仅报告估计与预测两个 RMSE，摘要未说明数据划分方式 [3]；Ayaliew 等报告独立测试集结果并辅以 5 折交叉验证 [8][10]。
+4. 误差含义的可解释性不同：Ayaliew 的 31.67 MPa 可与同文 ROM 的 312.5 MPa 误差和 R² = 0.9975 一起解读 [7][9]；Li 的 0.1667 没有对应的强度尺度误差或 D 的取值范围报告，无法换算成 MPa 或相对百分比 [3]。
+
+## 未能确定的信息
+
+- Li 等文中 0.1667 所对应预测集的具体构成（哪几次回用、样本数）、D 的取值范围及由 D 换算后的强度误差，摘要均未提供，需查该文第 4.3 节原始数据 [3]。
+- Ayaliew 等的数据集总样本量在本次证据中未见（仅见测试集 2,000 样本）[7]；31 MPa 与 31.6/31.67 MPa 的差异只是同一数值在不同位置的取整表述，不构成独立证据 [6][7][9][11][12]。</pre><details><summary>参考答案、评分及依据、调用轨迹与引用</summary><pre>{
+  &quot;case&quot;: {
+    &quot;id&quot;: &quot;FSX-002&quot;,
+    &quot;group&quot;: &quot;cross&quot;,
+    &quot;question&quot;: &quot;Li、Hu与Shao（2023）摘要报告曲线拟合模型prediction的RMSE为0.1667；Ayaliew等（2026）报告ANN的RMSE约31.6 MPa。有人据此说前者预测更准。请核对两篇论文各自预测什么、这些误差对应什么数据，并判断能否仅按这两个RMSE数值排名。&quot;,
+    &quot;reference_answer&quot;: &quot;不能直接排名。Li模型先预测无量纲损伤指数，0.1667是曲线拟合prediction误差，实验回收纤维WRV/RBA序列用于建模，再由D连接T。Ayaliew预测纤维增强聚合物复合材料抗拉强度，RMSE约31.6 MPa对应合成数据测试表现，数据集10000条。目标量/尺度、单位、材料与验证数据不同，不能按原始RMSE大小跨任务比较精度。无需强制提出特定替代评估算法。&quot;,
+    &quot;key_points&quot;: [
+      &quot;Li 0.1667是curve fitting的prediction RMSE，针对损伤指数建模，不是MPa强度误差&quot;,
+      &quot;Li基于回收纤维实验数据，WRV/RBA用于损伤建模再连到抗张强度&quot;,
+      &quot;Ayaliew是复合材料抗拉强度MPa，在合成数据上评估&quot;,
+      &quot;不能仅凭数值大小排名，指出目标/单位尺度及数据背景不同&quot;
+    ],
+    &quot;critical_errors&quot;: [
+      &quot;直接按0.1667小于31.6判定更准&quot;,
+      &quot;把Ayaliew合成数据当成全实测&quot;
+    ],
+    &quot;evidence&quot;: [
+      {
+        &quot;document&quot;: &quot;D3&quot;,
+        &quot;pages&quot;: [
+          2,
+          15,
+          16
+        ],
+        &quot;locator&quot;: &quot;摘要及损伤模型&quot;
+      },
+      {
+        &quot;document&quot;: &quot;D4&quot;,
+        &quot;pages&quot;: [
+          4,
+          10,
+          11,
+          12
+        ],
+        &quot;locator&quot;: &quot;数据准备及测试误差&quot;
+      }
+    ],
+    &quot;checks&quot;: &quot;跨论文误差可比性、数据性质与预测对象&quot;,
+    &quot;grading_notes&quot;: &quot;允许等价表述、合理舍入；不强制参考答案之外的背景、重复引用或特定工具顺序。&quot;,
+    &quot;tool_expectation&quot;: &quot;检索原论文依据并区分计算与原文事实，不要求固定工具顺序。&quot;,
+    &quot;citation_applicable&quot;: true
+  },
+  &quot;answer&quot;: &quot;## 结论\n\n不能仅凭 0.1667 与 31.6 MPa 这两个数值来排名：二者对应不同材料、不同目标量与不同评估条件，因此无法直接按大小比较优劣。\n\n## Li, Hu &amp; Shao (2023)：0.1667 是\&quot;损伤指数 D\&quot;的（无量纲）预测误差\n\n- 研究对象是再生木材纤维与非木材纤维手抄片的抗张强度随回用（回用 4 次）的劣化；保水值与相对结合面积因与抗张强度强相关而被选为特征 [2]。\n- 摘要给出：曲线拟合模型（基于纸浆性能双曲理论）与 LSTM 神经网络均以保水值和相对结合面积为输入；曲线拟合模型的 RMSE 为估计 0.0278、预测 0.1667，神经网络为估计 0.2445、预测 0.2206 [3]。\n- 0.1667 对应的是损伤指数 D 的误差，而 D 由摘要给出的表达式确定；抗张强度随后才由 T = T₀(1−D) 换算得到 [3]。因此 0.1667 不是以 MPa 为单位的强度误差，不能与\&quot;强度 RMSE\&quot;直接比较。\n- 摘要未说明 0.1667 所对应预测数据的具体划分（如是否留出某次回用）及样本量，也未给出与之对应的强度尺度误差。\n\n## Ayaliew et al. (2026)：31.67 MPa 是复合材料抗张强度的测试集 RMSE\n\n- 研究对象是纤维增强聚合物复合材料（玻璃、碳、芳纶、玄武岩纤维；环氧、聚酯、乙烯基酯、酚醛树脂等），特征包括纤维类型、树脂体系、密度、层数、固化温度、纤维体积分数与孔隙含量等组成与工艺参数 [5]。\n- 表 1（表头为\&quot;RMSE (MPa)\&quot;）中 ANN (MLP) 为 R² = 0.9975、RMSE = 31.67 MPa、MAE = 25.14 MPa；Stacking(LR) 为 31.58 MPa [9]。正文亦称 ANN 的 RMSE 为 31.67 MPa [11]，3.2.6 节表述为\&quot;≈ 31.6 MPa\&quot; [7]；摘要在 3.2.6 综述与结论中写作\&quot;约 31 MPa\&quot;，属四舍五入表述差异 [6][12]。\n- 评估条件：上述指标在独立测试集上计算，另用训练数据做 5 折交叉验证（ANN 的 CV R² 均值 0.9973、标准差 0.0002）[8][9][10]。\n- 同文对强度尺度提供了参照：Rule of Mixtures 理论模型在测试集（2,000 样本）上 R² = 0.842、RMSE = 312.5 MPa [7]。\n\n## 为何不能只按这两个数值排名\n\n1. 目标量不同：一边是损伤指数 D 的误差 [3]，一边是抗张强度（MPa）的误差 [9]，两者量纲与量级基准都不可比。\n2. 材料体系不同：一边是再生纤维纸页 [2]，一边是纤维增强树脂复合材料 [5]。\n3. 评估协议不同：Li 等仅报告估计与预测两个 RMSE，摘要未说明数据划分方式 [3]；Ayaliew 等报告独立测试集结果并辅以 5 折交叉验证 [8][10]。\n4. 误差含义的可解释性不同：Ayaliew 的 31.67 MPa 可与同文 ROM 的 312.5 MPa 误差和 R² = 0.9975 一起解读 [7][9]；Li 的 0.1667 没有对应的强度尺度误差或 D 的取值范围报告，无法换算成 MPa 或相对百分比 [3]。\n\n## 未能确定的信息\n\n- Li 等文中 0.1667 所对应预测集的具体构成（哪几次回用、样本数）、D 的取值范围及由 D 换算后的强度误差，摘要均未提供，需查该文第 4.3 节原始数据 [3]。\n- Ayaliew 等的数据集总样本量在本次证据中未见（仅见测试集 2,000 样本）[7]；31 MPa 与 31.6/31.67 MPa 的差异只是同一数值在不同位置的取整表述，不构成独立证据 [6][7][9][11][12]。&quot;,
+  &quot;draft&quot;: &quot;## 结论\n\n不能仅凭 0.1667 与 31.6 这两个数字排名。两个 RMSE 所指的因变量、单位、数据对象都不同，属于不可通约的量。\n\n## Li, Hu &amp; Shao (2023)：0.1667 是\&quot;损伤指数 D\&quot;的无量纲预测误差\n\n- 研究对象：回收木材纤维与非木材纤维纸页（手抄片）抗张强度随回用次数（回用 4 次）的劣化 [2][3]。\n- 摘要明确：曲线拟合模型（基于纸浆性能双曲理论）与 LSTM 神经网络**都用保水值和相对结合面积作为输入**；曲线拟合模型的 RMSE 为估计 0.0278、**预测 0.1667**，神经网络为 0.2445 / 0.2206 [3]。\n- 0.1667 对应的是**损伤指数 D 的拟合/预测误差**，D 由公式给出（D = (Ds−h)²/a² − (Dh−k)²/b²），并非抗张强度本身的误差；抗张强度事后才由 T = T₀(1−D) 换算 [3]。因此该数值无 MPa 单位，与\&quot;强度误差 MPa\&quot;不能直接比大小。\n- 摘要只给了两个数值（estimation 与 prediction），未在摘要中说明其对应的数据划分（如是否留出某次回用）与样本量。\n\n## Ayaliew et al. (2026)：31.67 MPa 是复合材料抗张强度测试集 RMSE\n\n- 研究对象：纤维增强聚合物复合材料（玻璃/碳/芳纶/玄武岩纤维，环氧/聚酯等树脂）的抗张强度，用组成与工艺参数（纤维类型、树脂体系、密度、层数、固化温度、纤维体积分数、孔隙率）作特征 [5]。\n- 单位明确：表 1 中 ANN (MLP) 为 R² = 0.9975、**RMSE = 31.67 MPa**、MAE 25.14 MPa（Stacking(LR) 为 31.58 MPa）；表头为\&quot;RMSE (MPa)\&quot; [9]。题述 31.6 MPa 与表 1 的 31.67 MPa 及正文\&quot;RMSE of only 31.67 MPa\&quot;[11]、\&quot;≈31.6 MPa\&quot;[7] 一致；但摘要与结论写作\&quot;约 31 MPa\&quot;[6][12]，属四舍五入表述差异。\n- 数据条件：指标在**独立测试集**上计算，另有 5 折交叉验证（ANN 的 CV R² 均值 0.9973、标准差 0.0002）[8][9][10]。ROM 理论模型在同一测试集（2,000 样本）上 R² = 0.842、RMSE 312.5 MPa [7]。\n\n## 为何不能排名\n\n1. **因变量不同**：一个是损伤指数 D [3]，一个是抗张强度（MPa）[9]。数值量纲与量级基准不可比。\n2. **材料体系不同**：再生纤维纸页 [2] vs 纤维增强树脂复合材料 [5]。\n3. **评估协议不同**：Li 摘要仅报 estimation/prediction 两个 RMSE，未说明划分细节 [3]；Ayaliew 是留出测试集 + 5 折 CV [8][10]。\n4. **误差可有相对参照**：Ayaliew 的 31.67 MPa 相对强度尺度可参考同文 ROM 误差 312.5 MPa 与 R² = 0.9975 [7][9]；Li 的 0.1667 无对应的强度尺度误差报告，无法换算为 MPa 或相对百分比。\n\n**未解决/缺失**：Li 等文中 0.1667 所对应预测集的具体构成（哪几次回用、样本数）、其 D 的取值范围与对应强度误差，未能从摘要确认；若需严格比较，需查阅该文第 4.3 节（损伤指数定量表达）中表/图的原始数据。Ayaliew 的数据集总样本量未在本次检索证据中出现（仅知测试集 2,000 样本 [7]）。&quot;,
+  &quot;raw_jev&quot;: {
+    &quot;key_point_scores&quot;: {
+      &quot;K1&quot;: 1,
+      &quot;K2&quot;: 1,
+      &quot;K3&quot;: 1,
+      &quot;K4&quot;: 1
+    },
+    &quot;claim_assessments&quot;: [
+      {
+        &quot;id&quot;: &quot;C1&quot;,
+        &quot;text&quot;: &quot;## 结论\n\n不能仅凭 0.1667 与 31.6 MPa 这两个数值来排名：二者对应不同材料、不同目标量与不同评估条件，因此无法直接按大小比较优劣。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C2&quot;,
+        &quot;text&quot;: &quot;## Li, Hu &amp; Shao (2023)：0.1667 是\&quot;损伤指数 D\&quot;的（无量纲）预测误差\n\n- 研究对象是再生木材纤维与非木材纤维手抄片的抗张强度随回用（回用 4 次）的劣化；保水值与相对结合面积因与抗张强度强相关而被选为特征 [2]。\n- 摘要给出：曲线拟合模型（基于纸浆性能双曲理论）与 LSTM 神经网络均以保水值和相对结合面积为输入；曲线拟合模型的 RMSE 为估计 0.0278、预测 0.1667，神经网络为估计 0.2445、预测 0.2206 [3]。\n- 0.1667 对应的是损伤指数 D 的误差，而 D 由摘要给出的表达式确定；抗张强度随后才由 T = T₀(1−D) 换算得到 [3]。因此 0.1667 不是以 MPa 为单位的强度误差，不能与\&quot;强度 RMSE\&quot;直接比较。\n- 摘要未说明 0.1667 所对应预测数据的具体划分（如是否留出某次回用）及样本量，也未给出与之对应的强度尺度误差。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[2]&quot;,
+          &quot;[3]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B003&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C3&quot;,
+        &quot;text&quot;: &quot;## Ayaliew et al. (2026)：31.67 MPa 是复合材料抗张强度的测试集 RMSE\n\n- 研究对象是纤维增强聚合物复合材料（玻璃、碳、芳纶、玄武岩纤维；环氧、聚酯、乙烯基酯、酚醛树脂等），特征包括纤维类型、树脂体系、密度、层数、固化温度、纤维体积分数与孔隙含量等组成与工艺参数 [5]。\n- 表 1（表头为\&quot;RMSE (MPa)\&quot;）中 ANN (MLP) 为 R² = 0.9975、RMSE = 31.67 MPa、MAE = 25.14 MPa；Stacking(LR) 为 31.58 MPa [9]。正文亦称 ANN 的 RMSE 为 31.67 MPa [11]，3.2.6 节表述为\&quot;≈ 31.6 MPa\&quot; [7]；摘要在 3.2.6 综述与结论中写作\&quot;约 31 MPa\&quot;，属四舍五入表述差异 [6][12]。\n- 评估条件：上述指标在独立测试集上计算，另用训练数据做 5 折交叉验证（ANN 的 CV R² 均值 0.9973、标准差 0.0002）[8][9][10]。\n- 同文对强度尺度提供了参照：Rule of Mixtures 理论模型在测试集（2,000 样本）上 R² = 0.842、RMSE = 312.5 MPa [7]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[5]&quot;,
+          &quot;[9]&quot;,
+          &quot;[11]&quot;,
+          &quot;[7]&quot;,
+          &quot;[6]&quot;,
+          &quot;[12]&quot;,
+          &quot;[8]&quot;,
+          &quot;[10]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B022&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C4&quot;,
+        &quot;text&quot;: &quot;## 为何不能只按这两个数值排名\n\n1. 目标量不同：一边是损伤指数 D 的误差 [3]，一边是抗张强度（MPa）的误差 [9]，两者量纲与量级基准都不可比。\n2. 材料体系不同：一边是再生纤维纸页 [2]，一边是纤维增强树脂复合材料 [5]。\n3. 评估协议不同：Li 等仅报告估计与预测两个 RMSE，摘要未说明数据划分方式 [3]；Ayaliew 等报告独立测试集结果并辅以 5 折交叉验证 [8][10]。\n4. 误差含义的可解释性不同：Ayaliew 的 31.67 MPa 可与同文 ROM 的 312.5 MPa 误差和 R² = 0.9975 一起解读 [7][9]；Li 的 0.1667 没有对应的强度尺度误差或 D 的取值范围报告，无法换算成 MPa 或相对百分比 [3]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[3]&quot;,
+          &quot;[9]&quot;,
+          &quot;[2]&quot;,
+          &quot;[5]&quot;,
+          &quot;[8]&quot;,
+          &quot;[10]&quot;,
+          &quot;[7]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C5&quot;,
+        &quot;text&quot;: &quot;## 未能确定的信息\n\n- Li 等文中 0.1667 所对应预测集的具体构成（哪几次回用、样本数）、D 的取值范围及由 D 换算后的强度误差，摘要均未提供，需查该文第 4.3 节原始数据 [3]。\n- Ayaliew 等的数据集总样本量在本次证据中未见（仅见测试集 2,000 样本）[7]；31 MPa 与 31.6/31.67 MPa 的差异只是同一数值在不同位置的取整表述，不构成独立证据 [6][7][9][11][12]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[3]&quot;,
+          &quot;[7]&quot;,
+          &quot;[6]&quot;,
+          &quot;[9]&quot;,
+          &quot;[11]&quot;,
+          &quot;[12]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      }
+    ],
+    &quot;citation_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[2]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[5]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[11]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[12]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[8]&quot;,
+        &quot;score&quot;: 0
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[10]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[2]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[5]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[8]&quot;,
+        &quot;score&quot;: 0
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[10]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 0
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 0
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[11]&quot;,
+        &quot;score&quot;: 0
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[12]&quot;,
+        &quot;score&quot;: 0
+      }
+    ],
+    &quot;citation_group_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;coverage&quot;: &quot;missing&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      }
+    ],
+    &quot;answerability_score&quot;: 2,
+    &quot;reference_concern&quot;: false,
+    &quot;decisions&quot;: {
+      &quot;boundary&quot;: &quot;appropriate&quot;,
+      &quot;reference_check&quot;: &quot;sound&quot;,
+      &quot;point_K1&quot;: &quot;complete&quot;,
+      &quot;point_K2&quot;: &quot;complete&quot;,
+      &quot;point_K3&quot;: &quot;complete&quot;,
+      &quot;point_K4&quot;: &quot;complete&quot;,
+      &quot;kind_C1&quot;: &quot;fact&quot;,
+      &quot;support_C1&quot;: &quot;supported&quot;,
+      &quot;basis_C1&quot;: &quot;NONE&quot;,
+      &quot;group_C1&quot;: &quot;missing&quot;,
+      &quot;kind_C2&quot;: &quot;fact&quot;,
+      &quot;support_C2&quot;: &quot;supported&quot;,
+      &quot;basis_C2&quot;: &quot;B003&quot;,
+      &quot;group_C2&quot;: &quot;complete&quot;,
+      &quot;citation_C2_1&quot;: &quot;supported&quot;,
+      &quot;citation_C2_2&quot;: &quot;supported&quot;,
+      &quot;kind_C3&quot;: &quot;fact&quot;,
+      &quot;support_C3&quot;: &quot;supported&quot;,
+      &quot;basis_C3&quot;: &quot;B022&quot;,
+      &quot;group_C3&quot;: &quot;partial&quot;,
+      &quot;citation_C3_1&quot;: &quot;supported&quot;,
+      &quot;citation_C3_2&quot;: &quot;supported&quot;,
+      &quot;citation_C3_3&quot;: &quot;supported&quot;,
+      &quot;citation_C3_4&quot;: &quot;supported&quot;,
+      &quot;citation_C3_5&quot;: &quot;supported&quot;,
+      &quot;citation_C3_6&quot;: &quot;supported&quot;,
+      &quot;citation_C3_7&quot;: &quot;unsupported&quot;,
+      &quot;citation_C3_8&quot;: &quot;supported&quot;,
+      &quot;kind_C4&quot;: &quot;fact&quot;,
+      &quot;support_C4&quot;: &quot;supported&quot;,
+      &quot;basis_C4&quot;: &quot;NONE&quot;,
+      &quot;group_C4&quot;: &quot;complete&quot;,
+      &quot;citation_C4_1&quot;: &quot;supported&quot;,
+      &quot;citation_C4_2&quot;: &quot;supported&quot;,
+      &quot;citation_C4_3&quot;: &quot;supported&quot;,
+      &quot;citation_C4_4&quot;: &quot;supported&quot;,
+      &quot;citation_C4_5&quot;: &quot;unsupported&quot;,
+      &quot;citation_C4_6&quot;: &quot;supported&quot;,
+      &quot;citation_C4_7&quot;: &quot;supported&quot;,
+      &quot;kind_C5&quot;: &quot;fact&quot;,
+      &quot;support_C5&quot;: &quot;supported&quot;,
+      &quot;basis_C5&quot;: &quot;NONE&quot;,
+      &quot;group_C5&quot;: &quot;partial&quot;,
+      &quot;citation_C5_1&quot;: &quot;supported&quot;,
+      &quot;citation_C5_2&quot;: &quot;supported&quot;,
+      &quot;citation_C5_3&quot;: &quot;unsupported&quot;,
+      &quot;citation_C5_4&quot;: &quot;unsupported&quot;,
+      &quot;citation_C5_5&quot;: &quot;unsupported&quot;,
+      &quot;citation_C5_6&quot;: &quot;unsupported&quot;
+    }
+  },
+  &quot;calibrated&quot;: {
+    &quot;key_point_scores&quot;: {
+      &quot;K1&quot;: 1,
+      &quot;K2&quot;: 1,
+      &quot;K3&quot;: 0.5,
+      &quot;K4&quot;: 1
+    },
+    &quot;claim_assessments&quot;: [
+      {
+        &quot;id&quot;: &quot;C1&quot;,
+        &quot;text&quot;: &quot;## 结论\n\n不能仅凭 0.1667 与 31.6 MPa 这两个数值来排名：二者对应不同材料、不同目标量与不同评估条件，因此无法直接按大小比较优劣。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C2&quot;,
+        &quot;text&quot;: &quot;## Li, Hu &amp; Shao (2023)：0.1667 是\&quot;损伤指数 D\&quot;的（无量纲）预测误差\n\n- 研究对象是再生木材纤维与非木材纤维手抄片的抗张强度随回用（回用 4 次）的劣化；保水值与相对结合面积因与抗张强度强相关而被选为特征 [2]。\n- 摘要给出：曲线拟合模型（基于纸浆性能双曲理论）与 LSTM 神经网络均以保水值和相对结合面积为输入；曲线拟合模型的 RMSE 为估计 0.0278、预测 0.1667，神经网络为估计 0.2445、预测 0.2206 [3]。\n- 0.1667 对应的是损伤指数 D 的误差，而 D 由摘要给出的表达式确定；抗张强度随后才由 T = T₀(1−D) 换算得到 [3]。因此 0.1667 不是以 MPa 为单位的强度误差，不能与\&quot;强度 RMSE\&quot;直接比较。\n- 摘要未说明 0.1667 所对应预测数据的具体划分（如是否留出某次回用）及样本量，也未给出与之对应的强度尺度误差。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[2]&quot;,
+          &quot;[3]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B003&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C3&quot;,
+        &quot;text&quot;: &quot;## Ayaliew et al. (2026)：31.67 MPa 是复合材料抗张强度的测试集 RMSE\n\n- 研究对象是纤维增强聚合物复合材料（玻璃、碳、芳纶、玄武岩纤维；环氧、聚酯、乙烯基酯、酚醛树脂等），特征包括纤维类型、树脂体系、密度、层数、固化温度、纤维体积分数与孔隙含量等组成与工艺参数 [5]。\n- 表 1（表头为\&quot;RMSE (MPa)\&quot;）中 ANN (MLP) 为 R² = 0.9975、RMSE = 31.67 MPa、MAE = 25.14 MPa；Stacking(LR) 为 31.58 MPa [9]。正文亦称 ANN 的 RMSE 为 31.67 MPa [11]，3.2.6 节表述为\&quot;≈ 31.6 MPa\&quot; [7]；摘要在 3.2.6 综述与结论中写作\&quot;约 31 MPa\&quot;，属四舍五入表述差异 [6][12]。\n- 评估条件：上述指标在独立测试集上计算，另用训练数据做 5 折交叉验证（ANN 的 CV R² 均值 0.9973、标准差 0.0002）[8][9][10]。\n- 同文对强度尺度提供了参照：Rule of Mixtures 理论模型在测试集（2,000 样本）上 R² = 0.842、RMSE = 312.5 MPa [7]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[5]&quot;,
+          &quot;[9]&quot;,
+          &quot;[11]&quot;,
+          &quot;[7]&quot;,
+          &quot;[6]&quot;,
+          &quot;[12]&quot;,
+          &quot;[8]&quot;,
+          &quot;[10]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B022&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C4&quot;,
+        &quot;text&quot;: &quot;## 为何不能只按这两个数值排名\n\n1. 目标量不同：一边是损伤指数 D 的误差 [3]，一边是抗张强度（MPa）的误差 [9]，两者量纲与量级基准都不可比。\n2. 材料体系不同：一边是再生纤维纸页 [2]，一边是纤维增强树脂复合材料 [5]。\n3. 评估协议不同：Li 等仅报告估计与预测两个 RMSE，摘要未说明数据划分方式 [3]；Ayaliew 等报告独立测试集结果并辅以 5 折交叉验证 [8][10]。\n4. 误差含义的可解释性不同：Ayaliew 的 31.67 MPa 可与同文 ROM 的 312.5 MPa 误差和 R² = 0.9975 一起解读 [7][9]；Li 的 0.1667 没有对应的强度尺度误差或 D 的取值范围报告，无法换算成 MPa 或相对百分比 [3]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[3]&quot;,
+          &quot;[9]&quot;,
+          &quot;[2]&quot;,
+          &quot;[5]&quot;,
+          &quot;[8]&quot;,
+          &quot;[10]&quot;,
+          &quot;[7]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C5&quot;,
+        &quot;text&quot;: &quot;## 未能确定的信息\n\n- Li 等文中 0.1667 所对应预测集的具体构成（哪几次回用、样本数）、D 的取值范围及由 D 换算后的强度误差，摘要均未提供，需查该文第 4.3 节原始数据 [3]。\n- Ayaliew 等的数据集总样本量在本次证据中未见（仅见测试集 2,000 样本）[7]；31 MPa 与 31.6/31.67 MPa 的差异只是同一数值在不同位置的取整表述，不构成独立证据 [6][7][9][11][12]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[3]&quot;,
+          &quot;[7]&quot;,
+          &quot;[6]&quot;,
+          &quot;[9]&quot;,
+          &quot;[11]&quot;,
+          &quot;[12]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      }
+    ],
+    &quot;citation_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[2]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[5]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[11]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[12]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[8]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[10]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[2]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[5]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[8]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[10]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[11]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[12]&quot;,
+        &quot;score&quot;: 1
+      }
+    ],
+    &quot;citation_group_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      }
+    ],
+    &quot;answerability_score&quot;: 2,
+    &quot;reference_concern&quot;: false
+  },
+  &quot;calibration&quot;: {
+    &quot;changes&quot;: [
+      {
+        &quot;path&quot;: &quot;key_point_scores.K3&quot;,
+        &quot;value&quot;: 0.5,
+        &quot;reason&quot;: &quot;确认了复合材料抗拉强度与MPa，但全文没有说明合成数据；题面明确要求核对误差对应的数据，预设K3缺一半，Jev误给满分。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_group_assessments.C1.coverage&quot;,
+        &quot;value&quot;: &quot;complete&quot;,
+        &quot;reason&quot;: &quot;开头结论由后文来源承接，不要求重复引用。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_assessments.C3.[8].score&quot;,
+        &quot;value&quot;: 1,
+        &quot;reason&quot;: &quot;[8]正文直接支持5折CV和ANN标准差0.0002，与[9][10]联合支撑。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_assessments.C4.[8].score&quot;,
+        &quot;value&quot;: 1,
+        &quot;reason&quot;: &quot;[8]直接支持交叉验证与测试集对比。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_group_assessments.C3.coverage&quot;,
+        &quot;value&quot;: &quot;complete&quot;,
+        &quot;reason&quot;: &quot;已陈述的材料、误差及交叉验证内容均有联合来源；合成数据漏答另在K3扣分，不重复判成错误陈述。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_group_assessments.C5.coverage&quot;,
+        &quot;value&quot;: &quot;complete&quot;,
+        &quot;reason&quot;: &quot;缺口说明限定本次证据和摘要；近似值的不同原文位置均有对应来源，不要求额外来源证明缺失。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_assessments.C5.[6].score&quot;,
+        &quot;value&quot;: 1,
+        &quot;reason&quot;: &quot;该来源给出所对照的近似/表格RMSE，实质支持不同位置的报告值，不要求单条支持整段。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_assessments.C5.[9].score&quot;,
+        &quot;value&quot;: 1,
+        &quot;reason&quot;: &quot;该来源给出所对照的近似/表格RMSE，实质支持不同位置的报告值，不要求单条支持整段。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_assessments.C5.[11].score&quot;,
+        &quot;value&quot;: 1,
+        &quot;reason&quot;: &quot;该来源给出所对照的近似/表格RMSE，实质支持不同位置的报告值，不要求单条支持整段。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_assessments.C5.[12].score&quot;,
+        &quot;value&quot;: 1,
+        &quot;reason&quot;: &quot;该来源给出所对照的近似/表格RMSE，实质支持不同位置的报告值，不要求单条支持整段。&quot;
+      }
+    ],
+    &quot;reason&quot;: &quot;校准要点87.5：遗漏Ayaliew使用合成数据，虽正确拒绝直接排名，仍未完整回答数据背景。其余实际回答的单位、预测链条、误差及有界缺口说明接受；摘要对树脂类型的列举有原文依据，不把正文与摘要差异直接算作模型编造。修正Jev对多条正确引文的误判。达到10次模型调用预算，未取得数据准备章节；不因此认定答案所述事实错误。&quot;
+  },
+  &quot;final&quot;: {
+    &quot;point_score&quot;: 87.5,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 5,
+    &quot;supported_facts&quot;: 5,
+    &quot;pair_count&quot;: 23,
+    &quot;supported_pairs&quot;: 23,
+    &quot;group_count&quot;: 5,
+    &quot;covered_groups&quot;: 5,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 100.0,
+    &quot;citation_precision&quot;: 100.0,
+    &quot;citation_coverage&quot;: 100.0,
+    &quot;strict_pass&quot;: false,
+    &quot;format_ok&quot;: true
+  },
+  &quot;jev&quot;: {
+    &quot;point_score&quot;: 100,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 5,
+    &quot;supported_facts&quot;: 5,
+    &quot;pair_count&quot;: 23,
+    &quot;supported_pairs&quot;: 17,
+    &quot;group_count&quot;: 5,
+    &quot;covered_groups&quot;: 2,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 100.0,
+    &quot;citation_precision&quot;: 73.91304347826087,
+    &quot;citation_coverage&quot;: 40.0,
+    &quot;strict_pass&quot;: false,
+    &quot;format_ok&quot;: true
+  },
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;review_status&quot;: &quot;completed&quot;,
+  &quot;tools&quot;: [
+    {
+      &quot;request&quot;: {
+        &quot;query&quot;: &quot;Li Hu Shao 2023&quot;,
+        &quot;reason&quot;: &quot;Locate the Li, Hu &amp; Shao (2023) paper and the Ayaliew et al. (2026) paper to check what each RMSE refers to.&quot;,
+        &quot;tool&quot;: &quot;find_documents&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;query&quot;: &quot;Ayaliew 2026 ANN&quot;,
+        &quot;reason&quot;: &quot;Locate the Ayaliew et al. (2026) ANN paper reporting RMSE ~31.6 MPa.&quot;,
+        &quot;tool&quot;: &quot;find_documents&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;reason&quot;: &quot;List all papers in the library to identify the Ayaliew 2026 paper by filename.&quot;,
+        &quot;tool&quot;: &quot;find_documents&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;reason&quot;: &quot;Find abstract/methods/results sections of the Li, Hu &amp; Shao 2023 paper to check what the 0.1667 RMSE refers to.&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;tool&quot;: &quot;list_sections&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;reason&quot;: &quot;Read the abstract/title section of Li et al. 2023 to see the reported RMSE 0.1667 and what model it belongs to (curve fitting vs LSTM, tensile strength index?).&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;section_id&quot;: &quot;sec_5af453059b58c1b9&quot;,
+        &quot;max_chars&quot;: 6000,
+        &quot;tool&quot;: &quot;read_section&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;reason&quot;: &quot;Locate abstract/results sections of Ayaliew et al. 2026 to check what the ~31.6 MPa RMSE refers to (target variable, data split, best model).&quot;,
+        &quot;tool&quot;: &quot;list_sections&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;reason&quot;: &quot;Read Ayaliew 2026 abstract to verify the ANN RMSE ≈31.6 MPa figure, its units (MPa), the target property, dataset size/split, and whether it is test-set performance.&quot;,
+        &quot;section_id&quot;: &quot;sec_593f319f51e785d6&quot;,
+        &quot;tool&quot;: &quot;read_section&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;query&quot;: &quot;31.6 RMSE ANN tensile strength MPa five-fold cross-validation&quot;,
+        &quot;document_ids&quot;: [
+          &quot;doc_f499d471c51c051a&quot;
+        ],
+        &quot;reason&quot;: &quot;Find the specific numeric 31.6 MPa RMSE for ANN in Ayaliew 2026 results/tables, and confirm units (MPa) and validation setting.&quot;,
+        &quot;tool&quot;: &quot;search_literature&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    }
+  ],
+  &quot;model_calls&quot;: 10,
+  &quot;elapsed_seconds&quot;: 100.6,
+  &quot;result_sha256&quot;: &quot;e787415ab0c673c0f1b0963577a5dbb439c4c6738f94ca1c49420876c7d28eb6&quot;,
+  &quot;judge_input_sha256&quot;: &quot;714ac6e6a82d7038a41a0c0f64ffdd38c22a2acbb932d888c908dad73076ffc4&quot;,
+  &quot;evidence&quot;: [
+    {
+      &quot;ref&quot;: &quot;[1]&quot;,
+      &quot;sha256&quot;: &quot;105f2a2a9b4711877c50d471f83df9881ea7b61ab88a421c690b3abdc8e335df&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 206,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 2,
+        &quot;page_start&quot;: 2,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_75d45bfd6588e4997353&quot;,
+            &quot;page_end&quot;: 2,
+            &quot;page_start&quot;: 2,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\nMing Li&lt;sup&gt;1&lt;/sup&gt;\\*, Kaitang Hu&lt;sup&gt;2&lt;/sup&gt; and Suying Shao&lt;sup&gt;3&lt;/sup&gt;&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\nMing Li&lt;sup&gt;1&lt;/sup&gt;\\*, Kaitang Hu&lt;sup&gt;2&lt;/sup&gt; and Suying Shao&lt;sup&gt;3&lt;/sup&gt;&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;72981bf2-04f7-4ea4-b956-a06ef0c2082e&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[2]&quot;,
+      &quot;sha256&quot;: &quot;194b904a2492b4f3ccf79694f98b4f95935170e40d82f5e6037e03571d1f12da&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 1318,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 2,
+        &quot;page_start&quot;: 2,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_f3685b3771b0e409a9c0&quot;,
+            &quot;page_end&quot;: 2,
+            &quot;page_start&quot;: 2,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\nAbstract: The deterioration of fiber properties during recycling processes, especially the loss of tensile strength, raises concerns that paper products made from recycled fibers might not satisfy quality requirements. The purpose of this paper is to estimate the deterioration of tensile strength and the damage in paper sheets made of recycled fibers using the theory of damage mechanics and machine learning methods. Experiments were carried out to recycle wood fibers and nonwood fibers four times, and the physicochemical properties of the handsheets made from these fibers were measured after each recycling. Water retention value and relative bonded area were selected as the features to estimate and predict tensile strength during recycling because they had strong correlations with tensile strength. This paper proposed a damage index to quantitatively express the severity of the damage in paper sheets based on the experimental investigation and the theory of damage mechanics. Thus, the deterioration of tensile strength could be estimated and predicted. To determine the damage index, a curve fitting model based on the hyperbolic theory of pulp properties was developed.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\nAbstract: The deterioration of fiber properties during recycling processes, especially the loss of tensile strength, raises concerns that paper products made from recycled fibers might not satisfy quality requirements. The purpose of this paper is to estimate the deterioration of tensile strength and the damage in paper sheets made of recycled fibers using the theory of damage mechanics and machine learning methods. Experiments were carried out to recycle wood fibers and nonwood fibers four times, and the physicochemical properties of the handsheets made from these fibers were measured after each recycling. Water retention value and relative bonded area were selected as the features to estimate and predict tensile strength during recycling because they had strong correlations with tensile strength. This paper proposed a damage index to quantitatively express the severity of the damage in paper sheets based on the experimental investigation and the theory of damage mechanics. Thus, the deterioration of tensile strength could be estimated and predicted. To determine the damage index, a curve fitting model based on the hyperbolic theory of pulp properties was developed.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;72981bf2-04f7-4ea4-b956-a06ef0c2082e&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[3]&quot;,
+      &quot;sha256&quot;: &quot;204fb5c06854e8f5f2d4a22855717bce526c033cfc3fc766623537358de6f437&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 1291,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 2,
+        &quot;page_start&quot;: 2,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_ffd5ff799c3252466954&quot;,
+            &quot;page_end&quot;: 2,
+            &quot;page_start&quot;: 2,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\n The proposed quantitative expression of the damage index is: $\\begin{array} { r } { D = \\frac { \\left( D _ { s } - h \\right) ^ { 2 } } { a ^ { 2 } } - \\frac { \\left( \\dot { D } _ { h } - k \\right) ^ { 2 } } { b ^ { 2 } } } \\end{array}$ , where the coefficients were determined through the curve fitting model. This paper also developed a long short-term memory recurrent neural network model to determine the damage index according to the sequence of recycling. Both models were trained with the experimental data of water retention value and relative bonded area. The estimation and prediction by the curve fitting model were more accurate than those of the neural network model. The root mean square errors by the curve fitting model were 0.0278 for estimation, 0.1667 for prediction; and by the neural network model were 0.2445 for estimation, 0.2206 for prediction, respectively. After the damage index was determined, the deterioration of tensile strength then could be calculated as ${ \\boldsymbol { T } } = { \\boldsymbol { T } } _ { \\boldsymbol { O } }$ (1–D).\n\nSubjects: Polymers &amp; Plastics; Machine Learning; Chemical Engineering; Waste &amp; Recycling&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\n The proposed quantitative expression of the damage index is: $\\begin{array} { r } { D = \\frac { \\left( D _ { s } - h \\right) ^ { 2 } } { a ^ { 2 } } - \\frac { \\left( \\dot { D } _ { h } - k \\right) ^ { 2 } } { b ^ { 2 } } } \\end{array}$ , where the coefficients were determined through the curve fitting model. This paper also developed a long short-term memory recurrent neural network model to determine the damage index according to the sequence of recycling. Both models were trained with the experimental data of water retention value and relative bonded area. The estimation and prediction by the curve fitting model were more accurate than those of the neural network model. The root mean square errors by the curve fitting model were 0.0278 for estimation, 0.1667 for prediction; and by the neural network model were 0.2445 for estimation, 0.2206 for prediction, respectively. After the damage index was determined, the deterioration of tensile strength then could be calculated as ${ \\boldsymbol { T } } = { \\boldsymbol { T } } _ { \\boldsymbol { O } }$ (1–D).\n\nSubjects: Polymers &amp; Plastics; Machine Learning; Chemical Engineering; Waste &amp; Recycling&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;72981bf2-04f7-4ea4-b956-a06ef0c2082e&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[4]&quot;,
+      &quot;sha256&quot;: &quot;91db038c8f5ea237f9a1255b47736c14468778ea2ef9bdba1e666ef793d96e42&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 274,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 2,
+        &quot;page_start&quot;: 2,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_66f15159c30bda847675&quot;,
+            &quot;page_end&quot;: 2,
+            &quot;page_start&quot;: 2,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\nKeywords: recycled fibers; tensile strength; damage estimation; damage index; curve fitting; long short term memory; recurrent neural network&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\nKeywords: recycled fibers; tensile strength; damage estimation; damage index; curve fitting; long short term memory; recurrent neural network&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;72981bf2-04f7-4ea4-b956-a06ef0c2082e&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[5]&quot;,
+      &quot;sha256&quot;: &quot;12fd384eeeb1f68a90c44d584381f06ee8e916d856b594ee09969fc4b7601a5a&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 934,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 1,
+        &quot;page_start&quot;: 1,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_76533d0fe7a5d2567485&quot;,
+            &quot;page_end&quot;: 1,
+            &quot;page_start&quot;: 1,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Abstract\n[原文]\nFiber-reinforced polymer composites are extensively used in aerospace, automotive, and structural applications due to their excellent strength-to-weight ratio and design versatility. However, experimental tensile strength testing is both time-consuming and resource-intensive, hindering rapid material development. A significant challenge in advancing fiber-reinforced composites is the scarcity of experimental tensile strength data for newly formulated designs. To address this gap, this study introduces a comprehensive machine learning (ML) framework to predict the tensile strength based on compositional and processing parameters. The framework utilizes publicly accessible datasets containing parameters such as fiber types (Glass, Carbon, Aramid, Basalt), resin systems (Epoxy, Polyester, Vinyl Ester, Phenolic), density, layer count, curing temperature, fiber volume fraction, and void content.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Abstract\n[原文]\nFiber-reinforced polymer composites are extensively used in aerospace, automotive, and structural applications due to their excellent strength-to-weight ratio and design versatility. However, experimental tensile strength testing is both time-consuming and resource-intensive, hindering rapid material development. A significant challenge in advancing fiber-reinforced composites is the scarcity of experimental tensile strength data for newly formulated designs. To address this gap, this study introduces a comprehensive machine learning (ML) framework to predict the tensile strength based on compositional and processing parameters. The framework utilizes publicly accessible datasets containing parameters such as fiber types (Glass, Carbon, Aramid, Basalt), resin systems (Epoxy, Polyester, Vinyl Ester, Phenolic), density, layer count, curing temperature, fiber volume fraction, and void content.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;09cd729c-2646-4fe3-965c-f2cc0afd2493&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[6]&quot;,
+      &quot;sha256&quot;: &quot;a31e78efca0238086610da5f5dfafa735ba5f08eeebe405ed1db6044bbcb4421&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 893,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 1,
+        &quot;page_start&quot;: 1,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_e96ab2d5ac7f0c8eb184&quot;,
+            &quot;page_end&quot;: 1,
+            &quot;page_start&quot;: 1,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Abstract\n[原文]\n Five regression algorithms, including Linear Regression, Support Vector Regression (SVR), Random Forest, XGBoost, LightGBM, Artificial Neural Networks (ANN), and stacking ensemble models, were trained and evaluated using five-fold cross-validation and standard performance metrics such as R², RMSE, and MAE. The ANN and stacking ensemble achieved the highest predictive performance, with an R² of 0.9975 and an RMSE of approximately 31 MPa, demonstrating excellent cross-validation stability. Overall, the proposed framework ofers a robust, reproducible, and data-driven method for accurate strength prediction, reducing the experimental workload while providing actionable insights for optimizing composite design.\n\nKeywords Fiber-reinforced composites, Machine learning, Ensemble learning, Stacking, Random forest, XGBoost, LightGBM, Artificial neural network&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Abstract\n[原文]\n Five regression algorithms, including Linear Regression, Support Vector Regression (SVR), Random Forest, XGBoost, LightGBM, Artificial Neural Networks (ANN), and stacking ensemble models, were trained and evaluated using five-fold cross-validation and standard performance metrics such as R², RMSE, and MAE. The ANN and stacking ensemble achieved the highest predictive performance, with an R² of 0.9975 and an RMSE of approximately 31 MPa, demonstrating excellent cross-validation stability. Overall, the proposed framework ofers a robust, reproducible, and data-driven method for accurate strength prediction, reducing the experimental workload while providing actionable insights for optimizing composite design.\n\nKeywords Fiber-reinforced composites, Machine learning, Ensemble learning, Stacking, Random forest, XGBoost, LightGBM, Artificial neural network&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;09cd729c-2646-4fe3-965c-f2cc0afd2493&quot;,
+        &quot;8a01adeb-9500-4d7c-baf9-743e51f985c8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[7]&quot;,
+      &quot;sha256&quot;: &quot;d6dcc82c6dbc967fa9a1008666fc2bf42ce23d0cd27ef14b87be18f68efc6c44&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 1355,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 12,
+        &quot;page_start&quot;: 12,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_9418440ad3f7f2c506db&quot;,
+            &quot;page_end&quot;: 12,
+            &quot;page_start&quot;: 12,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\nTo evaluate the relative performance of the machine learning approaches against an established theoretical method, the predictions from the proposed ML models were compared with the Rule of Mixtures (ROM), a classical composite mechanics model. The Rule of Mixtures predicts the composite tensile strength using Eq.  8, a linear relationship:&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_1dfbd2c4c74d34018416&quot;,
+            &quot;page_end&quot;: 12,
+            &quot;page_start&quot;: 12,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\n$$\n\\sigma c = \\sigma f V f + \\sigma m (1 - V f)\\tag{8}\n$$&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_cd6f484e7e1fadc5cf5c&quot;,
+            &quot;page_end&quot;: 12,
+            &quot;page_start&quot;: 12,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\nWhen applied to the test dataset (2,000 samples), the ROM achieved an $\\mathrm { R } ^ { 2 }$ of 0.842 and an RMSE of 312.5 MPa, capturing general trends but with significant errors owing to its simplified linear assumptions. In contrast, the ANN and stacking ensemble achieved $\\mathbb { R } ^ { 2 }$ ≈ 0.9975 and RMSE ≈ 31.6 MPa, reducing the prediction error compared to ROM. This superior performance stems from ML’s ability to capture complex nonlinear interactions among multiple features, which the ROM cannot simultaneously incorporate.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\nTo evaluate the relative performance of the machine learning approaches against an established theoretical method, the predictions from the proposed ML models were compared with the Rule of Mixtures (ROM), a classical composite mechanics model. The Rule of Mixtures predicts the composite tensile strength using Eq.  8, a linear relationship:\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\n$$\n\\sigma c = \\sigma f V f + \\sigma m (1 - V f)\\tag{8}\n$$\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\nWhen applied to the test dataset (2,000 samples), the ROM achieved an $\\mathrm { R } ^ { 2 }$ of 0.842 and an RMSE of 312.5 MPa, capturing general trends but with significant errors owing to its simplified linear assumptions. In contrast, the ANN and stacking ensemble achieved $\\mathbb { R } ^ { 2 }$ ≈ 0.9975 and RMSE ≈ 31.6 MPa, reducing the prediction error compared to ROM. This superior performance stems from ML’s ability to capture complex nonlinear interactions among multiple features, which the ROM cannot simultaneously incorporate.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;8a01adeb-9500-4d7c-baf9-743e51f985c8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[8]&quot;,
+      &quot;sha256&quot;: &quot;d543c7cfa9734b3b098897b556b19775b9dc88d73449aa5bcd89a60b4f3d1be4&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 551,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 11,
+        &quot;page_start&quot;: 11,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_76246710b8261f7b057a&quot;,
+            &quot;page_end&quot;: 11,
+            &quot;page_start&quot;: 11,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.4 Cross-validation and model stability\n[原文]\nThe 5‑fold cross‑validation results closely aligned with the test set outcomes for all models, underscoring the robustness of the evaluation process. The minimal standard deviation in the CV scores for the top models (0.0002 for ANN) suggests that their performance remains highly consistent across various data splits, making them exceptionally reliable for predicting new and unseen composite formulations [44].&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.4 Cross-validation and model stability\n[原文]\nThe 5‑fold cross‑validation results closely aligned with the test set outcomes for all models, underscoring the robustness of the evaluation process. The minimal standard deviation in the CV scores for the top models (0.0002 for ANN) suggests that their performance remains highly consistent across various data splits, making them exceptionally reliable for predicting new and unseen composite formulations [44].&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;8a01adeb-9500-4d7c-baf9-743e51f985c8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[9]&quot;,
+      &quot;sha256&quot;: &quot;8e979c89f795b1e0abbfee1d1ac105686512a5e3dcdbc41fbc1e8020fb6f37d0&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 3018,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [
+          {
+            &quot;bbox&quot;: [
+              186,
+              113,
+              806,
+              258
+            ],
+            &quot;byte_size&quot;: 36889,
+            &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+            &quot;height&quot;: 231,
+            &quot;id&quot;: &quot;img_9a3d29781178f13da93c&quot;,
+            &quot;image_path&quot;: &quot;visual-assets/1612c49ff8e34d1a788c7ee67cc109a132964e4df83177496b1942a64f1bf2a7.png&quot;,
+            &quot;kind&quot;: &quot;table&quot;,
+            &quot;label&quot;: &quot;Table 1 Model comparison for tensile strength prediction&quot;,
+            &quot;page&quot;: 10,
+            &quot;parent_chunk_id&quot;: &quot;chk_e33d20a913dbeba8e7da&quot;,
+            &quot;sha256&quot;: &quot;1612c49ff8e34d1a788c7ee67cc109a132964e4df83177496b1942a64f1bf2a7&quot;,
+            &quot;width&quot;: 739
+          },
+          {
+            &quot;bbox&quot;: [
+              203,
+              317,
+              794,
+              703
+            ],
+            &quot;byte_size&quot;: 75304,
+            &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+            &quot;height&quot;: 613,
+            &quot;id&quot;: &quot;img_6e9db7700c42519f8866&quot;,
+            &quot;image_path&quot;: &quot;visual-assets/4b604d66bae8fea0b165ab634aebc789610f69a1e007a28a4b938823f73ae74e.png&quot;,
+            &quot;kind&quot;: &quot;figure&quot;,
+            &quot;label&quot;: &quot;Fig. 4 Full correlation heat map after One‑Hot Encoding&quot;,
+            &quot;page&quot;: 9,
+            &quot;parent_chunk_id&quot;: &quot;chk_fde4b656058c480fa961&quot;,
+            &quot;sha256&quot;: &quot;4b604d66bae8fea0b165ab634aebc789610f69a1e007a28a4b938823f73ae74e&quot;,
+            &quot;width&quot;: 705
+          },
+          {
+            &quot;bbox&quot;: [
+              203,
+              272,
+              794,
+              499
+            ],
+            &quot;byte_size&quot;: 126822,
+            &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+            &quot;height&quot;: 362,
+            &quot;id&quot;: &quot;img_1975b153aca311d68f89&quot;,
+            &quot;image_path&quot;: &quot;visual-assets/882dd36acc311d684f1489622cc336323d40925a4b05c66116dfe00b6c3e83a8.png&quot;,
+            &quot;kind&quot;: &quot;figure&quot;,
+            &quot;label&quot;: &quot;Fig. 5 Scatter plots actual versus predicted for all models&quot;,
+            &quot;page&quot;: 10,
+            &quot;parent_chunk_id&quot;: &quot;chk_64e92bede9d35a012ee5&quot;,
+            &quot;sha256&quot;: &quot;882dd36acc311d684f1489622cc336323d40925a4b05c66116dfe00b6c3e83a8&quot;,
+            &quot;width&quot;: 705
+          }
+        ],
+        &quot;page_end&quot;: 10,
+        &quot;page_start&quot;: 9,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_773e869226fc31d83748&quot;,
+            &quot;page_end&quot;: 9,
+            &quot;page_start&quot;: 9,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nTo better understand factors afecting the tensile strength, a comprehensive correlation analysis was performed on all features after one-hot encoding of categorical variables. The correlation matrix in Fig. 4 confirms the significant positive impact of the number of layers and fiber volume fraction on the tensile strength. Notably, it quantitatively confirms the influence of material selection: the carbon fiber dummy variable is strongly positively correlated with tensile strength, whereas aramid shows a negative correlation, supporting earlier boxplot findings that fiber choice is a crucial factor in composite performance. Likewise, the Vinyl Ester resin is positively linked to strength.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_e33d20a913dbeba8e7da&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nTable 1 Model comparison for tensile strength prediction\n\n&lt;table&gt;&lt;tr&gt;&lt;td&gt;Model&lt;/td&gt;&lt;td&gt; $R^2$ &lt;/td&gt;&lt;td&gt;RMSE (MPa)&lt;/td&gt;&lt;td&gt;MAE (MPa)&lt;/td&gt;&lt;td&gt;CV  $R^2$  Mean&lt;/td&gt;&lt;td&gt;CV  $R^2$  Std&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Stacking (LR)&lt;/td&gt;&lt;td&gt;0.9975&lt;/td&gt;&lt;td&gt;31.58&lt;/td&gt;&lt;td&gt;25.09&lt;/td&gt;&lt;td&gt;0.9973&lt;/td&gt;&lt;td&gt;0.0002&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;ANN (MLP)&lt;/td&gt;&lt;td&gt;0.9975&lt;/td&gt;&lt;td&gt;31.67&lt;/td&gt;&lt;td&gt;25.14&lt;/td&gt;&lt;td&gt;0.9973&lt;/td&gt;&lt;td&gt;0.0002&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Stacking (XGB)&lt;/td&gt;&lt;td&gt;0.9966&lt;/td&gt;&lt;td&gt;36.45&lt;/td&gt;&lt;td&gt;27.51&lt;/td&gt;&lt;td&gt;0.9963&lt;/td&gt;&lt;td&gt;0.0003&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;LightGBM&lt;/td&gt;&lt;td&gt;0.9935&lt;/td&gt;&lt;td&gt;50.74&lt;/td&gt;&lt;td&gt;39.48&lt;/td&gt;&lt;td&gt;0.9927&lt;/td&gt;&lt;td&gt;0.0005&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;XGBoost&lt;/td&gt;&lt;td&gt;0.9913&lt;/td&gt;&lt;td&gt;58.38&lt;/td&gt;&lt;td&gt;44.43&lt;/td&gt;&lt;td&gt;0.9905&lt;/td&gt;&lt;td&gt;0.0006&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Random forest&lt;/td&gt;&lt;td&gt;0.9783&lt;/td&gt;&lt;td&gt;92.32&lt;/td&gt;&lt;td&gt;70.58&lt;/td&gt;&lt;td&gt;0.9699&lt;/td&gt;&lt;td&gt;0.0009&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Linear regression&lt;/td&gt;&lt;td&gt;0.9523&lt;/td&gt;&lt;td&gt;137.02&lt;/td&gt;&lt;td&gt;97.28&lt;/td&gt;&lt;td&gt;0.9505&lt;/td&gt;&lt;td&gt;0.0013&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;SVR (RBF)&lt;/td&gt;&lt;td&gt;0.3382&lt;/td&gt;&lt;td&gt;510.36&lt;/td&gt;&lt;td&gt;375.99&lt;/td&gt;&lt;td&gt;0.2884&lt;/td&gt;&lt;td&gt;0.0129&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_64e92bede9d35a012ee5&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nFig. 5 Scatter plots actual versus predicted for all models&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_a89785d0729a97c41ae9&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nBeyond the primary relationships, the heat map revealed generally low to moderate correlations between features, indicating the absence of severe multicollinearity that could compromise models such as linear regression. Physically meaningful relationships were also evident, such as a moderate correlation between the fiber volume fraction and layer count, whereas the void content was negatively associated with most strengthrelated parameters, underscoring its harmful efect. Overall, this analysis underscores the combined impact of processing parameters and material selection, ofering a robust statistical basis for future predictive models [40].&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nTo better understand factors afecting the tensile strength, a comprehensive correlation analysis was performed on all features after one-hot encoding of categorical variables. The correlation matrix in Fig. 4 confirms the significant positive impact of the number of layers and fiber volume fraction on the tensile strength. Notably, it quantitatively confirms the influence of material selection: the carbon fiber dummy variable is strongly positively correlated with tensile strength, whereas aramid shows a negative correlation, supporting earlier boxplot findings that fiber choice is a crucial factor in composite performance. Likewise, the Vinyl Ester resin is positively linked to strength.\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nTable 1 Model comparison for tensile strength prediction\n\n&lt;table&gt;&lt;tr&gt;&lt;td&gt;Model&lt;/td&gt;&lt;td&gt; $R^2$ &lt;/td&gt;&lt;td&gt;RMSE (MPa)&lt;/td&gt;&lt;td&gt;MAE (MPa)&lt;/td&gt;&lt;td&gt;CV  $R^2$  Mean&lt;/td&gt;&lt;td&gt;CV  $R^2$  Std&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Stacking (LR)&lt;/td&gt;&lt;td&gt;0.9975&lt;/td&gt;&lt;td&gt;31.58&lt;/td&gt;&lt;td&gt;25.09&lt;/td&gt;&lt;td&gt;0.9973&lt;/td&gt;&lt;td&gt;0.0002&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;ANN (MLP)&lt;/td&gt;&lt;td&gt;0.9975&lt;/td&gt;&lt;td&gt;31.67&lt;/td&gt;&lt;td&gt;25.14&lt;/td&gt;&lt;td&gt;0.9973&lt;/td&gt;&lt;td&gt;0.0002&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Stacking (XGB)&lt;/td&gt;&lt;td&gt;0.9966&lt;/td&gt;&lt;td&gt;36.45&lt;/td&gt;&lt;td&gt;27.51&lt;/td&gt;&lt;td&gt;0.9963&lt;/td&gt;&lt;td&gt;0.0003&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;LightGBM&lt;/td&gt;&lt;td&gt;0.9935&lt;/td&gt;&lt;td&gt;50.74&lt;/td&gt;&lt;td&gt;39.48&lt;/td&gt;&lt;td&gt;0.9927&lt;/td&gt;&lt;td&gt;0.0005&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;XGBoost&lt;/td&gt;&lt;td&gt;0.9913&lt;/td&gt;&lt;td&gt;58.38&lt;/td&gt;&lt;td&gt;44.43&lt;/td&gt;&lt;td&gt;0.9905&lt;/td&gt;&lt;td&gt;0.0006&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Random forest&lt;/td&gt;&lt;td&gt;0.9783&lt;/td&gt;&lt;td&gt;92.32&lt;/td&gt;&lt;td&gt;70.58&lt;/td&gt;&lt;td&gt;0.9699&lt;/td&gt;&lt;td&gt;0.0009&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Linear regression&lt;/td&gt;&lt;td&gt;0.9523&lt;/td&gt;&lt;td&gt;137.02&lt;/td&gt;&lt;td&gt;97.28&lt;/td&gt;&lt;td&gt;0.9505&lt;/td&gt;&lt;td&gt;0.0013&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;SVR (RBF)&lt;/td&gt;&lt;td&gt;0.3382&lt;/td&gt;&lt;td&gt;510.36&lt;/td&gt;&lt;td&gt;375.99&lt;/td&gt;&lt;td&gt;0.2884&lt;/td&gt;&lt;td&gt;0.0129&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nFig. 5 Scatter plots actual versus predicted for all models\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nBeyond the primary relationships, the heat map revealed generally low to moderate correlations between features, indicating the absence of severe multicollinearity that could compromise models such as linear regression. Physically meaningful relationships were also evident, such as a moderate correlation between the fiber volume fraction and layer count, whereas the void content was negatively associated with most strengthrelated parameters, underscoring its harmful efect. Overall, this analysis underscores the combined impact of processing parameters and material selection, ofering a robust statistical basis for future predictive models [40].&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;8a01adeb-9500-4d7c-baf9-743e51f985c8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[10]&quot;,
+      &quot;sha256&quot;: &quot;ba2ca71ca64877de0aa3f2a9941ca5273c7bd281d8f5a8829339b4acbe238fdf&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 905,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 10,
+        &quot;page_start&quot;: 10,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_ac1cbc23beb285448267&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength\n[原文]\nAfter conducting exploratory data analysis (EDA), a diverse array of regression models was developed and tested on the processed dataset to predict the tensile strength. The models included Linear Regression, Support Vector Regression (SVR), Random Forest, XGBoost, LightGBM, an Artificial Neural Network (ANN), and two stacking ensembles. Model efectiveness was evaluated using the coeficient of determination (R²), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE) on a separate test set. Additionally, 5-fold cross-validation (CV) was applied to the training data to verify the robustness and generalizability of the findings [41]. Table 1 provides a summary of the performance metrics for all models, whereas Fig. 5 displays scatter plots comparing the actual and predicted values for each model.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength\n[原文]\nAfter conducting exploratory data analysis (EDA), a diverse array of regression models was developed and tested on the processed dataset to predict the tensile strength. The models included Linear Regression, Support Vector Regression (SVR), Random Forest, XGBoost, LightGBM, an Artificial Neural Network (ANN), and two stacking ensembles. Model efectiveness was evaluated using the coeficient of determination (R²), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE) on a separate test set. Additionally, 5-fold cross-validation (CV) was applied to the training data to verify the robustness and generalizability of the findings [41]. Table 1 provides a summary of the performance metrics for all models, whereas Fig. 5 displays scatter plots comparing the actual and predicted values for each model.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;8a01adeb-9500-4d7c-baf9-743e51f985c8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[11]&quot;,
+      &quot;sha256&quot;: &quot;26025579d5bbe00116f4a43b27e3d60851477ff4a4850ce08fc2a664d71348ad&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 1137,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 11,
+        &quot;page_start&quot;: 11,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_8642140f886d8ae15549&quot;,
+            &quot;page_end&quot;: 11,
+            &quot;page_start&quot;: 11,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.3 Performance of neural network and stacking ensembles\n[原文]\nThe Artificial Neural Network (ANN) and two stacking ensembles achieved the highest predictive accuracy. As shown in Fig. 5, the predictions from these models were nearly perfectly aligned with the actual values. The ANN achieved a test $\\mathbb { R } ^ { 2 }$ of 0.9975 and an RMSE of only 31.67 MPa, demonstrating the efectiveness of a well-configured multilayer perceptron for this regression task, possibly because the dataset size was modest for deep learning applications. The stacking ensemble with a Linear Regression metalearner performed almost identically to the ANN. Interestingly, the stacking ensemble with an XGBoost meta-learner performed slightly worse, suggesting that a simpler linear model was more efective at combining the predictions of the base estimators in this specific case. The nearly identical and exceptionally high CV $\\mathbb { R } ^ { 2 }$ mean (0.9973) for both the ANN- and LR-based stacks confirms their remarkable generalization capability [43].&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.3 Performance of neural network and stacking ensembles\n[原文]\nThe Artificial Neural Network (ANN) and two stacking ensembles achieved the highest predictive accuracy. As shown in Fig. 5, the predictions from these models were nearly perfectly aligned with the actual values. The ANN achieved a test $\\mathbb { R } ^ { 2 }$ of 0.9975 and an RMSE of only 31.67 MPa, demonstrating the efectiveness of a well-configured multilayer perceptron for this regression task, possibly because the dataset size was modest for deep learning applications. The stacking ensemble with a Linear Regression metalearner performed almost identically to the ANN. Interestingly, the stacking ensemble with an XGBoost meta-learner performed slightly worse, suggesting that a simpler linear model was more efective at combining the predictions of the base estimators in this specific case. The nearly identical and exceptionally high CV $\\mathbb { R } ^ { 2 }$ mean (0.9973) for both the ANN- and LR-based stacks confirms their remarkable generalization capability [43].&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;8a01adeb-9500-4d7c-baf9-743e51f985c8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[12]&quot;,
+      &quot;sha256&quot;: &quot;025463e1ee108359ec4e38fdd220fa8e132053ed4527061ca602f4a12fd5e79e&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 1575,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 14,
+        &quot;page_start&quot;: 14,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_468dfa819143a1126bd8&quot;,
+            &quot;page_end&quot;: 14,
+            &quot;page_start&quot;: 14,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4 Conclusion\n[原文]\nThis study presents a detailed machine learning framework aimed at forecasting the tensile strength of fiber-reinforced polymer composites by considering compositional and processing factors. Initial data exploration and correlation analysis revealed that both the number of layers and fiber volume fraction positively impacted the tensile strength, whereas the void content negatively afected it. The quantitative analysis of categorical variables further underscored the importance of choosing the right fiber and resin, with carbon fibers and vinyl ester resins showing significant positive efects on mechanical performance. The correlation heat-map confirmed the lack of significant multicollinearity, ensuring the reliability of subsequent modeling processes.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_1df78d506a86a683bccc&quot;,
+            &quot;page_end&quot;: 14,
+            &quot;page_start&quot;: 14,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4 Conclusion\n[原文]\nWhen comparing models, it was found that while Linear Regression ofered a reliable starting point, more advanced tree-based ensemble methods greatly improved the predictive accuracy by efectively capturing intricate nonlinear interactions. The Artificial Neural Network and stacking ensemble models delivered the best performance (R² ≈ 0.9975, RMSE ≈ 31  MPa), exhibiting excellent cross-validation stability and minimal variance across diferent folds, indicating strong generalization capabilities.\n\nIn summary, the results demonstrate that ensemble and deep learning techniques are highly efective tools for precise, data-driven composite design, significantly reducing the need for extensive experimental testing of composite materials.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4 Conclusion\n[原文]\nThis study presents a detailed machine learning framework aimed at forecasting the tensile strength of fiber-reinforced polymer composites by considering compositional and processing factors. Initial data exploration and correlation analysis revealed that both the number of layers and fiber volume fraction positively impacted the tensile strength, whereas the void content negatively afected it. The quantitative analysis of categorical variables further underscored the importance of choosing the right fiber and resin, with carbon fibers and vinyl ester resins showing significant positive efects on mechanical performance. The correlation heat-map confirmed the lack of significant multicollinearity, ensuring the reliability of subsequent modeling processes.\n\n[章节标签（程序整理，非原文）] 4 Conclusion\n[原文]\nWhen comparing models, it was found that while Linear Regression ofered a reliable starting point, more advanced tree-based ensemble methods greatly improved the predictive accuracy by efectively capturing intricate nonlinear interactions. The Artificial Neural Network and stacking ensemble models delivered the best performance (R² ≈ 0.9975, RMSE ≈ 31  MPa), exhibiting excellent cross-validation stability and minimal variance across diferent folds, indicating strong generalization capabilities.\n\nIn summary, the results demonstrate that ensemble and deep learning techniques are highly efective tools for precise, data-driven composite design, significantly reducing the need for extensive experimental testing of composite materials.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;8a01adeb-9500-4d7c-baf9-743e51f985c8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[13]&quot;,
+      &quot;sha256&quot;: &quot;bd7f9f0729bb6f9b1732aa093d63f9fcb0d73860f6c82b19464419814839b0c4&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 1099,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 11,
+        &quot;page_start&quot;: 11,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_418270a1206588d6ad99&quot;,
+            &quot;page_end&quot;: 11,
+            &quot;page_start&quot;: 11,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.2 Performance of tree-based ensemble models\n[原文]\nThe tree-based ensemble methods, including Random Forest, XGBoost, and Light-GBM, significantly outperformed the linear models, demonstrating their ability to capture intricate, nonlinear relationships. As illustrated in Fig. 5, all three models produced predictions closely aligned with the ideal fit line. The Random Forest regressor delivered outstanding results with an $\\mathbb { R } ^ { 2 }$ of 0.978 and an RMSE of 92.32 MPa, owing to its gradient-boosting framework that sequentially corrects errors from previous trees [42]. The gradient-boosting models, XGBoost and LightGBM, performed even better than the tree-based models. LightGBM achieved an almost perfect $\\mathbb { R } ^ { 2 }$ of 0.9935 and a notably lower RMSE of 50.74 MPa, demonstrating its eficiency and precision on this dataset. The low standard deviation in their cross-validation scores (approximately 0.0005– 0.0009) confirmed their high stability and resistance to overfitting.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.2 Performance of tree-based ensemble models\n[原文]\nThe tree-based ensemble methods, including Random Forest, XGBoost, and Light-GBM, significantly outperformed the linear models, demonstrating their ability to capture intricate, nonlinear relationships. As illustrated in Fig. 5, all three models produced predictions closely aligned with the ideal fit line. The Random Forest regressor delivered outstanding results with an $\\mathbb { R } ^ { 2 }$ of 0.978 and an RMSE of 92.32 MPa, owing to its gradient-boosting framework that sequentially corrects errors from previous trees [42]. The gradient-boosting models, XGBoost and LightGBM, performed even better than the tree-based models. LightGBM achieved an almost perfect $\\mathbb { R } ^ { 2 }$ of 0.9935 and a notably lower RMSE of 50.74 MPa, demonstrating its eficiency and precision on this dataset. The low standard deviation in their cross-validation scores (approximately 0.0005– 0.0009) confirmed their high stability and resistance to overfitting.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;8a01adeb-9500-4d7c-baf9-743e51f985c8&quot;
+      ]
+    }
+  ]
+}</pre></details></article><article><h2>FSX-003</h2><p>只根据我提供的数据计算，不查论文：A的抗张指数为40 N·m/g，B未测，C为50 N·m/g。请输出已测样本均值、参与计算的样本数和缺失数，并说明把B当0计算会得到多少，以及为什么这个处理不合适。</p><p>校准：100 / 100.0 / N/A / N/A / 2 / 通过</p><p>均值45、有效2、缺失1及补0后30均正确，明确未测不等于零；没有调用论文工具，六维适用项通过，引用不适用。</p><h3>完整回答</h3><pre>只根据你提供的数据计算，不查论文：
+
+- **已测样本**：A = 40 N·m/g，C = 50 N·m/g
+- **已测样本均值**：(40 + 50) / 2 = **45 N·m/g**
+- **参与计算的样本数**：**2**（A、C）
+- **缺失数**：**1**（B）
+
+**如果将 B 当作 0 计算**：三个数的平均值为 (40 + 0 + 50) / 3 = **30 N·m/g**。
+
+**为什么这种处理不合适**：
+1. 把“未测”当作“实测值为 0”，相当于假设 B 的抗张指数确实为零；但这一信息在你的数据中并不存在，未测不等于测得为零。
+2. 这个例子显示，对缺失值填 0 会使均值从 45 降到 30 N·m/g，即偏低 15 N·m/g，相对偏低约 33%。
+3. 由于该均值被用于后续比较或统计计算，这种偏差会传递到比较或统计结果中；仅凭给定数据无法判断偏差的方向和幅度在其他情境下是否相同，但它源于一个未经证实的假设。
+4. 更合适的做法是：报告基于 2 个已测样本的均值 45 N·m/g，并注明 n=2、缺失 1 个（B）；或补测 B 后再计算。若确需估计，应明确说明缺失值处理方法及其假设，并报告相应不确定性，而不是默认置零。
+
+以上均为基于给定数值的算术计算示例，不含任何论文证据；未提供 B 的真实值和测量条件，因此无法确定包含 B 的真实均值。</pre><details><summary>参考答案、评分及依据、调用轨迹与引用</summary><pre>{
+  &quot;case&quot;: {
+    &quot;id&quot;: &quot;FSX-003&quot;,
+    &quot;group&quot;: &quot;no_paper&quot;,
+    &quot;question&quot;: &quot;只根据我提供的数据计算，不查论文：A的抗张指数为40 N·m/g，B未测，C为50 N·m/g。请输出已测样本均值、参与计算的样本数和缺失数，并说明把B当0计算会得到多少，以及为什么这个处理不合适。&quot;,
+    &quot;reference_answer&quot;: &quot;已测均值(40+50)/2=45 N·m/g，有效样本2、缺失1。把B当0会得(40+0+50)/3=30 N·m/g。未测不等于测得0，补0改变数据含义并压低均值。无需文献或工具检索。&quot;,
+    &quot;key_points&quot;: [
+      &quot;已测均值45 N·m/g&quot;,
+      &quot;有效样本2，缺失1&quot;,
+      &quot;错误补0的均值30 N·m/g&quot;,
+      &quot;未测不等于零，不应未经依据补0&quot;
+    ],
+    &quot;critical_errors&quot;: [
+      &quot;将未测默认当0作为正确均值&quot;
+    ],
+    &quot;evidence&quot;: [],
+    &quot;checks&quot;: &quot;非论文路由、缺失值及均值&quot;,
+    &quot;grading_notes&quot;: &quot;允许等价表述、合理舍入；不强制参考答案之外的背景、重复引用或特定工具顺序。&quot;,
+    &quot;tool_expectation&quot;: &quot;无需论文，直接依据用户输入计算，不检索。&quot;,
+    &quot;citation_applicable&quot;: false
+  },
+  &quot;answer&quot;: &quot;只根据你提供的数据计算，不查论文：\n\n- **已测样本**：A = 40 N·m/g，C = 50 N·m/g\n- **已测样本均值**：(40 + 50) / 2 = **45 N·m/g**\n- **参与计算的样本数**：**2**（A、C）\n- **缺失数**：**1**（B）\n\n**如果将 B 当作 0 计算**：三个数的平均值为 (40 + 0 + 50) / 3 = **30 N·m/g**。\n\n**为什么这种处理不合适**：\n1. 把“未测”当作“实测值为 0”，相当于假设 B 的抗张指数确实为零；但这一信息在你的数据中并不存在，未测不等于测得为零。\n2. 这个例子显示，对缺失值填 0 会使均值从 45 降到 30 N·m/g，即偏低 15 N·m/g，相对偏低约 33%。\n3. 由于该均值被用于后续比较或统计计算，这种偏差会传递到比较或统计结果中；仅凭给定数据无法判断偏差的方向和幅度在其他情境下是否相同，但它源于一个未经证实的假设。\n4. 更合适的做法是：报告基于 2 个已测样本的均值 45 N·m/g，并注明 n=2、缺失 1 个（B）；或补测 B 后再计算。若确需估计，应明确说明缺失值处理方法及其假设，并报告相应不确定性，而不是默认置零。\n\n以上均为基于给定数值的算术计算示例，不含任何论文证据；未提供 B 的真实值和测量条件，因此无法确定包含 B 的真实均值。&quot;,
+  &quot;draft&quot;: &quot;只使用你给出的数据，不检索论文：\n\n- **已测样本**：A = 40 N·m/g，C = 50 N·m/g\n- **已测样本均值**： (40 + 50) / 2 = **45 N·m/g**\n- **参与计算的样本数**：**2**（A、C）\n- **缺失数**：**1**（B）\n\n**如果把 B 当作 0 计算**：三个数的平均值为 (40 + 0 + 50) / 3 = **30 N·m/g**\n\n**为什么这种处理不合适**：\n1. 把“未测”当作“实测值为 0”，相当于凭空假设 B 的抗张指数真的为零，这是数据中没有的、也没有依据的信息；未测并不等于测得为零。\n2. 抗张指数是非负的强度指标，真实值不可能为 0 这种无效假设会让均值系统性偏低（此例中从 45 降到 30，偏低 15 N·m/g，即约 33% 的相对降低）。\n3. 由于 0 也拉低了样本均值，并稀释了 A、C 的信息，任何基于此均值的比较、排序或后续统计（方差、显著性检验等）都会产生偏差，且这种偏差不能通过增加样本量消除。\n4. 更恰当的做法是：报告基于 2 个已测样本的均值 45 N·m/g，并明确标注 n=2、缺失 1 个（B），或补测 B 后再计算；若确需估计，应采用明确声明的缺失值处理方法（如按组均值/回归插补），并同时报告不确定性与方法假设，而不是默认置零。\n\n以上均为基于给定数值的算术计算示例，不含任何论文证据。&quot;,
+  &quot;raw_jev&quot;: {
+    &quot;key_point_scores&quot;: {
+      &quot;K1&quot;: 1,
+      &quot;K2&quot;: 1,
+      &quot;K3&quot;: 1,
+      &quot;K4&quot;: 1
+    },
+    &quot;claim_assessments&quot;: [
+      {
+        &quot;id&quot;: &quot;C1&quot;,
+        &quot;text&quot;: &quot;只根据你提供的数据计算，不查论文：\n\n- **已测样本**：A = 40 N·m/g，C = 50 N·m/g\n- **已测样本均值**：(40 + 50) / 2 = **45 N·m/g**\n- **参与计算的样本数**：**2**（A、C）\n- **缺失数**：**1**（B）&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C2&quot;,
+        &quot;text&quot;: &quot;**如果将 B 当作 0 计算**：三个数的平均值为 (40 + 0 + 50) / 3 = **30 N·m/g**。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C3&quot;,
+        &quot;text&quot;: &quot;**为什么这种处理不合适**：\n1. 把“未测”当作“实测值为 0”，相当于假设 B 的抗张指数确实为零；但这一信息在你的数据中并不存在，未测不等于测得为零。\n2. 这个例子显示，对缺失值填 0 会使均值从 45 降到 30 N·m/g，即偏低 15 N·m/g，相对偏低约 33%。\n3. 由于该均值被用于后续比较或统计计算，这种偏差会传递到比较或统计结果中；仅凭给定数据无法判断偏差的方向和幅度在其他情境下是否相同，但它源于一个未经证实的假设。\n4. 更合适的做法是：报告基于 2 个已测样本的均值 45 N·m/g，并注明 n=2、缺失 1 个（B）；或补测 B 后再计算。若确需估计，应明确说明缺失值处理方法及其假设，并报告相应不确定性，而不是默认置零。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C4&quot;,
+        &quot;text&quot;: &quot;以上均为基于给定数值的算术计算示例，不含任何论文证据；未提供 B 的真实值和测量条件，因此无法确定包含 B 的真实均值。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      }
+    ],
+    &quot;citation_assessments&quot;: [],
+    &quot;citation_group_assessments&quot;: [],
+    &quot;answerability_score&quot;: 2,
+    &quot;reference_concern&quot;: false,
+    &quot;decisions&quot;: {
+      &quot;boundary&quot;: &quot;appropriate&quot;,
+      &quot;reference_check&quot;: &quot;sound&quot;,
+      &quot;point_K1&quot;: &quot;complete&quot;,
+      &quot;point_K2&quot;: &quot;complete&quot;,
+      &quot;point_K3&quot;: &quot;complete&quot;,
+      &quot;point_K4&quot;: &quot;complete&quot;,
+      &quot;kind_C1&quot;: &quot;fact&quot;,
+      &quot;support_C1&quot;: &quot;supported&quot;,
+      &quot;basis_C1&quot;: &quot;NONE&quot;,
+      &quot;kind_C2&quot;: &quot;fact&quot;,
+      &quot;support_C2&quot;: &quot;supported&quot;,
+      &quot;basis_C2&quot;: &quot;NONE&quot;,
+      &quot;kind_C3&quot;: &quot;fact&quot;,
+      &quot;support_C3&quot;: &quot;supported&quot;,
+      &quot;basis_C3&quot;: &quot;NONE&quot;,
+      &quot;kind_C4&quot;: &quot;fact&quot;,
+      &quot;support_C4&quot;: &quot;supported&quot;,
+      &quot;basis_C4&quot;: &quot;NONE&quot;
+    }
+  },
+  &quot;calibrated&quot;: {
+    &quot;key_point_scores&quot;: {
+      &quot;K1&quot;: 1,
+      &quot;K2&quot;: 1,
+      &quot;K3&quot;: 1,
+      &quot;K4&quot;: 1
+    },
+    &quot;claim_assessments&quot;: [
+      {
+        &quot;id&quot;: &quot;C1&quot;,
+        &quot;text&quot;: &quot;只根据你提供的数据计算，不查论文：\n\n- **已测样本**：A = 40 N·m/g，C = 50 N·m/g\n- **已测样本均值**：(40 + 50) / 2 = **45 N·m/g**\n- **参与计算的样本数**：**2**（A、C）\n- **缺失数**：**1**（B）&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C2&quot;,
+        &quot;text&quot;: &quot;**如果将 B 当作 0 计算**：三个数的平均值为 (40 + 0 + 50) / 3 = **30 N·m/g**。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C3&quot;,
+        &quot;text&quot;: &quot;**为什么这种处理不合适**：\n1. 把“未测”当作“实测值为 0”，相当于假设 B 的抗张指数确实为零；但这一信息在你的数据中并不存在，未测不等于测得为零。\n2. 这个例子显示，对缺失值填 0 会使均值从 45 降到 30 N·m/g，即偏低 15 N·m/g，相对偏低约 33%。\n3. 由于该均值被用于后续比较或统计计算，这种偏差会传递到比较或统计结果中；仅凭给定数据无法判断偏差的方向和幅度在其他情境下是否相同，但它源于一个未经证实的假设。\n4. 更合适的做法是：报告基于 2 个已测样本的均值 45 N·m/g，并注明 n=2、缺失 1 个（B）；或补测 B 后再计算。若确需估计，应明确说明缺失值处理方法及其假设，并报告相应不确定性，而不是默认置零。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C4&quot;,
+        &quot;text&quot;: &quot;以上均为基于给定数值的算术计算示例，不含任何论文证据；未提供 B 的真实值和测量条件，因此无法确定包含 B 的真实均值。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      }
+    ],
+    &quot;citation_assessments&quot;: [],
+    &quot;citation_group_assessments&quot;: [],
+    &quot;answerability_score&quot;: 2,
+    &quot;reference_concern&quot;: false
+  },
+  &quot;calibration&quot;: {
+    &quot;changes&quot;: [],
+    &quot;reason&quot;: &quot;均值45、有效2、缺失1及补0后30均正确，明确未测不等于零；没有调用论文工具，六维适用项通过，引用不适用。&quot;
+  },
+  &quot;final&quot;: {
+    &quot;point_score&quot;: 100,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 4,
+    &quot;supported_facts&quot;: 4,
+    &quot;pair_count&quot;: 0,
+    &quot;supported_pairs&quot;: 0,
+    &quot;group_count&quot;: 0,
+    &quot;covered_groups&quot;: 0,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 100.0,
+    &quot;citation_precision&quot;: null,
+    &quot;citation_coverage&quot;: null,
+    &quot;strict_pass&quot;: true,
+    &quot;format_ok&quot;: true
+  },
+  &quot;jev&quot;: {
+    &quot;point_score&quot;: 100,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 4,
+    &quot;supported_facts&quot;: 4,
+    &quot;pair_count&quot;: 0,
+    &quot;supported_pairs&quot;: 0,
+    &quot;group_count&quot;: 0,
+    &quot;covered_groups&quot;: 0,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 100.0,
+    &quot;citation_precision&quot;: null,
+    &quot;citation_coverage&quot;: null,
+    &quot;strict_pass&quot;: true,
+    &quot;format_ok&quot;: true
+  },
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;review_status&quot;: &quot;completed&quot;,
+  &quot;tools&quot;: [],
+  &quot;model_calls&quot;: 2,
+  &quot;elapsed_seconds&quot;: 13.357,
+  &quot;result_sha256&quot;: &quot;d4f4ad97174ab7960cfa6c9f2158b03ceb303533e5288849f079da6a5f63e867&quot;,
+  &quot;judge_input_sha256&quot;: &quot;c28b6f0c41afa55372cc8cbd023f7e7e673dcb8edfdeeed66298e6b29e8f495a&quot;,
+  &quot;evidence&quot;: []
+}</pre></details></article></main></html>
