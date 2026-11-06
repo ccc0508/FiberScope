@@ -14,7 +14,10 @@ from filelock import FileLock
 
 DATA = Path('/var/lib/fiberscope/rag-data')
 BACKUPS = Path('/var/backups/fiberscope')
-SQLITE_FILES = ['metadata.sqlite3', 'qa_history.sqlite3', 'extraction/records.sqlite3', 'chroma/chroma.sqlite3']
+# Discover new history, trace and versioned index databases as well.
+def sqlite_files():
+    return sorted(p.relative_to(DATA).as_posix() for p in DATA.rglob('*')
+                  if p.is_file() and p.suffix in {'.sqlite3', '.sqlite', '.db'})
 
 
 def sha(path):
@@ -39,16 +42,17 @@ def main():
     with FileLock(str(DATA / '.import.lock'), timeout=30):
         with tempfile.TemporaryDirectory(prefix='staging-', dir=output) as temporary:
             working = Path(temporary)
+            databases = sqlite_files()
             for source in DATA.rglob('*'):
                 relative = source.relative_to(DATA)
-                if not source.is_file() or relative.as_posix() in SQLITE_FILES or source.name.endswith(('-wal', '-shm', '.lock')):
+                if not source.is_file() or relative.as_posix() in databases or source.name.endswith(('-wal', '-shm', '.lock')):
                     continue
                 if source.is_symlink():
                     raise RuntimeError('Unexpected data symlink')
                 destination = working / 'rag-data' / relative
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(source, destination)
-            for relative in SQLITE_FILES:
+            for relative in databases:
                 destination = working / 'rag-data' / relative
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 with closing(sqlite3.connect((DATA / relative).as_uri() + '?mode=ro', uri=True)) as original:
