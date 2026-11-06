@@ -127,3 +127,23 @@ def test_failed_registration_rolls_back_snapshot_and_completion(kit):
     with pytest.raises(KeyError):kit.store.complete(r)
     assert kit.store.evidence('r')==[]
     assert kit.store.read('r')[0]['status']=='started'
+
+def test_directory_and_exact_table_number(kit):
+    from dataclasses import replace
+    c=kit.catalog.chunks['1'];kit.catalog.chunks['1']=replace(c,text='Table 1. Definitions\n<table></table>')
+    out=kit.call(dict(tool='find_documents',query='paper',reason='identify'),run_id='r')
+    assert out['result']['documents'][0]['document_id']=='doc'
+    for number,count in [('1',1),('10',0),('S1',0)]:
+        out=kit.call(dict(tool='find_table',document_id='doc',table_number=number,reason='locate'),run_id='r')
+        assert out['result']['total']==count
+    assert not kit.store.evidence('r')
+
+
+def test_scoped_search_validates_ids_and_passes_filter(kit):
+    calls=[]
+    kit.retriever.retrieve=lambda *a,**kw: calls.append(kw) or []
+    p=dict(tool='search_literature',query='unit',document_ids=['doc'],reason='target')
+    assert kit.call(p,run_id='r')['status']=='completed'
+    assert calls==[{'document_ids':['doc']}]
+    assert kit.call(dict(p,document_ids=['missing']),run_id='r')['status']=='failed'
+    assert len(calls)==1
