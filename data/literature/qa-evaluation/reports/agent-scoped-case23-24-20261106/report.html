@@ -1,0 +1,1259 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第23、24题最新重跑</title><style>body{background:#f4f7fa;color:#24364b;font:16px/1.8 system-ui;margin:0}main{max-width:1100px;margin:auto;padding:28px}article{background:white;padding:24px;margin:20px 0;border-radius:12px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.8 system-ui}summary{cursor:pointer}</style><main><h1>第23、24题最新重跑与评分</h1><pre># 第23、24题：最新版独立重跑及校准
+
+日期：2026-11-06。两份最终答案均完成复核；第24题首次工作进程失败，保留失败记录后独立补跑一次成功。不能记作首次2/2成功。
+
+顺序：要点分 / 事实充分支持率 / 单引有效率 / 引用组覆盖率 / 边界 / 严格通过。
+
+## FS8-023
+
+Jev：100.00 / 50.00 (2/4) / 84.62 (11/13) / 0.00 (0/4) / 2/2 / 未通过
+
+校准：100.00 / 75.00 (3/4) / 100.00 (13/13) / 75.00 (3/4) / 2/2 / 未通过
+
+四个必答要点完整，100分。C2的0.88/0.978分别见正文和表格，不判数值幻觉；“同一高粱原料”按高粱体系理解，不强读为单一品种。建议解释原文数值差异，但不扣实质分。仅保留C3部分支持：称Uddin为“单一打浆序列”未获[7]支持。开头、结尾及联合引用不作过严扣分。
+
+## FS8-024
+
+Jev：87.50 / 50.00 (2/4) / 90.91 (10/11) / 50.00 (2/4) / 1/2 / 未通过
+
+校准：87.50 / 75.00 (3/4) / 100.00 (11/11) / 75.00 (3/4) / 2/2 / 未通过
+
+沿用原四要点标准，K1/K3/K4齐全，K2只有MPa一侧，未回答Uddin的Nm/g，得87.5。维持C4部分支持：“合成数据所以不可外推”把应验证外推能力说成绝对禁止；“直接拼接会让模型把来源当信号”也把风险写成必然。其余实测/合成、10000/2000和原文性能数值有支持。不因如实承认证据不足惩罚事实正确性。
+
+## 对比及限制
+
+第23题要点分仍为100；第24题从上次校准的50提高至87.5，补上损伤公式与合成数据，但仍漏Uddin单位。第24题沿用预设四要点口径，没有因其已列出三类差异就改为满分。
+
+事实/引用按本轮冻结的复合语义段计数，不代表逐句准确率；旧回答与新回答分段数不同，不能仅凭百分比断言整体质量升降。两题均还有实质缺陷，严格通过均为否。没有重算或覆盖30题总分。
+</pre><article><h2>FS8-023</h2><p>Uddin等（2024）把kink列为ANN最重要输入，Pennells等（2022）也观察到kink与纳米纸性能相关。这是否足以建议“主动制造更多扭结一定能增强任何纸张”？</p><p>Jev：100.00 / 50.00 (2/4) / 84.62 (11/13) / 0.00 (0/4) / 2/2 / 未通过<br>校准：100.00 / 75.00 (3/4) / 100.00 (13/13) / 75.00 (3/4) / 2/2 / 未通过</p><p>四个必答要点完整，100分。C2的0.88/0.978分别见正文和表格，不判数值幻觉；“同一高粱原料”按高粱体系理解，不强读为单一品种。建议解释原文数值差异，但不扣实质分。仅保留C3部分支持：称Uddin为“单一打浆序列”未获[7]支持。开头、结尾及联合引用不作过严扣分。</p><h3>完整回答</h3><pre>**结论：不足以。** 这两篇文献支持的是&quot;kink 指标可作为预测某些纸浆/纳米纸强韧性的有用特征&quot;，并不支持&quot;主动制造更多扭结一定能增强任何纸张&quot;。
+
+**1. 两篇文献实际报告的内容与条件**
+
+- Pennells 等（2022）用 MorFi 在线形态分析仪，分析高粱生物质 CNF 经不同高能均质（HPH）能量处理后的形态—纳米纸性能关系。按四项纳米纸性能指标取平均，kinked fibre content 与 kink angle 的相关性最高（0.55、0.56）[1]；kink 相关参数与韧性正相关较强（0.60–0.66）[1]。摘要亦只表述为&quot;fibre content 与 fibre kink 性质与纳米纸强度和韧性最相关&quot;[3]。这些是群体内的 Pearson 相关系数，样本为同一高粱原料的不同 HPH 处理批次[2]，并非扭结剂量—性能的因果实验。
+- Uddin 等（2024）在 21 个打浆样品上用 MLR 与 ANN 建模，kink index 是七个纤维质量输入之一[7]。文中强调水稻秸秆、阔叶木与针叶木中纤维参数与造纸性能的相关格局并不相同[6]：水稻秸秆与 T. orientalis 的 kink index 与抗张指数、耐破指数呈强正相关（水稻秸秆 r 分别为 0.88/0.978 与 0.984）[6]；软木中 kink index 与抗张指数为 r = −0.825，表中未标显著性[6]；E. camaldulensis 中该相关很弱（r = −0.123）[6]。即 kink 的&quot;重要性&quot;是整体模型层面的排序，相关性方向随原料而变。
+
+**2. 为何不能据此建议&quot;主动制造更多扭结&quot;**
+
+- **相关不能证明因果，且存在共变解释。** Pennells 等指出，纳米纸性能与 kink 的关联可能源于随 HPH 处理能量增加而累积的纤维变形；也可能是部分微纤丝化的纤维束受光学分辨率限制被计为 kink，而与强度提高相关[4]。这些均为作者提出的可能解释，并非已证实的机理。
+- **方向依体系可相反。** 该文引述组织纸（tissue paper）中扭结纤维增加孔隙率与表面粗糙度，但降低纸密度与纤维间结合强度（Morais et al. 2021）[4]；并说明 kink 与纸性能的关系迄今在文献中很少被阐明[4]。
+- **不同性能不同步。** Pennells 等的数据中，kink 指标与韧性的相关强于与刚度的相关（kink number 与杨氏模量仅 0.37）[5]；Uddin 等的数据中，T. orientalis 的 kink index 与撕裂指数不显著（r = 0.160）[6]。
+- **重要性结论的适用范围有限。** Uddin 等的 ANN 输入重要性基于 21 个观测、单一打浆序列的建模设定[7]，反映的是该数据集内的预测贡献，不能直接外推为工艺处方。
+- **指标范围有限。** 两文涉及的是纸浆抄纸与纳米纸的拉伸、撕裂、耐破、韧性等指标，未涵盖其他纸种或其他性能目标，无法据此对其他纸张下结论。
+
+**可支持的较窄说法**：kink 类形态参数可作为该体系内预测强韧性的高效特征[1][3][7]；若要把&quot;增加扭结&quot;当作工艺手段，仍需在目标原料与纸种上做剂量—响应实验，并区分扭结与微纤丝化、纤维束等共变因素[4]。</pre><details><summary>参考答案、评分及校准依据、调用轨迹、引用原文</summary><pre>{
+  &quot;case&quot;: {
+    &quot;id&quot;: &quot;FS8-023&quot;,
+    &quot;group&quot;: &quot;cross&quot;,
+    &quot;question&quot;: &quot;Uddin等（2024）把kink列为ANN最重要输入，Pennells等（2022）也观察到kink与纳米纸性能相关。这是否足以建议“主动制造更多扭结一定能增强任何纸张”？&quot;,
+    &quot;reference_answer&quot;: &quot;不足。Uddin是特定模型的归一化重要性，不是独立因果效应；Pennells讨论光学分辨率下部分微原纤化可能被识别为kink，以及HPH能量同时改变形态与性能的解释。材料、处理和测量机制不同，不能从相关/重要性推出普适工艺指令，需要控制条件验证。&quot;,
+    &quot;key_points&quot;: [
+      &quot;D5重要性不等于独立因果效应&quot;,
+      &quot;D6存在部分微原纤化被识别为kink的可能解释&quot;,
+      &quot;D6讨论HPH能量等共同因素&quot;,
+      &quot;结论不能泛化为所有纸张越扭结越强，需控制实验&quot;
+    ],
+    &quot;critical_errors&quot;: [
+      &quot;把作者假说说成证明&quot;,
+      &quot;将相关性当普适因果工艺&quot;
+    ],
+    &quot;evidence&quot;: [
+      {
+        &quot;document&quot;: &quot;D5&quot;,
+        &quot;pages&quot;: [
+          8
+        ],
+        &quot;locator&quot;: &quot;图5&quot;
+      },
+      {
+        &quot;document&quot;: &quot;D6&quot;,
+        &quot;pages&quot;: [
+          12
+        ],
+        &quot;locator&quot;: &quot;Influence of kinked fibres&quot;
+      }
+    ],
+    &quot;checks&quot;: &quot;跨篇综合、测量混杂、因果&quot;,
+    &quot;grading_notes&quot;: &quot;允许等价表述；推断必须与论文直接结果区分。不得把参考答案措辞当成唯一正确表达。&quot;,
+    &quot;tool_expectation&quot;: &quot;从所涉论文取得证据；可一次检索覆盖多篇，不规定固定调用次数。需要可追溯的文献与页码/表图定位。&quot;,
+    &quot;citation_applicable&quot;: true
+  },
+  &quot;answer&quot;: &quot;**结论：不足以。** 这两篇文献支持的是\&quot;kink 指标可作为预测某些纸浆/纳米纸强韧性的有用特征\&quot;，并不支持\&quot;主动制造更多扭结一定能增强任何纸张\&quot;。\n\n**1. 两篇文献实际报告的内容与条件**\n\n- Pennells 等（2022）用 MorFi 在线形态分析仪，分析高粱生物质 CNF 经不同高能均质（HPH）能量处理后的形态—纳米纸性能关系。按四项纳米纸性能指标取平均，kinked fibre content 与 kink angle 的相关性最高（0.55、0.56）[1]；kink 相关参数与韧性正相关较强（0.60–0.66）[1]。摘要亦只表述为\&quot;fibre content 与 fibre kink 性质与纳米纸强度和韧性最相关\&quot;[3]。这些是群体内的 Pearson 相关系数，样本为同一高粱原料的不同 HPH 处理批次[2]，并非扭结剂量—性能的因果实验。\n- Uddin 等（2024）在 21 个打浆样品上用 MLR 与 ANN 建模，kink index 是七个纤维质量输入之一[7]。文中强调水稻秸秆、阔叶木与针叶木中纤维参数与造纸性能的相关格局并不相同[6]：水稻秸秆与 T. orientalis 的 kink index 与抗张指数、耐破指数呈强正相关（水稻秸秆 r 分别为 0.88/0.978 与 0.984）[6]；软木中 kink index 与抗张指数为 r = −0.825，表中未标显著性[6]；E. camaldulensis 中该相关很弱（r = −0.123）[6]。即 kink 的\&quot;重要性\&quot;是整体模型层面的排序，相关性方向随原料而变。\n\n**2. 为何不能据此建议\&quot;主动制造更多扭结\&quot;**\n\n- **相关不能证明因果，且存在共变解释。** Pennells 等指出，纳米纸性能与 kink 的关联可能源于随 HPH 处理能量增加而累积的纤维变形；也可能是部分微纤丝化的纤维束受光学分辨率限制被计为 kink，而与强度提高相关[4]。这些均为作者提出的可能解释，并非已证实的机理。\n- **方向依体系可相反。** 该文引述组织纸（tissue paper）中扭结纤维增加孔隙率与表面粗糙度，但降低纸密度与纤维间结合强度（Morais et al. 2021）[4]；并说明 kink 与纸性能的关系迄今在文献中很少被阐明[4]。\n- **不同性能不同步。** Pennells 等的数据中，kink 指标与韧性的相关强于与刚度的相关（kink number 与杨氏模量仅 0.37）[5]；Uddin 等的数据中，T. orientalis 的 kink index 与撕裂指数不显著（r = 0.160）[6]。\n- **重要性结论的适用范围有限。** Uddin 等的 ANN 输入重要性基于 21 个观测、单一打浆序列的建模设定[7]，反映的是该数据集内的预测贡献，不能直接外推为工艺处方。\n- **指标范围有限。** 两文涉及的是纸浆抄纸与纳米纸的拉伸、撕裂、耐破、韧性等指标，未涵盖其他纸种或其他性能目标，无法据此对其他纸张下结论。\n\n**可支持的较窄说法**：kink 类形态参数可作为该体系内预测强韧性的高效特征[1][3][7]；若要把\&quot;增加扭结\&quot;当作工艺手段，仍需在目标原料与纸种上做剂量—响应实验，并区分扭结与微纤丝化、纤维束等共变因素[4]。&quot;,
+  &quot;draft&quot;: &quot;**结论：不足以。** 这两篇文献支持的是\&quot;kink 指标是预测性能的有用特征\&quot;，而不是\&quot;主动增加扭结能提高任何纸的性能\&quot;。\n\n**1. 两篇文献实际说了什么**\n\n- Pennells 等（2022）用 MorFi 在线形态分析仪对高能均质（HPH）处理的高粱 CNF 做形态—纳米纸性能相关分析：kink 相关参数与纳米纸韧性正相关（0.60–0.66），按四项性能取平均，kinked fibre content 与 kink angle 的相关性最高（0.55、0.56）[1]。因此原文摘要只说\&quot;fibre content 与 fibre kink 性质与纳米纸的强度和韧性最相关\&quot;[3]。这仍是**相关系数**，样本是\&quot;一批高粱生物质 CNF 经不同 HPH 能量处理\&quot;这一群体[2]，不是扭结剂量—性能的因果实验。\n- Uddin 等（2024）在 21 个打浆样品上用 MLR 与 ANN 建模，kink index 是七个纤维质量输入之一[7]。文中明确强调\&quot;水稻秸秆、阔叶木与针叶木中纤维参数与造纸性能的相关格局并不相同\&quot;[6]。具体看：水稻秸秆与 T. orientalis 的 kink index 与抗张指数、耐破指数呈强正相关（如水稻秸秆 r 分别为 0.88/0.978、0.984）[6]；但软木中 kink index 与抗张指数为负相关（r = −0.825，且未标注显著性），E. camaldulensis 中 kink index 与抗张指数相关很弱（r = −0.123）[6]。即 kink 的\&quot;重要性\&quot;是跨模型整体排序的性质，方向随原料而变。\n\n**2. 为什么不能推出\&quot;主动制造更多扭结一定增强任何纸张\&quot;**\n\n- **相关 ≠ 因果，且可能是混杂。** Pennells 自己指出，HPH 处理系列中 kink 与纳米纸性能的关联可能来自随能量增加而产生的纤维变形，或者是部分微纤丝化的纤维束在光学分辨率限制下被误判为 kink，而后者才与强度提高相关[4]。也就是说\&quot;更多扭结\&quot;未必是起作用的那一变量。\n- **方向依体系而反。** 该文引述 tissu 纸中扭结纤维增加孔隙率与表面粗糙度、但降低纸密度与纤维间结合强度（Morais et al. 2021）[4]，并称 kink 与纸性能的关系\&quot;迄今文献中很少被阐明\&quot;[4]。对以键合强度为主的普通纸，这与\&quot;越多越好\&quot;相反。\n- **不同性能不同步。** 即便在 Pennells 的数据中，kink 指标与强度/模量的相关明显弱于与韧性的相关（如 kink number 与杨氏模量仅 0.37）[5]；Uddin 的数据里 kink 与撕裂指数的关系在 T. orientalis 中不显著[6]。\n- **\&quot;最重要输入\&quot;的语境有限。** Uddin 的重要性结论基于 21 个样品、单一打浆序列、经网络验证集仅约 19% 的建模设定[7]；ANN 中输入重要性只反映该数据集内的预测贡献，不能外推为工艺处方。\n- **任何纸张都有隐含前提。** 两文均只涉及造纸/纳米纸的拉伸、撕裂、耐破、韧性等指标，未涉及其他纸种或其他性能目标。\n\n**可支持的较窄说法**：kink 类形态参数可作为预测某些 CNF/纸浆体系强韧性的高效特征[1][3][7]；若要作为\&quot;主动增加扭结\&quot;的工艺依据，还需在目标原料与纸种上做剂量—响应实验，并区分扭结与微纤丝化/纤维束等共变因素[4]。&quot;,
+  &quot;raw_jev&quot;: {
+    &quot;key_point_scores&quot;: {
+      &quot;K1&quot;: 1,
+      &quot;K2&quot;: 1,
+      &quot;K3&quot;: 1,
+      &quot;K4&quot;: 1
+    },
+    &quot;claim_assessments&quot;: [
+      {
+        &quot;id&quot;: &quot;C1&quot;,
+        &quot;text&quot;: &quot;**结论：不足以。** 这两篇文献支持的是\&quot;kink 指标可作为预测某些纸浆/纳米纸强韧性的有用特征\&quot;，并不支持\&quot;主动制造更多扭结一定能增强任何纸张\&quot;。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C2&quot;,
+        &quot;text&quot;: &quot;**1. 两篇文献实际报告的内容与条件**\n\n- Pennells 等（2022）用 MorFi 在线形态分析仪，分析高粱生物质 CNF 经不同高能均质（HPH）能量处理后的形态—纳米纸性能关系。按四项纳米纸性能指标取平均，kinked fibre content 与 kink angle 的相关性最高（0.55、0.56）[1]；kink 相关参数与韧性正相关较强（0.60–0.66）[1]。摘要亦只表述为\&quot;fibre content 与 fibre kink 性质与纳米纸强度和韧性最相关\&quot;[3]。这些是群体内的 Pearson 相关系数，样本为同一高粱原料的不同 HPH 处理批次[2]，并非扭结剂量—性能的因果实验。\n- Uddin 等（2024）在 21 个打浆样品上用 MLR 与 ANN 建模，kink index 是七个纤维质量输入之一[7]。文中强调水稻秸秆、阔叶木与针叶木中纤维参数与造纸性能的相关格局并不相同[6]：水稻秸秆与 T. orientalis 的 kink index 与抗张指数、耐破指数呈强正相关（水稻秸秆 r 分别为 0.88/0.978 与 0.984）[6]；软木中 kink index 与抗张指数为 r = −0.825，表中未标显著性[6]；E. camaldulensis 中该相关很弱（r = −0.123）[6]。即 kink 的\&quot;重要性\&quot;是整体模型层面的排序，相关性方向随原料而变。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[1]&quot;,
+          &quot;[3]&quot;,
+          &quot;[2]&quot;,
+          &quot;[7]&quot;,
+          &quot;[6]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;partially_supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C3&quot;,
+        &quot;text&quot;: &quot;**2. 为何不能据此建议\&quot;主动制造更多扭结\&quot;**\n\n- **相关不能证明因果，且存在共变解释。** Pennells 等指出，纳米纸性能与 kink 的关联可能源于随 HPH 处理能量增加而累积的纤维变形；也可能是部分微纤丝化的纤维束受光学分辨率限制被计为 kink，而与强度提高相关[4]。这些均为作者提出的可能解释，并非已证实的机理。\n- **方向依体系可相反。** 该文引述组织纸（tissue paper）中扭结纤维增加孔隙率与表面粗糙度，但降低纸密度与纤维间结合强度（Morais et al. 2021）[4]；并说明 kink 与纸性能的关系迄今在文献中很少被阐明[4]。\n- **不同性能不同步。** Pennells 等的数据中，kink 指标与韧性的相关强于与刚度的相关（kink number 与杨氏模量仅 0.37）[5]；Uddin 等的数据中，T. orientalis 的 kink index 与撕裂指数不显著（r = 0.160）[6]。\n- **重要性结论的适用范围有限。** Uddin 等的 ANN 输入重要性基于 21 个观测、单一打浆序列的建模设定[7]，反映的是该数据集内的预测贡献，不能直接外推为工艺处方。\n- **指标范围有限。** 两文涉及的是纸浆抄纸与纳米纸的拉伸、撕裂、耐破、韧性等指标，未涵盖其他纸种或其他性能目标，无法据此对其他纸张下结论。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[4]&quot;,
+          &quot;[5]&quot;,
+          &quot;[6]&quot;,
+          &quot;[7]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;partially_supported&quot;,
+        &quot;basis&quot;: &quot;B023&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C4&quot;,
+        &quot;text&quot;: &quot;**可支持的较窄说法**：kink 类形态参数可作为该体系内预测强韧性的高效特征[1][3][7]；若要把\&quot;增加扭结\&quot;当作工艺手段，仍需在目标原料与纸种上做剂量—响应实验，并区分扭结与微纤丝化、纤维束等共变因素[4]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[1]&quot;,
+          &quot;[3]&quot;,
+          &quot;[7]&quot;,
+          &quot;[4]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B023&quot;
+      }
+    ],
+    &quot;citation_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[1]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[2]&quot;,
+        &quot;score&quot;: 0
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[4]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[5]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[1]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 0
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[4]&quot;,
+        &quot;score&quot;: 1
+      }
+    ],
+    &quot;citation_group_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;coverage&quot;: &quot;missing&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      }
+    ],
+    &quot;answerability_score&quot;: 2,
+    &quot;reference_concern&quot;: false,
+    &quot;decisions&quot;: {
+      &quot;boundary&quot;: &quot;appropriate&quot;,
+      &quot;reference_check&quot;: &quot;sound&quot;,
+      &quot;point_K1&quot;: &quot;complete&quot;,
+      &quot;point_K2&quot;: &quot;complete&quot;,
+      &quot;point_K3&quot;: &quot;complete&quot;,
+      &quot;point_K4&quot;: &quot;complete&quot;,
+      &quot;kind_C1&quot;: &quot;fact&quot;,
+      &quot;support_C1&quot;: &quot;supported&quot;,
+      &quot;basis_C1&quot;: &quot;NONE&quot;,
+      &quot;group_C1&quot;: &quot;missing&quot;,
+      &quot;kind_C2&quot;: &quot;fact&quot;,
+      &quot;support_C2&quot;: &quot;partially_supported&quot;,
+      &quot;basis_C2&quot;: &quot;NONE&quot;,
+      &quot;group_C2&quot;: &quot;partial&quot;,
+      &quot;citation_C2_1&quot;: &quot;supported&quot;,
+      &quot;citation_C2_2&quot;: &quot;supported&quot;,
+      &quot;citation_C2_3&quot;: &quot;unsupported&quot;,
+      &quot;citation_C2_4&quot;: &quot;supported&quot;,
+      &quot;citation_C2_5&quot;: &quot;supported&quot;,
+      &quot;kind_C3&quot;: &quot;fact&quot;,
+      &quot;support_C3&quot;: &quot;partially_supported&quot;,
+      &quot;basis_C3&quot;: &quot;B023&quot;,
+      &quot;group_C3&quot;: &quot;partial&quot;,
+      &quot;citation_C3_1&quot;: &quot;supported&quot;,
+      &quot;citation_C3_2&quot;: &quot;supported&quot;,
+      &quot;citation_C3_3&quot;: &quot;supported&quot;,
+      &quot;citation_C3_4&quot;: &quot;supported&quot;,
+      &quot;kind_C4&quot;: &quot;fact&quot;,
+      &quot;support_C4&quot;: &quot;supported&quot;,
+      &quot;basis_C4&quot;: &quot;B023&quot;,
+      &quot;group_C4&quot;: &quot;partial&quot;,
+      &quot;citation_C4_1&quot;: &quot;supported&quot;,
+      &quot;citation_C4_2&quot;: &quot;supported&quot;,
+      &quot;citation_C4_3&quot;: &quot;unsupported&quot;,
+      &quot;citation_C4_4&quot;: &quot;supported&quot;
+    }
+  },
+  &quot;calibrated&quot;: {
+    &quot;key_point_scores&quot;: {
+      &quot;K1&quot;: 1,
+      &quot;K2&quot;: 1,
+      &quot;K3&quot;: 1,
+      &quot;K4&quot;: 1
+    },
+    &quot;claim_assessments&quot;: [
+      {
+        &quot;id&quot;: &quot;C1&quot;,
+        &quot;text&quot;: &quot;**结论：不足以。** 这两篇文献支持的是\&quot;kink 指标可作为预测某些纸浆/纳米纸强韧性的有用特征\&quot;，并不支持\&quot;主动制造更多扭结一定能增强任何纸张\&quot;。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C2&quot;,
+        &quot;text&quot;: &quot;**1. 两篇文献实际报告的内容与条件**\n\n- Pennells 等（2022）用 MorFi 在线形态分析仪，分析高粱生物质 CNF 经不同高能均质（HPH）能量处理后的形态—纳米纸性能关系。按四项纳米纸性能指标取平均，kinked fibre content 与 kink angle 的相关性最高（0.55、0.56）[1]；kink 相关参数与韧性正相关较强（0.60–0.66）[1]。摘要亦只表述为\&quot;fibre content 与 fibre kink 性质与纳米纸强度和韧性最相关\&quot;[3]。这些是群体内的 Pearson 相关系数，样本为同一高粱原料的不同 HPH 处理批次[2]，并非扭结剂量—性能的因果实验。\n- Uddin 等（2024）在 21 个打浆样品上用 MLR 与 ANN 建模，kink index 是七个纤维质量输入之一[7]。文中强调水稻秸秆、阔叶木与针叶木中纤维参数与造纸性能的相关格局并不相同[6]：水稻秸秆与 T. orientalis 的 kink index 与抗张指数、耐破指数呈强正相关（水稻秸秆 r 分别为 0.88/0.978 与 0.984）[6]；软木中 kink index 与抗张指数为 r = −0.825，表中未标显著性[6]；E. camaldulensis 中该相关很弱（r = −0.123）[6]。即 kink 的\&quot;重要性\&quot;是整体模型层面的排序，相关性方向随原料而变。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[1]&quot;,
+          &quot;[3]&quot;,
+          &quot;[2]&quot;,
+          &quot;[7]&quot;,
+          &quot;[6]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C3&quot;,
+        &quot;text&quot;: &quot;**2. 为何不能据此建议\&quot;主动制造更多扭结\&quot;**\n\n- **相关不能证明因果，且存在共变解释。** Pennells 等指出，纳米纸性能与 kink 的关联可能源于随 HPH 处理能量增加而累积的纤维变形；也可能是部分微纤丝化的纤维束受光学分辨率限制被计为 kink，而与强度提高相关[4]。这些均为作者提出的可能解释，并非已证实的机理。\n- **方向依体系可相反。** 该文引述组织纸（tissue paper）中扭结纤维增加孔隙率与表面粗糙度，但降低纸密度与纤维间结合强度（Morais et al. 2021）[4]；并说明 kink 与纸性能的关系迄今在文献中很少被阐明[4]。\n- **不同性能不同步。** Pennells 等的数据中，kink 指标与韧性的相关强于与刚度的相关（kink number 与杨氏模量仅 0.37）[5]；Uddin 等的数据中，T. orientalis 的 kink index 与撕裂指数不显著（r = 0.160）[6]。\n- **重要性结论的适用范围有限。** Uddin 等的 ANN 输入重要性基于 21 个观测、单一打浆序列的建模设定[7]，反映的是该数据集内的预测贡献，不能直接外推为工艺处方。\n- **指标范围有限。** 两文涉及的是纸浆抄纸与纳米纸的拉伸、撕裂、耐破、韧性等指标，未涵盖其他纸种或其他性能目标，无法据此对其他纸张下结论。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[4]&quot;,
+          &quot;[5]&quot;,
+          &quot;[6]&quot;,
+          &quot;[7]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;partially_supported&quot;,
+        &quot;basis&quot;: &quot;B023&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C4&quot;,
+        &quot;text&quot;: &quot;**可支持的较窄说法**：kink 类形态参数可作为该体系内预测强韧性的高效特征[1][3][7]；若要把\&quot;增加扭结\&quot;当作工艺手段，仍需在目标原料与纸种上做剂量—响应实验，并区分扭结与微纤丝化、纤维束等共变因素[4]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[1]&quot;,
+          &quot;[3]&quot;,
+          &quot;[7]&quot;,
+          &quot;[4]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B023&quot;
+      }
+    ],
+    &quot;citation_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[1]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[2]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[4]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[5]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[1]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[4]&quot;,
+        &quot;score&quot;: 1
+      }
+    ],
+    &quot;citation_group_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      }
+    ],
+    &quot;answerability_score&quot;: 2,
+    &quot;reference_concern&quot;: false,
+    &quot;decisions&quot;: {
+      &quot;boundary&quot;: &quot;appropriate&quot;,
+      &quot;reference_check&quot;: &quot;sound&quot;,
+      &quot;point_K1&quot;: &quot;complete&quot;,
+      &quot;point_K2&quot;: &quot;complete&quot;,
+      &quot;point_K3&quot;: &quot;complete&quot;,
+      &quot;point_K4&quot;: &quot;complete&quot;,
+      &quot;kind_C1&quot;: &quot;fact&quot;,
+      &quot;support_C1&quot;: &quot;supported&quot;,
+      &quot;basis_C1&quot;: &quot;NONE&quot;,
+      &quot;group_C1&quot;: &quot;missing&quot;,
+      &quot;kind_C2&quot;: &quot;fact&quot;,
+      &quot;support_C2&quot;: &quot;partially_supported&quot;,
+      &quot;basis_C2&quot;: &quot;NONE&quot;,
+      &quot;group_C2&quot;: &quot;partial&quot;,
+      &quot;citation_C2_1&quot;: &quot;supported&quot;,
+      &quot;citation_C2_2&quot;: &quot;supported&quot;,
+      &quot;citation_C2_3&quot;: &quot;unsupported&quot;,
+      &quot;citation_C2_4&quot;: &quot;supported&quot;,
+      &quot;citation_C2_5&quot;: &quot;supported&quot;,
+      &quot;kind_C3&quot;: &quot;fact&quot;,
+      &quot;support_C3&quot;: &quot;partially_supported&quot;,
+      &quot;basis_C3&quot;: &quot;B023&quot;,
+      &quot;group_C3&quot;: &quot;partial&quot;,
+      &quot;citation_C3_1&quot;: &quot;supported&quot;,
+      &quot;citation_C3_2&quot;: &quot;supported&quot;,
+      &quot;citation_C3_3&quot;: &quot;supported&quot;,
+      &quot;citation_C3_4&quot;: &quot;supported&quot;,
+      &quot;kind_C4&quot;: &quot;fact&quot;,
+      &quot;support_C4&quot;: &quot;supported&quot;,
+      &quot;basis_C4&quot;: &quot;B023&quot;,
+      &quot;group_C4&quot;: &quot;partial&quot;,
+      &quot;citation_C4_1&quot;: &quot;supported&quot;,
+      &quot;citation_C4_2&quot;: &quot;supported&quot;,
+      &quot;citation_C4_3&quot;: &quot;unsupported&quot;,
+      &quot;citation_C4_4&quot;: &quot;supported&quot;
+    }
+  },
+  &quot;changes&quot;: [
+    {
+      &quot;path&quot;: &quot;claim_assessments.C2.support&quot;,
+      &quot;value&quot;: &quot;supported&quot;,
+      &quot;reason&quot;: &quot;0.88/0.978分别来自正文和表格，不判数值幻觉；高粱体系表述不强读为单一品种。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;citation_group_assessments.C2.coverage&quot;,
+      &quot;value&quot;: &quot;complete&quot;,
+      &quot;reason&quot;: &quot;联合引文提供相关数值、原料与建模背景。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;citation_group_assessments.C1.coverage&quot;,
+      &quot;value&quot;: &quot;complete&quot;,
+      &quot;reason&quot;: &quot;开头概括由后文明确引文承接，不要求重复引用。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;citation_assessments.C2.[2].score&quot;,
+      &quot;value&quot;: 1,
+      &quot;reason&quot;: &quot;[2]实质支持高粱样本与处理能量背景；不能因未独立支持整段所有事实而记零。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;citation_assessments.C4.[7].score&quot;,
+      &quot;value&quot;: 1,
+      &quot;reason&quot;: &quot;[7]提供包含kink的预测输入与ANN表现，联合[1][3]支持有限体系内预测特征的结论，不要求单条独立支撑整段。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;citation_group_assessments.C4.coverage&quot;,
+      &quot;value&quot;: &quot;complete&quot;,
+      &quot;reason&quot;: &quot;[1][3][7]共同支持预测用途，[4]支持需要区分共变解释，实验验证建议不冒充已证实结果。&quot;
+    }
+  ],
+  &quot;reason&quot;: &quot;四个必答要点完整，100分。C2的0.88/0.978分别见正文和表格，不判数值幻觉；“同一高粱原料”按高粱体系理解，不强读为单一品种。建议解释原文数值差异，但不扣实质分。仅保留C3部分支持：称Uddin为“单一打浆序列”未获[7]支持。开头、结尾及联合引用不作过严扣分。&quot;,
+  &quot;raw_metrics&quot;: {
+    &quot;point_score&quot;: 100,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 4,
+    &quot;supported_facts&quot;: 2,
+    &quot;pair_count&quot;: 13,
+    &quot;supported_pairs&quot;: 11,
+    &quot;group_count&quot;: 4,
+    &quot;covered_groups&quot;: 0,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 50.0,
+    &quot;citation_precision&quot;: 84.61538461538461,
+    &quot;citation_coverage&quot;: 0.0,
+    &quot;strict_pass&quot;: false,
+    &quot;format_ok&quot;: true
+  },
+  &quot;final_metrics&quot;: {
+    &quot;point_score&quot;: 100,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 4,
+    &quot;supported_facts&quot;: 3,
+    &quot;pair_count&quot;: 13,
+    &quot;supported_pairs&quot;: 13,
+    &quot;group_count&quot;: 4,
+    &quot;covered_groups&quot;: 3,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 75.0,
+    &quot;citation_precision&quot;: 100.0,
+    &quot;citation_coverage&quot;: 75.0,
+    &quot;strict_pass&quot;: false,
+    &quot;format_ok&quot;: true
+  },
+  &quot;run_id&quot;: &quot;agent-scoped-case23-24-20261106-FS8-023&quot;,
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;review_status&quot;: &quot;completed&quot;,
+  &quot;stop_reason&quot;: null,
+  &quot;elapsed_seconds&quot;: 53.989,
+  &quot;tools&quot;: [
+    {
+      &quot;request&quot;: {
+        &quot;reason&quot;: &quot;需定位 Uddin 2024 与 Pennells 2022 两篇论文以核实其关于kink的原始表述与局限&quot;,
+        &quot;query&quot;: &quot;Uddin Pennells kink nanofiber paper ANN&quot;,
+        &quot;tool&quot;: &quot;find_documents&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;query&quot;: &quot;&quot;,
+        &quot;reason&quot;: &quot;目录按关键词检索无结果，需列出全部论文以确认可用文献清单&quot;,
+        &quot;tool&quot;: &quot;find_documents&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;reason&quot;: &quot;需在 Uddin 2024 与 Pennells 2022 中查找 kink 的原始表述：重要性排序、相关系数方向、样本与条件限制&quot;,
+        &quot;query&quot;: &quot;kink index importance nanofiber morphology nanopaper tensile strength correlation&quot;,
+        &quot;document_ids&quot;: [
+          &quot;doc_8234f8075c2e184f&quot;,
+          &quot;doc_99f8d919ba6bf8bc&quot;
+        ],
+        &quot;tool&quot;: &quot;search_literature&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    }
+  ],
+  &quot;result_sha256&quot;: &quot;433c618e9c239a685c564cc594d76a073423ecc1c2606fc4208a7eaa8b79824e&quot;,
+  &quot;judge_input_sha256&quot;: &quot;81287708322b523ac2b62a5433f7860a8868954b286dffc1b07595a4a20897a0&quot;,
+  &quot;evidence&quot;: [
+    {
+      &quot;ref&quot;: &quot;[1]&quot;,
+      &quot;document_id&quot;: &quot;doc_99f8d919ba6bf8bc&quot;,
+      &quot;filename&quot;: &quot;06_2022_纤维形态与纳米纸性能_Pennells.pdf&quot;,
+      &quot;page_start&quot;: 8,
+      &quot;page_end&quot;: 9,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Fibre Morphology Correlations\n[原文]\nInitially, a correlation matrix detailing the relationship between each pair of fibre morphology parameters was calculated, as displayed in Fig. 1. Using a significance threshold of $\\begin{array} { r } { x \\ge 0 . 7 . } \\end{array}$ , a total of 27 of the 210 pairwise correlations were considered significantly correlated. Relationships of interest included the positive correlation between fibre width (fibre\\_W), fibre coarseness (fibre\\_coarse), fibre curl index (fibre\\_curl), macrofibrillation index (MF.index), and broken fibre content (fibre\\_broken), the inverse correlation between these parameters and fibre content (fibre\\_cont), and the inverse correlation between kinked fibre content (fibre\\_kink.cont) and mean fine area (fine\\_A) and length (fine\\_L). Following the analysis of pairwise correlations in Fig. 1, a correlation table was established between each fibre morphology parameter and each of the four nanopaper mechanical performance metrics, as outlined in Table 4.\n\n[章节标签（程序整理，非原文）] Fibre Morphology Correlations\n[原文]\n Notable positive correlations included fibre content (fibre\\_cont) for tensile index and Young’s modulus (0.6 and 0.71, respectively), the fine content (fine\\_cont) for Young’s modulus (0.67), and all kink-related parameters for toughness (0.6–0.66). Taking the average correlation across all four nanopaper metrics, kinked fibre content (fibre\\_kink.cont) and kink angle (fibre\\_kink.ang) have the highest values (0.55 and 0.56, respectively), indicating the strongest overall relationship to nanopaper performance out of all fibre morphology parameters. The most indicative fibre morphology parameter for a single nanopaper property was the inverse correlation between Young’s modulus and mean fibre width (-0.8). Other inverse correlations between fibre morphology parameters and nanopaper properties include fibre coarseness (fibre\\_coarse) for all nanopaper metrics besides strain at break (-0.51 to -0.8) and mean fine length (fine\\_L) and mean fine area (fine\\_A) for Young’s modulus (-0.69 and -0.71, respectively).\n\n[章节标签（程序整理，非原文）] Fibre Morphology Correlations\n[原文]\nFig. 1 Fibre morphology parameter correlation matrix\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] Fibre Morphology Correlations\n[原文]\nFig. 2 Principal Component Analyses for: a the association between Nanopaper properties grouped by HPH energy level; and b the association between fibre morphology parameters grouped by HPH energy level&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[2]&quot;,
+      &quot;document_id&quot;: &quot;doc_99f8d919ba6bf8bc&quot;,
+      &quot;filename&quot;: &quot;06_2022_纤维形态与纳米纸性能_Pennells.pdf&quot;,
+      &quot;page_start&quot;: 15,
+      &quot;page_end&quot;: 16,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Conclusions\n[原文]\nTo address the challenges associated with scalable CNF characterisation, this study investigated the relationships between fibre morphology and nanopaper properties for a broad sample population of sorghum biomass. Important fibre morphology parameters elucidated through correlation analysis included the positive correlation between fibre content and fibre kink with nanopaper properties, and the inverse correlation between fibre width and coarseness with nanopaper properties. Regression modelling of the fibre morphology to predict nanopaper properties demonstrated superior predictive power for the machine learning based support vector (SVR) model. The SVR model was further validated through the replication data set over an extended processing energy range, yielding a lower prediction accuracy than the original dataset that implied some degree of model overfitting. This study constitutes a platform for future investigation targeted at predicting nanopaper mechanical properties from the morphological properties of CNF pulp, with a focus on improving model generalisability.\n\n[章节标签（程序整理，非原文）] Conclusions\n[原文]\n Ultimately, the development of more accurate and generalisable models for the prediction of nanopaper mechanical properties from morphological data will enable scalable and expedient characterisation of CNF products in the future industrial setting.\n\n[章节标签（程序整理，非原文）] Conclusions\n[原文]\nAcknowledgments The authors gratefully acknowledge the Australian Government Research Training Program (RTP) scholarship and the University of Queensland’s tuition fee offset, along with the Grains Research and Development Corporation (GRDC) Research Scholarship for their support of this research.We appreciate the assistance provided by Yan Luo and Didier Rech from Techpap, France for installation and maintenance of the MorFi device, along with assistance in the interpretation of fibre morphology data.The authors acknowledge the contribution of Dugalunji Aboriginal Corporation on behalf of the Indjalandji-Dhidhanu peoples through use of their equipment and in-kind support.\n\nFunding Open Access funding enabled and organized by CAUL and its Member Institutions.&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[3]&quot;,
+      &quot;document_id&quot;: &quot;doc_99f8d919ba6bf8bc&quot;,
+      &quot;filename&quot;: &quot;06_2022_纤维形态与纳米纸性能_Pennells.pdf&quot;,
+      &quot;page_start&quot;: 1,
+      &quot;page_end&quot;: 1,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 未确定\n[原文]\nAbstract Characterising cellulose nanofibre (CNF) morphology has been identified as a grand challenge for the nanocellulose research field. Direct techniques for CNF morphology characterisation exhibit various difficulties related to the material network structure and equipment cost, while indirect techniques that investigate fibre-light interaction, fibre-solvent interaction, fibre-fibre interaction, or specific fibre surface area involve relatively facile methods but may be more unreliable. Nanopaper mechanical testing is a prevalent metric for assessing fibre-fibre interaction, but is an off-line, time-consuming, and destructive methodology. In this study, an optical fibre morphology analyser (MorFi, Techpap) was employed as an on-line, high throughput, fast turnaround tool to assess micro/nanofibre pulp morphology and predict the properties of nanopaper material. Correlation analysis identified fibre content and fibre kink properties as most correlated with nanopaper strength and toughness, while fibre width and coarseness were most inversely correlated with nanopaper performance.&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[4]&quot;,
+      &quot;document_id&quot;: &quot;doc_99f8d919ba6bf8bc&quot;,
+      &quot;filename&quot;: &quot;06_2022_纤维形态与纳米纸性能_Pennells.pdf&quot;,
+      &quot;page_start&quot;: 12,
+      &quot;page_end&quot;: 12,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Influence of kinkedfibres\n[原文]\nThe relationship between fibre kink and paper properties has rarely been described and has not been extensively elucidated in the literature thus far (Leopold and Thorpe 1968; Guangsheng et al. 2012; Sood and Sharma 2021). For tissue paper applications, the presence of kinked fibres increases material porosity and surface roughness, but negatively impacts the paper density and inter-fibre bond strength (Morais et al. 2021). However, in the case of a cellulose nanofibre system, fibre bundles that have undergone partial microfibrillation through homogenisation may be interpreted as fibre kinks due to limitations in optical resolution, which would be related with an increase in nanopaper strength. Alternatively, fibre kinks have previously been described as deformations induced by mechanical stress rather than by chemical pulping (Aguado et al. 2016). Therefore, their association with nanopaper performance could be related to the increasing energy applied to the fibre bundles over the HPH processing series, which induced fibre deformation.&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[5]&quot;,
+      &quot;document_id&quot;: &quot;doc_99f8d919ba6bf8bc&quot;,
+      &quot;filename&quot;: &quot;06_2022_纤维形态与纳米纸性能_Pennells.pdf&quot;,
+      &quot;page_start&quot;: 8,
+      &quot;page_end&quot;: 8,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Fibre Morphology Correlations\n[原文]\nTable 4 Pearson correlation values for each fibre morphology parameter across the four nanopaper metrics\n\n&lt;table&gt;&lt;tr&gt;&lt;td&gt;Fibre Morphology Parameter&lt;/td&gt;&lt;td&gt;TI&lt;/td&gt;&lt;td&gt;Toughness&lt;/td&gt;&lt;td&gt;Strain at break&lt;/td&gt;&lt;td&gt;Young&amp;#x27;s Modulus&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fibre content (millions/g of pulp)&lt;/td&gt;&lt;td&gt;0.60&lt;/td&gt;&lt;td&gt;0.44&lt;/td&gt;&lt;td&gt;0.20&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Average kink angle (°)&lt;/td&gt;&lt;td&gt;0.47&lt;/td&gt;&lt;td&gt;0.60&lt;/td&gt;&lt;td&gt;0.45&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Kinked fibre content (%)&lt;/td&gt;&lt;td&gt;0.46&lt;/td&gt;&lt;td&gt;0.66&lt;/td&gt;&lt;td&gt;0.54&lt;/td&gt;&lt;td&gt;0.56&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Average kink number&lt;/td&gt;&lt;td&gt;0.43&lt;/td&gt;&lt;td&gt;0.63&lt;/td&gt;&lt;td&gt;0.59&lt;/td&gt;&lt;td&gt;0.37&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mean arithmetic length (μm)&lt;/td&gt;&lt;td&gt;0.27&lt;/td&gt;&lt;td&gt;0.30&lt;/td&gt;&lt;td&gt;0.35&lt;/td&gt;&lt;td&gt;0.11&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fine content (millions/g of pulp)&lt;/td&gt;&lt;td&gt;0.19&lt;/td&gt;&lt;td&gt;0.26&lt;/td&gt;&lt;td&gt;0.08&lt;/td&gt;&lt;td&gt;0.67&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mean area-weighted length (μm)&lt;/td&gt;&lt;td&gt;0.07&lt;/td&gt;&lt;td&gt;0.16&lt;/td&gt;&lt;td&gt;0.32&lt;/td&gt;&lt;td&gt;-0.28&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mean length-weighted length (μm)&lt;/td&gt;&lt;td&gt;0.03&lt;/td&gt;&lt;td&gt;0.11&lt;/td&gt;&lt;td&gt;0.24&lt;/td&gt;&lt;td&gt;-0.17&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Number of analysed fibres&lt;/td&gt;&lt;td&gt;-0.03&lt;/td&gt;&lt;td&gt;-0.12&lt;/td&gt;&lt;td&gt;-0.01&lt;/td&gt;&lt;td&gt;-0.39&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fine content (% length)&lt;/td&gt;&lt;td&gt;-0.11&lt;/td&gt;&lt;td&gt;0.03&lt;/td&gt;&lt;td&gt;-0.01&lt;/td&gt;&lt;td&gt;0.28&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fine content (% area)&lt;/td&gt;&lt;td&gt;-0.12&lt;/td&gt;&lt;td&gt;-0.03&lt;/td&gt;&lt;td&gt;-0.07&lt;/td&gt;&lt;td&gt;0.27&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fine content (% length weight. length)&lt;/td&gt;&lt;td&gt;-0.13&lt;/td&gt;&lt;td&gt;0.04&lt;/td&gt;&lt;td&gt;-0.01&lt;/td&gt;&lt;td&gt;0.28&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Number of analysed fines&lt;/td&gt;&lt;td&gt;-0.14&lt;/td&gt;&lt;td&gt;0.02&lt;/td&gt;&lt;td&gt;0.02&lt;/td&gt;&lt;td&gt;0.16&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mean cubic-length.-weigh. length (μm)&lt;/td&gt;&lt;td&gt;-0.19&lt;/td&gt;&lt;td&gt;-0.10&lt;/td&gt;&lt;td&gt;0.08&lt;/td&gt;&lt;td&gt;-0.42&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;MacroFibrillation index (%)&lt;/td&gt;&lt;td&gt;-0.19&lt;/td&gt;&lt;td&gt;-0.13&lt;/td&gt;&lt;td&gt;-0.01&lt;/td&gt;&lt;td&gt;-0.37&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mean fine length (μm)&lt;/td&gt;&lt;td&gt;-0.36&lt;/td&gt;&lt;td&gt;-0.50&lt;/td&gt;&lt;td&gt;-0.33&lt;/td&gt;&lt;td&gt;-0.69&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mean fibre curl index (%)&lt;/td&gt;&lt;td&gt;-0.44&lt;/td&gt;&lt;td&gt;-0.18&lt;/td&gt;&lt;td&gt;-0.02&lt;/td&gt;&lt;td&gt;-0.56&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mean fine area (μm2)&lt;/td&gt;&lt;td&gt;-0.47&lt;/td&gt;&lt;td&gt;-0.53&lt;/td&gt;&lt;td&gt;-0.34&lt;/td&gt;&lt;td&gt;-0.71&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Broken fibre content (%)&lt;/td&gt;&lt;td&gt;-0.54&lt;/td&gt;&lt;td&gt;-0.34&lt;/td&gt;&lt;td&gt;-0.17&lt;/td&gt;&lt;td&gt;-0.58&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mean fibre width (μm)&lt;/td&gt;&lt;td&gt;-0.66&lt;/td&gt;&lt;td&gt;-0.51&lt;/td&gt;&lt;td&gt;-0.30&lt;/td&gt;&lt;td&gt;-0.80&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mean fibre coarseness (mg/m)&lt;/td&gt;&lt;td&gt;-0.71&lt;/td&gt;&lt;td&gt;-0.52&lt;/td&gt;&lt;td&gt;-0.32&lt;/td&gt;&lt;td&gt;-0.73&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[6]&quot;,
+      &quot;document_id&quot;: &quot;doc_8234f8075c2e184f&quot;,
+      &quot;filename&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+      &quot;page_start&quot;: 4,
+      &quot;page_end&quot;: 5,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Correlation\n[原文]\nThe correlations pattern among the fibre-quality parameters and paper-making properties are not same in rice straw, hardwood and softwood.\n\nIn rice straw pulp, tensile index is positively and very strongly correlated with fine content (r = .906) and kink index (r = .88), but negatively and very strongly correlated with fibre length (r = –.936) and fibre width (r = –.873). Negative but strong correlation exists between tear index and fibre width (r = –.753) and kink index (r = –.833). There is strong positive correlation between burst index and fibre content (r = .929) and kink index (r = .984), but strong negative association with fibre length $( r = - . 9 5 0 )$ and fibre width (r = –.904). These correlations are signifi cant at the 1% level (Table 2).\n\n[章节标签（程序整理，非原文）] Correlation\n[原文]\nIn case of hardwood namely T. orientalis pulp, tensile index is positively and very strongly correlated with fine content (r = .858), degree of external fibrillation (r = .901), curl index (r = .965), and kink index (r = .956), but negatively and very strongly correlated with fibre length (r = –.898), fibre width (r = –.942) and coarseness (r = –.903). Tear index is not significantly related with any of the fibre-quality parameters. Strong positive correlation exists between burst index and fibre content (r = .866), degree of external fibrillation (r = .908), curl index (r = .980) and kink index (r = .973), but strong negative association with fibre length (r = −.919), fibre width $( r = - . 9 6 9 )$ and coarseness $( r = - . 9 2 6 )$ These correlations are significant at the 1% level. Wang et al.&lt;sup&gt;31&lt;/sup&gt; found that the external fibrillation was positively correlated with Scott bond strength. Kang and Paulapuro&lt;sup&gt;32&lt;/sup&gt; also observed improvement in tensile and Scott bond strength by increasing external fibrillation (Table 3).\n\n[章节标签（程序整理，非原文）] Correlation\n[原文]\nIn softwood, tensile index is positively and very strongly correlated with fine content (r = .828) and fibre width (r = .972), but negatively and very strongly correlated with fibre length (r = −.911) and kink index (r = −.825). Like hardwood samples, tear index is not significantly related\n\n[章节标签（程序整理，非原文）] Correlation\n[原文]\nTable 2. Correlations among the &lt;sup&gt;fi&lt;/sup&gt;bre-quality parameters and paper-making properties of rice straw.\n\n&lt;table&gt;&lt;tr&gt;&lt;td rowspan=\&quot;2\&quot;&gt;Paper-making properties&lt;/td&gt;&lt;td colspan=\&quot;7\&quot;&gt;Fibre-quality parameters&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fine content (%)&lt;/td&gt;&lt;td&gt;Fibre length (mm)&lt;/td&gt;&lt;td&gt;Fibre width (μm)&lt;/td&gt;&lt;td&gt;Degree of external fibrillation (%)&lt;/td&gt;&lt;td&gt;Curl index&lt;/td&gt;&lt;td&gt;Kink index (mm-1)&lt;/td&gt;&lt;td&gt;Coarseness (mg/m)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tensile index (Nm/g)&lt;/td&gt;&lt;td&gt;0.906**&lt;/td&gt;&lt;td&gt;-0.936**&lt;/td&gt;&lt;td&gt;-0.873**&lt;/td&gt;&lt;td&gt;-0.660&lt;/td&gt;&lt;td&gt;-0.046&lt;/td&gt;&lt;td&gt;0.978**&lt;/td&gt;&lt;td&gt;0.058&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tear index (mN·m2/g)&lt;/td&gt;&lt;td&gt;0.484&lt;/td&gt;&lt;td&gt;-0.533&lt;/td&gt;&lt;td&gt;-0.753*&lt;/td&gt;&lt;td&gt;-0.833*&lt;/td&gt;&lt;td&gt;-0.020&lt;/td&gt;&lt;td&gt;0.798*&lt;/td&gt;&lt;td&gt;-0.284&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Burst index (kPa·m2/g)&lt;/td&gt;&lt;td&gt;0.929**&lt;/td&gt;&lt;td&gt;-0.950**&lt;/td&gt;&lt;td&gt;-0.904**&lt;/td&gt;&lt;td&gt;-0.679&lt;/td&gt;&lt;td&gt;-0.060&lt;/td&gt;&lt;td&gt;0.984**&lt;/td&gt;&lt;td&gt;0.088&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n\n\\*Correlation is signi&lt;sup&gt;fi&lt;/sup&gt;cant at the 0.05 level (two-tailed).\n\n\\*\\*Correlation is signi&lt;sup&gt;fi&lt;/sup&gt;cant at the 0.01 level (two-tailed).\n\n[章节标签（程序整理，非原文）] Correlation\n[原文]\nTable 3. Correlations among the &lt;sup&gt;fi&lt;/sup&gt;bre-quality parameters and paper-making properties of T. orientalis.\n\n&lt;table&gt;&lt;tr&gt;&lt;td rowspan=\&quot;2\&quot;&gt;Paper-making properties&lt;/td&gt;&lt;td colspan=\&quot;7\&quot;&gt;Fibre-quality parameters&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fine content (%)&lt;/td&gt;&lt;td&gt;Fibre length (mm)&lt;/td&gt;&lt;td&gt;Fibre width (μm)&lt;/td&gt;&lt;td&gt;Degree of external fibrillation (%)&lt;/td&gt;&lt;td&gt;Curl index&lt;/td&gt;&lt;td&gt;Kink index (mm-1)&lt;/td&gt;&lt;td&gt;Coarseness (mg/m)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tensile index (N·m/g)&lt;/td&gt;&lt;td&gt;0.858**&lt;/td&gt;&lt;td&gt;-0.898**&lt;/td&gt;&lt;td&gt;-0.942**&lt;/td&gt;&lt;td&gt;0.901**&lt;/td&gt;&lt;td&gt;0.965**&lt;/td&gt;&lt;td&gt;0.956**&lt;/td&gt;&lt;td&gt;-0.903**&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tear index (mN·m2/g)&lt;/td&gt;&lt;td&gt;0.161&lt;/td&gt;&lt;td&gt;-0.079&lt;/td&gt;&lt;td&gt;-0.139&lt;/td&gt;&lt;td&gt;0.196&lt;/td&gt;&lt;td&gt;0.198&lt;/td&gt;&lt;td&gt;0.160&lt;/td&gt;&lt;td&gt;0.000&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Burst index (kPa·m2/g)&lt;/td&gt;&lt;td&gt;0.866**&lt;/td&gt;&lt;td&gt;-0.919**&lt;/td&gt;&lt;td&gt;-0.969**&lt;/td&gt;&lt;td&gt;0.908**&lt;/td&gt;&lt;td&gt;0.980**&lt;/td&gt;&lt;td&gt;0.973**&lt;/td&gt;&lt;td&gt;-0.926**&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n\n\\*Correlation is signi&lt;sup&gt;fi&lt;/sup&gt;cant at the 0.05 level (two-tailed).\n\n\\*\\*Correlation is signi&lt;sup&gt;fi&lt;/sup&gt;cant at the 0.01 level (two-tailed).\n\n[章节标签（程序整理，非原文）] Correlation\n[原文]\nTable 4. Correlations among the &lt;sup&gt;fi&lt;/sup&gt;bre-quality parameters and paper-making properties of softwood.\n\n&lt;table&gt;&lt;tr&gt;&lt;td rowspan=\&quot;2\&quot;&gt;Paper-making properties&lt;/td&gt;&lt;td colspan=\&quot;7\&quot;&gt;Fibre-quality parameters&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fine content (%)&lt;/td&gt;&lt;td&gt;Fibre length (mm)&lt;/td&gt;&lt;td&gt;Fibre width (μm)&lt;/td&gt;&lt;td&gt;Degree of external fibrillation (%)&lt;/td&gt;&lt;td&gt;Curl index&lt;/td&gt;&lt;td&gt;Kink index (mm-1)&lt;/td&gt;&lt;td&gt;Coarseness (mg/m)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tensile index (N·m/g)&lt;/td&gt;&lt;td&gt;0.828&lt;/td&gt;&lt;td&gt;-0.911*&lt;/td&gt;&lt;td&gt;0.972**&lt;/td&gt;&lt;td&gt;0.783&lt;/td&gt;&lt;td&gt;-0.890*&lt;/td&gt;&lt;td&gt;-0.825&lt;/td&gt;&lt;td&gt;-0.751&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tear index (mN·m2/g)&lt;/td&gt;&lt;td&gt;0.664&lt;/td&gt;&lt;td&gt;-0.496&lt;/td&gt;&lt;td&gt;0.369&lt;/td&gt;&lt;td&gt;0.445&lt;/td&gt;&lt;td&gt;-0.503&lt;/td&gt;&lt;td&gt;-0.439&lt;/td&gt;&lt;td&gt;-0.546&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Burst index (kPa·m2/g)&lt;/td&gt;&lt;td&gt;0.914*&lt;/td&gt;&lt;td&gt;-0.964**&lt;/td&gt;&lt;td&gt;0.986**&lt;/td&gt;&lt;td&gt;0.864&lt;/td&gt;&lt;td&gt;-0.852&lt;/td&gt;&lt;td&gt;-0.766&lt;/td&gt;&lt;td&gt;-0.845&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n\n\\*Correlation is signi&lt;sup&gt;fi&lt;/sup&gt;cant at the 0.05 level (two-tailed).\n\n\\*\\*Correlation is signi&lt;sup&gt;fi&lt;/sup&gt;cant at the 0.01 level (two-tailed).\n\n[章节标签（程序整理，非原文）] Correlation\n[原文]\nTable 5. Correlations among the &lt;sup&gt;fi&lt;/sup&gt;bre-quality parameters and paper-making properties of E. camaldulensis\n\n&lt;table&gt;&lt;tr&gt;&lt;td rowspan=\&quot;2\&quot;&gt;Paper-making properties&lt;/td&gt;&lt;td colspan=\&quot;5\&quot;&gt;Fibre-quality parameters&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fine content (%)&lt;/td&gt;&lt;td&gt;Fibre length (mm)&lt;/td&gt;&lt;td&gt;Degree of external fibrillation (%)&lt;/td&gt;&lt;td&gt;Curl index&lt;/td&gt;&lt;td&gt;Kink index ( $mm^{-1}$ )&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tensile index (Nm/g)&lt;/td&gt;&lt;td&gt;0.986**&lt;/td&gt;&lt;td&gt;-0.924**&lt;/td&gt;&lt;td&gt;0.965**&lt;/td&gt;&lt;td&gt;0.681&lt;/td&gt;&lt;td&gt;-0.123&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tear index ( $mN·m^2/g$ )&lt;/td&gt;&lt;td&gt;-0.277&lt;/td&gt;&lt;td&gt;0.239&lt;/td&gt;&lt;td&gt;-0.128&lt;/td&gt;&lt;td&gt;-0.310&lt;/td&gt;&lt;td&gt;0.523&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Burst Index ( $kPa·m^2/g$ )&lt;/td&gt;&lt;td&gt;0.996**&lt;/td&gt;&lt;td&gt;-0.919**&lt;/td&gt;&lt;td&gt;0.956**&lt;/td&gt;&lt;td&gt;0.772*&lt;/td&gt;&lt;td&gt;-0.157&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n\n\\*Correlation is signi&lt;sup&gt;fi&lt;/sup&gt;cant at the 0.05 level (two-tailed).\n\n\\*\\*Correlation is signi&lt;sup&gt;fi&lt;/sup&gt;cant at the 0.01 level (two-tailed).\n\n[章节标签（程序整理，非原文）] Correlation\n[原文]\nTable 6. Correlations among the beating time, $o _ { S { \\sf R } }$ and paper-making properties.\n\n&lt;table&gt;&lt;tr&gt;&lt;td rowspan=\&quot;2\&quot;&gt;Samples&lt;/td&gt;&lt;td rowspan=\&quot;2\&quot;&gt;Beating time and  $^0SR$ &lt;/td&gt;&lt;td colspan=\&quot;3\&quot;&gt;Paper-making properties&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tensile index (Nm/g)&lt;/td&gt;&lt;td&gt;Tear index (mN·m2/g)&lt;/td&gt;&lt;td&gt;Burst index (kPa·m2/g)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td rowspan=\&quot;2\&quot;&gt;Rice Straw&lt;/td&gt;&lt;td&gt;Beating time&lt;/td&gt;&lt;td&gt;0.980**&lt;/td&gt;&lt;td&gt;0.669&lt;/td&gt;&lt;td&gt;0.990**&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt; $^0SR$ &lt;/td&gt;&lt;td&gt;0.995**&lt;/td&gt;&lt;td&gt;0.798*&lt;/td&gt;&lt;td&gt;0.991**&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td rowspan=\&quot;2\&quot;&gt;T. orientalis&lt;/td&gt;&lt;td&gt;Beating time&lt;/td&gt;&lt;td&gt;0.895**&lt;/td&gt;&lt;td&gt;0.113&lt;/td&gt;&lt;td&gt;0.911**&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt; $^0SR$ &lt;/td&gt;&lt;td&gt;0.873**&lt;/td&gt;&lt;td&gt;0.138&lt;/td&gt;&lt;td&gt;0.884**&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td rowspan=\&quot;2\&quot;&gt;Softwood&lt;/td&gt;&lt;td&gt;Beating time&lt;/td&gt;&lt;td&gt;0.928*&lt;/td&gt;&lt;td&gt;0.497&lt;/td&gt;&lt;td&gt;0.974**&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt; $^0SR$ &lt;/td&gt;&lt;td&gt;0.830&lt;/td&gt;&lt;td&gt;0.459&lt;/td&gt;&lt;td&gt;0.898*&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td rowspan=\&quot;2\&quot;&gt;E. camaldulensis&lt;/td&gt;&lt;td&gt;Beating time&lt;/td&gt;&lt;td&gt;0.989**&lt;/td&gt;&lt;td&gt;-0.179&lt;/td&gt;&lt;td&gt;0.988**&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt; $^0SR$ &lt;/td&gt;&lt;td&gt;0.988**&lt;/td&gt;&lt;td&gt;-0.286&lt;/td&gt;&lt;td&gt;0.987**&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n\n\\*Correlation is signi&lt;sup&gt;fi&lt;/sup&gt;cant at the 0.05 level (two-tailed).\n\n\\*\\*Correlation is signi&lt;sup&gt;fi&lt;/sup&gt;cant at the 0.01 level (two-tailed).&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[7]&quot;,
+      &quot;document_id&quot;: &quot;doc_8234f8075c2e184f&quot;,
+      &quot;filename&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+      &quot;page_start&quot;: 1,
+      &quot;page_end&quot;: 1,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Abstract\n[原文]\nPaper strength is developed through pulp re&lt;sup&gt;fi&lt;/sup&gt;ning. This paper investigates a correlation of pulp &lt;sup&gt;fi&lt;/sup&gt;bre properties changes by pulp re&lt;sup&gt;fi&lt;/sup&gt;ning with the development of papermaking properties by multiple linear regression (MLR) analysis and arti&lt;sup&gt;fi&lt;/sup&gt;cial neural network (ANN). A total of 21 observations were made on the samples. The available dataset was divided into two groups: 81% of experimental results were selected as training data and 19% for model veri&lt;sup&gt;fi&lt;/sup&gt;cation. A satisfactory level of the correlation between simulation data and experimental data was obtained. The linear regression analysis could be used for predicting tensile index (Adj. R&lt;sup&gt;2&lt;/sup&gt; = .85), tear index (Adj. R&lt;sup&gt;2&lt;/sup&gt; = .97) and burst index (Adj. R&lt;sup&gt;2&lt;/sup&gt; = .91) based on the fibre characteristics such as fine content (%), fibre length (mm), fibre width (μm), degree of external fibrillation (%), curl index, kink index and coarseness (mg/m). However, the tensile index, tear index and burst index could be estimated by ANN more ef&lt;sup&gt;fi&lt;/sup&gt;ciently (R&lt;sup&gt;2&lt;/sup&gt; &gt; .95).&quot;
+    }
+  ]
+}</pre></details></article><article><h2>FS8-024</h2><p>准备合并Li等（2023）的回收纸模型、Uddin等（2024）的纸浆研究和Ayaliew等（2026）的复合材料论文。三个都提到tensile，是否可以建一个没有单位和来源的strength列直接训练？请说明至少三类应保留的差异。</p><p>Jev：87.50 / 50.00 (2/4) / 90.91 (10/11) / 50.00 (2/4) / 1/2 / 未通过<br>校准：87.50 / 75.00 (3/4) / 100.00 (11/11) / 75.00 (3/4) / 2/2 / 未通过</p><p>沿用原四要点标准，K1/K3/K4齐全，K2只有MPa一侧，未回答Uddin的Nm/g，得87.5。维持C4部分支持：“合成数据所以不可外推”把应验证外推能力说成绝对禁止；“直接拼接会让模型把来源当信号”也把风险写成必然。其余实测/合成、10000/2000和原文性能数值有支持。不因如实承认证据不足惩罚事实正确性。</p><h3>完整回答</h3><pre>**不能直接建一个无单位、无来源的 `strength` 列来合并训练。** 三篇论文虽然都涉及 tensile，但目标定义、材料体系和数据来源不同，至少应保留以下三类差异。
+
+1. **材料体系与构效关系不同。** Li 等（2023）研究的是回收木纤维与非木纤维手抄纸，抗张强度主要用纤维间结合强度等来解释，并用损伤指数按 T=T₀(1−D) 计算其劣化（第13–14页，4.2节）[2][1][3]。Ayaliew 等（2026）研究的是纤维增强聚合物复合材料，以纤维类型、树脂类型、密度、层数、固化温度、纤维体积分数和孔隙率为输入特征，预测 tensile strength（MPa）（第4页，2.1节）[7]。因此，前者是纸页因回收损伤而劣化，后者是复合材料配方和工艺影响强度；两者涉及不同的材料和失效背景，不能视为同一个目标。
+
+2. **目标定义、单位与测试条件不同。** Li 的实验手抄纸按 TAPPI 标准成形和测试，实验中测得的量包括 tensile strength 以及 zero-span tensile strength、zero-span tensile index 等[6]。Ayaliew 的目标明确标为 tensile strength（MPa），其 RMSE、MAE 也以 MPa 计（第10页，表1）[11]。Uddin 等（2024）的 paper 对纤维质量参数与纸浆性能进行建模，但本次检索未能取得其 tensile 指标的具体定义、单位或测试条件的可核验文本：一次检索只返回了 Ayaliew 的证据，一次按 section 读取失败。**因此，无法确认 Uddin 的目标究竟是 tensile strength、tensile index 还是其他指标，也无法确认其单位。** 仅凭题干中的“tensile”就假定三者可以直接对齐，等同于补造信息。
+
+3. **数据来源、样本单位与样本量/处理水平不同。** Ayaliew 使用的是来自 Kaggle 的 **合成数据**：它依据既有复合力学关系和文献中的实验趋势构造了 10,000 条记录，按 2,000 条测试样本评估，并使用了 5 折交叉验证（第4页2.1节、第7页3.1节、第12页3.2.6节）[7][8][13]。因此，它的 R²≈0.9975、RMSE≈31.6 MPa 是**合成数据上的拟合表现**，不能当作实测材料精度；此外，“合成数据所以不可外推”是合理的数据属性判断，不是论文实测结论。Li 则是实际实验：同种浆料循环回收四次，在每次回收后测量手抄纸性能，每行对应“某原料×某回收次数”的实验纸页[4][6]；其样本量及具体处理水平组合未在已取证据中完整给出，不能按 Ayaliew 的 10,000 条类比。两者每行代表的“样本实体”不同（配方/工艺组合 vs. 浆料与回收历程），直接拼接会让模型把数据来源和实验设计当作预测信号。
+
+**处理建议：** 至少保留来源、材料类别、目标定义/测定量、单位和测试条件字段；统一物理含义与单位后，再决定是否合并，或按来源分层建模并做外部验证。在 Uddin 的目标定义和单位被核实之前，不应把其 tensile 结果并入同一 `strength` 列。</pre><details><summary>参考答案、评分及校准依据、调用轨迹、引用原文</summary><pre>{
+  &quot;case&quot;: {
+    &quot;id&quot;: &quot;FS8-024&quot;,
+    &quot;group&quot;: &quot;cross&quot;,
+    &quot;question&quot;: &quot;准备合并Li等（2023）的回收纸模型、Uddin等（2024）的纸浆研究和Ayaliew等（2026）的复合材料论文。三个都提到tensile，是否可以建一个没有单位和来源的strength列直接训练？请说明至少三类应保留的差异。&quot;,
+    &quot;reference_answer&quot;: &quot;不可以。Li的链条包括损伤D及T₀基准；Uddin明确抗张指数Nm/g并另有撕裂/耐破指数；Ayaliew是聚合物复合材料抗拉强度MPa且数据合成。应保留材料/对象、目标定义与单位、实验处理、实测或合成来源以及样品/论文标识。不能只改字段名就把抗张指数换成MPa，也不能把损伤D当强度。&quot;,
+    &quot;key_points&quot;: [
+      &quot;D3损伤D和T₀关系不能混同强度&quot;,
+      &quot;D5抗张指数Nm/g与D4 MPa不等价&quot;,
+      &quot;D4对象为聚合物复合材料且合成数据&quot;,
+      &quot;至少保留目标单位、材料条件、数据来源/样品标识&quot;
+    ],
+    &quot;critical_errors&quot;: [
+      &quot;直接拼接无单位strength&quot;,
+      &quot;把Nm/g无条件换成MPa&quot;
+    ],
+    &quot;evidence&quot;: [
+      {
+        &quot;document&quot;: &quot;D3&quot;,
+        &quot;pages&quot;: [
+          2
+        ],
+        &quot;locator&quot;: &quot;摘要&quot;
+      },
+      {
+        &quot;document&quot;: &quot;D5&quot;,
+        &quot;pages&quot;: [
+          1,
+          8
+        ],
+        &quot;locator&quot;: &quot;摘要、结论&quot;
+      },
+      {
+        &quot;document&quot;: &quot;D4&quot;,
+        &quot;pages&quot;: [
+          4,
+          13
+        ],
+        &quot;locator&quot;: &quot;数据准备、讨论&quot;
+      }
+    ],
+    &quot;checks&quot;: &quot;三篇整合、指标口径、来源&quot;,
+    &quot;grading_notes&quot;: &quot;允许等价表述；推断必须与论文直接结果区分。不得把参考答案措辞当成唯一正确表达。&quot;,
+    &quot;tool_expectation&quot;: &quot;从所涉论文取得证据；可一次检索覆盖多篇，不规定固定调用次数。需要可追溯的文献与页码/表图定位。&quot;,
+    &quot;citation_applicable&quot;: true
+  },
+  &quot;answer&quot;: &quot;**不能直接建一个无单位、无来源的 `strength` 列来合并训练。** 三篇论文虽然都涉及 tensile，但目标定义、材料体系和数据来源不同，至少应保留以下三类差异。\n\n1. **材料体系与构效关系不同。** Li 等（2023）研究的是回收木纤维与非木纤维手抄纸，抗张强度主要用纤维间结合强度等来解释，并用损伤指数按 T=T₀(1−D) 计算其劣化（第13–14页，4.2节）[2][1][3]。Ayaliew 等（2026）研究的是纤维增强聚合物复合材料，以纤维类型、树脂类型、密度、层数、固化温度、纤维体积分数和孔隙率为输入特征，预测 tensile strength（MPa）（第4页，2.1节）[7]。因此，前者是纸页因回收损伤而劣化，后者是复合材料配方和工艺影响强度；两者涉及不同的材料和失效背景，不能视为同一个目标。\n\n2. **目标定义、单位与测试条件不同。** Li 的实验手抄纸按 TAPPI 标准成形和测试，实验中测得的量包括 tensile strength 以及 zero-span tensile strength、zero-span tensile index 等[6]。Ayaliew 的目标明确标为 tensile strength（MPa），其 RMSE、MAE 也以 MPa 计（第10页，表1）[11]。Uddin 等（2024）的 paper 对纤维质量参数与纸浆性能进行建模，但本次检索未能取得其 tensile 指标的具体定义、单位或测试条件的可核验文本：一次检索只返回了 Ayaliew 的证据，一次按 section 读取失败。**因此，无法确认 Uddin 的目标究竟是 tensile strength、tensile index 还是其他指标，也无法确认其单位。** 仅凭题干中的“tensile”就假定三者可以直接对齐，等同于补造信息。\n\n3. **数据来源、样本单位与样本量/处理水平不同。** Ayaliew 使用的是来自 Kaggle 的 **合成数据**：它依据既有复合力学关系和文献中的实验趋势构造了 10,000 条记录，按 2,000 条测试样本评估，并使用了 5 折交叉验证（第4页2.1节、第7页3.1节、第12页3.2.6节）[7][8][13]。因此，它的 R²≈0.9975、RMSE≈31.6 MPa 是**合成数据上的拟合表现**，不能当作实测材料精度；此外，“合成数据所以不可外推”是合理的数据属性判断，不是论文实测结论。Li 则是实际实验：同种浆料循环回收四次，在每次回收后测量手抄纸性能，每行对应“某原料×某回收次数”的实验纸页[4][6]；其样本量及具体处理水平组合未在已取证据中完整给出，不能按 Ayaliew 的 10,000 条类比。两者每行代表的“样本实体”不同（配方/工艺组合 vs. 浆料与回收历程），直接拼接会让模型把数据来源和实验设计当作预测信号。\n\n**处理建议：** 至少保留来源、材料类别、目标定义/测定量、单位和测试条件字段；统一物理含义与单位后，再决定是否合并，或按来源分层建模并做外部验证。在 Uddin 的目标定义和单位被核实之前，不应把其 tensile 结果并入同一 `strength` 列。&quot;,
+  &quot;draft&quot;: &quot;**不能。** 不应把三篇论文的拉伸结果压成一个无单位、无来源的 `strength` 列直接合并训练。根据已取得的证据，至少有以下三类差异必须保留：\n\n1. **构效关系与材料体系不同**：Li 等（2023，第13–14页，4.2节）研究的是回收纤维手抄纸，抗张强度主要用纤维间结合强度等来解释，并通过损伤指数按 T = T₀(1−D) 计算其劣化[2][3]。Ayaliew 等（2026，第4页，2.1节）研究的是纤维增强聚合物复合材料，其输入特征包括纤维类型、树脂类型、密度、层数、固化温度、纤维体积分数和孔隙率，目标为 tensile strength（MPa）；该数据是 Kaggle 上的合成数据，遵循复合力学参数关系生成的10000条记录，而不是实测值[7][8]。这是“手抄纸的物理损伤劣化”与“复合材料配方和工艺”之间的差异，属于结构性差异，不能靠“都叫 tensile”来消除。\n\n2. **目标定义、单位与测量尺度不同**：Li 的白度拉伸是纸页的 tensile strength，并包含 zero-span tensile strength/tensile index 等不同量[6][1]。Ayaliew 明确以 MPa 为单位报告 tensile strength，其 RMSE/MAE 也以 MPa 表示（第10页表1）[11]。Uddin 等（2024，纤维质量参数→纸浆性能）的具体 tensile 指标、单位与测试条件未能取得可核验文本：首次检索仅返回了 Ayaliew 的证据，随后一次按 section 读取失败，工具预算已用尽，**故无法确认其 target 是 tensile index、tensile strength 还是其他指标，也无法确认单位**。仅凭题干的“tensile”就假定可以对齐，等同于补造信息。即使三者都叫 tensile strength，纸页单位面积强度与复合材料 MPa 之间若直接混用，也会出现量级和含义的错配。\n\n3. **数据来源、样本单位与验证方式不同**：Ayaliew 是合成数据划分为测试集（2000样本），并用 5 折交叉验证，性能为 R²≈0.997、RMSE 约 31.6 MPa（第10页表1、第12页3.2.6节）[11][13]。Li 的实验是在 TAPPI 标准手抄纸上进行，将同种浆料循环回收四次，逐次测量其性能，因此每行对应“某原料×某回收次数”的实验纸页[4][6]。两种数据行代表完全不同的“样本实体”（配方/工艺组合 vs. 浆料+回收历程），直接拼接会让模型把来源和实验设计当作预测信号。\n\n**建议**：保留显式来源/材料类别/目标定义字段，统一物理单位后再分别建模，或至少做来源分层与外部验证；在没有 Uddin 的目标定义和单位之前，不应并入同一 `strength` 列。&quot;,
+  &quot;raw_jev&quot;: {
+    &quot;key_point_scores&quot;: {
+      &quot;K1&quot;: 1,
+      &quot;K2&quot;: 0.5,
+      &quot;K3&quot;: 1,
+      &quot;K4&quot;: 1
+    },
+    &quot;claim_assessments&quot;: [
+      {
+        &quot;id&quot;: &quot;C1&quot;,
+        &quot;text&quot;: &quot;**不能直接建一个无单位、无来源的 `strength` 列来合并训练。** 三篇论文虽然都涉及 tensile，但目标定义、材料体系和数据来源不同，至少应保留以下三类差异。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C2&quot;,
+        &quot;text&quot;: &quot;1. **材料体系与构效关系不同。** Li 等（2023）研究的是回收木纤维与非木纤维手抄纸，抗张强度主要用纤维间结合强度等来解释，并用损伤指数按 T=T₀(1−D) 计算其劣化（第13–14页，4.2节）[2][1][3]。Ayaliew 等（2026）研究的是纤维增强聚合物复合材料，以纤维类型、树脂类型、密度、层数、固化温度、纤维体积分数和孔隙率为输入特征，预测 tensile strength（MPa）（第4页，2.1节）[7]。因此，前者是纸页因回收损伤而劣化，后者是复合材料配方和工艺影响强度；两者涉及不同的材料和失效背景，不能视为同一个目标。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[2]&quot;,
+          &quot;[1]&quot;,
+          &quot;[3]&quot;,
+          &quot;[7]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C3&quot;,
+        &quot;text&quot;: &quot;2. **目标定义、单位与测试条件不同。** Li 的实验手抄纸按 TAPPI 标准成形和测试，实验中测得的量包括 tensile strength 以及 zero-span tensile strength、zero-span tensile index 等[6]。Ayaliew 的目标明确标为 tensile strength（MPa），其 RMSE、MAE 也以 MPa 计（第10页，表1）[11]。Uddin 等（2024）的 paper 对纤维质量参数与纸浆性能进行建模，但本次检索未能取得其 tensile 指标的具体定义、单位或测试条件的可核验文本：一次检索只返回了 Ayaliew 的证据，一次按 section 读取失败。**因此，无法确认 Uddin 的目标究竟是 tensile strength、tensile index 还是其他指标，也无法确认其单位。** 仅凭题干中的“tensile”就假定三者可以直接对齐，等同于补造信息。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[6]&quot;,
+          &quot;[11]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;partially_supported&quot;,
+        &quot;basis&quot;: &quot;B017&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C4&quot;,
+        &quot;text&quot;: &quot;3. **数据来源、样本单位与样本量/处理水平不同。** Ayaliew 使用的是来自 Kaggle 的 **合成数据**：它依据既有复合力学关系和文献中的实验趋势构造了 10,000 条记录，按 2,000 条测试样本评估，并使用了 5 折交叉验证（第4页2.1节、第7页3.1节、第12页3.2.6节）[7][8][13]。因此，它的 R²≈0.9975、RMSE≈31.6 MPa 是**合成数据上的拟合表现**，不能当作实测材料精度；此外，“合成数据所以不可外推”是合理的数据属性判断，不是论文实测结论。Li 则是实际实验：同种浆料循环回收四次，在每次回收后测量手抄纸性能，每行对应“某原料×某回收次数”的实验纸页[4][6]；其样本量及具体处理水平组合未在已取证据中完整给出，不能按 Ayaliew 的 10,000 条类比。两者每行代表的“样本实体”不同（配方/工艺组合 vs. 浆料与回收历程），直接拼接会让模型把数据来源和实验设计当作预测信号。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[7]&quot;,
+          &quot;[8]&quot;,
+          &quot;[13]&quot;,
+          &quot;[4]&quot;,
+          &quot;[6]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;partially_supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C5&quot;,
+        &quot;text&quot;: &quot;**处理建议：** 至少保留来源、材料类别、目标定义/测定量、单位和测试条件字段；统一物理含义与单位后，再决定是否合并，或按来源分层建模并做外部验证。在 Uddin 的目标定义和单位被核实之前，不应把其 tensile 结果并入同一 `strength` 列。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;scope&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      }
+    ],
+    &quot;citation_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[2]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[1]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 0
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[11]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[8]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[13]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[4]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      }
+    ],
+    &quot;citation_group_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;coverage&quot;: &quot;missing&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;coverage&quot;: &quot;missing&quot;
+      }
+    ],
+    &quot;answerability_score&quot;: 1,
+    &quot;reference_concern&quot;: false,
+    &quot;decisions&quot;: {
+      &quot;boundary&quot;: &quot;partial&quot;,
+      &quot;reference_check&quot;: &quot;sound&quot;,
+      &quot;point_K1&quot;: &quot;complete&quot;,
+      &quot;point_K2&quot;: &quot;partial&quot;,
+      &quot;point_K3&quot;: &quot;complete&quot;,
+      &quot;point_K4&quot;: &quot;complete&quot;,
+      &quot;kind_C1&quot;: &quot;fact&quot;,
+      &quot;support_C1&quot;: &quot;supported&quot;,
+      &quot;basis_C1&quot;: &quot;NONE&quot;,
+      &quot;group_C1&quot;: &quot;missing&quot;,
+      &quot;kind_C2&quot;: &quot;fact&quot;,
+      &quot;support_C2&quot;: &quot;supported&quot;,
+      &quot;basis_C2&quot;: &quot;NONE&quot;,
+      &quot;group_C2&quot;: &quot;complete&quot;,
+      &quot;citation_C2_1&quot;: &quot;supported&quot;,
+      &quot;citation_C2_2&quot;: &quot;supported&quot;,
+      &quot;citation_C2_3&quot;: &quot;unsupported&quot;,
+      &quot;citation_C2_4&quot;: &quot;supported&quot;,
+      &quot;kind_C3&quot;: &quot;fact&quot;,
+      &quot;support_C3&quot;: &quot;partially_supported&quot;,
+      &quot;basis_C3&quot;: &quot;B017&quot;,
+      &quot;group_C3&quot;: &quot;partial&quot;,
+      &quot;citation_C3_1&quot;: &quot;supported&quot;,
+      &quot;citation_C3_2&quot;: &quot;supported&quot;,
+      &quot;kind_C4&quot;: &quot;fact&quot;,
+      &quot;support_C4&quot;: &quot;partially_supported&quot;,
+      &quot;basis_C4&quot;: &quot;NONE&quot;,
+      &quot;group_C4&quot;: &quot;complete&quot;,
+      &quot;citation_C4_1&quot;: &quot;supported&quot;,
+      &quot;citation_C4_2&quot;: &quot;supported&quot;,
+      &quot;citation_C4_3&quot;: &quot;supported&quot;,
+      &quot;citation_C4_4&quot;: &quot;supported&quot;,
+      &quot;citation_C4_5&quot;: &quot;supported&quot;,
+      &quot;kind_C5&quot;: &quot;scope&quot;,
+      &quot;support_C5&quot;: &quot;supported&quot;,
+      &quot;basis_C5&quot;: &quot;NONE&quot;,
+      &quot;group_C5&quot;: &quot;missing&quot;
+    }
+  },
+  &quot;calibrated&quot;: {
+    &quot;key_point_scores&quot;: {
+      &quot;K1&quot;: 1,
+      &quot;K2&quot;: 0.5,
+      &quot;K3&quot;: 1,
+      &quot;K4&quot;: 1
+    },
+    &quot;claim_assessments&quot;: [
+      {
+        &quot;id&quot;: &quot;C1&quot;,
+        &quot;text&quot;: &quot;**不能直接建一个无单位、无来源的 `strength` 列来合并训练。** 三篇论文虽然都涉及 tensile，但目标定义、材料体系和数据来源不同，至少应保留以下三类差异。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C2&quot;,
+        &quot;text&quot;: &quot;1. **材料体系与构效关系不同。** Li 等（2023）研究的是回收木纤维与非木纤维手抄纸，抗张强度主要用纤维间结合强度等来解释，并用损伤指数按 T=T₀(1−D) 计算其劣化（第13–14页，4.2节）[2][1][3]。Ayaliew 等（2026）研究的是纤维增强聚合物复合材料，以纤维类型、树脂类型、密度、层数、固化温度、纤维体积分数和孔隙率为输入特征，预测 tensile strength（MPa）（第4页，2.1节）[7]。因此，前者是纸页因回收损伤而劣化，后者是复合材料配方和工艺影响强度；两者涉及不同的材料和失效背景，不能视为同一个目标。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[2]&quot;,
+          &quot;[1]&quot;,
+          &quot;[3]&quot;,
+          &quot;[7]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C3&quot;,
+        &quot;text&quot;: &quot;2. **目标定义、单位与测试条件不同。** Li 的实验手抄纸按 TAPPI 标准成形和测试，实验中测得的量包括 tensile strength 以及 zero-span tensile strength、zero-span tensile index 等[6]。Ayaliew 的目标明确标为 tensile strength（MPa），其 RMSE、MAE 也以 MPa 计（第10页，表1）[11]。Uddin 等（2024）的 paper 对纤维质量参数与纸浆性能进行建模，但本次检索未能取得其 tensile 指标的具体定义、单位或测试条件的可核验文本：一次检索只返回了 Ayaliew 的证据，一次按 section 读取失败。**因此，无法确认 Uddin 的目标究竟是 tensile strength、tensile index 还是其他指标，也无法确认其单位。** 仅凭题干中的“tensile”就假定三者可以直接对齐，等同于补造信息。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[6]&quot;,
+          &quot;[11]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B017&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C4&quot;,
+        &quot;text&quot;: &quot;3. **数据来源、样本单位与样本量/处理水平不同。** Ayaliew 使用的是来自 Kaggle 的 **合成数据**：它依据既有复合力学关系和文献中的实验趋势构造了 10,000 条记录，按 2,000 条测试样本评估，并使用了 5 折交叉验证（第4页2.1节、第7页3.1节、第12页3.2.6节）[7][8][13]。因此，它的 R²≈0.9975、RMSE≈31.6 MPa 是**合成数据上的拟合表现**，不能当作实测材料精度；此外，“合成数据所以不可外推”是合理的数据属性判断，不是论文实测结论。Li 则是实际实验：同种浆料循环回收四次，在每次回收后测量手抄纸性能，每行对应“某原料×某回收次数”的实验纸页[4][6]；其样本量及具体处理水平组合未在已取证据中完整给出，不能按 Ayaliew 的 10,000 条类比。两者每行代表的“样本实体”不同（配方/工艺组合 vs. 浆料与回收历程），直接拼接会让模型把数据来源和实验设计当作预测信号。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[7]&quot;,
+          &quot;[8]&quot;,
+          &quot;[13]&quot;,
+          &quot;[4]&quot;,
+          &quot;[6]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;partially_supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C5&quot;,
+        &quot;text&quot;: &quot;**处理建议：** 至少保留来源、材料类别、目标定义/测定量、单位和测试条件字段；统一物理含义与单位后，再决定是否合并，或按来源分层建模并做外部验证。在 Uddin 的目标定义和单位被核实之前，不应把其 tensile 结果并入同一 `strength` 列。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;scope&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      }
+    ],
+    &quot;citation_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[2]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[1]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[11]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[7]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[8]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[13]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[4]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      }
+    ],
+    &quot;citation_group_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;coverage&quot;: &quot;missing&quot;
+      }
+    ],
+    &quot;answerability_score&quot;: 2,
+    &quot;reference_concern&quot;: false,
+    &quot;decisions&quot;: {
+      &quot;boundary&quot;: &quot;partial&quot;,
+      &quot;reference_check&quot;: &quot;sound&quot;,
+      &quot;point_K1&quot;: &quot;complete&quot;,
+      &quot;point_K2&quot;: &quot;partial&quot;,
+      &quot;point_K3&quot;: &quot;complete&quot;,
+      &quot;point_K4&quot;: &quot;complete&quot;,
+      &quot;kind_C1&quot;: &quot;fact&quot;,
+      &quot;support_C1&quot;: &quot;supported&quot;,
+      &quot;basis_C1&quot;: &quot;NONE&quot;,
+      &quot;group_C1&quot;: &quot;missing&quot;,
+      &quot;kind_C2&quot;: &quot;fact&quot;,
+      &quot;support_C2&quot;: &quot;supported&quot;,
+      &quot;basis_C2&quot;: &quot;NONE&quot;,
+      &quot;group_C2&quot;: &quot;complete&quot;,
+      &quot;citation_C2_1&quot;: &quot;supported&quot;,
+      &quot;citation_C2_2&quot;: &quot;supported&quot;,
+      &quot;citation_C2_3&quot;: &quot;unsupported&quot;,
+      &quot;citation_C2_4&quot;: &quot;supported&quot;,
+      &quot;kind_C3&quot;: &quot;fact&quot;,
+      &quot;support_C3&quot;: &quot;partially_supported&quot;,
+      &quot;basis_C3&quot;: &quot;B017&quot;,
+      &quot;group_C3&quot;: &quot;partial&quot;,
+      &quot;citation_C3_1&quot;: &quot;supported&quot;,
+      &quot;citation_C3_2&quot;: &quot;supported&quot;,
+      &quot;kind_C4&quot;: &quot;fact&quot;,
+      &quot;support_C4&quot;: &quot;partially_supported&quot;,
+      &quot;basis_C4&quot;: &quot;NONE&quot;,
+      &quot;group_C4&quot;: &quot;complete&quot;,
+      &quot;citation_C4_1&quot;: &quot;supported&quot;,
+      &quot;citation_C4_2&quot;: &quot;supported&quot;,
+      &quot;citation_C4_3&quot;: &quot;supported&quot;,
+      &quot;citation_C4_4&quot;: &quot;supported&quot;,
+      &quot;citation_C4_5&quot;: &quot;supported&quot;,
+      &quot;kind_C5&quot;: &quot;scope&quot;,
+      &quot;support_C5&quot;: &quot;supported&quot;,
+      &quot;basis_C5&quot;: &quot;NONE&quot;,
+      &quot;group_C5&quot;: &quot;missing&quot;
+    }
+  },
+  &quot;changes&quot;: [
+    {
+      &quot;path&quot;: &quot;citation_group_assessments.C1.coverage&quot;,
+      &quot;value&quot;: &quot;complete&quot;,
+      &quot;reason&quot;: &quot;开头结论由后文三类差异与引用承接。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;citation_assessments.C2.[3].score&quot;,
+      &quot;value&quot;: 1,
+      &quot;reason&quot;: &quot;[3]给出损伤D定义，实质支持该段损伤指标论述；T与T0公式由同组[1][2]支撑。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;claim_assessments.C3.support&quot;,
+      &quot;value&quot;: &quot;supported&quot;,
+      &quot;reason&quot;: &quot;Uddin目标/单位未取回是本轮轨迹事实，不是断言论文没有这些信息。已取得的Li与Ayaliew部分有支持；未答全另在K2扣分。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;citation_group_assessments.C3.coverage&quot;,
+      &quot;value&quot;: &quot;complete&quot;,
+      &quot;reason&quot;: &quot;[6][11]支持已回答的科学事实；工具失败说明不要求论文引用。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;citation_group_assessments.C4.coverage&quot;,
+      &quot;value&quot;: &quot;partial&quot;,
+      &quot;reason&quot;: &quot;5折交叉验证出现在已检索的[14]，本段却仅挂[7][8][13][4][6]；另“合成数据所以不可外推”过强。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;answerability_score&quot;,
+      &quot;value&quot;: 2,
+      &quot;reason&quot;: &quot;明确披露未查到Uddin及读取失败，未伪造其单位；K2漏答不重复算成不当边界。&quot;
+    }
+  ],
+  &quot;reason&quot;: &quot;沿用原四要点标准，K1/K3/K4齐全，K2只有MPa一侧，未回答Uddin的Nm/g，得87.5。维持C4部分支持：“合成数据所以不可外推”把应验证外推能力说成绝对禁止；“直接拼接会让模型把来源当信号”也把风险写成必然。其余实测/合成、10000/2000和原文性能数值有支持。不因如实承认证据不足惩罚事实正确性。&quot;,
+  &quot;raw_metrics&quot;: {
+    &quot;point_score&quot;: 87.5,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 4,
+    &quot;supported_facts&quot;: 2,
+    &quot;pair_count&quot;: 11,
+    &quot;supported_pairs&quot;: 10,
+    &quot;group_count&quot;: 4,
+    &quot;covered_groups&quot;: 2,
+    &quot;boundary&quot;: 1,
+    &quot;fact_support&quot;: 50.0,
+    &quot;citation_precision&quot;: 90.9090909090909,
+    &quot;citation_coverage&quot;: 50.0,
+    &quot;strict_pass&quot;: false,
+    &quot;format_ok&quot;: true
+  },
+  &quot;final_metrics&quot;: {
+    &quot;point_score&quot;: 87.5,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 4,
+    &quot;supported_facts&quot;: 3,
+    &quot;pair_count&quot;: 11,
+    &quot;supported_pairs&quot;: 11,
+    &quot;group_count&quot;: 4,
+    &quot;covered_groups&quot;: 3,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 75.0,
+    &quot;citation_precision&quot;: 100.0,
+    &quot;citation_coverage&quot;: 75.0,
+    &quot;strict_pass&quot;: false,
+    &quot;format_ok&quot;: true
+  },
+  &quot;run_id&quot;: &quot;agent-scoped-case23-24-recovery-20261106-FS8-024&quot;,
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;review_status&quot;: &quot;completed&quot;,
+  &quot;stop_reason&quot;: &quot;collection_budget&quot;,
+  &quot;elapsed_seconds&quot;: 57.641,
+  &quot;tools&quot;: [
+    {
+      &quot;request&quot;: {
+        &quot;reason&quot;: &quot;定位用户提到的三篇论文（Li 2023 回收纸、Uddin 2024 纸浆、Ayaliew 2026 复合材料）&quot;,
+        &quot;query&quot;: &quot;&quot;,
+        &quot;tool&quot;: &quot;find_documents&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;query&quot;: &quot;tensile strength target variable unit kPa MPa paper sheet measured breaking length&quot;,
+        &quot;document_ids&quot;: [
+          &quot;doc_347aacf900c9ab36&quot;
+        ],
+        &quot;reason&quot;: &quot;确认Li 2023回收纸模型中拉伸强度的具体定义与单位&quot;,
+        &quot;tool&quot;: &quot;search_literature&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;document_ids&quot;: [
+          &quot;doc_8234f8075c2e184f&quot;,
+          &quot;doc_f499d471c51c051a&quot;
+        ],
+        &quot;query&quot;: &quot;tensile strength unit output variable dataset description testing condition specimen preparation ASTM&quot;,
+        &quot;reason&quot;: &quot;确认Uddin 2024纸浆研究与Ayaliew 2026复合材料论文中tensile的目标定义、单位与测试标准&quot;,
+        &quot;tool&quot;: &quot;search_literature&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;document_id&quot;: &quot;doc_8234f8075c2e184f&quot;,
+        &quot;reason&quot;: &quot;Uddin 2024的检索结果未被返回，需直接读取其方法与数据部分，确认tensile目标（如tensile index）、单位及输入纤维质量参数&quot;,
+        &quot;section_id&quot;: &quot;sec_1&quot;,
+        &quot;max_chars&quot;: 6000,
+        &quot;tool&quot;: &quot;read_section&quot;
+      },
+      &quot;status&quot;: &quot;failed&quot;
+    }
+  ],
+  &quot;result_sha256&quot;: &quot;1d7a20efa5d968cc0bd300723e65010065eed2ddc1fad1be36f34a67eac19e41&quot;,
+  &quot;judge_input_sha256&quot;: &quot;a6ce10298b96171d46acd781e569c4887308462db2671e010e633c7aaecc6374&quot;,
+  &quot;evidence&quot;: [
+    {
+      &quot;ref&quot;: &quot;[1]&quot;,
+      &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+      &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+      &quot;page_start&quot;: 13,
+      &quot;page_end&quot;: 14,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.2. Damage index and the effective tensile strength of paper sheets\n[原文]\nFrom Page equation, it was presumed that the tensile strength decreased during recycling processes mainly because of the decrease in the fiber–fiber bond strength, and the relationship of tensile strength and the fiber–fiber bond strength could be written as (Jin et al., 2022):\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.2. Damage index and the effective tensile strength of paper sheets\n[原文]\n$$\n\\frac {1}{T} = \\frac {1}{F} + \\frac {1}{B}\\tag{14}\n$$\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.2. Damage index and the effective tensile strength of paper sheets\n[原文]\nwhere $\\mathsf { F } = 8 \\mathsf { Z } / 9$ is the fiber strength index, B is the bond strength index and 1/B is the factor of fiber–fiber bond weakness. Jin et al. examined the factor of fiber–fiber bond weakness during recycling processes, and found that for all the softwood pulp fibers, the factor of fiber–fiber bond weakness tended to increase and the fiber–fiber bond became weaker as the recycling number increased (Jin et al., 2022). In their recycling experiment of the softwood pulp fibers, Jin et al. also evaluated the correlation between the tensile strength and the factor of fiber–fiber bond weakness and found the correlation was as high as $\\mathsf { R } ^ { 2 } = 0 . 9 8$ (Jin et al., 2022). The proposed factor of fiber– fiber bond weakness focused on the change of fiber–fiber bond strength during recycling and explained that the deterioration of tensile strength of paper sheets was mainly because of the decrease of fiber–fiber bond strength, which was resulted from the loss of the wettability of paper fibers (Jin et al., 2022).\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.2. Damage index and the effective tensile strength of paper sheets\n[原文]\nAmong paper sheet properties, the factors determining the tensile strength include not only the fiber–fiber bonds but also the fiber length, the fiber strength, etc. Theoretically, there are some factors that can be chosen to express the damage severity of paper sheets. However, it is hard to identify a factor that not only can express the damage severity but also can quantitatively relate to mechanical properties of paper sheets. To address this issue, a damage index was proposed. If such a damage index can be identified with the aid of damage mechanics, then the damage and property deterioration of paper sheets due to recycling can be estimated quantitatively. Ideally, the damage index should be experimentally obtainable and can indicate the macro-mechanical properties of the sheets.\n\nIn Figure 8, (a) is an ideal sheet with no interior damage at all, and (b) is a real sheet with some interior damage. As illustrated in Figure 8, the stress on a paper sheet subjected to a tensile force is the ratio of the tensile force to the area that bears the force:\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.2. Damage index and the effective tensile strength of paper sheets\n[原文]\n$$\n\\sigma_ {0} = \\frac {F}{A _ {0}}\\tag{15}\n$$\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.2. Damage index and the effective tensile strength of paper sheets\n[原文]\nConsidering a sheet formed with recycled fibers, the cross-sectional area subjected to the tensile force decreases from $A _ { 0 }$ to A due to the deterioration of sheet properties and the change of fiber configurations during recycling processes. Based on the hypothesis of stress-strain equivalence, it is reasonable to propose a damage index as follows:\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.2. Damage index and the effective tensile strength of paper sheets\n[原文]\nIf a sheet is made from virgin pulps, it is not an ideal sheet because of fiber defects and damage during processing (Hughes, 2012). However, the damage in the pulp before refining is relatively little, then it may be assumed that $\\mathsf { A } \\ l = \\mathsf { A } _ { 0 } ,$ and $D / = 0 .$ . The sheet can bear the maximum rupture tensile force. If the sheet is made from recycled pulps with damaged fibers, then $A = A _ { 0 } \\ ( 1 { - } D ) ,$ $\\mathsf { A } \\mathsf { &lt; } \\mathsf { A } _ { 0 } ,$ and $\\begin{array} { r } { D &gt; ~ 0 . } \\end{array}$ . The maximum rupture tensile force that the sheet can bear will be reduced according to the damage index after each recycling process. The more severe the damage developed during fiber recycling, the less the tensile force that the sheet can bear. If a sheet is damaged to the maximum extent possible, $\\mathsf { i . e . , A = 0 } ,$ , the sheet will lose its strength completely.\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.2. Damage index and the effective tensile strength of paper sheets\n[原文]\nFigure 8. Different stresses on paper with different damage states.\n\n(a)\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.2. Damage index and the effective tensile strength of paper sheets\n[原文]\n(b)&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[2]&quot;,
+      &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+      &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+      &quot;page_start&quot;: 2,
+      &quot;page_end&quot;: 2,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\n The proposed quantitative expression of the damage index is: $\\begin{array} { r } { D = \\frac { \\left( D _ { s } - h \\right) ^ { 2 } } { a ^ { 2 } } - \\frac { \\left( \\dot { D } _ { h } - k \\right) ^ { 2 } } { b ^ { 2 } } } \\end{array}$ , where the coefficients were determined through the curve fitting model. This paper also developed a long short-term memory recurrent neural network model to determine the damage index according to the sequence of recycling. Both models were trained with the experimental data of water retention value and relative bonded area. The estimation and prediction by the curve fitting model were more accurate than those of the neural network model. The root mean square errors by the curve fitting model were 0.0278 for estimation, 0.1667 for prediction; and by the neural network model were 0.2445 for estimation, 0.2206 for prediction, respectively. After the damage index was determined, the deterioration of tensile strength then could be calculated as ${ \\boldsymbol { T } } = { \\boldsymbol { T } } _ { \\boldsymbol { O } }$ (1–D).\n\nSubjects: Polymers &amp; Plastics; Machine Learning; Chemical Engineering; Waste &amp; Recycling&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[3]&quot;,
+      &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+      &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+      &quot;page_start&quot;: 13,
+      &quot;page_end&quot;: 13,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.2. Damage index and the effective tensile strength of paper sheets\n[原文]\n$$\nD = \\frac {A _ {0} - A}{A _ {0}} = 1 - \\frac {A}{A _ {0}}\\tag{16}\n$$&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[4]&quot;,
+      &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+      &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+      &quot;page_start&quot;: 2,
+      &quot;page_end&quot;: 2,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\nAbstract: The deterioration of fiber properties during recycling processes, especially the loss of tensile strength, raises concerns that paper products made from recycled fibers might not satisfy quality requirements. The purpose of this paper is to estimate the deterioration of tensile strength and the damage in paper sheets made of recycled fibers using the theory of damage mechanics and machine learning methods. Experiments were carried out to recycle wood fibers and nonwood fibers four times, and the physicochemical properties of the handsheets made from these fibers were measured after each recycling. Water retention value and relative bonded area were selected as the features to estimate and predict tensile strength during recycling because they had strong correlations with tensile strength. This paper proposed a damage index to quantitatively express the severity of the damage in paper sheets based on the experimental investigation and the theory of damage mechanics. Thus, the deterioration of tensile strength could be estimated and predicted. To determine the damage index, a curve fitting model based on the hyperbolic theory of pulp properties was developed.&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[5]&quot;,
+      &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+      &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+      &quot;page_start&quot;: 2,
+      &quot;page_end&quot;: 4,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nRecycling is a key solution to the challenge of environmental pollution and resource shortages (Al-Hasan et al., 2020). With innovations in technologies, materials recovered from waste have found applications in various areas (Haque et al., 2021). Recycled fibers from waste paper have been widely utilized as manufacturing and construction materials all over the world (Solahuddin &amp; Yahaya, 2022). The quality requirements of recycled fibers include mechanical properties, physical properties, optical properties, printability, appearance properties, and so on (Campano et al., 2018). However, successive recycling processes cause damage in paper, which includes macro and micro changes in fibers. During papermaking and recycling processes, fibers have to endure shearing, pressing, and drying, which results in significant changes in properties (Hubbe et al., 2003; Nazhad, 2005). After each recycling process, the volume and shape of lumens and the volume of pores in fiber walls may change considerably (Chen et al., 2010; Hubbe et al., 2007).\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n The decrease of the water retention value (WRV) and the loss of fiber flexibility leads to the decrease in tensile strength, tear resistance, and folding endurance of paper sheets (Hubbe et al., 2007). These changes have been attributed to the loss of bonding potential, which is mainly determined by physical property changes during recycling processes, since no significant chemical property change occurs during recycling (Bouchard &amp; Douek, 1994).\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nOne of the major problems with paper recycling is the gradual loss in fiber strength during successive recycling processes (Hamzeh et al., 2013; M Zhang et al., 2002). Though it was observed that the tensile strength and density of recycled mechanical pulp did not decrease but slightly increased because the fibers became flattening and flexible to increase bonding potential (Howard &amp; Bichard, 1992). Researchers have long been developing technologies to reduce tensile loss in order to improve the quality of recycled fibers (Nordström &amp; Hermansson, 2017; Seo et al., 2002). Inter-fiber bonding enhancement, ultrasonic treatment, and other methods have been utilized to improve the mechanical properties of recycled fibers (Bajpai, 2010; Manfredi et al., 2013; Tatsumi et al., 2000).\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\ndi f h i f fib h l h h b i d i i theories and equipment (Belle &amp; Odermatt, 2016; Moral et al., 2010). Based on the theory of damage mechanics, damage will cause the ultra-structural disfigurement of fibers, which results in structure and property deterioration (Neagu et al., 2006). On the other hand, damage can be used to estimate the material property deterioration caused by changes in loading, ambient temperature, and so on. Since damage will unavoidably cause the deterioration of microstructures and macro properties during recycling, it is important to identify a damage index in the process where the damage is introduced. Thus, the changes in mechanical properties can be analyzed and described using the theory of damage mechanics of solid materials. The damage index should be a variable of interior states, which describes the irreversible changes in the structure of paper sheets (Keränen &amp; Retulainen, 2016; Retulainen &amp; Keränen, 2017). Hence, the damage index should be determined by some macro variables or micro parameters of paper sheets. It must also be measurable or obtainable easily.\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nThe Page equation (Page, 1993, 1969) describing the relationship between fiber configurations and the tensile strength of wet and dry sheets was proposed in 1969, and it has been widely used ever since (Duker &amp; Lindström, 2008; Lindström et al., 2016). However, the Page equation is a simplified approach, and it cannot be utilized to evaluate shear strength in once-dried fibers because of limited assumptions (Seth &amp; Page, 1996). There is no targeted theory that quantitatively relates the deterioration of fiber configurations and paper properties to the tensile strength of paper sheets during recycling processes. A quantitative expression of the mechanical damage in paper sheets after recycling processes would be important and highly desirable. Gurunagul et al. examined the contribution of the loss of fiber–fiber bond strength on the deterioration of tensile strength of once-dried paper sheets, but they eliminated the impact of fines by using long and straight fibers only (Gurnagul et al., 2001). Jin et al. explored the relationship between the tensile strength of recycled paper sheets and the wettability of a single fiber as well as the interfiber bond strength.\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n They used the factor of fiber–fiber bond weakness to indicate the fiber–fiber bond strength and found that during recycling processes, the factor of fiber–fiber bond weakness tended to increase and the fiber–fiber bond strength became weaker which led to the loss of tensile strength of paper sheets (Jin et al., 2022). However, this factor focused on the inter-fiber bond strength only, though it was the main factor affecting the tensile strength of paper sheets. The recycling effect has been examined mainly on mechanical and chemical wood pulps, while recycled non-wood fibers have been seldom studied. This is because wood fibers account for a significant share of the global pulp and paper industry. Non-wood fibers are not favorable compared with wood fibers, because they are only available seasonally and regionally; they have various physical and chemical properties; they have lower production yields, and so on (El-Sayed et al., 2020). However, non-wood fibers are valuable resources for the pulp and paper industry, especially for regions that have limited forest resources.\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n In some developing countries, e.g., China and India, 70% of the raw materials used in the paper and pulp industry come from nonwood plants (Liu et al., 2018). As technological innovations are shaping the future of the pulp and paper industry, non-wood fibers will play an indispensable role as a raw material resource (Salehi et al., 2017; Tschirner et al., 2007). This paper examines the property deterioration of reed fibers during recycling.\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nThe aim of this study is to estimate and predict the deterioration of tensile strength as well as other properties of paper sheets made from both wood and non-wood fibers such as bleached and unbleached softwood pulp, reed pulp, etc., in recycling processes. The theory and assumptions of damage mechanics for solid materials can be introduced to understand, analyze, and model the damage behavior of paper sheets during fiber recycling processes. Thus, the recycled fibers can be classified based on their damage severity and utilized in the manufacturing of different paper products.\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n The deterioration of tensile strength then could be calculated as ${ \\cal T } = { \\cal T } _ { \\cal O } \\left( 1 { - } { \\cal D } \\right)$ . The proposed method explored the possibility to quantitatively express the damage during recycling using a damage index and directly determine the tensile strength of paper products after recycling.\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n In this paper, a neural network model was trained to estimate the damage index as compared with the proposed curve fitting method. Recurrent neural networks (RNNs) are a class of neural networks that are suitable to process sequence data exhibiting temporal dynamic behavior. Long Short-Term Memory (LSTM) networks are a variant of RNNs. LSTM networks can solve the problem of long-time dependencies, when desired outputs depend on input presented a long time ago (Yu et al., 2019).&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[6]&quot;,
+      &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+      &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+      &quot;page_start&quot;: 5,
+      &quot;page_end&quot;: 7,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\nThe experiments were carried out based on the Technical Association of the Pulp and Paper Industry (TAPPI) standards. The TAPPI standard of “Forming Handsheets for Physical Tests of Pulp” describes the method of forming test handsheets to determine the properties of pulp. It includes a complete description of the standard apparatus, e.g., disintegrator, sheet machine, used in forming handsheets (Technical Association of the Pulp and Paper Industry, 2018). It also specifies the procedure to obtain a representative test specimen, including disintegration, sheetmaking, couching, pressing, drying, and testing (Technical Association of the Pulp and Paper Industry, 2018). The TAPPI standard of “Physical Testing of Pulp Handsheets” describes the procedure to test pulp handsheets. It defines the measurements of handsheet properties such as tensile strength, grammage, scattering coefficient, etc. (Technical Association of the Pulp and Paper Industry, 2021).\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\nThe bleached and unbleached softwood pulps and the reed pulp were refined by a PFI mill made by Paper and Fibre Research Institute, Norwegian, for laboratory beating of pulp. Handsheets were formed using the various aforementioned pulp samples. A hydraulic pulper made by the Shaanxi\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\nFigure 1. Fiber morphology of bleached kraft softwood pulp.\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\nUniversity of Science &amp; Technology Machinery Plant, China, was utilized to recycle the pulp fibers. A Kajaani Fiber Analyzer manufactured by Kajaani Electronics Ltd., Finland, was used to measure the fiber morphology. The light scattering coefficient of paper sheets was measured using a brightness tester manufactured by Hangzhou Pnshar Technology $\\mathsf { C o . }$ , Ltd., China. The degree of polymerization of celluloses was measured according to the Chinese National Standards (GB1548- 89). The zero-span tensile strength of the pulp fibers was measured with a zero-span tensile strength apparatus manufactured by China National Pulp and Paper Research Institute Ltd. Thus, handsheets were formed, tested, defibrated, and formed again to evaluate the deterioration of fiber properties during recycling processes.\n\nThe infrared spectra were acquired by an infrared (IR) spectrometer manufactured by Bruker Corporation, USA, using the transmission mode. A mixture of 100 mg pulp and dried potassium bromide (KBr) powder (1:100, w:w) was pressed into a transparent disc for IR analysis. The infrared crystal index was calculated as follows (Jiang et al., 2019):\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\n$$\nC. I. = I _ {1 3 7 2} / I _ {2 9 0 0}\\tag{1}\n$$\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\nwhere C.I. is the crystal index, and $I _ { 1 3 7 3 }$ and $I _ { 2 9 0 0 }$ are the spectral intensity at the indicated wave numbers. The 1372 cm&lt;sup&gt;−1&lt;/sup&gt; and the 2900 cm&lt;sup&gt;−1&lt;/sup&gt; peaks are the stretching vibrations of CH and $\\mathsf { C H } _ { 2 }$ respectively.\n\nThe X-ray diffraction analysis was carried out using a spectrograph made by Philip Co. The degree of crystallinity from X-ray diffraction was calculated as follows:\n\nThe relative crystallinity index (%; He et al., 2008):\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\n$$\nR C I = \\frac {I _ {0 0 2} - I _ {a m}}{I _ {0 0 2}} \\times 1 0 0\\tag{2}\n$$\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\nThe degree of crystallinity (%; Wan et al., 2010):\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\n$$\n\\alpha = \\frac {I _ {0 0 2}}{I _ {0 0 2} + I _ {a m}} \\times 1 0 0\\tag{3}\n$$\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\nwhere, I is the peak intensity at $2 6 \\approx 2 2 . 5 ^ { \\circ }$ , which expresses the diffraction intensity of crystalline fields. $I _ { a m }$ is the signal intensity at $2 \\Theta \\approx 1 8 ^ { \\circ }$ , which expresses the diffraction intensity of amorphous regions. The samples were glued on the sample holder, and the spectra were taken using a Cu Kα source at an output power of 40 KV/100 mA. The spectra were recorded at double diffraction angles with the 2θ ranging from 5° to 40°.\n\nThe WRV of the pulp samples was measured using a high-speed centrifuge. A quantity of wet pulp (equivalent to 1.5 g oven-dried pulp) was centrifuged at 3000 rpm for 15 minutes, and the WRV was calculated by (Jiang et al., 2019):\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\n$$\nW R V = \\frac {W c . f . - W o . d .}{W o . d .}\\tag{4}\n$$\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\nwhere $W _ { c . f . }$ and $W _ { o . d . }$ are the centrifuged wet weight and the oven-dried weight, respectively.\n\nThe RBA was calculated as follows (Tao &amp; Liu, 2011):\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\n$$\nR B A = 1 - \\frac {S}{S _ {0}}\\tag{5}\n$$\n\n[章节标签（程序整理，非原文）] 2. Materials and methods &gt; 2.2. Experimental methods\n[原文]\nwhere, S is the measured light scattering coefficient of paper sheets. S indicates the actual area providing effective hydrogen bonds. $S _ { o }$ is the light scattering coefficient of the sheet with no fiber hydrogen bond. The $S _ { o }$ can be substituted by the S value when the tensile strength is equal to zero, i.e., the S value at the intersection of the extended curve of tensile strength vs. the light scattering coefficient and the axis along which the tensile strength is equal to zero. Using the light scattering method to determine the RBA is one of the most common techniques, though it has limitations (Tao &amp; Liu, 2011).\n\nThe physicochemical properties of recycled fibers were measured during the successive recycling processes, from the original fibers until after having been recycled four times. The properties measured were zero-span tensile strength, zero-span tensile index, grammage, degree of polymerization (DP), fiber length, crystalline indices, degree of crystallinity, WRV, RBA, tensile strength, etc.&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[7]&quot;,
+      &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+      &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+      &quot;page_start&quot;: 4,
+      &quot;page_end&quot;: 4,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 2 Machine learning algorithms &gt; 2.1 Data preparation and preprocessing\n[原文]\nThis study utilized a synthetically generated dataset sourced from Kaggle [27], which contained.\n\n10,000 entries representing fiber-reinforced polymer composites. The dataset was constructed using parametric relationships informed by established composite mechanics principles and experimental trends from the literature, ensuring realistic ranges and interdependencies among features. The dataset features include eight critical parameters detailing composite composition and processing conditions. These parameters included two categorical variables, fiber type (Aramid, Glass, Carbon, Basalt) and resin type (Phenolic, Polyester, Vinyl Ester), along with six numerical variables, such as density (g/ cm³), layer count, curing temperature, fiber volume fraction, void content, and the target variable, tensile strength (MPa). Upon initial examination, it was confirmed that there were no missing values for any of the features. The analysis of outliers using boxplots indicated that there were no significant outliers in the numerical variables that needed to be removed.\n\n[章节标签（程序整理，非原文）] 2 Machine learning algorithms &gt; 2.1 Data preparation and preprocessing\n[原文]\n A systematic preprocessing pipeline was established in Python (Google Colab) utilizing scikit-learn for both baseline and neural models, as well as XGBoost and LightGBM for ensemble learning to ensure data quality and consistency in modeling. Categorical variables were transformed using one-hot encodings. Pearson correlation analysis was subsequently conducted to evaluate the relationship between the input features and tensile strength. Finally, all numerical features were standardized using Standard Scaler to achieve a mean of zero and a variance of one, which helps prevent scale dominance in models such as SVR and neural networks [28].&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[8]&quot;,
+      &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+      &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+      &quot;page_start&quot;: 7,
+      &quot;page_end&quot;: 7,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation\n[原文]\nAn initial exploratory data analysis (EDA) was performed to gain insights into the dataset structure and feature interconnections. The dataset comprised 10,000 synthetic entries with eight features, including categorical variables (fiber type and resin type) and numerical variables (density, layer count, curing temperature, fiber volume fraction, and void content), with tensile strength as the target variable. This preliminary analysis was essential for informing subsequent feature engineering and modeling.&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[9]&quot;,
+      &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+      &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+      &quot;page_start&quot;: 1,
+      &quot;page_end&quot;: 3,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 1 Introduction\n[原文]\nFiber-reinforced polymer composites are preferred materials for high-performance applications due to their outstanding mechanical properties, lightweight characteristics, and design flexibility [1]. Industries such as aerospace, automotive, and construction are increasingly utilizing these materials to reduce their weight while maintaining their structural strength. Among the various mechanical properties, tensile strength is a critical design factor that significantly afects a composite’s ability to resist cracking, deformation, and catastrophic failure when subjected to loads [2, 3]. In recent years, natural fiber-reinforced polymer (NFRP) composites have gained significant attention because of their low environmental impact, cost-efectiveness, and favorable mechanical properties [4]. The growing demand for sustainable materials has led to their increased use in areas such as automotive interiors, construction panels, and protective gear. However, developing new composite formulations is challenging because of the lack of experimental tensile strength data, which requires extensive and costly testing [5, 6].\n\n[章节标签（程序整理，非原文）] 1 Introduction\n[原文]\n Although accurate, traditional methods for experimentally characterizing composite tensile strength are resource-heavy and time-consuming. Each new material formulation necessitates the fabrication of specimens, conditioning, and mechanical testing under standardized conditions [7]. This method becomes impractical when exploring the extensive design space of fiber types, resin systems, and processing parameters of the composite material. The lack of reliable predictive tools for estimating tensile strength without extensive physical testing is a major obstacle to rapid material innovation [8]. Recent advancements in machine learning have created new opportunities for the prediction of material properties from limited data. Several studies have employed ML techniques to predict the composite strength with varying levels of success.\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 1 Introduction\n[原文]\nFiber-reinforced polymer composites exhibit superior mechanical performance owing to the synergistic interactions between the fibers and matrices. As noted by Singh et al. [9], their structural integrity depends on factors such as fiber–matrix adhesion, fiber aspect ratio, orientation, and eficient stress transfer, which are governed by interfacial shear strength and fiber geometry.\n\nThe fabrication process plays a crucial role in determining the properties of composites. Temesgen et al. [10] highlight that parameters like curing conditions, fiber alignment, and consolidation pressure control microstructure and mechanical behavior, which are essential for developing predictive models for material design and optimization.\n\nMoreover, the transition from Industry 4.0 to Industry 5.0 is transforming composite manufacturing processes. Sharma and Gupta [11] emphasize that integrating AI, digital twins, and data-driven approaches enables real-time optimization, predictive quality control, and sustainable production aligned with circular economy principles.\n\n[章节标签（程序整理，非原文）] 1 Introduction\n[原文]\nRecent research has highlighted the success of machine learning methods in predicting the mechanical properties of fiber-reinforced composites. Parra et al. [12] utilized various supervised learning algorithms to predict the elastic modulus and tensile strength of continuous fiber-reinforced polymer composites fabricated through materia extrusion additive manufacturing. They considered printing parameters such as the fiber content, deposition angle, lattice structure, and fill density. Among the models assessed, CatBoost and KNN showed superior predictive performance, with CatBoost excelling in both minimal error and rapid computation times. Tian et al. [13] evaluated random forest, XGBoost, CatBoost, SVM, and GBDT for predicting the tensile strength retention of glass fiber-reinforced polymer bars exposed to alkaline conditions, with CatBoost achieving the highest coeficient of determination. Similarly, Sathees Kumar, et al. [14] found that random forest outperformed SVM and decision tree models in predicting the tensile, flexural, and impact properties of hybrid natural fiber composites, demonstrating robust multi-property capabilities. Hamzat et al.\n\n[章节标签（程序整理，非原文）] 1 Introduction\n[原文]\n [15] further validated the efectiveness of ensemble methods, with random forest and gradient boosting achieving high predictive accuracy for flexural strength in fiber/PLA composites.\n\n[章节标签（程序整理，非原文）] 1 Introduction\n[原文]\nResearch has demonstrated that the model selection significantly affects the predic tion accuracy based on the target property. Kumar et al. [16] found that gradient boosting was more successful in predicting tensile strength, whereas random forest excelled in forecasting bursting strength in fiber-reinforced composites. Similarly, Al‑Mashhadani, et al. [17] discovered that random forests outperformed other tree-based models in predicting tensile strength retention at high temperatures while facilitating the identification of critical environmental predictors. Conversely, Yang et al. [18] noted that Gradient Boosting Decision Tree (GBDT) provided the highest accuracy among various tree-based algorithms for predicting the tensile strength of bamboo fiber-reinforced bio-based resin composites, with resin characteristics and fiber volume fraction identified as key factors. Recent research has combined machine learning with sophisticated composite-manufacturing techniques.\n\n[章节标签（程序整理，非原文）] 1 Introduction\n[原文]\n Kulkarni and Kumar [19] utilized ML to forecast the tensile stress in the material extrusion-based additive manufacturing of ABS/glass fiber composite sandwiches and to fine-tune the printing parameters for improved performance. Similarly, Wang and Zhang [20] employed ML for predictive analysis in the fused deposition modeling of PLA, achieving precise property predictions under diferent process conditions. In the realm of failure analysis, Sharma and Gupta [21] evaluated the failure criteria in the numerical modeling of electron-beam-cured polymer nanocomposites, emphasizing the significance of precise failure prediction. Reddy and Kumar [22] used ML to anticipate the bearing response in hydrothermally aged carbon fiber-reinforced epoxy composite joints, capturing the efects of aging-induced degradation on the bearing response. Patel and Singh [23] conducted a comprehensive review of the manufacturing and properties of carbon fiber composites, ofering insights into the process-structure-property relationships. Selvaraj and Kumar [24] demonstrated MLassisted 3D printing of sustainable structures using Agave sisalana waste-reinforced PLA composites.\n\n[章节标签（程序整理，非原文）] 1 Introduction\n[原文]\n Together, these studies highlight the increasing role of machine learning in applications related to composite manufacturing and their characterization. Collectively, these studies underscore the increasing significance of ensemble and hybrid machine learning models in accurately modeling the complex mechanical behaviors of composite materials, while highlighting the importance of selecting the appropriate algorithm and relevant features. Despite notable progress in the application of machine learning techniques to composite material research, several critical gaps persist in the literature. Many current studies rely on relatively limited feature sets, often neglecting important formulation parameters, such as surface density, epoxy group content, and matrix–filler ratio, which are crucial for capturing the complex interactions that govern composite performance [25]. Although individual tree-based algorithms are widely used, the application of stacking ensemble approaches that integrate multiple diverse learners remains largely unexplored for predicting composite properties [26].&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[10]&quot;,
+      &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+      &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+      &quot;page_start&quot;: 1,
+      &quot;page_end&quot;: 1,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Abstract\n[原文]\nFiber-reinforced polymer composites are extensively used in aerospace, automotive, and structural applications due to their excellent strength-to-weight ratio and design versatility. However, experimental tensile strength testing is both time-consuming and resource-intensive, hindering rapid material development. A significant challenge in advancing fiber-reinforced composites is the scarcity of experimental tensile strength data for newly formulated designs. To address this gap, this study introduces a comprehensive machine learning (ML) framework to predict the tensile strength based on compositional and processing parameters. The framework utilizes publicly accessible datasets containing parameters such as fiber types (Glass, Carbon, Aramid, Basalt), resin systems (Epoxy, Polyester, Vinyl Ester, Phenolic), density, layer count, curing temperature, fiber volume fraction, and void content.&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[11]&quot;,
+      &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+      &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+      &quot;page_start&quot;: 10,
+      &quot;page_end&quot;: 10,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nTable 1 Model comparison for tensile strength prediction\n\n&lt;table&gt;&lt;tr&gt;&lt;td&gt;Model&lt;/td&gt;&lt;td&gt; $R^2$ &lt;/td&gt;&lt;td&gt;RMSE (MPa)&lt;/td&gt;&lt;td&gt;MAE (MPa)&lt;/td&gt;&lt;td&gt;CV  $R^2$  Mean&lt;/td&gt;&lt;td&gt;CV  $R^2$  Std&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Stacking (LR)&lt;/td&gt;&lt;td&gt;0.9975&lt;/td&gt;&lt;td&gt;31.58&lt;/td&gt;&lt;td&gt;25.09&lt;/td&gt;&lt;td&gt;0.9973&lt;/td&gt;&lt;td&gt;0.0002&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;ANN (MLP)&lt;/td&gt;&lt;td&gt;0.9975&lt;/td&gt;&lt;td&gt;31.67&lt;/td&gt;&lt;td&gt;25.14&lt;/td&gt;&lt;td&gt;0.9973&lt;/td&gt;&lt;td&gt;0.0002&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Stacking (XGB)&lt;/td&gt;&lt;td&gt;0.9966&lt;/td&gt;&lt;td&gt;36.45&lt;/td&gt;&lt;td&gt;27.51&lt;/td&gt;&lt;td&gt;0.9963&lt;/td&gt;&lt;td&gt;0.0003&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;LightGBM&lt;/td&gt;&lt;td&gt;0.9935&lt;/td&gt;&lt;td&gt;50.74&lt;/td&gt;&lt;td&gt;39.48&lt;/td&gt;&lt;td&gt;0.9927&lt;/td&gt;&lt;td&gt;0.0005&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;XGBoost&lt;/td&gt;&lt;td&gt;0.9913&lt;/td&gt;&lt;td&gt;58.38&lt;/td&gt;&lt;td&gt;44.43&lt;/td&gt;&lt;td&gt;0.9905&lt;/td&gt;&lt;td&gt;0.0006&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Random forest&lt;/td&gt;&lt;td&gt;0.9783&lt;/td&gt;&lt;td&gt;92.32&lt;/td&gt;&lt;td&gt;70.58&lt;/td&gt;&lt;td&gt;0.9699&lt;/td&gt;&lt;td&gt;0.0009&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Linear regression&lt;/td&gt;&lt;td&gt;0.9523&lt;/td&gt;&lt;td&gt;137.02&lt;/td&gt;&lt;td&gt;97.28&lt;/td&gt;&lt;td&gt;0.9505&lt;/td&gt;&lt;td&gt;0.0013&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;SVR (RBF)&lt;/td&gt;&lt;td&gt;0.3382&lt;/td&gt;&lt;td&gt;510.36&lt;/td&gt;&lt;td&gt;375.99&lt;/td&gt;&lt;td&gt;0.2884&lt;/td&gt;&lt;td&gt;0.0129&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nFig. 5 Scatter plots actual versus predicted for all models\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nBeyond the primary relationships, the heat map revealed generally low to moderate correlations between features, indicating the absence of severe multicollinearity that could compromise models such as linear regression. Physically meaningful relationships were also evident, such as a moderate correlation between the fiber volume fraction and layer count, whereas the void content was negatively associated with most strengthrelated parameters, underscoring its harmful efect. Overall, this analysis underscores the combined impact of processing parameters and material selection, ofering a robust statistical basis for future predictive models [40].&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[12]&quot;,
+      &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+      &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+      &quot;page_start&quot;: 9,
+      &quot;page_end&quot;: 9,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nTo better understand factors afecting the tensile strength, a comprehensive correlation analysis was performed on all features after one-hot encoding of categorical variables. The correlation matrix in Fig. 4 confirms the significant positive impact of the number of layers and fiber volume fraction on the tensile strength. Notably, it quantitatively confirms the influence of material selection: the carbon fiber dummy variable is strongly positively correlated with tensile strength, whereas aramid shows a negative correlation, supporting earlier boxplot findings that fiber choice is a crucial factor in composite performance. Likewise, the Vinyl Ester resin is positively linked to strength.&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[13]&quot;,
+      &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+      &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+      &quot;page_start&quot;: 12,
+      &quot;page_end&quot;: 12,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\nTo evaluate the relative performance of the machine learning approaches against an established theoretical method, the predictions from the proposed ML models were compared with the Rule of Mixtures (ROM), a classical composite mechanics model. The Rule of Mixtures predicts the composite tensile strength using Eq.  8, a linear relationship:\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\n$$\n\\sigma c = \\sigma f V f + \\sigma m (1 - V f)\\tag{8}\n$$\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\nWhen applied to the test dataset (2,000 samples), the ROM achieved an $\\mathrm { R } ^ { 2 }$ of 0.842 and an RMSE of 312.5 MPa, capturing general trends but with significant errors owing to its simplified linear assumptions. In contrast, the ANN and stacking ensemble achieved $\\mathbb { R } ^ { 2 }$ ≈ 0.9975 and RMSE ≈ 31.6 MPa, reducing the prediction error compared to ROM. This superior performance stems from ML’s ability to capture complex nonlinear interactions among multiple features, which the ROM cannot simultaneously incorporate.&quot;
+    },
+    {
+      &quot;ref&quot;: &quot;[14]&quot;,
+      &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+      &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+      &quot;page_start&quot;: 10,
+      &quot;page_end&quot;: 10,
+      &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength\n[原文]\nAfter conducting exploratory data analysis (EDA), a diverse array of regression models was developed and tested on the processed dataset to predict the tensile strength. The models included Linear Regression, Support Vector Regression (SVR), Random Forest, XGBoost, LightGBM, an Artificial Neural Network (ANN), and two stacking ensembles. Model efectiveness was evaluated using the coeficient of determination (R²), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE) on a separate test set. Additionally, 5-fold cross-validation (CV) was applied to the training data to verify the robustness and generalizability of the findings [41]. Table 1 provides a summary of the performance metrics for all models, whereas Fig. 5 displays scatter plots comparing the actual and predicted values for each model.&quot;
+    }
+  ]
+}</pre></details></article></main></html>
