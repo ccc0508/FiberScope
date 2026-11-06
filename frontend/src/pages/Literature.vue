@@ -10,6 +10,7 @@ import {
 import { get } from "../api";
 import { apiPath } from "../urls";
 import LiteratureHistory from "../components/LiteratureHistory.vue";
+import EvidenceExcerpt from "../components/EvidenceExcerpt.vue";
 import { literatureRequest, feedbackTags, timeLabel, type Answer, type HistoryRecord, type HistoryItem, type Feedback } from "../literature";
 
 interface Document {
@@ -420,7 +421,7 @@ load();
             >查看原文<ExternalLink :size="13"
           /></a>
         </div>
-        <blockquote>{{ c.excerpt }}</blockquote>
+        <EvidenceExcerpt :text="c.excerpt" />
         <div v-if="c.visual_assets?.length" class="citation-images">
           <figure v-for="image in c.visual_assets" :key="image.id">
             <a :href="imageUrl(image.sha256)" target="_blank" rel="noreferrer"
@@ -434,7 +435,7 @@ load();
           <summary>查看引用的原文组成（{{ c.source_chunks?.length }} 段）</summary>
           <div v-for="part in c.source_chunks" :key="part.chunk_id">
             <small>PDF 第 {{ part.page_start }}{{ part.page_end !== part.page_start ? `–${part.page_end}` : "" }} 页</small>
-            <blockquote>{{ part.text }}</blockquote>
+            <EvidenceExcerpt :text="part.text" />
           </div>
         </details>
       </article>
