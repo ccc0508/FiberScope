@@ -25,6 +25,9 @@ def adapt_run(state, evidence, trace, elapsed_ms):
             a=c['asset']
             row=dict(ref=e['ref'],kind=kind,document_id=a['document_id'],filename=a['label'],
                 page_start=a['page'],page_end=a['page'],chunk_id=a['parent_chunk_id'],excerpt='模型查看的原PDF图片：'+a['label'],visual_assets=[a])
+        elif kind=='experiment_query':
+            row=dict(ref=e['ref'],kind=kind,document_id='',filename='实验数据库查询 · '+c['view'],
+                page_start=0,page_end=0,chunk_id='',excerpt=json.dumps(c,ensure_ascii=False,indent=2))
         elif kind=='calculation':
             row=dict(ref=e['ref'],kind=kind,document_id='',filename='计算结果（非论文原文）',page_start=0,page_end=0,chunk_id='',
                 excerpt=f"初值：{c['initial']}；终值：{c['final']}；单位：{c['unit']}；差值：{c['difference']}；相对变化：{c.get('relative_change_percent')}%。公式：{c['formula']}",source_refs=c.get('source_refs',[]))
