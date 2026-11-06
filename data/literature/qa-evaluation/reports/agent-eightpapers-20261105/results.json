@@ -4812,7 +4812,7 @@
         },
         {
           "claim_id": "C5",
-          "coverage": "missing"
+          "coverage": "partial"
         },
         {
           "claim_id": "C6",
@@ -4828,7 +4828,7 @@
         },
         {
           "claim_id": "C9",
-          "coverage": "missing"
+          "coverage": "complete"
         }
       ],
       "answerability_score": 2,
@@ -4919,11 +4919,11 @@
         "pair_count": 11,
         "supported_pairs": 11,
         "group_count": 9,
-        "covered_groups": 6,
+        "covered_groups": 7,
         "boundary": 2,
         "fact_support": 77.77777777777777,
         "citation_precision": 100.0,
-        "citation_coverage": 66.66666666666667,
+        "citation_coverage": 77.77777777777777,
         "strict_pass": false,
         "format_ok": true
       },
@@ -4937,9 +4937,19 @@
           "path": "claim_assessments.C5.support",
           "value": "partially_supported",
           "reason": "表5按性能行组织，抗张指数是首行，不是与表7同类意义的首列。"
+        },
+        {
+          "path": "citation_group_assessments.C9.coverage",
+          "value": "complete",
+          "reason": "用户确认总结不必重复引用：该段只重述前文已附表5/表7证据的结论，承接前文引用。"
+        },
+        {
+          "path": "citation_group_assessments.C5.coverage",
+          "value": "partial",
+          "reason": "同表说明可承接前面的表5[4]/表7[6]引用，不判missing；但首行说成首列的错误仍未获支持，故不是complete。"
         }
       ],
-      "reason": "表5与表7四个抗张NRMSE及优劣关系正确。正文额外称表5抗张是首列，实际是首行，属于图表布局叙述错误；不影响核心数值但影响额外事实充分支持。"
+      "reason": "核心数值与优劣答全。总结承接前文引用，C9改complete；同表说明承接表格引用，C5由missing改partial，不再因没有重复引用扣分，但布局说错仍保留事实及完整覆盖缺陷。C6额外正文数值表述仍保留部分支持。"
     },
     "result_sha256": "c6bd34d38fbb11404130a94dcc1fc3b6f51fe0de12b21b9577ef306476f00e5c",
     "judge_input_sha256": "0d6ba9bffd3c487924e9c00e4773f43f417ac42b12ac4052c62fa92291691dc7"
@@ -5271,7 +5281,7 @@
       "routing_ok": true,
       "elapsed_ms": 29004,
       "changes": [],
-      "reason": "检测不到全部纳米纤维及5µm限制答全。额外将100到10µm作为纤维区间是错误的单位/范围复述，原文涉及100µm到10mm；并把代理假设讲成无法可靠验证过强，保留部分支持。"
+      "reason": "核心测量限制答全。2026-11-06查看原PDF第5/12页：原页面即印between 100 and 10 mm，100后单位不明确；MinerU及实际上下文保留mm。初稿擅自改成100–10 μm，复核未改正。不能将100μm到10mm说成原文明确写法。引用初稿[1]本为Influence of fibre content，复核改成[2]（实际为力学制备/测试与参数表），主要错引发生于复核。保留原评分，修正诊断表述。"
     },
     "result_sha256": "9cea28765b7b1d89308b1e217787d2604c566f597d1adc9bde1491d6f961c80d",
     "judge_input_sha256": "1a50db6b59307e735d3ca564b1d96b40b71cad85a6ff0581ea5cee5a090f3a66"

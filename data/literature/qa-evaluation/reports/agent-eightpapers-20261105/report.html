@@ -45,8 +45,8 @@
       &quot;denominator&quot;: 243
     },
     &quot;citation_coverage&quot;: {
-      &quot;percent&quot;: 43.96551724137931,
-      &quot;numerator&quot;: 51,
+      &quot;percent&quot;: 44.827586206896555,
+      &quot;numerator&quot;: 52,
       &quot;denominator&quot;: 116
     }
   },
@@ -67,8 +67,8 @@
         &quot;denominator&quot;: 148
       },
       &quot;citation_coverage&quot;: {
-        &quot;percent&quot;: 49.31506849315068,
-        &quot;numerator&quot;: 36,
+        &quot;percent&quot;: 50.68493150684932,
+        &quot;numerator&quot;: 37,
         &quot;denominator&quot;: 73
       }
     },
@@ -3738,7 +3738,7 @@ Morais与Curto（2022，PDF第4页，3.2节）在ANN方法部分统一说明：�
       &quot;citation_C3_2&quot;: &quot;supported&quot;
     }
   }
-}</pre></details></article><article><h2>FS8-011 · Pennells等（2022）比较MLR和SVR时，表5与表7的抗张指标误差各是多少？“SVR在建模和新增验证样品上都更好”对吗？</h2><p><b>Jev：</b>100.00 / 88.89 / 100.00 / 66.67 / 2 / 未通过<br><b>校准：</b>100.00 / 77.78 / 100.00 / 66.67 / 2 / 未通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>表5与表7四个抗张NRMSE及优劣关系正确。正文额外称表5抗张是首列，实际是首行，属于图表布局叙述错误；不影响核心数值但影响额外事实充分支持。</p><ul><li>claim_assessments.C5.support → partially_supported：表5按性能行组织，抗张指数是首行，不是与表7同类意义的首列。</li></ul><p>状态：completed · 复核：completed · 工具：search_literature · 27.4秒</p><details><summary>完整回答</summary><pre># Pennells 等（2022）MLR 与 SVR 的抗张指标误差，以及“SVR 在建模和新增验证样品上都更好”这一说法的核查
+}</pre></details></article><article><h2>FS8-011 · Pennells等（2022）比较MLR和SVR时，表5与表7的抗张指标误差各是多少？“SVR在建模和新增验证样品上都更好”对吗？</h2><p><b>Jev：</b>100.00 / 88.89 / 100.00 / 66.67 / 2 / 未通过<br><b>校准：</b>100.00 / 77.78 / 100.00 / 77.78 / 2 / 未通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>核心数值与优劣答全。总结承接前文引用，C9改complete；同表说明承接表格引用，C5由missing改partial，不再因没有重复引用扣分，但布局说错仍保留事实及完整覆盖缺陷。C6额外正文数值表述仍保留部分支持。</p><ul><li>claim_assessments.C5.support → partially_supported：表5按性能行组织，抗张指数是首行，不是与表7同类意义的首列。</li><li>citation_group_assessments.C9.coverage → complete：用户确认总结不必重复引用：该段只重述前文已附表5/表7证据的结论，承接前文引用。</li><li>citation_group_assessments.C5.coverage → partial：同表说明可承接前面的表5[4]/表7[6]引用，不判missing；但首行说成首列的错误仍未获支持，故不是complete。</li></ul><p>状态：completed · 复核：completed · 工具：search_literature · 27.4秒</p><details><summary>完整回答</summary><pre># Pennells 等（2022）MLR 与 SVR 的抗张指标误差，以及“SVR 在建模和新增验证样品上都更好”这一说法的核查
 
 ## 一、抗张指标误差
 
@@ -4201,7 +4201,7 @@ Morais与Curto（2022，PDF第4页，3.2节）在ANN方法部分统一说明：�
       },
       {
         &quot;claim_id&quot;: &quot;C5&quot;,
-        &quot;coverage&quot;: &quot;missing&quot;
+        &quot;coverage&quot;: &quot;partial&quot;
       },
       {
         &quot;claim_id&quot;: &quot;C6&quot;,
@@ -4217,7 +4217,7 @@ Morais与Curto（2022，PDF第4页，3.2节）在ANN方法部分统一说明：�
       },
       {
         &quot;claim_id&quot;: &quot;C9&quot;,
-        &quot;coverage&quot;: &quot;missing&quot;
+        &quot;coverage&quot;: &quot;complete&quot;
       }
     ],
     &quot;answerability_score&quot;: 2,
@@ -4278,7 +4278,7 @@ Morais与Curto（2022，PDF第4页，3.2节）在ANN方法部分统一说明：�
       &quot;group_C9&quot;: &quot;missing&quot;
     }
   }
-}</pre></details></article><article><h2>FS8-012 · Pennells等（2022）用MorFi预测纳米纸性能，是否意味着MorFi直接测量了全部纳米纤维？作者对fiber content这个指标有什么限制说明？</h2><p><b>Jev：</b>100.00 / 50.00 / 60.00 / 0.00 / 2 / 未通过<br><b>校准：</b>100.00 / 50.00 / 60.00 / 0.00 / 2 / 未通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>检测不到全部纳米纤维及5µm限制答全。额外将100到10µm作为纤维区间是错误的单位/范围复述，原文涉及100µm到10mm；并把代理假设讲成无法可靠验证过强，保留部分支持。</p><ul><li>维持Jev评分，理由见下。</li></ul><p>状态：completed · 复核：completed · 工具：search_literature · 29.0秒</p><details><summary>完整回答</summary><pre>**结论：不是。** MorFi 只是用以**预测**纳米纸性能的间接工具，并没有直接测量全部纳米纤维；作者明确指出 MorFi 无法获知真实纤维含量，并说明&quot;fiber content&quot;只对应可检测的微米级纤维，必须依赖无法可靠验证的假设才能作为原纤化程度的代理指标。
+}</pre></details></article><article><h2>FS8-012 · Pennells等（2022）用MorFi预测纳米纸性能，是否意味着MorFi直接测量了全部纳米纤维？作者对fiber content这个指标有什么限制说明？</h2><p><b>Jev：</b>100.00 / 50.00 / 60.00 / 0.00 / 2 / 未通过<br><b>校准：</b>100.00 / 50.00 / 60.00 / 0.00 / 2 / 未通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>核心测量限制答全。2026-11-06查看原PDF第5/12页：原页面即印between 100 and 10 mm，100后单位不明确；MinerU及实际上下文保留mm。初稿擅自改成100–10 μm，复核未改正。不能将100μm到10mm说成原文明确写法。引用初稿[1]本为Influence of fibre content，复核改成[2]（实际为力学制备/测试与参数表），主要错引发生于复核。保留原评分，修正诊断表述。</p><ul><li>维持Jev评分，理由见下。</li></ul><p>状态：completed · 复核：completed · 工具：search_literature · 29.0秒</p><details><summary>完整回答</summary><pre>**结论：不是。** MorFi 只是用以**预测**纳米纸性能的间接工具，并没有直接测量全部纳米纤维；作者明确指出 MorFi 无法获知真实纤维含量，并说明&quot;fiber content&quot;只对应可检测的微米级纤维，必须依赖无法可靠验证的假设才能作为原纤化程度的代理指标。
 
 ## 1. MorFi 并非直接测量全部纳米纤维
 
