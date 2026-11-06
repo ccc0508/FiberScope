@@ -1,0 +1,154 @@
+{
+  "report_type": "mixed-version selected-results snapshot, not a single-version end-to-end run",
+  "answer_regenerated": false,
+  "judge_rerun": false,
+  "baseline": {
+    "count": 30,
+    "point_score": 92.5,
+    "strict_pass_count": 8,
+    "boundary_mean": 1.8,
+    "fact_support": {
+      "percent": 69.35483870967742,
+      "numerator": 86,
+      "denominator": 124
+    },
+    "citation_precision": {
+      "percent": 80.65843621399176,
+      "numerator": 196,
+      "denominator": 243
+    },
+    "citation_coverage": {
+      "percent": 47.41379310344828,
+      "numerator": 55,
+      "denominator": 116
+    }
+  },
+  "selected_before_audit": {
+    "count": 30,
+    "point_score": 94.16666666666667,
+    "strict_pass_count": 9,
+    "boundary_mean": 1.8666666666666667,
+    "fact_support": {
+      "percent": 73.22834645669292,
+      "numerator": 93,
+      "denominator": 127
+    },
+    "citation_precision": {
+      "percent": 89.1213389121339,
+      "numerator": 213,
+      "denominator": 239
+    },
+    "citation_coverage": {
+      "percent": 57.983193277310924,
+      "numerator": 69,
+      "denominator": 119
+    }
+  },
+  "latest": {
+    "count": 30,
+    "point_score": 94.16666666666667,
+    "strict_pass_count": 11,
+    "boundary_mean": 1.8666666666666667,
+    "fact_support": {
+      "percent": 75.59055118110236,
+      "numerator": 96,
+      "denominator": 127
+    },
+    "citation_precision": {
+      "percent": 89.9581589958159,
+      "numerator": 215,
+      "denominator": 239
+    },
+    "citation_coverage": {
+      "percent": 63.865546218487395,
+      "numerator": 76,
+      "denominator": 119
+    }
+  },
+  "groups": {
+    "single": {
+      "count": 16,
+      "point_score": 98.4375,
+      "strict_pass_count": 5,
+      "boundary_mean": 1.9375,
+      "fact_support": {
+        "percent": 81.57894736842105,
+        "numerator": 62,
+        "denominator": 76
+      },
+      "citation_precision": {
+        "percent": 88.88888888888889,
+        "numerator": 128,
+        "denominator": 144
+      },
+      "citation_coverage": {
+        "percent": 80.26315789473684,
+        "numerator": 61,
+        "denominator": 76
+      }
+    },
+    "cross": {
+      "count": 8,
+      "point_score": 81.25,
+      "strict_pass_count": 0,
+      "boundary_mean": 1.625,
+      "fact_support": {
+        "percent": 60.46511627906977,
+        "numerator": 26,
+        "denominator": 43
+      },
+      "citation_precision": {
+        "percent": 91.57894736842105,
+        "numerator": 87,
+        "denominator": 95
+      },
+      "citation_coverage": {
+        "percent": 34.883720930232556,
+        "numerator": 15,
+        "denominator": 43
+      }
+    },
+    "no_paper": {
+      "count": 6,
+      "point_score": 100,
+      "strict_pass_count": 6,
+      "boundary_mean": 2,
+      "fact_support": {
+        "percent": 100.0,
+        "numerator": 8,
+        "denominator": 8
+      },
+      "citation_precision": {
+        "percent": null,
+        "numerator": 0,
+        "denominator": 0
+      },
+      "citation_coverage": {
+        "percent": null,
+        "numerator": 0,
+        "denominator": 0
+      }
+    }
+  },
+  "strict_pass_cases": [
+    "FS8-001",
+    "FS8-009",
+    "FS8-010",
+    "FS8-012",
+    "FS8-014",
+    "FS8-025",
+    "FS8-026",
+    "FS8-027",
+    "FS8-028",
+    "FS8-029",
+    "FS8-030"
+  ],
+  "limitations": [
+    "仅前12题按本轮口径复查，13—30题保留此前校准。",
+    "这不是同一版本的一次完整运行，不可将变化全部归因于算法优化。",
+    "历史Jev评分未重跑；最终分为基于既有来源的Codex校准，不等同独立专家审核。",
+    "第4题采用原图重跑，不采用后续分辨率实验或挑最高分答案。",
+    "不混算不同批次Token、费用与时延。",
+    "事实核查单位为冻结语义段落组，不是逐句正确率。"
+  ]
+}

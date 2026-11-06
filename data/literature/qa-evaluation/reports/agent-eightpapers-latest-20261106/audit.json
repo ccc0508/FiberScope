@@ -1,0 +1,542 @@
+[
+  {
+    "case_id": "FS8-001",
+    "source_run": "agent-eightpapers-20261105",
+    "reviewed": true,
+    "reason": "维持已确认满分；局部证据范围限定和总结不重复引用均已接受。",
+    "changes": [],
+    "before": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 3,
+      "supported_facts": 3,
+      "pair_count": 6,
+      "supported_pairs": 6,
+      "group_count": 3,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 100.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 100.0,
+      "strict_pass": true,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 3,
+      "supported_facts": 3,
+      "pair_count": 6,
+      "supported_pairs": 6,
+      "group_count": 3,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 100.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 100.0,
+      "strict_pass": true,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-002",
+    "source_run": "agent-hash-refs-case2-20261105",
+    "reviewed": true,
+    "reason": "接受C3明确限定于本次检索材料的不确定性说明；仍保留C4把两位作者写成四位作者的实质错误。",
+    "changes": [
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "supported",
+        "reason": "该段明确说现有收录材料、本次检索范围；不将未取得补充材料解释成断言论文没有该材料。其余实验输入与验证限制由[2][11][13]支持。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "complete",
+        "reason": "允许来源共同支持段落及有界的检索不足说明，不要求每个来源单独证明整段。"
+      },
+      {
+        "path": "citation_assessments.C3.[1].score",
+        "value": 1,
+        "reason": "[1]摘要说明建模数据来自实验设计，但未展示ANN划分；该引用用于限定已取得的信息，并非断言全文没有划分。"
+      },
+      {
+        "path": "citation_assessments.C3.[9].score",
+        "value": 1,
+        "reason": "[9]明确将MLR分析明细指向补充表S2/S3，支持当前片段不足以核对完整训练清单的说明。"
+      }
+    ],
+    "before": {
+      "point_score": 100,
+      "point_count": 3,
+      "fact_count": 4,
+      "supported_facts": 2,
+      "pair_count": 11,
+      "supported_pairs": 9,
+      "group_count": 4,
+      "covered_groups": 2,
+      "boundary": 2,
+      "fact_support": 50.0,
+      "citation_precision": 81.81818181818181,
+      "citation_coverage": 50.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 3,
+      "fact_count": 4,
+      "supported_facts": 3,
+      "pair_count": 11,
+      "supported_pairs": 11,
+      "group_count": 4,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 75.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 75.0,
+      "strict_pass": false,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-003",
+    "source_run": "agent-eightpapers-20261105",
+    "reviewed": true,
+    "reason": "三值本身由[3]共同支持；总结承接前文，取消纯粹缺少重复引用的扣分。但50%条件缺损造成的过度保留、错引和把无量纲增幅称为量纲不可通约等问题仍保留。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "实际[3]同时列出56.8%、99.3%、108.1%，[1][2]支持抗张的50%条件；其他冗余错引仍在单引维度保留，不否认现有有效来源的联合覆盖。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "partial",
+        "reason": "总结继承前文来源，不再判missing；但仍重复后两项50%配比待确认的实质缺陷，不能恢复complete。"
+      }
+    ],
+    "before": {
+      "point_score": 75.0,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 2,
+      "pair_count": 13,
+      "supported_pairs": 7,
+      "group_count": 4,
+      "covered_groups": 0,
+      "boundary": 1,
+      "fact_support": 50.0,
+      "citation_precision": 53.84615384615385,
+      "citation_coverage": 0.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 75.0,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 2,
+      "pair_count": 13,
+      "supported_pairs": 7,
+      "group_count": 4,
+      "covered_groups": 1,
+      "boundary": 1,
+      "fact_support": 50.0,
+      "citation_precision": 53.84615384615385,
+      "citation_coverage": 25.0,
+      "strict_pass": false,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-004",
+    "source_run": "agent-figure-discovery-case4-20261106",
+    "reviewed": true,
+    "reason": "采用指定的原图重跑，非高分辨率实验。开头趋势结论继承后文图像与正文引用；仍保留棉浆抗张峰位、耐破50%低于0%的读图错误。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "开头正确趋势总结由后文[7][9][10]支持，无需重复挂引。"
+      }
+    ],
+    "before": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 3,
+      "pair_count": 7,
+      "supported_pairs": 7,
+      "group_count": 4,
+      "covered_groups": 2,
+      "boundary": 2,
+      "fact_support": 75.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 50.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 3,
+      "pair_count": 7,
+      "supported_pairs": 7,
+      "group_count": 4,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 75.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 75.0,
+      "strict_pass": false,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-005",
+    "source_run": "agent-eightpapers-20261105",
+    "reviewed": true,
+    "reason": "维持原分，但澄清扣分理由：[6]确实写WRV回收五次，不应将这一忠实转述视为无依据。保留的是把解析后异常公式断言为原论文排版错误，尚不能排除解析失真；不因一般外推限制扣分。",
+    "changes": [],
+    "before": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 5,
+      "supported_facts": 4,
+      "pair_count": 16,
+      "supported_pairs": 16,
+      "group_count": 5,
+      "covered_groups": 5,
+      "boundary": 2,
+      "fact_support": 80.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 100.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 5,
+      "supported_facts": 4,
+      "pair_count": 16,
+      "supported_pairs": 16,
+      "group_count": 5,
+      "covered_groups": 5,
+      "boundary": 2,
+      "fact_support": 80.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 100.0,
+      "strict_pass": false,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-006",
+    "source_run": "agent-eightpapers-20261105",
+    "reviewed": true,
+    "reason": "接受末段对未提供误差区间及显著性的谨慎提醒，恢复C4；保留C3把训练集复用直接解释为曲线拟合优于LSTM的因果推断。两种方法都使用训练数据估计，不能据此单独解释优劣。",
+    "changes": [
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "supported",
+        "reason": "C4复述模型、RMSE及适用范围，不能从点估计确定统计显著性属于合理边界提醒，并未否认论文报告的精度差异。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "complete",
+        "reason": "承接前文摘要、讨论和结论引用；合理不确定性提醒无需另找论文逐字表述。"
+      }
+    ],
+    "before": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 2,
+      "pair_count": 10,
+      "supported_pairs": 10,
+      "group_count": 4,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 50.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 75.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 3,
+      "pair_count": 10,
+      "supported_pairs": 10,
+      "group_count": 4,
+      "covered_groups": 4,
+      "boundary": 2,
+      "fact_support": 75.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 100.0,
+      "strict_pass": false,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-007",
+    "source_run": "agent-eightpapers-20261105",
+    "reviewed": true,
+    "reason": "保留把公开可获得与合成数据误称冲突的事实问题；末段未确定是否分层抽样是方法信息不足说明，承接已有方法引用，不单独罚漏引。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C5.coverage",
+        "value": "complete",
+        "reason": "训练/测试划分的方法说明承接前文来源；未能确定是否分层属于谨慎范围说明。"
+      }
+    ],
+    "before": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 5,
+      "supported_facts": 4,
+      "pair_count": 9,
+      "supported_pairs": 9,
+      "group_count": 5,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 80.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 60.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 5,
+      "supported_facts": 4,
+      "pair_count": 9,
+      "supported_pairs": 9,
+      "group_count": 5,
+      "covered_groups": 4,
+      "boundary": 2,
+      "fact_support": 80.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 80.0,
+      "strict_pass": false,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-008",
+    "source_run": "agent-current-case8-20261106",
+    "reviewed": true,
+    "reason": "采用新回答，编号错配已消失；仍保留将原文列举的First/Second/Third进一步写成最关键的无依据因素排名，不因其余合理局限说明扣分。",
+    "changes": [],
+    "before": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 7,
+      "supported_facts": 6,
+      "pair_count": 10,
+      "supported_pairs": 10,
+      "group_count": 7,
+      "covered_groups": 6,
+      "boundary": 2,
+      "fact_support": 85.71428571428571,
+      "citation_precision": 100.0,
+      "citation_coverage": 85.71428571428571,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 7,
+      "supported_facts": 6,
+      "pair_count": 10,
+      "supported_pairs": 10,
+      "group_count": 7,
+      "covered_groups": 6,
+      "boundary": 2,
+      "fact_support": 85.71428571428571,
+      "citation_precision": 100.0,
+      "citation_coverage": 85.71428571428571,
+      "strict_pass": false,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-009",
+    "source_run": "agent-eightpapers-20261105",
+    "reviewed": true,
+    "reason": "[1]结论和[4]摘要共同支持分组结果及总体结果；合理区分评价层级、现有证据未提供样本明细不应扣覆盖分，恢复C4完整覆盖。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "complete",
+        "reason": "原料分组及总体拟合结果有对应来源；未取得明细是局部证据范围声明，不要求原文主动声明缺失。"
+      }
+    ],
+    "before": {
+      "point_score": 100,
+      "point_count": 3,
+      "fact_count": 4,
+      "supported_facts": 4,
+      "pair_count": 6,
+      "supported_pairs": 6,
+      "group_count": 4,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 100.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 75.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 3,
+      "fact_count": 4,
+      "supported_facts": 4,
+      "pair_count": 6,
+      "supported_pairs": 6,
+      "group_count": 4,
+      "covered_groups": 4,
+      "boundary": 2,
+      "fact_support": 100.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 100.0,
+      "strict_pass": true,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-010",
+    "source_run": "agent-eightpapers-20261105",
+    "reviewed": true,
+    "reason": "正文确实印R²=.34，答案明确标注原文为.34；不因未额外罗列结论中的.94而扣本题事实与引用分。保留原文内部数值冲突提示，但不是模型捏造，也不是题目要求的冲突辨析。",
+    "changes": [
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "supported",
+        "reason": "实际[1]包含.34及混合样品预测不推荐的说明，忠实引用注明出处；小样本稳健性不确定是合理限定。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "complete",
+        "reason": "来源支持该段报告值和训练划分，不强加题面未要求的全篇冲突汇总义务。"
+      }
+    ],
+    "before": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 3,
+      "supported_facts": 2,
+      "pair_count": 4,
+      "supported_pairs": 4,
+      "group_count": 3,
+      "covered_groups": 2,
+      "boundary": 2,
+      "fact_support": 66.66666666666667,
+      "citation_precision": 100.0,
+      "citation_coverage": 66.66666666666667,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 3,
+      "supported_facts": 3,
+      "pair_count": 4,
+      "supported_pairs": 4,
+      "group_count": 3,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 100.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 100.0,
+      "strict_pass": true,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-011",
+    "source_run": "agent-eightpapers-20261105",
+    "reviewed": true,
+    "reason": "已接受总结和同表说明继承引用；仍保留把Table 5行说成列，以及将正文MLR数值误述为0.31范围的实质问题。实际正文给杨氏模量0.33，Table 5给0.31。",
+    "changes": [],
+    "before": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 9,
+      "supported_facts": 7,
+      "pair_count": 11,
+      "supported_pairs": 11,
+      "group_count": 9,
+      "covered_groups": 7,
+      "boundary": 2,
+      "fact_support": 77.77777777777777,
+      "citation_precision": 100.0,
+      "citation_coverage": 77.77777777777777,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 9,
+      "supported_facts": 7,
+      "pair_count": 11,
+      "supported_pairs": 11,
+      "group_count": 9,
+      "covered_groups": 7,
+      "boundary": 2,
+      "fact_support": 77.77777777777777,
+      "citation_precision": 100.0,
+      "citation_coverage": 77.77777777777777,
+      "strict_pass": false,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-012",
+    "source_run": "agent-current-case12-20261106",
+    "reviewed": true,
+    "reason": "采用新回答且维持满分；Table 2支持Fibre_cont定义，原文100 and 10 mm的单位歧义属于来源问题，新答未擅自改为μm。",
+    "changes": [],
+    "before": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 5,
+      "supported_facts": 5,
+      "pair_count": 8,
+      "supported_pairs": 8,
+      "group_count": 5,
+      "covered_groups": 5,
+      "boundary": 2,
+      "fact_support": 100.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 100.0,
+      "strict_pass": true,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 5,
+      "supported_facts": 5,
+      "pair_count": 8,
+      "supported_pairs": 8,
+      "group_count": 5,
+      "covered_groups": 5,
+      "boundary": 2,
+      "fact_support": 100.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 100.0,
+      "strict_pass": true,
+      "format_ok": true
+    }
+  }
+]
