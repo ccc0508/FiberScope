@@ -234,7 +234,7 @@ load();
         <p class="muted">
           {{
             enabled
-              ? "仅依据以下已导入文献回答，不检索互联网，也不查询实验数据库。"
+              ? "可查询以下文献及平台实验数据；不检索互联网。回答分别标注文献与实验数据来源。"
               : "文献问答尚未启用，请先配置文献库和模型服务。"
           }}
         </p>
@@ -352,7 +352,7 @@ load();
         </p>
       </div>
       <p class="answer-note">
-        回答仅反映当前文献中的证据。引用校验确保来源可追溯，不替代对研究结论和适用条件的判断。
+        回答依据本次取得的文献或实验数据；引用用于追溯来源，不替代对研究结论和适用条件的判断。
       </p>
       <div v-if="selected" class="record-info">
         <span>已保存 · {{ timeLabel(selected.created_at) }}<template v-if="selected.latency_ms != null"> · 用时 {{ (selected.latency_ms / 1000).toFixed(1) }} 秒</template></span>
@@ -404,7 +404,7 @@ load();
           <span class="evidence-number">{{ c.ref }}</span>
           <div>
             <h3>{{ c.filename }}</h3>
-            <small v-if="c.kind !== 'calculation'"
+            <small v-if="c.document_id"
               >PDF 第 {{ c.page_start
               }}{{
                 c.page_end !== c.page_start ? `–${c.page_end}` : ""
@@ -413,7 +413,7 @@ load();
             >
           </div>
           <a
-            v-if="c.kind !== 'calculation'"
+            v-if="c.document_id"
             class="text-link"
             :href="pdf(c.document_id, c.page_start)"
             target="_blank"
