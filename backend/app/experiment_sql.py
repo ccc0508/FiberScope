@@ -1,4 +1,4 @@
-"""Restricted, single-view PostgreSQL SELECT execution for the research agent."""
+"""Read-only PostgreSQL SELECTs over allowlisted views, including joins/subqueries."""
 import json
 from datetime import datetime, timezone
 from uuid import uuid4
@@ -8,8 +8,9 @@ from sqlglot import exp
 from app.catalog import VIEWS, INDICATORS, NOTES
 
 ALLOWED = {v.view for v in VIEWS.values()}
-# Fail closed: no arbitrary functions, joins, CTEs, casts, system tables or subqueries.
+# Every nested node and physical relation is checked, not just the outer SELECT.
 NODES = set('select from table identifier column star alias tablealias literal null boolean where and or not paren eq neq gt gte lt lte is in between like ilike order ordered group having distinct limit offset add sub mul div neg count sum avg min max round abs coalesce nullif'.split())
+NODES.update('join subquery exists any all tuple lateral'.split())
 
 
 def validate_sql(text):
@@ -19,20 +20,22 @@ def validate_sql(text):
     if len(trees) != 1 or not isinstance(trees[0], exp.Select):
         raise ValueError('Only one SELECT is allowed')
     tree = trees[0]
-    if any(n.key not in NODES for n in tree.walk()) or len(list(tree.find_all(exp.Select))) != 1:
-        raise ValueError('Unsupported SQL: single-view SELECT only; no joins, CTEs, subqueries, casts or arbitrary functions')
+    if any(n.key not in NODES for n in tree.walk()):
+        raise ValueError('Unsupported SQL: SELECT with joins/subqueries allowed; no CTEs, set operations, casts, writes or arbitrary functions')
     tables = list(tree.find_all(exp.Table))
-    if len(tables) != 1 or tables[0].db not in ('', 'fiber') or tables[0].catalog or tables[0].name not in ALLOWED:
-        raise ValueError('Use exactly one allowed fiber analysis view; call describe_experiment_data')
-    tables[0].set('db', exp.to_identifier('fiber'))
-    for key in ('limit', 'offset'):
-        node = tree.args.get(key)
-        if node:
+    if not tables or any(t.db not in ('', 'fiber') or t.catalog or t.name not in ALLOWED for t in tables):
+        raise ValueError('Every relation, including inside subqueries, must be an allowed fiber analysis view; call describe_experiment_data')
+    for table in tables:
+        table.set('db', exp.to_identifier('fiber'))
+    for select in tree.find_all(exp.Select):
+        for key in ('limit', 'offset'):
+            node = select.args.get(key)
+            if not node: continue
             value = node.expression
             if not isinstance(value, exp.Literal) or not value.is_int or not 0 <= int(value.this) <= 10000:
                 raise ValueError('LIMIT/OFFSET must be an integer between 0 and 10000')
     # Execute regenerated AST, never the unchecked original SQL text.
-    return tree.sql(dialect='postgres', comments=False), tables[0].name
+    return tree.sql(dialect='postgres', comments=False), sorted({t.name for t in tables})
 
 
 def connect():
@@ -67,7 +70,7 @@ def execute(request, run_id, store):
                         'v_recycled_data_quality':'one flagged raw observation',
                         'v_data_lineage':'one source usage association; multiple usages can share a sample or source row'},
                     sample_types=['softwood','hardwood','blend'],
-                    policy='Single fiber view SELECT; WHERE/GROUP BY/HAVING/ORDER BY; COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF. No joins, CTEs, subqueries or casts. Include sample IDs for raw rows. Add ORDER BY for deterministic results. Rows are observations, not necessarily independent samples. lineage has multiple usages per sample. Max 100 returned rows; truncated results are not the full population.')
+                    policy='SELECT over allowed fiber views, arbitrary joins between those views and nested/correlated SELECT subqueries permitted. WHERE/GROUP BY/HAVING/ORDER BY; COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF. No CTEs, set operations or casts. Include sample IDs for raw rows. Add ORDER BY for deterministic results. Explain join keys and resulting grain; one-to-many joins can multiply samples and bias counts/averages. lineage has multiple usages per sample. Max 100 returned rows; truncated results are not the full population.')
             else:
                 with db.cursor(name='agent_experiment_rows') as cur:
                     cur.execute(normalized)
@@ -80,7 +83,8 @@ def execute(request, run_id, store):
                     if size>24000:
                         truncated=True; break
                     data.append(values)
-                result=dict(sql=normalized, view='fiber.'+view, columns=columns, rows=data,
+                views=['fiber.'+name for name in view]
+                result=dict(sql=normalized, view=', '.join(views), views=views, columns=columns, rows=data,
                     row_count=len(data), truncated=truncated, row_limit=100,
                     queried_at=datetime.now(timezone.utc).isoformat(), notes=NOTES,
                     notice='Database result snapshot, not paper text. Decimal values may be strings. Missing values are null. A truncated result cannot support population-wide conclusions; use SQL aggregates.')
