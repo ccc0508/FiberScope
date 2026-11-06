@@ -1,0 +1,468 @@
+{
+  "jev": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": 1
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "## 结论\n\n**不能直接拼接 Morais 与 Curto（2022）和 Uddin 等（2024）的纤维粗度数值。** 在本次八篇语料中，Morais（2022）只说明其用 MorFi Fiber Analyzer（TECHPAP, Grenoble, France）测定了 coarseness，并列出与纤维长度、宽度、kinks、curls、细小组分等一同评估的参数，但没有在该片段中给出 coarseness 的单位，也没有给出可核对的粗度数值表[12]；而 Uddin 等（2024）把其表 1 的 coarseness 列明确标为 **mg/m**[2]，其 MLR 回归中也以 mg/m 数值代入 coarseness（如 tensile index 模型系数 −6.98）[9]。因此，仅凭语料无法确认 Morais 一侧的粗度究竟以什么单位记录：合并前必须先查原文表格或仪器报告核实单位，并按统一后的口径重算。",
+        "citation_refs": [
+          "[12]",
+          "[2]",
+          "[9]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C2",
+        "text": "**换算示例（仅为计算示例，非论文实测值）：** 如果某条记录为 10 mg/100 m，则换算为 mg/m 时应除以 100：10 ÷ 100 = **0.10 mg/m**。这里的“10”和“0.10”都不是任何论文的实测结果。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C3",
+        "text": "**数量级提醒：** 若 Morais 一侧确实以 mg/100 m 记录，那么同一物理量以 mg/100 m 记录时，数值会比以 mg/m 记录时大两个数量级；这会导致直接拼接在数值上显著失真。此点只是基于单位定义的条件性推断，尚不能作为已证实事实。可对照的是，Uddin（2024）报出的粗度为稻秆 0.08 ± 0.01、阔叶木 0.08 ± 0.02、针叶木 0.23 ± 0.10 mg/m，桉木为“—”（未给出）[2]；这是其表格中的实测均值与 SD。",
+        "citation_refs": [
+          "[2]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B022"
+      },
+      {
+        "id": "C4",
+        "text": "## 统一字段时还需保留的条件\n\n1. **单位与换算是必要条件，但不是充分条件。** 统一为 mg/m 后，coarseness 仍受平均方式（算术、长度加权、长度立方加权等）和仪器测量下限、细小组分定义影响。同语料中，两项表征仪器（Kajaani 与 L&amp;W Pulp Tester Plus）的测量下限与分辨率不同，对小纤维、细小组分的检出能力也不同（Table 2–4）[10][11]；MorFi 类设备对细小组分另有尺寸定义[5]。这些差异会体现在粗度数值本身，而不只是记录格式上。",
+        "citation_refs": [
+          "[10]",
+          "[11]",
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C5",
+        "text": "2. **来源信息应随值保存。** 至少保留仪器/软件、平均方式、原料与制浆/精磨条件、SD 与样本数，才能判断合并后的 coarseness 是否可比。",
+        "citation_refs": [],
+        "claim_type": "scope",
+        "support": "unsupported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C6",
+        "text": "3. **模型系数不可混用。** Uddin（2024）的回归以 mg/m 数值代入 coarseness 并给出相应系数[9]；若改用其他单位的数值，系数与截距必须重新标定，不能直接套用。",
+        "citation_refs": [
+          "[9]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "B027"
+      },
+      {
+        "id": "C7",
+        "text": "4. **未解决的事实缺口：** 本次语料未提供 Morais 与 Curto（2022）coarseness 的单位表述与实测数值表[12]，因此“Morais 一侧使用 mg/100 m”这一前提无法在现有证据内确认；需查阅该文原文后，才能确定采用除以 100 的换算以及是否可直接合并。",
+        "citation_refs": [
+          "[12]"
+        ],
+        "claim_type": "fact",
+        "support": "contradicted",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C1",
+        "ref": "[12]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[9]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[10]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[11]",
+        "score": 0
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C6",
+        "ref": "[9]",
+        "score": 1
+      },
+      {
+        "claim_id": "C7",
+        "ref": "[12]",
+        "score": 1
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "missing"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C5",
+        "coverage": "missing"
+      },
+      {
+        "claim_id": "C6",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C7",
+        "coverage": "partial"
+      }
+    ],
+    "answerability_score": 1,
+    "reference_concern": false,
+    "decisions": {
+      "boundary": "partial",
+      "reference_check": "sound",
+      "point_K1": "complete",
+      "point_K2": "complete",
+      "point_K3": "complete",
+      "point_K4": "complete",
+      "kind_C1": "fact",
+      "support_C1": "supported",
+      "basis_C1": "NONE",
+      "group_C1": "partial",
+      "citation_C1_1": "supported",
+      "citation_C1_2": "supported",
+      "citation_C1_3": "supported",
+      "kind_C2": "fact",
+      "support_C2": "supported",
+      "basis_C2": "NONE",
+      "group_C2": "missing",
+      "kind_C3": "fact",
+      "support_C3": "supported",
+      "basis_C3": "B022",
+      "group_C3": "partial",
+      "citation_C3_1": "supported",
+      "kind_C4": "fact",
+      "support_C4": "partially_supported",
+      "basis_C4": "NONE",
+      "group_C4": "partial",
+      "citation_C4_1": "supported",
+      "citation_C4_2": "unsupported",
+      "citation_C4_3": "supported",
+      "kind_C5": "scope",
+      "support_C5": "unsupported",
+      "basis_C5": "NONE",
+      "group_C5": "missing",
+      "kind_C6": "fact",
+      "support_C6": "partially_supported",
+      "basis_C6": "B027",
+      "group_C6": "complete",
+      "citation_C6_1": "supported",
+      "kind_C7": "fact",
+      "support_C7": "contradicted",
+      "basis_C7": "NONE",
+      "group_C7": "partial",
+      "citation_C7_1": "supported"
+    }
+  },
+  "calibrated": {
+    "key_point_scores": {
+      "K1": 0.5,
+      "K2": 1,
+      "K3": 1,
+      "K4": 1
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "## 结论\n\n**不能直接拼接 Morais 与 Curto（2022）和 Uddin 等（2024）的纤维粗度数值。** 在本次八篇语料中，Morais（2022）只说明其用 MorFi Fiber Analyzer（TECHPAP, Grenoble, France）测定了 coarseness，并列出与纤维长度、宽度、kinks、curls、细小组分等一同评估的参数，但没有在该片段中给出 coarseness 的单位，也没有给出可核对的粗度数值表[12]；而 Uddin 等（2024）把其表 1 的 coarseness 列明确标为 **mg/m**[2]，其 MLR 回归中也以 mg/m 数值代入 coarseness（如 tensile index 模型系数 −6.98）[9]。因此，仅凭语料无法确认 Morais 一侧的粗度究竟以什么单位记录：合并前必须先查原文表格或仪器报告核实单位，并按统一后的口径重算。",
+        "citation_refs": [
+          "[12]",
+          "[2]",
+          "[9]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C2",
+        "text": "**换算示例（仅为计算示例，非论文实测值）：** 如果某条记录为 10 mg/100 m，则换算为 mg/m 时应除以 100：10 ÷ 100 = **0.10 mg/m**。这里的“10”和“0.10”都不是任何论文的实测结果。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C3",
+        "text": "**数量级提醒：** 若 Morais 一侧确实以 mg/100 m 记录，那么同一物理量以 mg/100 m 记录时，数值会比以 mg/m 记录时大两个数量级；这会导致直接拼接在数值上显著失真。此点只是基于单位定义的条件性推断，尚不能作为已证实事实。可对照的是，Uddin（2024）报出的粗度为稻秆 0.08 ± 0.01、阔叶木 0.08 ± 0.02、针叶木 0.23 ± 0.10 mg/m，桉木为“—”（未给出）[2]；这是其表格中的实测均值与 SD。",
+        "citation_refs": [
+          "[2]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B022"
+      },
+      {
+        "id": "C4",
+        "text": "## 统一字段时还需保留的条件\n\n1. **单位与换算是必要条件，但不是充分条件。** 统一为 mg/m 后，coarseness 仍受平均方式（算术、长度加权、长度立方加权等）和仪器测量下限、细小组分定义影响。同语料中，两项表征仪器（Kajaani 与 L&amp;W Pulp Tester Plus）的测量下限与分辨率不同，对小纤维、细小组分的检出能力也不同（Table 2–4）[10][11]；MorFi 类设备对细小组分另有尺寸定义[5]。这些差异会体现在粗度数值本身，而不只是记录格式上。",
+        "citation_refs": [
+          "[10]",
+          "[11]",
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C5",
+        "text": "2. **来源信息应随值保存。** 至少保留仪器/软件、平均方式、原料与制浆/精磨条件、SD 与样本数，才能判断合并后的 coarseness 是否可比。",
+        "citation_refs": [],
+        "claim_type": "scope",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C6",
+        "text": "3. **模型系数不可混用。** Uddin（2024）的回归以 mg/m 数值代入 coarseness 并给出相应系数[9]；若改用其他单位的数值，系数与截距必须重新标定，不能直接套用。",
+        "citation_refs": [
+          "[9]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "B027"
+      },
+      {
+        "id": "C7",
+        "text": "4. **未解决的事实缺口：** 本次语料未提供 Morais 与 Curto（2022）coarseness 的单位表述与实测数值表[12]，因此“Morais 一侧使用 mg/100 m”这一前提无法在现有证据内确认；需查阅该文原文后，才能确定采用除以 100 的换算以及是否可直接合并。",
+        "citation_refs": [
+          "[12]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C1",
+        "ref": "[12]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[9]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[10]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[11]",
+        "score": 0
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C6",
+        "ref": "[9]",
+        "score": 1
+      },
+      {
+        "claim_id": "C7",
+        "ref": "[12]",
+        "score": 1
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C5",
+        "coverage": "missing"
+      },
+      {
+        "claim_id": "C6",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C7",
+        "coverage": "complete"
+      }
+    ],
+    "answerability_score": 1,
+    "reference_concern": false
+  },
+  "changes": [
+    {
+      "path": "key_point_scores.K1",
+      "value": 0.5,
+      "reason": "仍只确认Uddin mg/m，Morais单位未取得，沿用同题标准。"
+    },
+    {
+      "path": "claim_assessments.C5.support",
+      "value": "supported",
+      "reason": "保留仪器、样品与统计信息是合理数据整合建议。"
+    },
+    {
+      "path": "claim_assessments.C7.support",
+      "value": "supported",
+      "reason": "全文上下文限定现有证据未确认单位；实际[12]只有方法段，不将局部缺口等同原文不存在。"
+    },
+    {
+      "path": "citation_group_assessments.C1.coverage",
+      "value": "complete",
+      "reason": "引用支持取得的事实，接受该片段缺少单位的局部范围说明。"
+    },
+    {
+      "path": "citation_group_assessments.C2.coverage",
+      "value": "complete",
+      "reason": "用户给定数值的算术换算可直接验证，无需论文引用。"
+    },
+    {
+      "path": "citation_group_assessments.C3.coverage",
+      "value": "complete",
+      "reason": "条件性百倍换算与[2]实测数据均有依据。"
+    },
+    {
+      "path": "citation_group_assessments.C6.coverage",
+      "value": "partial",
+      "reason": "[9]支持原回归方程，但不支持纯单位换算后截距必须重新标定；比例换算可代数调整对应系数而保持截距。"
+    },
+    {
+      "path": "citation_group_assessments.C7.coverage",
+      "value": "complete",
+      "reason": "缺口说明承接实际检索片段，不强求论文证明本次检索未取得信息。"
+    }
+  ],
+  "raw_metrics": {
+    "point_score": 100,
+    "point_count": 4,
+    "fact_count": 6,
+    "supported_facts": 3,
+    "pair_count": 9,
+    "supported_pairs": 8,
+    "group_count": 6,
+    "covered_groups": 1,
+    "boundary": 1,
+    "fact_support": 50.0,
+    "citation_precision": 88.88888888888889,
+    "citation_coverage": 16.666666666666668,
+    "strict_pass": false,
+    "format_ok": true
+  },
+  "final_metrics": {
+    "point_score": 87.5,
+    "point_count": 4,
+    "fact_count": 6,
+    "supported_facts": 4,
+    "pair_count": 9,
+    "supported_pairs": 8,
+    "group_count": 6,
+    "covered_groups": 4,
+    "boundary": 1,
+    "fact_support": 66.66666666666667,
+    "citation_precision": 88.88888888888889,
+    "citation_coverage": 66.66666666666667,
+    "strict_pass": false,
+    "format_ok": true
+  },
+  "model": "deepseek-flash",
+  "budget": {
+    "max_model_calls": 6,
+    "max_tool_calls": 8,
+    "max_search_calls": 2,
+    "total_seconds": 240.0,
+    "reserve_seconds": 45,
+    "max_output_tokens": 8192,
+    "max_context_chars": 160000
+  },
+  "tools": [
+    {
+      "reason": "需要找到两篇论文（Morais与Curto 2022；Uddin等2024）关于纤维粗度（coarseness）数值与单位（mg/100m vs mg/m 或 dtex/mg/m 等）的原文表述，判断能否直接拼接",
+      "query": "fiber coarseness mg/100 m Morais Curto 2022 non-wood fibers; Uddin 2024 fiber coarseness mg/m",
+      "tool": "search_literature"
+    },
+    {
+      "reason": "第一轮未找到 Morais & Curto 2022 的 coarseness 单位与数值；需确认该文献是否在八篇语料中、是否用 mg/100 m 或 dtex、以及测量方法（MorFi/Kajaani），这是判断能否直接拼接的关键缺失证据",
+      "query": "Morais Curto 2022 coarseness fibres mg/100 m 或 dtex fibre width coarseness pulp characterization",
+      "tool": "search_literature"
+    }
+  ],
+  "scoring_policy_version": "20261106-contextual-citations",
+  "merged_into_latest_summary": false,
+  "remaining_issues": [
+    "未取得Morais表1单位，第二次仅取得第3页方法段。",
+    "粗度平均方式与其他形态量平均方式混用，所引仪器差异并不足以证明该两论文粗度数值的具体变化。",
+    "仅改变输入单位不要求重新标定截距：x_new=100*x_old时，b_new=b_old/100，截距不变。"
+  ]
+}
