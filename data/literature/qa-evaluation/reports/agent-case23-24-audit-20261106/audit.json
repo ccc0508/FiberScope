@@ -1,0 +1,1781 @@
+[
+  {
+    "case": {
+      "id": "FS8-023",
+      "group": "cross",
+      "question": "Uddin等（2024）把kink列为ANN最重要输入，Pennells等（2022）也观察到kink与纳米纸性能相关。这是否足以建议“主动制造更多扭结一定能增强任何纸张”？",
+      "reference_answer": "不足。Uddin是特定模型的归一化重要性，不是独立因果效应；Pennells讨论光学分辨率下部分微原纤化可能被识别为kink，以及HPH能量同时改变形态与性能的解释。材料、处理和测量机制不同，不能从相关/重要性推出普适工艺指令，需要控制条件验证。",
+      "key_points": [
+        "D5重要性不等于独立因果效应",
+        "D6存在部分微原纤化被识别为kink的可能解释",
+        "D6讨论HPH能量等共同因素",
+        "结论不能泛化为所有纸张越扭结越强，需控制实验"
+      ],
+      "critical_errors": [
+        "把作者假说说成证明",
+        "将相关性当普适因果工艺"
+      ],
+      "evidence": [
+        {
+          "document": "D5",
+          "pages": [
+            8
+          ],
+          "locator": "图5"
+        },
+        {
+          "document": "D6",
+          "pages": [
+            12
+          ],
+          "locator": "Influence of kinked fibres"
+        }
+      ],
+      "checks": "跨篇综合、测量混杂、因果",
+      "grading_notes": "允许等价表述；推断必须与论文直接结果区分。不得把参考答案措辞当成唯一正确表达。",
+      "tool_expectation": "从所涉论文取得证据；可一次检索覆盖多篇，不规定固定调用次数。需要可追溯的文献与页码/表图定位。",
+      "citation_applicable": true
+    },
+    "answer": "**结论：不足以这样建议。** 两篇文献只提供了“某个参数重要性较高”或“统计相关较强”的证据，都没有证明提高扭结数量或扭结程度会让纸张变强；Pennells等还给出了相反方向的观察，以及对相关性的替代解释。\n\n**1. 两项研究实际支持的结论（均带条件）**\n\n- **Uddin等（2024）**：原文称 kink index 是 ANN 网络中最重要的变量（归一化重要性100%），其后为 curl index、纤维宽度和外部细纤维化（约90%），细小组分62%、纤维长度60%，粗度最低（40%）[7]（第8页，Artificial neural network 节，Figure 5）。该结果基于21个观测（17个训练、4个测试）、1个隐层的多层感知机[7]；输入变量共7个形态参数[8]。模型表现在不同原料和指标间不一致，作者结论写明硬木样本只有撕裂指数能有效预测[9]。该重要性反映的是网络对输入的依赖程度和预测贡献，不能说明增大扭结会使性能提高。\n\n- **Pennells等（2022）**：在来源于高粱生物质、经 HPH 处理的 CNF 系列中，kink 相关参数与四种纳米纸指标呈正相关；所有 kink 参数与韧性相关为0.6–0.66，kinked fibre content 与 kink angle 在四项指标上的平均相关最高（0.55、0.56）[1]（第8页，Table 4）。摘要与结论概括为纤维含量和 kink 特性与纳米纸强度、韧性最相关[3][4]。这些是 MorFi 在线形态参数与纳米纸实测力学值之间的 Pearson 相关系数，属于统计相关，不能证明因果关系[1][4]。\n\n**2. 为何不能据此建议“主动制造更多扭结”**\n\n- **存在相反方向的证据**：该文引用他人研究指出，组织纸中扭结纤维会提高孔隙率和表面粗糙度，但降低纸的紧度和纤维间结合强度[5]（第12页，“Influence of kinked fibres”）。\n- **相关可能来自混杂或测量假象**：在 CNF 体系中，通过均质化部分微纤化的纤维束，可能因光学分辨率限制被识别为“扭结”，而这类结构与纳米纸强度提高有关；扭结也可能只是 HPH 处理能量增大引起的纤维变形，因此其与性能的关联可能反映处理能量，而非扭结本身的作用[5]。该文并称纤维扭结与纸性能的关系在文献中很少被描述、尚未充分阐明[5]。这些是作者提出的可能解释，并非已证实的原因。\n\n**3. 适用范围与不确定性的限制**\n\n- Uddin等研究的是常规纸浆（稻秸、硬木、软木）抄纸的拉伸、撕裂、耐破指数[8][9]；Pennells等研究的是纳米纸的拉伸性能[2]。材料体系和性能指标均不同，结论不能直接推广到“任何纸张”。\n- ANN 重要性结果在原文中是三个输出指标（拉伸、撕裂、耐破指数）的归一化重要性汇总，未给出各单一指标下的重要性数值[7]，具体哪个纸种、哪个指标下 kink 排第一无法从现有证据确定。\n- 目前没有直接干预实验给出“人为增加扭结”的剂量–响应关系，也没有关于阈值、拐点或“过多扭结有害”的定量数据。这些是回答问题所需但现有证据缺失的事实。\n\n**合理表述**：在上述两项研究覆盖的条件下，kink 是被识别出的强相关或高重要性形态参数，可作为纳米纸性能预测和工艺表征的候选指标；但“主动制造更多扭结一定能增强任何纸张”超出相关性证据的范围，且与组织纸中的相反观察冲突，须针对具体纸种与工艺做直接干预实验验证。",
+    "draft": "**结论：不足以这样建议。** 两项研究提供的都是“参数重要性较高”或“统计相关较强”的证据，都没有证明提高扭结数量或强度会让纸张变强；其中一项研究的作者还给出了完全相反的可能解释。\n\n**1. 两篇文献实际上说明的内容（均需限定条件）**\n\n- Uddin等（2024）：该文中，“kink index 是最重要变量（100%）”指的是 ANN 的归一化重要性，其中 curl、纤维宽度、外部细纤维化约为90%，细小组分62%，纤维长度60%，粗度最低40%[7]（第8页，正文与 Figure 5 图注）。但该结果是一个很小的数据集（21 个观测，17 个训练、4 个测试）[7][8]，输入变量只有7个[8]；模型表现随原料和指标差异明显：在硬木上，撕裂指数 R² 仅为 .34（原文OCR可能为 .34，但结论段写“只有撕裂指数可有效预测”）[9]。该模型只是预测模型，重要性也不能表明作用方向。\n- Morais等（2022）在讨论 ANN 变量重要性时也明确写道，重要性结果“并不能识别自变量与被预测结果之间的关系”，因此需要与 MLR 互补[10]。这可以作为理解“重要性不等于因果关系”的旁证。\n\n- Pennells等（2022）：kink 相关参数与四种纳米纸指标呈正相关，所有 kink 参数与韧性相关为 0.6–0.66；kinked fibre content 与 kink angle 的四指标平均相关最高（0.55、0.56）[1]（第8页，Table 4）；摘要与结论概括为纤维含量和 kink 特性与强度、韧性最相关[3][4]。但这些都是以 MorFi 在线形态参数与纳米纸实测值为基础的 Pearson 相关系数，样本来自高粱生物质 CNF、经 HPH 处理的系列，属于统计相关，不足以证明因果关系[1][4]。\n\n**2. 为什么不能直接推出“主动制造更多扭结”**\n\n- 方向可能相反：Pennells等指出，组织纸中扭结纤维会提高孔隙率与表面粗糙度，但**降低紧度与纤维间结合强度**[5]（第12页 “Influence of kinked fibres”）。\n- 相关性可能来自混杂因素，而不是扭结本身：在 CNF 体系中，经均质化部分微纤化的纤维束，在光学分辨率限制下，可能被误判为“扭结”，而后者与纳米纸强度提高有关；或者扭结其实是 HPH 处理能量增加导致的纤维变形，其关联反映了处理能量[5]。该文还称纤维扭结与纸性能的关系“在文献中很少被描述、尚未被充分阐明”[5]。\n\n**3. 其他限制**\n\n- Uddin等研究的是常规纸浆抄纸的拉伸、撕裂、耐破指数，而且纸种为稻秸、硬木、软木[8][9]；Pennells等研究的是纳米纸拉伸性能[2]。两者的材料体系与测试指标不同，不能直接套用到“任何纸张”。\n- 目前没有实验证据确定“主动增加扭结”的剂量–响应，也没有阈值、拐点或“过多有害”的定量数据。另外，Uddin等 ANN 重要性对应的具体输出变量是三个指标的聚合结果，原文没有说明各单指标下的重要性如何[7]。\n\n**因此，合理说法是**：在这两项研究覆盖的条件下，kink 是被识别的强相关或高重要性形态参数，可作为预测和工艺表征的候选指标；但“主动制造更多扭结一定能增强任何纸张”既超出相关性证据，也与组织纸中的相反观察冲突，需要针对具体纸种和工艺做直接的干预实验。",
+    "raw_jev": {
+      "key_point_scores": {
+        "K1": 1,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "**结论：不足以这样建议。** 两篇文献只提供了“某个参数重要性较高”或“统计相关较强”的证据，都没有证明提高扭结数量或扭结程度会让纸张变强；Pennells等还给出了相反方向的观察，以及对相关性的替代解释。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "**1. 两项研究实际支持的结论（均带条件）**\n\n- **Uddin等（2024）**：原文称 kink index 是 ANN 网络中最重要的变量（归一化重要性100%），其后为 curl index、纤维宽度和外部细纤维化（约90%），细小组分62%、纤维长度60%，粗度最低（40%）[7]（第8页，Artificial neural network 节，Figure 5）。该结果基于21个观测（17个训练、4个测试）、1个隐层的多层感知机[7]；输入变量共7个形态参数[8]。模型表现在不同原料和指标间不一致，作者结论写明硬木样本只有撕裂指数能有效预测[9]。该重要性反映的是网络对输入的依赖程度和预测贡献，不能说明增大扭结会使性能提高。",
+          "citation_refs": [
+            "[7]",
+            "[8]",
+            "[9]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B009"
+        },
+        {
+          "id": "C3",
+          "text": "- **Pennells等（2022）**：在来源于高粱生物质、经 HPH 处理的 CNF 系列中，kink 相关参数与四种纳米纸指标呈正相关；所有 kink 参数与韧性相关为0.6–0.66，kinked fibre content 与 kink angle 在四项指标上的平均相关最高（0.55、0.56）[1]（第8页，Table 4）。摘要与结论概括为纤维含量和 kink 特性与纳米纸强度、韧性最相关[3][4]。这些是 MorFi 在线形态参数与纳米纸实测力学值之间的 Pearson 相关系数，属于统计相关，不能证明因果关系[1][4]。",
+          "citation_refs": [
+            "[1]",
+            "[3]",
+            "[4]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B029"
+        },
+        {
+          "id": "C4",
+          "text": "**2. 为何不能据此建议“主动制造更多扭结”**\n\n- **存在相反方向的证据**：该文引用他人研究指出，组织纸中扭结纤维会提高孔隙率和表面粗糙度，但降低纸的紧度和纤维间结合强度[5]（第12页，“Influence of kinked fibres”）。\n- **相关可能来自混杂或测量假象**：在 CNF 体系中，通过均质化部分微纤化的纤维束，可能因光学分辨率限制被识别为“扭结”，而这类结构与纳米纸强度提高有关；扭结也可能只是 HPH 处理能量增大引起的纤维变形，因此其与性能的关联可能反映处理能量，而非扭结本身的作用[5]。该文并称纤维扭结与纸性能的关系在文献中很少被描述、尚未充分阐明[5]。这些是作者提出的可能解释，并非已证实的原因。",
+          "citation_refs": [
+            "[5]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B030"
+        },
+        {
+          "id": "C5",
+          "text": "**3. 适用范围与不确定性的限制**\n\n- Uddin等研究的是常规纸浆（稻秸、硬木、软木）抄纸的拉伸、撕裂、耐破指数[8][9]；Pennells等研究的是纳米纸的拉伸性能[2]。材料体系和性能指标均不同，结论不能直接推广到“任何纸张”。\n- ANN 重要性结果在原文中是三个输出指标（拉伸、撕裂、耐破指数）的归一化重要性汇总，未给出各单一指标下的重要性数值[7]，具体哪个纸种、哪个指标下 kink 排第一无法从现有证据确定。\n- 目前没有直接干预实验给出“人为增加扭结”的剂量–响应关系，也没有关于阈值、拐点或“过多扭结有害”的定量数据。这些是回答问题所需但现有证据缺失的事实。",
+          "citation_refs": [
+            "[8]",
+            "[9]",
+            "[2]",
+            "[7]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C6",
+          "text": "**合理表述**：在上述两项研究覆盖的条件下，kink 是被识别出的强相关或高重要性形态参数，可作为纳米纸性能预测和工艺表征的候选指标；但“主动制造更多扭结一定能增强任何纸张”超出相关性证据的范围，且与组织纸中的相反观察冲突，须针对具体纸种与工艺做直接干预实验验证。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C2",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[9]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[5]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[9]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[7]",
+          "score": 1
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C5",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C6",
+          "coverage": "missing"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false,
+      "decisions": {
+        "boundary": "appropriate",
+        "reference_check": "sound",
+        "point_K1": "complete",
+        "point_K2": "complete",
+        "point_K3": "complete",
+        "point_K4": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "NONE",
+        "group_C1": "missing",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "B009",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "citation_C2_2": "supported",
+        "citation_C2_3": "supported",
+        "kind_C3": "fact",
+        "support_C3": "supported",
+        "basis_C3": "B029",
+        "group_C3": "complete",
+        "citation_C3_1": "supported",
+        "citation_C3_2": "supported",
+        "citation_C3_3": "supported",
+        "kind_C4": "fact",
+        "support_C4": "supported",
+        "basis_C4": "B030",
+        "group_C4": "complete",
+        "citation_C4_1": "supported",
+        "kind_C5": "fact",
+        "support_C5": "partially_supported",
+        "basis_C5": "NONE",
+        "group_C5": "partial",
+        "citation_C5_1": "supported",
+        "citation_C5_2": "supported",
+        "citation_C5_3": "supported",
+        "citation_C5_4": "supported",
+        "kind_C6": "fact",
+        "support_C6": "supported",
+        "basis_C6": "NONE",
+        "group_C6": "missing"
+      }
+    },
+    "calibrated": {
+      "key_point_scores": {
+        "K1": 1,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "**结论：不足以这样建议。** 两篇文献只提供了“某个参数重要性较高”或“统计相关较强”的证据，都没有证明提高扭结数量或扭结程度会让纸张变强；Pennells等还给出了相反方向的观察，以及对相关性的替代解释。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "**1. 两项研究实际支持的结论（均带条件）**\n\n- **Uddin等（2024）**：原文称 kink index 是 ANN 网络中最重要的变量（归一化重要性100%），其后为 curl index、纤维宽度和外部细纤维化（约90%），细小组分62%、纤维长度60%，粗度最低（40%）[7]（第8页，Artificial neural network 节，Figure 5）。该结果基于21个观测（17个训练、4个测试）、1个隐层的多层感知机[7]；输入变量共7个形态参数[8]。模型表现在不同原料和指标间不一致，作者结论写明硬木样本只有撕裂指数能有效预测[9]。该重要性反映的是网络对输入的依赖程度和预测贡献，不能说明增大扭结会使性能提高。",
+          "citation_refs": [
+            "[7]",
+            "[8]",
+            "[9]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B009"
+        },
+        {
+          "id": "C3",
+          "text": "- **Pennells等（2022）**：在来源于高粱生物质、经 HPH 处理的 CNF 系列中，kink 相关参数与四种纳米纸指标呈正相关；所有 kink 参数与韧性相关为0.6–0.66，kinked fibre content 与 kink angle 在四项指标上的平均相关最高（0.55、0.56）[1]（第8页，Table 4）。摘要与结论概括为纤维含量和 kink 特性与纳米纸强度、韧性最相关[3][4]。这些是 MorFi 在线形态参数与纳米纸实测力学值之间的 Pearson 相关系数，属于统计相关，不能证明因果关系[1][4]。",
+          "citation_refs": [
+            "[1]",
+            "[3]",
+            "[4]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B029"
+        },
+        {
+          "id": "C4",
+          "text": "**2. 为何不能据此建议“主动制造更多扭结”**\n\n- **存在相反方向的证据**：该文引用他人研究指出，组织纸中扭结纤维会提高孔隙率和表面粗糙度，但降低纸的紧度和纤维间结合强度[5]（第12页，“Influence of kinked fibres”）。\n- **相关可能来自混杂或测量假象**：在 CNF 体系中，通过均质化部分微纤化的纤维束，可能因光学分辨率限制被识别为“扭结”，而这类结构与纳米纸强度提高有关；扭结也可能只是 HPH 处理能量增大引起的纤维变形，因此其与性能的关联可能反映处理能量，而非扭结本身的作用[5]。该文并称纤维扭结与纸性能的关系在文献中很少被描述、尚未充分阐明[5]。这些是作者提出的可能解释，并非已证实的原因。",
+          "citation_refs": [
+            "[5]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B030"
+        },
+        {
+          "id": "C5",
+          "text": "**3. 适用范围与不确定性的限制**\n\n- Uddin等研究的是常规纸浆（稻秸、硬木、软木）抄纸的拉伸、撕裂、耐破指数[8][9]；Pennells等研究的是纳米纸的拉伸性能[2]。材料体系和性能指标均不同，结论不能直接推广到“任何纸张”。\n- ANN 重要性结果在原文中是三个输出指标（拉伸、撕裂、耐破指数）的归一化重要性汇总，未给出各单一指标下的重要性数值[7]，具体哪个纸种、哪个指标下 kink 排第一无法从现有证据确定。\n- 目前没有直接干预实验给出“人为增加扭结”的剂量–响应关系，也没有关于阈值、拐点或“过多扭结有害”的定量数据。这些是回答问题所需但现有证据缺失的事实。",
+          "citation_refs": [
+            "[8]",
+            "[9]",
+            "[2]",
+            "[7]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C6",
+          "text": "**合理表述**：在上述两项研究覆盖的条件下，kink 是被识别出的强相关或高重要性形态参数，可作为纳米纸性能预测和工艺表征的候选指标；但“主动制造更多扭结一定能增强任何纸张”超出相关性证据的范围，且与组织纸中的相反观察冲突，须针对具体纸种与工艺做直接干预实验验证。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C2",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[9]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[5]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[9]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[7]",
+          "score": 1
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C5",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C6",
+          "coverage": "complete"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false
+    },
+    "summary": {
+      "id": "FS8-023",
+      "group": "cross",
+      "status": "completed",
+      "review_status": "completed",
+      "stop_reason": null,
+      "jev": {
+        "point_score": 100,
+        "point_count": 4,
+        "fact_count": 6,
+        "supported_facts": 5,
+        "pair_count": 11,
+        "supported_pairs": 11,
+        "group_count": 6,
+        "covered_groups": 3,
+        "boundary": 2,
+        "fact_support": 83.33333333333333,
+        "citation_precision": 100.0,
+        "citation_coverage": 50.0,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "final": {
+        "point_score": 100,
+        "point_count": 4,
+        "fact_count": 6,
+        "supported_facts": 5,
+        "pair_count": 11,
+        "supported_pairs": 11,
+        "group_count": 6,
+        "covered_groups": 3,
+        "boundary": 2,
+        "fact_support": 83.33333333333333,
+        "citation_precision": 100.0,
+        "citation_coverage": 50.0,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "tools": [
+        "search_literature",
+        "search_literature"
+      ],
+      "routing_ok": true,
+      "elapsed_ms": 40567,
+      "changes": [],
+      "reason": "重要性、测量假象、HPH共同因素及非普适因果的四要点齐全。保留局限段额外范围断言的部分支持和首尾无附引用的覆盖扣分。"
+    },
+    "result_sha256": "dc723e128902ed6ee15458dd444c52f787f002db2c09d1f3784b050d5f359927",
+    "judge_input_sha256": "e6d3c9b72b84b9e1d8d69097f5c896e896720705ebb0899c7e84e32c6e0a7c18",
+    "source_calibrated": {
+      "key_point_scores": {
+        "K1": 1,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "**结论：不足以这样建议。** 两篇文献只提供了“某个参数重要性较高”或“统计相关较强”的证据，都没有证明提高扭结数量或扭结程度会让纸张变强；Pennells等还给出了相反方向的观察，以及对相关性的替代解释。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "**1. 两项研究实际支持的结论（均带条件）**\n\n- **Uddin等（2024）**：原文称 kink index 是 ANN 网络中最重要的变量（归一化重要性100%），其后为 curl index、纤维宽度和外部细纤维化（约90%），细小组分62%、纤维长度60%，粗度最低（40%）[7]（第8页，Artificial neural network 节，Figure 5）。该结果基于21个观测（17个训练、4个测试）、1个隐层的多层感知机[7]；输入变量共7个形态参数[8]。模型表现在不同原料和指标间不一致，作者结论写明硬木样本只有撕裂指数能有效预测[9]。该重要性反映的是网络对输入的依赖程度和预测贡献，不能说明增大扭结会使性能提高。",
+          "citation_refs": [
+            "[7]",
+            "[8]",
+            "[9]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B009"
+        },
+        {
+          "id": "C3",
+          "text": "- **Pennells等（2022）**：在来源于高粱生物质、经 HPH 处理的 CNF 系列中，kink 相关参数与四种纳米纸指标呈正相关；所有 kink 参数与韧性相关为0.6–0.66，kinked fibre content 与 kink angle 在四项指标上的平均相关最高（0.55、0.56）[1]（第8页，Table 4）。摘要与结论概括为纤维含量和 kink 特性与纳米纸强度、韧性最相关[3][4]。这些是 MorFi 在线形态参数与纳米纸实测力学值之间的 Pearson 相关系数，属于统计相关，不能证明因果关系[1][4]。",
+          "citation_refs": [
+            "[1]",
+            "[3]",
+            "[4]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B029"
+        },
+        {
+          "id": "C4",
+          "text": "**2. 为何不能据此建议“主动制造更多扭结”**\n\n- **存在相反方向的证据**：该文引用他人研究指出，组织纸中扭结纤维会提高孔隙率和表面粗糙度，但降低纸的紧度和纤维间结合强度[5]（第12页，“Influence of kinked fibres”）。\n- **相关可能来自混杂或测量假象**：在 CNF 体系中，通过均质化部分微纤化的纤维束，可能因光学分辨率限制被识别为“扭结”，而这类结构与纳米纸强度提高有关；扭结也可能只是 HPH 处理能量增大引起的纤维变形，因此其与性能的关联可能反映处理能量，而非扭结本身的作用[5]。该文并称纤维扭结与纸性能的关系在文献中很少被描述、尚未充分阐明[5]。这些是作者提出的可能解释，并非已证实的原因。",
+          "citation_refs": [
+            "[5]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B030"
+        },
+        {
+          "id": "C5",
+          "text": "**3. 适用范围与不确定性的限制**\n\n- Uddin等研究的是常规纸浆（稻秸、硬木、软木）抄纸的拉伸、撕裂、耐破指数[8][9]；Pennells等研究的是纳米纸的拉伸性能[2]。材料体系和性能指标均不同，结论不能直接推广到“任何纸张”。\n- ANN 重要性结果在原文中是三个输出指标（拉伸、撕裂、耐破指数）的归一化重要性汇总，未给出各单一指标下的重要性数值[7]，具体哪个纸种、哪个指标下 kink 排第一无法从现有证据确定。\n- 目前没有直接干预实验给出“人为增加扭结”的剂量–响应关系，也没有关于阈值、拐点或“过多扭结有害”的定量数据。这些是回答问题所需但现有证据缺失的事实。",
+          "citation_refs": [
+            "[8]",
+            "[9]",
+            "[2]",
+            "[7]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C6",
+          "text": "**合理表述**：在上述两项研究覆盖的条件下，kink 是被识别出的强相关或高重要性形态参数，可作为纳米纸性能预测和工艺表征的候选指标；但“主动制造更多扭结一定能增强任何纸张”超出相关性证据的范围，且与组织纸中的相反观察冲突，须针对具体纸种与工艺做直接干预实验验证。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C2",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[9]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[5]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[9]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[7]",
+          "score": 1
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C5",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C6",
+          "coverage": "missing"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false,
+      "decisions": {
+        "boundary": "appropriate",
+        "reference_check": "sound",
+        "point_K1": "complete",
+        "point_K2": "complete",
+        "point_K3": "complete",
+        "point_K4": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "NONE",
+        "group_C1": "missing",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "B009",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "citation_C2_2": "supported",
+        "citation_C2_3": "supported",
+        "kind_C3": "fact",
+        "support_C3": "supported",
+        "basis_C3": "B029",
+        "group_C3": "complete",
+        "citation_C3_1": "supported",
+        "citation_C3_2": "supported",
+        "citation_C3_3": "supported",
+        "kind_C4": "fact",
+        "support_C4": "supported",
+        "basis_C4": "B030",
+        "group_C4": "complete",
+        "citation_C4_1": "supported",
+        "kind_C5": "fact",
+        "support_C5": "partially_supported",
+        "basis_C5": "NONE",
+        "group_C5": "partial",
+        "citation_C5_1": "supported",
+        "citation_C5_2": "supported",
+        "citation_C5_3": "supported",
+        "citation_C5_4": "supported",
+        "kind_C6": "fact",
+        "support_C6": "supported",
+        "basis_C6": "NONE",
+        "group_C6": "missing"
+      }
+    },
+    "source_run": "agent-eightpapers-20261105",
+    "baseline_metrics": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 6,
+      "supported_facts": 5,
+      "pair_count": 11,
+      "supported_pairs": 11,
+      "group_count": 6,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 83.33333333333333,
+      "citation_precision": 100.0,
+      "citation_coverage": 50.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "pre_audit_metrics": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 6,
+      "supported_facts": 5,
+      "pair_count": 11,
+      "supported_pairs": 11,
+      "group_count": 6,
+      "covered_groups": 3,
+      "boundary": 2,
+      "fact_support": 83.33333333333333,
+      "citation_precision": 100.0,
+      "citation_coverage": 50.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "latest_audit": {
+      "reason": "要点100。首尾归纳继承正文引用，恢复覆盖。C5仍部分支持：原文[7]报告归一化重要性但没有明确说明如何汇总三个输出，不能直接断言是三个输出的汇总；限定当前证据的缺失说明本身不扣分。",
+      "metrics": {
+        "point_score": 100,
+        "point_count": 4,
+        "fact_count": 6,
+        "supported_facts": 5,
+        "pair_count": 11,
+        "supported_pairs": 11,
+        "group_count": 6,
+        "covered_groups": 5,
+        "boundary": 2,
+        "fact_support": 83.33333333333333,
+        "citation_precision": 100.0,
+        "citation_coverage": 83.33333333333333,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "answer_regenerated": false,
+      "judge_rerun": false
+    },
+    "answer_sha256": "726b97eb64c34ad7f20f810fd9085ff2e87f32a9d13f4ea88ea558dba2d0c2a1"
+  },
+  {
+    "case": {
+      "id": "FS8-024",
+      "group": "cross",
+      "question": "准备合并Li等（2023）的回收纸模型、Uddin等（2024）的纸浆研究和Ayaliew等（2026）的复合材料论文。三个都提到tensile，是否可以建一个没有单位和来源的strength列直接训练？请说明至少三类应保留的差异。",
+      "reference_answer": "不可以。Li的链条包括损伤D及T₀基准；Uddin明确抗张指数Nm/g并另有撕裂/耐破指数；Ayaliew是聚合物复合材料抗拉强度MPa且数据合成。应保留材料/对象、目标定义与单位、实验处理、实测或合成来源以及样品/论文标识。不能只改字段名就把抗张指数换成MPa，也不能把损伤D当强度。",
+      "key_points": [
+        "D3损伤D和T₀关系不能混同强度",
+        "D5抗张指数Nm/g与D4 MPa不等价",
+        "D4对象为聚合物复合材料且合成数据",
+        "至少保留目标单位、材料条件、数据来源/样品标识"
+      ],
+      "critical_errors": [
+        "直接拼接无单位strength",
+        "把Nm/g无条件换成MPa"
+      ],
+      "evidence": [
+        {
+          "document": "D3",
+          "pages": [
+            2
+          ],
+          "locator": "摘要"
+        },
+        {
+          "document": "D5",
+          "pages": [
+            1,
+            8
+          ],
+          "locator": "摘要、结论"
+        },
+        {
+          "document": "D4",
+          "pages": [
+            4,
+            13
+          ],
+          "locator": "数据准备、讨论"
+        }
+      ],
+      "checks": "三篇整合、指标口径、来源",
+      "grading_notes": "允许等价表述；推断必须与论文直接结果区分。不得把参考答案措辞当成唯一正确表达。",
+      "tool_expectation": "从所涉论文取得证据；可一次检索覆盖多篇，不规定固定调用次数。需要可追溯的文献与页码/表图定位。",
+      "citation_applicable": true
+    },
+    "answer": "## 结论\n\n不建议。把三篇来源中名称都叫 “tensile” 的数值压进一个**无单位、无来源的 strength 列**直接训练，会抹掉三处不可通约的差异，使模型既无法解释，也无法按任何一方的量纲校验。至少应保留以下三类差异。\n\n## 三类必须保留的差异\n\n**1. 物理量与量纲不唯一（Li 等一篇内部就有多种）**\n\nLi 等（2023）的 Table 2（p.10）中，同一份芦苇浆数据同时给出：\n- Zero-span tensile strength（用于指示单纤维强度）：kg/15 mm [1]\n- Zero-span tensile index 与 Tensile index（纸页）：Nm/g [1]\n\nkg/15 mm 是“力/试样宽度”形式的量，Nm/g 是单位定量归一化的强度指数，二者量纲不同。此外，正文对 Figure 4 的抗张强度变化以“回收四次后下降 15%–35%”这类相对幅度表述 [1]。\n\nUddin 等（2024）建模的目标是 **tensile index**，与 tear index、burst index 并列，由纤维特性经 MLR/ANN 预测 [8]；Ayaliew 等（2026）的目标是复合材料 **tensile strength**，其模型误差以 MPa 报出（Table 1，p.10 的 RMSE/MAE 列）[12]，摘要/结论亦以“RMSE ≈ 31 MPa”表述 [6]。\n\n若删去单位合并为一列，等于把 kg/15 mm、Nm/g、MPa 视为同一量，既无法做有意义的归一化，也无法还原原始指标，并会丢掉“强度指数已按定量归一化、抗张强度未按定量归一化”这一差别。\n\n**2. 被测试对象与测量层级不同**\n\n- Li 等：手抄片（handsheets），并区分单纤维层面与纸页层面——文中说明 zero-span 用于指示单纤维强度，且回收对单纤维强度的影响远小于对纸页抗张强度的影响 [1]。\n- Uddin 等：由打浆后的**纸浆纤维特性**（细组分含量、纤维长度/宽度、外部细纤维化度、卷曲指数、扭结指数、粗度）预测纸浆的 tensile index，共 21 个观测，按 81%/19% 划分训练与验证 [8]。\n- Ayaliew 等：纤维增强聚合物**复合材料**，预测变量为铺层数、纤维体积分数、孔隙含量、纤维种类与树脂种类等 [6]。\n\n单纤维强度、纸页强度指数、复合材料拉伸强度属不同层级，三种来源的破坏机制与测量方式也不同，混为一列会使模型把这些不同层级的量当作同一目标。\n\n**3. 材料体系、工艺变量与数据来源不同**\n\n- Li 等：木材与非木材（芦苇）浆，模拟回收 0–4 次，“回收次数”是核心变量；未精磨浆的降幅小于精磨浆，高得率浆降幅小于化学浆 [1]。作者自述局限为未考虑混合纤维组成 [4]。\n- Uddin 等：以**打浆**为工艺变量，样本仅 21 个观测 [8]。\n- Ayaliew 等：数据来自公开数据集（Kaggle 复合材料拉伸数据集，参考文献 27）[9]，变量为铺层数、纤维体积分数、孔隙率、纤维/树脂类别 [6]。\n\n回收次数、打浆程度、铺层数/纤维体积分数三组工艺变量不可互换，数据来源也分别是自家手抄片实验、21 点打浆实验与公开数据集。\n\n## 可行的替代做法\n\n不合并为同列，而保留元数据列：`target_quantity`（zero-span strength / tensile index / tensile strength）、`unit`、`normalization_basis`、`specimen_level`（单纤维 / 纸页 / 层合板）、`material_system`、`process_variable`（回收次数 / 打浆 / 铺层与体积分数）与 `source`；数值按目标量分列存放，跨来源比较只用无量纲比值（如相对未处理基准的保留率）并显式标注基准。\n\n## 不确定与限制\n\n- Ayaliew 等 tensile strength 的单位 MPa 是由 Table 1 的“RMSE (MPa)/MAE (MPa)”列及结论中“RMSE ≈ 31 MPa”推得，属间接证据 [12][6]。\n- Uddin 等 tensile index 的具体单位在本次检索到的摘要片段中未给出 [8]；其完整数据集与测量量表未获取，无法核查。\n- Li 等 Table 2 数值为原文表格文字 [1]，未逐像素核对图表；15%–35% 降幅为原文文字表述，未读取 Figure 4 刻度。\n- 三篇所依据的拉伸测试标准、试样尺寸等具体测试条件在已获取片段中未完整呈现，故不能断定其测试条件“一定不可比”，只能确认上述三项差异存在；这本身已足以反对无单位同列合并。",
+    "draft": "## 结论\n\n不建议。把三篇来源中名称都叫 “tensile” 的数值压进一个**无单位、无来源的 strength 列**直接训练，会抹掉三处不可通约的差异，得到的模型既无法解释，也不可被任何一方量纲校验。这三篇里的 “tensile” 至少在**物理量纲/归一化基准、被测试对象（材料形态与测量层级）、材料体系与工艺条件**三个维度上不同，这三类差异必须保留为独立列或元数据。\n\n## 三类必须保留的差异\n\n**1. 物理量与量纲不唯一（同一篇内部就有三种）**\n\nLi 等（2023）中 “tensile” 至少对应三个量：\n\n| 指标 | 单位 | 出处 |\n|---|---|---|\n| Zero-span tensile strength（单纤维强度指示） | kg/15 mm | Table 2，p.10 [1] |\n| Zero-span tensile index | Nm/g | Table 2，p.10 [1] |\n| Tensile index（纸页） | Nm/g | Table 2，p.10 [1] |\n\nkg/15 mm 是“力/试样宽”，Nm/g 是“单位定量归一化的强度指数”，二者量纲不同；正文另用“下降 15%–35%”这类相对量表述 Figure 4 的抗张强度变化 [1]。Uddin 等（2024）明确预测对象是 **tensile index**，并与其他 index（tear/burst index）并列建模 [8]；Ayaliew 等（2026）则是 **tensile strength，单位 MPa**，其 RMSE/MAE 均以 MPa 报出（Table 1，p.10）[12]。\n\n若去掉单位统一成 “strength”，等于把 kg/15 mm、Nm/g、MPa 混为一列，**既不能做有意义的归一化，也无法还原任何一种原始指标**；同时会丢掉“强度指数已按定量归一化、抗张强度未归一化”这一关键区别。\n\n**2. 被测试对象与测量层级不同**\n\n- Li 等：手抄片（handsheets），且区分**单纤维层面**（zero-span）与**纸页层面**（sheet tensile index），文中明确 zero-span 指示单纤维强度，回收对单纤维强度影响远小于对纸页抗张强度的影响 [1]。\n- Uddin 等：由**打浆（refining）后的纸浆纤维特性**（细组分含量、纤维长度/宽度、外部细纤维化度、卷曲、扭结、粗度）预测纸浆的 tensile index，样本量 21 个观测 [8]。\n- Ayaliew 等：**纤维增强聚合物复合材料**（层数、纤维体积分数、孔隙含量、纤维种类、树脂种类等），为材料级复合板 [6][12]。\n\n单纤维强度、纸页强度指数、复合材料拉伸强度是**不同层级、不同破坏机制**的量；同列训练会让模型把“纤维级强度”与“制品级强度”当作同一目标，学到的关系不可迁移。\n\n**3. 材料体系、工艺变量与批次/条件不同**\n\n- Li 等：木材与非木材（芦苇）浆，模拟**回收循环 0–4 次**，“recycling times” 是核心自变量，且未漂/漂白、机械浆/化学浆影响幅度不同，未精磨浆降幅小于精磨浆 [1]；作者也自限“未考虑混合纤维组成” [4]。\n- Uddin 等：**打浆**作为工艺变量，21 个观测、81%/19% 训练/验证划分 [8]。\n- Ayaliew 等：合成数据源（Kaggle 数据集）[9]，变量为铺层数、纤维体积分数、孔隙率、纤维/树脂类别 [6]。\n\n回收次数、打浆度、纤维体积分数/铺层数三组工艺变量**不可互换**，且各自的实验/数据来源不同（自家手抄片实验 vs. 21 点打浆实验 vs. 公开数据集）。此外 Ayaliew 的 RMSE≈31 MPa 与 R²≈0.9975 [6][12] 只在 MPa 尺度上有意义，与纸页的 Nm/g 或 kg/15 mm 数值不可比。\n\n## 可行的替代做法（而非同列合并）\n\n保留 `target_quantity`（zero-span strength / tensile index / tensile strength）、`unit`、`normalization_basis`（如 g/m² 定量、纤维体积分数）、`specimen_level`（单纤维/纸页/层合板）、`material_system`、`process_variable`（回收次数 / 打浆度 / 铺层与体积分数）以及 `source`；数值列按目标量分表或分列存放，跨来源只用**无量纲比值**（如相对未处理基准的保留率）并显式标注基准。\n\n## 不确定与限制\n\n- 上述为基于各论文正文与表格的证据判断；Uddin 等 tensile index 的**具体单位**在本次检索到的摘要/结论片段中未直接给出（其原文数据集未在提供的片段内），Ayaliew 等 tensile strength 的单位是由 Table 1 的 “RMSE (MPa)/MAE (MPa)” 推得为 MPa [12]，属间接证据。\n- Li 等 Table 2 的数值为原文表格转录 [1]，未逐像素核图；Figure 4 的 15%–35% 降幅为原文文字表述，我没有读取图内刻度。\n- 三篇的样本量、测试标准（尤其拉伸测试标准与夹持/跨距条件）在已获取片段中未完整呈现，无法确认测试条件是否可比——这本身也是不宜简单合并的理由之一，但不能据此断定它们“一定不可比”。",
+    "raw_jev": {
+      "key_point_scores": {
+        "K1": 0,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "## 结论\n\n不建议。把三篇来源中名称都叫 “tensile” 的数值压进一个**无单位、无来源的 strength 列**直接训练，会抹掉三处不可通约的差异，使模型既无法解释，也无法按任何一方的量纲校验。至少应保留以下三类差异。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "## 三类必须保留的差异\n\n**1. 物理量与量纲不唯一（Li 等一篇内部就有多种）**\n\nLi 等（2023）的 Table 2（p.10）中，同一份芦苇浆数据同时给出：\n- Zero-span tensile strength（用于指示单纤维强度）：kg/15 mm [1]\n- Zero-span tensile index 与 Tensile index（纸页）：Nm/g [1]",
+          "citation_refs": [
+            "[1]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B025"
+        },
+        {
+          "id": "C3",
+          "text": "kg/15 mm 是“力/试样宽度”形式的量，Nm/g 是单位定量归一化的强度指数，二者量纲不同。此外，正文对 Figure 4 的抗张强度变化以“回收四次后下降 15%–35%”这类相对幅度表述 [1]。",
+          "citation_refs": [
+            "[1]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B023"
+        },
+        {
+          "id": "C4",
+          "text": "Uddin 等（2024）建模的目标是 **tensile index**，与 tear index、burst index 并列，由纤维特性经 MLR/ANN 预测 [8]；Ayaliew 等（2026）的目标是复合材料 **tensile strength**，其模型误差以 MPa 报出（Table 1，p.10 的 RMSE/MAE 列）[12]，摘要/结论亦以“RMSE ≈ 31 MPa”表述 [6]。",
+          "citation_refs": [
+            "[8]",
+            "[12]",
+            "[6]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B039"
+        },
+        {
+          "id": "C5",
+          "text": "若删去单位合并为一列，等于把 kg/15 mm、Nm/g、MPa 视为同一量，既无法做有意义的归一化，也无法还原原始指标，并会丢掉“强度指数已按定量归一化、抗张强度未按定量归一化”这一差别。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C6",
+          "text": "**2. 被测试对象与测量层级不同**\n\n- Li 等：手抄片（handsheets），并区分单纤维层面与纸页层面——文中说明 zero-span 用于指示单纤维强度，且回收对单纤维强度的影响远小于对纸页抗张强度的影响 [1]。\n- Uddin 等：由打浆后的**纸浆纤维特性**（细组分含量、纤维长度/宽度、外部细纤维化度、卷曲指数、扭结指数、粗度）预测纸浆的 tensile index，共 21 个观测，按 81%/19% 划分训练与验证 [8]。\n- Ayaliew 等：纤维增强聚合物**复合材料**，预测变量为铺层数、纤维体积分数、孔隙含量、纤维种类与树脂种类等 [6]。",
+          "citation_refs": [
+            "[1]",
+            "[8]",
+            "[6]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C7",
+          "text": "单纤维强度、纸页强度指数、复合材料拉伸强度属不同层级，三种来源的破坏机制与测量方式也不同，混为一列会使模型把这些不同层级的量当作同一目标。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C8",
+          "text": "**3. 材料体系、工艺变量与数据来源不同**\n\n- Li 等：木材与非木材（芦苇）浆，模拟回收 0–4 次，“回收次数”是核心变量；未精磨浆的降幅小于精磨浆，高得率浆降幅小于化学浆 [1]。作者自述局限为未考虑混合纤维组成 [4]。\n- Uddin 等：以**打浆**为工艺变量，样本仅 21 个观测 [8]。\n- Ayaliew 等：数据来自公开数据集（Kaggle 复合材料拉伸数据集，参考文献 27）[9]，变量为铺层数、纤维体积分数、孔隙率、纤维/树脂类别 [6]。",
+          "citation_refs": [
+            "[1]",
+            "[4]",
+            "[8]",
+            "[9]",
+            "[6]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C9",
+          "text": "回收次数、打浆程度、铺层数/纤维体积分数三组工艺变量不可互换，数据来源也分别是自家手抄片实验、21 点打浆实验与公开数据集。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C10",
+          "text": "## 可行的替代做法\n\n不合并为同列，而保留元数据列：`target_quantity`（zero-span strength / tensile index / tensile strength）、`unit`、`normalization_basis`、`specimen_level`（单纤维 / 纸页 / 层合板）、`material_system`、`process_variable`（回收次数 / 打浆 / 铺层与体积分数）与 `source`；数值按目标量分列存放，跨来源比较只用无量纲比值（如相对未处理基准的保留率）并显式标注基准。",
+          "citation_refs": [],
+          "claim_type": "scope",
+          "support": "unsupported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C11",
+          "text": "## 不确定与限制\n\n- Ayaliew 等 tensile strength 的单位 MPa 是由 Table 1 的“RMSE (MPa)/MAE (MPa)”列及结论中“RMSE ≈ 31 MPa”推得，属间接证据 [12][6]。\n- Uddin 等 tensile index 的具体单位在本次检索到的摘要片段中未给出 [8]；其完整数据集与测量量表未获取，无法核查。\n- Li 等 Table 2 数值为原文表格文字 [1]，未逐像素核对图表；15%–35% 降幅为原文文字表述，未读取 Figure 4 刻度。\n- 三篇所依据的拉伸测试标准、试样尺寸等具体测试条件在已获取片段中未完整呈现，故不能断定其测试条件“一定不可比”，只能确认上述三项差异存在；这本身已足以反对无单位同列合并。",
+          "citation_refs": [
+            "[12]",
+            "[6]",
+            "[8]",
+            "[1]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C2",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[12]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[9]",
+          "score": 0
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C11",
+          "ref": "[12]",
+          "score": 1
+        },
+        {
+          "claim_id": "C11",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C11",
+          "ref": "[8]",
+          "score": 0
+        },
+        {
+          "claim_id": "C11",
+          "ref": "[1]",
+          "score": 1
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C5",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C6",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C7",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C8",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C9",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C10",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C11",
+          "coverage": "partial"
+        }
+      ],
+      "answerability_score": 1,
+      "reference_concern": false,
+      "decisions": {
+        "boundary": "partial",
+        "reference_check": "sound",
+        "point_K1": "missing",
+        "point_K2": "complete",
+        "point_K3": "complete",
+        "point_K4": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "NONE",
+        "group_C1": "missing",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "B025",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "kind_C3": "fact",
+        "support_C3": "supported",
+        "basis_C3": "B023",
+        "group_C3": "complete",
+        "citation_C3_1": "supported",
+        "kind_C4": "fact",
+        "support_C4": "supported",
+        "basis_C4": "B039",
+        "group_C4": "complete",
+        "citation_C4_1": "supported",
+        "citation_C4_2": "supported",
+        "citation_C4_3": "supported",
+        "kind_C5": "fact",
+        "support_C5": "partially_supported",
+        "basis_C5": "NONE",
+        "group_C5": "missing",
+        "kind_C6": "fact",
+        "support_C6": "supported",
+        "basis_C6": "NONE",
+        "group_C6": "complete",
+        "citation_C6_1": "supported",
+        "citation_C6_2": "supported",
+        "citation_C6_3": "supported",
+        "kind_C7": "fact",
+        "support_C7": "partially_supported",
+        "basis_C7": "NONE",
+        "group_C7": "missing",
+        "kind_C8": "fact",
+        "support_C8": "supported",
+        "basis_C8": "NONE",
+        "group_C8": "complete",
+        "citation_C8_1": "supported",
+        "citation_C8_2": "supported",
+        "citation_C8_3": "supported",
+        "citation_C8_4": "unsupported",
+        "citation_C8_5": "supported",
+        "kind_C9": "fact",
+        "support_C9": "partially_supported",
+        "basis_C9": "NONE",
+        "group_C9": "partial",
+        "kind_C10": "scope",
+        "support_C10": "unsupported",
+        "basis_C10": "NONE",
+        "group_C10": "missing",
+        "kind_C11": "fact",
+        "support_C11": "partially_supported",
+        "basis_C11": "NONE",
+        "group_C11": "partial",
+        "citation_C11_1": "supported",
+        "citation_C11_2": "supported",
+        "citation_C11_3": "unsupported",
+        "citation_C11_4": "supported"
+      }
+    },
+    "calibrated": {
+      "key_point_scores": {
+        "K1": 0,
+        "K2": 0.5,
+        "K3": 0.5,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "## 结论\n\n不建议。把三篇来源中名称都叫 “tensile” 的数值压进一个**无单位、无来源的 strength 列**直接训练，会抹掉三处不可通约的差异，使模型既无法解释，也无法按任何一方的量纲校验。至少应保留以下三类差异。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "## 三类必须保留的差异\n\n**1. 物理量与量纲不唯一（Li 等一篇内部就有多种）**\n\nLi 等（2023）的 Table 2（p.10）中，同一份芦苇浆数据同时给出：\n- Zero-span tensile strength（用于指示单纤维强度）：kg/15 mm [1]\n- Zero-span tensile index 与 Tensile index（纸页）：Nm/g [1]",
+          "citation_refs": [
+            "[1]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B025"
+        },
+        {
+          "id": "C3",
+          "text": "kg/15 mm 是“力/试样宽度”形式的量，Nm/g 是单位定量归一化的强度指数，二者量纲不同。此外，正文对 Figure 4 的抗张强度变化以“回收四次后下降 15%–35%”这类相对幅度表述 [1]。",
+          "citation_refs": [
+            "[1]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B023"
+        },
+        {
+          "id": "C4",
+          "text": "Uddin 等（2024）建模的目标是 **tensile index**，与 tear index、burst index 并列，由纤维特性经 MLR/ANN 预测 [8]；Ayaliew 等（2026）的目标是复合材料 **tensile strength**，其模型误差以 MPa 报出（Table 1，p.10 的 RMSE/MAE 列）[12]，摘要/结论亦以“RMSE ≈ 31 MPa”表述 [6]。",
+          "citation_refs": [
+            "[8]",
+            "[12]",
+            "[6]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B039"
+        },
+        {
+          "id": "C5",
+          "text": "若删去单位合并为一列，等于把 kg/15 mm、Nm/g、MPa 视为同一量，既无法做有意义的归一化，也无法还原原始指标，并会丢掉“强度指数已按定量归一化、抗张强度未按定量归一化”这一差别。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C6",
+          "text": "**2. 被测试对象与测量层级不同**\n\n- Li 等：手抄片（handsheets），并区分单纤维层面与纸页层面——文中说明 zero-span 用于指示单纤维强度，且回收对单纤维强度的影响远小于对纸页抗张强度的影响 [1]。\n- Uddin 等：由打浆后的**纸浆纤维特性**（细组分含量、纤维长度/宽度、外部细纤维化度、卷曲指数、扭结指数、粗度）预测纸浆的 tensile index，共 21 个观测，按 81%/19% 划分训练与验证 [8]。\n- Ayaliew 等：纤维增强聚合物**复合材料**，预测变量为铺层数、纤维体积分数、孔隙含量、纤维种类与树脂种类等 [6]。",
+          "citation_refs": [
+            "[1]",
+            "[8]",
+            "[6]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C7",
+          "text": "单纤维强度、纸页强度指数、复合材料拉伸强度属不同层级，三种来源的破坏机制与测量方式也不同，混为一列会使模型把这些不同层级的量当作同一目标。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C8",
+          "text": "**3. 材料体系、工艺变量与数据来源不同**\n\n- Li 等：木材与非木材（芦苇）浆，模拟回收 0–4 次，“回收次数”是核心变量；未精磨浆的降幅小于精磨浆，高得率浆降幅小于化学浆 [1]。作者自述局限为未考虑混合纤维组成 [4]。\n- Uddin 等：以**打浆**为工艺变量，样本仅 21 个观测 [8]。\n- Ayaliew 等：数据来自公开数据集（Kaggle 复合材料拉伸数据集，参考文献 27）[9]，变量为铺层数、纤维体积分数、孔隙率、纤维/树脂类别 [6]。",
+          "citation_refs": [
+            "[1]",
+            "[4]",
+            "[8]",
+            "[9]",
+            "[6]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C9",
+          "text": "回收次数、打浆程度、铺层数/纤维体积分数三组工艺变量不可互换，数据来源也分别是自家手抄片实验、21 点打浆实验与公开数据集。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C10",
+          "text": "## 可行的替代做法\n\n不合并为同列，而保留元数据列：`target_quantity`（zero-span strength / tensile index / tensile strength）、`unit`、`normalization_basis`、`specimen_level`（单纤维 / 纸页 / 层合板）、`material_system`、`process_variable`（回收次数 / 打浆 / 铺层与体积分数）与 `source`；数值按目标量分列存放，跨来源比较只用无量纲比值（如相对未处理基准的保留率）并显式标注基准。",
+          "citation_refs": [],
+          "claim_type": "scope",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C11",
+          "text": "## 不确定与限制\n\n- Ayaliew 等 tensile strength 的单位 MPa 是由 Table 1 的“RMSE (MPa)/MAE (MPa)”列及结论中“RMSE ≈ 31 MPa”推得，属间接证据 [12][6]。\n- Uddin 等 tensile index 的具体单位在本次检索到的摘要片段中未给出 [8]；其完整数据集与测量量表未获取，无法核查。\n- Li 等 Table 2 数值为原文表格文字 [1]，未逐像素核对图表；15%–35% 降幅为原文文字表述，未读取 Figure 4 刻度。\n- 三篇所依据的拉伸测试标准、试样尺寸等具体测试条件在已获取片段中未完整呈现，故不能断定其测试条件“一定不可比”，只能确认上述三项差异存在；这本身已足以反对无单位同列合并。",
+          "citation_refs": [
+            "[12]",
+            "[6]",
+            "[8]",
+            "[1]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C2",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[12]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[9]",
+          "score": 0
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C11",
+          "ref": "[12]",
+          "score": 1
+        },
+        {
+          "claim_id": "C11",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C11",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C11",
+          "ref": "[1]",
+          "score": 1
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C5",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C6",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C7",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C8",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C9",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C10",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C11",
+          "coverage": "complete"
+        }
+      ],
+      "answerability_score": 1,
+      "reference_concern": false
+    },
+    "summary": {
+      "id": "FS8-024",
+      "group": "cross",
+      "status": "completed",
+      "review_status": "completed",
+      "stop_reason": null,
+      "jev": {
+        "point_score": 75.0,
+        "point_count": 4,
+        "fact_count": 10,
+        "supported_facts": 6,
+        "pair_count": 17,
+        "supported_pairs": 15,
+        "group_count": 10,
+        "covered_groups": 5,
+        "boundary": 1,
+        "fact_support": 60.0,
+        "citation_precision": 88.23529411764706,
+        "citation_coverage": 50.0,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "final": {
+        "point_score": 50.0,
+        "point_count": 4,
+        "fact_count": 10,
+        "supported_facts": 6,
+        "pair_count": 17,
+        "supported_pairs": 15,
+        "group_count": 10,
+        "covered_groups": 5,
+        "boundary": 1,
+        "fact_support": 60.0,
+        "citation_precision": 88.23529411764706,
+        "citation_coverage": 50.0,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "tools": [
+        "search_literature",
+        "search_literature"
+      ],
+      "routing_ok": true,
+      "elapsed_ms": 42871,
+      "changes": [
+        {
+          "path": "key_point_scores.K2",
+          "value": 0.5,
+          "reason": "讨论Nm/g与MPa但明确无法核查Uddin的单位，未完成所问来源对应。"
+        },
+        {
+          "path": "key_point_scores.K3",
+          "value": 0.5,
+          "reason": "说明复合材料，却未说明合成数据。"
+        },
+        {
+          "path": "claim_assessments.C10.support",
+          "value": "partially_supported",
+          "reason": "来源/单位等元数据建议合理；只允许无量纲比较这一绝对限制没有被证明。"
+        }
+      ],
+      "reason": "解释了不能无单位合并，但没有说明Li损伤D/T₀关系，没有确认Uddin抗张Nm/g，且遗漏Ayaliew合成数据属性。Jev对后两项给满分过宽。数据整合建议多数合理，不能整段算无依据，只对“只用无量纲比较”的过强限制扣分。"
+    },
+    "result_sha256": "381932d8c884b9c05f69e00ced303db4cf5b1a9a0eab29fd9295d9764763afcc",
+    "judge_input_sha256": "9593eb068c206b25848d188aa35f7b5ea2a1a9ad9a19336320753794a801bfda",
+    "source_calibrated": {
+      "key_point_scores": {
+        "K1": 0,
+        "K2": 0.5,
+        "K3": 0.5,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "## 结论\n\n不建议。把三篇来源中名称都叫 “tensile” 的数值压进一个**无单位、无来源的 strength 列**直接训练，会抹掉三处不可通约的差异，使模型既无法解释，也无法按任何一方的量纲校验。至少应保留以下三类差异。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "## 三类必须保留的差异\n\n**1. 物理量与量纲不唯一（Li 等一篇内部就有多种）**\n\nLi 等（2023）的 Table 2（p.10）中，同一份芦苇浆数据同时给出：\n- Zero-span tensile strength（用于指示单纤维强度）：kg/15 mm [1]\n- Zero-span tensile index 与 Tensile index（纸页）：Nm/g [1]",
+          "citation_refs": [
+            "[1]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B025"
+        },
+        {
+          "id": "C3",
+          "text": "kg/15 mm 是“力/试样宽度”形式的量，Nm/g 是单位定量归一化的强度指数，二者量纲不同。此外，正文对 Figure 4 的抗张强度变化以“回收四次后下降 15%–35%”这类相对幅度表述 [1]。",
+          "citation_refs": [
+            "[1]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B023"
+        },
+        {
+          "id": "C4",
+          "text": "Uddin 等（2024）建模的目标是 **tensile index**，与 tear index、burst index 并列，由纤维特性经 MLR/ANN 预测 [8]；Ayaliew 等（2026）的目标是复合材料 **tensile strength**，其模型误差以 MPa 报出（Table 1，p.10 的 RMSE/MAE 列）[12]，摘要/结论亦以“RMSE ≈ 31 MPa”表述 [6]。",
+          "citation_refs": [
+            "[8]",
+            "[12]",
+            "[6]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B039"
+        },
+        {
+          "id": "C5",
+          "text": "若删去单位合并为一列，等于把 kg/15 mm、Nm/g、MPa 视为同一量，既无法做有意义的归一化，也无法还原原始指标，并会丢掉“强度指数已按定量归一化、抗张强度未按定量归一化”这一差别。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C6",
+          "text": "**2. 被测试对象与测量层级不同**\n\n- Li 等：手抄片（handsheets），并区分单纤维层面与纸页层面——文中说明 zero-span 用于指示单纤维强度，且回收对单纤维强度的影响远小于对纸页抗张强度的影响 [1]。\n- Uddin 等：由打浆后的**纸浆纤维特性**（细组分含量、纤维长度/宽度、外部细纤维化度、卷曲指数、扭结指数、粗度）预测纸浆的 tensile index，共 21 个观测，按 81%/19% 划分训练与验证 [8]。\n- Ayaliew 等：纤维增强聚合物**复合材料**，预测变量为铺层数、纤维体积分数、孔隙含量、纤维种类与树脂种类等 [6]。",
+          "citation_refs": [
+            "[1]",
+            "[8]",
+            "[6]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C7",
+          "text": "单纤维强度、纸页强度指数、复合材料拉伸强度属不同层级，三种来源的破坏机制与测量方式也不同，混为一列会使模型把这些不同层级的量当作同一目标。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C8",
+          "text": "**3. 材料体系、工艺变量与数据来源不同**\n\n- Li 等：木材与非木材（芦苇）浆，模拟回收 0–4 次，“回收次数”是核心变量；未精磨浆的降幅小于精磨浆，高得率浆降幅小于化学浆 [1]。作者自述局限为未考虑混合纤维组成 [4]。\n- Uddin 等：以**打浆**为工艺变量，样本仅 21 个观测 [8]。\n- Ayaliew 等：数据来自公开数据集（Kaggle 复合材料拉伸数据集，参考文献 27）[9]，变量为铺层数、纤维体积分数、孔隙率、纤维/树脂类别 [6]。",
+          "citation_refs": [
+            "[1]",
+            "[4]",
+            "[8]",
+            "[9]",
+            "[6]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C9",
+          "text": "回收次数、打浆程度、铺层数/纤维体积分数三组工艺变量不可互换，数据来源也分别是自家手抄片实验、21 点打浆实验与公开数据集。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C10",
+          "text": "## 可行的替代做法\n\n不合并为同列，而保留元数据列：`target_quantity`（zero-span strength / tensile index / tensile strength）、`unit`、`normalization_basis`、`specimen_level`（单纤维 / 纸页 / 层合板）、`material_system`、`process_variable`（回收次数 / 打浆 / 铺层与体积分数）与 `source`；数值按目标量分列存放，跨来源比较只用无量纲比值（如相对未处理基准的保留率）并显式标注基准。",
+          "citation_refs": [],
+          "claim_type": "scope",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C11",
+          "text": "## 不确定与限制\n\n- Ayaliew 等 tensile strength 的单位 MPa 是由 Table 1 的“RMSE (MPa)/MAE (MPa)”列及结论中“RMSE ≈ 31 MPa”推得，属间接证据 [12][6]。\n- Uddin 等 tensile index 的具体单位在本次检索到的摘要片段中未给出 [8]；其完整数据集与测量量表未获取，无法核查。\n- Li 等 Table 2 数值为原文表格文字 [1]，未逐像素核对图表；15%–35% 降幅为原文文字表述，未读取 Figure 4 刻度。\n- 三篇所依据的拉伸测试标准、试样尺寸等具体测试条件在已获取片段中未完整呈现，故不能断定其测试条件“一定不可比”，只能确认上述三项差异存在；这本身已足以反对无单位同列合并。",
+          "citation_refs": [
+            "[12]",
+            "[6]",
+            "[8]",
+            "[1]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C2",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[12]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[9]",
+          "score": 0
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C11",
+          "ref": "[12]",
+          "score": 1
+        },
+        {
+          "claim_id": "C11",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C11",
+          "ref": "[8]",
+          "score": 0
+        },
+        {
+          "claim_id": "C11",
+          "ref": "[1]",
+          "score": 1
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C5",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C6",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C7",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C8",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C9",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C10",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C11",
+          "coverage": "partial"
+        }
+      ],
+      "answerability_score": 1,
+      "reference_concern": false,
+      "decisions": {
+        "boundary": "partial",
+        "reference_check": "sound",
+        "point_K1": "missing",
+        "point_K2": "complete",
+        "point_K3": "complete",
+        "point_K4": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "NONE",
+        "group_C1": "missing",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "B025",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "kind_C3": "fact",
+        "support_C3": "supported",
+        "basis_C3": "B023",
+        "group_C3": "complete",
+        "citation_C3_1": "supported",
+        "kind_C4": "fact",
+        "support_C4": "supported",
+        "basis_C4": "B039",
+        "group_C4": "complete",
+        "citation_C4_1": "supported",
+        "citation_C4_2": "supported",
+        "citation_C4_3": "supported",
+        "kind_C5": "fact",
+        "support_C5": "partially_supported",
+        "basis_C5": "NONE",
+        "group_C5": "missing",
+        "kind_C6": "fact",
+        "support_C6": "supported",
+        "basis_C6": "NONE",
+        "group_C6": "complete",
+        "citation_C6_1": "supported",
+        "citation_C6_2": "supported",
+        "citation_C6_3": "supported",
+        "kind_C7": "fact",
+        "support_C7": "partially_supported",
+        "basis_C7": "NONE",
+        "group_C7": "missing",
+        "kind_C8": "fact",
+        "support_C8": "supported",
+        "basis_C8": "NONE",
+        "group_C8": "complete",
+        "citation_C8_1": "supported",
+        "citation_C8_2": "supported",
+        "citation_C8_3": "supported",
+        "citation_C8_4": "unsupported",
+        "citation_C8_5": "supported",
+        "kind_C9": "fact",
+        "support_C9": "partially_supported",
+        "basis_C9": "NONE",
+        "group_C9": "partial",
+        "kind_C10": "scope",
+        "support_C10": "unsupported",
+        "basis_C10": "NONE",
+        "group_C10": "missing",
+        "kind_C11": "fact",
+        "support_C11": "partially_supported",
+        "basis_C11": "NONE",
+        "group_C11": "partial",
+        "citation_C11_1": "supported",
+        "citation_C11_2": "supported",
+        "citation_C11_3": "unsupported",
+        "citation_C11_4": "supported"
+      }
+    },
+    "source_run": "agent-eightpapers-20261105",
+    "baseline_metrics": {
+      "point_score": 50.0,
+      "point_count": 4,
+      "fact_count": 10,
+      "supported_facts": 6,
+      "pair_count": 17,
+      "supported_pairs": 15,
+      "group_count": 10,
+      "covered_groups": 5,
+      "boundary": 1,
+      "fact_support": 60.0,
+      "citation_precision": 88.23529411764706,
+      "citation_coverage": 50.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "pre_audit_metrics": {
+      "point_score": 50.0,
+      "point_count": 4,
+      "fact_count": 10,
+      "supported_facts": 6,
+      "pair_count": 17,
+      "supported_pairs": 15,
+      "group_count": 10,
+      "covered_groups": 5,
+      "boundary": 1,
+      "fact_support": 60.0,
+      "citation_precision": 88.23529411764706,
+      "citation_coverage": 50.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "latest_audit": {
+      "reason": "预设要点分50保留：D/T0未谈，Uddin单位未确认，合成属性漏答。注意这是覆盖特定预设内容的分数，不代表回答一半事实错误。恢复单位/层级归纳及明确限定检索片段的缺口说明；[8]摘要确实没有给抗张指数单位。保留[9]仅为Kaggle参考文献条目，不能仅凭被引用就证实本研究数据来自该数据集；C8、C9仍部分支持。公开可得与合成不矛盾，缺合成属性属遗漏而非公开数据表述本身错误。只允许无量纲比较的建议仍过强。",
+      "metrics": {
+        "point_score": 50.0,
+        "point_count": 4,
+        "fact_count": 10,
+        "supported_facts": 8,
+        "pair_count": 17,
+        "supported_pairs": 16,
+        "group_count": 10,
+        "covered_groups": 8,
+        "boundary": 1,
+        "fact_support": 80.0,
+        "citation_precision": 94.11764705882354,
+        "citation_coverage": 80.0,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "answer_regenerated": false,
+      "judge_rerun": false
+    },
+    "answer_sha256": "07912c26487dd56bffb1adb8bbae3d20ad058570d9fd069acc244dd905f100f3"
+  }
+]
