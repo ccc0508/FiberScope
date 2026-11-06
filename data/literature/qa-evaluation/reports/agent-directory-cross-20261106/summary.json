@@ -1,0 +1,51 @@
+{
+  "latest": {
+    "count": 1,
+    "point_score": 87.5,
+    "strict_pass_count": 0,
+    "boundary_mean": 2,
+    "fact_support": {
+      "percent": 80.0,
+      "numerator": 4,
+      "denominator": 5
+    },
+    "citation_precision": {
+      "percent": 100.0,
+      "numerator": 19,
+      "denominator": 19
+    },
+    "citation_coverage": {
+      "percent": 80.0,
+      "numerator": 4,
+      "denominator": 5
+    }
+  },
+  "raw_jev": {
+    "count": 1,
+    "point_score": 100,
+    "strict_pass_count": 0,
+    "boundary_mean": 2,
+    "fact_support": {
+      "percent": 80.0,
+      "numerator": 4,
+      "denominator": 5
+    },
+    "citation_precision": {
+      "percent": 94.73684210526316,
+      "numerator": 18,
+      "denominator": 19
+    },
+    "citation_coverage": {
+      "percent": 40.0,
+      "numerator": 2,
+      "denominator": 5
+    }
+  },
+  "count": 1,
+  "limitations": [
+    "本次仅一题首次运行，不能推断稳定性或总体泛化。",
+    "新三题独立报告，不替换或混入原30题。",
+    "按既有宽严口径校准；不是独立人工专家评审。",
+    "非论文题引用N/A，不按满分填充。"
+  ]
+}
