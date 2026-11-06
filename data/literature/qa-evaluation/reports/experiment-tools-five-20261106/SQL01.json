@@ -1,0 +1,1632 @@
+{
+  "id": "SQL01",
+  "question": "只查平台实验数据库：纤维长度有哪两种口径，字段名和单位分别是什么？再按样本类型统计规范样本数及总数。不要把实验展示行数当样本数，不要检索论文。",
+  "sql": "SELECT sample_type,COUNT(*) AS n FROM fiber.v_sample_overview GROUP BY sample_type ORDER BY sample_type",
+  "criteria": "目录说明算术平均/长度加权，均为mm；blend9/hardwood24/softwood28，总61；实际查库，有数据引用。",
+  "reference": {
+    "columns": [
+      "sample_type",
+      "n"
+    ],
+    "rows": [
+      [
+        "blend",
+        9
+      ],
+      [
+        "hardwood",
+        24
+      ],
+      [
+        "softwood",
+        28
+      ]
+    ]
+  },
+  "run_id": "experiment-five-20261106-SQL01",
+  "elapsed_seconds": 52.57,
+  "exit_code": 0,
+  "status": "completed",
+  "answer": "**1）纤维长度的两种定义（字段名与单位）**\n\n| 定义 | 字段名 | 单位 |\n|---|---|---|\n| 算术平均纤维长度 | `fiber_length_arithmetic_mm` | mm |\n| 长度加权纤维长度 | `fiber_length_weighted_mm` | mm |\n\n这两项都出现在 `fiber.v_beating_analysis`、`fiber.v_blend_analysis`、`fiber.v_fiber_paper_analysis`、`fiber.v_recycled_cycle_summary` 和 `fiber.v_recycled_cycle_detail` 中 [3]。在指标元数据中，这两项的单位状态都标为 confirmed；字段名中的 `_mm` 后缀也表明单位是 mm，而且这两项适用于 core（核心）与 recycled（再生纸浆）两类范围 [3]。\n\n**2）按样本类型统计的规范样本数**\n\n统计以 `fiber.v_sample_overview` 为粒度，该视图每行对应一个规范样本（一行代表一个规范样本）：\n\n| sample_type | 规范样本数 |\n|---|---|\n| softwood（针叶木） | 28 |\n| hardwood（阔叶木） | 24 |\n| blend（混配） | 9 |\n| **合计** | **61** |\n\n分组计数结果见 [1]；总数在独立汇总中为 61 个样本，且 61 个互不相同的 `canonical_code` 与总行数一致，说明没有重复行 [2]，并且分组计数之和 28+24+9 也等于 61。\n\n**统计规范与限制**\n- `v_sample_overview` 不包含纤维长度列，因此以上只是各类样本的数量，并不表示长度指标的有效值数量；长度字段只在上述打浆、配抄、纤维-纸张及再生纸浆视图中存在 [3]。\n- 没有把 `v_beating_analysis` 或 `v_blend_analysis` 的行数当作样本数：前者一行对应一条实验展示行，同一个样本可能出现在多个实验中；后者除混配样本外还包含纯浆端点行 [3]。`v_data_lineage` 中同一样本也可能有多条来源关联 [3]。\n- 再生纸浆（recycled）的数据块属于独立范围，其处理条件未知，并且有 4 条长度分布异常但保留原值；因此它不能与 core 的打浆、配抄样本合并计数，也不能混用其中的强度类指标 [3]。\n- 以上内容均来自平台实验数据库快照，不是论文引文，也不是原文表述。",
+  "review_status": "completed",
+  "tool_calls": [
+    {
+      "provider_call_id": "call_00_5tO4BQpnAxqojcnJBboE0105",
+      "request": {
+        "reason": "需要先获取真实字段名、单位与行粒度，才能回答纤维长度两种口径和按样本类型统计规范样本数。",
+        "tool": "describe_experiment_data"
+      },
+      "status": "completed",
+      "result": {
+        "call_id": "0ba24dcd-5e04-4d52-8b38-6b335197b2e0",
+        "status": "completed",
+        "result": {
+          "views": {
+            "fiber.v_sample_overview": {
+              "columns": [
+                {
+                  "name": "sample_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "canonical_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "sample_type",
+                  "type": "character varying"
+                },
+                {
+                  "name": "display_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "notes",
+                  "type": "text"
+                },
+                {
+                  "name": "component_count",
+                  "type": "integer"
+                },
+                {
+                  "name": "sw_proportion_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "hw_proportion_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "sw_beating_revolutions",
+                  "type": "integer"
+                },
+                {
+                  "name": "sw_beating_degree_sr",
+                  "type": "numeric"
+                },
+                {
+                  "name": "hw_beating_revolutions",
+                  "type": "integer"
+                },
+                {
+                  "name": "hw_beating_degree_sr",
+                  "type": "numeric"
+                }
+              ],
+              "default_order": [
+                "canonical_code"
+              ]
+            },
+            "fiber.v_beating_analysis": {
+              "columns": [
+                {
+                  "name": "experiment_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "experiment_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "experiment_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "display_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "display_order",
+                  "type": "integer"
+                },
+                {
+                  "name": "sample_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "canonical_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "sample_type",
+                  "type": "character varying"
+                },
+                {
+                  "name": "display_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "material_code",
+                  "type": "text"
+                },
+                {
+                  "name": "beating_revolutions",
+                  "type": "integer"
+                },
+                {
+                  "name": "beating_degree_sr",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_length_arithmetic_mm",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_length_weighted_mm",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_width_um",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_coarseness_mg_m",
+                  "type": "numeric"
+                },
+                {
+                  "name": "kink_angle_deg",
+                  "type": "numeric"
+                },
+                {
+                  "name": "kinked_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "curved_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fibrillation_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "broken_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_weighted_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_area_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "basis_weight_g_m2",
+                  "type": "numeric"
+                },
+                {
+                  "name": "thickness_um",
+                  "type": "numeric"
+                },
+                {
+                  "name": "burst_index",
+                  "type": "numeric"
+                },
+                {
+                  "name": "tear_index",
+                  "type": "numeric"
+                },
+                {
+                  "name": "tensile_index",
+                  "type": "numeric"
+                },
+                {
+                  "name": "zero_span_tensile",
+                  "type": "numeric"
+                },
+                {
+                  "name": "surface_roughness",
+                  "type": "numeric"
+                },
+                {
+                  "name": "air_permeability",
+                  "type": "numeric"
+                },
+                {
+                  "name": "folding_endurance_raw",
+                  "type": "numeric"
+                },
+                {
+                  "name": "replicate_count",
+                  "type": "smallint"
+                },
+                {
+                  "name": "aggregation_method",
+                  "type": "character varying"
+                },
+                {
+                  "name": "experiment_source_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "fiber_source_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "paper_source_id",
+                  "type": "bigint"
+                }
+              ],
+              "default_order": [
+                "experiment_code",
+                "display_order"
+              ]
+            },
+            "fiber.v_blend_analysis": {
+              "columns": [
+                {
+                  "name": "experiment_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "experiment_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "experiment_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "display_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "display_order",
+                  "type": "integer"
+                },
+                {
+                  "name": "sample_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "canonical_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "sample_type",
+                  "type": "character varying"
+                },
+                {
+                  "name": "display_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "sw_proportion_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "hw_proportion_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "sw_beating_revolutions",
+                  "type": "integer"
+                },
+                {
+                  "name": "sw_beating_degree_sr",
+                  "type": "numeric"
+                },
+                {
+                  "name": "hw_beating_revolutions",
+                  "type": "integer"
+                },
+                {
+                  "name": "hw_beating_degree_sr",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_length_arithmetic_mm",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_length_weighted_mm",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_width_um",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_coarseness_mg_m",
+                  "type": "numeric"
+                },
+                {
+                  "name": "kink_angle_deg",
+                  "type": "numeric"
+                },
+                {
+                  "name": "kinked_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "curved_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fibrillation_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "broken_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_weighted_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_area_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "basis_weight_g_m2",
+                  "type": "numeric"
+                },
+                {
+                  "name": "thickness_um",
+                  "type": "numeric"
+                },
+                {
+                  "name": "burst_index",
+                  "type": "numeric"
+                },
+                {
+                  "name": "tear_index",
+                  "type": "numeric"
+                },
+                {
+                  "name": "tensile_index",
+                  "type": "numeric"
+                },
+                {
+                  "name": "zero_span_tensile",
+                  "type": "numeric"
+                },
+                {
+                  "name": "surface_roughness",
+                  "type": "numeric"
+                },
+                {
+                  "name": "air_permeability",
+                  "type": "numeric"
+                },
+                {
+                  "name": "folding_endurance_raw",
+                  "type": "numeric"
+                },
+                {
+                  "name": "replicate_count",
+                  "type": "smallint"
+                },
+                {
+                  "name": "aggregation_method",
+                  "type": "character varying"
+                },
+                {
+                  "name": "experiment_source_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "fiber_source_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "paper_source_id",
+                  "type": "bigint"
+                }
+              ],
+              "default_order": [
+                "display_order"
+              ]
+            },
+            "fiber.v_fiber_paper_analysis": {
+              "columns": [
+                {
+                  "name": "sample_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "canonical_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "sample_type",
+                  "type": "character varying"
+                },
+                {
+                  "name": "display_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "notes",
+                  "type": "text"
+                },
+                {
+                  "name": "component_count",
+                  "type": "integer"
+                },
+                {
+                  "name": "sw_proportion_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "hw_proportion_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "sw_beating_revolutions",
+                  "type": "integer"
+                },
+                {
+                  "name": "sw_beating_degree_sr",
+                  "type": "numeric"
+                },
+                {
+                  "name": "hw_beating_revolutions",
+                  "type": "integer"
+                },
+                {
+                  "name": "hw_beating_degree_sr",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_length_arithmetic_mm",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_length_weighted_mm",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_width_um",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_coarseness_mg_m",
+                  "type": "numeric"
+                },
+                {
+                  "name": "kink_angle_deg",
+                  "type": "numeric"
+                },
+                {
+                  "name": "kinked_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "curved_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fibrillation_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "broken_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_weighted_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_area_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "basis_weight_g_m2",
+                  "type": "numeric"
+                },
+                {
+                  "name": "thickness_um",
+                  "type": "numeric"
+                },
+                {
+                  "name": "burst_index",
+                  "type": "numeric"
+                },
+                {
+                  "name": "tear_index",
+                  "type": "numeric"
+                },
+                {
+                  "name": "tensile_index",
+                  "type": "numeric"
+                },
+                {
+                  "name": "zero_span_tensile",
+                  "type": "numeric"
+                },
+                {
+                  "name": "surface_roughness",
+                  "type": "numeric"
+                },
+                {
+                  "name": "air_permeability",
+                  "type": "numeric"
+                },
+                {
+                  "name": "folding_endurance_raw",
+                  "type": "numeric"
+                },
+                {
+                  "name": "replicate_count",
+                  "type": "smallint"
+                },
+                {
+                  "name": "aggregation_method",
+                  "type": "character varying"
+                },
+                {
+                  "name": "fiber_source_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "paper_source_id",
+                  "type": "bigint"
+                }
+              ],
+              "default_order": [
+                "canonical_code"
+              ]
+            },
+            "fiber.v_recycled_cycle_summary": {
+              "columns": [
+                {
+                  "name": "dataset_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "study_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "block_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "block_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "block_order",
+                  "type": "smallint"
+                },
+                {
+                  "name": "section_no",
+                  "type": "smallint"
+                },
+                {
+                  "name": "contributor_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "raw_material_grade",
+                  "type": "character varying"
+                },
+                {
+                  "name": "condition_label",
+                  "type": "character varying"
+                },
+                {
+                  "name": "metadata_status",
+                  "type": "character varying"
+                },
+                {
+                  "name": "cycle_no",
+                  "type": "smallint"
+                },
+                {
+                  "name": "replicate_count",
+                  "type": "smallint"
+                },
+                {
+                  "name": "length_0_2_0_3_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_0_3_0_45_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_0_45_0_67_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_0_67_1_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_1_1_5_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_1_5_2_24_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_2_24_3_35_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_3_35_5_01_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_5_01_7_5_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_gt_7_5_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_length_arithmetic_mm",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_length_weighted_mm",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_width_um",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_coarseness_mg_m",
+                  "type": "numeric"
+                },
+                {
+                  "name": "kink_angle_deg",
+                  "type": "numeric"
+                },
+                {
+                  "name": "kinked_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "curved_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fibrillation_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "broken_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_weighted_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_area_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "tensile_strength_kn_m",
+                  "type": "numeric"
+                },
+                {
+                  "name": "burst_strength_kpa",
+                  "type": "numeric"
+                },
+                {
+                  "name": "tear_strength_mn",
+                  "type": "numeric"
+                }
+              ],
+              "default_order": [
+                "block_order",
+                "cycle_no"
+              ]
+            },
+            "fiber.v_recycled_cycle_detail": {
+              "columns": [
+                {
+                  "name": "dataset_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "study_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "file_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "sheet_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "source_version",
+                  "type": "character varying"
+                },
+                {
+                  "name": "block_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "block_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "block_order",
+                  "type": "smallint"
+                },
+                {
+                  "name": "section_no",
+                  "type": "smallint"
+                },
+                {
+                  "name": "contributor_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "raw_material_grade",
+                  "type": "character varying"
+                },
+                {
+                  "name": "material_assignment_basis",
+                  "type": "character varying"
+                },
+                {
+                  "name": "condition_label",
+                  "type": "character varying"
+                },
+                {
+                  "name": "metadata_status",
+                  "type": "character varying"
+                },
+                {
+                  "name": "cycle_no",
+                  "type": "smallint"
+                },
+                {
+                  "name": "replicate_no",
+                  "type": "smallint"
+                },
+                {
+                  "name": "source_row",
+                  "type": "integer"
+                },
+                {
+                  "name": "length_0_2_0_3_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_0_3_0_45_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_0_45_0_67_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_0_67_1_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_1_1_5_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_1_5_2_24_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_2_24_3_35_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_3_35_5_01_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_5_01_7_5_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_gt_7_5_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_distribution_sum_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_distribution_qc",
+                  "type": "text"
+                },
+                {
+                  "name": "fiber_length_arithmetic_mm",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_length_weighted_mm",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_width_um",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fiber_coarseness_mg_m",
+                  "type": "numeric"
+                },
+                {
+                  "name": "kink_angle_deg",
+                  "type": "numeric"
+                },
+                {
+                  "name": "kinked_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "curved_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fibrillation_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "broken_fiber_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_weighted_length_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "fines_area_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "tensile_strength_kn_m",
+                  "type": "numeric"
+                },
+                {
+                  "name": "burst_strength_kpa",
+                  "type": "numeric"
+                },
+                {
+                  "name": "tear_strength_mn",
+                  "type": "numeric"
+                }
+              ],
+              "default_order": [
+                "block_order",
+                "cycle_no",
+                "replicate_no"
+              ]
+            },
+            "fiber.v_recycled_data_quality": {
+              "columns": [
+                {
+                  "name": "dataset_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "block_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "cycle_no",
+                  "type": "smallint"
+                },
+                {
+                  "name": "replicate_no",
+                  "type": "smallint"
+                },
+                {
+                  "name": "source_row",
+                  "type": "integer"
+                },
+                {
+                  "name": "length_distribution_sum_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "deviation_from_100_pct",
+                  "type": "numeric"
+                },
+                {
+                  "name": "length_distribution_qc",
+                  "type": "text"
+                }
+              ],
+              "default_order": [
+                "source_row"
+              ]
+            },
+            "fiber.v_data_lineage": {
+              "columns": [
+                {
+                  "name": "source_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "file_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "sheet_name",
+                  "type": "character varying"
+                },
+                {
+                  "name": "source_row",
+                  "type": "integer"
+                },
+                {
+                  "name": "source_version",
+                  "type": "character varying"
+                },
+                {
+                  "name": "imported_at",
+                  "type": "timestamp with time zone"
+                },
+                {
+                  "name": "usage_type",
+                  "type": "text"
+                },
+                {
+                  "name": "experiment_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "display_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "material_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "sample_id",
+                  "type": "bigint"
+                },
+                {
+                  "name": "canonical_code",
+                  "type": "character varying"
+                },
+                {
+                  "name": "sample_type",
+                  "type": "character varying"
+                },
+                {
+                  "name": "display_name",
+                  "type": "character varying"
+                }
+              ],
+              "default_order": [
+                "source_id",
+                "usage_type",
+                "canonical_code",
+                "display_code",
+                "material_code"
+              ]
+            }
+          },
+          "indicators": [
+            {
+              "key": "fiber_length_arithmetic_mm",
+              "name": "纤维长度（算术平均）",
+              "unit": "mm",
+              "group": "fiber",
+              "scope": [
+                "core",
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "fiber_length_weighted_mm",
+              "name": "纤维长度（长度加权）",
+              "unit": "mm",
+              "group": "fiber",
+              "scope": [
+                "core",
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "fiber_width_um",
+              "name": "纤维宽度",
+              "unit": "μm",
+              "group": "fiber",
+              "scope": [
+                "core",
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "fiber_coarseness_mg_m",
+              "name": "纤维粗度",
+              "unit": "mg/m",
+              "group": "fiber",
+              "scope": [
+                "core",
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "kink_angle_deg",
+              "name": "扭结角",
+              "unit": "°",
+              "group": "fiber",
+              "scope": [
+                "core",
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "kinked_fiber_pct",
+              "name": "扭结纤维比例",
+              "unit": "%",
+              "group": "fiber",
+              "scope": [
+                "core",
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "curved_fiber_pct",
+              "name": "弯曲纤维比例",
+              "unit": "%",
+              "group": "fiber",
+              "scope": [
+                "core",
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "fibrillation_length_pct",
+              "name": "分丝帚化长度比",
+              "unit": "%",
+              "group": "fiber",
+              "scope": [
+                "core",
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "broken_fiber_pct",
+              "name": "折断纤维比",
+              "unit": "%",
+              "group": "fiber",
+              "scope": [
+                "core",
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "fines_length_pct",
+              "name": "细小纤维长度比",
+              "unit": "%",
+              "group": "fiber",
+              "scope": [
+                "core",
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "fines_weighted_length_pct",
+              "name": "细小纤维长度加权比",
+              "unit": "%",
+              "group": "fiber",
+              "scope": [
+                "core",
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "fines_area_pct",
+              "name": "细小纤维面积比",
+              "unit": "%",
+              "group": "fiber",
+              "scope": [
+                "core",
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "basis_weight_g_m2",
+              "name": "定量",
+              "unit": "g/m²",
+              "group": "paper",
+              "scope": [
+                "core"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "thickness_um",
+              "name": "厚度",
+              "unit": "μm",
+              "group": "paper",
+              "scope": [
+                "core"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "burst_index",
+              "name": "耐破指数",
+              "unit": "kPa·m²/g",
+              "group": "paper",
+              "scope": [
+                "core"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "tear_index",
+              "name": "撕裂指数",
+              "unit": "mN·m²/g",
+              "group": "paper",
+              "scope": [
+                "core"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "tensile_index",
+              "name": "抗张指数",
+              "unit": "N·m/g",
+              "group": "paper",
+              "scope": [
+                "core"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "zero_span_tensile",
+              "name": "零距抗张强度",
+              "unit": "N/cm",
+              "group": "paper",
+              "scope": [
+                "core"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "surface_roughness",
+              "name": "表面粗糙度",
+              "unit": "ml/min",
+              "group": "paper",
+              "scope": [
+                "core"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "air_permeability",
+              "name": "透气度",
+              "unit": "μm/(Pa·s)",
+              "group": "paper",
+              "scope": [
+                "core"
+              ],
+              "unit_status": "tentative"
+            },
+            {
+              "key": "folding_endurance_raw",
+              "name": "耐折度",
+              "unit": null,
+              "group": "paper",
+              "scope": [
+                "core"
+              ],
+              "unit_status": "unconfirmed"
+            },
+            {
+              "key": "length_0_2_0_3_pct",
+              "name": "长度分布 0.2–0.3 mm",
+              "unit": "%",
+              "group": "distribution",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "length_0_3_0_45_pct",
+              "name": "长度分布 0.3–0.45 mm",
+              "unit": "%",
+              "group": "distribution",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "length_0_45_0_67_pct",
+              "name": "长度分布 0.45–0.67 mm",
+              "unit": "%",
+              "group": "distribution",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "length_0_67_1_pct",
+              "name": "长度分布 0.67–1 mm",
+              "unit": "%",
+              "group": "distribution",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "length_1_1_5_pct",
+              "name": "长度分布 1–1.5 mm",
+              "unit": "%",
+              "group": "distribution",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "length_1_5_2_24_pct",
+              "name": "长度分布 1.5–2.24 mm",
+              "unit": "%",
+              "group": "distribution",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "length_2_24_3_35_pct",
+              "name": "长度分布 2.24–3.35 mm",
+              "unit": "%",
+              "group": "distribution",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "length_3_35_5_01_pct",
+              "name": "长度分布 3.35–5.01 mm",
+              "unit": "%",
+              "group": "distribution",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "length_5_01_7_5_pct",
+              "name": "长度分布 5.01–7.5 mm",
+              "unit": "%",
+              "group": "distribution",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "length_gt_7_5_pct",
+              "name": "长度分布 >7.5 mm",
+              "unit": "%",
+              "group": "distribution",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "tensile_strength_kn_m",
+              "name": "抗张强度",
+              "unit": "kN/m",
+              "group": "strength",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "burst_strength_kpa",
+              "name": "耐破强度",
+              "unit": "kPa",
+              "group": "strength",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            },
+            {
+              "key": "tear_strength_mn",
+              "name": "撕裂强度",
+              "unit": "mN",
+              "group": "strength",
+              "scope": [
+                "recycled"
+              ],
+              "unit_status": "confirmed"
+            }
+          ],
+          "notes": [
+            "空值保留为 null，百分比使用0—100口径。",
+            "透气度单位暂定；耐折度单位未确认。",
+            "再生纸浆数据块的处理条件未知；4条长度分布异常保留原值。",
+            "图表展示对应关系，不代表因果关系；核心指数与再生纸浆强度不可混用。"
+          ],
+          "material_codes": {
+            "SW": "针叶木",
+            "HW": "阔叶木"
+          },
+          "grains": {
+            "v_sample_overview": "one canonical sample; use this for sample counts",
+            "v_beating_analysis": "one experiment display row; samples may appear in multiple experiments",
+            "v_blend_analysis": "one blend experiment row including pure-pulp endpoints; not the number of blend-only samples",
+            "v_fiber_paper_analysis": "one canonical sample with fiber/paper measurements",
+            "v_recycled_cycle_summary": "one data block and cycle summary",
+            "v_recycled_cycle_detail": "one raw replicate per block and cycle",
+            "v_recycled_data_quality": "one flagged raw observation",
+            "v_data_lineage": "one source usage association; multiple usages can share a sample or source row"
+          },
+          "sample_types": [
+            "softwood",
+            "hardwood",
+            "blend"
+          ],
+          "policy": "SELECT over allowed fiber views, arbitrary joins between those views and nested/correlated SELECT subqueries permitted. WHERE/GROUP BY/HAVING/ORDER BY; COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF. No CTEs, set operations or casts. Include sample IDs for raw rows. Add ORDER BY for deterministic results. Explain join keys and resulting grain; one-to-many joins can multiply samples and bias counts/averages. lineage has multiple usages per sample. Max 100 returned rows; truncated results are not the full population.",
+          "evidence_scope": {
+            "run_id": "experiment-five-20261106-SQL01",
+            "reference_policy": "immutable_exact_snapshot",
+            "notice": "References are unique only within this run. Text availability is not proof of visual inspection."
+          }
+        }
+      },
+      "model_delivery": {
+        "status": "delivered",
+        "reason": null,
+        "messages": [
+          {
+            "role": "tool",
+            "tool_call_id": "call_00_5tO4BQpnAxqojcnJBboE0105",
+            "content": "{\"call_id\": \"0ba24dcd-5e04-4d52-8b38-6b335197b2e0\", \"status\": \"completed\", \"result\": {\"views\": {\"fiber.v_sample_overview\": {\"columns\": [{\"name\": \"sample_id\", \"type\": \"bigint\"}, {\"name\": \"canonical_code\", \"type\": \"character varying\"}, {\"name\": \"sample_type\", \"type\": \"character varying\"}, {\"name\": \"display_name\", \"type\": \"character varying\"}, {\"name\": \"notes\", \"type\": \"text\"}, {\"name\": \"component_count\", \"type\": \"integer\"}, {\"name\": \"sw_proportion_pct\", \"type\": \"numeric\"}, {\"name\": \"hw_proportion_pct\", \"type\": \"numeric\"}, {\"name\": \"sw_beating_revolutions\", \"type\": \"integer\"}, {\"name\": \"sw_beating_degree_sr\", \"type\": \"numeric\"}, {\"name\": \"hw_beating_revolutions\", \"type\": \"integer\"}, {\"name\": \"hw_beating_degree_sr\", \"type\": \"numeric\"}], \"default_order\": [\"canonical_code\"]}, \"fiber.v_beating_analysis\": {\"columns\": [{\"name\": \"experiment_id\", \"type\": \"bigint\"}, {\"name\": \"experiment_code\", \"type\": \"character varying\"}, {\"name\": \"experiment_name\", \"type\": \"character varying\"}, {\"name\": \"display_code\", \"type\": \"character varying\"}, {\"name\": \"display_order\", \"type\": \"integer\"}, {\"name\": \"sample_id\", \"type\": \"bigint\"}, {\"name\": \"canonical_code\", \"type\": \"character varying\"}, {\"name\": \"sample_type\", \"type\": \"character varying\"}, {\"name\": \"display_name\", \"type\": \"character varying\"}, {\"name\": \"material_code\", \"type\": \"text\"}, {\"name\": \"beating_revolutions\", \"type\": \"integer\"}, {\"name\": \"beating_degree_sr\", \"type\": \"numeric\"}, {\"name\": \"fiber_length_arithmetic_mm\", \"type\": \"numeric\"}, {\"name\": \"fiber_length_weighted_mm\", \"type\": \"numeric\"}, {\"name\": \"fiber_width_um\", \"type\": \"numeric\"}, {\"name\": \"fiber_coarseness_mg_m\", \"type\": \"numeric\"}, {\"name\": \"kink_angle_deg\", \"type\": \"numeric\"}, {\"name\": \"kinked_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"curved_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"fibrillation_length_pct\", \"type\": \"numeric\"}, {\"name\": \"broken_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_length_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_weighted_length_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_area_pct\", \"type\": \"numeric\"}, {\"name\": \"basis_weight_g_m2\", \"type\": \"numeric\"}, {\"name\": \"thickness_um\", \"type\": \"numeric\"}, {\"name\": \"burst_index\", \"type\": \"numeric\"}, {\"name\": \"tear_index\", \"type\": \"numeric\"}, {\"name\": \"tensile_index\", \"type\": \"numeric\"}, {\"name\": \"zero_span_tensile\", \"type\": \"numeric\"}, {\"name\": \"surface_roughness\", \"type\": \"numeric\"}, {\"name\": \"air_permeability\", \"type\": \"numeric\"}, {\"name\": \"folding_endurance_raw\", \"type\": \"numeric\"}, {\"name\": \"replicate_count\", \"type\": \"smallint\"}, {\"name\": \"aggregation_method\", \"type\": \"character varying\"}, {\"name\": \"experiment_source_id\", \"type\": \"bigint\"}, {\"name\": \"fiber_source_id\", \"type\": \"bigint\"}, {\"name\": \"paper_source_id\", \"type\": \"bigint\"}], \"default_order\": [\"experiment_code\", \"display_order\"]}, \"fiber.v_blend_analysis\": {\"columns\": [{\"name\": \"experiment_id\", \"type\": \"bigint\"}, {\"name\": \"experiment_code\", \"type\": \"character varying\"}, {\"name\": \"experiment_name\", \"type\": \"character varying\"}, {\"name\": \"display_code\", \"type\": \"character varying\"}, {\"name\": \"display_order\", \"type\": \"integer\"}, {\"name\": \"sample_id\", \"type\": \"bigint\"}, {\"name\": \"canonical_code\", \"type\": \"character varying\"}, {\"name\": \"sample_type\", \"type\": \"character varying\"}, {\"name\": \"display_name\", \"type\": \"character varying\"}, {\"name\": \"sw_proportion_pct\", \"type\": \"numeric\"}, {\"name\": \"hw_proportion_pct\", \"type\": \"numeric\"}, {\"name\": \"sw_beating_revolutions\", \"type\": \"integer\"}, {\"name\": \"sw_beating_degree_sr\", \"type\": \"numeric\"}, {\"name\": \"hw_beating_revolutions\", \"type\": \"integer\"}, {\"name\": \"hw_beating_degree_sr\", \"type\": \"numeric\"}, {\"name\": \"fiber_length_arithmetic_mm\", \"type\": \"numeric\"}, {\"name\": \"fiber_length_weighted_mm\", \"type\": \"numeric\"}, {\"name\": \"fiber_width_um\", \"type\": \"numeric\"}, {\"name\": \"fiber_coarseness_mg_m\", \"type\": \"numeric\"}, {\"name\": \"kink_angle_deg\", \"type\": \"numeric\"}, {\"name\": \"kinked_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"curved_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"fibrillation_length_pct\", \"type\": \"numeric\"}, {\"name\": \"broken_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_length_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_weighted_length_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_area_pct\", \"type\": \"numeric\"}, {\"name\": \"basis_weight_g_m2\", \"type\": \"numeric\"}, {\"name\": \"thickness_um\", \"type\": \"numeric\"}, {\"name\": \"burst_index\", \"type\": \"numeric\"}, {\"name\": \"tear_index\", \"type\": \"numeric\"}, {\"name\": \"tensile_index\", \"type\": \"numeric\"}, {\"name\": \"zero_span_tensile\", \"type\": \"numeric\"}, {\"name\": \"surface_roughness\", \"type\": \"numeric\"}, {\"name\": \"air_permeability\", \"type\": \"numeric\"}, {\"name\": \"folding_endurance_raw\", \"type\": \"numeric\"}, {\"name\": \"replicate_count\", \"type\": \"smallint\"}, {\"name\": \"aggregation_method\", \"type\": \"character varying\"}, {\"name\": \"experiment_source_id\", \"type\": \"bigint\"}, {\"name\": \"fiber_source_id\", \"type\": \"bigint\"}, {\"name\": \"paper_source_id\", \"type\": \"bigint\"}], \"default_order\": [\"display_order\"]}, \"fiber.v_fiber_paper_analysis\": {\"columns\": [{\"name\": \"sample_id\", \"type\": \"bigint\"}, {\"name\": \"canonical_code\", \"type\": \"character varying\"}, {\"name\": \"sample_type\", \"type\": \"character varying\"}, {\"name\": \"display_name\", \"type\": \"character varying\"}, {\"name\": \"notes\", \"type\": \"text\"}, {\"name\": \"component_count\", \"type\": \"integer\"}, {\"name\": \"sw_proportion_pct\", \"type\": \"numeric\"}, {\"name\": \"hw_proportion_pct\", \"type\": \"numeric\"}, {\"name\": \"sw_beating_revolutions\", \"type\": \"integer\"}, {\"name\": \"sw_beating_degree_sr\", \"type\": \"numeric\"}, {\"name\": \"hw_beating_revolutions\", \"type\": \"integer\"}, {\"name\": \"hw_beating_degree_sr\", \"type\": \"numeric\"}, {\"name\": \"fiber_length_arithmetic_mm\", \"type\": \"numeric\"}, {\"name\": \"fiber_length_weighted_mm\", \"type\": \"numeric\"}, {\"name\": \"fiber_width_um\", \"type\": \"numeric\"}, {\"name\": \"fiber_coarseness_mg_m\", \"type\": \"numeric\"}, {\"name\": \"kink_angle_deg\", \"type\": \"numeric\"}, {\"name\": \"kinked_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"curved_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"fibrillation_length_pct\", \"type\": \"numeric\"}, {\"name\": \"broken_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_length_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_weighted_length_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_area_pct\", \"type\": \"numeric\"}, {\"name\": \"basis_weight_g_m2\", \"type\": \"numeric\"}, {\"name\": \"thickness_um\", \"type\": \"numeric\"}, {\"name\": \"burst_index\", \"type\": \"numeric\"}, {\"name\": \"tear_index\", \"type\": \"numeric\"}, {\"name\": \"tensile_index\", \"type\": \"numeric\"}, {\"name\": \"zero_span_tensile\", \"type\": \"numeric\"}, {\"name\": \"surface_roughness\", \"type\": \"numeric\"}, {\"name\": \"air_permeability\", \"type\": \"numeric\"}, {\"name\": \"folding_endurance_raw\", \"type\": \"numeric\"}, {\"name\": \"replicate_count\", \"type\": \"smallint\"}, {\"name\": \"aggregation_method\", \"type\": \"character varying\"}, {\"name\": \"fiber_source_id\", \"type\": \"bigint\"}, {\"name\": \"paper_source_id\", \"type\": \"bigint\"}], \"default_order\": [\"canonical_code\"]}, \"fiber.v_recycled_cycle_summary\": {\"columns\": [{\"name\": \"dataset_code\", \"type\": \"character varying\"}, {\"name\": \"study_name\", \"type\": \"character varying\"}, {\"name\": \"block_code\", \"type\": \"character varying\"}, {\"name\": \"block_name\", \"type\": \"character varying\"}, {\"name\": \"block_order\", \"type\": \"smallint\"}, {\"name\": \"section_no\", \"type\": \"smallint\"}, {\"name\": \"contributor_name\", \"type\": \"character varying\"}, {\"name\": \"raw_material_grade\", \"type\": \"character varying\"}, {\"name\": \"condition_label\", \"type\": \"character varying\"}, {\"name\": \"metadata_status\", \"type\": \"character varying\"}, {\"name\": \"cycle_no\", \"type\": \"smallint\"}, {\"name\": \"replicate_count\", \"type\": \"smallint\"}, {\"name\": \"length_0_2_0_3_pct\", \"type\": \"numeric\"}, {\"name\": \"length_0_3_0_45_pct\", \"type\": \"numeric\"}, {\"name\": \"length_0_45_0_67_pct\", \"type\": \"numeric\"}, {\"name\": \"length_0_67_1_pct\", \"type\": \"numeric\"}, {\"name\": \"length_1_1_5_pct\", \"type\": \"numeric\"}, {\"name\": \"length_1_5_2_24_pct\", \"type\": \"numeric\"}, {\"name\": \"length_2_24_3_35_pct\", \"type\": \"numeric\"}, {\"name\": \"length_3_35_5_01_pct\", \"type\": \"numeric\"}, {\"name\": \"length_5_01_7_5_pct\", \"type\": \"numeric\"}, {\"name\": \"length_gt_7_5_pct\", \"type\": \"numeric\"}, {\"name\": \"fiber_length_arithmetic_mm\", \"type\": \"numeric\"}, {\"name\": \"fiber_length_weighted_mm\", \"type\": \"numeric\"}, {\"name\": \"fiber_width_um\", \"type\": \"numeric\"}, {\"name\": \"fiber_coarseness_mg_m\", \"type\": \"numeric\"}, {\"name\": \"kink_angle_deg\", \"type\": \"numeric\"}, {\"name\": \"kinked_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"curved_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"fibrillation_length_pct\", \"type\": \"numeric\"}, {\"name\": \"broken_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_length_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_weighted_length_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_area_pct\", \"type\": \"numeric\"}, {\"name\": \"tensile_strength_kn_m\", \"type\": \"numeric\"}, {\"name\": \"burst_strength_kpa\", \"type\": \"numeric\"}, {\"name\": \"tear_strength_mn\", \"type\": \"numeric\"}], \"default_order\": [\"block_order\", \"cycle_no\"]}, \"fiber.v_recycled_cycle_detail\": {\"columns\": [{\"name\": \"dataset_code\", \"type\": \"character varying\"}, {\"name\": \"study_name\", \"type\": \"character varying\"}, {\"name\": \"file_name\", \"type\": \"character varying\"}, {\"name\": \"sheet_name\", \"type\": \"character varying\"}, {\"name\": \"source_version\", \"type\": \"character varying\"}, {\"name\": \"block_code\", \"type\": \"character varying\"}, {\"name\": \"block_name\", \"type\": \"character varying\"}, {\"name\": \"block_order\", \"type\": \"smallint\"}, {\"name\": \"section_no\", \"type\": \"smallint\"}, {\"name\": \"contributor_name\", \"type\": \"character varying\"}, {\"name\": \"raw_material_grade\", \"type\": \"character varying\"}, {\"name\": \"material_assignment_basis\", \"type\": \"character varying\"}, {\"name\": \"condition_label\", \"type\": \"character varying\"}, {\"name\": \"metadata_status\", \"type\": \"character varying\"}, {\"name\": \"cycle_no\", \"type\": \"smallint\"}, {\"name\": \"replicate_no\", \"type\": \"smallint\"}, {\"name\": \"source_row\", \"type\": \"integer\"}, {\"name\": \"length_0_2_0_3_pct\", \"type\": \"numeric\"}, {\"name\": \"length_0_3_0_45_pct\", \"type\": \"numeric\"}, {\"name\": \"length_0_45_0_67_pct\", \"type\": \"numeric\"}, {\"name\": \"length_0_67_1_pct\", \"type\": \"numeric\"}, {\"name\": \"length_1_1_5_pct\", \"type\": \"numeric\"}, {\"name\": \"length_1_5_2_24_pct\", \"type\": \"numeric\"}, {\"name\": \"length_2_24_3_35_pct\", \"type\": \"numeric\"}, {\"name\": \"length_3_35_5_01_pct\", \"type\": \"numeric\"}, {\"name\": \"length_5_01_7_5_pct\", \"type\": \"numeric\"}, {\"name\": \"length_gt_7_5_pct\", \"type\": \"numeric\"}, {\"name\": \"length_distribution_sum_pct\", \"type\": \"numeric\"}, {\"name\": \"length_distribution_qc\", \"type\": \"text\"}, {\"name\": \"fiber_length_arithmetic_mm\", \"type\": \"numeric\"}, {\"name\": \"fiber_length_weighted_mm\", \"type\": \"numeric\"}, {\"name\": \"fiber_width_um\", \"type\": \"numeric\"}, {\"name\": \"fiber_coarseness_mg_m\", \"type\": \"numeric\"}, {\"name\": \"kink_angle_deg\", \"type\": \"numeric\"}, {\"name\": \"kinked_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"curved_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"fibrillation_length_pct\", \"type\": \"numeric\"}, {\"name\": \"broken_fiber_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_length_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_weighted_length_pct\", \"type\": \"numeric\"}, {\"name\": \"fines_area_pct\", \"type\": \"numeric\"}, {\"name\": \"tensile_strength_kn_m\", \"type\": \"numeric\"}, {\"name\": \"burst_strength_kpa\", \"type\": \"numeric\"}, {\"name\": \"tear_strength_mn\", \"type\": \"numeric\"}], \"default_order\": [\"block_order\", \"cycle_no\", \"replicate_no\"]}, \"fiber.v_recycled_data_quality\": {\"columns\": [{\"name\": \"dataset_code\", \"type\": \"character varying\"}, {\"name\": \"block_code\", \"type\": \"character varying\"}, {\"name\": \"cycle_no\", \"type\": \"smallint\"}, {\"name\": \"replicate_no\", \"type\": \"smallint\"}, {\"name\": \"source_row\", \"type\": \"integer\"}, {\"name\": \"length_distribution_sum_pct\", \"type\": \"numeric\"}, {\"name\": \"deviation_from_100_pct\", \"type\": \"numeric\"}, {\"name\": \"length_distribution_qc\", \"type\": \"text\"}], \"default_order\": [\"source_row\"]}, \"fiber.v_data_lineage\": {\"columns\": [{\"name\": \"source_id\", \"type\": \"bigint\"}, {\"name\": \"file_name\", \"type\": \"character varying\"}, {\"name\": \"sheet_name\", \"type\": \"character varying\"}, {\"name\": \"source_row\", \"type\": \"integer\"}, {\"name\": \"source_version\", \"type\": \"character varying\"}, {\"name\": \"imported_at\", \"type\": \"timestamp with time zone\"}, {\"name\": \"usage_type\", \"type\": \"text\"}, {\"name\": \"experiment_code\", \"type\": \"character varying\"}, {\"name\": \"display_code\", \"type\": \"character varying\"}, {\"name\": \"material_code\", \"type\": \"character varying\"}, {\"name\": \"sample_id\", \"type\": \"bigint\"}, {\"name\": \"canonical_code\", \"type\": \"character varying\"}, {\"name\": \"sample_type\", \"type\": \"character varying\"}, {\"name\": \"display_name\", \"type\": \"character varying\"}], \"default_order\": [\"source_id\", \"usage_type\", \"canonical_code\", \"display_code\", \"material_code\"]}}, \"indicators\": [{\"key\": \"fiber_length_arithmetic_mm\", \"name\": \"纤维长度（算术平均）\", \"unit\": \"mm\", \"group\": \"fiber\", \"scope\": [\"core\", \"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"fiber_length_weighted_mm\", \"name\": \"纤维长度（长度加权）\", \"unit\": \"mm\", \"group\": \"fiber\", \"scope\": [\"core\", \"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"fiber_width_um\", \"name\": \"纤维宽度\", \"unit\": \"μm\", \"group\": \"fiber\", \"scope\": [\"core\", \"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"fiber_coarseness_mg_m\", \"name\": \"纤维粗度\", \"unit\": \"mg/m\", \"group\": \"fiber\", \"scope\": [\"core\", \"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"kink_angle_deg\", \"name\": \"扭结角\", \"unit\": \"°\", \"group\": \"fiber\", \"scope\": [\"core\", \"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"kinked_fiber_pct\", \"name\": \"扭结纤维比例\", \"unit\": \"%\", \"group\": \"fiber\", \"scope\": [\"core\", \"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"curved_fiber_pct\", \"name\": \"弯曲纤维比例\", \"unit\": \"%\", \"group\": \"fiber\", \"scope\": [\"core\", \"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"fibrillation_length_pct\", \"name\": \"分丝帚化长度比\", \"unit\": \"%\", \"group\": \"fiber\", \"scope\": [\"core\", \"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"broken_fiber_pct\", \"name\": \"折断纤维比\", \"unit\": \"%\", \"group\": \"fiber\", \"scope\": [\"core\", \"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"fines_length_pct\", \"name\": \"细小纤维长度比\", \"unit\": \"%\", \"group\": \"fiber\", \"scope\": [\"core\", \"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"fines_weighted_length_pct\", \"name\": \"细小纤维长度加权比\", \"unit\": \"%\", \"group\": \"fiber\", \"scope\": [\"core\", \"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"fines_area_pct\", \"name\": \"细小纤维面积比\", \"unit\": \"%\", \"group\": \"fiber\", \"scope\": [\"core\", \"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"basis_weight_g_m2\", \"name\": \"定量\", \"unit\": \"g/m²\", \"group\": \"paper\", \"scope\": [\"core\"], \"unit_status\": \"confirmed\"}, {\"key\": \"thickness_um\", \"name\": \"厚度\", \"unit\": \"μm\", \"group\": \"paper\", \"scope\": [\"core\"], \"unit_status\": \"confirmed\"}, {\"key\": \"burst_index\", \"name\": \"耐破指数\", \"unit\": \"kPa·m²/g\", \"group\": \"paper\", \"scope\": [\"core\"], \"unit_status\": \"confirmed\"}, {\"key\": \"tear_index\", \"name\": \"撕裂指数\", \"unit\": \"mN·m²/g\", \"group\": \"paper\", \"scope\": [\"core\"], \"unit_status\": \"confirmed\"}, {\"key\": \"tensile_index\", \"name\": \"抗张指数\", \"unit\": \"N·m/g\", \"group\": \"paper\", \"scope\": [\"core\"], \"unit_status\": \"confirmed\"}, {\"key\": \"zero_span_tensile\", \"name\": \"零距抗张强度\", \"unit\": \"N/cm\", \"group\": \"paper\", \"scope\": [\"core\"], \"unit_status\": \"confirmed\"}, {\"key\": \"surface_roughness\", \"name\": \"表面粗糙度\", \"unit\": \"ml/min\", \"group\": \"paper\", \"scope\": [\"core\"], \"unit_status\": \"confirmed\"}, {\"key\": \"air_permeability\", \"name\": \"透气度\", \"unit\": \"μm/(Pa·s)\", \"group\": \"paper\", \"scope\": [\"core\"], \"unit_status\": \"tentative\"}, {\"key\": \"folding_endurance_raw\", \"name\": \"耐折度\", \"unit\": null, \"group\": \"paper\", \"scope\": [\"core\"], \"unit_status\": \"unconfirmed\"}, {\"key\": \"length_0_2_0_3_pct\", \"name\": \"长度分布 0.2–0.3 mm\", \"unit\": \"%\", \"group\": \"distribution\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"length_0_3_0_45_pct\", \"name\": \"长度分布 0.3–0.45 mm\", \"unit\": \"%\", \"group\": \"distribution\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"length_0_45_0_67_pct\", \"name\": \"长度分布 0.45–0.67 mm\", \"unit\": \"%\", \"group\": \"distribution\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"length_0_67_1_pct\", \"name\": \"长度分布 0.67–1 mm\", \"unit\": \"%\", \"group\": \"distribution\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"length_1_1_5_pct\", \"name\": \"长度分布 1–1.5 mm\", \"unit\": \"%\", \"group\": \"distribution\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"length_1_5_2_24_pct\", \"name\": \"长度分布 1.5–2.24 mm\", \"unit\": \"%\", \"group\": \"distribution\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"length_2_24_3_35_pct\", \"name\": \"长度分布 2.24–3.35 mm\", \"unit\": \"%\", \"group\": \"distribution\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"length_3_35_5_01_pct\", \"name\": \"长度分布 3.35–5.01 mm\", \"unit\": \"%\", \"group\": \"distribution\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"length_5_01_7_5_pct\", \"name\": \"长度分布 5.01–7.5 mm\", \"unit\": \"%\", \"group\": \"distribution\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"length_gt_7_5_pct\", \"name\": \"长度分布 >7.5 mm\", \"unit\": \"%\", \"group\": \"distribution\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"tensile_strength_kn_m\", \"name\": \"抗张强度\", \"unit\": \"kN/m\", \"group\": \"strength\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"burst_strength_kpa\", \"name\": \"耐破强度\", \"unit\": \"kPa\", \"group\": \"strength\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}, {\"key\": \"tear_strength_mn\", \"name\": \"撕裂强度\", \"unit\": \"mN\", \"group\": \"strength\", \"scope\": [\"recycled\"], \"unit_status\": \"confirmed\"}], \"notes\": [\"空值保留为 null，百分比使用0—100口径。\", \"透气度单位暂定；耐折度单位未确认。\", \"再生纸浆数据块的处理条件未知；4条长度分布异常保留原值。\", \"图表展示对应关系，不代表因果关系；核心指数与再生纸浆强度不可混用。\"], \"material_codes\": {\"SW\": \"针叶木\", \"HW\": \"阔叶木\"}, \"grains\": {\"v_sample_overview\": \"one canonical sample; use this for sample counts\", \"v_beating_analysis\": \"one experiment display row; samples may appear in multiple experiments\", \"v_blend_analysis\": \"one blend experiment row including pure-pulp endpoints; not the number of blend-only samples\", \"v_fiber_paper_analysis\": \"one canonical sample with fiber/paper measurements\", \"v_recycled_cycle_summary\": \"one data block and cycle summary\", \"v_recycled_cycle_detail\": \"one raw replicate per block and cycle\", \"v_recycled_data_quality\": \"one flagged raw observation\", \"v_data_lineage\": \"one source usage association; multiple usages can share a sample or source row\"}, \"sample_types\": [\"softwood\", \"hardwood\", \"blend\"], \"policy\": \"SELECT over allowed fiber views, arbitrary joins between those views and nested/correlated SELECT subqueries permitted. WHERE/GROUP BY/HAVING/ORDER BY; COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF. No CTEs, set operations or casts. Include sample IDs for raw rows. Add ORDER BY for deterministic results. Explain join keys and resulting grain; one-to-many joins can multiply samples and bias counts/averages. lineage has multiple usages per sample. Max 100 returned rows; truncated results are not the full population.\", \"text_protocol\": \"Concatenate text_parts in order; reuse_text_id references exact text previously supplied in this run. already_provided means this same evidence was supplied earlier. text_id and reuse_text_id are internal text reuse keys (txt_<hash>), NOT citation IDs. Cite only the enclosing evidence ref [n]. Image captions are not viewed pixels.\"}}"
+          }
+        ]
+      }
+    },
+    {
+      "provider_call_id": "call_00_zz4A253Fw4bV1bIg0VJc8071",
+      "request": {
+        "reason": "按样本类型统计规范样本数（以 v_sample_overview 一行一样本为粒度），并给出总数；同时检查两种长度口径在该样本表中的缺失情况。",
+        "sql": "SELECT sample_type, COUNT(*) AS canonical_samples, COUNT(fiber_length_arithmetic_mm) AS has_arithmetic, COUNT(fiber_length_weighted_mm) AS has_weighted FROM fiber.v_sample_overview GROUP BY sample_type ORDER BY sample_type",
+        "tool": "query_experiment_data"
+      },
+      "status": "failed",
+      "result": {
+        "call_id": "b8abd9db-630a-4a9f-85db-48bc4ce1b235",
+        "status": "failed",
+        "error_code": "database_query_failed",
+        "message": "Query failed or timed out. Check columns with describe_experiment_data, simplify SQL and retry. Raw database errors are not exposed."
+      },
+      "model_delivery": {
+        "status": "delivered",
+        "reason": null,
+        "messages": [
+          {
+            "role": "tool",
+            "tool_call_id": "call_00_zz4A253Fw4bV1bIg0VJc8071",
+            "content": "{\"call_id\": \"b8abd9db-630a-4a9f-85db-48bc4ce1b235\", \"status\": \"failed\", \"error_code\": \"database_query_failed\", \"message\": \"Query failed or timed out. Check columns with describe_experiment_data, simplify SQL and retry. Raw database errors are not exposed.\", \"result\": {\"text_protocol\": \"Concatenate text_parts in order; reuse_text_id references exact text previously supplied in this run. already_provided means this same evidence was supplied earlier. text_id and reuse_text_id are internal text reuse keys (txt_<hash>), NOT citation IDs. Cite only the enclosing evidence ref [n]. Image captions are not viewed pixels.\"}}"
+          }
+        ]
+      }
+    },
+    {
+      "provider_call_id": "call_00_DYDdJpJCkCvMVcwwKSq52356",
+      "request": {
+        "reason": "上一查询因引用 v_sample_overview 中不存在的纤维长度列而失败（该视图无长度字段）。改为仅按 sample_type 计数规范样本，并另加一行总数。",
+        "sql": "SELECT sample_type, COUNT(*) AS canonical_samples FROM fiber.v_sample_overview GROUP BY sample_type ORDER BY sample_type",
+        "tool": "query_experiment_data"
+      },
+      "status": "completed",
+      "result": {
+        "call_id": "c5b5d21b-d987-4fae-8a83-188752161cab",
+        "status": "completed",
+        "result": {
+          "sql": "SELECT sample_type, COUNT(*) AS canonical_samples FROM fiber.v_sample_overview GROUP BY sample_type ORDER BY sample_type",
+          "view": "fiber.v_sample_overview",
+          "views": [
+            "fiber.v_sample_overview"
+          ],
+          "columns": [
+            "sample_type",
+            "canonical_samples"
+          ],
+          "rows": [
+            [
+              "blend",
+              9
+            ],
+            [
+              "hardwood",
+              24
+            ],
+            [
+              "softwood",
+              28
+            ]
+          ],
+          "row_count": 3,
+          "truncated": false,
+          "row_limit": 100,
+          "queried_at": "2026-11-06T14:56:50.179412+00:00",
+          "notes": [
+            "空值保留为 null，百分比使用0—100口径。",
+            "透气度单位暂定；耐折度单位未确认。",
+            "再生纸浆数据块的处理条件未知；4条长度分布异常保留原值。",
+            "图表展示对应关系，不代表因果关系；核心指数与再生纸浆强度不可混用。"
+          ],
+          "notice": "Database result snapshot, not paper text. Decimal values may be strings. Missing values are null. A truncated result cannot support population-wide conclusions; use SQL aggregates.",
+          "ref": "[1]",
+          "evidence_scope": {
+            "run_id": "experiment-five-20261106-SQL01",
+            "reference_policy": "immutable_exact_snapshot",
+            "notice": "References are unique only within this run. Text availability is not proof of visual inspection."
+          }
+        }
+      },
+      "model_delivery": {
+        "status": "delivered",
+        "reason": null,
+        "messages": [
+          {
+            "role": "tool",
+            "tool_call_id": "call_00_DYDdJpJCkCvMVcwwKSq52356",
+            "content": "{\"call_id\": \"c5b5d21b-d987-4fae-8a83-188752161cab\", \"status\": \"completed\", \"result\": {\"sql\": \"SELECT sample_type, COUNT(*) AS canonical_samples FROM fiber.v_sample_overview GROUP BY sample_type ORDER BY sample_type\", \"view\": \"fiber.v_sample_overview\", \"views\": [\"fiber.v_sample_overview\"], \"columns\": [\"sample_type\", \"canonical_samples\"], \"rows\": [[\"blend\", 9], [\"hardwood\", 24], [\"softwood\", 28]], \"row_count\": 3, \"truncated\": false, \"row_limit\": 100, \"queried_at\": \"2026-11-06T14:56:50.179412+00:00\", \"notes\": [\"空值保留为 null，百分比使用0—100口径。\", \"透气度单位暂定；耐折度单位未确认。\", \"再生纸浆数据块的处理条件未知；4条长度分布异常保留原值。\", \"图表展示对应关系，不代表因果关系；核心指数与再生纸浆强度不可混用。\"], \"notice\": \"Database result snapshot, not paper text. Decimal values may be strings. Missing values are null. A truncated result cannot support population-wide conclusions; use SQL aggregates.\", \"ref\": \"[1]\", \"text_protocol\": \"Concatenate text_parts in order; reuse_text_id references exact text previously supplied in this run. already_provided means this same evidence was supplied earlier. text_id and reuse_text_id are internal text reuse keys (txt_<hash>), NOT citation IDs. Cite only the enclosing evidence ref [n]. Image captions are not viewed pixels.\"}}"
+          }
+        ]
+      }
+    },
+    {
+      "provider_call_id": "call_00_Fv4jEdFX4a5j5QCXvkVn4784",
+      "request": {
+        "reason": "获取三种样本类型的规范样本总数（单行聚合），以验证分组计数之和。",
+        "sql": "SELECT COUNT(*) AS total_canonical_samples, COUNT(DISTINCT canonical_code) AS distinct_codes FROM fiber.v_sample_overview",
+        "tool": "query_experiment_data"
+      },
+      "status": "completed",
+      "result": {
+        "call_id": "7111c544-2106-44f0-b9b3-fbac6f969089",
+        "status": "completed",
+        "result": {
+          "sql": "SELECT COUNT(*) AS total_canonical_samples, COUNT(DISTINCT canonical_code) AS distinct_codes FROM fiber.v_sample_overview",
+          "view": "fiber.v_sample_overview",
+          "views": [
+            "fiber.v_sample_overview"
+          ],
+          "columns": [
+            "total_canonical_samples",
+            "distinct_codes"
+          ],
+          "rows": [
+            [
+              61,
+              61
+            ]
+          ],
+          "row_count": 1,
+          "truncated": false,
+          "row_limit": 100,
+          "queried_at": "2026-11-06T14:56:58.250732+00:00",
+          "notes": [
+            "空值保留为 null，百分比使用0—100口径。",
+            "透气度单位暂定；耐折度单位未确认。",
+            "再生纸浆数据块的处理条件未知；4条长度分布异常保留原值。",
+            "图表展示对应关系，不代表因果关系；核心指数与再生纸浆强度不可混用。"
+          ],
+          "notice": "Database result snapshot, not paper text. Decimal values may be strings. Missing values are null. A truncated result cannot support population-wide conclusions; use SQL aggregates.",
+          "ref": "[2]",
+          "evidence_scope": {
+            "run_id": "experiment-five-20261106-SQL01",
+            "reference_policy": "immutable_exact_snapshot",
+            "notice": "References are unique only within this run. Text availability is not proof of visual inspection."
+          }
+        }
+      },
+      "model_delivery": {
+        "status": "delivered",
+        "reason": null,
+        "messages": [
+          {
+            "role": "tool",
+            "tool_call_id": "call_00_Fv4jEdFX4a5j5QCXvkVn4784",
+            "content": "{\"call_id\": \"7111c544-2106-44f0-b9b3-fbac6f969089\", \"status\": \"completed\", \"result\": {\"sql\": \"SELECT COUNT(*) AS total_canonical_samples, COUNT(DISTINCT canonical_code) AS distinct_codes FROM fiber.v_sample_overview\", \"view\": \"fiber.v_sample_overview\", \"views\": [\"fiber.v_sample_overview\"], \"columns\": [\"total_canonical_samples\", \"distinct_codes\"], \"rows\": [[61, 61]], \"row_count\": 1, \"truncated\": false, \"row_limit\": 100, \"queried_at\": \"2026-11-06T14:56:58.250732+00:00\", \"notes\": [\"空值保留为 null，百分比使用0—100口径。\", \"透气度单位暂定；耐折度单位未确认。\", \"再生纸浆数据块的处理条件未知；4条长度分布异常保留原值。\", \"图表展示对应关系，不代表因果关系；核心指数与再生纸浆强度不可混用。\"], \"notice\": \"Database result snapshot, not paper text. Decimal values may be strings. Missing values are null. A truncated result cannot support population-wide conclusions; use SQL aggregates.\", \"ref\": \"[2]\", \"text_protocol\": \"Concatenate text_parts in order; reuse_text_id references exact text previously supplied in this run. already_provided means this same evidence was supplied earlier. text_id and reuse_text_id are internal text reuse keys (txt_<hash>), NOT citation IDs. Cite only the enclosing evidence ref [n]. Image captions are not viewed pixels.\"}}"
+          }
+        ]
+      }
+    }
+  ],
+  "model": "deepseek-flash",
+  "budget": {
+    "max_model_calls": 10,
+    "max_tool_calls": 8,
+    "max_search_calls": 2,
+    "total_seconds": 240.0,
+    "reserve_seconds": 45,
+    "max_output_tokens": 8192,
+    "max_context_chars": 160000
+  },
+  "usage": [
+    {
+      "prompt_tokens": 3571,
+      "completion_tokens": 73,
+      "total_tokens": 3644,
+      "cached_tokens": 3328
+    },
+    {
+      "prompt_tokens": 9874,
+      "completion_tokens": 141,
+      "total_tokens": 10015,
+      "cached_tokens": 3584
+    },
+    {
+      "prompt_tokens": 10187,
+      "completion_tokens": 116,
+      "total_tokens": 10303,
+      "cached_tokens": 9984
+    },
+    {
+      "prompt_tokens": 10682,
+      "completion_tokens": 98,
+      "total_tokens": 10780,
+      "cached_tokens": 10240
+    },
+    {
+      "prompt_tokens": 11149,
+      "completion_tokens": 454,
+      "total_tokens": 11603,
+      "cached_tokens": 10752
+    },
+    {
+      "prompt_tokens": 9852,
+      "completion_tokens": 559,
+      "total_tokens": 10411,
+      "cached_tokens": 1280
+    }
+  ]
+}
