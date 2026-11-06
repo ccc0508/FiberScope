@@ -1,0 +1,704 @@
+{
+  "FS8-001": {
+    "reason": "四个必答要点齐全。保留新增陈述错误：声称原文未说明误差是否涵盖全部因变量，但[5]明确写all dependent variables；同段还提供7输入、3隐藏神经元、4输出结构，不能笼统称没有超参数细节。不是因缺少重复引用扣分。",
+    "changes": [
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "partially_supported",
+        "reason": "[5]明确all dependent variables及网络结构；误差数值正确，附加的缺失声明不准确。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "partial",
+        "reason": "[5]支持数值，却不支持同段声称未说明汇总范围。"
+      }
+    ]
+  },
+  "FS8-002": {
+    "reason": "核心分工及验证样品关系正确，相关表格和实验细节可由[3][5][10–22]核对。恢复总结引用、单引部分支持和证据边界；沿用先前已确认的K4非必答处理。",
+    "changes": [
+      {
+        "path": "key_point_scores.K4",
+        "value": null,
+        "reason": "沿用已确认口径：题面未要求讨论任意浆种的泛化，K4不作必答分母。"
+      },
+      {
+        "path": "citation_assessments.C2.[3].score",
+        "value": 1,
+        "reason": "[3]明确验证样品未参与建模，支持该段与随机训练测试划分的区别。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "complete",
+        "reason": "分工总结承接C2已有来源，不要求重复引用。"
+      },
+      {
+        "path": "citation_group_assessments.C5.coverage",
+        "value": "complete",
+        "reason": "对验证层次和当前证据不足的谨慎说明，与[3][5][13]相符；未断言ANN独立验证已成立。"
+      },
+      {
+        "path": "answerability_score",
+        "value": 2,
+        "reason": "已明确未参与建模，区分内部划分与验证示例，并谨慎限定未核对部分。"
+      }
+    ]
+  },
+  "FS8-003": {
+    "reason": "三项数值正确，但MinerU文字缺损仍使模型未完整确认50%条件。保留原文条件错误及把百分比说成无共同单位的科学表述问题；恢复[7][8]对各自数值的实质引用支持。",
+    "changes": [
+      {
+        "path": "key_point_scores.K1",
+        "value": 0.5,
+        "reason": "已识别抗张和撕裂的50%条件，但未完成耐破的同条件确认，不能算条件完整。"
+      },
+      {
+        "path": "citation_group_assessments.C2.coverage",
+        "value": "partial",
+        "reason": "所引解析文本遗漏50%，能解释模型为何保留，不能证明原PDF没有该条件。"
+      },
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "partially_supported",
+        "reason": "总结再次要求保留并不存在于原PDF的配比差异；数值及不可直接相加结论正确。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "partial",
+        "reason": "汇总数值有据，但配比差异未由完整原文支持。"
+      },
+      {
+        "path": "citation_assessments.C4.[7].score",
+        "value": 1,
+        "reason": "[7]实质支持撕裂108.1%，不要求单独证明其他两值。"
+      },
+      {
+        "path": "citation_assessments.C4.[8].score",
+        "value": 1,
+        "reason": "[8]实质支持耐破99.3%，不要求单独证明其他两值。"
+      }
+    ]
+  },
+  "FS8-004": {
+    "reason": "实际查看两张原图：主要棉浆峰位、下降趋势和近似值正确。保留马尾松始终高于其他浆的额外过度概括（20%时竹浆更高）。恢复有效图片引用及正确边界说明，不把Jev无法看图当回答错误。",
+    "changes": [
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "supported",
+        "reason": "原图横轴取点、单位和近似声明正确，未越界推断机制。"
+      },
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "partial",
+        "reason": "图确实支持棉浆40%峰后下降和马尾松增长，但20%竹浆高于马尾松，不能说全程高于其他浆。"
+      },
+      {
+        "path": "citation_group_assessments.C2.coverage",
+        "value": "partial",
+        "reason": "棉浆20%峰后下降读图正确，但马尾松不是全程最高，20%竹浆更高。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "complete",
+        "reason": "[1][2]为实际看过的图像，支持坐标、取点及近似判断。"
+      },
+      {
+        "path": "answerability_score",
+        "value": 2,
+        "reason": "主动说明近似读数、取点限制及图不能证明因果，边界处理恰当。"
+      },
+      {
+        "path": "citation_assessments.C1.[1].score",
+        "value": 1,
+        "reason": "人工查看对应原图，图像对该段有实质支持；Jev不能看像素，不应将图片引用一律判0。"
+      },
+      {
+        "path": "citation_assessments.C2.[2].score",
+        "value": 1,
+        "reason": "人工查看对应原图，图像对该段有实质支持；Jev不能看像素，不应将图片引用一律判0。"
+      },
+      {
+        "path": "citation_assessments.C3.[1].score",
+        "value": 1,
+        "reason": "人工查看对应原图，图像对该段有实质支持；Jev不能看像素，不应将图片引用一律判0。"
+      },
+      {
+        "path": "citation_assessments.C3.[2].score",
+        "value": 1,
+        "reason": "人工查看对应原图，图像对该段有实质支持；Jev不能看像素，不应将图片引用一律判0。"
+      }
+    ]
+  },
+  "FS8-005": {
+    "reason": "[1][3][4][6]支持特征、损伤公式、四次回收和作者局限。式19–21文字顺序确有歧义，答案没有擅自指控PDF排版错误；按最新口径恢复谨慎提示。",
+    "changes": [
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "supported",
+        "reason": "回收次数、材料和局限有据；对式19–21文字与公式不一致的提醒符合原文。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "complete",
+        "reason": "[1][3][4]联合覆盖该段。"
+      }
+    ]
+  },
+  "FS8-006": {
+    "reason": "四项RMSE与训练/测试含义一致，限定本文四次回收场景，没有把精度差异写成显著性结论。末句未查看图像的自述与工具轨迹相符，是范围说明，不是无依据科学事实。",
+    "changes": [
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "supported",
+        "reason": "轨迹可核实没有view_image；该范围说明不要求论文引用。"
+      }
+    ]
+  },
+  "FS8-007": {
+    "reason": "必答来源、数据量和划分齐全。恢复合理限定与计算总结；保留额外把含目标的八个参数称为八个输入参数的对象混淆，不因原文自身列举六数值变量而扣分。",
+    "changes": [
+      {
+        "path": "claim_assessments.C1.support",
+        "value": "partially_supported",
+        "reason": "[1]写八个参数且包含目标拉伸强度，回答改称八个输入参数，把目标也列入输入；其余数据来源等正确。"
+      },
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "partial",
+        "reason": "原文支持八个参数，不支持八个输入参数。"
+      },
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "supported",
+        "reason": "合成不等于独立实测，8000/5=1600，且明确按数值推算与所读章节范围。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "complete",
+        "reason": "承接C1/C2的来源及计算，无需重复引用。"
+      }
+    ]
+  },
+  "FS8-008": {
+    "reason": "核对[3]模型表、[4]ROM对照、[10]局限和[12]三条解释：数值、合成来源及真实外部验证边界一致，没有把First/Second/Third误写成贡献排名。维持Jev评分。",
+    "changes": []
+  },
+  "FS8-009": {
+    "reason": "要点齐全，原文内部数值矛盾及缺测均可核实；恢复事实与组覆盖。图题[11]单独不支持重要性数值，保留此项冗余引用扣分。",
+    "changes": [
+      {
+        "path": "claim_assessments.C2.support",
+        "value": "supported",
+        "reason": "[5]确实缺桉木宽/粗度，[7]给划分和93.6%，[13]给.34及重要性；未取到处理细节的限定合理。"
+      },
+      {
+        "path": "citation_group_assessments.C2.coverage",
+        "value": "complete",
+        "reason": "[5][7][13]联合覆盖，保留图题[11]本身无数值的单引扣分。"
+      },
+      {
+        "path": "answerability_score",
+        "value": 2,
+        "reason": "已区分训练测试、缺测和未查看像素，没有把不确定性当确定结论。"
+      }
+    ]
+  },
+  "FS8-010": {
+    "reason": "目视核对图5，恢复图片和图题对归一化刻度的支持、开头及总结承接引用。保留C2把所有模型笼统说成远未达到完美、C3由调整R²直接断言单变量不可能解释100%的不严谨推论。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_group_assessments.C5.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_assessments.C2.[8].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C2.[6].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C4.[6].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      }
+    ]
+  },
+  "FS8-011": {
+    "reason": "表5/7数值与模型顺序正确。保留C3仅凭NRMSE量级不同推断尺度不可直接比较的额外断言；不因合理提醒缺少置信区间扣分。",
+    "changes": []
+  },
+  "FS8-012": {
+    "reason": "MorFi范围、代理限制及相关性正确，恢复开头总结及Table4支持。C3把原文100与10 mm改成100与10 μm，末段却称照录未改单位，自相矛盾且没有核验，保留实质单位问题。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_assessments.C4.[5].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "partially_supported",
+        "reason": "[1]原文是100与10 mm，回答擅改为μm又声明照录；不能确定错误来源时应保留歧义。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "partial",
+        "reason": "原文不支持擅改后的尺寸区间。"
+      },
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "partially_supported",
+        "reason": "末项声称照录单位与正文实际更改不一致。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "partial",
+        "reason": "研究条件与限制有据，照录声明不准确。"
+      }
+    ]
+  },
+  "FS8-013": {
+    "reason": "核心负荷、浆浓、间隙和比较边界正确。原文两种浆分别列相同转数并用Corresponding引出SR序列；将重复列举认定疑似笔误、称无法对应首值属于过度怀疑。",
+    "changes": [
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "partially_supported",
+        "reason": "对应序列在方法中已给出；缺少能耗说明正确，但首值对应被过度否定。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "partial",
+        "reason": "Corresponding与逐项序列不支持无法对应的断言。"
+      }
+    ]
+  },
+  "FS8-014": {
+    "reason": "CI反例和晶型区别答全。保留对全文仅报告CI与尺寸的错误概括：原文讨论峰位且明确未改变晶体结构；没有检索到不等于原文未报告。非事实scope也含可核实全文断言。 PDF第6页还明确给出CI波动的可能解释，与C4声称未解释回升原因相反。",
+    "changes": [
+      {
+        "path": "claim_assessments.C4.claim_type",
+        "value": "fact",
+        "reason": "包含本文仅报告哪些结果等可核实断言，不仅是表达范围。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "partial",
+        "reason": "误差谨慎提醒可承接表1；全文范围断言缺支持。"
+      }
+    ]
+  },
+  "FS8-015": {
+    "reason": "表1转数和25kg/t正确，明确不是1000°SR；但未说明添加剂为阳离子淀粉，K3=0保留，其余评分维持。",
+    "changes": []
+  },
+  "FS8-016": {
+    "reason": "定义、标准与设备尺寸差异有据。末段明确当前证据不足以量化差异显著性，没有否认仪器差别；不要求引文逐字陈述这种限制。",
+    "changes": [
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "answerability_score",
+        "value": 2,
+        "reason": "正确区分实测差别、定义和未能量化的统计检验。"
+      }
+    ]
+  },
+  "FS8-017": {
+    "reason": "Morais单位没有找到，必答K1只能给一半。回答多次明确限定本次检索范围，不能当作断言论文无单位。恢复单位表及讨论来源的实质引用；保留未完成目标事实的缺口。",
+    "changes": [
+      {
+        "path": "key_point_scores.K1",
+        "value": 0.5,
+        "reason": "仅确认Uddin mg/m，未确认Morais mg/100m。"
+      },
+      {
+        "path": "claim_assessments.C1.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "claim_assessments.C2.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "claim_assessments.C5.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "claim_assessments.C6.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_group_assessments.C2.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_group_assessments.C5.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "claim_assessments.C3.claim_type",
+        "value": "scope",
+        "reason": "纯题给算术示例，不要求文献引用；不计论文事实/引用分母。"
+      },
+      {
+        "path": "citation_assessments.C2.[6].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C2.[7].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C2.[10].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C2.[12].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C2.[13].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      }
+    ]
+  },
+  "FS8-018": {
+    "reason": "两文判据、检测限制和计量口径对比到位，恢复开头和定义总结的承接引用。保留C5把Motamedian的250–350nm宽度直接套到MorFi漏检阈值：MorFi此处给的是长度检测限，不能仅据宽度等同漏检范围。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "claim_assessments.C5.support",
+        "value": "partially_supported",
+        "reason": "两仪器研究的检测条件不同，不能把250–350nm宽度描述直接视为MorFi长度阈值对应的完全相同群体。"
+      }
+    ]
+  },
+  "FS8-019": {
+    "reason": "主要比较、合成来源和验证风险正确，恢复总结引用与CV来源。保留C4最后一句将Pennells的SVR超参数讨论[7]错归到Ayaliew。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_group_assessments.C5.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_assessments.C2.[3].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "partially_supported",
+        "reason": "[7]属于Pennells，不能支持Ayaliew作者指出其超参数待优化。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "partial",
+        "reason": "该处跨论文归属错误，其余比较有据。"
+      }
+    ]
+  },
+  "FS8-020": {
+    "reason": "主要预测链正确，Uddin仅列六项形态参数且承认未读建模部分，存在不完整；把不同打浆观测视为独立样本没有证据。恢复TAPPI、时间序列和公式对各自内容的实质支持，不额外要求来源追溯作为必答点。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_assessments.C2.[15].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C4.[1].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C5.[32].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C5.[44].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "claim_assessments.C5.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "citation_group_assessments.C5.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      }
+    ]
+  },
+  "FS8-021": {
+    "reason": "主要条件差异本身正确，但[2]实际是Motamedian、[3]实际是Li，出现明确引用错配，[6]是Li补充材料，不能支持Motamedian机制。保留单引与组覆盖扣分，事实与引用分开；方法学建议已注明非论文结论。",
+    "changes": [
+      {
+        "path": "claim_assessments.C1.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "claim_assessments.C2.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      }
+    ]
+  },
+  "FS8-022": {
+    "reason": "两条结构获取路径与核心比较正确。恢复苯浸渍法/公式引用及总结。保留[2]MATLAB说明与[32]引言不能支撑所附制样/材料陈述的错引；把模拟能替代的用途限定为仅平均松厚/孔隙率过于绝对。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_assessments.C3.[14].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C3.[15].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_group_assessments.C5.coverage",
+        "value": "partial",
+        "reason": "推断承接方法来源，但仅限这一用途的排他性未证明。"
+      },
+      {
+        "path": "citation_group_assessments.C6.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      }
+    ]
+  },
+  "FS8-023": {
+    "reason": "相关与因果、材料边界及作者可能解释区分正确。恢复开头/总结引用和摘要对kink相关性的部分支持；“主要理由如下”为引导语，不应判错误。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_group_assessments.C7.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "claim_assessments.C2.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "citation_assessments.C5.[5].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      }
+    ]
+  },
+  "FS8-024": {
+    "reason": "三文目标、单位和数据性质的主要区别齐全；恢复合理数据整理建议、方法标准引用及总结承接。保留“这些特征只在各自体系内有定义”“混合训练会污染关系”等过度绝对化说法，不能靠最后声明推断消除。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "claim_assessments.C2.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "citation_group_assessments.C2.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "claim_assessments.C3.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "citation_group_assessments.C3.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "claim_assessments.C5.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "claim_assessments.C10.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      },
+      {
+        "path": "citation_group_assessments.C11.coverage",
+        "value": "complete",
+        "reason": "承接已有对应来源，或所附来源联合支持；无需重复引用。"
+      },
+      {
+        "path": "citation_assessments.C2.[8].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C4.[14].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C9.[5].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "citation_assessments.C9.[11].score",
+        "value": 1,
+        "reason": "核对实际来源，对其承担的事实具有实质支持。"
+      },
+      {
+        "path": "claim_assessments.C6.claim_type",
+        "value": "fact",
+        "reason": "声称特征仅在各自体系内有定义，是可核验但不成立的排他断言。"
+      }
+    ]
+  },
+  "FS8-025": {
+    "reason": "核对题面、完整输出与工具轨迹：遵守问候/改写/计算/换算/澄清/JSON任务要求，无无谓论文检索。非论文题不计引用分。",
+    "changes": []
+  },
+  "FS8-026": {
+    "reason": "核对题面、完整输出与工具轨迹：遵守问候/改写/计算/换算/澄清/JSON任务要求，无无谓论文检索。非论文题不计引用分。",
+    "changes": []
+  },
+  "FS8-027": {
+    "reason": "核对题面、完整输出与工具轨迹：遵守问候/改写/计算/换算/澄清/JSON任务要求，无无谓论文检索。非论文题不计引用分。",
+    "changes": []
+  },
+  "FS8-028": {
+    "reason": "核对题面、完整输出与工具轨迹：遵守问候/改写/计算/换算/澄清/JSON任务要求，无无谓论文检索。非论文题不计引用分。",
+    "changes": []
+  },
+  "FS8-029": {
+    "reason": "核对题面、完整输出与工具轨迹：遵守问候/改写/计算/换算/澄清/JSON任务要求，无无谓论文检索。非论文题不计引用分。",
+    "changes": [
+      {
+        "path": "claim_assessments.C2.support",
+        "value": "supported",
+        "reason": "按原文及最新口径，该陈述正确或为合理范围声明。"
+      }
+    ]
+  },
+  "FS8-030": {
+    "reason": "核对题面、完整输出与工具轨迹：遵守问候/改写/计算/换算/澄清/JSON任务要求，无无谓论文检索。非论文题不计引用分。",
+    "changes": []
+  }
+}
