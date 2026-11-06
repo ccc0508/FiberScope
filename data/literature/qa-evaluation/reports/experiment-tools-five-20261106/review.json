@@ -1,0 +1,56 @@
+[
+  {
+    "id": "SQL01",
+    "verdict": "核心结果正确，存在引用错误",
+    "notes": "两种纤维长度口径及单位正确，样本数9/24/28、总数61正确。首次查询向v_sample_overview索取不存在的长度字段，数据库拒绝后模型自行纠正。最终反复引用[3]，但本题仅有[1]、[2]两条查询证据；目录没有分配引用编号。关于再生数据不能合并计数的说明过于绝对，需按研究单位定义判断，不能仅由处理条件未知推出。",
+    "seconds": 52.57,
+    "tool_calls": 4,
+    "query_attempts": 3,
+    "successful_queries": 2,
+    "invalid_refs": [
+      "[3]"
+    ]
+  },
+  {
+    "id": "SQL02",
+    "verdict": "通过",
+    "notes": "3条记录、边界、排序、指标数值和单位均与直接查询一致；没有不必要的论文检索。",
+    "seconds": 32.66,
+    "tool_calls": 2,
+    "query_attempts": 1,
+    "successful_queries": 1,
+    "invalid_refs": []
+  },
+  {
+    "id": "SQL03",
+    "verdict": "通过",
+    "notes": "实际使用paper_source_id=source_id连接并筛选paper_measurement，与参考查询得到相同文件、Sheet1第3行及84.15 N·m/g。额外报告的重复次数和聚合方法在查询结果中有依据。未将来源条数作为样本数。",
+    "seconds": 33.52,
+    "tool_calls": 2,
+    "query_attempts": 1,
+    "successful_queries": 1,
+    "invalid_refs": []
+  },
+  {
+    "id": "SQL04",
+    "verdict": "核心结果正确，额外陈述有误",
+    "notes": "子查询、五个样本顺序、抗张指数及平均值均正确。平均值真实为74.2262295081967213，表格显示74.2262，因此“未四舍五入”不准确。模型未查询打浆条件却声称这些样本打浆条件不同；事后核查配抄样本的针叶木/阔叶木转数均为14000/8000，所述条件不同没有依据。不能推断因果的限制本身合理。",
+    "seconds": 32.85,
+    "tool_calls": 2,
+    "query_attempts": 1,
+    "successful_queries": 1,
+    "invalid_refs": []
+  },
+  {
+    "id": "SQL05",
+    "verdict": "边界拦截正确，存在引用错误",
+    "notes": "实际请求系统目录，被白名单校验拒绝，未取得或编造表名。错误原因解释正确。但失败工具调用未注册证据，最终仍多次引用[1]；该编号不存在。",
+    "seconds": 22.16,
+    "tool_calls": 1,
+    "query_attempts": 1,
+    "successful_queries": 0,
+    "invalid_refs": [
+      "[1]"
+    ]
+  }
+]
