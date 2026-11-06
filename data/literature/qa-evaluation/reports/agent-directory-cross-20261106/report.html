@@ -1,0 +1,1412 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>跨论文题目录直供重跑评测</title><style>body{font:16px/1.7 system-ui;background:#f3f6fa;color:#24364b}main{max-width:1100px;margin:auto;padding:25px}article{background:white;padding:24px;margin:20px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.7 system-ui}</style><main><pre># 跨论文题目录直供重跑：首次独立评测
+
+六维顺序：要点 / 事实支持% / 单引有效% / 引用覆盖% / 边界0–2 / 严格通过。
+
+## FSX-002 · cross
+
+Li、Hu与Shao（2023）摘要报告曲线拟合模型prediction的RMSE为0.1667；Ayaliew等（2026）报告ANN的RMSE约31.6 MPa。有人据此说前者预测更准。请核对两篇论文各自预测什么、这些误差对应什么数据，并判断能否仅按这两个RMSE数值排名。
+
+Jev：100 / 80.0 / 94.74 / 40.0 / 2 / 未通过
+
+校准：87.5 / 80.0 / 100.0 / 80.0 / 2 / 未通过
+
+要点仍87.5，遗漏Ayaliew合成数据。保留C4部分支持/覆盖：把跨任务比较表述为需在同一量纲比较相对误差，混淆无量纲相对指标与原始单位；同单位或归一化本身不足以建立不同任务的公平排名。C6沿用同样表达，属于建议中的技术局限。Jev漏检K3，已校准；不因摘要/当前证据范围内的不确定性说明或总结不重复引用扣分。
+
+
+- 本次仅一题首次运行，不能推断稳定性或总体泛化。
+- 新三题独立报告，不替换或混入原30题。
+- 按既有宽严口径校准；不是独立人工专家评审。
+- 非论文题引用N/A，不按满分填充。
+</pre><article><h2>FSX-002</h2><p>Li、Hu与Shao（2023）摘要报告曲线拟合模型prediction的RMSE为0.1667；Ayaliew等（2026）报告ANN的RMSE约31.6 MPa。有人据此说前者预测更准。请核对两篇论文各自预测什么、这些误差对应什么数据，并判断能否仅按这两个RMSE数值排名。</p><p>校准：87.5 / 80.0 / 100.0 / 80.0 / 2 / 未通过</p><p>要点仍87.5，遗漏Ayaliew合成数据。保留C4部分支持/覆盖：把跨任务比较表述为需在同一量纲比较相对误差，混淆无量纲相对指标与原始单位；同单位或归一化本身不足以建立不同任务的公平排名。C6沿用同样表达，属于建议中的技术局限。Jev漏检K3，已校准；不因摘要/当前证据范围内的不确定性说明或总结不重复引用扣分。</p><h3>完整回答</h3><pre>**结论：不能只按这两个 RMSE 数值排名。** 两者预测的对象、量纲和评估数据都不同，0.1667 与 31.6 MPa 不是同一件事的误差。
+
+## 一、两篇论文各自预测什么
+
+**Li、Hu &amp; Shao（2023）**（《Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning》）
+- 论文目标是估计和预测回收纤维纸页的抗张强度劣化，但模型直接输出的是**无量纲损伤指数 D**（D = (D_s−h)²/a² − (D_h−k)²/b²），输入特征为各回收轮次后的保水值 WRV 和相对结合面积 RBA；抗张强度再由 T = T₀(1−D) 换算得到 [3][5]。
+- 因此 **0.1667 是损伤指数 D 的 RMSE，不是以 MPa 计的抗张强度误差**。摘要与 4.3 节写明：曲线拟合模型在训练数据上 RMSE = 0.0278，在测试/预测数据上 RMSE = 0.1667；对照的 LSTM RNN 分别为 0.2445 和 0.2206 [1][3][5]。
+- 数据规模很小：对木材与非木材（含芦苇浆等）纤维模拟回收 4 次，在每次回收后测量 WRV、RBA、抗张指数等（例如表 2 中芦苇浆回收 0–4 次抗张指数由 28.14 降至 20.22 Nm/g）[6]。文中的&quot;prediction&quot;是模型对未参与训练的测试数据（后续回收轮次的 D）做出预测，并非在大样本上随机划分的留出集评估 [5]。
+
+**Ayaliew 等（2026）**（《Predicting tensile strength in fiber-reinforced composites using machine learning and deep learning models》）
+- 预测对象是**纤维增强复合材料的抗张强度（MPa）**，输入特征包括层数、纤维体积分数、纤维/树脂种类、孔隙率等 [11][12]。
+- 31.6 MPa 对应 ANN（MLP）在**独立测试集**上的表现：R² = 0.9975、RMSE = 31.67 MPa、MAE = 25.14 MPa；Stacking（LR）为 31.58 MPa；3.2.6 节将二者合述为&quot;R² ≈ 0.9975、RMSE ≈ 31.6 MPa&quot;，而同一测试集（2000 样本）上 ROM 理论模型的 RMSE 为 312.5 MPa [8][9][12]。摘要中&quot;约 31 MPa&quot;即指此值 [13]。
+
+## 二、为什么不能据此排名
+
+1. **被预测量不同、量纲不同**：一个是无量纲指数 D（须再经 T = T₀(1−D) 才成为强度），另一个是 MPa 绝对值。RMSE 的数值大小与量纲直接相关，因此 0.1667 与 31.6 MPa 不能横向比较 [1][3][5][8][12]。
+2. **误差所依据的数据条件不同**：Li 基于 4 次回收的小样本序列、测试点很少 [5][6]；Ayaliew 基于 2000 个测试样本，并做了 5 折交叉验证（ANN 的 CV R² 均值 0.9973、标准差 0.0002）[8][12][15]。二者的样本量、任务难度与变异性不可比。
+3. **缺少可比的相对精度指标**：要判断&quot;谁更准&quot;，需在同一量纲下比较相对误差（如 RMSE 占强度均值的比例或 MAPE）。Li 文中未报告抗张强度本身的预测误差；Ayaliew 只给出 RMSE、MAE 与 R²，未给出强度均值 [12]，因此无法把 31.6 MPa 换算成可比的百分比。这一信息缺口无法用现有材料补齐。
+4. **能比的只是各自文内的相对结论**：Li 中曲线拟合优于 LSTM RNN（0.1667 vs 0.2206）[5]；Ayaliew 中 ANN/Stacking 远优于 ROM 与 SVR [8][10][12]。这些结论只在各自体系内成立，不能跨文合并成&quot;前者更准&quot;。
+
+**不确定性说明**：Li 的 0.1667 是测试/预测数据上损伤指数 D 的 RMSE，若该文另有抗张强度误差而未在可见文本中报告，本回答无法涵盖；Ayaliew 的&quot;约 31 MPa&quot;是摘要对 31.67 MPa 的取整表述 [9][13]。
+
+**若要做可比评估**：需将 Li 的 D 误差经 T = T₀(1−D) 传播为强度误差（该文未做此换算），或在同一量纲下用相对误差与各自强度均值比较；所需数据两文均未完整给出。</pre><details><summary>参考答案、评分及依据、调用轨迹与引用</summary><pre>{
+  &quot;case&quot;: {
+    &quot;id&quot;: &quot;FSX-002&quot;,
+    &quot;group&quot;: &quot;cross&quot;,
+    &quot;question&quot;: &quot;Li、Hu与Shao（2023）摘要报告曲线拟合模型prediction的RMSE为0.1667；Ayaliew等（2026）报告ANN的RMSE约31.6 MPa。有人据此说前者预测更准。请核对两篇论文各自预测什么、这些误差对应什么数据，并判断能否仅按这两个RMSE数值排名。&quot;,
+    &quot;reference_answer&quot;: &quot;不能直接排名。Li模型先预测无量纲损伤指数，0.1667是曲线拟合prediction误差，实验回收纤维WRV/RBA序列用于建模，再由D连接T。Ayaliew预测纤维增强聚合物复合材料抗拉强度，RMSE约31.6 MPa对应合成数据测试表现，数据集10000条。目标量/尺度、单位、材料与验证数据不同，不能按原始RMSE大小跨任务比较精度。无需强制提出特定替代评估算法。&quot;,
+    &quot;key_points&quot;: [
+      &quot;Li 0.1667是curve fitting的prediction RMSE，针对损伤指数建模，不是MPa强度误差&quot;,
+      &quot;Li基于回收纤维实验数据，WRV/RBA用于损伤建模再连到抗张强度&quot;,
+      &quot;Ayaliew是复合材料抗拉强度MPa，在合成数据上评估&quot;,
+      &quot;不能仅凭数值大小排名，指出目标/单位尺度及数据背景不同&quot;
+    ],
+    &quot;critical_errors&quot;: [
+      &quot;直接按0.1667小于31.6判定更准&quot;,
+      &quot;把Ayaliew合成数据当成全实测&quot;
+    ],
+    &quot;evidence&quot;: [
+      {
+        &quot;document&quot;: &quot;D3&quot;,
+        &quot;pages&quot;: [
+          2,
+          15,
+          16
+        ],
+        &quot;locator&quot;: &quot;摘要及损伤模型&quot;
+      },
+      {
+        &quot;document&quot;: &quot;D4&quot;,
+        &quot;pages&quot;: [
+          4,
+          10,
+          11,
+          12
+        ],
+        &quot;locator&quot;: &quot;数据准备及测试误差&quot;
+      }
+    ],
+    &quot;checks&quot;: &quot;跨论文误差可比性、数据性质与预测对象&quot;,
+    &quot;grading_notes&quot;: &quot;允许等价表述、合理舍入；不强制参考答案之外的背景、重复引用或特定工具顺序。&quot;,
+    &quot;tool_expectation&quot;: &quot;检索原论文依据并区分计算与原文事实，不要求固定工具顺序。&quot;,
+    &quot;citation_applicable&quot;: true
+  },
+  &quot;answer&quot;: &quot;**结论：不能只按这两个 RMSE 数值排名。** 两者预测的对象、量纲和评估数据都不同，0.1667 与 31.6 MPa 不是同一件事的误差。\n\n## 一、两篇论文各自预测什么\n\n**Li、Hu &amp; Shao（2023）**（《Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning》）\n- 论文目标是估计和预测回收纤维纸页的抗张强度劣化，但模型直接输出的是**无量纲损伤指数 D**（D = (D_s−h)²/a² − (D_h−k)²/b²），输入特征为各回收轮次后的保水值 WRV 和相对结合面积 RBA；抗张强度再由 T = T₀(1−D) 换算得到 [3][5]。\n- 因此 **0.1667 是损伤指数 D 的 RMSE，不是以 MPa 计的抗张强度误差**。摘要与 4.3 节写明：曲线拟合模型在训练数据上 RMSE = 0.0278，在测试/预测数据上 RMSE = 0.1667；对照的 LSTM RNN 分别为 0.2445 和 0.2206 [1][3][5]。\n- 数据规模很小：对木材与非木材（含芦苇浆等）纤维模拟回收 4 次，在每次回收后测量 WRV、RBA、抗张指数等（例如表 2 中芦苇浆回收 0–4 次抗张指数由 28.14 降至 20.22 Nm/g）[6]。文中的\&quot;prediction\&quot;是模型对未参与训练的测试数据（后续回收轮次的 D）做出预测，并非在大样本上随机划分的留出集评估 [5]。\n\n**Ayaliew 等（2026）**（《Predicting tensile strength in fiber-reinforced composites using machine learning and deep learning models》）\n- 预测对象是**纤维增强复合材料的抗张强度（MPa）**，输入特征包括层数、纤维体积分数、纤维/树脂种类、孔隙率等 [11][12]。\n- 31.6 MPa 对应 ANN（MLP）在**独立测试集**上的表现：R² = 0.9975、RMSE = 31.67 MPa、MAE = 25.14 MPa；Stacking（LR）为 31.58 MPa；3.2.6 节将二者合述为\&quot;R² ≈ 0.9975、RMSE ≈ 31.6 MPa\&quot;，而同一测试集（2000 样本）上 ROM 理论模型的 RMSE 为 312.5 MPa [8][9][12]。摘要中\&quot;约 31 MPa\&quot;即指此值 [13]。\n\n## 二、为什么不能据此排名\n\n1. **被预测量不同、量纲不同**：一个是无量纲指数 D（须再经 T = T₀(1−D) 才成为强度），另一个是 MPa 绝对值。RMSE 的数值大小与量纲直接相关，因此 0.1667 与 31.6 MPa 不能横向比较 [1][3][5][8][12]。\n2. **误差所依据的数据条件不同**：Li 基于 4 次回收的小样本序列、测试点很少 [5][6]；Ayaliew 基于 2000 个测试样本，并做了 5 折交叉验证（ANN 的 CV R² 均值 0.9973、标准差 0.0002）[8][12][15]。二者的样本量、任务难度与变异性不可比。\n3. **缺少可比的相对精度指标**：要判断\&quot;谁更准\&quot;，需在同一量纲下比较相对误差（如 RMSE 占强度均值的比例或 MAPE）。Li 文中未报告抗张强度本身的预测误差；Ayaliew 只给出 RMSE、MAE 与 R²，未给出强度均值 [12]，因此无法把 31.6 MPa 换算成可比的百分比。这一信息缺口无法用现有材料补齐。\n4. **能比的只是各自文内的相对结论**：Li 中曲线拟合优于 LSTM RNN（0.1667 vs 0.2206）[5]；Ayaliew 中 ANN/Stacking 远优于 ROM 与 SVR [8][10][12]。这些结论只在各自体系内成立，不能跨文合并成\&quot;前者更准\&quot;。\n\n**不确定性说明**：Li 的 0.1667 是测试/预测数据上损伤指数 D 的 RMSE，若该文另有抗张强度误差而未在可见文本中报告，本回答无法涵盖；Ayaliew 的\&quot;约 31 MPa\&quot;是摘要对 31.67 MPa 的取整表述 [9][13]。\n\n**若要做可比评估**：需将 Li 的 D 误差经 T = T₀(1−D) 传播为强度误差（该文未做此换算），或在同一量纲下用相对误差与各自强度均值比较；所需数据两文均未完整给出。&quot;,
+  &quot;draft&quot;: &quot;**结论：不能只按这两个 RMSE 数值排名。** 两者预测的对象、量纲与评估数据完全不同，0.1667 与 31.6 MPa 比较的不是同一件事。\n\n## 一、两篇论文各自预测什么\n\n**Li、Hu &amp; Shao (2023)**（《Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning》）\n- 论文名称与目标确实是\&quot;抗张强度估计与预测\&quot;，但模型直接输出的是**无量纲损伤指数 D**（D = (D_s−h)²/a² − (D_h−k)²/b²），输入特征是各回收轮次后的保水值 WRV 和相对结合面积 RBA；抗张强度再由 T = T₀(1−D) 换算得到 [3][5]。\n- 因此 **0.1667 是\&quot;损伤指数 D\&quot;的 RMSE，不是 MPa 的抗张强度误差**。摘要和 4.3 节写明：曲线拟合模型在训练数据上 RMSE = 0.0278，在测试/预测数据上 RMSE = 0.1667；对照的 LSTM RNN 分别为 0.2445 和 0.2206 [1][3][5]。\n- 数据规模很小：木材与非木材（芦竹/芦苇等）浆各模拟回收 4 次，每个回收阶段测一组 WRV、RBA、抗张指数等（如芦苇浆回收 0–4 次抗张指数 28.14→20.22 Nm/g，见表 2）[6]。也就是说测试集是极少数的序列点，\&quot;prediction\&quot;指预测后续回收轮次的 D，而不是在一个大样本上随机划分的留出集 [5]。\n\n**Ayaliew 等 (2026)**（《Predicting tensile strength in fiber-reinforced composites using machine learning and deep learning models》）\n- 预测对象是**纤维增强复合材料的抗张强度（MPa）**，输入为层数、纤维体积分数、纤维/树脂种类、孔隙率等特征 [11][12]。\n- 31.6 MPa 对应 ANN(MLP) 在**独立测试集**上的表现：R² = 0.9975、RMSE = 31.67 MPa、MAE = 25.14 MPa；Stacking(LR) 为 31.58 MPa；3.2.6 节把二者合述为\&quot;R² ≈ 0.9975、RMSE ≈ 31.6 MPa\&quot;，同数据集上 ROM 的理论模型 RMSE 为 312.5 MPa（测试集 2000 样本）[8][9][12]。摘要里\&quot;约 31 MPa\&quot;即指此值 [13]。\n\n## 二、为什么不能据此排名\n\n1. **被预测量不同、量纲不同**：一个是无量纲指数 D（而且必须再经 T = T₀(1−D) 才能变成强度），另一个是 MPa 绝对值。RMSE 数值大小与量纲直接相关，0.1667 与 31.6 MPa 不能横向比较 [1][3][5][8][12]。\n2. **误差所依据的数据集不同**：Li 是 4 次回收的小样本序列外推、测试点极少 [5][6]；Ayaliew 是 2000 个测试样本、含 5 折交叉验证（ANN 的 CV R² 均值 0.9973、标准差 0.0002）[8][12][15]。样本量、任务难度与变异性完全不可比。\n3. **没有共同的基线精度**：若要判断谁\&quot;更准\&quot;，需要相同量纲下的相对误差（如 MAPE、RMSE/均值），Li 文中未给出抗张强度本身的预测误差，也未报告该目标量的量级；Ayaliew  composites 的强度量级很大，31.6 MPa 相对误差需结合强度分布判断，文中只给了 MAE 与 R²，未给强度均值 [12]，因此无法直接换算成可比百分比。这一缺口无法从现有材料补齐。\n4. **可比的只有\&quot;同文内部的相对结论\&quot;**：Li 中曲线拟合优于 LSTM RNN（0.1667 vs 0.2206）[5]；Ayaliew 中 ANN/Stacking 远优于 ROM 与 SVR [8][10][12]。这些是各自体系内的比较，不能跨界合并成\&quot;前者更准\&quot;。\n\n**不确定性说明**：Li 的 0.1667 是损伤指数 D 的测试期 RMSE（原文表述为 \&quot;testing data or prediction\&quot;），若作者另有抗张强度误差未在此文报告，则本回答仅基于已见文本；Ayaliew 的 31.6 MPa 是测试集 RMSE，\&quot;31 MPa\&quot;为摘要中的取整表述 [13]。\n\n**建议的可比做法**：把 Li 的 D 误差经 T = T₀(1−D) 传播为强度误差（本文未做此换算），或在同一量纲下用相对误差（如 RMSE%/MAPE）与各自强度均值比较——这需要两文都未完整提供的额外数据。&quot;,
+  &quot;raw_jev&quot;: {
+    &quot;key_point_scores&quot;: {
+      &quot;K1&quot;: 1,
+      &quot;K2&quot;: 1,
+      &quot;K3&quot;: 1,
+      &quot;K4&quot;: 1
+    },
+    &quot;claim_assessments&quot;: [
+      {
+        &quot;id&quot;: &quot;C1&quot;,
+        &quot;text&quot;: &quot;**结论：不能只按这两个 RMSE 数值排名。** 两者预测的对象、量纲和评估数据都不同，0.1667 与 31.6 MPa 不是同一件事的误差。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C2&quot;,
+        &quot;text&quot;: &quot;## 一、两篇论文各自预测什么\n\n**Li、Hu &amp; Shao（2023）**（《Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning》）\n- 论文目标是估计和预测回收纤维纸页的抗张强度劣化，但模型直接输出的是**无量纲损伤指数 D**（D = (D_s−h)²/a² − (D_h−k)²/b²），输入特征为各回收轮次后的保水值 WRV 和相对结合面积 RBA；抗张强度再由 T = T₀(1−D) 换算得到 [3][5]。\n- 因此 **0.1667 是损伤指数 D 的 RMSE，不是以 MPa 计的抗张强度误差**。摘要与 4.3 节写明：曲线拟合模型在训练数据上 RMSE = 0.0278，在测试/预测数据上 RMSE = 0.1667；对照的 LSTM RNN 分别为 0.2445 和 0.2206 [1][3][5]。\n- 数据规模很小：对木材与非木材（含芦苇浆等）纤维模拟回收 4 次，在每次回收后测量 WRV、RBA、抗张指数等（例如表 2 中芦苇浆回收 0–4 次抗张指数由 28.14 降至 20.22 Nm/g）[6]。文中的\&quot;prediction\&quot;是模型对未参与训练的测试数据（后续回收轮次的 D）做出预测，并非在大样本上随机划分的留出集评估 [5]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[3]&quot;,
+          &quot;[5]&quot;,
+          &quot;[1]&quot;,
+          &quot;[6]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C3&quot;,
+        &quot;text&quot;: &quot;**Ayaliew 等（2026）**（《Predicting tensile strength in fiber-reinforced composites using machine learning and deep learning models》）\n- 预测对象是**纤维增强复合材料的抗张强度（MPa）**，输入特征包括层数、纤维体积分数、纤维/树脂种类、孔隙率等 [11][12]。\n- 31.6 MPa 对应 ANN（MLP）在**独立测试集**上的表现：R² = 0.9975、RMSE = 31.67 MPa、MAE = 25.14 MPa；Stacking（LR）为 31.58 MPa；3.2.6 节将二者合述为\&quot;R² ≈ 0.9975、RMSE ≈ 31.6 MPa\&quot;，而同一测试集（2000 样本）上 ROM 理论模型的 RMSE 为 312.5 MPa [8][9][12]。摘要中\&quot;约 31 MPa\&quot;即指此值 [13]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[11]&quot;,
+          &quot;[12]&quot;,
+          &quot;[8]&quot;,
+          &quot;[9]&quot;,
+          &quot;[13]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B052&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C4&quot;,
+        &quot;text&quot;: &quot;## 二、为什么不能据此排名\n\n1. **被预测量不同、量纲不同**：一个是无量纲指数 D（须再经 T = T₀(1−D) 才成为强度），另一个是 MPa 绝对值。RMSE 的数值大小与量纲直接相关，因此 0.1667 与 31.6 MPa 不能横向比较 [1][3][5][8][12]。\n2. **误差所依据的数据条件不同**：Li 基于 4 次回收的小样本序列、测试点很少 [5][6]；Ayaliew 基于 2000 个测试样本，并做了 5 折交叉验证（ANN 的 CV R² 均值 0.9973、标准差 0.0002）[8][12][15]。二者的样本量、任务难度与变异性不可比。\n3. **缺少可比的相对精度指标**：要判断\&quot;谁更准\&quot;，需在同一量纲下比较相对误差（如 RMSE 占强度均值的比例或 MAPE）。Li 文中未报告抗张强度本身的预测误差；Ayaliew 只给出 RMSE、MAE 与 R²，未给出强度均值 [12]，因此无法把 31.6 MPa 换算成可比的百分比。这一信息缺口无法用现有材料补齐。\n4. **能比的只是各自文内的相对结论**：Li 中曲线拟合优于 LSTM RNN（0.1667 vs 0.2206）[5]；Ayaliew 中 ANN/Stacking 远优于 ROM 与 SVR [8][10][12]。这些结论只在各自体系内成立，不能跨文合并成\&quot;前者更准\&quot;。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[1]&quot;,
+          &quot;[3]&quot;,
+          &quot;[5]&quot;,
+          &quot;[8]&quot;,
+          &quot;[12]&quot;,
+          &quot;[6]&quot;,
+          &quot;[15]&quot;,
+          &quot;[10]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;partially_supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C5&quot;,
+        &quot;text&quot;: &quot;**不确定性说明**：Li 的 0.1667 是测试/预测数据上损伤指数 D 的 RMSE，若该文另有抗张强度误差而未在可见文本中报告，本回答无法涵盖；Ayaliew 的\&quot;约 31 MPa\&quot;是摘要对 31.67 MPa 的取整表述 [9][13]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[9]&quot;,
+          &quot;[13]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C6&quot;,
+        &quot;text&quot;: &quot;**若要做可比评估**：需将 Li 的 D 误差经 T = T₀(1−D) 传播为强度误差（该文未做此换算），或在同一量纲下用相对误差与各自强度均值比较；所需数据两文均未完整给出。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;scope&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      }
+    ],
+    &quot;citation_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[5]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[1]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[11]&quot;,
+        &quot;score&quot;: 0
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[12]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[8]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[13]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[1]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[5]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[8]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[12]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[15]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[10]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[13]&quot;,
+        &quot;score&quot;: 1
+      }
+    ],
+    &quot;citation_group_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;coverage&quot;: &quot;missing&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C6&quot;,
+        &quot;coverage&quot;: &quot;missing&quot;
+      }
+    ],
+    &quot;answerability_score&quot;: 2,
+    &quot;reference_concern&quot;: false,
+    &quot;decisions&quot;: {
+      &quot;boundary&quot;: &quot;appropriate&quot;,
+      &quot;reference_check&quot;: &quot;sound&quot;,
+      &quot;point_K1&quot;: &quot;complete&quot;,
+      &quot;point_K2&quot;: &quot;complete&quot;,
+      &quot;point_K3&quot;: &quot;complete&quot;,
+      &quot;point_K4&quot;: &quot;complete&quot;,
+      &quot;kind_C1&quot;: &quot;fact&quot;,
+      &quot;support_C1&quot;: &quot;supported&quot;,
+      &quot;basis_C1&quot;: &quot;NONE&quot;,
+      &quot;group_C1&quot;: &quot;missing&quot;,
+      &quot;kind_C2&quot;: &quot;fact&quot;,
+      &quot;support_C2&quot;: &quot;supported&quot;,
+      &quot;basis_C2&quot;: &quot;NONE&quot;,
+      &quot;group_C2&quot;: &quot;complete&quot;,
+      &quot;citation_C2_1&quot;: &quot;supported&quot;,
+      &quot;citation_C2_2&quot;: &quot;supported&quot;,
+      &quot;citation_C2_3&quot;: &quot;supported&quot;,
+      &quot;citation_C2_4&quot;: &quot;supported&quot;,
+      &quot;kind_C3&quot;: &quot;fact&quot;,
+      &quot;support_C3&quot;: &quot;supported&quot;,
+      &quot;basis_C3&quot;: &quot;B052&quot;,
+      &quot;group_C3&quot;: &quot;partial&quot;,
+      &quot;citation_C3_1&quot;: &quot;unsupported&quot;,
+      &quot;citation_C3_2&quot;: &quot;supported&quot;,
+      &quot;citation_C3_3&quot;: &quot;supported&quot;,
+      &quot;citation_C3_4&quot;: &quot;supported&quot;,
+      &quot;citation_C3_5&quot;: &quot;supported&quot;,
+      &quot;kind_C4&quot;: &quot;fact&quot;,
+      &quot;support_C4&quot;: &quot;partially_supported&quot;,
+      &quot;basis_C4&quot;: &quot;NONE&quot;,
+      &quot;group_C4&quot;: &quot;partial&quot;,
+      &quot;citation_C4_1&quot;: &quot;supported&quot;,
+      &quot;citation_C4_2&quot;: &quot;supported&quot;,
+      &quot;citation_C4_3&quot;: &quot;supported&quot;,
+      &quot;citation_C4_4&quot;: &quot;supported&quot;,
+      &quot;citation_C4_5&quot;: &quot;supported&quot;,
+      &quot;citation_C4_6&quot;: &quot;supported&quot;,
+      &quot;citation_C4_7&quot;: &quot;supported&quot;,
+      &quot;citation_C4_8&quot;: &quot;supported&quot;,
+      &quot;kind_C5&quot;: &quot;fact&quot;,
+      &quot;support_C5&quot;: &quot;supported&quot;,
+      &quot;basis_C5&quot;: &quot;NONE&quot;,
+      &quot;group_C5&quot;: &quot;complete&quot;,
+      &quot;citation_C5_1&quot;: &quot;supported&quot;,
+      &quot;citation_C5_2&quot;: &quot;supported&quot;,
+      &quot;kind_C6&quot;: &quot;scope&quot;,
+      &quot;support_C6&quot;: &quot;supported&quot;,
+      &quot;basis_C6&quot;: &quot;NONE&quot;,
+      &quot;group_C6&quot;: &quot;missing&quot;
+    }
+  },
+  &quot;calibrated&quot;: {
+    &quot;key_point_scores&quot;: {
+      &quot;K1&quot;: 1,
+      &quot;K2&quot;: 1,
+      &quot;K3&quot;: 0.5,
+      &quot;K4&quot;: 1
+    },
+    &quot;claim_assessments&quot;: [
+      {
+        &quot;id&quot;: &quot;C1&quot;,
+        &quot;text&quot;: &quot;**结论：不能只按这两个 RMSE 数值排名。** 两者预测的对象、量纲和评估数据都不同，0.1667 与 31.6 MPa 不是同一件事的误差。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C2&quot;,
+        &quot;text&quot;: &quot;## 一、两篇论文各自预测什么\n\n**Li、Hu &amp; Shao（2023）**（《Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning》）\n- 论文目标是估计和预测回收纤维纸页的抗张强度劣化，但模型直接输出的是**无量纲损伤指数 D**（D = (D_s−h)²/a² − (D_h−k)²/b²），输入特征为各回收轮次后的保水值 WRV 和相对结合面积 RBA；抗张强度再由 T = T₀(1−D) 换算得到 [3][5]。\n- 因此 **0.1667 是损伤指数 D 的 RMSE，不是以 MPa 计的抗张强度误差**。摘要与 4.3 节写明：曲线拟合模型在训练数据上 RMSE = 0.0278，在测试/预测数据上 RMSE = 0.1667；对照的 LSTM RNN 分别为 0.2445 和 0.2206 [1][3][5]。\n- 数据规模很小：对木材与非木材（含芦苇浆等）纤维模拟回收 4 次，在每次回收后测量 WRV、RBA、抗张指数等（例如表 2 中芦苇浆回收 0–4 次抗张指数由 28.14 降至 20.22 Nm/g）[6]。文中的\&quot;prediction\&quot;是模型对未参与训练的测试数据（后续回收轮次的 D）做出预测，并非在大样本上随机划分的留出集评估 [5]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[3]&quot;,
+          &quot;[5]&quot;,
+          &quot;[1]&quot;,
+          &quot;[6]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C3&quot;,
+        &quot;text&quot;: &quot;**Ayaliew 等（2026）**（《Predicting tensile strength in fiber-reinforced composites using machine learning and deep learning models》）\n- 预测对象是**纤维增强复合材料的抗张强度（MPa）**，输入特征包括层数、纤维体积分数、纤维/树脂种类、孔隙率等 [11][12]。\n- 31.6 MPa 对应 ANN（MLP）在**独立测试集**上的表现：R² = 0.9975、RMSE = 31.67 MPa、MAE = 25.14 MPa；Stacking（LR）为 31.58 MPa；3.2.6 节将二者合述为\&quot;R² ≈ 0.9975、RMSE ≈ 31.6 MPa\&quot;，而同一测试集（2000 样本）上 ROM 理论模型的 RMSE 为 312.5 MPa [8][9][12]。摘要中\&quot;约 31 MPa\&quot;即指此值 [13]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[11]&quot;,
+          &quot;[12]&quot;,
+          &quot;[8]&quot;,
+          &quot;[9]&quot;,
+          &quot;[13]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;B052&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C4&quot;,
+        &quot;text&quot;: &quot;## 二、为什么不能据此排名\n\n1. **被预测量不同、量纲不同**：一个是无量纲指数 D（须再经 T = T₀(1−D) 才成为强度），另一个是 MPa 绝对值。RMSE 的数值大小与量纲直接相关，因此 0.1667 与 31.6 MPa 不能横向比较 [1][3][5][8][12]。\n2. **误差所依据的数据条件不同**：Li 基于 4 次回收的小样本序列、测试点很少 [5][6]；Ayaliew 基于 2000 个测试样本，并做了 5 折交叉验证（ANN 的 CV R² 均值 0.9973、标准差 0.0002）[8][12][15]。二者的样本量、任务难度与变异性不可比。\n3. **缺少可比的相对精度指标**：要判断\&quot;谁更准\&quot;，需在同一量纲下比较相对误差（如 RMSE 占强度均值的比例或 MAPE）。Li 文中未报告抗张强度本身的预测误差；Ayaliew 只给出 RMSE、MAE 与 R²，未给出强度均值 [12]，因此无法把 31.6 MPa 换算成可比的百分比。这一信息缺口无法用现有材料补齐。\n4. **能比的只是各自文内的相对结论**：Li 中曲线拟合优于 LSTM RNN（0.1667 vs 0.2206）[5]；Ayaliew 中 ANN/Stacking 远优于 ROM 与 SVR [8][10][12]。这些结论只在各自体系内成立，不能跨文合并成\&quot;前者更准\&quot;。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[1]&quot;,
+          &quot;[3]&quot;,
+          &quot;[5]&quot;,
+          &quot;[8]&quot;,
+          &quot;[12]&quot;,
+          &quot;[6]&quot;,
+          &quot;[15]&quot;,
+          &quot;[10]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;partially_supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C5&quot;,
+        &quot;text&quot;: &quot;**不确定性说明**：Li 的 0.1667 是测试/预测数据上损伤指数 D 的 RMSE，若该文另有抗张强度误差而未在可见文本中报告，本回答无法涵盖；Ayaliew 的\&quot;约 31 MPa\&quot;是摘要对 31.67 MPa 的取整表述 [9][13]。&quot;,
+        &quot;citation_refs&quot;: [
+          &quot;[9]&quot;,
+          &quot;[13]&quot;
+        ],
+        &quot;claim_type&quot;: &quot;fact&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      },
+      {
+        &quot;id&quot;: &quot;C6&quot;,
+        &quot;text&quot;: &quot;**若要做可比评估**：需将 Li 的 D 误差经 T = T₀(1−D) 传播为强度误差（该文未做此换算），或在同一量纲下用相对误差与各自强度均值比较；所需数据两文均未完整给出。&quot;,
+        &quot;citation_refs&quot;: [],
+        &quot;claim_type&quot;: &quot;scope&quot;,
+        &quot;support&quot;: &quot;partially_supported&quot;,
+        &quot;basis&quot;: &quot;NONE&quot;
+      }
+    ],
+    &quot;citation_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[5]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[1]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[11]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[12]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[8]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;ref&quot;: &quot;[13]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[1]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[3]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[5]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[8]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[12]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[6]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[15]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;ref&quot;: &quot;[10]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[9]&quot;,
+        &quot;score&quot;: 1
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;ref&quot;: &quot;[13]&quot;,
+        &quot;score&quot;: 1
+      }
+    ],
+    &quot;citation_group_assessments&quot;: [
+      {
+        &quot;claim_id&quot;: &quot;C1&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C2&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C3&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C4&quot;,
+        &quot;coverage&quot;: &quot;partial&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C5&quot;,
+        &quot;coverage&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;claim_id&quot;: &quot;C6&quot;,
+        &quot;coverage&quot;: &quot;missing&quot;
+      }
+    ],
+    &quot;answerability_score&quot;: 2,
+    &quot;reference_concern&quot;: false
+  },
+  &quot;calibration&quot;: {
+    &quot;changes&quot;: [
+      {
+        &quot;path&quot;: &quot;key_point_scores.K3&quot;,
+        &quot;value&quot;: 0.5,
+        &quot;reason&quot;: &quot;再次遗漏合成数据性质；只有复合材料MPa目标，不应给满分。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_group_assessments.C1.coverage&quot;,
+        &quot;value&quot;: &quot;complete&quot;,
+        &quot;reason&quot;: &quot;开头结论承接后文引文，不要求重复挂引。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_assessments.C3.[11].score&quot;,
+        &quot;value&quot;: 1,
+        &quot;reason&quot;: &quot;[11]明确支持预测tensile strength及独立测试集/5折验证，承担该段实质子事实，不要求单条证明全部输入变量。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;citation_group_assessments.C3.coverage&quot;,
+        &quot;value&quot;: &quot;complete&quot;,
+        &quot;reason&quot;: &quot;联合引文支持该段目标与测试表现；合成数据缺失另扣要点。&quot;
+      },
+      {
+        &quot;path&quot;: &quot;claim_assessments.C6.support&quot;,
+        &quot;value&quot;: &quot;partially_supported&quot;,
+        &quot;reason&quot;: &quot;相对误差本来无量纲，不能把同一量纲作为其必要条件；传播D误差也不会自动消除材料与数据集差异。&quot;
+      }
+    ],
+    &quot;reason&quot;: &quot;要点仍87.5，遗漏Ayaliew合成数据。保留C4部分支持/覆盖：把跨任务比较表述为需在同一量纲比较相对误差，混淆无量纲相对指标与原始单位；同单位或归一化本身不足以建立不同任务的公平排名。C6沿用同样表达，属于建议中的技术局限。Jev漏检K3，已校准；不因摘要/当前证据范围内的不确定性说明或总结不重复引用扣分。&quot;
+  },
+  &quot;final&quot;: {
+    &quot;point_score&quot;: 87.5,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 5,
+    &quot;supported_facts&quot;: 4,
+    &quot;pair_count&quot;: 19,
+    &quot;supported_pairs&quot;: 19,
+    &quot;group_count&quot;: 5,
+    &quot;covered_groups&quot;: 4,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 80.0,
+    &quot;citation_precision&quot;: 100.0,
+    &quot;citation_coverage&quot;: 80.0,
+    &quot;strict_pass&quot;: false,
+    &quot;format_ok&quot;: true
+  },
+  &quot;jev&quot;: {
+    &quot;point_score&quot;: 100,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 5,
+    &quot;supported_facts&quot;: 4,
+    &quot;pair_count&quot;: 19,
+    &quot;supported_pairs&quot;: 18,
+    &quot;group_count&quot;: 5,
+    &quot;covered_groups&quot;: 2,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 80.0,
+    &quot;citation_precision&quot;: 94.73684210526316,
+    &quot;citation_coverage&quot;: 40.0,
+    &quot;strict_pass&quot;: false,
+    &quot;format_ok&quot;: true
+  },
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;review_status&quot;: &quot;completed&quot;,
+  &quot;tools&quot;: [
+    {
+      &quot;request&quot;: {
+        &quot;query&quot;: &quot;RMSE curve fitting model prediction tensile strength Li 2023 recycled fibers&quot;,
+        &quot;document_ids&quot;: [
+          &quot;doc_347aacf900c9ab36&quot;
+        ],
+        &quot;reason&quot;: &quot;Need to know what quantity Li 2023 predicts and what RMSE 0.1667 refers to&quot;,
+        &quot;tool&quot;: &quot;search_literature&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;query&quot;: &quot;ANN RMSE MPa tensile strength prediction Ayaliew 2026&quot;,
+        &quot;document_ids&quot;: [
+          &quot;doc_f499d471c51c051a&quot;
+        ],
+        &quot;reason&quot;: &quot;Need to know Ayaliew 2026 prediction target and RMSE 31.6 MPa context&quot;,
+        &quot;tool&quot;: &quot;search_literature&quot;
+      },
+      &quot;status&quot;: &quot;blocked&quot;
+    },
+    {
+      &quot;request&quot;: {
+        &quot;document_ids&quot;: [
+          &quot;doc_f499d471c51c051a&quot;
+        ],
+        &quot;query&quot;: &quot;ANN RMSE MPa tensile strength prediction test dataset Ayaliew&quot;,
+        &quot;reason&quot;: &quot;Need Ayaliew 2026&#x27;s predicted quantity and what the 31.6 MPa RMSE refers to&quot;,
+        &quot;tool&quot;: &quot;search_literature&quot;
+      },
+      &quot;status&quot;: &quot;completed&quot;
+    }
+  ],
+  &quot;model_calls&quot;: 4,
+  &quot;elapsed_seconds&quot;: 47.299,
+  &quot;result_sha256&quot;: &quot;f1b3e4cc87cd385885e272472974fde47e138ac291adbbdb17e2e96429c64bc0&quot;,
+  &quot;judge_input_sha256&quot;: &quot;4cd3cbd570d26d7ca0ce4846bcef6fcc809ba0c8f4ac75f2ac6010cf2f20c7cc&quot;,
+  &quot;evidence&quot;: [
+    {
+      &quot;ref&quot;: &quot;[1]&quot;,
+      &quot;sha256&quot;: &quot;86b147efbc2b5e7be78bf95e6f6fdf548a54b209d2b1d23936165cb36a914beb&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 3202,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 16,
+        &quot;page_start&quot;: 16,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_8123dd110a86aadb3902&quot;,
+            &quot;page_end&quot;: 16,
+            &quot;page_start&quot;: 16,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 5. Conclusions\n[原文]\nThe properties of fibers deteriorate during recycling processes, which raises concerns about the quality of paper products made of recycled fibers. This paper aims to estimate the deterioration of tensile strength and the damage in paper sheets made of recycled wood and non-wood fibers by means of the theory of non-continuum damage mechanics and machine learning methods. To investigate the deterioration of fiber properties due to recycling, experiments were carried out to simulate recycling processes for four times. Various physicochemical properties were measured after each recycling process. Due to the fact that water retention value and relative bonding area were strongly correlated with tensile strength, they were chosen to estimate and predict the loss of tensile strength and the damage developed during recycling processes.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_e54e2a1fc7a40d1bfac8&quot;,
+            &quot;page_end&quot;: 16,
+            &quot;page_start&quot;: 16,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 5. Conclusions\n[原文]\nBased on the experimental results and damage mechanics, a damage index was proposed according to the hyperbolic model: $\\begin{array} { r } { D = \\frac { ( D _ { s } - h ) ^ { 2 } } { a ^ { 2 } } - \\frac { ( D _ { h } - k ) ^ { 2 } } { h ^ { 2 } } } \\end{array}$ , The curve fitting method was utilized to identify the coefficients in the equation. Then, $\\overset { \\upsilon } { T } = T _ { 0 } \\ ( 1 - D )$ was proposed to estimate and predict the tensile strength deterioration during recycling. The proposed approach to estimate and predict the damage index and the tensile strength can be utilized to determine in advance the quality of paper products made from recycled fibers; thus, the applications of the recycled fibers can be selected. A recurrent neural network with long short-term memory was designed and trained to estimate and predict the damage index as compared with the curve fitting method. The accuracy of the estimations of the neural network was less than that of the curve fitting estimations. For the curve fitting method, the RMSE of estimation for training data was 0.0278, for testing or prediction was 0.1667.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_d71cedc93606ea39399f&quot;,
+            &quot;page_end&quot;: 16,
+            &quot;page_start&quot;: 16,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 5. Conclusions\n[原文]\n For LSTM RNN estimation, the RMSE for training was 0.2445, for testing or prediction was 0.2206. From the results, the proposed method could be utilized to estimate and predict the tensile strength of paper products made of recycled fibers. The proposed method using an LSTM RNN model to analyze tensile strength and paper damage during recycling processes is novel. The memory of LSTM RNN models can store information of previous recycling, so it is suitable to analyze other variables during multiple recycling processes. In the future, further analysis will be conducted to determine the coefficients in the damage index equation through experimental data so that a better understanding of the physical significances of the coefficients can be achieved. The other limitation of this study is that different compositions of fibers have not been considered; while in real life, recovered fibers are combinations of various types of fibers. Experiments on recycled fibers obtained from different waste paper streams will be carried out to study the impact of different fiber compositions on tensile strength.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 5. Conclusions\n[原文]\nThe properties of fibers deteriorate during recycling processes, which raises concerns about the quality of paper products made of recycled fibers. This paper aims to estimate the deterioration of tensile strength and the damage in paper sheets made of recycled wood and non-wood fibers by means of the theory of non-continuum damage mechanics and machine learning methods. To investigate the deterioration of fiber properties due to recycling, experiments were carried out to simulate recycling processes for four times. Various physicochemical properties were measured after each recycling process. Due to the fact that water retention value and relative bonding area were strongly correlated with tensile strength, they were chosen to estimate and predict the loss of tensile strength and the damage developed during recycling processes.\n\n[章节标签（程序整理，非原文）] 5. Conclusions\n[原文]\nBased on the experimental results and damage mechanics, a damage index was proposed according to the hyperbolic model: $\\begin{array} { r } { D = \\frac { ( D _ { s } - h ) ^ { 2 } } { a ^ { 2 } } - \\frac { ( D _ { h } - k ) ^ { 2 } } { h ^ { 2 } } } \\end{array}$ , The curve fitting method was utilized to identify the coefficients in the equation. Then, $\\overset { \\upsilon } { T } = T _ { 0 } \\ ( 1 - D )$ was proposed to estimate and predict the tensile strength deterioration during recycling. The proposed approach to estimate and predict the damage index and the tensile strength can be utilized to determine in advance the quality of paper products made from recycled fibers; thus, the applications of the recycled fibers can be selected. A recurrent neural network with long short-term memory was designed and trained to estimate and predict the damage index as compared with the curve fitting method. The accuracy of the estimations of the neural network was less than that of the curve fitting estimations. For the curve fitting method, the RMSE of estimation for training data was 0.0278, for testing or prediction was 0.1667.\n\n[章节标签（程序整理，非原文）] 5. Conclusions\n[原文]\n For LSTM RNN estimation, the RMSE for training was 0.2445, for testing or prediction was 0.2206. From the results, the proposed method could be utilized to estimate and predict the tensile strength of paper products made of recycled fibers. The proposed method using an LSTM RNN model to analyze tensile strength and paper damage during recycling processes is novel. The memory of LSTM RNN models can store information of previous recycling, so it is suitable to analyze other variables during multiple recycling processes. In the future, further analysis will be conducted to determine the coefficients in the damage index equation through experimental data so that a better understanding of the physical significances of the coefficients can be achieved. The other limitation of this study is that different compositions of fibers have not been considered; while in real life, recovered fibers are combinations of various types of fibers. Experiments on recycled fibers obtained from different waste paper streams will be carried out to study the impact of different fiber compositions on tensile strength.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;d2b79faa-d543-42ea-80ce-08a3975b8fa8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[2]&quot;,
+      &quot;sha256&quot;: &quot;80610e6c355abd1feb6e9725efb446c53a11caa9a2ee1154d05cd74f3c7ae45a&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 7570,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 5,
+        &quot;page_start&quot;: 3,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_f6b52252dc0009077ea2&quot;,
+            &quot;page_end&quot;: 3,
+            &quot;page_start&quot;: 3,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nThe Page equation (Page, 1993, 1969) describing the relationship between fiber configurations and the tensile strength of wet and dry sheets was proposed in 1969, and it has been widely used ever since (Duker &amp; Lindström, 2008; Lindström et al., 2016). However, the Page equation is a simplified approach, and it cannot be utilized to evaluate shear strength in once-dried fibers because of limited assumptions (Seth &amp; Page, 1996). There is no targeted theory that quantitatively relates the deterioration of fiber configurations and paper properties to the tensile strength of paper sheets during recycling processes. A quantitative expression of the mechanical damage in paper sheets after recycling processes would be important and highly desirable. Gurunagul et al. examined the contribution of the loss of fiber–fiber bond strength on the deterioration of tensile strength of once-dried paper sheets, but they eliminated the impact of fines by using long and straight fibers only (Gurnagul et al., 2001). Jin et al. explored the relationship between the tensile strength of recycled paper sheets and the wettability of a single fiber as well as the interfiber bond strength.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_19958e0131dfeca08a9d&quot;,
+            &quot;page_end&quot;: 3,
+            &quot;page_start&quot;: 3,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n They used the factor of fiber–fiber bond weakness to indicate the fiber–fiber bond strength and found that during recycling processes, the factor of fiber–fiber bond weakness tended to increase and the fiber–fiber bond strength became weaker which led to the loss of tensile strength of paper sheets (Jin et al., 2022). However, this factor focused on the inter-fiber bond strength only, though it was the main factor affecting the tensile strength of paper sheets. The recycling effect has been examined mainly on mechanical and chemical wood pulps, while recycled non-wood fibers have been seldom studied. This is because wood fibers account for a significant share of the global pulp and paper industry. Non-wood fibers are not favorable compared with wood fibers, because they are only available seasonally and regionally; they have various physical and chemical properties; they have lower production yields, and so on (El-Sayed et al., 2020). However, non-wood fibers are valuable resources for the pulp and paper industry, especially for regions that have limited forest resources.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_cb873d7bf5a7a06d9774&quot;,
+            &quot;page_end&quot;: 3,
+            &quot;page_start&quot;: 3,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n In some developing countries, e.g., China and India, 70% of the raw materials used in the paper and pulp industry come from nonwood plants (Liu et al., 2018). As technological innovations are shaping the future of the pulp and paper industry, non-wood fibers will play an indispensable role as a raw material resource (Salehi et al., 2017; Tschirner et al., 2007). This paper examines the property deterioration of reed fibers during recycling.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_74577a6adbfa8199379b&quot;,
+            &quot;page_end&quot;: 4,
+            &quot;page_start&quot;: 4,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nThe aim of this study is to estimate and predict the deterioration of tensile strength as well as other properties of paper sheets made from both wood and non-wood fibers such as bleached and unbleached softwood pulp, reed pulp, etc., in recycling processes. The theory and assumptions of damage mechanics for solid materials can be introduced to understand, analyze, and model the damage behavior of paper sheets during fiber recycling processes. Thus, the recycled fibers can be classified based on their damage severity and utilized in the manufacturing of different paper products.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_562912f710ba1383b621&quot;,
+            &quot;page_end&quot;: 4,
+            &quot;page_start&quot;: 4,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nThe experiments simulating recycling processes were conducted four times to examine the changes in fiber configurations and paper sheet properties. The decrease in the area carrying the load of tensile force was evaluated to estimate the damage developed in paper sheets made of recycled wood and non-wood fibers. The relationship between the loss of hydrogen bonding capacity and the deterioration of properties of paper sheets was evalugted. Based on the theory of damage mechanics, a mathematical model was proposed to quantify the loss of tensile strength during recycling processes. The proposed damage index D was derived from a hyperbolic model: $\\begin{array} { r } { \\dot { \\boldsymbol { D } } = \\frac { ( \\bar { D } _ { s } - \\dot { h } ) ^ { 2 } } { a ^ { 2 } } - \\frac { ( D _ { h } - k ) ^ { 2 } } { b ^ { 2 } } } \\end{array}$ , where $D _ { h }$ and $D _ { s }$ represented the deterioration of the water retention value (WRV) and the relative bonded area (RBA), respectively. The coefficients a, $b , h ,$ k were determined with the aid of curve fitting.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_82eebd5bce866c32bc6d&quot;,
+            &quot;page_end&quot;: 4,
+            &quot;page_start&quot;: 4,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n The deterioration of tensile strength then could be calculated as ${ \\cal T } = { \\cal T } _ { \\cal O } \\left( 1 { - } { \\cal D } \\right)$ . The proposed method explored the possibility to quantitatively express the damage during recycling using a damage index and directly determine the tensile strength of paper products after recycling.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_51bb0bbe38b5e30ffffb&quot;,
+            &quot;page_end&quot;: 4,
+            &quot;page_start&quot;: 4,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nMachine learning is a family of algorithms that enable machines to make decisions by learning f ll l d d d h h f l bl h hl Machine learning methods have been widely utilized in estimating and predicting properties of pulp and paper; since pulp and paper manufacturing is a complicated process where different events occur simultaneously (Almonti et al., 2021; Li et al., 2021; Y Zhang et al., 2021). Almonti et al. implemented a neural network to predict the length of outgoing fibers from a refining process based on the main process parameters. Their study aimed at optimizing the refining process and their neural network model excellently predicted the length of refined fibers (Almonti et al., 2019). Tofani et al. developed a multiple linear regression model to determine in advance if recovered waste paper mixtures could achieve the desired brightness (Tofani et al., 2022). Their model correlated the resulting brightness to the different fiber compositions of the waste paper after bleaching processes. Despite some limitations, the model could predict the brightness of recovered paper under specific bleaching conditions.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_601d76fd881344a83bcf&quot;,
+            &quot;page_end&quot;: 4,
+            &quot;page_start&quot;: 4,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n In this paper, a neural network model was trained to estimate the damage index as compared with the proposed curve fitting method. Recurrent neural networks (RNNs) are a class of neural networks that are suitable to process sequence data exhibiting temporal dynamic behavior. Long Short-Term Memory (LSTM) networks are a variant of RNNs. LSTM networks can solve the problem of long-time dependencies, when desired outputs depend on input presented a long time ago (Yu et al., 2019).&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_9d564d805f191a3470f4&quot;,
+            &quot;page_end&quot;: 5,
+            &quot;page_start&quot;: 5,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nThe proposed curve fitting model and neural network model utilized regression analysis to identify the inherent relationship between the physicochemical properties and tensile strength of recycled fibers. The proposed damage index was determined by approximating the sequence data, i.e., properties measured after each consecutive recycling, with characteristic expressions. The proposed models could estimate the current and predict the next damage index and the deterioration of tensile strength during the successive recycling. The proposed approach employed the advancement of machine learning and utilized data-driven-based models to analyze the complicated recycling processes alternatively. As far as we know, using a LSTM model to estimate the physicochemical properties and predict the damage index of tensile strength during recycling processes is not reported in the literature.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nThe Page equation (Page, 1993, 1969) describing the relationship between fiber configurations and the tensile strength of wet and dry sheets was proposed in 1969, and it has been widely used ever since (Duker &amp; Lindström, 2008; Lindström et al., 2016). However, the Page equation is a simplified approach, and it cannot be utilized to evaluate shear strength in once-dried fibers because of limited assumptions (Seth &amp; Page, 1996). There is no targeted theory that quantitatively relates the deterioration of fiber configurations and paper properties to the tensile strength of paper sheets during recycling processes. A quantitative expression of the mechanical damage in paper sheets after recycling processes would be important and highly desirable. Gurunagul et al. examined the contribution of the loss of fiber–fiber bond strength on the deterioration of tensile strength of once-dried paper sheets, but they eliminated the impact of fines by using long and straight fibers only (Gurnagul et al., 2001). Jin et al. explored the relationship between the tensile strength of recycled paper sheets and the wettability of a single fiber as well as the interfiber bond strength.\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n They used the factor of fiber–fiber bond weakness to indicate the fiber–fiber bond strength and found that during recycling processes, the factor of fiber–fiber bond weakness tended to increase and the fiber–fiber bond strength became weaker which led to the loss of tensile strength of paper sheets (Jin et al., 2022). However, this factor focused on the inter-fiber bond strength only, though it was the main factor affecting the tensile strength of paper sheets. The recycling effect has been examined mainly on mechanical and chemical wood pulps, while recycled non-wood fibers have been seldom studied. This is because wood fibers account for a significant share of the global pulp and paper industry. Non-wood fibers are not favorable compared with wood fibers, because they are only available seasonally and regionally; they have various physical and chemical properties; they have lower production yields, and so on (El-Sayed et al., 2020). However, non-wood fibers are valuable resources for the pulp and paper industry, especially for regions that have limited forest resources.\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n In some developing countries, e.g., China and India, 70% of the raw materials used in the paper and pulp industry come from nonwood plants (Liu et al., 2018). As technological innovations are shaping the future of the pulp and paper industry, non-wood fibers will play an indispensable role as a raw material resource (Salehi et al., 2017; Tschirner et al., 2007). This paper examines the property deterioration of reed fibers during recycling.\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nThe aim of this study is to estimate and predict the deterioration of tensile strength as well as other properties of paper sheets made from both wood and non-wood fibers such as bleached and unbleached softwood pulp, reed pulp, etc., in recycling processes. The theory and assumptions of damage mechanics for solid materials can be introduced to understand, analyze, and model the damage behavior of paper sheets during fiber recycling processes. Thus, the recycled fibers can be classified based on their damage severity and utilized in the manufacturing of different paper products.\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nThe experiments simulating recycling processes were conducted four times to examine the changes in fiber configurations and paper sheet properties. The decrease in the area carrying the load of tensile force was evaluated to estimate the damage developed in paper sheets made of recycled wood and non-wood fibers. The relationship between the loss of hydrogen bonding capacity and the deterioration of properties of paper sheets was evalugted. Based on the theory of damage mechanics, a mathematical model was proposed to quantify the loss of tensile strength during recycling processes. The proposed damage index D was derived from a hyperbolic model: $\\begin{array} { r } { \\dot { \\boldsymbol { D } } = \\frac { ( \\bar { D } _ { s } - \\dot { h } ) ^ { 2 } } { a ^ { 2 } } - \\frac { ( D _ { h } - k ) ^ { 2 } } { b ^ { 2 } } } \\end{array}$ , where $D _ { h }$ and $D _ { s }$ represented the deterioration of the water retention value (WRV) and the relative bonded area (RBA), respectively. The coefficients a, $b , h ,$ k were determined with the aid of curve fitting.\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n The deterioration of tensile strength then could be calculated as ${ \\cal T } = { \\cal T } _ { \\cal O } \\left( 1 { - } { \\cal D } \\right)$ . The proposed method explored the possibility to quantitatively express the damage during recycling using a damage index and directly determine the tensile strength of paper products after recycling.\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nMachine learning is a family of algorithms that enable machines to make decisions by learning f ll l d d d h h f l bl h hl Machine learning methods have been widely utilized in estimating and predicting properties of pulp and paper; since pulp and paper manufacturing is a complicated process where different events occur simultaneously (Almonti et al., 2021; Li et al., 2021; Y Zhang et al., 2021). Almonti et al. implemented a neural network to predict the length of outgoing fibers from a refining process based on the main process parameters. Their study aimed at optimizing the refining process and their neural network model excellently predicted the length of refined fibers (Almonti et al., 2019). Tofani et al. developed a multiple linear regression model to determine in advance if recovered waste paper mixtures could achieve the desired brightness (Tofani et al., 2022). Their model correlated the resulting brightness to the different fiber compositions of the waste paper after bleaching processes. Despite some limitations, the model could predict the brightness of recovered paper under specific bleaching conditions.\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\n In this paper, a neural network model was trained to estimate the damage index as compared with the proposed curve fitting method. Recurrent neural networks (RNNs) are a class of neural networks that are suitable to process sequence data exhibiting temporal dynamic behavior. Long Short-Term Memory (LSTM) networks are a variant of RNNs. LSTM networks can solve the problem of long-time dependencies, when desired outputs depend on input presented a long time ago (Yu et al., 2019).\n\n[章节标签（程序整理，非原文）] 1. Introduction\n[原文]\nThe proposed curve fitting model and neural network model utilized regression analysis to identify the inherent relationship between the physicochemical properties and tensile strength of recycled fibers. The proposed damage index was determined by approximating the sequence data, i.e., properties measured after each consecutive recycling, with characteristic expressions. The proposed models could estimate the current and predict the next damage index and the deterioration of tensile strength during the successive recycling. The proposed approach employed the advancement of machine learning and utilized data-driven-based models to analyze the complicated recycling processes alternatively. As far as we know, using a LSTM model to estimate the physicochemical properties and predict the damage index of tensile strength during recycling processes is not reported in the literature.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;d2b79faa-d543-42ea-80ce-08a3975b8fa8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[3]&quot;,
+      &quot;sha256&quot;: &quot;204fb5c06854e8f5f2d4a22855717bce526c033cfc3fc766623537358de6f437&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 1291,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 2,
+        &quot;page_start&quot;: 2,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_ffd5ff799c3252466954&quot;,
+            &quot;page_end&quot;: 2,
+            &quot;page_start&quot;: 2,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\n The proposed quantitative expression of the damage index is: $\\begin{array} { r } { D = \\frac { \\left( D _ { s } - h \\right) ^ { 2 } } { a ^ { 2 } } - \\frac { \\left( \\dot { D } _ { h } - k \\right) ^ { 2 } } { b ^ { 2 } } } \\end{array}$ , where the coefficients were determined through the curve fitting model. This paper also developed a long short-term memory recurrent neural network model to determine the damage index according to the sequence of recycling. Both models were trained with the experimental data of water retention value and relative bonded area. The estimation and prediction by the curve fitting model were more accurate than those of the neural network model. The root mean square errors by the curve fitting model were 0.0278 for estimation, 0.1667 for prediction; and by the neural network model were 0.2445 for estimation, 0.2206 for prediction, respectively. After the damage index was determined, the deterioration of tensile strength then could be calculated as ${ \\boldsymbol { T } } = { \\boldsymbol { T } } _ { \\boldsymbol { O } }$ (1–D).\n\nSubjects: Polymers &amp; Plastics; Machine Learning; Chemical Engineering; Waste &amp; Recycling&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\n The proposed quantitative expression of the damage index is: $\\begin{array} { r } { D = \\frac { \\left( D _ { s } - h \\right) ^ { 2 } } { a ^ { 2 } } - \\frac { \\left( \\dot { D } _ { h } - k \\right) ^ { 2 } } { b ^ { 2 } } } \\end{array}$ , where the coefficients were determined through the curve fitting model. This paper also developed a long short-term memory recurrent neural network model to determine the damage index according to the sequence of recycling. Both models were trained with the experimental data of water retention value and relative bonded area. The estimation and prediction by the curve fitting model were more accurate than those of the neural network model. The root mean square errors by the curve fitting model were 0.0278 for estimation, 0.1667 for prediction; and by the neural network model were 0.2445 for estimation, 0.2206 for prediction, respectively. After the damage index was determined, the deterioration of tensile strength then could be calculated as ${ \\boldsymbol { T } } = { \\boldsymbol { T } } _ { \\boldsymbol { O } }$ (1–D).\n\nSubjects: Polymers &amp; Plastics; Machine Learning; Chemical Engineering; Waste &amp; Recycling&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;d2b79faa-d543-42ea-80ce-08a3975b8fa8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[4]&quot;,
+      &quot;sha256&quot;: &quot;194b904a2492b4f3ccf79694f98b4f95935170e40d82f5e6037e03571d1f12da&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 1318,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 2,
+        &quot;page_start&quot;: 2,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_f3685b3771b0e409a9c0&quot;,
+            &quot;page_end&quot;: 2,
+            &quot;page_start&quot;: 2,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\nAbstract: The deterioration of fiber properties during recycling processes, especially the loss of tensile strength, raises concerns that paper products made from recycled fibers might not satisfy quality requirements. The purpose of this paper is to estimate the deterioration of tensile strength and the damage in paper sheets made of recycled fibers using the theory of damage mechanics and machine learning methods. Experiments were carried out to recycle wood fibers and nonwood fibers four times, and the physicochemical properties of the handsheets made from these fibers were measured after each recycling. Water retention value and relative bonded area were selected as the features to estimate and predict tensile strength during recycling because they had strong correlations with tensile strength. This paper proposed a damage index to quantitatively express the severity of the damage in paper sheets based on the experimental investigation and the theory of damage mechanics. Thus, the deterioration of tensile strength could be estimated and predicted. To determine the damage index, a curve fitting model based on the hyperbolic theory of pulp properties was developed.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\nAbstract: The deterioration of fiber properties during recycling processes, especially the loss of tensile strength, raises concerns that paper products made from recycled fibers might not satisfy quality requirements. The purpose of this paper is to estimate the deterioration of tensile strength and the damage in paper sheets made of recycled fibers using the theory of damage mechanics and machine learning methods. Experiments were carried out to recycle wood fibers and nonwood fibers four times, and the physicochemical properties of the handsheets made from these fibers were measured after each recycling. Water retention value and relative bonded area were selected as the features to estimate and predict tensile strength during recycling because they had strong correlations with tensile strength. This paper proposed a damage index to quantitatively express the severity of the damage in paper sheets based on the experimental investigation and the theory of damage mechanics. Thus, the deterioration of tensile strength could be estimated and predicted. To determine the damage index, a curve fitting model based on the hyperbolic theory of pulp properties was developed.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;d2b79faa-d543-42ea-80ce-08a3975b8fa8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[5]&quot;,
+      &quot;sha256&quot;: &quot;143e7b2ee1ab34a0a9cb429b1cb9f98a4da19ab24c5df331b083f65af212576a&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 6820,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [
+          {
+            &quot;bbox&quot;: [
+              283,
+              689,
+              689,
+              941
+            ],
+            &quot;byte_size&quot;: 29980,
+            &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+            &quot;height&quot;: 401,
+            &quot;id&quot;: &quot;img_0543301c5cf3e061ed48&quot;,
+            &quot;image_path&quot;: &quot;visual-assets/bde8d6fad02cf6de97dfa100623a567a28eb3c1605615a5c4b16434865a6431e.png&quot;,
+            &quot;kind&quot;: &quot;figure&quot;,
+            &quot;label&quot;: &quot;Figure 9. Damage index and tensile strength after each recycling.&quot;,
+            &quot;page&quot;: 15,
+            &quot;parent_chunk_id&quot;: &quot;chk_f8c2776aac3f952df919&quot;,
+            &quot;sha256&quot;: &quot;bde8d6fad02cf6de97dfa100623a567a28eb3c1605615a5c4b16434865a6431e&quot;,
+            &quot;width&quot;: 496
+          },
+          {
+            &quot;bbox&quot;: [
+              285,
+              117,
+              686,
+              366
+            ],
+            &quot;byte_size&quot;: 48274,
+            &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+            &quot;height&quot;: 396,
+            &quot;id&quot;: &quot;img_f47ce91c9c74649d9ac1&quot;,
+            &quot;image_path&quot;: &quot;visual-assets/9915faba4c48b046fa9918f332093edfb9995ecc849b37e99db50fe00cd732ed.png&quot;,
+            &quot;kind&quot;: &quot;figure&quot;,
+            &quot;label&quot;: &quot;Figure 10. Damage index esti mation based on curve fitting and neural network.&quot;,
+            &quot;page&quot;: 16,
+            &quot;parent_chunk_id&quot;: &quot;chk_28632999d0067aed4a60&quot;,
+            &quot;sha256&quot;: &quot;9915faba4c48b046fa9918f332093edfb9995ecc849b37e99db50fe00cd732ed&quot;,
+            &quot;width&quot;: 490
+          }
+        ],
+        &quot;page_end&quot;: 16,
+        &quot;page_start&quot;: 14,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_70b2ab479f8acb94ec72&quot;,
+            &quot;page_end&quot;: 14,
+            &quot;page_start&quot;: 14,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nAlthough the deterioration of the fiber properties, including single fiber strength, degree of crystallinity, degree of polymerization of celluloses, and so on, causes sheet damage; the losses of hydrogen bonding capacity are a main component. Hence, the damage index should reflect the change of hydrogen bonding capacity. From the calculation of correlation coefficients, WRV and RBA were chosen as features, and they were both related to hydrogen bonding capacity. Since hyperbolic models relate variables with a constant of physical significance, they can be utilized to simplify the concept of paper structure and represent the relationship of tensile strength, the light scattering coefficient, and so on (Ring, 2011). For example, the following equation describes the inverse relationship between the tensile strength and the light scattering coefficient (Ring, 2011):&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_89878d780d96677ad865&quot;,
+            &quot;page_end&quot;: 14,
+            &quot;page_start&quot;: 14,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\n$$\n\\left(T - T _ {d i s p}\\right) \\left(s - s _ {d i s p}\\right) = \\left(\\gamma T _ {d i s p} s _ {d i s p}\\right) - &gt; \\text { constant }\\tag{17}\n$$&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_81a7ac2e75d7eb7785a2&quot;,
+            &quot;page_end&quot;: 14,
+            &quot;page_start&quot;: 14,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nBased on the hyperbolic models, Equation 18 is proposed to describe the paper sheet damage index:&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_a2666c04238a28893751&quot;,
+            &quot;page_end&quot;: 14,
+            &quot;page_start&quot;: 14,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\n$$\nD = \\frac {(D _ {s} - h) ^ {2}}{a ^ {2}} - \\frac {(D _ {h} - k) ^ {2}}{b ^ {2}}\\tag{18}\n$$&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_792e37de2a82d56c22f1&quot;,
+            &quot;page_end&quot;: 14,
+            &quot;page_start&quot;: 14,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nwhere $a , b , h ,$ and k are coefficients related to fiber properties during recycling processes. They vary with respect to pulp properties, such as the fiber coarseness, and the average fiber cross-sectional area, etc. They also vary with respect to bleaching conditions, degrees of refining, and so on. The hyperbolic center is $( h , k )$ , which indicates the shift from the origin. The coefficients were determined through the curve fitting toolbox in MATLAB. Ds and Dh are sub-indices (sub-variables) composing the damage index of paper sheets. The physical meaning of Ds is the damage variable related to the no-bond area of recycled sheets:&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_c05be03e5c07a12a1109&quot;,
+            &quot;page_end&quot;: 14,
+            &quot;page_start&quot;: 14,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\n$$\nD _ {s} = 1 - \\frac {R B A}{R B A _ {0}}\\tag{19}\n$$&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_22518288edbb77ea7945&quot;,
+            &quot;page_end&quot;: 15,
+            &quot;page_start&quot;: 15,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nwhere RBA and $R B A _ { O }$ are the relative bonded areas before and after recycling. Dh is a variable indicating the severity of paper damage related to hornification:&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_0a37ba7c4b3a87259972&quot;,
+            &quot;page_end&quot;: 15,
+            &quot;page_start&quot;: 15,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\n$$\nD _ {h} = 1 - \\frac {W R V}{W R V _ {0}}\\tag{20}\n$$&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_996ccad98accde11efb9&quot;,
+            &quot;page_end&quot;: 15,
+            &quot;page_start&quot;: 15,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nwhere WRV and $W R V _ { O }$ are the water retention values before and after recycling. Based on the theory of damage mechanics and tensile strength hyperbolas (Ring, 2011), an equation expressing the relationship between the damage index and the tensile strength can be written as follows:&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_24ba465884d13e8eda19&quot;,
+            &quot;page_end&quot;: 15,
+            &quot;page_start&quot;: 15,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\n$$\nT = T _ {0} (1 - D)\\tag{21}\n$$&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_6b7c62fb72618c5b070d&quot;,
+            &quot;page_end&quot;: 15,
+            &quot;page_start&quot;: 15,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nwhere T and $\\tau _ { o }$ represent the tensile strength of the sheet before and after recycling. Figure 9 shows the linear relationship between the damage index and the loss of tensile strength of paper sheets made of various pulps during recycling processes. The damage indexes were derived from Equation 21 based on the experimental data. The graph shows the damage index changed the most after the first recycling, in accordance with the worst deterioration of the properties of fibers endured the irreversible recycling process. The damage index proposed in this paper could quantitatively express the deterioration in tensile strength during recycling. Thus, if the damage index could be estimated and predicted, then it can be used to estimate and predict the tensile strength of paper sheets.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_912b5894b065f16fbff5&quot;,
+            &quot;page_end&quot;: 15,
+            &quot;page_start&quot;: 15,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nIn this paper, a curve fitting model based on Equation 18 as well as an LSTM RNN model considering the recycling processes as a dynamic event sequence was utilized to estimate and predict the damage index, and Figure 10 shows the results. For both methods, the training data, which were Ds and Dh after each recycling, were utilized to train the models first. After the models had been set $\\mathsf { u p } ,$ the training data were input into the models to estimate the damage index as compared with the experimental results. The testing data which had not been presented to the models were used for predictions. The accuracy of the estimation and prediction of curve fitting was better than that of the LSTM RNN. The LSTM RNN model had memory to store previous time step information, as more training data accumulated during the successive four recycling processes, the accuracy improved. For the estimation of the training data, the RMSE (root mean square error) of the curve fitting estimation was 0.0278, while the RMSE of the LSTM RNN estimation was 0.2445.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_79cf2bec8757ff7170b1&quot;,
+            &quot;page_end&quot;: 15,
+            &quot;page_start&quot;: 15,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\n For the testing data or prediction, the RMSE of the curve fitting estimation was 0.1667, while the RMSE of the LSTM RNN estimation was 0.2206. In order to improve the accuracy of the estimation of the LSTM RNN, more experimental data would be needed for training.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_f8c2776aac3f952df919&quot;,
+            &quot;page_end&quot;: 15,
+            &quot;page_start&quot;: 15,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nFigure 9. Damage index and tensile strength after each recycling.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_28632999d0067aed4a60&quot;,
+            &quot;page_end&quot;: 16,
+            &quot;page_start&quot;: 16,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nFigure 10. Damage index esti mation based on curve fitting and neural network.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_7c95694c9bf595468977&quot;,
+            &quot;page_end&quot;: 16,
+            &quot;page_start&quot;: 16,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nFrom the results, the proposed damage index could be used to estimate and predict the tensile strength of handsheets made of recycled fibers. The curve fitting model was developed based on Equation 18 and it simplified the calculation from a hyperbolic model. In this paper, an LSTM neural network model was developed to determine the damage index during recycling. An LSTM model can also be utilized to analyze and determine other properties which cannot be expressed directly with a mathematical model since the successive recycling process can be considered as a dynamic sequence. The LSTM model can store information from previous recycles, so it is suitable to analyze recycled fibers which have endured multiple recycles.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nAlthough the deterioration of the fiber properties, including single fiber strength, degree of crystallinity, degree of polymerization of celluloses, and so on, causes sheet damage; the losses of hydrogen bonding capacity are a main component. Hence, the damage index should reflect the change of hydrogen bonding capacity. From the calculation of correlation coefficients, WRV and RBA were chosen as features, and they were both related to hydrogen bonding capacity. Since hyperbolic models relate variables with a constant of physical significance, they can be utilized to simplify the concept of paper structure and represent the relationship of tensile strength, the light scattering coefficient, and so on (Ring, 2011). For example, the following equation describes the inverse relationship between the tensile strength and the light scattering coefficient (Ring, 2011):\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\n$$\n\\left(T - T _ {d i s p}\\right) \\left(s - s _ {d i s p}\\right) = \\left(\\gamma T _ {d i s p} s _ {d i s p}\\right) - &gt; \\text { constant }\\tag{17}\n$$\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nBased on the hyperbolic models, Equation 18 is proposed to describe the paper sheet damage index:\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\n$$\nD = \\frac {(D _ {s} - h) ^ {2}}{a ^ {2}} - \\frac {(D _ {h} - k) ^ {2}}{b ^ {2}}\\tag{18}\n$$\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nwhere $a , b , h ,$ and k are coefficients related to fiber properties during recycling processes. They vary with respect to pulp properties, such as the fiber coarseness, and the average fiber cross-sectional area, etc. They also vary with respect to bleaching conditions, degrees of refining, and so on. The hyperbolic center is $( h , k )$ , which indicates the shift from the origin. The coefficients were determined through the curve fitting toolbox in MATLAB. Ds and Dh are sub-indices (sub-variables) composing the damage index of paper sheets. The physical meaning of Ds is the damage variable related to the no-bond area of recycled sheets:\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\n$$\nD _ {s} = 1 - \\frac {R B A}{R B A _ {0}}\\tag{19}\n$$\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nwhere RBA and $R B A _ { O }$ are the relative bonded areas before and after recycling. Dh is a variable indicating the severity of paper damage related to hornification:\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\n$$\nD _ {h} = 1 - \\frac {W R V}{W R V _ {0}}\\tag{20}\n$$\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nwhere WRV and $W R V _ { O }$ are the water retention values before and after recycling. Based on the theory of damage mechanics and tensile strength hyperbolas (Ring, 2011), an equation expressing the relationship between the damage index and the tensile strength can be written as follows:\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\n$$\nT = T _ {0} (1 - D)\\tag{21}\n$$\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nwhere T and $\\tau _ { o }$ represent the tensile strength of the sheet before and after recycling. Figure 9 shows the linear relationship between the damage index and the loss of tensile strength of paper sheets made of various pulps during recycling processes. The damage indexes were derived from Equation 21 based on the experimental data. The graph shows the damage index changed the most after the first recycling, in accordance with the worst deterioration of the properties of fibers endured the irreversible recycling process. The damage index proposed in this paper could quantitatively express the deterioration in tensile strength during recycling. Thus, if the damage index could be estimated and predicted, then it can be used to estimate and predict the tensile strength of paper sheets.\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nIn this paper, a curve fitting model based on Equation 18 as well as an LSTM RNN model considering the recycling processes as a dynamic event sequence was utilized to estimate and predict the damage index, and Figure 10 shows the results. For both methods, the training data, which were Ds and Dh after each recycling, were utilized to train the models first. After the models had been set $\\mathsf { u p } ,$ the training data were input into the models to estimate the damage index as compared with the experimental results. The testing data which had not been presented to the models were used for predictions. The accuracy of the estimation and prediction of curve fitting was better than that of the LSTM RNN. The LSTM RNN model had memory to store previous time step information, as more training data accumulated during the successive four recycling processes, the accuracy improved. For the estimation of the training data, the RMSE (root mean square error) of the curve fitting estimation was 0.0278, while the RMSE of the LSTM RNN estimation was 0.2445.\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\n For the testing data or prediction, the RMSE of the curve fitting estimation was 0.1667, while the RMSE of the LSTM RNN estimation was 0.2206. In order to improve the accuracy of the estimation of the LSTM RNN, more experimental data would be needed for training.\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nFigure 9. Damage index and tensile strength after each recycling.\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nFigure 10. Damage index esti mation based on curve fitting and neural network.\n\n[章节标签（程序整理，非原文）] 4. Discussion &gt; 4.3. Quantitative expression of damage index\n[原文]\nFrom the results, the proposed damage index could be used to estimate and predict the tensile strength of handsheets made of recycled fibers. The curve fitting model was developed based on Equation 18 and it simplified the calculation from a hyperbolic model. In this paper, an LSTM neural network model was developed to determine the damage index during recycling. An LSTM model can also be utilized to analyze and determine other properties which cannot be expressed directly with a mathematical model since the successive recycling process can be considered as a dynamic sequence. The LSTM model can store information from previous recycles, so it is suitable to analyze recycled fibers which have endured multiple recycles.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;d2b79faa-d543-42ea-80ce-08a3975b8fa8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[6]&quot;,
+      &quot;sha256&quot;: &quot;af1af924bd11459dd3fcefdee8f8d302dc14298de061109e0a8236a3fe1ac1fc&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 3174,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [
+          {
+            &quot;bbox&quot;: [
+              287,
+              143,
+              924,
+              482
+            ],
+            &quot;byte_size&quot;: 55318,
+            &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+            &quot;height&quot;: 540,
+            &quot;id&quot;: &quot;img_1e68e9c027af97dd5494&quot;,
+            &quot;image_path&quot;: &quot;visual-assets/0261a0989604b20cee3a20cc6b768154e74148532a7c1472c7666c147e1ab32c.png&quot;,
+            &quot;kind&quot;: &quot;table&quot;,
+            &quot;label&quot;: &quot;table page 10 block 122&quot;,
+            &quot;page&quot;: 10,
+            &quot;parent_chunk_id&quot;: &quot;chk_8928177addb946dc454a&quot;,
+            &quot;sha256&quot;: &quot;0261a0989604b20cee3a20cc6b768154e74148532a7c1472c7666c147e1ab32c&quot;,
+            &quot;width&quot;: 778
+          },
+          {
+            &quot;bbox&quot;: [
+              287,
+              713,
+              922,
+              940
+            ],
+            &quot;byte_size&quot;: 37908,
+            &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+            &quot;height&quot;: 362,
+            &quot;id&quot;: &quot;img_72dc6a09b096f5986fd2&quot;,
+            &quot;image_path&quot;: &quot;visual-assets/45e96a5487d65255d87017b5eed10e26eb3855bff60a073078f22f8e8000ebad.png&quot;,
+            &quot;kind&quot;: &quot;table&quot;,
+            &quot;label&quot;: &quot;Table 1. Fiber length during recycling processes (mm)&quot;,
+            &quot;page&quot;: 9,
+            &quot;parent_chunk_id&quot;: &quot;chk_9600081785c52a6a429f&quot;,
+            &quot;sha256&quot;: &quot;45e96a5487d65255d87017b5eed10e26eb3855bff60a073078f22f8e8000ebad&quot;,
+            &quot;width&quot;: 775
+          }
+        ],
+        &quot;page_end&quot;: 11,
+        &quot;page_start&quot;: 9,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_bfa6b56da8daed2409ce&quot;,
+            &quot;page_end&quot;: 9,
+            &quot;page_start&quot;: 9,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 5 shows the effect of fiber recycling on the WRV of different pulps. The decrease of the WRV typically fell in the range from 20% to 40% after having been recycled five times, depending&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_9600081785c52a6a429f&quot;,
+            &quot;page_end&quot;: 9,
+            &quot;page_start&quot;: 9,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 1. Fiber length during recycling processes (mm)\n\n&lt;table&gt;&lt;tr&gt;&lt;td colspan=\&quot;2\&quot;&gt;Recycling times&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;5&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td rowspan=\&quot;3\&quot;&gt;Reed Pulp&lt;/td&gt;&lt;td&gt;Arithmetic mean&lt;/td&gt;&lt;td&gt;0.30&lt;/td&gt;&lt;td&gt;0.31&lt;/td&gt;&lt;td&gt;0.31&lt;/td&gt;&lt;td&gt;0.30&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted average&lt;/td&gt;&lt;td&gt;0.59&lt;/td&gt;&lt;td&gt;0.55&lt;/td&gt;&lt;td&gt;0.55&lt;/td&gt;&lt;td&gt;0.56&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted Weighted average&lt;/td&gt;&lt;td&gt;0.91&lt;/td&gt;&lt;td&gt;0.84&lt;/td&gt;&lt;td&gt;0.80&lt;/td&gt;&lt;td&gt;0.85&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td rowspan=\&quot;3\&quot;&gt;Wood Pulp&lt;/td&gt;&lt;td&gt;Arithmetic mean&lt;/td&gt;&lt;td&gt;1.52&lt;/td&gt;&lt;td&gt;1.49&lt;/td&gt;&lt;td&gt;1.48&lt;/td&gt;&lt;td&gt;1.50&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted average&lt;/td&gt;&lt;td&gt;2.28&lt;/td&gt;&lt;td&gt;2.25&lt;/td&gt;&lt;td&gt;2.20&lt;/td&gt;&lt;td&gt;2.26&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted Weighted average&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;td&gt;0.68&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_9e478343dd69c40124c1&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 2. Properties of reed fibers during recycling Recycle Number&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_8928177addb946dc454a&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\n&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;4&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Properties&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Zero-span tensile strength (kg/15 mm)&lt;/td&gt;&lt;td&gt;7.95&lt;/td&gt;&lt;td&gt;7.63&lt;/td&gt;&lt;td&gt;7.80&lt;/td&gt;&lt;td&gt;7.69&lt;/td&gt;&lt;td&gt;7.58&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Zero-span tensile index (Nm/g)&lt;/td&gt;&lt;td&gt;808.7&lt;/td&gt;&lt;td&gt;793.0&lt;/td&gt;&lt;td&gt;775.1&lt;/td&gt;&lt;td&gt;760.2&lt;/td&gt;&lt;td&gt;748.6&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Basis weight (g/m2)&lt;/td&gt;&lt;td&gt;73.57&lt;/td&gt;&lt;td&gt;64.33&lt;/td&gt;&lt;td&gt;65.61&lt;/td&gt;&lt;td&gt;64.65&lt;/td&gt;&lt;td&gt;63.69&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Degree of polymerization&lt;/td&gt;&lt;td&gt;644&lt;/td&gt;&lt;td&gt;549&lt;/td&gt;&lt;td&gt;545&lt;/td&gt;&lt;td&gt;542&lt;/td&gt;&lt;td&gt;536&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fiber length (mm)&lt;/td&gt;&lt;td&gt;0.91&lt;/td&gt;&lt;td&gt;0.84&lt;/td&gt;&lt;td&gt;0.81&lt;/td&gt;&lt;td&gt;0.80&lt;/td&gt;&lt;td&gt;0.82&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Degree of crystallinity (%)&lt;/td&gt;&lt;td&gt;77.34&lt;/td&gt;&lt;td&gt;77.89&lt;/td&gt;&lt;td&gt;79.91&lt;/td&gt;&lt;td&gt;80.62&lt;/td&gt;&lt;td&gt;81.33&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Crystalline indices (%)&lt;/td&gt;&lt;td&gt;70.71&lt;/td&gt;&lt;td&gt;71.62&lt;/td&gt;&lt;td&gt;74.86&lt;/td&gt;&lt;td&gt;75.97&lt;/td&gt;&lt;td&gt;77.08&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;WRV (g/g)&lt;/td&gt;&lt;td&gt;2.02&lt;/td&gt;&lt;td&gt;1.80&lt;/td&gt;&lt;td&gt;1.65&lt;/td&gt;&lt;td&gt;1.60&lt;/td&gt;&lt;td&gt;1.56&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;RBA&lt;/td&gt;&lt;td&gt;0.23&lt;/td&gt;&lt;td&gt;0.20&lt;/td&gt;&lt;td&gt;0.18&lt;/td&gt;&lt;td&gt;0.18&lt;/td&gt;&lt;td&gt;0.16&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tensile index (Nm/g)&lt;/td&gt;&lt;td&gt;28.14&lt;/td&gt;&lt;td&gt;25.35&lt;/td&gt;&lt;td&gt;23.12&lt;/td&gt;&lt;td&gt;21.95&lt;/td&gt;&lt;td&gt;20.22&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_e749fa4adbfaa3279eb5&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 4. Effect of recycling on tensile strength of different pulps.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_76eca09d4f2c69970126&quot;,
+            &quot;page_end&quot;: 11,
+            &quot;page_start&quot;: 11,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 5. Effect of recycling on WRV.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_b6088c63350a9e4d0d3b&quot;,
+            &quot;page_end&quot;: 11,
+            &quot;page_start&quot;: 11,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 6. Effect of recycling on RBA.\n\nconsidered as the bonding mechanism between fibers, though it was observed to be less important than expected (Hirn &amp; Schennach, 2015).&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 5 shows the effect of fiber recycling on the WRV of different pulps. The decrease of the WRV typically fell in the range from 20% to 40% after having been recycled five times, depending\n\n[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 1. Fiber length during recycling processes (mm)\n\n&lt;table&gt;&lt;tr&gt;&lt;td colspan=\&quot;2\&quot;&gt;Recycling times&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;5&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td rowspan=\&quot;3\&quot;&gt;Reed Pulp&lt;/td&gt;&lt;td&gt;Arithmetic mean&lt;/td&gt;&lt;td&gt;0.30&lt;/td&gt;&lt;td&gt;0.31&lt;/td&gt;&lt;td&gt;0.31&lt;/td&gt;&lt;td&gt;0.30&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted average&lt;/td&gt;&lt;td&gt;0.59&lt;/td&gt;&lt;td&gt;0.55&lt;/td&gt;&lt;td&gt;0.55&lt;/td&gt;&lt;td&gt;0.56&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted Weighted average&lt;/td&gt;&lt;td&gt;0.91&lt;/td&gt;&lt;td&gt;0.84&lt;/td&gt;&lt;td&gt;0.80&lt;/td&gt;&lt;td&gt;0.85&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td rowspan=\&quot;3\&quot;&gt;Wood Pulp&lt;/td&gt;&lt;td&gt;Arithmetic mean&lt;/td&gt;&lt;td&gt;1.52&lt;/td&gt;&lt;td&gt;1.49&lt;/td&gt;&lt;td&gt;1.48&lt;/td&gt;&lt;td&gt;1.50&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted average&lt;/td&gt;&lt;td&gt;2.28&lt;/td&gt;&lt;td&gt;2.25&lt;/td&gt;&lt;td&gt;2.20&lt;/td&gt;&lt;td&gt;2.26&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Weighted Weighted average&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;td&gt;0.68&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;td&gt;0.71&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n\n[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 2. Properties of reed fibers during recycling Recycle Number\n\n[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\n&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;4&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Properties&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Zero-span tensile strength (kg/15 mm)&lt;/td&gt;&lt;td&gt;7.95&lt;/td&gt;&lt;td&gt;7.63&lt;/td&gt;&lt;td&gt;7.80&lt;/td&gt;&lt;td&gt;7.69&lt;/td&gt;&lt;td&gt;7.58&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Zero-span tensile index (Nm/g)&lt;/td&gt;&lt;td&gt;808.7&lt;/td&gt;&lt;td&gt;793.0&lt;/td&gt;&lt;td&gt;775.1&lt;/td&gt;&lt;td&gt;760.2&lt;/td&gt;&lt;td&gt;748.6&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Basis weight (g/m2)&lt;/td&gt;&lt;td&gt;73.57&lt;/td&gt;&lt;td&gt;64.33&lt;/td&gt;&lt;td&gt;65.61&lt;/td&gt;&lt;td&gt;64.65&lt;/td&gt;&lt;td&gt;63.69&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Degree of polymerization&lt;/td&gt;&lt;td&gt;644&lt;/td&gt;&lt;td&gt;549&lt;/td&gt;&lt;td&gt;545&lt;/td&gt;&lt;td&gt;542&lt;/td&gt;&lt;td&gt;536&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Fiber length (mm)&lt;/td&gt;&lt;td&gt;0.91&lt;/td&gt;&lt;td&gt;0.84&lt;/td&gt;&lt;td&gt;0.81&lt;/td&gt;&lt;td&gt;0.80&lt;/td&gt;&lt;td&gt;0.82&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Degree of crystallinity (%)&lt;/td&gt;&lt;td&gt;77.34&lt;/td&gt;&lt;td&gt;77.89&lt;/td&gt;&lt;td&gt;79.91&lt;/td&gt;&lt;td&gt;80.62&lt;/td&gt;&lt;td&gt;81.33&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Crystalline indices (%)&lt;/td&gt;&lt;td&gt;70.71&lt;/td&gt;&lt;td&gt;71.62&lt;/td&gt;&lt;td&gt;74.86&lt;/td&gt;&lt;td&gt;75.97&lt;/td&gt;&lt;td&gt;77.08&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;WRV (g/g)&lt;/td&gt;&lt;td&gt;2.02&lt;/td&gt;&lt;td&gt;1.80&lt;/td&gt;&lt;td&gt;1.65&lt;/td&gt;&lt;td&gt;1.60&lt;/td&gt;&lt;td&gt;1.56&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;RBA&lt;/td&gt;&lt;td&gt;0.23&lt;/td&gt;&lt;td&gt;0.20&lt;/td&gt;&lt;td&gt;0.18&lt;/td&gt;&lt;td&gt;0.18&lt;/td&gt;&lt;td&gt;0.16&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Tensile index (Nm/g)&lt;/td&gt;&lt;td&gt;28.14&lt;/td&gt;&lt;td&gt;25.35&lt;/td&gt;&lt;td&gt;23.12&lt;/td&gt;&lt;td&gt;21.95&lt;/td&gt;&lt;td&gt;20.22&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n\n[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 4. Effect of recycling on tensile strength of different pulps.\n\n[原文片段不连续]\n\n[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 5. Effect of recycling on WRV.\n\n[章节标签（程序整理，非原文）] 3. Results &gt; 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 6. Effect of recycling on RBA.\n\nconsidered as the bonding mechanism between fibers, though it was observed to be less important than expected (Hirn &amp; Schennach, 2015).&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;d2b79faa-d543-42ea-80ce-08a3975b8fa8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[7]&quot;,
+      &quot;sha256&quot;: &quot;e272cb0b6cf054a15c340d42449ba69639a35cdaeb434a155355ce3042da6f87&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93&quot;,
+        &quot;document_id&quot;: &quot;doc_347aacf900c9ab36&quot;,
+        &quot;end_char&quot;: 270,
+        &quot;filename&quot;: &quot;03_2023_回收纤维纸页抗张性能预测_Li.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 1,
+        &quot;page_start&quot;: 1,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_f02f9b49735348bd2a31&quot;,
+            &quot;page_end&quot;: 1,
+            &quot;page_start&quot;: 1,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 未确定\n[原文]\nTo cite this article: Ming Li, Kaitang Hu &amp; Suying Shao (2023) Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning, Cogent Engineering, 10:1, 2116828, DOI: 10.1080/23311916.2022.2116828&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 未确定\n[原文]\nTo cite this article: Ming Li, Kaitang Hu &amp; Suying Shao (2023) Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning, Cogent Engineering, 10:1, 2116828, DOI: 10.1080/23311916.2022.2116828&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;d2b79faa-d543-42ea-80ce-08a3975b8fa8&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[8]&quot;,
+      &quot;sha256&quot;: &quot;d6dcc82c6dbc967fa9a1008666fc2bf42ce23d0cd27ef14b87be18f68efc6c44&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 1355,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 12,
+        &quot;page_start&quot;: 12,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_9418440ad3f7f2c506db&quot;,
+            &quot;page_end&quot;: 12,
+            &quot;page_start&quot;: 12,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\nTo evaluate the relative performance of the machine learning approaches against an established theoretical method, the predictions from the proposed ML models were compared with the Rule of Mixtures (ROM), a classical composite mechanics model. The Rule of Mixtures predicts the composite tensile strength using Eq.  8, a linear relationship:&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_1dfbd2c4c74d34018416&quot;,
+            &quot;page_end&quot;: 12,
+            &quot;page_start&quot;: 12,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\n$$\n\\sigma c = \\sigma f V f + \\sigma m (1 - V f)\\tag{8}\n$$&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_cd6f484e7e1fadc5cf5c&quot;,
+            &quot;page_end&quot;: 12,
+            &quot;page_start&quot;: 12,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\nWhen applied to the test dataset (2,000 samples), the ROM achieved an $\\mathrm { R } ^ { 2 }$ of 0.842 and an RMSE of 312.5 MPa, capturing general trends but with significant errors owing to its simplified linear assumptions. In contrast, the ANN and stacking ensemble achieved $\\mathbb { R } ^ { 2 }$ ≈ 0.9975 and RMSE ≈ 31.6 MPa, reducing the prediction error compared to ROM. This superior performance stems from ML’s ability to capture complex nonlinear interactions among multiple features, which the ROM cannot simultaneously incorporate.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\nTo evaluate the relative performance of the machine learning approaches against an established theoretical method, the predictions from the proposed ML models were compared with the Rule of Mixtures (ROM), a classical composite mechanics model. The Rule of Mixtures predicts the composite tensile strength using Eq.  8, a linear relationship:\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\n$$\n\\sigma c = \\sigma f V f + \\sigma m (1 - V f)\\tag{8}\n$$\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.6 Comparison with theoretical models\n[原文]\nWhen applied to the test dataset (2,000 samples), the ROM achieved an $\\mathrm { R } ^ { 2 }$ of 0.842 and an RMSE of 312.5 MPa, capturing general trends but with significant errors owing to its simplified linear assumptions. In contrast, the ANN and stacking ensemble achieved $\\mathbb { R } ^ { 2 }$ ≈ 0.9975 and RMSE ≈ 31.6 MPa, reducing the prediction error compared to ROM. This superior performance stems from ML’s ability to capture complex nonlinear interactions among multiple features, which the ROM cannot simultaneously incorporate.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;3857eb95-f3ab-4184-968b-bdecbed02201&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[9]&quot;,
+      &quot;sha256&quot;: &quot;18480a502af325d93f3f57974367c21d87e83bef40dedd1cf7458f7c589c41a1&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 1137,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [
+          {
+            &quot;bbox&quot;: [
+              203,
+              272,
+              794,
+              499
+            ],
+            &quot;byte_size&quot;: 126822,
+            &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+            &quot;height&quot;: 362,
+            &quot;id&quot;: &quot;img_1975b153aca311d68f89&quot;,
+            &quot;image_path&quot;: &quot;visual-assets/882dd36acc311d684f1489622cc336323d40925a4b05c66116dfe00b6c3e83a8.png&quot;,
+            &quot;kind&quot;: &quot;figure&quot;,
+            &quot;label&quot;: &quot;Fig. 5 Scatter plots actual versus predicted for all models&quot;,
+            &quot;page&quot;: 10,
+            &quot;parent_chunk_id&quot;: &quot;chk_64e92bede9d35a012ee5&quot;,
+            &quot;sha256&quot;: &quot;882dd36acc311d684f1489622cc336323d40925a4b05c66116dfe00b6c3e83a8&quot;,
+            &quot;width&quot;: 705
+          }
+        ],
+        &quot;page_end&quot;: 11,
+        &quot;page_start&quot;: 11,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_8642140f886d8ae15549&quot;,
+            &quot;page_end&quot;: 11,
+            &quot;page_start&quot;: 11,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.3 Performance of neural network and stacking ensembles\n[原文]\nThe Artificial Neural Network (ANN) and two stacking ensembles achieved the highest predictive accuracy. As shown in Fig. 5, the predictions from these models were nearly perfectly aligned with the actual values. The ANN achieved a test $\\mathbb { R } ^ { 2 }$ of 0.9975 and an RMSE of only 31.67 MPa, demonstrating the efectiveness of a well-configured multilayer perceptron for this regression task, possibly because the dataset size was modest for deep learning applications. The stacking ensemble with a Linear Regression metalearner performed almost identically to the ANN. Interestingly, the stacking ensemble with an XGBoost meta-learner performed slightly worse, suggesting that a simpler linear model was more efective at combining the predictions of the base estimators in this specific case. The nearly identical and exceptionally high CV $\\mathbb { R } ^ { 2 }$ mean (0.9973) for both the ANN- and LR-based stacks confirms their remarkable generalization capability [43].&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.3 Performance of neural network and stacking ensembles\n[原文]\nThe Artificial Neural Network (ANN) and two stacking ensembles achieved the highest predictive accuracy. As shown in Fig. 5, the predictions from these models were nearly perfectly aligned with the actual values. The ANN achieved a test $\\mathbb { R } ^ { 2 }$ of 0.9975 and an RMSE of only 31.67 MPa, demonstrating the efectiveness of a well-configured multilayer perceptron for this regression task, possibly because the dataset size was modest for deep learning applications. The stacking ensemble with a Linear Regression metalearner performed almost identically to the ANN. Interestingly, the stacking ensemble with an XGBoost meta-learner performed slightly worse, suggesting that a simpler linear model was more efective at combining the predictions of the base estimators in this specific case. The nearly identical and exceptionally high CV $\\mathbb { R } ^ { 2 }$ mean (0.9973) for both the ANN- and LR-based stacks confirms their remarkable generalization capability [43].&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;3857eb95-f3ab-4184-968b-bdecbed02201&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[10]&quot;,
+      &quot;sha256&quot;: &quot;29fd288998204ee851350aa74e610d083db6d4aba5cd1ea78c4c2f82e42cbf9e&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 792,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 11,
+        &quot;page_start&quot;: 11,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_825190b909173ee38527&quot;,
+            &quot;page_end&quot;: 11,
+            &quot;page_start&quot;: 11,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.1 Performance of baseline and kernel models\n[原文]\nLinear Regression established a surprisingly robust baseline, achieving an $\\mathrm { R } ^ { 2 }$ of 0.9523 on the test dataset. This indicates that a large portion of the variance in the tensile strength is accounted for by a linear combination of the features. However, its error rates, with an RMSE of 137.02 MPa, are notably higher than those of more sophisticated models. In contrast, the Support Vector Regression (SVR) model performed poorly, with an $\\mathbb { R } ^ { 2 }$ of only 0.3382 and an RMSE of 510.36 MPa. This underperformance underscores the complexity of the structure-property relationship in fiber-reinforced composites [25].&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.1 Performance of baseline and kernel models\n[原文]\nLinear Regression established a surprisingly robust baseline, achieving an $\\mathrm { R } ^ { 2 }$ of 0.9523 on the test dataset. This indicates that a large portion of the variance in the tensile strength is accounted for by a linear combination of the features. However, its error rates, with an RMSE of 137.02 MPa, are notably higher than those of more sophisticated models. In contrast, the Support Vector Regression (SVR) model performed poorly, with an $\\mathbb { R } ^ { 2 }$ of only 0.3382 and an RMSE of 510.36 MPa. This underperformance underscores the complexity of the structure-property relationship in fiber-reinforced composites [25].&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;3857eb95-f3ab-4184-968b-bdecbed02201&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[11]&quot;,
+      &quot;sha256&quot;: &quot;ba2ca71ca64877de0aa3f2a9941ca5273c7bd281d8f5a8829339b4acbe238fdf&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 905,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 10,
+        &quot;page_start&quot;: 10,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_ac1cbc23beb285448267&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength\n[原文]\nAfter conducting exploratory data analysis (EDA), a diverse array of regression models was developed and tested on the processed dataset to predict the tensile strength. The models included Linear Regression, Support Vector Regression (SVR), Random Forest, XGBoost, LightGBM, an Artificial Neural Network (ANN), and two stacking ensembles. Model efectiveness was evaluated using the coeficient of determination (R²), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE) on a separate test set. Additionally, 5-fold cross-validation (CV) was applied to the training data to verify the robustness and generalizability of the findings [41]. Table 1 provides a summary of the performance metrics for all models, whereas Fig. 5 displays scatter plots comparing the actual and predicted values for each model.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength\n[原文]\nAfter conducting exploratory data analysis (EDA), a diverse array of regression models was developed and tested on the processed dataset to predict the tensile strength. The models included Linear Regression, Support Vector Regression (SVR), Random Forest, XGBoost, LightGBM, an Artificial Neural Network (ANN), and two stacking ensembles. Model efectiveness was evaluated using the coeficient of determination (R²), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE) on a separate test set. Additionally, 5-fold cross-validation (CV) was applied to the training data to verify the robustness and generalizability of the findings [41]. Table 1 provides a summary of the performance metrics for all models, whereas Fig. 5 displays scatter plots comparing the actual and predicted values for each model.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;3857eb95-f3ab-4184-968b-bdecbed02201&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[12]&quot;,
+      &quot;sha256&quot;: &quot;0baa78315323607f2c22cb8b9eee8c0abe557be49e921f9a9359e611e71a2217&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 3018,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [
+          {
+            &quot;bbox&quot;: [
+              186,
+              113,
+              806,
+              258
+            ],
+            &quot;byte_size&quot;: 36889,
+            &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+            &quot;height&quot;: 231,
+            &quot;id&quot;: &quot;img_9a3d29781178f13da93c&quot;,
+            &quot;image_path&quot;: &quot;visual-assets/1612c49ff8e34d1a788c7ee67cc109a132964e4df83177496b1942a64f1bf2a7.png&quot;,
+            &quot;kind&quot;: &quot;table&quot;,
+            &quot;label&quot;: &quot;Table 1 Model comparison for tensile strength prediction&quot;,
+            &quot;page&quot;: 10,
+            &quot;parent_chunk_id&quot;: &quot;chk_e33d20a913dbeba8e7da&quot;,
+            &quot;sha256&quot;: &quot;1612c49ff8e34d1a788c7ee67cc109a132964e4df83177496b1942a64f1bf2a7&quot;,
+            &quot;width&quot;: 739
+          },
+          {
+            &quot;bbox&quot;: [
+              203,
+              317,
+              794,
+              703
+            ],
+            &quot;byte_size&quot;: 75304,
+            &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+            &quot;height&quot;: 613,
+            &quot;id&quot;: &quot;img_6e9db7700c42519f8866&quot;,
+            &quot;image_path&quot;: &quot;visual-assets/4b604d66bae8fea0b165ab634aebc789610f69a1e007a28a4b938823f73ae74e.png&quot;,
+            &quot;kind&quot;: &quot;figure&quot;,
+            &quot;label&quot;: &quot;Fig. 4 Full correlation heat map after One‑Hot Encoding&quot;,
+            &quot;page&quot;: 9,
+            &quot;parent_chunk_id&quot;: &quot;chk_fde4b656058c480fa961&quot;,
+            &quot;sha256&quot;: &quot;4b604d66bae8fea0b165ab634aebc789610f69a1e007a28a4b938823f73ae74e&quot;,
+            &quot;width&quot;: 705
+          }
+        ],
+        &quot;page_end&quot;: 10,
+        &quot;page_start&quot;: 9,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_773e869226fc31d83748&quot;,
+            &quot;page_end&quot;: 9,
+            &quot;page_start&quot;: 9,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nTo better understand factors afecting the tensile strength, a comprehensive correlation analysis was performed on all features after one-hot encoding of categorical variables. The correlation matrix in Fig. 4 confirms the significant positive impact of the number of layers and fiber volume fraction on the tensile strength. Notably, it quantitatively confirms the influence of material selection: the carbon fiber dummy variable is strongly positively correlated with tensile strength, whereas aramid shows a negative correlation, supporting earlier boxplot findings that fiber choice is a crucial factor in composite performance. Likewise, the Vinyl Ester resin is positively linked to strength.&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_e33d20a913dbeba8e7da&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nTable 1 Model comparison for tensile strength prediction\n\n&lt;table&gt;&lt;tr&gt;&lt;td&gt;Model&lt;/td&gt;&lt;td&gt; $R^2$ &lt;/td&gt;&lt;td&gt;RMSE (MPa)&lt;/td&gt;&lt;td&gt;MAE (MPa)&lt;/td&gt;&lt;td&gt;CV  $R^2$  Mean&lt;/td&gt;&lt;td&gt;CV  $R^2$  Std&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Stacking (LR)&lt;/td&gt;&lt;td&gt;0.9975&lt;/td&gt;&lt;td&gt;31.58&lt;/td&gt;&lt;td&gt;25.09&lt;/td&gt;&lt;td&gt;0.9973&lt;/td&gt;&lt;td&gt;0.0002&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;ANN (MLP)&lt;/td&gt;&lt;td&gt;0.9975&lt;/td&gt;&lt;td&gt;31.67&lt;/td&gt;&lt;td&gt;25.14&lt;/td&gt;&lt;td&gt;0.9973&lt;/td&gt;&lt;td&gt;0.0002&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Stacking (XGB)&lt;/td&gt;&lt;td&gt;0.9966&lt;/td&gt;&lt;td&gt;36.45&lt;/td&gt;&lt;td&gt;27.51&lt;/td&gt;&lt;td&gt;0.9963&lt;/td&gt;&lt;td&gt;0.0003&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;LightGBM&lt;/td&gt;&lt;td&gt;0.9935&lt;/td&gt;&lt;td&gt;50.74&lt;/td&gt;&lt;td&gt;39.48&lt;/td&gt;&lt;td&gt;0.9927&lt;/td&gt;&lt;td&gt;0.0005&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;XGBoost&lt;/td&gt;&lt;td&gt;0.9913&lt;/td&gt;&lt;td&gt;58.38&lt;/td&gt;&lt;td&gt;44.43&lt;/td&gt;&lt;td&gt;0.9905&lt;/td&gt;&lt;td&gt;0.0006&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Random forest&lt;/td&gt;&lt;td&gt;0.9783&lt;/td&gt;&lt;td&gt;92.32&lt;/td&gt;&lt;td&gt;70.58&lt;/td&gt;&lt;td&gt;0.9699&lt;/td&gt;&lt;td&gt;0.0009&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Linear regression&lt;/td&gt;&lt;td&gt;0.9523&lt;/td&gt;&lt;td&gt;137.02&lt;/td&gt;&lt;td&gt;97.28&lt;/td&gt;&lt;td&gt;0.9505&lt;/td&gt;&lt;td&gt;0.0013&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;SVR (RBF)&lt;/td&gt;&lt;td&gt;0.3382&lt;/td&gt;&lt;td&gt;510.36&lt;/td&gt;&lt;td&gt;375.99&lt;/td&gt;&lt;td&gt;0.2884&lt;/td&gt;&lt;td&gt;0.0129&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_64e92bede9d35a012ee5&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nFig. 5 Scatter plots actual versus predicted for all models&quot;
+          },
+          {
+            &quot;chunk_id&quot;: &quot;chk_a89785d0729a97c41ae9&quot;,
+            &quot;page_end&quot;: 10,
+            &quot;page_start&quot;: 10,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nBeyond the primary relationships, the heat map revealed generally low to moderate correlations between features, indicating the absence of severe multicollinearity that could compromise models such as linear regression. Physically meaningful relationships were also evident, such as a moderate correlation between the fiber volume fraction and layer count, whereas the void content was negatively associated with most strengthrelated parameters, underscoring its harmful efect. Overall, this analysis underscores the combined impact of processing parameters and material selection, ofering a robust statistical basis for future predictive models [40].&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nTo better understand factors afecting the tensile strength, a comprehensive correlation analysis was performed on all features after one-hot encoding of categorical variables. The correlation matrix in Fig. 4 confirms the significant positive impact of the number of layers and fiber volume fraction on the tensile strength. Notably, it quantitatively confirms the influence of material selection: the carbon fiber dummy variable is strongly positively correlated with tensile strength, whereas aramid shows a negative correlation, supporting earlier boxplot findings that fiber choice is a crucial factor in composite performance. Likewise, the Vinyl Ester resin is positively linked to strength.\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nTable 1 Model comparison for tensile strength prediction\n\n&lt;table&gt;&lt;tr&gt;&lt;td&gt;Model&lt;/td&gt;&lt;td&gt; $R^2$ &lt;/td&gt;&lt;td&gt;RMSE (MPa)&lt;/td&gt;&lt;td&gt;MAE (MPa)&lt;/td&gt;&lt;td&gt;CV  $R^2$  Mean&lt;/td&gt;&lt;td&gt;CV  $R^2$  Std&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Stacking (LR)&lt;/td&gt;&lt;td&gt;0.9975&lt;/td&gt;&lt;td&gt;31.58&lt;/td&gt;&lt;td&gt;25.09&lt;/td&gt;&lt;td&gt;0.9973&lt;/td&gt;&lt;td&gt;0.0002&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;ANN (MLP)&lt;/td&gt;&lt;td&gt;0.9975&lt;/td&gt;&lt;td&gt;31.67&lt;/td&gt;&lt;td&gt;25.14&lt;/td&gt;&lt;td&gt;0.9973&lt;/td&gt;&lt;td&gt;0.0002&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Stacking (XGB)&lt;/td&gt;&lt;td&gt;0.9966&lt;/td&gt;&lt;td&gt;36.45&lt;/td&gt;&lt;td&gt;27.51&lt;/td&gt;&lt;td&gt;0.9963&lt;/td&gt;&lt;td&gt;0.0003&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;LightGBM&lt;/td&gt;&lt;td&gt;0.9935&lt;/td&gt;&lt;td&gt;50.74&lt;/td&gt;&lt;td&gt;39.48&lt;/td&gt;&lt;td&gt;0.9927&lt;/td&gt;&lt;td&gt;0.0005&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;XGBoost&lt;/td&gt;&lt;td&gt;0.9913&lt;/td&gt;&lt;td&gt;58.38&lt;/td&gt;&lt;td&gt;44.43&lt;/td&gt;&lt;td&gt;0.9905&lt;/td&gt;&lt;td&gt;0.0006&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Random forest&lt;/td&gt;&lt;td&gt;0.9783&lt;/td&gt;&lt;td&gt;92.32&lt;/td&gt;&lt;td&gt;70.58&lt;/td&gt;&lt;td&gt;0.9699&lt;/td&gt;&lt;td&gt;0.0009&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Linear regression&lt;/td&gt;&lt;td&gt;0.9523&lt;/td&gt;&lt;td&gt;137.02&lt;/td&gt;&lt;td&gt;97.28&lt;/td&gt;&lt;td&gt;0.9505&lt;/td&gt;&lt;td&gt;0.0013&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;SVR (RBF)&lt;/td&gt;&lt;td&gt;0.3382&lt;/td&gt;&lt;td&gt;510.36&lt;/td&gt;&lt;td&gt;375.99&lt;/td&gt;&lt;td&gt;0.2884&lt;/td&gt;&lt;td&gt;0.0129&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nFig. 5 Scatter plots actual versus predicted for all models\n\n[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.1 Exploratory data analysis and feature correlation &gt; 3.1.3 Correlation heatmap of all features\n[原文]\nBeyond the primary relationships, the heat map revealed generally low to moderate correlations between features, indicating the absence of severe multicollinearity that could compromise models such as linear regression. Physically meaningful relationships were also evident, such as a moderate correlation between the fiber volume fraction and layer count, whereas the void content was negatively associated with most strengthrelated parameters, underscoring its harmful efect. Overall, this analysis underscores the combined impact of processing parameters and material selection, ofering a robust statistical basis for future predictive models [40].&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;3857eb95-f3ab-4184-968b-bdecbed02201&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[13]&quot;,
+      &quot;sha256&quot;: &quot;a31e78efca0238086610da5f5dfafa735ba5f08eeebe405ed1db6044bbcb4421&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 893,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 1,
+        &quot;page_start&quot;: 1,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_e96ab2d5ac7f0c8eb184&quot;,
+            &quot;page_end&quot;: 1,
+            &quot;page_start&quot;: 1,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Abstract\n[原文]\n Five regression algorithms, including Linear Regression, Support Vector Regression (SVR), Random Forest, XGBoost, LightGBM, Artificial Neural Networks (ANN), and stacking ensemble models, were trained and evaluated using five-fold cross-validation and standard performance metrics such as R², RMSE, and MAE. The ANN and stacking ensemble achieved the highest predictive performance, with an R² of 0.9975 and an RMSE of approximately 31 MPa, demonstrating excellent cross-validation stability. Overall, the proposed framework ofers a robust, reproducible, and data-driven method for accurate strength prediction, reducing the experimental workload while providing actionable insights for optimizing composite design.\n\nKeywords Fiber-reinforced composites, Machine learning, Ensemble learning, Stacking, Random forest, XGBoost, LightGBM, Artificial neural network&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] Abstract\n[原文]\n Five regression algorithms, including Linear Regression, Support Vector Regression (SVR), Random Forest, XGBoost, LightGBM, Artificial Neural Networks (ANN), and stacking ensemble models, were trained and evaluated using five-fold cross-validation and standard performance metrics such as R², RMSE, and MAE. The ANN and stacking ensemble achieved the highest predictive performance, with an R² of 0.9975 and an RMSE of approximately 31 MPa, demonstrating excellent cross-validation stability. Overall, the proposed framework ofers a robust, reproducible, and data-driven method for accurate strength prediction, reducing the experimental workload while providing actionable insights for optimizing composite design.\n\nKeywords Fiber-reinforced composites, Machine learning, Ensemble learning, Stacking, Random forest, XGBoost, LightGBM, Artificial neural network&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;3857eb95-f3ab-4184-968b-bdecbed02201&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[14]&quot;,
+      &quot;sha256&quot;: &quot;bd7f9f0729bb6f9b1732aa093d63f9fcb0d73860f6c82b19464419814839b0c4&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 1099,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 11,
+        &quot;page_start&quot;: 11,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_418270a1206588d6ad99&quot;,
+            &quot;page_end&quot;: 11,
+            &quot;page_start&quot;: 11,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.2 Performance of tree-based ensemble models\n[原文]\nThe tree-based ensemble methods, including Random Forest, XGBoost, and Light-GBM, significantly outperformed the linear models, demonstrating their ability to capture intricate, nonlinear relationships. As illustrated in Fig. 5, all three models produced predictions closely aligned with the ideal fit line. The Random Forest regressor delivered outstanding results with an $\\mathbb { R } ^ { 2 }$ of 0.978 and an RMSE of 92.32 MPa, owing to its gradient-boosting framework that sequentially corrects errors from previous trees [42]. The gradient-boosting models, XGBoost and LightGBM, performed even better than the tree-based models. LightGBM achieved an almost perfect $\\mathbb { R } ^ { 2 }$ of 0.9935 and a notably lower RMSE of 50.74 MPa, demonstrating its eficiency and precision on this dataset. The low standard deviation in their cross-validation scores (approximately 0.0005– 0.0009) confirmed their high stability and resistance to overfitting.&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.2 Performance of tree-based ensemble models\n[原文]\nThe tree-based ensemble methods, including Random Forest, XGBoost, and Light-GBM, significantly outperformed the linear models, demonstrating their ability to capture intricate, nonlinear relationships. As illustrated in Fig. 5, all three models produced predictions closely aligned with the ideal fit line. The Random Forest regressor delivered outstanding results with an $\\mathbb { R } ^ { 2 }$ of 0.978 and an RMSE of 92.32 MPa, owing to its gradient-boosting framework that sequentially corrects errors from previous trees [42]. The gradient-boosting models, XGBoost and LightGBM, performed even better than the tree-based models. LightGBM achieved an almost perfect $\\mathbb { R } ^ { 2 }$ of 0.9935 and a notably lower RMSE of 50.74 MPa, demonstrating its eficiency and precision on this dataset. The low standard deviation in their cross-validation scores (approximately 0.0005– 0.0009) confirmed their high stability and resistance to overfitting.&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;3857eb95-f3ab-4184-968b-bdecbed02201&quot;
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[15]&quot;,
+      &quot;sha256&quot;: &quot;d543c7cfa9734b3b098897b556b19775b9dc88d73449aa5bcd89a60b4f3d1be4&quot;,
+      &quot;content&quot;: {
+        &quot;document_hash&quot;: &quot;f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0&quot;,
+        &quot;document_id&quot;: &quot;doc_f499d471c51c051a&quot;,
+        &quot;end_char&quot;: 551,
+        &quot;filename&quot;: &quot;04_2026_复合材料拉伸强度预测_Ayaliew.pdf&quot;,
+        &quot;images&quot;: [],
+        &quot;page_end&quot;: 11,
+        &quot;page_start&quot;: 11,
+        &quot;sources&quot;: [
+          {
+            &quot;chunk_id&quot;: &quot;chk_76246710b8261f7b057a&quot;,
+            &quot;page_end&quot;: 11,
+            &quot;page_start&quot;: 11,
+            &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.4 Cross-validation and model stability\n[原文]\nThe 5‑fold cross‑validation results closely aligned with the test set outcomes for all models, underscoring the robustness of the evaluation process. The minimal standard deviation in the CV scores for the top models (0.0002 for ANN) suggests that their performance remains highly consistent across various data splits, making them exceptionally reliable for predicting new and unseen composite formulations [44].&quot;
+          }
+        ],
+        &quot;start_char&quot;: 0,
+        &quot;text&quot;: &quot;[章节标签（程序整理，非原文）] 3 Results and discussion &gt; 3.2 Predictive modeling of tensile strength &gt; 3.2.4 Cross-validation and model stability\n[原文]\nThe 5‑fold cross‑validation results closely aligned with the test set outcomes for all models, underscoring the robustness of the evaluation process. The minimal standard deviation in the CV scores for the top models (0.0002 for ANN) suggests that their performance remains highly consistent across various data splits, making them exceptionally reliable for predicting new and unseen composite formulations [44].&quot;
+      },
+      &quot;kind&quot;: &quot;source_text&quot;,
+      &quot;call_ids&quot;: [
+        &quot;3857eb95-f3ab-4184-968b-bdecbed02201&quot;
+      ]
+    }
+  ]
+}</pre></details></article></main></html>
