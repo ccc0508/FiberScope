@@ -150,8 +150,8 @@ def main():
                 call['model_info'] = getattr(generator, 'last_model_info', None)
 
     class CapturedRetriever(RetrievalService):
-        def retrieve(self, *args):
-            try:evidences = super().retrieve(*args)
+        def retrieve(self, *args, **kwargs):
+            try:evidences = super().retrieve(*args, **kwargs)
             finally:
                 seed_evidence.extend(asdict(e) for e in self.last_seed_evidences)
                 context_diagnostics.update(self.last_context_diagnostics)

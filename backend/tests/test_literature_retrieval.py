@@ -324,3 +324,13 @@ def test_retrieval_rejects_invalid_vector_match_scores(score: object) -> None:
         match=r"^vector search returned an invalid score$",
     ):
         service.retrieve("fiber strength", top_k=1, min_score=0.35)
+
+def test_document_filter_reaches_vector_search_before_limit():
+    from types import SimpleNamespace
+    calls=[]
+    def search(v, k, *, document_ids=None):
+        calls.append((k,document_ids))
+        return []
+    service=RetrievalService(InMemoryMetadataStore(),SimpleNamespace(search=search),SpyEmbedder())
+    assert service.retrieve('coarseness',8,.35,document_ids=['doc_1'])==[]
+    assert calls==[(50,['doc_1'])]

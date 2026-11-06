@@ -139,3 +139,16 @@ def test_table_mode_requires_bounded_context_and_default_stays_off():
     assert Settings(_env_file=None).table_retrieval_enabled is False
     with pytest.raises(ValueError,match='bounded'):
         Settings(_env_file=None,table_retrieval_enabled=True)
+
+def test_definition_rows_keep_groups_units_and_verbatim_offsets():
+    text=('Table 1. Variables<table><tr><td colspan="2">Independent Variables (Inputs)</td></tr>'
+        '<tr><td>$X_3$</td><td>Coarseness (mg/100m)</td></tr>'
+        '<tr><td colspan="2">Dependent Variables (Outputs)</td></tr>'
+        '<tr><td>$Y_1$</td><td>Tensile Index (N.m/g)</td></tr></table>')
+    rows=table_rows(chunk('table',text,'table'))
+    assert len(rows)==2
+    assert 'mg/100m' in rows[0]['text'] and 'Independent' in rows[0]['text']
+    assert 'Dependent' in rows[1]['text'] and 'Independent' not in rows[1]['text']
+    assert rows[0]['parent_raw_row']==text[rows[0]['parent_text_start']:rows[0]['parent_text_end']]
+    text='Table 2.<table><tr><td>Variable</td><td>Definition</td><td>Unit</td></tr><tr><td>C</td><td>Coarseness</td><td>mg/m</td></tr></table>'
+    assert len(table_rows(chunk('table',text,'table')))==1
