@@ -98,3 +98,6 @@ watchfiles==1.2.0
 websocket-client==1.9.2
 websockets==17.1
 yarl==1.25.1
+
+# Agent image/PDF support (2026-11-06)
+PyMuPDF==1.28.0
