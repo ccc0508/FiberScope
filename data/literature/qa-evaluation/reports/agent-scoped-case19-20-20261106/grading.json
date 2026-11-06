@@ -1,0 +1,1252 @@
+[
+  {
+    "case": {
+      "id": "FS8-019",
+      "group": "cross",
+      "question": "用Ayaliew等（2026）的高R²和Pennells等（2022）的SVR结果，能不能得出“ANN一定比SVR更适合真实纸张预测”？请比较数据来源和验证证据。",
+      "reference_answer": "不能。Ayaliew研究合成的聚合物复合材料数据，并说明需要实测验证；Pennells研究微/纳米纤维纳米纸，新增验证系列抗张NRMSE中SVR1.72还略高于MLR1.62。材料、目标、数据分布与指标不同，两个研究不构成ANN与SVR在同一真实纸张任务上的受控比较。",
+      "key_points": [
+        "D4为合成复合材料，不是真实纸张实验",
+        "D6为纳米纸且有新增验证系列",
+        "给出D6验证抗张SVR1.72、MLR1.62这一限制",
+        "跨任务分数不能排出普适ANN/SVR优劣"
+      ],
+      "critical_errors": [
+        "直接按R²给算法普适排名",
+        "说D6所有验证指标SVR均更优"
+      ],
+      "evidence": [
+        {
+          "document": "D4",
+          "pages": [
+            4,
+            13
+          ],
+          "locator": "数据准备、讨论"
+        },
+        {
+          "document": "D6",
+          "pages": [
+            10,
+            12
+          ],
+          "locator": "表5、表7"
+        }
+      ],
+      "checks": "跨篇模型比较、泛化",
+      "grading_notes": "允许等价表述；推断必须与论文直接结果区分。不得把参考答案措辞当成唯一正确表达。",
+      "tool_expectation": "从所涉论文取得证据；可一次检索覆盖多篇，不规定固定调用次数。需要可追溯的文献与页码/表图定位。",
+      "citation_applicable": true
+    },
+    "answer": "## 结论\n\n不能。Ayaliew 等（2026）与 Pennells 等（2022）的结果无法支持“ANN 一定比 SVR 更适合真实纸张预测”这一说法：两篇论文的研究对象不同，Ayaliew 等使用的是合成数据，而 Pennells 的 SVR 在外部验证中精度明显下降。在“某类数据上 ANN 优于 SVR”的较弱意义上（例如 Ayaliew 的合成复合材料数据），该说法可以成立；但“在真实纸张上一定更好”不成立。\n\n## 1. 两篇论文的数据来源不同，不能直接比较\n\n- **Ayaliew 等（2026）** 研究的是**纤维增强聚合物复合材料的拉伸强度**，并非纸张。输入特征包括纤维类型、树脂类型、纤维体积分数、孔隙率、层数和固化温度等；这些数据是**依据复合材料力学原理（参数化关系）人工合成**的，而不是实验测量。作者自己说明：正是由于缺少测量噪声和批次波动，模型才达到高精度；作者把这一结果定位为“理想合成条件下的理论上限”，并建议未来用实验数据集验证其真实泛化能力 [15]。\n- **Pennells 等（2022）** 研究的是**高粱生物质 CNF 纳米纸**：用 MorFi 纤维形态参数（纤维长度、宽度、粗度、扭结、细组分含量等）[7] 预测纳米纸的拉伸指数、杨氏模量、断裂应变和韧性；这些性能由纳米纸手抄片和 Instron 实际拉伸测试测得 [7]。该论文是“真实纸张”一方的证据。\n\n因此，这两个 R² 来自不同的目标变量（复合材料拉伸强度与纳米纸拉伸指数）和不同的特征空间，**不能直接横向比较**。Ayaliew 等在讨论中把自己使用合成数据的结果与使用实验数据的文献 [45–47] 的 R² 进行对比时，也明确表示这种对绝对 R² 值的直接比较在当前语境下“意义不大” [15]。\n\n## 2. Ayaliew 的 0.9975 来自合成数据内部的验证\n\n在这篇论文中，ANN（MLP）在独立测试集上的 R² 为 0.9975，RMSE 为 31.67 MPa，5 折交叉验证的平均 R² 为 0.9973，标准差为 0.0002；SVR（RBF）在测试集上的 R² 为 0.3382（RMSE 为 510.36 MPa，交叉验证平均 R² 为 0.2884），在表 1 中表现最差 [8][10][11][14]。\n\n需要注意：\n\n- 这些结果都来自**同一合成数据集的内部划分**（5 折交叉验证和独立测试集），不属于外部验证或跨种群验证 [9][10]。\n- 本次获取的证据没有涵盖样本总数、训练集与测试集比例、数据合成所用的具体参数范围，以及 ANN 的架构和训练细节。\n- 作者自己指出数据集规模较小（“dataset size was modest”），并把高精度部分归因于合成数据的信噪比高 [11][15]。\n\n## 3. Pennells 的 SVR 存在过拟合，外部验证精度显著下降\n\nPennells 等用全部 MorFi 参数拟合 SVR，采用 2 阶多项式核，其 R² 取五折交叉验证的平均值 [2]；原始五折交叉验证的 R² 为 0.98–0.99（拉伸指数的 R² 为 0.99、NRMSE 为 0.23）[1]。作者随后用**新的 HPH 验证系列**（同一 Sugargraze 品种、各组分等量混合，能量范围扩展至 200 bar 处理 1 次到 1100 bar 处理 3 次）做独立测试，结果验证系列的 NRMSE 比原始系列高 **4.1–7.5 倍** [5][6]。例如，杨氏模量的 SVR NRMSE 由 0.13 升至 0.81，拉伸指数的 SVR NRMSE 由 0.23 升至 1.72；并且在拉伸指数这一指标上，SVR（1.72）**反而略差于 MLR（1.62）** [1][6]。作者据此判定 SVR 对原始样本群存在“一定程度的过拟合”，并把全部参数纳入模型和超参数未充分优化列为**可能原因**；这些是作者提出的解释，并未被证明是确定原因 [3][5]。\n\n也就是说，Pennells 的 0.99 主要反映交叉验证内部的拟合，无法在跨能量范围的真实纸张数据上保持 [2][6]。这说明在真实材料上，交叉验证 R² 高并不等于泛化能力强。\n\n## 4. 综合判断\n\n- 仅凭 Ayaliew 等（2026）的 R²（0.9975）与 Pennells 等（2022）的内部交叉验证 R²（0.99），不能判断 ANN 与 SVR 在真实纸张上谁更优：两组结果所用的材料、目标变量和数据性质均不相同，而且 Pennells 的外部验证已经显示，在真实数据上内部精度会大幅下降 [2][6][15]。\n- 因此，也不能反过来把 Ayaliew 中 SVR 的低 R²（0.3382）当作“SVR 在纸张上表现差”的证据：该结果基于合成数据和 RBF 核，与 Pennells 使用真实数据、多项式核和五折交叉验证的设置完全不同 [2][14]。\n\n**仍无法确定的内容**：现有证据中没有任何研究在同一批真实纸张数据上同时训练并外部测试 ANN 与 SVR，也没有可直接比较的独立测试指标。要回答“哪一个更适合真实纸张”，需要在实验纸张数据上统一特征和划分，并设置外部验证或跨批次验证来进行对照实验。",
+    "draft": "## 结论\n\n不能。这两个结果无法支持“ANN 一定比 SVR 更适合真实纸张预测”这一说法，原因有三点：两篇论文的研究对象不同，Ayaliew 等（2026）使用的数据是合成数据，而 Pennells 等（2022）的 SVR 在外部验证中明显变差。因此，“在一定条件下，ANN 效果优于 SVR”或“ANN 更适合复合材料合成数据”这类较弱结论可以成立，但“一定适用于真实纸张”不成立。\n\n## 1. 两篇论文的数据来源不同，不能直接比较\n\n- **Ayaliew 等（2026）** 研究的是**纤维增强聚合物复合材料的拉伸强度**，并非纸张。其主要输入包括纤维类型、树脂类型、纤维体积分数、孔隙率、层数和固化温度等，并且这些数据是**根据复合材料力学原理（参数化关系）人工合成**的，而不是实验测量得到的。作者自己说明：正是因为没有测量噪声和批次波动，模型才能达到高精度，并把这一结果定位为“理想合成条件下的理论上限”，同时建议未来在实验数据上验证其真实泛化能力 [15]。\n- **Pennells 等（2022）** 研究的是**高粱生物质 CNF 纳米纸**：用 MorFi 光纤形态参数（纤维长度、宽度、粗度、扭结、细组分含量等）预测纳米纸的拉伸指数、杨氏模量、断裂应变和韧性；这些性能来自 Rapid Köthen 手抄片和 Instron 实际拉伸测试 [1][7]。这是“真实纸张”这一方的证据。\n\n因此，两个 R² 分别来自不同的目标变量（复合材料拉伸强度与纳米纸拉伸指数）和不同的特征空间，**不能直接放在一起比较**。Ayaliew 等本人在讨论中也将自己的结果与使用实验数据的文献 [45–47] 的 R² 对比，称为“不太有意义的直接比较” [15]。\n\n## 2. 验证证据：Ayaliew 的 0.9975 是合成数据内部的验证\n\n在这篇论文中，ANN（MLP）在独立测试集上的 R² 为 0.9975，RMSE 为 31.67 MPa，5 折交叉验证 R² 均值为 0.9973、标准差为 0.0002；SVR（RBF）在测试集上的 R² 仅为 0.3382（RMSE 为 510.36 MPa，交叉验证 R² 为 0.2884），在表 1 中垫底 [8][10][11][14]。\n\n需要注意：\n\n- 这些结果都来自**同一合成数据集的内部划分（5 折交叉验证加独立测试集）**，并不构成外部或跨种群验证 [9][10]。\n- 论文没有详细说明样本总数、训练集与测试集比例、数据合成所用的具体参数范围，以及 ANN 的架构和训练细节（这些位置未获取到）。\n- 作者自己指出数据集规模较小（“dataset size was modest”），并用这些数据说明合成数据的信噪比高 [11][15]。\n\n## 3. Pennells 的 SVR 表现出明显过拟合，外部验证精度大幅下降\n\n在 Pennells 的论文中，SVR 用全部 MorFi 参数进行拟合，采用 2 阶多项式核，各模型的 R² 为五折交叉验证的平均值 [2]，原始交叉验证 R² 为 0.98–0.99（拉伸指数 0.99、NRMSE 0.23）[1]。作者随后用**新的 HPH 验证系列**（品种相同、能量范围扩展至 200 bar 处理 1 次到 1100 bar 处理 3 次）进行独立测试：验证系列的 NRMSE 比原始系列高 **4.1–7.5 倍** [5][6]，例如杨氏模量的 SVR NRMSE 从 0.13 升至 0.81，拉伸指数的 NRMSE 从 0.23 升至 1.72；并且在拉伸指数上，SVR（1.72）**反而略差于 MLR（1.62）** [1][6]。作者据此明确判定“SVR 对原始样本群存在一定过拟合”，并把包含全部参数和超参数未充分优化列为可能原因 [5][3]。\n\n也就是说，Pennells 的 0.99 主要反映的是交叉验证内部的拟合，在真实、外推的真实纸张数据上无法保持 [2][6]。这恰恰说明，**在真实材料上，交叉验证 R² 高并不等于泛化能力强**。\n\n## 4. 综合判断\n\n- 仅凭 Ayaliew 等（2026）的 R²（0.9975）与 Pennells 等（2022）的内部交叉验证 R²（0.99），不能得出 ANN 与 SVR 在真实纸张上孰优孰劣的结论：两者的对象不同、数据性质不同，而且 Pennells 的验证已经显示，在真实数据上内部精度会大幅偏离外部表现 [2][6][15]。\n- Ayaliew 等（2026）自己也强调，与使用实验数据的文献进行直接比较意义有限，需要实验数据验证 [15]。\n- 同样，论文中 SVR 的 0.3382（Ayaliew 等）远差于 0.99（Pennells 等）这一现象，也不能反过来证明“在纸张上 SVR 差”：前者是合成数据，特征只有 7 个左右，并且采用 RBF 核；后者是真实纳米纸数据，采用多项式核并且经过五折交叉验证 [2][14]。\n\n**尚未解决、也无法从现有证据判断的内容**：没有任何一项研究在同一批真实纸张数据上同时训练并外部测试 ANN 与 SVR；也没有可以直接比较的独立测试集指标。要回答“哪一个更适合真实纸张”，还需要在实验纸张数据上做统一特征、统一划分、外部/跨批次验证的对照实验。",
+    "raw_jev": {
+      "key_point_scores": {
+        "K1": 1,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "## 结论\n\n不能。Ayaliew 等（2026）与 Pennells 等（2022）的结果无法支持“ANN 一定比 SVR 更适合真实纸张预测”这一说法：两篇论文的研究对象不同，Ayaliew 等使用的是合成数据，而 Pennells 的 SVR 在外部验证中精度明显下降。在“某类数据上 ANN 优于 SVR”的较弱意义上（例如 Ayaliew 的合成复合材料数据），该说法可以成立；但“在真实纸张上一定更好”不成立。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "## 1. 两篇论文的数据来源不同，不能直接比较\n\n- **Ayaliew 等（2026）** 研究的是**纤维增强聚合物复合材料的拉伸强度**，并非纸张。输入特征包括纤维类型、树脂类型、纤维体积分数、孔隙率、层数和固化温度等；这些数据是**依据复合材料力学原理（参数化关系）人工合成**的，而不是实验测量。作者自己说明：正是由于缺少测量噪声和批次波动，模型才达到高精度；作者把这一结果定位为“理想合成条件下的理论上限”，并建议未来用实验数据集验证其真实泛化能力 [15]。\n- **Pennells 等（2022）** 研究的是**高粱生物质 CNF 纳米纸**：用 MorFi 纤维形态参数（纤维长度、宽度、粗度、扭结、细组分含量等）[7] 预测纳米纸的拉伸指数、杨氏模量、断裂应变和韧性；这些性能由纳米纸手抄片和 Instron 实际拉伸测试测得 [7]。该论文是“真实纸张”一方的证据。",
+          "citation_refs": [
+            "[15]",
+            "[7]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C3",
+          "text": "因此，这两个 R² 来自不同的目标变量（复合材料拉伸强度与纳米纸拉伸指数）和不同的特征空间，**不能直接横向比较**。Ayaliew 等在讨论中把自己使用合成数据的结果与使用实验数据的文献 [45–47] 的 R² 进行对比时，也明确表示这种对绝对 R² 值的直接比较在当前语境下“意义不大” [15]。",
+          "citation_refs": [
+            "[15]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B019"
+        },
+        {
+          "id": "C4",
+          "text": "## 2. Ayaliew 的 0.9975 来自合成数据内部的验证\n\n在这篇论文中，ANN（MLP）在独立测试集上的 R² 为 0.9975，RMSE 为 31.67 MPa，5 折交叉验证的平均 R² 为 0.9973，标准差为 0.0002；SVR（RBF）在测试集上的 R² 为 0.3382（RMSE 为 510.36 MPa，交叉验证平均 R² 为 0.2884），在表 1 中表现最差 [8][10][11][14]。",
+          "citation_refs": [
+            "[8]",
+            "[10]",
+            "[11]",
+            "[14]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C5",
+          "text": "需要注意：\n\n- 这些结果都来自**同一合成数据集的内部划分**（5 折交叉验证和独立测试集），不属于外部验证或跨种群验证 [9][10]。\n- 本次获取的证据没有涵盖样本总数、训练集与测试集比例、数据合成所用的具体参数范围，以及 ANN 的架构和训练细节。\n- 作者自己指出数据集规模较小（“dataset size was modest”），并把高精度部分归因于合成数据的信噪比高 [11][15]。",
+          "citation_refs": [
+            "[9]",
+            "[10]",
+            "[11]",
+            "[15]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C6",
+          "text": "## 3. Pennells 的 SVR 存在过拟合，外部验证精度显著下降\n\nPennells 等用全部 MorFi 参数拟合 SVR，采用 2 阶多项式核，其 R² 取五折交叉验证的平均值 [2]；原始五折交叉验证的 R² 为 0.98–0.99（拉伸指数的 R² 为 0.99、NRMSE 为 0.23）[1]。作者随后用**新的 HPH 验证系列**（同一 Sugargraze 品种、各组分等量混合，能量范围扩展至 200 bar 处理 1 次到 1100 bar 处理 3 次）做独立测试，结果验证系列的 NRMSE 比原始系列高 **4.1–7.5 倍** [5][6]。例如，杨氏模量的 SVR NRMSE 由 0.13 升至 0.81，拉伸指数的 SVR NRMSE 由 0.23 升至 1.72；并且在拉伸指数这一指标上，SVR（1.72）**反而略差于 MLR（1.62）** [1][6]。作者据此判定 SVR 对原始样本群存在“一定程度的过拟合”，并把全部参数纳入模型和超参数未充分优化列为**可能原因**；这些是作者提出的解释，并未被证明是确定原因 [3][5]。",
+          "citation_refs": [
+            "[2]",
+            "[1]",
+            "[5]",
+            "[6]",
+            "[3]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C7",
+          "text": "也就是说，Pennells 的 0.99 主要反映交叉验证内部的拟合，无法在跨能量范围的真实纸张数据上保持 [2][6]。这说明在真实材料上，交叉验证 R² 高并不等于泛化能力强。",
+          "citation_refs": [
+            "[2]",
+            "[6]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B050"
+        },
+        {
+          "id": "C8",
+          "text": "## 4. 综合判断\n\n- 仅凭 Ayaliew 等（2026）的 R²（0.9975）与 Pennells 等（2022）的内部交叉验证 R²（0.99），不能判断 ANN 与 SVR 在真实纸张上谁更优：两组结果所用的材料、目标变量和数据性质均不相同，而且 Pennells 的外部验证已经显示，在真实数据上内部精度会大幅下降 [2][6][15]。\n- 因此，也不能反过来把 Ayaliew 中 SVR 的低 R²（0.3382）当作“SVR 在纸张上表现差”的证据：该结果基于合成数据和 RBF 核，与 Pennells 使用真实数据、多项式核和五折交叉验证的设置完全不同 [2][14]。",
+          "citation_refs": [
+            "[2]",
+            "[6]",
+            "[15]",
+            "[14]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C9",
+          "text": "**仍无法确定的内容**：现有证据中没有任何研究在同一批真实纸张数据上同时训练并外部测试 ANN 与 SVR，也没有可直接比较的独立测试指标。要回答“哪一个更适合真实纸张”，需要在实验纸张数据上统一特征和划分，并设置外部验证或跨批次验证来进行对照实验。",
+          "citation_refs": [],
+          "claim_type": "scope",
+          "support": "unsupported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C2",
+          "ref": "[15]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[15]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[10]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[11]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[14]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[9]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[10]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[11]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[15]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[5]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C7",
+          "ref": "[2]",
+          "score": 0
+        },
+        {
+          "claim_id": "C7",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[15]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[14]",
+          "score": 1
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C5",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C6",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C7",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C8",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C9",
+          "coverage": "missing"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false,
+      "decisions": {
+        "boundary": "appropriate",
+        "reference_check": "sound",
+        "point_K1": "complete",
+        "point_K2": "complete",
+        "point_K3": "complete",
+        "point_K4": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "NONE",
+        "group_C1": "missing",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "NONE",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "citation_C2_2": "supported",
+        "kind_C3": "fact",
+        "support_C3": "supported",
+        "basis_C3": "B019",
+        "group_C3": "complete",
+        "citation_C3_1": "supported",
+        "kind_C4": "fact",
+        "support_C4": "supported",
+        "basis_C4": "NONE",
+        "group_C4": "complete",
+        "citation_C4_1": "supported",
+        "citation_C4_2": "supported",
+        "citation_C4_3": "supported",
+        "citation_C4_4": "supported",
+        "kind_C5": "fact",
+        "support_C5": "supported",
+        "basis_C5": "NONE",
+        "group_C5": "partial",
+        "citation_C5_1": "supported",
+        "citation_C5_2": "supported",
+        "citation_C5_3": "supported",
+        "citation_C5_4": "supported",
+        "kind_C6": "fact",
+        "support_C6": "supported",
+        "basis_C6": "NONE",
+        "group_C6": "complete",
+        "citation_C6_1": "supported",
+        "citation_C6_2": "supported",
+        "citation_C6_3": "supported",
+        "citation_C6_4": "supported",
+        "citation_C6_5": "supported",
+        "kind_C7": "fact",
+        "support_C7": "supported",
+        "basis_C7": "B050",
+        "group_C7": "complete",
+        "citation_C7_1": "unsupported",
+        "citation_C7_2": "supported",
+        "kind_C8": "fact",
+        "support_C8": "supported",
+        "basis_C8": "NONE",
+        "group_C8": "complete",
+        "citation_C8_1": "supported",
+        "citation_C8_2": "supported",
+        "citation_C8_3": "supported",
+        "citation_C8_4": "supported",
+        "kind_C9": "scope",
+        "support_C9": "unsupported",
+        "basis_C9": "NONE",
+        "group_C9": "missing"
+      }
+    },
+    "calibrated": {
+      "key_point_scores": {
+        "K1": 1,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "## 结论\n\n不能。Ayaliew 等（2026）与 Pennells 等（2022）的结果无法支持“ANN 一定比 SVR 更适合真实纸张预测”这一说法：两篇论文的研究对象不同，Ayaliew 等使用的是合成数据，而 Pennells 的 SVR 在外部验证中精度明显下降。在“某类数据上 ANN 优于 SVR”的较弱意义上（例如 Ayaliew 的合成复合材料数据），该说法可以成立；但“在真实纸张上一定更好”不成立。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "## 1. 两篇论文的数据来源不同，不能直接比较\n\n- **Ayaliew 等（2026）** 研究的是**纤维增强聚合物复合材料的拉伸强度**，并非纸张。输入特征包括纤维类型、树脂类型、纤维体积分数、孔隙率、层数和固化温度等；这些数据是**依据复合材料力学原理（参数化关系）人工合成**的，而不是实验测量。作者自己说明：正是由于缺少测量噪声和批次波动，模型才达到高精度；作者把这一结果定位为“理想合成条件下的理论上限”，并建议未来用实验数据集验证其真实泛化能力 [15]。\n- **Pennells 等（2022）** 研究的是**高粱生物质 CNF 纳米纸**：用 MorFi 纤维形态参数（纤维长度、宽度、粗度、扭结、细组分含量等）[7] 预测纳米纸的拉伸指数、杨氏模量、断裂应变和韧性；这些性能由纳米纸手抄片和 Instron 实际拉伸测试测得 [7]。该论文是“真实纸张”一方的证据。",
+          "citation_refs": [
+            "[15]",
+            "[7]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C3",
+          "text": "因此，这两个 R² 来自不同的目标变量（复合材料拉伸强度与纳米纸拉伸指数）和不同的特征空间，**不能直接横向比较**。Ayaliew 等在讨论中把自己使用合成数据的结果与使用实验数据的文献 [45–47] 的 R² 进行对比时，也明确表示这种对绝对 R² 值的直接比较在当前语境下“意义不大” [15]。",
+          "citation_refs": [
+            "[15]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B019"
+        },
+        {
+          "id": "C4",
+          "text": "## 2. Ayaliew 的 0.9975 来自合成数据内部的验证\n\n在这篇论文中，ANN（MLP）在独立测试集上的 R² 为 0.9975，RMSE 为 31.67 MPa，5 折交叉验证的平均 R² 为 0.9973，标准差为 0.0002；SVR（RBF）在测试集上的 R² 为 0.3382（RMSE 为 510.36 MPa，交叉验证平均 R² 为 0.2884），在表 1 中表现最差 [8][10][11][14]。",
+          "citation_refs": [
+            "[8]",
+            "[10]",
+            "[11]",
+            "[14]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C5",
+          "text": "需要注意：\n\n- 这些结果都来自**同一合成数据集的内部划分**（5 折交叉验证和独立测试集），不属于外部验证或跨种群验证 [9][10]。\n- 本次获取的证据没有涵盖样本总数、训练集与测试集比例、数据合成所用的具体参数范围，以及 ANN 的架构和训练细节。\n- 作者自己指出数据集规模较小（“dataset size was modest”），并把高精度部分归因于合成数据的信噪比高 [11][15]。",
+          "citation_refs": [
+            "[9]",
+            "[10]",
+            "[11]",
+            "[15]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C6",
+          "text": "## 3. Pennells 的 SVR 存在过拟合，外部验证精度显著下降\n\nPennells 等用全部 MorFi 参数拟合 SVR，采用 2 阶多项式核，其 R² 取五折交叉验证的平均值 [2]；原始五折交叉验证的 R² 为 0.98–0.99（拉伸指数的 R² 为 0.99、NRMSE 为 0.23）[1]。作者随后用**新的 HPH 验证系列**（同一 Sugargraze 品种、各组分等量混合，能量范围扩展至 200 bar 处理 1 次到 1100 bar 处理 3 次）做独立测试，结果验证系列的 NRMSE 比原始系列高 **4.1–7.5 倍** [5][6]。例如，杨氏模量的 SVR NRMSE 由 0.13 升至 0.81，拉伸指数的 SVR NRMSE 由 0.23 升至 1.72；并且在拉伸指数这一指标上，SVR（1.72）**反而略差于 MLR（1.62）** [1][6]。作者据此判定 SVR 对原始样本群存在“一定程度的过拟合”，并把全部参数纳入模型和超参数未充分优化列为**可能原因**；这些是作者提出的解释，并未被证明是确定原因 [3][5]。",
+          "citation_refs": [
+            "[2]",
+            "[1]",
+            "[5]",
+            "[6]",
+            "[3]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C7",
+          "text": "也就是说，Pennells 的 0.99 主要反映交叉验证内部的拟合，无法在跨能量范围的真实纸张数据上保持 [2][6]。这说明在真实材料上，交叉验证 R² 高并不等于泛化能力强。",
+          "citation_refs": [
+            "[2]",
+            "[6]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B050"
+        },
+        {
+          "id": "C8",
+          "text": "## 4. 综合判断\n\n- 仅凭 Ayaliew 等（2026）的 R²（0.9975）与 Pennells 等（2022）的内部交叉验证 R²（0.99），不能判断 ANN 与 SVR 在真实纸张上谁更优：两组结果所用的材料、目标变量和数据性质均不相同，而且 Pennells 的外部验证已经显示，在真实数据上内部精度会大幅下降 [2][6][15]。\n- 因此，也不能反过来把 Ayaliew 中 SVR 的低 R²（0.3382）当作“SVR 在纸张上表现差”的证据：该结果基于合成数据和 RBF 核，与 Pennells 使用真实数据、多项式核和五折交叉验证的设置完全不同 [2][14]。",
+          "citation_refs": [
+            "[2]",
+            "[6]",
+            "[15]",
+            "[14]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C9",
+          "text": "**仍无法确定的内容**：现有证据中没有任何研究在同一批真实纸张数据上同时训练并外部测试 ANN 与 SVR，也没有可直接比较的独立测试指标。要回答“哪一个更适合真实纸张”，需要在实验纸张数据上统一特征和划分，并设置外部验证或跨批次验证来进行对照实验。",
+          "citation_refs": [],
+          "claim_type": "scope",
+          "support": "supported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C2",
+          "ref": "[15]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[15]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[8]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[10]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[11]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[14]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[9]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[10]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[11]",
+          "score": 1
+        },
+        {
+          "claim_id": "C5",
+          "ref": "[15]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[5]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C6",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C7",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C7",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[15]",
+          "score": 1
+        },
+        {
+          "claim_id": "C8",
+          "ref": "[14]",
+          "score": 1
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C5",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C6",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C7",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C8",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C9",
+          "coverage": "missing"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false,
+      "decisions": {
+        "boundary": "appropriate",
+        "reference_check": "sound",
+        "point_K1": "complete",
+        "point_K2": "complete",
+        "point_K3": "complete",
+        "point_K4": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "NONE",
+        "group_C1": "missing",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "NONE",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "citation_C2_2": "supported",
+        "kind_C3": "fact",
+        "support_C3": "supported",
+        "basis_C3": "B019",
+        "group_C3": "complete",
+        "citation_C3_1": "supported",
+        "kind_C4": "fact",
+        "support_C4": "supported",
+        "basis_C4": "NONE",
+        "group_C4": "complete",
+        "citation_C4_1": "supported",
+        "citation_C4_2": "supported",
+        "citation_C4_3": "supported",
+        "citation_C4_4": "supported",
+        "kind_C5": "fact",
+        "support_C5": "supported",
+        "basis_C5": "NONE",
+        "group_C5": "partial",
+        "citation_C5_1": "supported",
+        "citation_C5_2": "supported",
+        "citation_C5_3": "supported",
+        "citation_C5_4": "supported",
+        "kind_C6": "fact",
+        "support_C6": "supported",
+        "basis_C6": "NONE",
+        "group_C6": "complete",
+        "citation_C6_1": "supported",
+        "citation_C6_2": "supported",
+        "citation_C6_3": "supported",
+        "citation_C6_4": "supported",
+        "citation_C6_5": "supported",
+        "kind_C7": "fact",
+        "support_C7": "supported",
+        "basis_C7": "B050",
+        "group_C7": "complete",
+        "citation_C7_1": "unsupported",
+        "citation_C7_2": "supported",
+        "kind_C8": "fact",
+        "support_C8": "supported",
+        "basis_C8": "NONE",
+        "group_C8": "complete",
+        "citation_C8_1": "supported",
+        "citation_C8_2": "supported",
+        "citation_C8_3": "supported",
+        "citation_C8_4": "supported",
+        "kind_C9": "scope",
+        "support_C9": "unsupported",
+        "basis_C9": "NONE",
+        "group_C9": "missing"
+      }
+    },
+    "changes": [
+      "C1总结承接后文来源，无需重复引用。",
+      "C5各实验划分及小数据集陈述有对应来源；明确限定本次获取证据的缺口，不另要求引文证明缺失。",
+      "C7-[2]明确说明R²取五折平均，实质支持内部交叉验证这一部分；[6]承担外部验证结果，不要求[2]独自证明整句。",
+      "C9为限定现有证据的比较边界与实验设计建议，scope不应因无独立引文被标为unsupported并间接阻止严格通过；校准为supported。"
+    ],
+    "reason": "正确找到Ayaliew，合成数据与真实纳米纸对照清楚，新增验证NRMSE和过拟合限制完整，按最新口径通过。原文引用[45–47]明确为Ayaliew论文自己的参考文献编号，不当作本次RAG证据编号。",
+    "raw_metrics": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 8,
+      "supported_facts": 8,
+      "pair_count": 22,
+      "supported_pairs": 21,
+      "group_count": 8,
+      "covered_groups": 6,
+      "boundary": 2,
+      "fact_support": 100.0,
+      "citation_precision": 95.45454545454545,
+      "citation_coverage": 75.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "final_metrics": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 8,
+      "supported_facts": 8,
+      "pair_count": 22,
+      "supported_pairs": 22,
+      "group_count": 8,
+      "covered_groups": 8,
+      "boundary": 2,
+      "fact_support": 100.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 100.0,
+      "strict_pass": true,
+      "format_ok": true
+    },
+    "elapsed_seconds": 63.725,
+    "tool_attempts": [
+      {
+        "request": {
+          "query": "Ayaliew",
+          "reason": "定位Ayaliew等（2026）论文以核实ANN高R²的来源与验证方式",
+          "tool": "find_documents"
+        },
+        "status": "completed"
+      },
+      {
+        "request": {
+          "query": "Pennells",
+          "reason": "定位Pennells等（2022）论文以核实SVR结果与验证设计",
+          "tool": "find_documents"
+        },
+        "status": "blocked"
+      },
+      {
+        "request": {
+          "query": "Pennells",
+          "reason": "定位Pennells等（2022）论文以核实SVR结果与验证设计",
+          "tool": "find_documents"
+        },
+        "status": "completed"
+      },
+      {
+        "request": {
+          "query": "support vector regression SVR prediction nanopaper tensile strength R2 validation leave-one-out cross-validation",
+          "document_ids": [
+            "doc_99f8d919ba6bf8bc"
+          ],
+          "reason": "获取Pennells 2022中SVR的输入变量、R²数值与验证方案（LOSO/LOO等）证据",
+          "tool": "search_literature"
+        },
+        "status": "completed"
+      },
+      {
+        "request": {
+          "document_ids": [
+            "doc_f499d471c51c051a"
+          ],
+          "query": "ANN artificial neural network tensile strength R2 dataset size experimental data training testing split validation",
+          "reason": "获取Ayaliew 2026中ANN模型的R²数值、数据来源（自有实验/文献汇编）、样本量与验证划分方式",
+          "tool": "search_literature"
+        },
+        "status": "completed"
+      }
+    ],
+    "completed_tools": 4,
+    "review_status": "completed",
+    "stop_reason": "collection_budget",
+    "result_sha256": "0f4add0feb527af6e4a4a9c89eedef9a7cd82038f2a7a12ee5f8aac2891146fe",
+    "judge_input_sha256": "41e3d98e8fcfcf026b2acbee74d8801c79aad0e3159f5dbd2078e9d0d04f9708"
+  },
+  {
+    "case": {
+      "id": "FS8-020",
+      "group": "cross",
+      "question": "Li、Hu与Shao（2023）与Uddin等（2024）都做纸张预测，但它们的输入和预测链条相同吗？如果我要整理训练数据，应保留什么区别？",
+      "reference_answer": "不同。前者以回收过程的WRV和RBA估计损伤指数，再经T=T₀(1−D)关联抗张；后者以七项纤维质量特征预测抗张、撕裂、耐破指数。应保留材料、回收/打浆条件、输入定义单位、目标名称、损伤中间量和来源，不能把D或三个强度指数合成同一目标列。",
+      "key_points": [
+        "D3输入WRV/RBA并经损伤D关联抗张",
+        "D5为纤维质量特征到三种强度指数",
+        "两者过程背景和目标定义不同",
+        "数据集保留条件、单位、目标与来源，D不可混同强度"
+      ],
+      "critical_errors": [
+        "认为相同模型输入输出",
+        "把损伤指数当撕裂指数"
+      ],
+      "evidence": [
+        {
+          "document": "D3",
+          "pages": [
+            2
+          ],
+          "locator": "摘要"
+        },
+        {
+          "document": "D5",
+          "pages": [
+            1
+          ],
+          "locator": "摘要"
+        }
+      ],
+      "checks": "跨篇流程映射、数据架构",
+      "grading_notes": "允许等价表述；推断必须与论文直接结果区分。不得把参考答案措辞当成唯一正确表达。",
+      "tool_expectation": "从所涉论文取得证据；可一次检索覆盖多篇，不规定固定调用次数。需要可追溯的文献与页码/表图定位。",
+      "citation_applicable": true
+    },
+    "answer": "**二者不一致：输入变量不同，预测链条也不同。**\n\n**Li、Hu & Shao（2023）**\n- 输入（特征）：回收后纸页的保水值（WRV）与相对结合面积（RBA）；这两个量因与抗张强度强相关而被选为特征[6]。\n- 链条：采用损伤力学并结合双曲模型做曲线拟合，构造“损伤指数 D”（由 WRV 劣化量 Dh 与 RBA 劣化量 Ds、拟合系数 a、b、h、k 得到），再按 T = T₀(1−D) 换算抗张强度[4]；此外还训练神经网络来估计损伤指数，作为曲线拟合法的对照[4]。\n- 输出：回收过程中纸页抗张强度的劣化[6]。\n- 材料与实验条件：漂白/未漂硫酸盐针叶木浆、芦苇浆等木与非木纤维，人工模拟回收4次（手抄片成型—测试—解离—再成型）[4][6][7]。\n\n**Uddin 等（2024）**\n- 输入：精磨（PFI磨浆）样品的7项纤维质量参数——细小纤维含量、纤维长度、宽度、外部细纤维化程度、卷曲指数、扭结指数、粗度[2]。\n- 链条：多元线性回归（MLR）与单隐层 ANN 直接把纤维参数映射到纸页强度指标，没有损伤指数之类的物理中间变量[2][3]。\n- 输出：抗张指数（MLR Adj. R²=.85）、撕裂指数（.97）、耐破指数（.91）；ANN 的 R²>.95[2]。样本共21个观测，17个训练、4个测试（81%/19%）[2][3]。\n- 材料与条件：稻秆、阔叶材（T. orientalis）、针叶木三类浆料；三者变量间的相关格局不一致[5]。\n\n**整理训练数据时需保留的区别**\n1. **目标不同**：前者是“回收劣化后的抗张强度”，且依赖基准值 T₀ 与损伤指数的定义；后者是抗张/撕裂/耐破三项指数。两者不能混为同一个标签列[6][4][2]。\n2. **输入层级不同**：前者使用纸页层面的 WRV、RBA；后者使用纤维分析仪测得的纤维形态参数，这两套特征并非同一测量体系[6][2]。\n3. **是否含物理中间量**：前者的结果依赖先验双曲模型和损伤指数（含拟合系数），后者是纯统计映射；合并时须标注样本是否经过损伤指数变换，不能把模型假设当作原始数据[4][2]。\n4. **工艺维度**：前者有回收循环次数（序列/劣化路径），后者是精磨程度下的横截面样本，没有序列结构[4][3]。\n5. **原料标签**：稻秆、阔叶、针叶的相关关系不可通用，必须保留原料标签以及木浆/非木浆属性[5]；Li 等也区分木浆与非木浆[4]。以上相关关系属于统计关联，不构成因果结论[5]。\n6. **单位与量纲**：Uddin 等报告的抗张指数为 Nm/g、撕裂指数为 mN·m²/g、耐破指数为 kPa·m²/g[5]，与 Li 等的抗张强度不可直接混算；Li 等抗张强度的单位在已获取证据中未确认。\n7. **数据划分**：Uddin 等仅21条、按81/19划分，合并时应保留其原划分标识，避免同一样本跨训练/测试泄漏[3]。\n\n**未能确定的信息**：Li 等（2023）神经网络的具体输入（是否包含回收轮次）、具体网络结构，以及抗张强度的单位与各浆种配比，在已获取证据中不完整，无法据此推断。",
+    "draft": "**二者不一样：输入量不同，预测链条也不同。**\n\n**Li、Hu & Shao（2023）**\n- 输入（特征）：经过最多4次回收循环后制成的纸页的保水值（WRV）与相对结合面积（RBA）；这两个量因与抗张强度强相关而被选为特征[6]。\n- 中间构造：先用损伤力学和双曲型曲线拟合构造“损伤指数 D”（由 WRV 劣化量 Dh 和 RBA 劣化量 Ds 经曲线拟合系数 a、b、h、k 得到），再用 T = T₀(1−D) 换算抗张强度[4]；同时训练神经网络（比较中用到 LSTM/RNN）来估计损伤指数，作为曲线拟合法的替代[4]。\n- 输出：回收过程中纸页抗张强度的劣化[6]。\n- 材料条件：漂白/未漂硫酸盐针叶木浆、芦苇浆等木与非木纤维，人工模拟回收4次（手抄片成型—测试—解离—再成型）[4][6][7]。\n\n**Uddin 等（2024）**\n- 输入：单次精磨（PFI磨浆）样品的纤维质量参数——细小纤维含量、纤维长度、宽度、外部细纤维化程度、卷曲指数、扭结指数、粗度（7个变量）[2]。\n- 模型：多元线性回归（MLR）与单隐层ANN（双曲正切激活），两类模型都直接把纤维参数映射到纸页强度指标，中间没有损伤指数一类的物理变量[2][3]。\n- 输出为三个指数：抗张指数（MLR Adj. R²=.85）、撕裂指数（.97）、耐破指数（.91）；ANN 的 R²>.95[2]。样本仅21个观测，17个训练、4个测试[2][3]。\n- 材料条件：稻秆、阔叶材（T. orientalis）、针叶木三类浆料，且三者的相关格局不一致（同一变量在不同浆种中相关方向/强度可不同）[5]。\n\n**整理训练数据时应保留的区别**\n1. **目标不同**：前者目标是“回收劣化后的绝对抗张强度”，且依赖基准值 T₀；后者目标是抗张/撕裂/耐破三指标（指数化）。不能混为一列。\n2. **输入层级不同**：前者是纸页/浆料层面的 WRV、RBA（由纸页性能反推），后者是单纤维分析仪测得的形态参数。两套特征并非同一测量体系的等价变量[6][2]。\n3. **是否含物理中间量**：前者有先验的双曲模型和损伤指数（含曲线拟合系数），后者是纯统计映射；若合并，须标注样本是否经过“损伤指数”变换，否则会把模型假设当作数据。\n4. **工艺与历史维度**：前者有循环次数（时间序列/劣化路径，材料用LSTM就有理由）；后者是精磨程度下的横截面样本，没有序列结构[4][3]。\n5. **浆种/原料标签**：Uddin 显示稻秆、阔叶、针叶的相关关系不可通用，必须保留原料标签（以及是否木浆/非木浆）[5]；Li 也区分木浆与非木浆，且回收对象不同[4]。\n6. **单位与量纲**：抗张指数 Nm/g、撕裂指数 mN·m²/g、耐破指数 kPa·m²/g（Uddin）与抗张强度（Li，MPa 量级未在本次证据中确认）不可直接混算[5][6]。\n7. **数据量与划分**：Uddin 仅21条、81/19划分，任何合并都应保留其原划分标识，避免同一样本跨训练/测试泄漏[3]。\n\n未确认处：Li 等（2023）所用机器学习模型的输入是否为回收轮次与WRV/RBA的组合、具体网络结构，以及抗张强度的单位与精磨实验的具体浆种配比，在已获取的证据中没有完整细节，故不推断。",
+    "raw_jev": {
+      "key_point_scores": {
+        "K1": 1,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "**二者不一致：输入变量不同，预测链条也不同。**\n\n**Li、Hu & Shao（2023）**\n- 输入（特征）：回收后纸页的保水值（WRV）与相对结合面积（RBA）；这两个量因与抗张强度强相关而被选为特征[6]。\n- 链条：采用损伤力学并结合双曲模型做曲线拟合，构造“损伤指数 D”（由 WRV 劣化量 Dh 与 RBA 劣化量 Ds、拟合系数 a、b、h、k 得到），再按 T = T₀(1−D) 换算抗张强度[4]；此外还训练神经网络来估计损伤指数，作为曲线拟合法的对照[4]。\n- 输出：回收过程中纸页抗张强度的劣化[6]。\n- 材料与实验条件：漂白/未漂硫酸盐针叶木浆、芦苇浆等木与非木纤维，人工模拟回收4次（手抄片成型—测试—解离—再成型）[4][6][7]。",
+          "citation_refs": [
+            "[6]",
+            "[4]",
+            "[7]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "**Uddin 等（2024）**\n- 输入：精磨（PFI磨浆）样品的7项纤维质量参数——细小纤维含量、纤维长度、宽度、外部细纤维化程度、卷曲指数、扭结指数、粗度[2]。\n- 链条：多元线性回归（MLR）与单隐层 ANN 直接把纤维参数映射到纸页强度指标，没有损伤指数之类的物理中间变量[2][3]。\n- 输出：抗张指数（MLR Adj. R²=.85）、撕裂指数（.97）、耐破指数（.91）；ANN 的 R²>.95[2]。样本共21个观测，17个训练、4个测试（81%/19%）[2][3]。\n- 材料与条件：稻秆、阔叶材（T. orientalis）、针叶木三类浆料；三者变量间的相关格局不一致[5]。",
+          "citation_refs": [
+            "[2]",
+            "[3]",
+            "[5]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B021"
+        },
+        {
+          "id": "C3",
+          "text": "**整理训练数据时需保留的区别**\n1. **目标不同**：前者是“回收劣化后的抗张强度”，且依赖基准值 T₀ 与损伤指数的定义；后者是抗张/撕裂/耐破三项指数。两者不能混为同一个标签列[6][4][2]。\n2. **输入层级不同**：前者使用纸页层面的 WRV、RBA；后者使用纤维分析仪测得的纤维形态参数，这两套特征并非同一测量体系[6][2]。\n3. **是否含物理中间量**：前者的结果依赖先验双曲模型和损伤指数（含拟合系数），后者是纯统计映射；合并时须标注样本是否经过损伤指数变换，不能把模型假设当作原始数据[4][2]。\n4. **工艺维度**：前者有回收循环次数（序列/劣化路径），后者是精磨程度下的横截面样本，没有序列结构[4][3]。\n5. **原料标签**：稻秆、阔叶、针叶的相关关系不可通用，必须保留原料标签以及木浆/非木浆属性[5]；Li 等也区分木浆与非木浆[4]。以上相关关系属于统计关联，不构成因果结论[5]。\n6. **单位与量纲**：Uddin 等报告的抗张指数为 Nm/g、撕裂指数为 mN·m²/g、耐破指数为 kPa·m²/g[5]，与 Li 等的抗张强度不可直接混算；Li 等抗张强度的单位在已获取证据中未确认。\n7. **数据划分**：Uddin 等仅21条、按81/19划分，合并时应保留其原划分标识，避免同一样本跨训练/测试泄漏[3]。",
+          "citation_refs": [
+            "[6]",
+            "[4]",
+            "[2]",
+            "[3]",
+            "[5]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C4",
+          "text": "**未能确定的信息**：Li 等（2023）神经网络的具体输入（是否包含回收轮次）、具体网络结构，以及抗张强度的单位与各浆种配比，在已获取证据中不完整，无法据此推断。",
+          "citation_refs": [],
+          "claim_type": "scope",
+          "support": "partially_supported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C1",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[5]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[5]",
+          "score": 1
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "missing"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false,
+      "decisions": {
+        "boundary": "appropriate",
+        "reference_check": "sound",
+        "point_K1": "complete",
+        "point_K2": "complete",
+        "point_K3": "complete",
+        "point_K4": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "NONE",
+        "group_C1": "complete",
+        "citation_C1_1": "supported",
+        "citation_C1_2": "supported",
+        "citation_C1_3": "supported",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "B021",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "citation_C2_2": "supported",
+        "citation_C2_3": "supported",
+        "kind_C3": "fact",
+        "support_C3": "partially_supported",
+        "basis_C3": "NONE",
+        "group_C3": "partial",
+        "citation_C3_1": "supported",
+        "citation_C3_2": "supported",
+        "citation_C3_3": "supported",
+        "citation_C3_4": "supported",
+        "citation_C3_5": "supported",
+        "kind_C4": "scope",
+        "support_C4": "partially_supported",
+        "basis_C4": "NONE",
+        "group_C4": "missing"
+      }
+    },
+    "calibrated": {
+      "key_point_scores": {
+        "K1": 1,
+        "K2": 1,
+        "K3": 1,
+        "K4": 0.5
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "**二者不一致：输入变量不同，预测链条也不同。**\n\n**Li、Hu & Shao（2023）**\n- 输入（特征）：回收后纸页的保水值（WRV）与相对结合面积（RBA）；这两个量因与抗张强度强相关而被选为特征[6]。\n- 链条：采用损伤力学并结合双曲模型做曲线拟合，构造“损伤指数 D”（由 WRV 劣化量 Dh 与 RBA 劣化量 Ds、拟合系数 a、b、h、k 得到），再按 T = T₀(1−D) 换算抗张强度[4]；此外还训练神经网络来估计损伤指数，作为曲线拟合法的对照[4]。\n- 输出：回收过程中纸页抗张强度的劣化[6]。\n- 材料与实验条件：漂白/未漂硫酸盐针叶木浆、芦苇浆等木与非木纤维，人工模拟回收4次（手抄片成型—测试—解离—再成型）[4][6][7]。",
+          "citation_refs": [
+            "[6]",
+            "[4]",
+            "[7]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "**Uddin 等（2024）**\n- 输入：精磨（PFI磨浆）样品的7项纤维质量参数——细小纤维含量、纤维长度、宽度、外部细纤维化程度、卷曲指数、扭结指数、粗度[2]。\n- 链条：多元线性回归（MLR）与单隐层 ANN 直接把纤维参数映射到纸页强度指标，没有损伤指数之类的物理中间变量[2][3]。\n- 输出：抗张指数（MLR Adj. R²=.85）、撕裂指数（.97）、耐破指数（.91）；ANN 的 R²>.95[2]。样本共21个观测，17个训练、4个测试（81%/19%）[2][3]。\n- 材料与条件：稻秆、阔叶材（T. orientalis）、针叶木三类浆料；三者变量间的相关格局不一致[5]。",
+          "citation_refs": [
+            "[2]",
+            "[3]",
+            "[5]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B021"
+        },
+        {
+          "id": "C3",
+          "text": "**整理训练数据时需保留的区别**\n1. **目标不同**：前者是“回收劣化后的抗张强度”，且依赖基准值 T₀ 与损伤指数的定义；后者是抗张/撕裂/耐破三项指数。两者不能混为同一个标签列[6][4][2]。\n2. **输入层级不同**：前者使用纸页层面的 WRV、RBA；后者使用纤维分析仪测得的纤维形态参数，这两套特征并非同一测量体系[6][2]。\n3. **是否含物理中间量**：前者的结果依赖先验双曲模型和损伤指数（含拟合系数），后者是纯统计映射；合并时须标注样本是否经过损伤指数变换，不能把模型假设当作原始数据[4][2]。\n4. **工艺维度**：前者有回收循环次数（序列/劣化路径），后者是精磨程度下的横截面样本，没有序列结构[4][3]。\n5. **原料标签**：稻秆、阔叶、针叶的相关关系不可通用，必须保留原料标签以及木浆/非木浆属性[5]；Li 等也区分木浆与非木浆[4]。以上相关关系属于统计关联，不构成因果结论[5]。\n6. **单位与量纲**：Uddin 等报告的抗张指数为 Nm/g、撕裂指数为 mN·m²/g、耐破指数为 kPa·m²/g[5]，与 Li 等的抗张强度不可直接混算；Li 等抗张强度的单位在已获取证据中未确认。\n7. **数据划分**：Uddin 等仅21条、按81/19划分，合并时应保留其原划分标识，避免同一样本跨训练/测试泄漏[3]。",
+          "citation_refs": [
+            "[6]",
+            "[4]",
+            "[2]",
+            "[3]",
+            "[5]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C4",
+          "text": "**未能确定的信息**：Li 等（2023）神经网络的具体输入（是否包含回收轮次）、具体网络结构，以及抗张强度的单位与各浆种配比，在已获取证据中不完整，无法据此推断。",
+          "citation_refs": [],
+          "claim_type": "scope",
+          "support": "supported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C1",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[5]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[5]",
+          "score": 1
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "missing"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false,
+      "decisions": {
+        "boundary": "appropriate",
+        "reference_check": "sound",
+        "point_K1": "complete",
+        "point_K2": "complete",
+        "point_K3": "complete",
+        "point_K4": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "NONE",
+        "group_C1": "complete",
+        "citation_C1_1": "supported",
+        "citation_C1_2": "supported",
+        "citation_C1_3": "supported",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "B021",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "citation_C2_2": "supported",
+        "citation_C2_3": "supported",
+        "kind_C3": "fact",
+        "support_C3": "partially_supported",
+        "basis_C3": "NONE",
+        "group_C3": "partial",
+        "citation_C3_1": "supported",
+        "citation_C3_2": "supported",
+        "citation_C3_3": "supported",
+        "citation_C3_4": "supported",
+        "citation_C3_5": "supported",
+        "kind_C4": "scope",
+        "support_C4": "partially_supported",
+        "basis_C4": "NONE",
+        "group_C4": "missing"
+      }
+    },
+    "changes": [
+      "K4由1改为0.5：说明条件、单位、目标和原划分标识，但仍未提出保留论文/样品来源追溯，沿用上一轮相同尺度。",
+      "C4为明确限定已获取证据的缺口说明，不将无法确认具体结构、输入和单位当作事实错误；scope不计事实/引用分母。"
+    ],
+    "reason": "链条与主要输入输出正确。保留C3部分支持：不能从MLR/ANN和21条观测推出数据没有序列结构；按打浆程度得到的观测仍可能来自同一浆料的处理序列，需要样品/批次/处理次序依据。缺来源追溯建议，K4半分。",
+    "raw_metrics": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 3,
+      "supported_facts": 2,
+      "pair_count": 11,
+      "supported_pairs": 11,
+      "group_count": 3,
+      "covered_groups": 2,
+      "boundary": 2,
+      "fact_support": 66.66666666666667,
+      "citation_precision": 100.0,
+      "citation_coverage": 66.66666666666667,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "final_metrics": {
+      "point_score": 87.5,
+      "point_count": 4,
+      "fact_count": 3,
+      "supported_facts": 2,
+      "pair_count": 11,
+      "supported_pairs": 11,
+      "group_count": 3,
+      "covered_groups": 2,
+      "boundary": 2,
+      "fact_support": 66.66666666666667,
+      "citation_precision": 100.0,
+      "citation_coverage": 66.66666666666667,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "elapsed_seconds": 46.208,
+    "tool_attempts": [
+      {
+        "request": {
+          "query": "Uddin 2024 paper",
+          "reason": "先定位两篇论文的文档ID",
+          "tool": "find_documents"
+        },
+        "status": "completed"
+      },
+      {
+        "request": {
+          "query": "Li Hu Shao 2023 paper prediction",
+          "reason": "定位Li Hu Shao 2023论文",
+          "tool": "find_documents"
+        },
+        "status": "blocked"
+      },
+      {
+        "request": {
+          "query": "",
+          "reason": "列出文库中所有论文，以确定两篇目标论文的文档ID",
+          "tool": "find_documents"
+        },
+        "status": "completed"
+      },
+      {
+        "request": {
+          "reason": "比较两篇论文的输入变量与预测链条：查找摘要/方法中输入特征（纤维形态、纸浆性能等）、目标（抗张强度 vs 纸浆性能）及模型链条",
+          "query": "input variables fiber morphology freeness tensile strength pulp properties prediction model chain",
+          "document_ids": [
+            "doc_347aacf900c9ab36",
+            "doc_8234f8075c2e184f"
+          ],
+          "tool": "search_literature"
+        },
+        "status": "completed"
+      }
+    ],
+    "completed_tools": 3,
+    "review_status": "completed",
+    "stop_reason": null,
+    "result_sha256": "2e890994b9a96182eb5c4b4747de580885c403971aca2ea59a7a128fd2e89858",
+    "judge_input_sha256": "d443b56d2903f5274afc8882e1b39650217c29e14114c6689d833aa89957a421"
+  }
+]
