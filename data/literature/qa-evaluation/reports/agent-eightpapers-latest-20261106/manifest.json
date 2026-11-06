@@ -1,0 +1,348 @@
+[
+  {
+    "case_id": "FS8-001",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "21607943b5557f739f7483f2b65a0f6a6696ba3546e2c24dff622af936900fc2",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-002",
+    "source_run": "agent-hash-refs-case2-20261105",
+    "answer_sha256": "8cc02be7247ed72cbb0f463170f80439f9a51269c53de9d971c357026ff36fa1",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-hash-refs-case2-20261105/grading.json",
+        "sha256": "5dca5e3df022f54f423332561f0898cf0a7d3b038bc360f2f7079bb89ae1fcc1"
+      },
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-hash-refs-case2-20261105/answer.md",
+        "sha256": "19787ab67f734fd6ae71c3390f6c7c691a16d988a24d3203df25738e9197f53c"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-003",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "5021892c335e9da999aead908501ee5dffe0df711d109dce8fef3fb11838b169",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-004",
+    "source_run": "agent-figure-discovery-case4-20261106",
+    "answer_sha256": "d380ffd1ac55910c78ce84489b0c9ecec8eeeb788b4c8a27fb15c49f4ca58722",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-figure-discovery-case4-20261106/grading.json",
+        "sha256": "a2ab52c171f51b27b25c5424aad0238092dd39ae5fa14ab7549682e29efd5d31"
+      },
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-figure-discovery-case4-20261106/answer.md",
+        "sha256": "84e693052726fac24f1d0d727aff9b3ec760f2b0d11c0d1f9827a417401e2aea"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-005",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "2b50c042eb23b0295b5e7e71666ce4d0baf90f4261016f60724a01a99b81c5d4",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-006",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "0169aa3ab5e70a463e3a45396d9d69753e021bd1d454751170db5629e5ed0de2",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-007",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "515f6fa1dc690daeee7ac6aedfb9cd575ff29cb29902118bfa4dbe975e2fcf50",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-008",
+    "source_run": "agent-current-case8-20261106",
+    "answer_sha256": "2166b96324c9ff1c6541d2cccc3f6ce2dd08bda48b9b57cb7dc2fc3e45313c2d",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-current-case8-20261106/grading.json",
+        "sha256": "8cc05131db2051eed68a14976c146496dfb5dffaf9a7cac583e567df476caa03"
+      },
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-current-case8-20261106/answer.md",
+        "sha256": "a1a4269caf821c6744c1807c867456a9781b8e17625a815e8d351ff3f6fd1063"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-009",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "ebad75043dfecc1d28e1ec511d1353b210666322d10b685f0c9a4e922235bf2c",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-010",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "634a5012d8d4724255f1622f0d8bb277916702bf31845df46a8476d75e8d08f1",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-011",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "c0db0177ef90a655cb9f3c0e1931fd13b36fa914307b10d4608bb216e0611a37",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-012",
+    "source_run": "agent-current-case12-20261106",
+    "answer_sha256": "c3a19b115708545364cbf38f0319a402953e07584025c3bfe8d32fcfa4b8c0da",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-current-case12-20261106/grading.json",
+        "sha256": "b7f12ef0ff012567d3e039a1ab69516e0d30db3159a47684850358354f8ec94c"
+      },
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-current-case12-20261106/answer.md",
+        "sha256": "cb71cf599624995395f8ad7c13d8c7b0f71c31ac3bdf70924ef5ae679834d263"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-013",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "5448b051af95c9b0813cac7ed08cee5c0f046299586cbf7af15078060a785fa9",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-014",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "65e537be7b966fa3654bc3966cbef156ed4017a34732bc7566897d14ba726598",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-015",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "694a09e126b82666d47f7189f62baa7d2a6efc9c942e81bc44413a9f7c31c55b",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-016",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "52fa68d2a33ec3357546c6f7a0d31e641e08bbf90c61a797c4e6fcb259cdaeaa",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-017",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "7360909749000998adaf0136872087777ecfc28fc71118090b9fd93493f128de",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-018",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "4e681c11f32d885d9a16caac8608fb168a9394beb2fa89f56b3f507d924ee8de",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-019",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "7e3704055c3130964e2fc235e4762a22b01021ef8dc2fd49e106cc265b1fab2a",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-020",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "d4ebec54dbf74ec43e0fdf86b39eeb09dfceb8e49bec2d1935726f86bd9f2084",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-021",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "7a1aa92aaf0fe210d51de0fb959e4fce320d1eb51b60a1e4d8901676e0224701",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-022",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "3fce601c299ebb566a1ac2fbdc2696ce9bec78e227f46ba398195e02e48a5a5a",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-023",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "726b97eb64c34ad7f20f810fd9085ff2e87f32a9d13f4ea88ea558dba2d0c2a1",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-024",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "07912c26487dd56bffb1adb8bbae3d20ad058570d9fd069acc244dd905f100f3",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-025",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "8fcc64401543ac19da983ef519faaf12c6ef93da26da7f02d90094a6f4b12e38",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-026",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "5c5161892b72559bbd2289cab4eb3ba0189085d81fe02631d7d57b4ed10ffbd2",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-027",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "c8373c7e46ebf35f4b7f8e31fe8b088d448031f3eafbe45e64a15d659f58bc13",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-028",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "4f3430d4dd56aef2412423214051c90ca4ff0987208db4102ebe32658f4f3294",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-029",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "706f6392634760720d8e4bfecd7edf5c9ca44652e0c69db9fd1ffa2d76573626",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  },
+  {
+    "case_id": "FS8-030",
+    "source_run": "agent-eightpapers-20261105",
+    "answer_sha256": "0fc9f22791ac9746e84981f656bdce0304da284461190dbcda79ce020f8eb0cb",
+    "source_artifacts": [
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
+        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+      }
+    ]
+  }
+]
