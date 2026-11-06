@@ -1,0 +1,254 @@
+<meta charset="utf-8"><title>第17题重跑</title><style>body{max-width:1000px;margin:40px auto;font:16px/1.8 system-ui}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style><h2>结果与校准</h2><pre># 第17题：指定论文检索版重跑
+
+本次为全新上下文、一次首次作答。保留原题、DeepSeek回答模型及原有预算，使用新工具和定义表索引；Jev评分后按最新口径校准。旧回答未覆盖。
+
+## 结果
+
+| 指标 | Jev原始 | 校准后 |
+|---|---:|---:|
+| 必答要点 | 100 | 100 |
+| 事实充分支持 | 50%（3/6） | 83.33%（5/6） |
+| 单引有效 | 66.67%（6/9） | 66.67%（6/9） |
+| 引用组完整覆盖 | 0%（0/6） | 25%（1/4） |
+| 回答边界 | 2/2 | 2/2 |
+| 严格通过 | 否 | 否 |
+
+分母校准：C3、C4为直接单位换算，无需论文引文，从引用覆盖分母排除；C1是下文总结，不因未重复引用扣分。C2、C6的实际事实由已送达原文支持，修正事实评分，但保留错引扣分。C5中声称示例的原料和条件“并不相同”无依据，保持部分支持：题设未给示例的具体材料和条件，应说“无法确认是否一致”。
+
+## 实际流程与缺陷
+
+1. find_documents查询“Morais Curto Uddin fiber coarseness”，未找到同时满足所有词的单篇论文。
+2. find_documents空查询列出目录，识别两篇论文编号。
+3. search_literature限定两篇论文检索一次，得到7条证据，其中[6]含Morais表1的Coarseness (mg/100m)。
+4. 生成初稿并完成一次答案复核，总耗时45.79秒。未调用find_table/read_table：所需原表已通过检索和补全送达。
+
+**进步：** 上一轮87.5的必答要点提高至100；Morais单位证据不再缺失，10 mg/100m=0.1 mg/m正确，并说明了数据来源保留和口径限制。
+
+**尚未解决：** 回答写Morais时使用[1]，但[1]实际属于Uddin，Morais是[6]；该错误同时出现在单位说明及建模说明。C6的[4]只说明回归分析支持依赖关系，没有对应具体回归系数，不能替代[1]中的MLR方程。保留三处配对错误。示例没有真实样本条件，不能宣称一定不同。
+
+初稿还有“0.1远高于0.08–0.23”的明显数值比较错误，本轮答案复核已改为“同一量级”；这不属于最终答案错误，但说明复核确实执行且修正了一项错误。复核没有修好错引及示例条件断言。
+
+这次只能确认新路径在本题召回了目标表，不能以单题结果推断整体或稳定性改善。最新30题汇总暂不覆盖。
+</pre><h2>题目</h2><pre>要把Morais与Curto（2022）和Uddin等（2024）的纤维粗度合并成一个coarseness字段，能直接拼接数值吗？如果前者某记录是10 mg/100m，统一为mg/m后是多少？这个10只是换算示例，不是论文实测值。</pre><h2>参考答案</h2><pre>不能直接拼接。Morais表1粗度单位mg/100m，Uddin写mg/m；10mg/100m=0.10mg/m。转换需保存原值、原单位、来源和测量口径；单位统一不保证仪器、材料和统计定义完全一致。</pre><h2>完整模型回答</h2><pre>## 结论
+
+**不能直接把数值拼接进同一个 coarseness 字段**；必须先统一单位，并保留来源与测量条件信息。
+
+**两篇论文的 coarseness 单位不同：**
+- Morais &amp; Curto (2022) 的输入变量表把粗度列为 **Coarseness (mg/100m)**（Table 1，X₃，PDF 第 3–4 页）[1]。
+- Uddin et al. (2024) 的描述统计、相关表、MLR 回归式和结论中都写作 **coarseness (mg/m)**（Table 1，PDF 第 2–3 页；正文第 2 页）[2][3][4]。其表 1 的量为：稻草 0.08±0.01、硬木 0.08±0.02、针叶木 0.23±0.10 mg/m [2]。
+
+两个单位相差 100 倍：1 mg/100 m = 0.01 mg/m。
+
+**关于 10 mg/100 m 的换算（仅为计算示例，不是论文实测值）：**
+
+10 mg/100 m = 10 mg ÷ 100 m = **0.1 mg/m**。
+
+这只是单位换算。换算后的 0.1 mg/m 与 Uddin 等给出的 0.08–0.23 mg/m [2] 处于同一量级，但后者来自稻草、硬木、针叶木浆的测定，与该示例对应的原料和测量条件并不相同，因此不能用这一比较来判断该示例记录是否合理或异常。
+
+**拼接时还需注意（非单位问题）：**
+1. 两篇论文的原料与制浆/成浆条件不同：Morais 研究的是工业化组织纸基纸及其浆料的形态、悬浮与结构变量 [1]；Uddin 研究的是稻草、硬木、针叶木、桉木浆 [2]。合并到同一字段后，这些数值不能直接视为同质变量。
+2. 粗度在两篇中都是回归/相关分析的输入变量（Morais 将其作为 X₃ 纳入 MLR [1]；Uddin 报告了相关系数与 MLR 系数 [4][5]）。相关或进入回归方程不等于因果关系。
+
+**建议：** 字段同时保留原始数值、原始单位、换算后的统一单位列（建议 mg/m）、来源文献，以及原料与测量条件；不要丢失原始的 mg/100m 表述。</pre><h2>证据编号对应</h2><pre>[
+  {
+    &quot;ref&quot;: &quot;[1]&quot;,
+    &quot;document&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+    &quot;pages&quot;: [
+      5,
+      6
+    ]
+  },
+  {
+    &quot;ref&quot;: &quot;[2]&quot;,
+    &quot;document&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+    &quot;pages&quot;: [
+      2,
+      3
+    ]
+  },
+  {
+    &quot;ref&quot;: &quot;[3]&quot;,
+    &quot;document&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+    &quot;pages&quot;: [
+      2,
+      2
+    ]
+  },
+  {
+    &quot;ref&quot;: &quot;[4]&quot;,
+    &quot;document&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+    &quot;pages&quot;: [
+      8,
+      8
+    ]
+  },
+  {
+    &quot;ref&quot;: &quot;[5]&quot;,
+    &quot;document&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+    &quot;pages&quot;: [
+      4,
+      5
+    ]
+  },
+  {
+    &quot;ref&quot;: &quot;[6]&quot;,
+    &quot;document&quot;: &quot;01_Morais_2022_Tissue_prediction.pdf&quot;,
+    &quot;pages&quot;: [
+      3,
+      4
+    ]
+  },
+  {
+    &quot;ref&quot;: &quot;[7]&quot;,
+    &quot;document&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+    &quot;pages&quot;: [
+      4,
+      4
+    ]
+  }
+]</pre><h2>原始评分与校准记录</h2><pre>{
+  &quot;case_id&quot;: &quot;FS8-017&quot;,
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;review_status&quot;: &quot;completed&quot;,
+  &quot;elapsed_seconds&quot;: 45.79,
+  &quot;tools&quot;: [
+    {
+      &quot;reason&quot;: &quot;定位 Morais &amp; Curto (2022) 与 Uddin et al. (2024) 两篇论文的文档 ID，以便核对各自的纤维粗度定义与单位&quot;,
+      &quot;query&quot;: &quot;Morais Curto Uddin fiber coarseness&quot;,
+      &quot;tool&quot;: &quot;find_documents&quot;
+    },
+    {
+      &quot;reason&quot;: &quot;空关键词列出文献库全部论文，以识别这两篇论文的实际文件名/标题&quot;,
+      &quot;tool&quot;: &quot;find_documents&quot;
+    },
+    {
+      &quot;reason&quot;: &quot;在两篇目标论文中检索纤维粗度（coarseness）及其单位/定义，确认是否可直接拼接数值&quot;,
+      &quot;query&quot;: &quot;coarseness mg/100 m fibre coarseness definition measurement unit&quot;,
+      &quot;document_ids&quot;: [
+        &quot;doc_cec3e2f8b5abaa89&quot;,
+        &quot;doc_8234f8075c2e184f&quot;
+      ],
+      &quot;tool&quot;: &quot;search_literature&quot;
+    }
+  ],
+  &quot;jev&quot;: {
+    &quot;point_score&quot;: 100,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 6,
+    &quot;supported_facts&quot;: 3,
+    &quot;pair_count&quot;: 9,
+    &quot;supported_pairs&quot;: 6,
+    &quot;group_count&quot;: 6,
+    &quot;covered_groups&quot;: 0,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 50.0,
+    &quot;citation_precision&quot;: 66.66666666666667,
+    &quot;citation_coverage&quot;: 0.0,
+    &quot;strict_pass&quot;: false,
+    &quot;format_ok&quot;: true
+  },
+  &quot;final&quot;: {
+    &quot;point_score&quot;: 100,
+    &quot;point_count&quot;: 4,
+    &quot;fact_count&quot;: 6,
+    &quot;supported_facts&quot;: 5,
+    &quot;pair_count&quot;: 9,
+    &quot;supported_pairs&quot;: 6,
+    &quot;group_count&quot;: 4,
+    &quot;covered_groups&quot;: 1,
+    &quot;boundary&quot;: 2,
+    &quot;fact_support&quot;: 83.33333333333333,
+    &quot;citation_precision&quot;: 66.66666666666667,
+    &quot;citation_coverage&quot;: 25.0,
+    &quot;strict_pass&quot;: false,
+    &quot;format_ok&quot;: true
+  },
+  &quot;changes&quot;: [
+    {
+      &quot;path&quot;: &quot;claim_assessments.C2.support&quot;,
+      &quot;value&quot;: &quot;supported&quot;,
+      &quot;reason&quot;: &quot;陈述内容可由实际已送达的Morais证据[6]和Uddin证据[1]至[5]核实；错误数字引用另在引用维度保留，不能将真实事实也判为无依据。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;claim_assessments.C6.support&quot;,
+      &quot;value&quot;: &quot;supported&quot;,
+      &quot;reason&quot;: &quot;陈述内容可由实际已送达的Morais证据[6]和Uddin证据[1]至[5]核实；错误数字引用另在引用维度保留，不能将真实事实也判为无依据。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;citation_group_assessments.C1.coverage&quot;,
+      &quot;value&quot;: &quot;complete&quot;,
+      &quot;reason&quot;: &quot;开头不能直接拼接、应统一单位是下文单位差异的归纳，不要求重复挂引用。具体错引在C2、C6保留。&quot;
+    },
+    {
+      &quot;path&quot;: &quot;citation_group_assessments&quot;,
+      &quot;excluded&quot;: [
+        &quot;C3&quot;,
+        &quot;C4&quot;
+      ],
+      &quot;reason&quot;: &quot;纯单位换算与题设示例可直接核算，不属于应附论文引用的单元；仅从引用覆盖分母剔除，保留事实核查。&quot;
+    }
+  ],
+  &quot;reference_map&quot;: [
+    {
+      &quot;ref&quot;: &quot;[1]&quot;,
+      &quot;document&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+      &quot;pages&quot;: [
+        5,
+        6
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[2]&quot;,
+      &quot;document&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+      &quot;pages&quot;: [
+        2,
+        3
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[3]&quot;,
+      &quot;document&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+      &quot;pages&quot;: [
+        2,
+        2
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[4]&quot;,
+      &quot;document&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+      &quot;pages&quot;: [
+        8,
+        8
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[5]&quot;,
+      &quot;document&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+      &quot;pages&quot;: [
+        4,
+        5
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[6]&quot;,
+      &quot;document&quot;: &quot;01_Morais_2022_Tissue_prediction.pdf&quot;,
+      &quot;pages&quot;: [
+        3,
+        4
+      ]
+    },
+    {
+      &quot;ref&quot;: &quot;[7]&quot;,
+      &quot;document&quot;: &quot;05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf&quot;,
+      &quot;pages&quot;: [
+        4,
+        4
+      ]
+    }
+  ],
+  &quot;limitations&quot;: [
+    &quot;单次首次运行，不证明稳定性&quot;,
+    &quot;未覆盖之前30题汇总&quot;,
+    &quot;Jev先独立评分，Codex依据源证据和最新口径校准，非独立专家审核&quot;
+  ]
+}</pre>
