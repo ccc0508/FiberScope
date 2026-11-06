@@ -21,6 +21,22 @@ def test_native_tool_then_draft_review():
     assert len(executed)==1 and len(a.requests)==3
     assert not a.requests[-1][1]
 
+
+def test_directory_provided_without_tool_call():
+    directory=[dict(document_id='doc_123',filename='paper.pdf',title='Paper')]
+    a=Fake([decision('draft'),decision('final')]);executed=[]
+    r=AgentLoop(a,lambda *args:executed.append(args),lambda s:None,paper_directory=directory).run('q','r')
+    assert not executed and r['paper_directory']==directory
+    assert 'doc_123' in a.requests[0][0][0]['content']
+    assert 'find_documents' not in a.requests[0][1]
+    assert 'search_literature' in a.requests[0][1]
+
+
+def test_directory_redundant_call_not_executed():
+    a=Fake([decision(calls=[ToolCall('a','find_documents',dict(reason='list'))]),decision('draft'),decision('final')])
+    r=AgentLoop(a,lambda *args:(_ for _ in ()).throw(AssertionError()),lambda s:None,paper_directory=[]).run('q','r')
+    assert r['tool_calls'][0]['result']['error_code']=='directory_already_provided'
+
 def test_duplicate_and_batch_limit():
     calls=[ToolCall(str(i),'search_literature',dict(query='q',reason=str(i))) for i in range(4)]
     a=Fake([decision(calls=calls),decision('draft'),decision('final')]);executed=[]
