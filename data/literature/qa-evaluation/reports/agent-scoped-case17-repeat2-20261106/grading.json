@@ -1,0 +1,541 @@
+{
+  "case": {
+    "id": "FS8-017",
+    "group": "cross",
+    "question": "要把Morais与Curto（2022）和Uddin等（2024）的纤维粗度合并成一个coarseness字段，能直接拼接数值吗？如果前者某记录是10 mg/100m，统一为mg/m后是多少？这个10只是换算示例，不是论文实测值。",
+    "reference_answer": "不能直接拼接。Morais表1粗度单位mg/100m，Uddin写mg/m；10mg/100m=0.10mg/m。转换需保存原值、原单位、来源和测量口径；单位统一不保证仪器、材料和统计定义完全一致。",
+    "key_points": [
+      "准确对应D1 mg/100m、D5 mg/m",
+      "10mg/100m换成0.10mg/m",
+      "保留原单位、原值和文献追溯",
+      "单位统一不足以保证测量口径一致"
+    ],
+    "critical_errors": [
+      "乘以100而非除100",
+      "将示例10宣称论文实测"
+    ],
+    "evidence": [
+      {
+        "document": "D1",
+        "pages": [
+          4
+        ],
+        "locator": "表1"
+      },
+      {
+        "document": "D5",
+        "pages": [
+          1,
+          8
+        ],
+        "locator": "摘要、结论"
+      }
+    ],
+    "checks": "跨篇单位换算、数据整合",
+    "grading_notes": "允许等价表述；推断必须与论文直接结果区分。不得把参考答案措辞当成唯一正确表达。",
+    "tool_expectation": "从所涉论文取得证据；可一次检索覆盖多篇，不规定固定调用次数。需要可追溯的文献与页码/表图定位。",
+    "citation_applicable": true
+  },
+  "raw_jev": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": 1
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "**结论：不能直接把两个来源的粗度数值拼进同一 coarseness 字段。**\n\n**1. 单位不一致**\n- Morais 与 Curto（2022，`01_Morais_2022_Tissue_prediction.pdf`）在 MLR 建模的变量表中把粗度列为 **Coarseness (mg/100m)**（第 4 页 Table 1，X₃）[7]。\n- Uddin 等（2024，`05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf`）在描述统计、回归方程与结论中一律使用 **coarseness (mg/m)**（第 2–3 页 Table 1；第 5–6 页回归式；第 8 页结论）[1][2][3][4]。",
+        "citation_refs": [
+          "[7]",
+          "[1]",
+          "[2]",
+          "[3]",
+          "[4]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B013"
+      },
+      {
+        "id": "C2",
+        "text": "同一物理量以两种单位记录，若并列在同一字段中，Morais 那组数值会比 Uddin 组的数值大 100 倍，属于量纲错配。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C3",
+        "text": "**2. 换算示例（计算示例，非论文实测值）**\n10 mg/100 m = 0.1 mg/m，即 mg/100m → mg/m 需除以 100。问题中的 10 只是换算示例。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C4",
+        "text": "**3. 合并时还需注意的不一致**\n- **原料与体系不同**：Morais 等针对 tissue（卫生纸）的浆料/工业基纸体系，自变量包括长度加权长度、宽度、粗度、kinks、curl、fines、°SR、松厚度、孔隙率等 [7]；Uddin 等针对稻草、阔叶材（T. orientalis）、针叶材与桉木浆 [2][3]，且部分原料的粗度未报告（桉木为“—”）[2]。\n- **相关变量的定义不同**：Morais 等用 Kinks (%)、Curl (%) [7]；Uddin 等用 curl index 与 kink index (mm⁻¹) [2][5]。这些列同样不能直接拼接。\n- **数值量级对照**：Uddin 等 Table 1 报告 coarseness（mg/m）为 0.08 ± 0.01（稻草）、0.08 ± 0.02（阔叶材）、0.23 ± 0.10（针叶材），桉木未报告 [2]。若按除以 100 反推，相当于约 8–23 mg/100m；但这只是量级的算术对应，两文原料、浆种与测量口径未经核对一致，不能据此认为可直接比较。",
+        "citation_refs": [
+          "[7]",
+          "[2]",
+          "[3]",
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C5",
+        "text": "**4. 缺口与不确定性**\n现有证据中，两篇论文均未给出粗度的测量方法、仪器或口径说明（如是否含 fines、是否长度加权），因此无法确认二者“mg/100m”与“mg/m”记录是否来自同一定义；也就无法判断换算后数值是否具可比性。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C6",
+        "text": "**5. 建议**\n合并前先把 Morais 的 mg/100m 值除以 100 统一为 mg/m 再写入，并保留原始单位列与来源标记；跨来源的粗度数值不宜直接做统计比较或放入同一回归模型，除非另行核实其测量条件一致。",
+        "citation_refs": [],
+        "claim_type": "scope",
+        "support": "partially_supported",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C1",
+        "ref": "[7]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[3]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[4]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[7]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[3]",
+        "score": 0
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[5]",
+        "score": 1
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "missing"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "missing"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C5",
+        "coverage": "missing"
+      },
+      {
+        "claim_id": "C6",
+        "coverage": "missing"
+      }
+    ],
+    "answerability_score": 2,
+    "reference_concern": false,
+    "decisions": {
+      "boundary": "appropriate",
+      "reference_check": "sound",
+      "point_K1": "complete",
+      "point_K2": "complete",
+      "point_K3": "complete",
+      "point_K4": "complete",
+      "kind_C1": "fact",
+      "support_C1": "supported",
+      "basis_C1": "B013",
+      "group_C1": "complete",
+      "citation_C1_1": "supported",
+      "citation_C1_2": "supported",
+      "citation_C1_3": "supported",
+      "citation_C1_4": "supported",
+      "citation_C1_5": "supported",
+      "kind_C2": "fact",
+      "support_C2": "supported",
+      "basis_C2": "NONE",
+      "group_C2": "missing",
+      "kind_C3": "fact",
+      "support_C3": "supported",
+      "basis_C3": "NONE",
+      "group_C3": "missing",
+      "kind_C4": "fact",
+      "support_C4": "partially_supported",
+      "basis_C4": "NONE",
+      "group_C4": "partial",
+      "citation_C4_1": "supported",
+      "citation_C4_2": "supported",
+      "citation_C4_3": "unsupported",
+      "citation_C4_4": "supported",
+      "kind_C5": "fact",
+      "support_C5": "partially_supported",
+      "basis_C5": "NONE",
+      "group_C5": "missing",
+      "kind_C6": "scope",
+      "support_C6": "partially_supported",
+      "basis_C6": "NONE",
+      "group_C6": "missing"
+    }
+  },
+  "calibrated": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": 1
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "**结论：不能直接把两个来源的粗度数值拼进同一 coarseness 字段。**\n\n**1. 单位不一致**\n- Morais 与 Curto（2022，`01_Morais_2022_Tissue_prediction.pdf`）在 MLR 建模的变量表中把粗度列为 **Coarseness (mg/100m)**（第 4 页 Table 1，X₃）[7]。\n- Uddin 等（2024，`05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf`）在描述统计、回归方程与结论中一律使用 **coarseness (mg/m)**（第 2–3 页 Table 1；第 5–6 页回归式；第 8 页结论）[1][2][3][4]。",
+        "citation_refs": [
+          "[7]",
+          "[1]",
+          "[2]",
+          "[3]",
+          "[4]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B013"
+      },
+      {
+        "id": "C2",
+        "text": "同一物理量以两种单位记录，若并列在同一字段中，Morais 那组数值会比 Uddin 组的数值大 100 倍，属于量纲错配。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C3",
+        "text": "**2. 换算示例（计算示例，非论文实测值）**\n10 mg/100 m = 0.1 mg/m，即 mg/100m → mg/m 需除以 100。问题中的 10 只是换算示例。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C4",
+        "text": "**3. 合并时还需注意的不一致**\n- **原料与体系不同**：Morais 等针对 tissue（卫生纸）的浆料/工业基纸体系，自变量包括长度加权长度、宽度、粗度、kinks、curl、fines、°SR、松厚度、孔隙率等 [7]；Uddin 等针对稻草、阔叶材（T. orientalis）、针叶材与桉木浆 [2][3]，且部分原料的粗度未报告（桉木为“—”）[2]。\n- **相关变量的定义不同**：Morais 等用 Kinks (%)、Curl (%) [7]；Uddin 等用 curl index 与 kink index (mm⁻¹) [2][5]。这些列同样不能直接拼接。\n- **数值量级对照**：Uddin 等 Table 1 报告 coarseness（mg/m）为 0.08 ± 0.01（稻草）、0.08 ± 0.02（阔叶材）、0.23 ± 0.10（针叶材），桉木未报告 [2]。若按除以 100 反推，相当于约 8–23 mg/100m；但这只是量级的算术对应，两文原料、浆种与测量口径未经核对一致，不能据此认为可直接比较。",
+        "citation_refs": [
+          "[7]",
+          "[2]",
+          "[3]",
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C5",
+        "text": "**4. 缺口与不确定性**\n现有证据中，两篇论文均未给出粗度的测量方法、仪器或口径说明（如是否含 fines、是否长度加权），因此无法确认二者“mg/100m”与“mg/m”记录是否来自同一定义；也就无法判断换算后数值是否具可比性。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C6",
+        "text": "**5. 建议**\n合并前先把 Morais 的 mg/100m 值除以 100 统一为 mg/m 再写入，并保留原始单位列与来源标记；跨来源的粗度数值不宜直接做统计比较或放入同一回归模型，除非另行核实其测量条件一致。",
+        "citation_refs": [],
+        "claim_type": "scope",
+        "support": "partially_supported",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C1",
+        "ref": "[7]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[3]",
+        "score": 1
+      },
+      {
+        "claim_id": "C1",
+        "ref": "[4]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[7]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[3]",
+        "score": 0
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[5]",
+        "score": 1
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C6",
+        "coverage": "missing"
+      }
+    ],
+    "answerability_score": 2,
+    "reference_concern": false,
+    "decisions": {
+      "boundary": "appropriate",
+      "reference_check": "sound",
+      "point_K1": "complete",
+      "point_K2": "complete",
+      "point_K3": "complete",
+      "point_K4": "complete",
+      "kind_C1": "fact",
+      "support_C1": "supported",
+      "basis_C1": "B013",
+      "group_C1": "complete",
+      "citation_C1_1": "supported",
+      "citation_C1_2": "supported",
+      "citation_C1_3": "supported",
+      "citation_C1_4": "supported",
+      "citation_C1_5": "supported",
+      "kind_C2": "fact",
+      "support_C2": "supported",
+      "basis_C2": "NONE",
+      "group_C2": "missing",
+      "kind_C3": "fact",
+      "support_C3": "supported",
+      "basis_C3": "NONE",
+      "group_C3": "missing",
+      "kind_C4": "fact",
+      "support_C4": "partially_supported",
+      "basis_C4": "NONE",
+      "group_C4": "partial",
+      "citation_C4_1": "supported",
+      "citation_C4_2": "supported",
+      "citation_C4_3": "unsupported",
+      "citation_C4_4": "supported",
+      "kind_C5": "fact",
+      "support_C5": "partially_supported",
+      "basis_C5": "NONE",
+      "group_C5": "missing",
+      "kind_C6": "scope",
+      "support_C6": "partially_supported",
+      "basis_C6": "NONE",
+      "group_C6": "missing"
+    }
+  },
+  "summary": {
+    "case_id": "FS8-017",
+    "run_id": "agent-scoped-case17-repeat2-20261106",
+    "elapsed_seconds": 48.009,
+    "tools": [
+      {
+        "reason": "需要定位这两篇论文",
+        "query": "Morais Curto 2022 coarseness Uddin 2024 fiber",
+        "tool": "find_documents"
+      },
+      {
+        "reason": "列出库中论文以确认两篇文档",
+        "query": "",
+        "tool": "find_documents"
+      },
+      {
+        "reason": "查找两篇论文中纤维粗度（coarseness）的单位与测量方法描述",
+        "query": "coarseness unit mg/100m fiber coarseness measurement",
+        "document_ids": [
+          "doc_cec3e2f8b5abaa89",
+          "doc_8234f8075c2e184f"
+        ],
+        "tool": "search_literature"
+      }
+    ],
+    "raw_metrics": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 5,
+      "supported_facts": 3,
+      "pair_count": 9,
+      "supported_pairs": 8,
+      "group_count": 5,
+      "covered_groups": 1,
+      "boundary": 2,
+      "fact_support": 60.0,
+      "citation_precision": 88.88888888888889,
+      "citation_coverage": 20.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "final_metrics": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 5,
+      "supported_facts": 5,
+      "pair_count": 9,
+      "supported_pairs": 8,
+      "group_count": 2,
+      "covered_groups": 2,
+      "boundary": 2,
+      "fact_support": 100.0,
+      "citation_precision": 88.88888888888889,
+      "citation_coverage": 100.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "changes": [
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "supported",
+        "reason": "已提供原文[7]、[2]、[5]支持材料、指标单位和数值；0.08–0.23 mg/m反向换算为8–23 mg/100m正确。按除以100反推虽不够直白，不将正确数值算作换算错误。"
+      },
+      {
+        "path": "claim_assessments.C5.support",
+        "value": "supported",
+        "reason": "明确限定现有证据范围，实际送达片段未含测量方法或仪器。按最新口径允许基于当前上下文说明无法确认，不解释成断言全文不存在。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "complete",
+        "reason": "联合来源[7][2][5]完整支持该段事实；[3]冗余错配另在单引有效率保留，不要求每个来源单独证明整个段落。"
+      },
+      {
+        "path": "citation_group_assessments",
+        "excluded": [
+          "C2",
+          "C3",
+          "C5"
+        ],
+        "reason": "C2/C3是依据已给单位的算术说明；C5是当前上下文的证据缺口说明，不要求另附论文证明缺失。保留事实核查，只从需附论文证据分母剔除。"
+      }
+    ],
+    "notes": "C2在同一物理量以两种单位记录的语境中解释100倍换算尺度，接受该含义；若解释成两篇论文实际样本值固定相差100倍则不成立。推荐更明确地写同一粗度值的两种单位表示相差100倍，不额外扣分。",
+    "reference_map": [
+      {
+        "ref": "[1]",
+        "document": "05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf",
+        "pages": [
+          5,
+          6
+        ]
+      },
+      {
+        "ref": "[2]",
+        "document": "05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf",
+        "pages": [
+          2,
+          3
+        ]
+      },
+      {
+        "ref": "[3]",
+        "document": "05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf",
+        "pages": [
+          2,
+          2
+        ]
+      },
+      {
+        "ref": "[4]",
+        "document": "05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf",
+        "pages": [
+          8,
+          8
+        ]
+      },
+      {
+        "ref": "[5]",
+        "document": "05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf",
+        "pages": [
+          4,
+          5
+        ]
+      },
+      {
+        "ref": "[6]",
+        "document": "05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf",
+        "pages": [
+          5,
+          5
+        ]
+      },
+      {
+        "ref": "[7]",
+        "document": "01_Morais_2022_Tissue_prediction.pdf",
+        "pages": [
+          3,
+          4
+        ]
+      }
+    ],
+    "result_sha256": "7f620428c3dcbab482eb5565ae817e176ae4a5fa5f62e35140e8583f77b01966"
+  }
+}
