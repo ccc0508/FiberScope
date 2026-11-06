@@ -20,6 +20,7 @@ RERUNS = {
 
 # Each audit applies to the selected answer, never to another run's claim IDs.
 AUDIT = {
+    20: ('修正预设标准过严：来源追溯是可选建议，未提及不扣要点分；其余事实和引用评分保留。', [('key_point_scores.K4', 1, '题目要求保留研究区别，已说明条件、单位和目标；来源追溯不是论文明确要求或题目必答。')]),
     1: ('维持已确认满分；局部证据范围限定和总结不重复引用均已接受。', []),
     2: ('接受C3明确限定于本次检索材料的不确定性说明；仍保留C4把两位作者写成四位作者的实质错误。', [
         ('claim_assessments.C3.support', 'supported', '该段明确说现有收录材料、本次检索范围；不将未取得补充材料解释成断言论文没有该材料。其余实验输入与验证限制由[2][11][13]支持。'),
@@ -94,6 +95,8 @@ def main():
     audit_rows = []
     for number, row in enumerate(rows, 1):
         tid = row['case']['id']
+        if tid == 'FS8-020':
+            row['case'] = next(json.loads(line) for line in (ROOT/'fiberscope-eval-8papers-v1/gold.jsonl').read_text('utf-8').splitlines() if json.loads(line)['id'] == tid)
         source = RERUNS.get(number, ORIGINAL.name)
         paths = [ORIGINAL / 'results.json']
         if number in RERUNS:
@@ -147,7 +150,7 @@ def main():
         'latest': summary(final_rows, 'final'),
         'groups': {g: summary([r for r in final_rows if r['group'] == g], 'final') for g in ['single', 'cross', 'no_paper']},
         'strict_pass_cases': [r['id'] for r in final_rows if r['final']['strict_pass']],
-        'limitations': ['前12题及第15—18题按本轮口径复查，其余保留此前校准。', '这不是同一版本的一次完整运行，不可将变化全部归因于算法优化。', '历史Jev评分未重跑；最终分为基于既有来源的Codex校准，不等同独立专家审核。', '第4题采用原图重跑，不采用后续分辨率实验或挑最高分答案。', '不混算不同批次Token、费用与时延。', '事实核查单位为冻结语义段落组，不是逐句正确率。'],
+        'limitations': ['前12题及第15—18题按本轮口径复查；第20题修正来源追溯非强制的评分标准，其余保留此前校准。', '这不是同一版本的一次完整运行，不可将变化全部归因于算法优化。', '历史Jev评分未重跑；最终分为基于既有来源的Codex校准，不等同独立专家审核。', '第4题采用原图重跑，不采用后续分辨率实验或挑最高分答案。', '不混算不同批次Token、费用与时延。', '事实核查单位为冻结语义段落组，不是逐句正确率。'],
     }
     OUT.mkdir(parents=True, exist_ok=True)
     write(OUT / 'results.json', rows)
