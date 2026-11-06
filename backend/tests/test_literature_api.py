@@ -39,7 +39,7 @@ def configured(tmp_path):
     with sqlite3.connect(tmp_path / 'metadata.sqlite3') as conn:
         conn.execute('CREATE TABLE documents (id TEXT, filename TEXT, file_path TEXT, status TEXT, page_count INTEGER, chunk_count INTEGER)')
         conn.execute("INSERT INTO documents VALUES ('doc1','paper.pdf','papers/paper.pdf','completed',14,44)")
-    return literature.LiteratureSettings(_env_file=None, enabled=True, data_dir=tmp_path)
+    return literature.LiteratureSettings(_env_file=None, enabled=True, data_dir=tmp_path, engine='legacy', timeout_seconds=90)
 
 
 def client_for(config):
