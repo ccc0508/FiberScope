@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import EvidenceMath from './EvidenceMath.vue';
 
 const props = defineProps<{ text: string }>();
 // Parse table structure only. Never insert source HTML into the live document:
@@ -29,12 +30,12 @@ const parts = computed(() => props.text.split(/(<table\b[^>]*>[\s\S]*?<\/table\s
           <tbody>
             <tr v-for="(row, rowIndex) in part.rows" :key="rowIndex">
               <component :is="cell.header ? 'th' : 'td'" v-for="(cell, cellIndex) in row" :key="cellIndex"
-                :colspan="cell.colspan" :rowspan="cell.rowspan">{{ cell.text }}</component>
+                :colspan="cell.colspan" :rowspan="cell.rowspan"><EvidenceMath :text="cell.text" /></component>
             </tr>
           </tbody>
         </table>
       </div>
-      <div v-else class="source-text">{{ part.text }}</div>
+      <div v-else class="source-text"><EvidenceMath :text="part.text" /></div>
     </template>
   </div>
 </template>
