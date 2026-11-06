@@ -19,4 +19,4 @@
 
 表6沿用原文SR(mL)，不是捏造单位，但应明确单位疑点；“打浆程度相同”按后文是相同PFI转数，而非证明实测°SR相同。
 
-answer.md为完整新回答，draft.md为初稿，grading.json保存原始Jev、校准及证据映射。本次单独保存，尚未覆盖最新30题汇总；原始记录保持不变。
+answer.md为完整新回答，draft.md为初稿，grading.json保存原始Jev、校准及证据映射。本次独立报告保留，结果已纳入agent-eightpapers-latest-20261106最新30题汇总；原始30题报告保持不变。

@@ -378,5 +378,6 @@
   "remaining_issue": "C4引用[5]只有表9的1.1/1.12/1.21，没有作者差异不显著的解释或检验，不能仅由接近的数值推出；全篇未报道的范围判断也未由所引片段完整确立。保留部分支持/部分覆盖。",
   "caveat": "打浆程度相同应按后文理解为PFI转数相同，不代表实测°SR相等；原表SR(mL)单位疑点仍存在，跨单位量级比较并非否定1000°SR误读的有效依据，核心判断依据为表1命名。",
   "result_sha256": "546a43b8c670beee6a448cf2daae01b8b0ef9492884c81ccc07bf8cac7e0da3c",
-  "merged_into_latest_summary": false
+  "merged_into_latest_summary": true,
+  "scoring_policy_version": "20261106-contextual-citations"
 }

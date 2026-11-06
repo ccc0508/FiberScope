@@ -171,12 +171,16 @@
   },
   {
     "case_id": "FS8-015",
-    "source_run": "agent-eightpapers-20261105",
-    "answer_sha256": "694a09e126b82666d47f7189f62baa7d2a6efc9c942e81bc44413a9f7c31c55b",
+    "source_run": "agent-current-case15-20261106",
+    "answer_sha256": "9e5912ff8d7714e964a935b02e996114369900bc0d8cc6ab99ba0cf3b1dadc0c",
     "source_artifacts": [
       {
-        "path": "data/literature/qa-evaluation/reports/agent-eightpapers-20261105/results.json",
-        "sha256": "ca59adbd1ff91894f329e1e2d077ad996c0da35e1f93d55b76eee5b0a8a77c6f"
+        "path": "data/literature/qa-evaluation/reports/agent-current-case15-20261106/grading.json",
+        "sha256": "815171c5ecb575d6f8ff0f36708b89cd02631c386be04fe8d5fc2bbe41692a81"
+      },
+      {
+        "path": "data/literature/qa-evaluation/reports/agent-current-case15-20261106/answer.md",
+        "sha256": "a9065ccdac6fd1b448062bf42ab711ccd8941e9119b489ce4adcb4150c1dbd40"
       }
     ]
   },
