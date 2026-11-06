@@ -27,6 +27,12 @@ def main():
     from literature_rag.domain.errors import ProviderError, InfrastructureError
 
     body = json.loads(sys.stdin.read())
+    if body.get('tool_call', {}).get('tool') in ('describe_experiment_data', 'query_experiment_data'):
+        from app.experiment_sql import execute
+        from literature_rag.application.tools import ToolTraceStore
+        store = ToolTraceStore(Path(__file__).resolve().parents[1]/'.rag-data/tool-traces.sqlite3')
+        print(json.dumps(execute(body['tool_call'], body['run_id'], store), ensure_ascii=False))
+        return
     root = Path(body['data_dir']).resolve()
     if not (root / 'chroma/chroma.sqlite3').is_file():
         raise FileNotFoundError('missing vector index')
