@@ -1,0 +1,964 @@
+{
+  "case": {
+    "id": "FS8-024",
+    "group": "cross",
+    "question": "准备合并Li等（2023）的回收纸模型、Uddin等（2024）的纸浆研究和Ayaliew等（2026）的复合材料论文。三个都提到tensile，是否可以建一个没有单位和来源的strength列直接训练？请说明至少三类应保留的差异。",
+    "reference_answer": "不可以。Li的链条包括损伤D及T₀基准；Uddin明确抗张指数Nm/g并另有撕裂/耐破指数；Ayaliew是聚合物复合材料抗拉强度MPa且数据合成。应保留材料/对象、目标定义与单位、实验处理、实测或合成来源以及样品/论文标识。不能只改字段名就把抗张指数换成MPa，也不能把损伤D当强度。",
+    "key_points": [
+      "D3损伤D和T₀关系不能混同强度",
+      "D5抗张指数Nm/g与D4 MPa不等价",
+      "D4对象为聚合物复合材料且合成数据",
+      "至少保留目标单位、材料条件、数据来源/样品标识"
+    ],
+    "critical_errors": [
+      "直接拼接无单位strength",
+      "把Nm/g无条件换成MPa"
+    ],
+    "evidence": [
+      {
+        "document": "D3",
+        "pages": [
+          2
+        ],
+        "locator": "摘要"
+      },
+      {
+        "document": "D5",
+        "pages": [
+          1,
+          8
+        ],
+        "locator": "摘要、结论"
+      },
+      {
+        "document": "D4",
+        "pages": [
+          4,
+          13
+        ],
+        "locator": "数据准备、讨论"
+      }
+    ],
+    "checks": "三篇整合、指标口径、来源",
+    "grading_notes": "允许等价表述；推断必须与论文直接结果区分。不得把参考答案措辞当成唯一正确表达。",
+    "tool_expectation": "从所涉论文取得证据；可一次检索覆盖多篇，不规定固定调用次数。需要可追溯的文献与页码/表图定位。",
+    "citation_applicable": true
+  },
+  "answer": "## 结论\n\n**不建议**把三篇的 tensile 结果并成一列无单位、无来源的 `strength` 直接训练。\n\n理由不在于字面上都叫 tensile；问题在于三篇的 tensile 在物理量、量纲、归一化方式和预测对象上并不是同一个可观测变量。Ayaliew 等（2026）的目标量是**合成数据**中按参数化规则生成的 tensile strength（MPa）[7]；把它和两个纸张/纸浆数据集混在同一列里，模型会同时拟合\"数据生成规则、测试方法和材料体系\"的混合信号，而非材料强度。\n\n## 三篇 tensile 实际指什么（分别标明来源）\n\n- **Li 等（2023，回收纤维纸页抗张性能预测）**：研究对象是**纸页（paper sheet）的抗张强度**，并与单纤维强度区分：文中明确\"zero-span tensile strength 用来代表单纤维强度\"，而回收对纸页 tensile strength 的影响远大于对单纤维强度的影响[1]。定量指标是**抗张指数 tensile index（Nm/g）**，例如芦苇浆未回收为 28.14、第 4 次回收为 20.22 Nm/g；同表另列 zero-span tensile strength（kg/15 mm）和 zero-span tensile index（Nm/g）[1]。建模层面是\"损伤指数 D → T = T₀(1−D)\"，用 WRV 与 RBA 序列训练曲线拟合模型和 LSTM[3]，因此它的 tensile 是**基准值 T₀ 经回收损伤折减后的量**，而非直接回归的绝对强度。\n- **Uddin 等（2024，纤维质量参数与纸浆性能）**：目标量是**抗张指数 tensile index（Nm/g）**，以细组分含量、纤维长宽、外部细纤维化度、卷曲/扭结指数、粗度为自变量做 MLR 与 ANN[2][4]。实测均值约 46.9–59.6 Nm/g（稻草、阔叶木、针叶木、桉木）[5]。原文结论是这些原料间的 tensile index **无显著差异（p = .327）**，而撕裂指数差异显著[5]；这提示跨原料合并时需谨慎，不能靠去掉来源标签来回避。\n- **Ayaliew 等（2026，纤维增强复合材料）**：目标量是 **tensile strength（MPa）**，输入为纤维类型、树脂类型、密度、层数、固化温度、纤维体积分数、孔隙率[7]。关键限制：数据为 **Kaggle 的 10,000 条合成数据**，\"按既有复合材料力学原理与文献实验趋势的参数化关系构造\"[7]，并非实测结果；文中报告的层数 r = 0.38、纤维体积分数 r = 0.20、孔隙率 r = −0.28 等相关系数，也只基于这套合成数据[6]，属相关而非因果。\n\n## 至少三类必须保留的差异\n\n1. **量纲与归一化方式（指数 vs 应力）**：纸张两篇为抗张指数 Nm/g（按定量/克重归一化），复合材料为 MPa（截面应力），两者量级、分布与可加性不同[1][2][7]。去掉单位标签只是掩盖差异。\n2. **变量与对象层级（纸页 vs 单纤维 vs 层合板）**：Li 同时出现纸页 tensile strength、zero-span tensile strength 与 tensile index 三种量[1]；Uddin 为纸浆/手抄片层面的指数[2][5]；Ayaliew 为纤维增强聚合物层合板的整体强度[7]。放在同一列会把对应不同尺度失效机制的量混在一起。\n3. **测量方法与条件（测试方向、定量、浆种/工艺）**：纸张强度依赖定量（Li 表中 basis weight 由 73.57 降至 63.69 g/m²，与 tensile index 同步下降[1]）和打浆/回收次数（原文称未精浆的下降小于精浆、高得率浆小于化学浆[1]）；复合材料强度则受铺层层数、树脂类型、固化温度与孔隙率支配[7]。这些条件若不写入，结果将无法解释或外推。\n4. **证据性质（实测 vs 合成/推算）**：Li、Uddin 的数据为实验测量[1][5]，Ayaliew 的目标值来自合成生成[7]，Li 的预测值由损伤指数公式推算[3]。混训时模型会无差别拟合实测噪声与生成公式。\n5. **（可选的第四类）误差尺度与适用域不同**：Uddin 报告的是原料间 p 值与分原料的 ANN 精度（阔叶木仅撕裂指数可有效预测 R²≈.94，针叶木抗张指数 R²≈.99）[4]；Li 报告的是 RMSE（估计 0.0278、预测 0.1667）[3]；这些误差的尺度和含义不可互换。\n\n## 可操作的替代做法\n\n保留**来源/体系维度加原始量纲列**：至少设 `target_name`（tensile_index / tensile_strength / zero_span）、`unit`（Nm/g / MPa / kg per 15 mm）、`specimen_level`（sheet / pulp handsheet / laminate）、`source`（Li2023 / Uddin2024 / Ayaliew2026）、`data_origin`（measured / synthetic / derived）、`test_condition`（定量、打浆/回收次数、测试方向、铺层等）。若确需统一目标，只能选一个同量纲子集（如仅 Li 与 Uddin 的 Nm/g 抗张指数），并另行核对定量与打浆条件是否可比，再分别建模或做多任务学习；不要直接把 Ayaliew 的 MPa 折算进来。\n\n**未解决的信息缺口**：本次证据未给出 Li 与 Uddin 的具体测试标准编号与测试方向（纵/横向），也未给出 Ayaliew 合成数据的 tensile strength 数值范围，因此三者数值区间是否重叠无法判断；上述结论不依赖这一点。MPa 与 Nm/g 之间即使形式上可借助密度/定量换算，文献中也未提供共同标定，故不作此假设。",
+  "draft": "## 结论\n\n**不建议**把三篇的 tensile 结果并成一列无单位、无来源的 `strength` 来直接训练。\n\n主要理由不是\"字面上都叫 tensile\"，而是三篇论文中的\"tensile\"从物理量、量纲、归一化方式到研究/预测对象都不是同一个可观测变量；而且 Ayaliew 等（2026）的目标量本身是**合成数据**里按参数化规则生成的 tensile strength（MPa）[7]，把它与两个实测纸张/纸浆数据集混在一列，会让模型学到\"数据生成规则 + 测试方法 + 材料体系\"的混合信号，而不是材料强度。\n\n## 三篇 tensile 实际指什么（各自来源分别标明）\n\n- **Li 等（2023，回收纤维纸页抗张强度预测）**：预测对象是**纸页（paper sheet）的抗张强度**，并与单纤维强度区分——文中明确\"zero-span tensile strength 用来代表单纤维强度\"，而纸页 tensile strength 受回收影响远大于单纤维强度[1]。定量列用的是**抗张指数 tensile index（Nm/g）**，例如芦苇浆未回收 28.14、第4次回收 20.22 Nm/g；同表还有 zero-span tensile strength（kg/15 mm）与 zero-span tensile index（Nm/g）[1]。模型层面是\"损伤指数 D → T = T₀(1−D)\"，用 WRV 与 RBA 序列训练曲线拟合/LSTM[3]，即它的 tensile 是**基准值 T₀ 经回收损伤折减后的相对量**，并非直接回归的绝对强度。\n- **Uddin 等（2024，纤维质量参数与纸浆性能）**：目标量是**抗张指数 tensile index（Nm/g）**，以细组分含量、纤维长宽、外部细纤维化度、卷曲/扭结指数、粗度为自变量做 MLR 与 ANN[2][4]。实测均值约 46.9–59.6 Nm/g（稻草、阔叶木、针叶木、桉木）[5]。注意其结论是这些原料间的 tensile index **无显著差异（p = .327）**，而撕裂指数差异显著[5]——这是跨原料可合并性的一个来自原文的反证据，不能靠合并成无来源列绕开。\n- **Ayaliew 等（2026，纤维增强复合材料）**：目标量是 **tensile strength（MPa）**，输入为纤维类型、树脂类型、密度、层数、固化温度、纤维体积分数、孔隙率[7]。关键限制：数据是 **Kaggle 的 10,000 条合成数据**，\"按既有复合材料力学原理与文献实验趋势的参数化关系构造\"[7]，不是这批论文的实测结果；文中报告的层数 r = 0.38、纤维体积分数 r = 0.20、孔隙率 r = −0.28 等相关性也是在这套合成数据上的[6]。\n\n## 至少三类必须保留的差异\n\n1. **量纲与归一化方式（指数 vs 应力）**：纸张两篇是抗张指数 Nm/g（单位定量/单位克重归一化），复合材料是 MPa（真实截面应力），量级、分布与可加性完全不同[1][2][7]。消除单位标签只是把差异藏起来，不会让它们可比。\n2. **变量/预测对象层级（纸页 vs 单纤维 vs 层合板）**：Li 同时出现纸页 tensile strength、zero-span tensile strength 与 tensile index 三种量[1]；Uddin 是纸浆/手抄片层面的指数[2][5]；Ayaliew 是纤维增强聚合物层合板整体强度[7]。同一列会混入不同物理长度的失效机制。\n3. **测量方法与条件（测试方向、定量、浆种/工艺）**：纸张强度依赖定量（Li 表中 basis weight 73.57→63.69 g/m² 与 tensile index 同步变化[1]）、打浆/回收次数（精浆损失大于未精浆、化学浆损失大于高得率浆[1]），且纸页有纵/横向各向异性；复合材料则受铺层层数、树脂类型、固化温度与孔隙率支配[7]。这些条件不写进列，就无法解释或外推。\n4. **证据性质（实测 vs 合成/推算）**：Li、Uddin 的数据来自实验测量[1][5]，Ayaliew 的目标值来自合成生成[7]；Li 的预测值还是由损伤指数公式推算[3]。混训时模型会无差别拟合\"实测噪声\"和\"生成公式\"。\n5. **（可选第四类）适用范围与不确定性口径不同**：Uddin 的原料间 p 值与 ANN 分原料精度（如阔叶木仅撕裂指数可预测 R²≈.94，针叶木抗张指数 R²≈.99）[4]，Li 报的是 RMSE（拟合 0.0278、预测 0.1667）[3]，Ayaliew 报的是其在合成测试集上的回归指标——误差尺度与含义不可互换。\n\n## 可操作的替代做法\n\n保留**一个来源/体系维度 + 原始量纲列**：至少设 `target_name`（tensile_index / tensile_strength / zero_span）、`unit`（Nm/g / MPa / kg per 15 mm）、`specimen_level`（sheet / pulp handsheet / laminate）、`source`（Li2023 / Uddin2024 / Ayaliew2026）、`data_origin`（measured / synthetic / derived）、`test_condition`（定量、打浆/回收次数、测试方向、铺层等）。若确需统一目标，只能选一个同量纲子集（例如仅 Li 与 Uddin 的 Nm/g 抗张指数，并额外核对定量与打浆条件是否可比）分别建模或做域自适应/多任务学习，而不要把 Ayaliew 的 MPa 直接折算进去；MPa 与 Nm/g 之间即使形式上可用密度/定量换算，本文献中也**未给出**可用的换算或共同标定，我不做此假设。\n\n**未解决的信息缺口**：本次检索到的片段未给出 Li 与 Uddin 的具体测试标准编号与测试方向（纵/横向），也未给出 Ayaliew 合成数据的 tensile strength 数值范围，因此\"三者数值区间是否重叠\"无法据现有证据判断；上述结论不依赖这一点。",
+  "raw_jev": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": 1
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "## 结论\n\n**不建议**把三篇的 tensile 结果并成一列无单位、无来源的 `strength` 直接训练。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C2",
+        "text": "理由不在于字面上都叫 tensile；问题在于三篇的 tensile 在物理量、量纲、归一化方式和预测对象上并不是同一个可观测变量。Ayaliew 等（2026）的目标量是**合成数据**中按参数化规则生成的 tensile strength（MPa）[7]；把它和两个纸张/纸浆数据集混在同一列里，模型会同时拟合\"数据生成规则、测试方法和材料体系\"的混合信号，而非材料强度。",
+        "citation_refs": [
+          "[7]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "B035"
+      },
+      {
+        "id": "C3",
+        "text": "## 三篇 tensile 实际指什么（分别标明来源）\n\n- **Li 等（2023，回收纤维纸页抗张性能预测）**：研究对象是**纸页（paper sheet）的抗张强度**，并与单纤维强度区分：文中明确\"zero-span tensile strength 用来代表单纤维强度\"，而回收对纸页 tensile strength 的影响远大于对单纤维强度的影响[1]。定量指标是**抗张指数 tensile index（Nm/g）**，例如芦苇浆未回收为 28.14、第 4 次回收为 20.22 Nm/g；同表另列 zero-span tensile strength（kg/15 mm）和 zero-span tensile index（Nm/g）[1]。建模层面是\"损伤指数 D → T = T₀(1−D)\"，用 WRV 与 RBA 序列训练曲线拟合模型和 LSTM[3]，因此它的 tensile 是**基准值 T₀ 经回收损伤折减后的量**，而非直接回归的绝对强度。\n- **Uddin 等（2024，纤维质量参数与纸浆性能）**：目标量是**抗张指数 tensile index（Nm/g）**，以细组分含量、纤维长宽、外部细纤维化度、卷曲/扭结指数、粗度为自变量做 MLR 与 ANN[2][4]。实测均值约 46.9–59.6 Nm/g（稻草、阔叶木、针叶木、桉木）[5]。原文结论是这些原料间的 tensile index **无显著差异（p = .327）**，而撕裂指数差异显著[5]；这提示跨原料合并时需谨慎，不能靠去掉来源标签来回避。\n- **Ayaliew 等（2026，纤维增强复合材料）**：目标量是 **tensile strength（MPa）**，输入为纤维类型、树脂类型、密度、层数、固化温度、纤维体积分数、孔隙率[7]。关键限制：数据为 **Kaggle 的 10,000 条合成数据**，\"按既有复合材料力学原理与文献实验趋势的参数化关系构造\"[7]，并非实测结果；文中报告的层数 r = 0.38、纤维体积分数 r = 0.20、孔隙率 r = −0.28 等相关系数，也只基于这套合成数据[6]，属相关而非因果。",
+        "citation_refs": [
+          "[1]",
+          "[3]",
+          "[2]",
+          "[4]",
+          "[5]",
+          "[7]",
+          "[6]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C4",
+        "text": "## 至少三类必须保留的差异\n\n1. **量纲与归一化方式（指数 vs 应力）**：纸张两篇为抗张指数 Nm/g（按定量/克重归一化），复合材料为 MPa（截面应力），两者量级、分布与可加性不同[1][2][7]。去掉单位标签只是掩盖差异。\n2. **变量与对象层级（纸页 vs 单纤维 vs 层合板）**：Li 同时出现纸页 tensile strength、zero-span tensile strength 与 tensile index 三种量[1]；Uddin 为纸浆/手抄片层面的指数[2][5]；Ayaliew 为纤维增强聚合物层合板的整体强度[7]。放在同一列会把对应不同尺度失效机制的量混在一起。\n3. **测量方法与条件（测试方向、定量、浆种/工艺）**：纸张强度依赖定量（Li 表中 basis weight 由 73.57 降至 63.69 g/m²，与 tensile index 同步下降[1]）和打浆/回收次数（原文称未精浆的下降小于精浆、高得率浆小于化学浆[1]）；复合材料强度则受铺层层数、树脂类型、固化温度与孔隙率支配[7]。这些条件若不写入，结果将无法解释或外推。\n4. **证据性质（实测 vs 合成/推算）**：Li、Uddin 的数据为实验测量[1][5]，Ayaliew 的目标值来自合成生成[7]，Li 的预测值由损伤指数公式推算[3]。混训时模型会无差别拟合实测噪声与生成公式。\n5. **（可选的第四类）误差尺度与适用域不同**：Uddin 报告的是原料间 p 值与分原料的 ANN 精度（阔叶木仅撕裂指数可有效预测 R²≈.94，针叶木抗张指数 R²≈.99）[4]；Li 报告的是 RMSE（估计 0.0278、预测 0.1667）[3]；这些误差的尺度和含义不可互换。",
+        "citation_refs": [
+          "[1]",
+          "[2]",
+          "[7]",
+          "[5]",
+          "[3]",
+          "[4]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C5",
+        "text": "## 可操作的替代做法\n\n保留**来源/体系维度加原始量纲列**：至少设 `target_name`（tensile_index / tensile_strength / zero_span）、`unit`（Nm/g / MPa / kg per 15 mm）、`specimen_level`（sheet / pulp handsheet / laminate）、`source`（Li2023 / Uddin2024 / Ayaliew2026）、`data_origin`（measured / synthetic / derived）、`test_condition`（定量、打浆/回收次数、测试方向、铺层等）。若确需统一目标，只能选一个同量纲子集（如仅 Li 与 Uddin 的 Nm/g 抗张指数），并另行核对定量与打浆条件是否可比，再分别建模或做多任务学习；不要直接把 Ayaliew 的 MPa 折算进来。",
+        "citation_refs": [],
+        "claim_type": "scope",
+        "support": "partially_supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C6",
+        "text": "**未解决的信息缺口**：本次证据未给出 Li 与 Uddin 的具体测试标准编号与测试方向（纵/横向），也未给出 Ayaliew 合成数据的 tensile strength 数值范围，因此三者数值区间是否重叠无法判断；上述结论不依赖这一点。MPa 与 Nm/g 之间即使形式上可借助密度/定量换算，文献中也未提供共同标定，故不作此假设。",
+        "citation_refs": [],
+        "claim_type": "scope",
+        "support": "supported",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C2",
+        "ref": "[7]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[3]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[4]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[7]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[6]",
+        "score": 0
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[7]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[3]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[4]",
+        "score": 1
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "missing"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C5",
+        "coverage": "missing"
+      },
+      {
+        "claim_id": "C6",
+        "coverage": "missing"
+      }
+    ],
+    "answerability_score": 2,
+    "reference_concern": false,
+    "decisions": {
+      "boundary": "appropriate",
+      "reference_check": "sound",
+      "point_K1": "complete",
+      "point_K2": "complete",
+      "point_K3": "complete",
+      "point_K4": "complete",
+      "kind_C1": "fact",
+      "support_C1": "supported",
+      "basis_C1": "NONE",
+      "group_C1": "missing",
+      "kind_C2": "fact",
+      "support_C2": "partially_supported",
+      "basis_C2": "B035",
+      "group_C2": "partial",
+      "citation_C2_1": "supported",
+      "kind_C3": "fact",
+      "support_C3": "supported",
+      "basis_C3": "NONE",
+      "group_C3": "complete",
+      "citation_C3_1": "supported",
+      "citation_C3_2": "supported",
+      "citation_C3_3": "supported",
+      "citation_C3_4": "supported",
+      "citation_C3_5": "supported",
+      "citation_C3_6": "supported",
+      "citation_C3_7": "unsupported",
+      "kind_C4": "fact",
+      "support_C4": "partially_supported",
+      "basis_C4": "NONE",
+      "group_C4": "complete",
+      "citation_C4_1": "supported",
+      "citation_C4_2": "supported",
+      "citation_C4_3": "supported",
+      "citation_C4_4": "supported",
+      "citation_C4_5": "supported",
+      "citation_C4_6": "supported",
+      "kind_C5": "scope",
+      "support_C5": "partially_supported",
+      "basis_C5": "NONE",
+      "group_C5": "missing",
+      "kind_C6": "scope",
+      "support_C6": "supported",
+      "basis_C6": "NONE",
+      "group_C6": "missing"
+    }
+  },
+  "calibrated": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": 1
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "## 结论\n\n**不建议**把三篇的 tensile 结果并成一列无单位、无来源的 `strength` 直接训练。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C2",
+        "text": "理由不在于字面上都叫 tensile；问题在于三篇的 tensile 在物理量、量纲、归一化方式和预测对象上并不是同一个可观测变量。Ayaliew 等（2026）的目标量是**合成数据**中按参数化规则生成的 tensile strength（MPa）[7]；把它和两个纸张/纸浆数据集混在同一列里，模型会同时拟合\"数据生成规则、测试方法和材料体系\"的混合信号，而非材料强度。",
+        "citation_refs": [
+          "[7]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "B035"
+      },
+      {
+        "id": "C3",
+        "text": "## 三篇 tensile 实际指什么（分别标明来源）\n\n- **Li 等（2023，回收纤维纸页抗张性能预测）**：研究对象是**纸页（paper sheet）的抗张强度**，并与单纤维强度区分：文中明确\"zero-span tensile strength 用来代表单纤维强度\"，而回收对纸页 tensile strength 的影响远大于对单纤维强度的影响[1]。定量指标是**抗张指数 tensile index（Nm/g）**，例如芦苇浆未回收为 28.14、第 4 次回收为 20.22 Nm/g；同表另列 zero-span tensile strength（kg/15 mm）和 zero-span tensile index（Nm/g）[1]。建模层面是\"损伤指数 D → T = T₀(1−D)\"，用 WRV 与 RBA 序列训练曲线拟合模型和 LSTM[3]，因此它的 tensile 是**基准值 T₀ 经回收损伤折减后的量**，而非直接回归的绝对强度。\n- **Uddin 等（2024，纤维质量参数与纸浆性能）**：目标量是**抗张指数 tensile index（Nm/g）**，以细组分含量、纤维长宽、外部细纤维化度、卷曲/扭结指数、粗度为自变量做 MLR 与 ANN[2][4]。实测均值约 46.9–59.6 Nm/g（稻草、阔叶木、针叶木、桉木）[5]。原文结论是这些原料间的 tensile index **无显著差异（p = .327）**，而撕裂指数差异显著[5]；这提示跨原料合并时需谨慎，不能靠去掉来源标签来回避。\n- **Ayaliew 等（2026，纤维增强复合材料）**：目标量是 **tensile strength（MPa）**，输入为纤维类型、树脂类型、密度、层数、固化温度、纤维体积分数、孔隙率[7]。关键限制：数据为 **Kaggle 的 10,000 条合成数据**，\"按既有复合材料力学原理与文献实验趋势的参数化关系构造\"[7]，并非实测结果；文中报告的层数 r = 0.38、纤维体积分数 r = 0.20、孔隙率 r = −0.28 等相关系数，也只基于这套合成数据[6]，属相关而非因果。",
+        "citation_refs": [
+          "[1]",
+          "[3]",
+          "[2]",
+          "[4]",
+          "[5]",
+          "[7]",
+          "[6]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C4",
+        "text": "## 至少三类必须保留的差异\n\n1. **量纲与归一化方式（指数 vs 应力）**：纸张两篇为抗张指数 Nm/g（按定量/克重归一化），复合材料为 MPa（截面应力），两者量级、分布与可加性不同[1][2][7]。去掉单位标签只是掩盖差异。\n2. **变量与对象层级（纸页 vs 单纤维 vs 层合板）**：Li 同时出现纸页 tensile strength、zero-span tensile strength 与 tensile index 三种量[1]；Uddin 为纸浆/手抄片层面的指数[2][5]；Ayaliew 为纤维增强聚合物层合板的整体强度[7]。放在同一列会把对应不同尺度失效机制的量混在一起。\n3. **测量方法与条件（测试方向、定量、浆种/工艺）**：纸张强度依赖定量（Li 表中 basis weight 由 73.57 降至 63.69 g/m²，与 tensile index 同步下降[1]）和打浆/回收次数（原文称未精浆的下降小于精浆、高得率浆小于化学浆[1]）；复合材料强度则受铺层层数、树脂类型、固化温度与孔隙率支配[7]。这些条件若不写入，结果将无法解释或外推。\n4. **证据性质（实测 vs 合成/推算）**：Li、Uddin 的数据为实验测量[1][5]，Ayaliew 的目标值来自合成生成[7]，Li 的预测值由损伤指数公式推算[3]。混训时模型会无差别拟合实测噪声与生成公式。\n5. **（可选的第四类）误差尺度与适用域不同**：Uddin 报告的是原料间 p 值与分原料的 ANN 精度（阔叶木仅撕裂指数可有效预测 R²≈.94，针叶木抗张指数 R²≈.99）[4]；Li 报告的是 RMSE（估计 0.0278、预测 0.1667）[3]；这些误差的尺度和含义不可互换。",
+        "citation_refs": [
+          "[1]",
+          "[2]",
+          "[7]",
+          "[5]",
+          "[3]",
+          "[4]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C5",
+        "text": "## 可操作的替代做法\n\n保留**来源/体系维度加原始量纲列**：至少设 `target_name`（tensile_index / tensile_strength / zero_span）、`unit`（Nm/g / MPa / kg per 15 mm）、`specimen_level`（sheet / pulp handsheet / laminate）、`source`（Li2023 / Uddin2024 / Ayaliew2026）、`data_origin`（measured / synthetic / derived）、`test_condition`（定量、打浆/回收次数、测试方向、铺层等）。若确需统一目标，只能选一个同量纲子集（如仅 Li 与 Uddin 的 Nm/g 抗张指数），并另行核对定量与打浆条件是否可比，再分别建模或做多任务学习；不要直接把 Ayaliew 的 MPa 折算进来。",
+        "citation_refs": [],
+        "claim_type": "scope",
+        "support": "supported",
+        "basis": "NONE"
+      },
+      {
+        "id": "C6",
+        "text": "**未解决的信息缺口**：本次证据未给出 Li 与 Uddin 的具体测试标准编号与测试方向（纵/横向），也未给出 Ayaliew 合成数据的 tensile strength 数值范围，因此三者数值区间是否重叠无法判断；上述结论不依赖这一点。MPa 与 Nm/g 之间即使形式上可借助密度/定量换算，文献中也未提供共同标定，故不作此假设。",
+        "citation_refs": [],
+        "claim_type": "scope",
+        "support": "supported",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C2",
+        "ref": "[7]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[3]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[4]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[7]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[6]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[2]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[7]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[5]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[3]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[4]",
+        "score": 1
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "partial"
+      },
+      {
+        "claim_id": "C5",
+        "coverage": "missing"
+      },
+      {
+        "claim_id": "C6",
+        "coverage": "missing"
+      }
+    ],
+    "answerability_score": 2,
+    "reference_concern": false,
+    "decisions": {
+      "boundary": "appropriate",
+      "reference_check": "sound",
+      "point_K1": "complete",
+      "point_K2": "complete",
+      "point_K3": "complete",
+      "point_K4": "complete",
+      "kind_C1": "fact",
+      "support_C1": "supported",
+      "basis_C1": "NONE",
+      "group_C1": "missing",
+      "kind_C2": "fact",
+      "support_C2": "partially_supported",
+      "basis_C2": "B035",
+      "group_C2": "partial",
+      "citation_C2_1": "supported",
+      "kind_C3": "fact",
+      "support_C3": "supported",
+      "basis_C3": "NONE",
+      "group_C3": "complete",
+      "citation_C3_1": "supported",
+      "citation_C3_2": "supported",
+      "citation_C3_3": "supported",
+      "citation_C3_4": "supported",
+      "citation_C3_5": "supported",
+      "citation_C3_6": "supported",
+      "citation_C3_7": "unsupported",
+      "kind_C4": "fact",
+      "support_C4": "partially_supported",
+      "basis_C4": "NONE",
+      "group_C4": "complete",
+      "citation_C4_1": "supported",
+      "citation_C4_2": "supported",
+      "citation_C4_3": "supported",
+      "citation_C4_4": "supported",
+      "citation_C4_5": "supported",
+      "citation_C4_6": "supported",
+      "kind_C5": "scope",
+      "support_C5": "partially_supported",
+      "basis_C5": "NONE",
+      "group_C5": "missing",
+      "kind_C6": "scope",
+      "support_C6": "supported",
+      "basis_C6": "NONE",
+      "group_C6": "missing"
+    }
+  },
+  "changes": [
+    {
+      "path": "citation_group_assessments.C1.coverage",
+      "value": "complete",
+      "reason": "开头结论由后文明确证据承接，不要求重复引用。"
+    },
+    {
+      "path": "citation_assessments.C3.[6].score",
+      "value": 1,
+      "reason": "[6]正文明确列出层数0.38、纤维体积分数0.20、孔隙率−0.28，不是仅图注。Jev此处误判。"
+    },
+    {
+      "path": "citation_group_assessments.C4.coverage",
+      "value": "partial",
+      "reason": "来源支持测量值与输入特征，但不完整支持“受…支配”“将无法解释或外推”“会无差别拟合”等必然性扩写；与保留的事实部分支持一致。"
+    },
+    {
+      "path": "claim_assessments.C5.support",
+      "value": "supported",
+      "reason": "这是明确的保守处理建议，要求再核对可比性，不声称单位相同就一定可合并；不强读为禁止一切可能的换算方法。"
+    }
+  ],
+  "reason": "四要点齐全，100分。C2把无来源混训的风险写成必然混合信号且“而非材料强度”，C4把合成数据的输入变量说成支配强度，并把缺条件的风险写成必然无法外推，保留部分支持。不惩罚开头无重复引用、正确的相关系数和保守合并建议。",
+  "raw_metrics": {
+    "point_score": 100,
+    "point_count": 4,
+    "fact_count": 4,
+    "supported_facts": 2,
+    "pair_count": 14,
+    "supported_pairs": 13,
+    "group_count": 4,
+    "covered_groups": 2,
+    "boundary": 2,
+    "fact_support": 50.0,
+    "citation_precision": 92.85714285714286,
+    "citation_coverage": 50.0,
+    "strict_pass": false,
+    "format_ok": true
+  },
+  "final_metrics": {
+    "point_score": 100,
+    "point_count": 4,
+    "fact_count": 4,
+    "supported_facts": 2,
+    "pair_count": 14,
+    "supported_pairs": 14,
+    "group_count": 4,
+    "covered_groups": 2,
+    "boundary": 2,
+    "fact_support": 50.0,
+    "citation_precision": 100.0,
+    "citation_coverage": 50.0,
+    "strict_pass": false,
+    "format_ok": true
+  },
+  "run_id": "agent-section-recovery-case24-20261106-FS8-024",
+  "status": "completed",
+  "review_status": "completed",
+  "budget": {
+    "max_model_calls": 10,
+    "max_tool_calls": 8,
+    "max_search_calls": 2,
+    "total_seconds": 240.0,
+    "reserve_seconds": 45,
+    "max_output_tokens": 8192,
+    "max_context_chars": 160000
+  },
+  "model": "deepseek-flash",
+  "model_calls": 7,
+  "elapsed_seconds": 85.025,
+  "tools": [
+    {
+      "request": {
+        "reason": "确认这三篇论文是否存在及获取其 document_id",
+        "query": "Li Uddin Ayaliew paper pulp composite recycled paper tensile",
+        "tool": "find_documents"
+      },
+      "status": "completed"
+    },
+    {
+      "request": {
+        "reason": "空查询列出资料库全部论文，确认可用的八篇论文身份",
+        "query": "",
+        "tool": "find_documents"
+      },
+      "status": "completed"
+    },
+    {
+      "request": {
+        "reason": "获取三篇论文中 tensile 指标的定义（抗张指数/抗张强度/拉伸强度）、单位、测试标准/方向与建模目标",
+        "query": "tensile strength tensile index units kN·m/kg MPa test direction machine direction cross direction target variable",
+        "document_ids": [
+          "doc_347aacf900c9ab36",
+          "doc_8234f8075c2e184f",
+          "doc_f499d471c51c051a"
+        ],
+        "tool": "search_literature"
+      },
+      "status": "completed"
+    },
+    {
+      "request": {
+        "reason": "定位 Ayaliew 论文的方法/数据描述与目标变量定义章节，以便读取 tensile strength 的单位与数据来源",
+        "document_id": "doc_f499d471c51c051a",
+        "tool": "list_sections"
+      },
+      "status": "completed"
+    },
+    {
+      "request": {
+        "document_id": "doc_f499d471c51c051a",
+        "section_id": "sec_d1d94d90c614716c",
+        "reason": "读取 Ayaliew 的数据准备章节，确认 tensile strength 单位、数据集来源与样本构成",
+        "tool": "read_section"
+      },
+      "status": "completed"
+    }
+  ],
+  "result_sha256": "451e96a25be1545d4c3f03c7846d1a479c3eaae7cd430b60795db9cae865776e",
+  "judge_input_sha256": "e7623ac20c9c9454d9d81c60896b0e876b7b376e86ee5f6e704b173f0a0df444",
+  "evidence": [
+    {
+      "ref": "[1]",
+      "document_hash": "347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93",
+      "document_id": "doc_347aacf900c9ab36",
+      "end_char": 7177,
+      "filename": "03_2023_回收纤维纸页抗张性能预测_Li.pdf",
+      "images": [
+        {
+          "bbox": [
+            287,
+            143,
+            924,
+            482
+          ],
+          "byte_size": 55318,
+          "document_id": "doc_347aacf900c9ab36",
+          "height": 540,
+          "id": "img_1e68e9c027af97dd5494",
+          "image_path": "visual-assets/0261a0989604b20cee3a20cc6b768154e74148532a7c1472c7666c147e1ab32c.png",
+          "kind": "table",
+          "label": "table page 10 block 122",
+          "page": 10,
+          "parent_chunk_id": "chk_8928177addb946dc454a",
+          "sha256": "0261a0989604b20cee3a20cc6b768154e74148532a7c1472c7666c147e1ab32c",
+          "width": 778
+        },
+        {
+          "bbox": [
+            287,
+            713,
+            922,
+            940
+          ],
+          "byte_size": 37908,
+          "document_id": "doc_347aacf900c9ab36",
+          "height": 362,
+          "id": "img_72dc6a09b096f5986fd2",
+          "image_path": "visual-assets/45e96a5487d65255d87017b5eed10e26eb3855bff60a073078f22f8e8000ebad.png",
+          "kind": "table",
+          "label": "Table 1. Fiber length during recycling processes (mm)",
+          "page": 9,
+          "parent_chunk_id": "chk_9600081785c52a6a429f",
+          "sha256": "45e96a5487d65255d87017b5eed10e26eb3855bff60a073078f22f8e8000ebad",
+          "width": 775
+        },
+        {
+          "bbox": [
+            283,
+            500,
+            686,
+            752
+          ],
+          "byte_size": 33892,
+          "document_id": "doc_347aacf900c9ab36",
+          "height": 401,
+          "id": "img_162d1eb7736168ba3932",
+          "image_path": "visual-assets/bc90760ae788e82693f278a1ad3541220b5dd877df68df1bcf5771d25cda6a9c.png",
+          "kind": "figure",
+          "label": "Figure 4. Effect of recycling on tensile strength of different pulps.",
+          "page": 10,
+          "parent_chunk_id": "chk_e749fa4adbfaa3279eb5",
+          "sha256": "bc90760ae788e82693f278a1ad3541220b5dd877df68df1bcf5771d25cda6a9c",
+          "width": 493
+        },
+        {
+          "bbox": [
+            285,
+            383,
+            686,
+            631
+          ],
+          "byte_size": 29276,
+          "document_id": "doc_347aacf900c9ab36",
+          "height": 395,
+          "id": "img_433f9ec80ceb8a4c2966",
+          "image_path": "visual-assets/ff4640d96a0268a361ab80256ed9c90a93118c38553c0860ca7eb3abf7b5afe8.png",
+          "kind": "figure",
+          "label": "Figure 6. Effect of recycling on RBA. considered as the bonding mechanism between fibers, though it was observed to be less important than expected (Hirn & Schennach, 2015).",
+          "page": 11,
+          "parent_chunk_id": "chk_b6088c63350a9e4d0d3b",
+          "sha256": "ff4640d96a0268a361ab80256ed9c90a93118c38553c0860ca7eb3abf7b5afe8",
+          "width": 490
+        }
+      ],
+      "page_end": 11,
+      "page_start": 9,
+      "sources": [
+        {
+          "chunk_id": "chk_8269db53dfea02b7e947",
+          "page_end": 9,
+          "page_start": 9,
+          "text": "[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 2 lists the change of properties of reed fibers during successive recycling processes. The zero-span tensile strength was used to indicate the single fiber strength in this study. The results illustrate that after each time of the recycling, the fiber strength of the reed pulp decreased slightly. Because fibers were subjected to various hydraulic and mechanical shear forces during a recycling process, the scission of the macromolecules of celluloses took place. The decrease in DP of fibers after recycling processes also supports this conclusion. However, the effect of recycling on the single fiber strength was far less than that on the tensile strength of paper sheets. It was as expected that fiber recycling would have a negative effect on the single fiber strength. But the loss of the single fiber strength after one recycle was only 2% for the reed pulp. Interestingly, the loss of single fiber strength was only about 6% after as many as three recycles. The increase in the degree of crystallinity within fibers would compensate for the single fiber strength loss caused by the scission of cellulose chains during recycling."
+        },
+        {
+          "chunk_id": "chk_c50099e486933dae21ae",
+          "page_end": 9,
+          "page_start": 9,
+          "text": "[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\n However, the effect was little, compared with other factors, including the change in the swelling capacity of fibers. The degree of crystallinity of fibers increased as they were subjected to each successive recycling. It is obvious that the area of the crystalline region in the fibers expanded and the crystalline indices increased gradually. Such changes led to a decrease in the swelling capacity and the hydrogen bonding capacity of fibers, which in turn caused the loss of the strength of paper sheets."
+        },
+        {
+          "chunk_id": "chk_d5a47c402d12cf4d2388",
+          "page_end": 9,
+          "page_start": 9,
+          "text": "[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTensile strength is one of the most important properties of paper products. It is a concern of using recycled fibers since the deterioration of tensile strength during recycling lower the quality of paper products. In order to ensure paper products have acceptable quality, it is imperative to estimate and predict the deterioration of tensile strength during recycling processes. Figure 4 shows the impact of recycling on the tensile strength of paper sheets made from recycled wood pulps and reed pulps. The results indicate that the tensile strength of paper sheets made of both wood pulps and non-wood pulps responded to recycling negatively. The tensile strength of paper sheets dropped 15% to 35% after four recycling processes, and the highest loss of tensile strength occurred after the first recycling. Additionally, the decrease in the tensile strength of unrefined pulps was less than that of refined pulps, and the decrease in the tensile strength of high yield pulps was less than that of chemical pulps."
+        },
+        {
+          "chunk_id": "chk_bfa6b56da8daed2409ce",
+          "page_end": 9,
+          "page_start": 9,
+          "text": "[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 5 shows the effect of fiber recycling on the WRV of different pulps. The decrease of the WRV typically fell in the range from 20% to 40% after having been recycled five times, depending"
+        },
+        {
+          "chunk_id": "chk_9600081785c52a6a429f",
+          "page_end": 9,
+          "page_start": 9,
+          "text": "[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 1. Fiber length during recycling processes (mm)\n\n<table><tr><td colspan=\"2\">Recycling times</td><td>0</td><td>1</td><td>3</td><td>5</td></tr><tr><td rowspan=\"3\">Reed Pulp</td><td>Arithmetic mean</td><td>0.30</td><td>0.31</td><td>0.31</td><td>0.30</td></tr><tr><td>Weighted average</td><td>0.59</td><td>0.55</td><td>0.55</td><td>0.56</td></tr><tr><td>Weighted Weighted average</td><td>0.91</td><td>0.84</td><td>0.80</td><td>0.85</td></tr><tr><td rowspan=\"3\">Wood Pulp</td><td>Arithmetic mean</td><td>1.52</td><td>1.49</td><td>1.48</td><td>1.50</td></tr><tr><td>Weighted average</td><td>2.28</td><td>2.25</td><td>2.20</td><td>2.26</td></tr><tr><td>Weighted Weighted average</td><td>0.71</td><td>0.68</td><td>0.71</td><td>0.71</td></tr></table>"
+        },
+        {
+          "chunk_id": "chk_9e478343dd69c40124c1",
+          "page_end": 10,
+          "page_start": 10,
+          "text": "[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 2. Properties of reed fibers during recycling Recycle Number"
+        },
+        {
+          "chunk_id": "chk_8928177addb946dc454a",
+          "page_end": 10,
+          "page_start": 10,
+          "text": "[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\n<table><tr><td></td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr><tr><td>Properties</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Zero-span tensile strength (kg/15 mm)</td><td>7.95</td><td>7.63</td><td>7.80</td><td>7.69</td><td>7.58</td></tr><tr><td>Zero-span tensile index (Nm/g)</td><td>808.7</td><td>793.0</td><td>775.1</td><td>760.2</td><td>748.6</td></tr><tr><td>Basis weight (g/m2)</td><td>73.57</td><td>64.33</td><td>65.61</td><td>64.65</td><td>63.69</td></tr><tr><td>Degree of polymerization</td><td>644</td><td>549</td><td>545</td><td>542</td><td>536</td></tr><tr><td>Fiber length (mm)</td><td>0.91</td><td>0.84</td><td>0.81</td><td>0.80</td><td>0.82</td></tr><tr><td>Degree of crystallinity (%)</td><td>77.34</td><td>77.89</td><td>79.91</td><td>80.62</td><td>81.33</td></tr><tr><td>Crystalline indices (%)</td><td>70.71</td><td>71.62</td><td>74.86</td><td>75.97</td><td>77.08</td></tr><tr><td>WRV (g/g)</td><td>2.02</td><td>1.80</td><td>1.65</td><td>1.60</td><td>1.56</td></tr><tr><td>RBA</td><td>0.23</td><td>0.20</td><td>0.18</td><td>0.18</td><td>0.16</td></tr><tr><td>Tensile index (Nm/g)</td><td>28.14</td><td>25.35</td><td>23.12</td><td>21.95</td><td>20.22</td></tr></table>"
+        },
+        {
+          "chunk_id": "chk_e749fa4adbfaa3279eb5",
+          "page_end": 10,
+          "page_start": 10,
+          "text": "[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 4. Effect of recycling on tensile strength of different pulps."
+        },
+        {
+          "chunk_id": "chk_e223fad15cc3e1e06975",
+          "page_end": 10,
+          "page_start": 10,
+          "text": "[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\non different pulps. For all pulp samples, the magnitude of the change in WRV after the first recycling was greater than that of the subsequent recycling processes. Experiments showed that the WRV of pulps reflected the wet flexibility and contributed directly to the hydrogen bonding capacity (Hubbe et al., 2007). In order to further investiaate the relationship between fiber recycling and tensile strength, the effect of recycling on the RBA of paper sheets was also examined. As shown in Figure $^ { 6 , }$ after having been recycled four times, the RBA of paper sheets made from different pulps was reduced from 10% to 40%. The maximum change occurred within the sheets made from reed pulp. During recycling, the fiber hornification took place, which resulted in the loss of fiber swelling capacity and wet flexibility (Somwang et al., 2002). These changes in turn led to the reduction of the hydrogen bonding capacity of fibers. Hydrogen bonding is generally"
+        },
+        {
+          "chunk_id": "chk_76eca09d4f2c69970126",
+          "page_end": 11,
+          "page_start": 11,
+          "text": "[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 5. Effect of recycling on WRV."
+        },
+        {
+          "chunk_id": "chk_b6088c63350a9e4d0d3b",
+          "page_end": 11,
+          "page_start": 11,
+          "text": "[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 6. Effect of recycling on RBA.\n\nconsidered as the bonding mechanism between fibers, though it was observed to be less important than expected (Hirn & Schennach, 2015)."
+        }
+      ],
+      "start_char": 0,
+      "text": "[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 2 lists the change of properties of reed fibers during successive recycling processes. The zero-span tensile strength was used to indicate the single fiber strength in this study. The results illustrate that after each time of the recycling, the fiber strength of the reed pulp decreased slightly. Because fibers were subjected to various hydraulic and mechanical shear forces during a recycling process, the scission of the macromolecules of celluloses took place. The decrease in DP of fibers after recycling processes also supports this conclusion. However, the effect of recycling on the single fiber strength was far less than that on the tensile strength of paper sheets. It was as expected that fiber recycling would have a negative effect on the single fiber strength. But the loss of the single fiber strength after one recycle was only 2% for the reed pulp. Interestingly, the loss of single fiber strength was only about 6% after as many as three recycles. The increase in the degree of crystallinity within fibers would compensate for the single fiber strength loss caused by the scission of cellulose chains during recycling.\n\n[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\n However, the effect was little, compared with other factors, including the change in the swelling capacity of fibers. The degree of crystallinity of fibers increased as they were subjected to each successive recycling. It is obvious that the area of the crystalline region in the fibers expanded and the crystalline indices increased gradually. Such changes led to a decrease in the swelling capacity and the hydrogen bonding capacity of fibers, which in turn caused the loss of the strength of paper sheets.\n\n[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTensile strength is one of the most important properties of paper products. It is a concern of using recycled fibers since the deterioration of tensile strength during recycling lower the quality of paper products. In order to ensure paper products have acceptable quality, it is imperative to estimate and predict the deterioration of tensile strength during recycling processes. Figure 4 shows the impact of recycling on the tensile strength of paper sheets made from recycled wood pulps and reed pulps. The results indicate that the tensile strength of paper sheets made of both wood pulps and non-wood pulps responded to recycling negatively. The tensile strength of paper sheets dropped 15% to 35% after four recycling processes, and the highest loss of tensile strength occurred after the first recycling. Additionally, the decrease in the tensile strength of unrefined pulps was less than that of refined pulps, and the decrease in the tensile strength of high yield pulps was less than that of chemical pulps.\n\n[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 5 shows the effect of fiber recycling on the WRV of different pulps. The decrease of the WRV typically fell in the range from 20% to 40% after having been recycled five times, depending\n\n[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 1. Fiber length during recycling processes (mm)\n\n<table><tr><td colspan=\"2\">Recycling times</td><td>0</td><td>1</td><td>3</td><td>5</td></tr><tr><td rowspan=\"3\">Reed Pulp</td><td>Arithmetic mean</td><td>0.30</td><td>0.31</td><td>0.31</td><td>0.30</td></tr><tr><td>Weighted average</td><td>0.59</td><td>0.55</td><td>0.55</td><td>0.56</td></tr><tr><td>Weighted Weighted average</td><td>0.91</td><td>0.84</td><td>0.80</td><td>0.85</td></tr><tr><td rowspan=\"3\">Wood Pulp</td><td>Arithmetic mean</td><td>1.52</td><td>1.49</td><td>1.48</td><td>1.50</td></tr><tr><td>Weighted average</td><td>2.28</td><td>2.25</td><td>2.20</td><td>2.26</td></tr><tr><td>Weighted Weighted average</td><td>0.71</td><td>0.68</td><td>0.71</td><td>0.71</td></tr></table>\n\n[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nTable 2. Properties of reed fibers during recycling Recycle Number\n\n[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\n<table><tr><td></td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr><tr><td>Properties</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Zero-span tensile strength (kg/15 mm)</td><td>7.95</td><td>7.63</td><td>7.80</td><td>7.69</td><td>7.58</td></tr><tr><td>Zero-span tensile index (Nm/g)</td><td>808.7</td><td>793.0</td><td>775.1</td><td>760.2</td><td>748.6</td></tr><tr><td>Basis weight (g/m2)</td><td>73.57</td><td>64.33</td><td>65.61</td><td>64.65</td><td>63.69</td></tr><tr><td>Degree of polymerization</td><td>644</td><td>549</td><td>545</td><td>542</td><td>536</td></tr><tr><td>Fiber length (mm)</td><td>0.91</td><td>0.84</td><td>0.81</td><td>0.80</td><td>0.82</td></tr><tr><td>Degree of crystallinity (%)</td><td>77.34</td><td>77.89</td><td>79.91</td><td>80.62</td><td>81.33</td></tr><tr><td>Crystalline indices (%)</td><td>70.71</td><td>71.62</td><td>74.86</td><td>75.97</td><td>77.08</td></tr><tr><td>WRV (g/g)</td><td>2.02</td><td>1.80</td><td>1.65</td><td>1.60</td><td>1.56</td></tr><tr><td>RBA</td><td>0.23</td><td>0.20</td><td>0.18</td><td>0.18</td><td>0.16</td></tr><tr><td>Tensile index (Nm/g)</td><td>28.14</td><td>25.35</td><td>23.12</td><td>21.95</td><td>20.22</td></tr></table>\n\n[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 4. Effect of recycling on tensile strength of different pulps.\n\n[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\non different pulps. For all pulp samples, the magnitude of the change in WRV after the first recycling was greater than that of the subsequent recycling processes. Experiments showed that the WRV of pulps reflected the wet flexibility and contributed directly to the hydrogen bonding capacity (Hubbe et al., 2007). In order to further investiaate the relationship between fiber recycling and tensile strength, the effect of recycling on the RBA of paper sheets was also examined. As shown in Figure $^ { 6 , }$ after having been recycled four times, the RBA of paper sheets made from different pulps was reduced from 10% to 40%. The maximum change occurred within the sheets made from reed pulp. During recycling, the fiber hornification took place, which resulted in the loss of fiber swelling capacity and wet flexibility (Somwang et al., 2002). These changes in turn led to the reduction of the hydrogen bonding capacity of fibers. Hydrogen bonding is generally\n\n[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 5. Effect of recycling on WRV.\n\n[章节标签（程序整理，非原文）] 3. Results > 3.1. Effect of recycling on properties of recycled fibers\n[原文]\nFigure 6. Effect of recycling on RBA.\n\nconsidered as the bonding mechanism between fibers, though it was observed to be less important than expected (Hirn & Schennach, 2015)."
+    },
+    {
+      "ref": "[2]",
+      "document_hash": "8234f8075c2e184f7b34df5b6336578b325a510d7dc6a78cad42868f00f9be96",
+      "document_id": "doc_8234f8075c2e184f",
+      "end_char": 3253,
+      "filename": "05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf",
+      "images": [],
+      "page_end": 6,
+      "page_start": 5,
+      "sources": [
+        {
+          "chunk_id": "chk_f32766ad7e43f16a3169",
+          "page_end": 5,
+          "page_start": 5,
+          "text": "[章节标签（程序整理，非原文）] MLR\n[原文]\nThe causal relationship of fibre-quality parameters such as: fine content (%), fibre length (mm), fibre width (μm), degree of external fibrillation (%), curl index, kink index $( \\mathrm { m i n } ^ { - 1 } )$ and coarseness(mg/m) on the paper-making properties namely, tensile index (Nm/g), tear index $( \\mathrm { m N m } ^ { 2 } / \\mathrm { g } )$ and burst index $( \\mathrm { k P a m } ^ { 2 } / \\mathrm { g } )$ have been established with regression analysis.\n\nThe fitted regression equations are shown below:\n\nTensile index $( \\mathrm { N m } / \\mathrm { g } ) { = } { - } 1 0 9 . 2 3 + 1 . 7 3$ fine content (%) + 24.29 fibre length (mm) + 3.77 fibre width (μm) + 3.11 degree of external fibrillation (%)−1534.49 curl index + 107.26 kink index $( \\mathrm { m m } ^ { - 1 } ) { - } 6 . 9 8$ coarseness (mg/m)\n\n(Significance value = 0.00, R<sup>2</sup>= .91, Adj. R<sup>2</sup> = .85)"
+        },
+        {
+          "chunk_id": "chk_47e2d16a3279bc6bbd94",
+          "page_end": 6,
+          "page_start": 6,
+          "text": "[章节标签（程序整理，非原文）] MLR\n[原文]\nTear index $( \\mathrm { m N m } ^ { 2 } / \\mathrm { g } ) { = } { - 6 . 0 2 + 0 . 3 3 }$ fine content (%)+ 13.82 fibre length (mm) + 0.04 fibre width (μm)−0.06 degree of external fibrillation (%)−52.45 curl index + 2.68 kink index (mm<sup>−1</sup>)−24.65 coarseness (mg/m)\n\n(Significance value = 0.00, R<sup>2</sup>= .98, Adj. $R ^ { 2 } = . 9 7 )$\n\nBurst index $( \\mathrm { k P a m ^ { 2 } / g } ) = - 1 1 . 6 5 + 0 . 2 4$ fine content (%)+ 5.33 fibre length (mm) + 0.28 fibre width (μm) + 0.22 degree of external fibrillation (%)–120.49 curl index + 8.19 kink index (mm<sup>−1</sup>)−10.95 coarseness(mg/m)\n\n(Significance value = 0.00, R<sup>2</sup>= .94, Adj. R<sup>2</sup> = .91)\n\nAll these regression equations for predicting tensile index, tear index and burst index based on fine content (%), fibre length (mm), fibre width (μm), degree of external fibrillation (%), curl index, kink index $( \\mathbf { m } \\mathbf { m } ^ { - 1 } )$ and coarseness (mg/m) are significant at 0% level, and at the same time their efficiencies in terms of $R ^ { 2 }$ and Adj. $R ^ { 2 }$ are very high."
+        },
+        {
+          "chunk_id": "chk_a0203c19922c33e74098",
+          "page_end": 6,
+          "page_start": 6,
+          "text": "[章节标签（程序整理，非原文）] MLR\n[原文]\nTable 7. Predicted by observed $R ^ { 2 } .$\n\n<table><tr><td rowspan=\"2\">Samples</td><td colspan=\"3\">Predicted by observed  $R^{2}$ </td></tr><tr><td>Tensile index</td><td>Tear index</td><td>Burst index</td></tr><tr><td>Rice straw</td><td>0.999</td><td>0.959</td><td>0.999</td></tr><tr><td>T. orientalis</td><td>0.835</td><td>0.936</td><td>0.884</td></tr><tr><td>Softwood</td><td>0.987</td><td>0.695</td><td>0.995</td></tr><tr><td>E. camaldulensis</td><td>0.998</td><td>0.912</td><td>0.995</td></tr><tr><td>All raw materials</td><td>0.783</td><td>0.988</td><td>0.826</td></tr></table>"
+        },
+        {
+          "chunk_id": "chk_3b287e13ff70e6ee8ec7",
+          "page_end": 6,
+          "page_start": 6,
+          "text": "[章节标签（程序整理，非原文）] MLR\n[原文]\nMonga et $\\mathrm { a l . } ^ { 2 6 }$ developed MLR for predicting tensile index (Nm/g) and burst index $( \\mathrm { k P a m } ^ { 2 } / \\mathrm { g } )$ based on fibre length, fibre width, coarseness and curl index of S. officinarum and found very good predictive efficiency of developed models $( R ^ { 2 } = \\dot { . } \\dot { 9 } 9 )$\n\nAs the efficiency of developed models in the present study are close to the reported one, so the developed models could be used for quantification of tensile, tear and burst indexes from raw materials of rice straw, hard wood and softwood."
+        }
+      ],
+      "start_char": 0,
+      "text": "[章节标签（程序整理，非原文）] MLR\n[原文]\nThe causal relationship of fibre-quality parameters such as: fine content (%), fibre length (mm), fibre width (μm), degree of external fibrillation (%), curl index, kink index $( \\mathrm { m i n } ^ { - 1 } )$ and coarseness(mg/m) on the paper-making properties namely, tensile index (Nm/g), tear index $( \\mathrm { m N m } ^ { 2 } / \\mathrm { g } )$ and burst index $( \\mathrm { k P a m } ^ { 2 } / \\mathrm { g } )$ have been established with regression analysis.\n\nThe fitted regression equations are shown below:\n\nTensile index $( \\mathrm { N m } / \\mathrm { g } ) { = } { - } 1 0 9 . 2 3 + 1 . 7 3$ fine content (%) + 24.29 fibre length (mm) + 3.77 fibre width (μm) + 3.11 degree of external fibrillation (%)−1534.49 curl index + 107.26 kink index $( \\mathrm { m m } ^ { - 1 } ) { - } 6 . 9 8$ coarseness (mg/m)\n\n(Significance value = 0.00, R<sup>2</sup>= .91, Adj. R<sup>2</sup> = .85)\n\n[章节标签（程序整理，非原文）] MLR\n[原文]\nTear index $( \\mathrm { m N m } ^ { 2 } / \\mathrm { g } ) { = } { - 6 . 0 2 + 0 . 3 3 }$ fine content (%)+ 13.82 fibre length (mm) + 0.04 fibre width (μm)−0.06 degree of external fibrillation (%)−52.45 curl index + 2.68 kink index (mm<sup>−1</sup>)−24.65 coarseness (mg/m)\n\n(Significance value = 0.00, R<sup>2</sup>= .98, Adj. $R ^ { 2 } = . 9 7 )$\n\nBurst index $( \\mathrm { k P a m ^ { 2 } / g } ) = - 1 1 . 6 5 + 0 . 2 4$ fine content (%)+ 5.33 fibre length (mm) + 0.28 fibre width (μm) + 0.22 degree of external fibrillation (%)–120.49 curl index + 8.19 kink index (mm<sup>−1</sup>)−10.95 coarseness(mg/m)\n\n(Significance value = 0.00, R<sup>2</sup>= .94, Adj. R<sup>2</sup> = .91)\n\nAll these regression equations for predicting tensile index, tear index and burst index based on fine content (%), fibre length (mm), fibre width (μm), degree of external fibrillation (%), curl index, kink index $( \\mathbf { m } \\mathbf { m } ^ { - 1 } )$ and coarseness (mg/m) are significant at 0% level, and at the same time their efficiencies in terms of $R ^ { 2 }$ and Adj. $R ^ { 2 }$ are very high.\n\n[章节标签（程序整理，非原文）] MLR\n[原文]\nTable 7. Predicted by observed $R ^ { 2 } .$\n\n<table><tr><td rowspan=\"2\">Samples</td><td colspan=\"3\">Predicted by observed  $R^{2}$ </td></tr><tr><td>Tensile index</td><td>Tear index</td><td>Burst index</td></tr><tr><td>Rice straw</td><td>0.999</td><td>0.959</td><td>0.999</td></tr><tr><td>T. orientalis</td><td>0.835</td><td>0.936</td><td>0.884</td></tr><tr><td>Softwood</td><td>0.987</td><td>0.695</td><td>0.995</td></tr><tr><td>E. camaldulensis</td><td>0.998</td><td>0.912</td><td>0.995</td></tr><tr><td>All raw materials</td><td>0.783</td><td>0.988</td><td>0.826</td></tr></table>\n\n[章节标签（程序整理，非原文）] MLR\n[原文]\nMonga et $\\mathrm { a l . } ^ { 2 6 }$ developed MLR for predicting tensile index (Nm/g) and burst index $( \\mathrm { k P a m } ^ { 2 } / \\mathrm { g } )$ based on fibre length, fibre width, coarseness and curl index of S. officinarum and found very good predictive efficiency of developed models $( R ^ { 2 } = \\dot { . } \\dot { 9 } 9 )$\n\nAs the efficiency of developed models in the present study are close to the reported one, so the developed models could be used for quantification of tensile, tear and burst indexes from raw materials of rice straw, hard wood and softwood."
+    },
+    {
+      "ref": "[3]",
+      "document_hash": "347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93",
+      "document_id": "doc_347aacf900c9ab36",
+      "end_char": 1291,
+      "filename": "03_2023_回收纤维纸页抗张性能预测_Li.pdf",
+      "images": [],
+      "page_end": 2,
+      "page_start": 2,
+      "sources": [
+        {
+          "chunk_id": "chk_ffd5ff799c3252466954",
+          "page_end": 2,
+          "page_start": 2,
+          "text": "[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\n The proposed quantitative expression of the damage index is: $\\begin{array} { r } { D = \\frac { \\left( D _ { s } - h \\right) ^ { 2 } } { a ^ { 2 } } - \\frac { \\left( \\dot { D } _ { h } - k \\right) ^ { 2 } } { b ^ { 2 } } } \\end{array}$ , where the coefficients were determined through the curve fitting model. This paper also developed a long short-term memory recurrent neural network model to determine the damage index according to the sequence of recycling. Both models were trained with the experimental data of water retention value and relative bonded area. The estimation and prediction by the curve fitting model were more accurate than those of the neural network model. The root mean square errors by the curve fitting model were 0.0278 for estimation, 0.1667 for prediction; and by the neural network model were 0.2445 for estimation, 0.2206 for prediction, respectively. After the damage index was determined, the deterioration of tensile strength then could be calculated as ${ \\boldsymbol { T } } = { \\boldsymbol { T } } _ { \\boldsymbol { O } }$ (1–D).\n\nSubjects: Polymers & Plastics; Machine Learning; Chemical Engineering; Waste & Recycling"
+        }
+      ],
+      "start_char": 0,
+      "text": "[章节标签（程序整理，非原文）] Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning\n[原文]\n The proposed quantitative expression of the damage index is: $\\begin{array} { r } { D = \\frac { \\left( D _ { s } - h \\right) ^ { 2 } } { a ^ { 2 } } - \\frac { \\left( \\dot { D } _ { h } - k \\right) ^ { 2 } } { b ^ { 2 } } } \\end{array}$ , where the coefficients were determined through the curve fitting model. This paper also developed a long short-term memory recurrent neural network model to determine the damage index according to the sequence of recycling. Both models were trained with the experimental data of water retention value and relative bonded area. The estimation and prediction by the curve fitting model were more accurate than those of the neural network model. The root mean square errors by the curve fitting model were 0.0278 for estimation, 0.1667 for prediction; and by the neural network model were 0.2445 for estimation, 0.2206 for prediction, respectively. After the damage index was determined, the deterioration of tensile strength then could be calculated as ${ \\boldsymbol { T } } = { \\boldsymbol { T } } _ { \\boldsymbol { O } }$ (1–D).\n\nSubjects: Polymers & Plastics; Machine Learning; Chemical Engineering; Waste & Recycling"
+    },
+    {
+      "ref": "[4]",
+      "document_hash": "8234f8075c2e184f7b34df5b6336578b325a510d7dc6a78cad42868f00f9be96",
+      "document_id": "doc_8234f8075c2e184f",
+      "end_char": 1791,
+      "filename": "05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf",
+      "images": [],
+      "page_end": 8,
+      "page_start": 8,
+      "sources": [
+        {
+          "chunk_id": "chk_a07e4d834bb4ca038b06",
+          "page_end": 8,
+          "page_start": 8,
+          "text": "[章节标签（程序整理，非原文）] Conclusion\n[原文]\nANOVA test with DMRT shows that the fibre-quality parameters are significantly different in rice straw, Nalita and softwood $( p < . 0 5 )$ . Paper-making properties such as tensile index and burst index $( p > . 0 5 )$ are same in paper from these raw materials. However, tear index is different for these raw materials $( p < . 0 5 )$"
+        },
+        {
+          "chunk_id": "chk_2f5e5e2081b2a2c9964a",
+          "page_end": 8,
+          "page_start": 8,
+          "text": "[章节标签（程序整理，非原文）] Conclusion\n[原文]\nIt has been established that the fibre-quality parameters such as fine content (%), fibre length (mm), fibre width (μm), degree of external fibrillation (%), curl index, kink index and coarseness (mg/m) greatly influence papermaking properties namely tensile index (Nm/g), tear index $( \\mathrm { m N m } ^ { 2 } / \\mathrm { g } )$ and burst index $( \\mathrm { k P a m } ^ { 2 } / \\mathrm { g } )$ . This dependency relationship has been supported by the linear regression analysis with good predictive efficiencies of tensile index (Adj. $R ^ { 2 } = . { \\bar { 8 } } 5 ) .$ tear index (Adj. $R ^ { 2 } = . 9 7 )$ and burst index $( \\operatorname { A d j } . \\ R ^ { 2 } = . 9 1 )$ . Tensile index, tear index and burst index of paper from rice straw could be predicted by the developed ANN with very high accuracy $( R ^ { 2 } > . 9 5 )$ For hardwood samples only tear index could be predicted effectively $( R ^ { 2 } = \\vartheta 4 )$ . In case of softwood samples tensile index $( R ^ { \\bar { 2 } } = \\backepsilon 9 9 )$ and burst index $( R ^ { 2 } = . 9 9 )$ could be estimated with this ANN with very high accuracy."
+        },
+        {
+          "chunk_id": "chk_d4afb9923cf0d2098846",
+          "page_end": 8,
+          "page_start": 8,
+          "text": "[章节标签（程序整理，非原文）] Conclusion\n[原文]\nFinally, the effectiveness of ANN was demonstrated very high for predicting paper-making properties based on some cellulose fibre characteristics for rice straw, hardwood and softwood as raw materials in paper production process."
+        }
+      ],
+      "start_char": 0,
+      "text": "[章节标签（程序整理，非原文）] Conclusion\n[原文]\nANOVA test with DMRT shows that the fibre-quality parameters are significantly different in rice straw, Nalita and softwood $( p < . 0 5 )$ . Paper-making properties such as tensile index and burst index $( p > . 0 5 )$ are same in paper from these raw materials. However, tear index is different for these raw materials $( p < . 0 5 )$\n\n[章节标签（程序整理，非原文）] Conclusion\n[原文]\nIt has been established that the fibre-quality parameters such as fine content (%), fibre length (mm), fibre width (μm), degree of external fibrillation (%), curl index, kink index and coarseness (mg/m) greatly influence papermaking properties namely tensile index (Nm/g), tear index $( \\mathrm { m N m } ^ { 2 } / \\mathrm { g } )$ and burst index $( \\mathrm { k P a m } ^ { 2 } / \\mathrm { g } )$ . This dependency relationship has been supported by the linear regression analysis with good predictive efficiencies of tensile index (Adj. $R ^ { 2 } = . { \\bar { 8 } } 5 ) .$ tear index (Adj. $R ^ { 2 } = . 9 7 )$ and burst index $( \\operatorname { A d j } . \\ R ^ { 2 } = . 9 1 )$ . Tensile index, tear index and burst index of paper from rice straw could be predicted by the developed ANN with very high accuracy $( R ^ { 2 } > . 9 5 )$ For hardwood samples only tear index could be predicted effectively $( R ^ { 2 } = \\vartheta 4 )$ . In case of softwood samples tensile index $( R ^ { \\bar { 2 } } = \\backepsilon 9 9 )$ and burst index $( R ^ { 2 } = . 9 9 )$ could be estimated with this ANN with very high accuracy.\n\n[章节标签（程序整理，非原文）] Conclusion\n[原文]\nFinally, the effectiveness of ANN was demonstrated very high for predicting paper-making properties based on some cellulose fibre characteristics for rice straw, hardwood and softwood as raw materials in paper production process."
+    },
+    {
+      "ref": "[5]",
+      "document_hash": "8234f8075c2e184f7b34df5b6336578b325a510d7dc6a78cad42868f00f9be96",
+      "document_id": "doc_8234f8075c2e184f",
+      "end_char": 3143,
+      "filename": "05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf",
+      "images": [],
+      "page_end": 3,
+      "page_start": 2,
+      "sources": [
+        {
+          "chunk_id": "chk_b359cf7a7315ddad335f",
+          "page_end": 2,
+          "page_start": 2,
+          "text": "[章节标签（程序整理，非原文）] Descriptive statistics\n[原文]\nIn order to see the average measures, two descriptive statistics: mean and SD of fibre-quality parameters such as fine content (%), fibre length (mm), fibre width, degree of external fibrillation (%), curl index, kink index, coarseness (mg/m), and paper-making properties such as tensile index (Nm/g), tear index $( \\mathrm { m N m } ^ { 2 } / \\mathrm { g } )$ and burst index $( \\mathrm { k P a m } ^ { 2 } / \\mathrm { g } )$ were calculated and presented in Table 1."
+        },
+        {
+          "chunk_id": "chk_816846eac0628b49ac03",
+          "page_end": 2,
+          "page_start": 2,
+          "text": "[章节标签（程序整理，非原文）] Descriptive statistics\n[原文]\nTable 1. Descriptive statistics of <sup>fi</sup>bre-quality parameters and paper-making properties with DMRT.\n\n<table><tr><td>Parameters</td><td>Rice straw (Mean ± SD)</td><td>Hardwood (Mean ± SD)</td><td>Softwood (Mean ± SD)</td><td>Eucalyptus (Mean ± SD)</td><td>Significance value (p)</td></tr><tr><td colspan=\"6\">Fibre-quality parameters</td></tr><tr><td>Fine content (%)</td><td> $18.58 \\pm 1.45^a$ </td><td> $10.13 \\pm 1.79^{bc}$ </td><td> $8.50 \\pm 1.52^c$ </td><td> $12.64 \\pm 3.52^b$ </td><td>.000</td></tr><tr><td>Fibre length (mm)</td><td> $0.53 \\pm 0.03^c$ </td><td> $0.77 \\pm 0.08^b$ </td><td> $1.64 \\pm 0.26^a$ </td><td> $0.7264 \\pm 0.08^b$ </td><td>.000</td></tr><tr><td>Fibre width (μm)</td><td> $10.83 \\pm 0.29^c$ </td><td> $23.41 \\pm 0.65^b$ </td><td> $26.26 \\pm 0.79^a$ </td><td>—</td><td>.000</td></tr><tr><td>Degree of external Fibrillation (%)</td><td> $1.10 \\pm 0.36^b$ </td><td> $1.36 \\pm 0.54^b$ </td><td> $2.20 \\pm 0.93^a$ </td><td> $0.956 \\pm 0.14^b$ </td><td>.014</td></tr><tr><td>Curl index</td><td> $0.09 \\pm 0.01^b$ </td><td> $0.07 \\pm 0.02^b$ </td><td> $0.12 \\pm 0.05^a$ </td><td> $0.031 \\pm 0.003^c$ </td><td>.013</td></tr><tr><td>Kink index</td><td> $1.98 \\pm 0.09^a$ </td><td> $1.39 \\pm 0.38^b$ </td><td> $1.77 \\pm 0.48^a$ </td><td> $0.33 \\pm .022^c$ </td><td>.008</td></tr><tr><td>Coarseness (mg/m)</td><td> $0.08 \\pm 0.01^b$ </td><td> $0.08 \\pm 0.02^b$ </td><td> $0.23 \\pm 0.10^a$ </td><td>—</td><td>.000</td></tr><tr><td colspan=\"6\">Paper-making properties</td></tr><tr><td>Tensile index (N·m/g)</td><td> $46.90 \\pm 12.65^a$ </td><td> $59.64 \\pm 16.52^a$ </td><td> $58.05 \\pm 29.38^a$ </td><td> $46.94 \\pm 7.18^a$ </td><td>.327</td></tr><tr><td>Tear index (mN·m2/g)</td><td> $6.14 \\pm 0.38^b$ </td><td> $6.78 \\pm 0.69^b$ </td><td> $13.29 \\pm 0.69^a$ </td><td> $6.79 \\pm 0.54^b$ </td><td>.000</td></tr><tr><td>Burst index (kPa·m2/g)</td><td> $2.79 \\pm 0.97^b$ </td><td> $3.69 \\pm 1.29^{ab}$ </td><td> $4.73 \\pm 2.50^a$ </td><td> $2.58 \\pm 0.39^b$ </td><td>.047</td></tr></table>\n\nNote. Means containing the same letter do not differ signi<sup>fi</sup>cantly at 5% level of signi<sup>fi</sup>cance."
+        },
+        {
+          "chunk_id": "chk_327abee74d389d34ad01",
+          "page_end": 3,
+          "page_start": 3,
+          "text": "[章节标签（程序整理，非原文）] Descriptive statistics\n[原文]\nThen for testing the equality of these fibre-quality parameters and paper-making properties of three different types of raw materials such as rice straw, Nalita and softwood, analysis of variance (ANOVA) was performed. Next, Duncan’s multiple range test (DMRT) of post hoc test was performed to rank these three sources of pulp raw materials based on their fibre-quality parameters and pulp properties."
+        }
+      ],
+      "start_char": 0,
+      "text": "[章节标签（程序整理，非原文）] Descriptive statistics\n[原文]\nIn order to see the average measures, two descriptive statistics: mean and SD of fibre-quality parameters such as fine content (%), fibre length (mm), fibre width, degree of external fibrillation (%), curl index, kink index, coarseness (mg/m), and paper-making properties such as tensile index (Nm/g), tear index $( \\mathrm { m N m } ^ { 2 } / \\mathrm { g } )$ and burst index $( \\mathrm { k P a m } ^ { 2 } / \\mathrm { g } )$ were calculated and presented in Table 1.\n\n[章节标签（程序整理，非原文）] Descriptive statistics\n[原文]\nTable 1. Descriptive statistics of <sup>fi</sup>bre-quality parameters and paper-making properties with DMRT.\n\n<table><tr><td>Parameters</td><td>Rice straw (Mean ± SD)</td><td>Hardwood (Mean ± SD)</td><td>Softwood (Mean ± SD)</td><td>Eucalyptus (Mean ± SD)</td><td>Significance value (p)</td></tr><tr><td colspan=\"6\">Fibre-quality parameters</td></tr><tr><td>Fine content (%)</td><td> $18.58 \\pm 1.45^a$ </td><td> $10.13 \\pm 1.79^{bc}$ </td><td> $8.50 \\pm 1.52^c$ </td><td> $12.64 \\pm 3.52^b$ </td><td>.000</td></tr><tr><td>Fibre length (mm)</td><td> $0.53 \\pm 0.03^c$ </td><td> $0.77 \\pm 0.08^b$ </td><td> $1.64 \\pm 0.26^a$ </td><td> $0.7264 \\pm 0.08^b$ </td><td>.000</td></tr><tr><td>Fibre width (μm)</td><td> $10.83 \\pm 0.29^c$ </td><td> $23.41 \\pm 0.65^b$ </td><td> $26.26 \\pm 0.79^a$ </td><td>—</td><td>.000</td></tr><tr><td>Degree of external Fibrillation (%)</td><td> $1.10 \\pm 0.36^b$ </td><td> $1.36 \\pm 0.54^b$ </td><td> $2.20 \\pm 0.93^a$ </td><td> $0.956 \\pm 0.14^b$ </td><td>.014</td></tr><tr><td>Curl index</td><td> $0.09 \\pm 0.01^b$ </td><td> $0.07 \\pm 0.02^b$ </td><td> $0.12 \\pm 0.05^a$ </td><td> $0.031 \\pm 0.003^c$ </td><td>.013</td></tr><tr><td>Kink index</td><td> $1.98 \\pm 0.09^a$ </td><td> $1.39 \\pm 0.38^b$ </td><td> $1.77 \\pm 0.48^a$ </td><td> $0.33 \\pm .022^c$ </td><td>.008</td></tr><tr><td>Coarseness (mg/m)</td><td> $0.08 \\pm 0.01^b$ </td><td> $0.08 \\pm 0.02^b$ </td><td> $0.23 \\pm 0.10^a$ </td><td>—</td><td>.000</td></tr><tr><td colspan=\"6\">Paper-making properties</td></tr><tr><td>Tensile index (N·m/g)</td><td> $46.90 \\pm 12.65^a$ </td><td> $59.64 \\pm 16.52^a$ </td><td> $58.05 \\pm 29.38^a$ </td><td> $46.94 \\pm 7.18^a$ </td><td>.327</td></tr><tr><td>Tear index (mN·m2/g)</td><td> $6.14 \\pm 0.38^b$ </td><td> $6.78 \\pm 0.69^b$ </td><td> $13.29 \\pm 0.69^a$ </td><td> $6.79 \\pm 0.54^b$ </td><td>.000</td></tr><tr><td>Burst index (kPa·m2/g)</td><td> $2.79 \\pm 0.97^b$ </td><td> $3.69 \\pm 1.29^{ab}$ </td><td> $4.73 \\pm 2.50^a$ </td><td> $2.58 \\pm 0.39^b$ </td><td>.047</td></tr></table>\n\nNote. Means containing the same letter do not differ signi<sup>fi</sup>cantly at 5% level of signi<sup>fi</sup>cance.\n\n[章节标签（程序整理，非原文）] Descriptive statistics\n[原文]\nThen for testing the equality of these fibre-quality parameters and paper-making properties of three different types of raw materials such as rice straw, Nalita and softwood, analysis of variance (ANOVA) was performed. Next, Duncan’s multiple range test (DMRT) of post hoc test was performed to rank these three sources of pulp raw materials based on their fibre-quality parameters and pulp properties."
+    },
+    {
+      "ref": "[6]",
+      "document_hash": "f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0",
+      "document_id": "doc_f499d471c51c051a",
+      "end_char": 1399,
+      "filename": "04_2026_复合材料拉伸强度预测_Ayaliew.pdf",
+      "images": [],
+      "page_end": 8,
+      "page_start": 7,
+      "sources": [
+        {
+          "chunk_id": "chk_b3ad3606eec8f63d78de",
+          "page_end": 7,
+          "page_start": 7,
+          "text": "[章节标签（程序整理，非原文）] 3 Results and discussion > 3.1 Exploratory data analysis and feature correlation > 3.1.1 Feature correlation with target\n[原文]\nPearson’s correlation analysis was conducted on numerical features to evaluate their linear association with the tensile strength. As shown in Fig. 1, the analysis revealed that the layer count $\\left( r = 0 . 3 8 \\right)$ and fiber volume fraction $( r = 0 . 2 0 )$ exhibited the strongest positive correlations, indicating that an increase in the number of layers and fiber proportion generally enhances strength [37, 38]. In contrast, void content demonstrated a significant negative correlation $( r = - 0 . 2 8 )$ , indicating that porosity adversely afects structural integrity [39]. Features such as density and curing temperature showed very weak linear correlations with the target values. To enhance the accessibility of these findings, a bar chart of the correlation coeficients was show Fig. 2, providing a visual ranking of each feature’s linear predictive capability."
+        },
+        {
+          "chunk_id": "chk_31464d0a680ad5914bdd",
+          "page_end": 8,
+          "page_start": 8,
+          "text": "[章节标签（程序整理，非原文）] 3 Results and discussion > 3.1 Exploratory data analysis and feature correlation > 3.1.1 Feature correlation with target\n[原文]\nFig. 1 Correlation matrix of numerical feature"
+        },
+        {
+          "chunk_id": "chk_9a6a7ea2b80304d77c00",
+          "page_end": 8,
+          "page_start": 8,
+          "text": "[章节标签（程序整理，非原文）] 3 Results and discussion > 3.1 Exploratory data analysis and feature correlation > 3.1.1 Feature correlation with target\n[原文]\nFig. 2 Chart of correlation coeficients"
+        }
+      ],
+      "start_char": 0,
+      "text": "[章节标签（程序整理，非原文）] 3 Results and discussion > 3.1 Exploratory data analysis and feature correlation > 3.1.1 Feature correlation with target\n[原文]\nPearson’s correlation analysis was conducted on numerical features to evaluate their linear association with the tensile strength. As shown in Fig. 1, the analysis revealed that the layer count $\\left( r = 0 . 3 8 \\right)$ and fiber volume fraction $( r = 0 . 2 0 )$ exhibited the strongest positive correlations, indicating that an increase in the number of layers and fiber proportion generally enhances strength [37, 38]. In contrast, void content demonstrated a significant negative correlation $( r = - 0 . 2 8 )$ , indicating that porosity adversely afects structural integrity [39]. Features such as density and curing temperature showed very weak linear correlations with the target values. To enhance the accessibility of these findings, a bar chart of the correlation coeficients was show Fig. 2, providing a visual ranking of each feature’s linear predictive capability.\n\n[章节标签（程序整理，非原文）] 3 Results and discussion > 3.1 Exploratory data analysis and feature correlation > 3.1.1 Feature correlation with target\n[原文]\nFig. 1 Correlation matrix of numerical feature\n\n[章节标签（程序整理，非原文）] 3 Results and discussion > 3.1 Exploratory data analysis and feature correlation > 3.1.1 Feature correlation with target\n[原文]\nFig. 2 Chart of correlation coeficients"
+    },
+    {
+      "ref": "[7]",
+      "document_hash": "f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0",
+      "document_id": "doc_f499d471c51c051a",
+      "end_char": 1166,
+      "filename": "04_2026_复合材料拉伸强度预测_Ayaliew.pdf",
+      "images": [],
+      "page_end": 4,
+      "page_start": 4,
+      "sources": [
+        {
+          "chunk_id": "chk_3935df41556b78e47de8",
+          "page_end": 4,
+          "page_start": 4,
+          "text": "[章节标签（程序整理，非原文）] 2 Machine learning algorithms > 2.1 Data preparation and preprocessing\n[原文]\nThis study utilized a synthetically generated dataset sourced from Kaggle [27], which contained.\n\n10,000 entries representing fiber-reinforced polymer composites. The dataset was constructed using parametric relationships informed by established composite mechanics principles and experimental trends from the literature, ensuring realistic ranges and interdependencies among features. The dataset features include eight critical parameters detailing composite composition and processing conditions. These parameters included two categorical variables, fiber type (Aramid, Glass, Carbon, Basalt) and resin type (Phenolic, Polyester, Vinyl Ester), along with six numerical variables, such as density (g/ cm³), layer count, curing temperature, fiber volume fraction, void content, and the target variable, tensile strength (MPa). Upon initial examination, it was confirmed that there were no missing values for any of the features. The analysis of outliers using boxplots indicated that there were no significant outliers in the numerical variables that needed to be removed."
+        }
+      ],
+      "start_char": 0,
+      "text": "[章节标签（程序整理，非原文）] 2 Machine learning algorithms > 2.1 Data preparation and preprocessing\n[原文]\nThis study utilized a synthetically generated dataset sourced from Kaggle [27], which contained.\n\n10,000 entries representing fiber-reinforced polymer composites. The dataset was constructed using parametric relationships informed by established composite mechanics principles and experimental trends from the literature, ensuring realistic ranges and interdependencies among features. The dataset features include eight critical parameters detailing composite composition and processing conditions. These parameters included two categorical variables, fiber type (Aramid, Glass, Carbon, Basalt) and resin type (Phenolic, Polyester, Vinyl Ester), along with six numerical variables, such as density (g/ cm³), layer count, curing temperature, fiber volume fraction, void content, and the target variable, tensile strength (MPa). Upon initial examination, it was confirmed that there were no missing values for any of the features. The analysis of outliers using boxplots indicated that there were no significant outliers in the numerical variables that needed to be removed."
+    },
+    {
+      "ref": "[8]",
+      "document_hash": "f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0",
+      "document_id": "doc_f499d471c51c051a",
+      "end_char": 739,
+      "filename": "04_2026_复合材料拉伸强度预测_Ayaliew.pdf",
+      "images": [],
+      "page_end": 4,
+      "page_start": 4,
+      "sources": [
+        {
+          "chunk_id": "chk_e7e5abe4bdb5b2166d46",
+          "page_end": 4,
+          "page_start": 4,
+          "text": "[章节标签（程序整理，非原文）] 2 Machine learning algorithms > 2.1 Data preparation and preprocessing\n[原文]\n A systematic preprocessing pipeline was established in Python (Google Colab) utilizing scikit-learn for both baseline and neural models, as well as XGBoost and LightGBM for ensemble learning to ensure data quality and consistency in modeling. Categorical variables were transformed using one-hot encodings. Pearson correlation analysis was subsequently conducted to evaluate the relationship between the input features and tensile strength. Finally, all numerical features were standardized using Standard Scaler to achieve a mean of zero and a variance of one, which helps prevent scale dominance in models such as SVR and neural networks [28]."
+        }
+      ],
+      "start_char": 0,
+      "text": "[章节标签（程序整理，非原文）] 2 Machine learning algorithms > 2.1 Data preparation and preprocessing\n[原文]\n A systematic preprocessing pipeline was established in Python (Google Colab) utilizing scikit-learn for both baseline and neural models, as well as XGBoost and LightGBM for ensemble learning to ensure data quality and consistency in modeling. Categorical variables were transformed using one-hot encodings. Pearson correlation analysis was subsequently conducted to evaluate the relationship between the input features and tensile strength. Finally, all numerical features were standardized using Standard Scaler to achieve a mean of zero and a variance of one, which helps prevent scale dominance in models such as SVR and neural networks [28]."
+    }
+  ]
+}

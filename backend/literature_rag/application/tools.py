@@ -38,10 +38,22 @@ class FindTable(Request):
     offset: int = Field(default=0, ge=0)
 
 
+class ListSections(Request):
+    tool: Literal['list_sections']
+    document_id: str = Field(min_length=1, max_length=200)
+    offset: int = Field(default=0, ge=0)
+
+
+class SectionLookupError(LookupError):
+    def __init__(self, code, recovery):
+        self.code, self.recovery = code, recovery
+        super().__init__(code)
+
+
 class ReadSection(Request):
     tool: Literal['read_section']
     document_id: str = Field(min_length=1, max_length=200)
-    section_id: str = Field(min_length=1, max_length=200)
+    section_id: str = Field(min_length=1, max_length=200, description='Exact ID returned by list_sections or evidence locator; never infer from chapter number.')
     offset: int = Field(default=0, ge=0)
     max_chars: int = Field(default=12000, ge=256, le=24000)
     exclude_chunk_ids: list[str] = Field(default_factory=list, max_length=1000)
@@ -75,9 +87,9 @@ class Calculate(Request):
     source_call_ids: list[str] = Field(min_length=1, max_length=20)
 
 
-INPUT = TypeAdapter(Annotated[Search | ReadSection | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | Calculate, Field(discriminator='tool')])
+INPUT = TypeAdapter(Annotated[Search | ListSections | ReadSection | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | Calculate, Field(discriminator='tool')])
 SCHEMAS = {c.model_fields['tool'].annotation.__args__[0]: c.model_json_schema()
-           for c in (Search, ReadSection, ReadTable, ViewImage, FindFigure, FindDocuments, FindTable, Calculate)}
+           for c in (Search, ListSections, ReadSection, ReadTable, ViewImage, FindFigure, FindDocuments, FindTable, Calculate)}
 
 
 def encode(x):
@@ -167,6 +179,8 @@ class LiteratureTools:
             result, image_bytes = self.execute(parsed)
             result = json.loads(encode(result))
             record.update(status='completed', result=result, result_sha256=sha256(encode(result).encode()).hexdigest())
+        except SectionLookupError as error:
+            record.update(status='failed', error_code=error.code, recovery=error.recovery)
         except Exception as error:
             record.update(status='failed', error_code=type(error).__name__)
             # Do not persist raw provider exceptions or credentials.
@@ -192,9 +206,30 @@ class LiteratureTools:
                 output['image'] = dict(mime_type='image/png', base64=base64.b64encode(image_bytes).decode())
         else:
             output['error_code'] = record['error_code']
+            if 'recovery' in record: output['result'] = record['recovery']
         return output
 
+    def section_directory(self, document_id, offset=0):
+        if self.catalog is None: raise LookupError('Section catalog unavailable')
+        chunks = sorted((c for c in self.catalog.chunks.values() if c.document_id == document_id), key=lambda c:c.chunk_index)
+        if not chunks:
+            raise SectionLookupError('unknown_document', dict(message='Unknown document_id; call find_documents for a real paper ID.', document_id=document_id, sections=[]))
+        rows = {}
+        for c in chunks:
+            m = self.catalog.mapping[c.id]; sid = m.get('section_id')
+            if not sid: continue
+            node = getattr(self.catalog, 'sections', {}).get(sid, {})
+            path = m.get('section_path') or node.get('path') or []
+            row = rows.setdefault(sid, dict(section_id=sid, title=node.get('title') or (path[-1] if path else ''), section_path=path, page_start=c.page_start, page_end=c.page_end, chunk_count=0))
+            row['page_start'] = min(row['page_start'], c.page_start)
+            row['page_end'] = max(row['page_end'], c.page_end)
+            row['chunk_count'] += 1
+        values = list(rows.values()); end = min(offset+20, len(values))
+        return dict(document_id=document_id, sections=values[offset:end], total=len(values), next_offset=end if end<len(values) else None, notice='Directory handles only, not scientific evidence. Read an exact section_id with read_section; paginate list_sections with next_offset when present.')
+
     def execute(self, p):
+        if isinstance(p, ListSections):
+            return self.section_directory(p.document_id, p.offset), None
         if isinstance(p, FindDocuments):
             if self.catalog is None: raise LookupError('Catalog unavailable')
             rows = {}
@@ -284,7 +319,10 @@ class LiteratureTools:
                 notice='Preserves stored table text; does not infer missing cells or units.'), None
         chunks = sorted([c for c in self.catalog.chunks.values() if c.document_id == p.document_id
             and self.catalog.mapping[c.id].get('section_id') == p.section_id], key=lambda c:c.chunk_index)
-        if not chunks: raise LookupError('Unknown section')
+        if not chunks:
+            recovery = self.section_directory(p.document_id)
+            recovery.update(message='Unknown section_id for this document. Choose an exact ID from sections and retry read_section; do not guess chapter IDs.', requested_section_id=p.section_id)
+            raise SectionLookupError('unknown_section', recovery)
         excluded = set(p.exclude_chunk_ids)
         if not excluded <= {c.id for c in chunks}: raise ValueError('Exclusions outside section')
         rows = [c for c in chunks if c.id not in excluded]
