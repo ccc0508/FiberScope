@@ -30,7 +30,8 @@ class LiteratureSettings(BaseSettings):
     enabled: bool = False
     data_dir: Path = BACKEND.parent / '.rag-data'
     library_dir: Path | None = None
-    timeout_seconds: int = Field(90, ge=5, le=300)
+    timeout_seconds: int = Field(300, ge=5, le=300)
+    engine: Literal['agent', 'legacy'] = 'agent'
     extraction_timeout_seconds: int = Field(180, ge=10, le=300)
     document_extraction_timeout_seconds: int = Field(1800, ge=60, le=3600)
 
@@ -96,6 +97,9 @@ def pdf_path(config: LiteratureSettings, document_id: str):
 
 
 def run_answer(config: LiteratureSettings, question: str):
+    if config.engine == 'agent':
+        from .agent_answer import run_agent_answer
+        return run_agent_answer(config, question)
     try:
         result = subprocess.run(
             [sys.executable, '-I', '-X', 'utf8', str(BACKEND / 'literature_worker.py')],
