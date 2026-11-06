@@ -10,6 +10,7 @@ export interface CitationImage {
 }
 
 export interface Citation {
+  kind?: "source_text" | "source_image" | "calculation";
   ref: string;
   document_id: string;
   filename: string;
