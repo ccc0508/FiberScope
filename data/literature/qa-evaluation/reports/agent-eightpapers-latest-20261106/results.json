@@ -9848,7 +9848,7 @@
             "[2]"
           ],
           "claim_type": "fact",
-          "support": "partially_supported",
+          "support": "supported",
           "basis": "B019"
         },
         {
@@ -9866,7 +9866,7 @@
           "text": "因此，在没有确认以下各项前，不应把数值直接拼入同一字段：两篇的原始单位（是否确为 mg/100m 与 mg/m）、粗度定义是否一致、测量仪器与方法、样品与处理条件、以及统计粒度（单纤维还是样本均值）。若必须合并，应统一换算到 mg/m 并记录换算过程，同时保留来源与原始单位列；换算后仍需把两来源分开评估，不能默认数值可比。",
           "citation_refs": [],
           "claim_type": "fact",
-          "support": "partially_supported",
+          "support": "supported",
           "basis": "NONE"
         },
         {
@@ -9898,11 +9898,11 @@
       "citation_group_assessments": [
         {
           "claim_id": "C1",
-          "coverage": "missing"
+          "coverage": "complete"
         },
         {
           "claim_id": "C2",
-          "coverage": "partial"
+          "coverage": "complete"
         },
         {
           "claim_id": "C3",
@@ -9910,7 +9910,7 @@
         },
         {
           "claim_id": "C4",
-          "coverage": "missing"
+          "coverage": "complete"
         },
         {
           "claim_id": "C5",
@@ -9946,15 +9946,15 @@
         "point_score": 87.5,
         "point_count": 4,
         "fact_count": 4,
-        "supported_facts": 2,
+        "supported_facts": 4,
         "pair_count": 3,
         "supported_pairs": 3,
         "group_count": 4,
-        "covered_groups": 1,
+        "covered_groups": 4,
         "boundary": 1,
-        "fact_support": 50.0,
+        "fact_support": 100.0,
         "citation_precision": 100.0,
-        "citation_coverage": 25.0,
+        "citation_coverage": 100.0,
         "strict_pass": false,
         "format_ok": true
       },
@@ -9965,17 +9965,32 @@
       "elapsed_ms": 22909,
       "changes": [
         {
-          "path": "key_point_scores.K1",
-          "value": 0.5,
-          "reason": "仅确认Uddin mg/m；未确认Morais mg/100m。"
+          "path": "claim_assessments.C2.support",
+          "value": "supported",
+          "reason": "实际[2][3]支持Uddin单位及数值，Morais仅参考文献条目，局部证据不足说明准确。"
         },
         {
-          "path": "claim_assessments.C5.support",
+          "path": "claim_assessments.C4.support",
           "value": "supported",
-          "reason": "核查实际工具证据，Morais仅有参考文献条目；这是诚实的局部证据限制，不是原文不存在该数据。"
+          "reason": "核对定义、仪器与统计基准并保留来源是合理整合建议，没有宣称论文给出了尚未取得的信息。"
+        },
+        {
+          "path": "citation_group_assessments.C1.coverage",
+          "value": "complete",
+          "reason": "用户给定数值的算术换算可直接核验，结论承接后文，不要求额外论文引用。"
+        },
+        {
+          "path": "citation_group_assessments.C2.coverage",
+          "value": "complete",
+          "reason": "已陈述的论文事实有[2][3]支持，检索范围限制不要求原文逐字声明。"
+        },
+        {
+          "path": "citation_group_assessments.C4.coverage",
+          "value": "complete",
+          "reason": "整合建议承接前文定义与单位证据，不因缺重复编号判漏引。"
         }
       ],
-      "reason": "只检索一次；Morais实际命中的是参考文献条目，未取得其表1粗度单位，答案明确说不能确认。Jev把K1判全对过宽。真实的“现有材料未提供”不能用裁判看得到的原文反驳为虚假。"
+      "reason": "单位换算正确；只检索一次且Morais命中参考文献条目，未确认mg/100m，保留K1半分和边界1。接受对现有材料缺口的如实说明及数据整合建议，不把答题不完整重复判成事实错误；换算不要求论文引用，总结承接前文。"
     },
     "result_sha256": "46ee72787de638c8547c29be05f6b95d4da27a4927eefd9261ec352cf4c7e998",
     "judge_input_sha256": "83df3383f29e245c434fdebd718c577600737038dca876005fc91b38834891f8",
@@ -10140,9 +10155,35 @@
       "format_ok": true
     },
     "latest_audit": {
-      "reviewed": false,
-      "reason": "未列入本轮复查的题目沿用此前校准。",
-      "changes": []
+      "reviewed": true,
+      "reason": "单位换算正确；只检索一次且Morais命中参考文献条目，未确认mg/100m，保留K1半分和边界1。接受对现有材料缺口的如实说明及数据整合建议，不把答题不完整重复判成事实错误；换算不要求论文引用，总结承接前文。",
+      "changes": [
+        {
+          "path": "claim_assessments.C2.support",
+          "value": "supported",
+          "reason": "实际[2][3]支持Uddin单位及数值，Morais仅参考文献条目，局部证据不足说明准确。"
+        },
+        {
+          "path": "claim_assessments.C4.support",
+          "value": "supported",
+          "reason": "核对定义、仪器与统计基准并保留来源是合理整合建议，没有宣称论文给出了尚未取得的信息。"
+        },
+        {
+          "path": "citation_group_assessments.C1.coverage",
+          "value": "complete",
+          "reason": "用户给定数值的算术换算可直接核验，结论承接后文，不要求额外论文引用。"
+        },
+        {
+          "path": "citation_group_assessments.C2.coverage",
+          "value": "complete",
+          "reason": "已陈述的论文事实有[2][3]支持，检索范围限制不要求原文逐字声明。"
+        },
+        {
+          "path": "citation_group_assessments.C4.coverage",
+          "value": "complete",
+          "reason": "整合建议承接前文定义与单位证据，不因缺重复编号判漏引。"
+        }
+      ]
     },
     "answer_sha256": "7360909749000998adaf0136872087777ecfc28fc71118090b9fd93493f128de"
   },
@@ -10587,7 +10628,7 @@
       "citation_group_assessments": [
         {
           "claim_id": "C1",
-          "coverage": "partial"
+          "coverage": "complete"
         },
         {
           "claim_id": "C2",
@@ -10599,11 +10640,11 @@
         },
         {
           "claim_id": "C4",
-          "coverage": "partial"
+          "coverage": "complete"
         },
         {
           "claim_id": "C5",
-          "coverage": "missing"
+          "coverage": "complete"
         }
       ],
       "answerability_score": 2,
@@ -10639,11 +10680,11 @@
         "pair_count": 18,
         "supported_pairs": 18,
         "group_count": 5,
-        "covered_groups": 1,
+        "covered_groups": 4,
         "boundary": 2,
         "fact_support": 80.0,
         "citation_precision": 100.0,
-        "citation_coverage": 20.0,
+        "citation_coverage": 80.0,
         "strict_pass": false,
         "format_ok": true
       },
@@ -10655,17 +10696,22 @@
       "elapsed_ms": 41664,
       "changes": [
         {
-          "path": "claim_assessments.C3.support",
-          "value": "partially_supported",
-          "reason": "5µm长度下限小于74µm筛孔并不能独立证明所覆盖粒群更细。"
+          "path": "citation_group_assessments.C1.coverage",
+          "value": "complete",
+          "reason": "开头概括由后文两篇定义和检测限制共同支持。"
         },
         {
-          "path": "citation_group_assessments.C3.coverage",
-          "value": "partial",
-          "reason": "所引论文不证明上述跨定义粒群比较。"
+          "path": "citation_group_assessments.C4.coverage",
+          "value": "complete",
+          "reason": "不同定义及统计量不可直接换算由所附来源联合支持；可信度不同按后文理解为测量范围限制，而非论文质量排名。"
+        },
+        {
+          "path": "citation_group_assessments.C5.coverage",
+          "value": "complete",
+          "reason": "总结承接前文来源；没有现成校正关系时不直接拼接是合理有界结论。"
         }
       ],
-      "reason": "两篇定义与检测限制核心答全。但5µm长度检测下限与74µm筛孔不能直接比较并推出粒群必然更细，混淆长度阈值和筛孔口径，Jev漏检该额外推断。"
+      "reason": "核心定义和检测限制齐全；开头、整合建议及总结可联合承接前文来源，恢复C1/C4/C5覆盖。保留C3将5µm长度检测下限与74µm筛孔直接比较后推出粒群更细的实质推断错误。"
     },
     "result_sha256": "50cc7b37323d9ba4de136f347c93e65ffcc02df981706b2a7b417d09b1bcd07d",
     "judge_input_sha256": "473ae3e54cf7f7409e93a4e9e8884f3024e0984454dd923df9310e50ba799957",
@@ -10937,9 +10983,25 @@
       "format_ok": true
     },
     "latest_audit": {
-      "reviewed": false,
-      "reason": "未列入本轮复查的题目沿用此前校准。",
-      "changes": []
+      "reviewed": true,
+      "reason": "核心定义和检测限制齐全；开头、整合建议及总结可联合承接前文来源，恢复C1/C4/C5覆盖。保留C3将5µm长度检测下限与74µm筛孔直接比较后推出粒群更细的实质推断错误。",
+      "changes": [
+        {
+          "path": "citation_group_assessments.C1.coverage",
+          "value": "complete",
+          "reason": "开头概括由后文两篇定义和检测限制共同支持。"
+        },
+        {
+          "path": "citation_group_assessments.C4.coverage",
+          "value": "complete",
+          "reason": "不同定义及统计量不可直接换算由所附来源联合支持；可信度不同按后文理解为测量范围限制，而非论文质量排名。"
+        },
+        {
+          "path": "citation_group_assessments.C5.coverage",
+          "value": "complete",
+          "reason": "总结承接前文来源；没有现成校正关系时不直接拼接是合理有界结论。"
+        }
+      ]
     },
     "answer_sha256": "4e681c11f32d885d9a16caac8608fb168a9394beb2fa89f56b3f507d924ee8de"
   },

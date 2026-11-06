@@ -59,6 +59,18 @@ AUDIT = {
         ('citation_assessments.C4.[7].score', 1, 'Table 4直接支持L&W测量均值，承担实质子事实。'),
         ('citation_group_assessments.C4.coverage', 'complete', '[1]方法与检测限制及[6][7]表格联合支持；不要求推论在论文中逐字重述。'),
     ]),
+    17: ('单位换算正确；只检索一次且Morais命中参考文献条目，未确认mg/100m，保留K1半分和边界1。接受对现有材料缺口的如实说明及数据整合建议，不把答题不完整重复判成事实错误；换算不要求论文引用，总结承接前文。', [
+        ('claim_assessments.C2.support', 'supported', '实际[2][3]支持Uddin单位及数值，Morais仅参考文献条目，局部证据不足说明准确。'),
+        ('claim_assessments.C4.support', 'supported', '核对定义、仪器与统计基准并保留来源是合理整合建议，没有宣称论文给出了尚未取得的信息。'),
+        ('citation_group_assessments.C1.coverage', 'complete', '用户给定数值的算术换算可直接核验，结论承接后文，不要求额外论文引用。'),
+        ('citation_group_assessments.C2.coverage', 'complete', '已陈述的论文事实有[2][3]支持，检索范围限制不要求原文逐字声明。'),
+        ('citation_group_assessments.C4.coverage', 'complete', '整合建议承接前文定义与单位证据，不因缺重复编号判漏引。'),
+    ]),
+    18: ('核心定义和检测限制齐全；开头、整合建议及总结可联合承接前文来源，恢复C1/C4/C5覆盖。保留C3将5µm长度检测下限与74µm筛孔直接比较后推出粒群更细的实质推断错误。', [
+        ('citation_group_assessments.C1.coverage', 'complete', '开头概括由后文两篇定义和检测限制共同支持。'),
+        ('citation_group_assessments.C4.coverage', 'complete', '不同定义及统计量不可直接换算由所附来源联合支持；可信度不同按后文理解为测量范围限制，而非论文质量排名。'),
+        ('citation_group_assessments.C5.coverage', 'complete', '总结承接前文来源；没有现成校正关系时不直接拼接是合理有界结论。'),
+    ]),
 }
 
 
@@ -135,7 +147,7 @@ def main():
         'latest': summary(final_rows, 'final'),
         'groups': {g: summary([r for r in final_rows if r['group'] == g], 'final') for g in ['single', 'cross', 'no_paper']},
         'strict_pass_cases': [r['id'] for r in final_rows if r['final']['strict_pass']],
-        'limitations': ['前12题及第15、16题按本轮口径复查，其余保留此前校准。', '这不是同一版本的一次完整运行，不可将变化全部归因于算法优化。', '历史Jev评分未重跑；最终分为基于既有来源的Codex校准，不等同独立专家审核。', '第4题采用原图重跑，不采用后续分辨率实验或挑最高分答案。', '不混算不同批次Token、费用与时延。', '事实核查单位为冻结语义段落组，不是逐句正确率。'],
+        'limitations': ['前12题及第15—18题按本轮口径复查，其余保留此前校准。', '这不是同一版本的一次完整运行，不可将变化全部归因于算法优化。', '历史Jev评分未重跑；最终分为基于既有来源的Codex校准，不等同独立专家审核。', '第4题采用原图重跑，不采用后续分辨率实验或挑最高分答案。', '不混算不同批次Token、费用与时延。', '事实核查单位为冻结语义段落组，不是逐句正确率。'],
     }
     OUT.mkdir(parents=True, exist_ok=True)
     write(OUT / 'results.json', rows)
@@ -157,7 +169,7 @@ def main():
     for r in rows:
         c = r['case']; a = r['latest_audit']
         articles.append(f'<article id="q{c["id"]}"><h2>{c["id"]} · {esc(c["question"])}</h2><p>答案来源：{esc(r["source_run"])}</p><p>原30题对应分：{score(r["baseline_metrics"])}<br>选定回答复查前：{score(r["pre_audit_metrics"])}<br><b>最新校准：{score(r["summary"]["final"])}</b></p><p>{esc(r["summary"]["reason"])}</p><details open><summary>完整回答</summary><pre>{esc(r["answer"])}</pre></details><details><summary>题目参考答案与评分要点</summary><pre>{esc(json.dumps(c,ensure_ascii=False,indent=2))}</pre></details><details><summary>本轮调整、历史Jev及当前核查</summary><pre>{esc(json.dumps({"本轮复查":a,"历史Jev":r["raw_jev"],"选定版本校准":r["source_calibrated"],"当前校准":r["calibrated"]},ensure_ascii=False,indent=2))}</pre></details></article>')
-    intro = '第2、4、8、12、15题使用指定重跑，其余保留原答案；前12题及15、16题按最新口径复查。原30题报告未修改。此为不同版本合并快照，不是一次新的端到端测试。'
+    intro = '第2、4、8、12、15题使用指定重跑，其余保留原答案；前12题及15—18题按最新口径复查。原30题报告未修改。此为不同版本合并快照，不是一次新的端到端测试。'
     page = '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>八篇论文·最新结果汇总</title><style>body{font:16px/1.65 system-ui,"Microsoft YaHei";color:#24344a;background:#f3f6fa;margin:0}main{max-width:1200px;margin:auto;padding:28px}article{background:white;padding:24px;border:1px solid #d6e0ed;border-radius:12px;margin:20px 0}table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid #ccd7e3;padding:8px;text-align:left;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.7 system-ui}summary{cursor:pointer;color:#25639a}details{margin:12px 0}</style><main><h1>八篇论文 · 最新结果汇总</h1><p>'+intro+'</p><p>六维顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过。</p>'+overall+'<details><summary>分组统计、分子分母与限制</summary><pre>'+esc(json.dumps(totals,ensure_ascii=False,indent=2))+'</pre></details>'+table+''.join(articles)+'</main></html>'
     (OUT / 'report.html').write_text(page, encoding='utf-8')
     md = '# 八篇论文：最新结果汇总\n\n' + intro + '\n\n## 汇总\n\n| 阶段 | 要点 | 事实充分支持 | 单引有效 | 引用组覆盖 | 严格通过 |\n|---|---:|---:|---:|---:|---:|\n'

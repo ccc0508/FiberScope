@@ -637,5 +637,125 @@
       "strict_pass": true,
       "format_ok": true
     }
+  },
+  {
+    "case_id": "FS8-017",
+    "source_run": "agent-eightpapers-20261105",
+    "reviewed": true,
+    "reason": "单位换算正确；只检索一次且Morais命中参考文献条目，未确认mg/100m，保留K1半分和边界1。接受对现有材料缺口的如实说明及数据整合建议，不把答题不完整重复判成事实错误；换算不要求论文引用，总结承接前文。",
+    "changes": [
+      {
+        "path": "claim_assessments.C2.support",
+        "value": "supported",
+        "reason": "实际[2][3]支持Uddin单位及数值，Morais仅参考文献条目，局部证据不足说明准确。"
+      },
+      {
+        "path": "claim_assessments.C4.support",
+        "value": "supported",
+        "reason": "核对定义、仪器与统计基准并保留来源是合理整合建议，没有宣称论文给出了尚未取得的信息。"
+      },
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "用户给定数值的算术换算可直接核验，结论承接后文，不要求额外论文引用。"
+      },
+      {
+        "path": "citation_group_assessments.C2.coverage",
+        "value": "complete",
+        "reason": "已陈述的论文事实有[2][3]支持，检索范围限制不要求原文逐字声明。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "complete",
+        "reason": "整合建议承接前文定义与单位证据，不因缺重复编号判漏引。"
+      }
+    ],
+    "before": {
+      "point_score": 87.5,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 2,
+      "pair_count": 3,
+      "supported_pairs": 3,
+      "group_count": 4,
+      "covered_groups": 1,
+      "boundary": 1,
+      "fact_support": 50.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 25.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 87.5,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 4,
+      "pair_count": 3,
+      "supported_pairs": 3,
+      "group_count": 4,
+      "covered_groups": 4,
+      "boundary": 1,
+      "fact_support": 100.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 100.0,
+      "strict_pass": false,
+      "format_ok": true
+    }
+  },
+  {
+    "case_id": "FS8-018",
+    "source_run": "agent-eightpapers-20261105",
+    "reviewed": true,
+    "reason": "核心定义和检测限制齐全；开头、整合建议及总结可联合承接前文来源，恢复C1/C4/C5覆盖。保留C3将5µm长度检测下限与74µm筛孔直接比较后推出粒群更细的实质推断错误。",
+    "changes": [
+      {
+        "path": "citation_group_assessments.C1.coverage",
+        "value": "complete",
+        "reason": "开头概括由后文两篇定义和检测限制共同支持。"
+      },
+      {
+        "path": "citation_group_assessments.C4.coverage",
+        "value": "complete",
+        "reason": "不同定义及统计量不可直接换算由所附来源联合支持；可信度不同按后文理解为测量范围限制，而非论文质量排名。"
+      },
+      {
+        "path": "citation_group_assessments.C5.coverage",
+        "value": "complete",
+        "reason": "总结承接前文来源；没有现成校正关系时不直接拼接是合理有界结论。"
+      }
+    ],
+    "before": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 5,
+      "supported_facts": 4,
+      "pair_count": 18,
+      "supported_pairs": 18,
+      "group_count": 5,
+      "covered_groups": 1,
+      "boundary": 2,
+      "fact_support": 80.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 20.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 5,
+      "supported_facts": 4,
+      "pair_count": 18,
+      "supported_pairs": 18,
+      "group_count": 5,
+      "covered_groups": 4,
+      "boundary": 2,
+      "fact_support": 80.0,
+      "citation_precision": 100.0,
+      "citation_coverage": 80.0,
+      "strict_pass": false,
+      "format_ok": true
+    }
   }
 ]
