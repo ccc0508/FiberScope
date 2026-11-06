@@ -119,8 +119,8 @@
     "strict_pass_count": 12,
     "boundary_mean": 1.8666666666666667,
     "fact_support": {
-      "percent": 76.19047619047619,
-      "numerator": 96,
+      "percent": 77.77777777777777,
+      "numerator": 98,
       "denominator": 126
     },
     "citation_precision": {
@@ -129,8 +129,8 @@
       "denominator": 239
     },
     "citation_coverage": {
-      "percent": 66.10169491525424,
-      "numerator": 78,
+      "percent": 71.1864406779661,
+      "numerator": 84,
       "denominator": 118
     }
   },
@@ -162,8 +162,8 @@
       "strict_pass_count": 0,
       "boundary_mean": 1.625,
       "fact_support": {
-        "percent": 60.46511627906977,
-        "numerator": 26,
+        "percent": 65.11627906976744,
+        "numerator": 28,
         "denominator": 43
       },
       "citation_precision": {
@@ -172,8 +172,8 @@
         "denominator": 95
       },
       "citation_coverage": {
-        "percent": 34.883720930232556,
-        "numerator": 15,
+        "percent": 48.83720930232558,
+        "numerator": 21,
         "denominator": 43
       }
     },
@@ -214,7 +214,7 @@
     "FS8-030"
   ],
   "limitations": [
-    "前12题及第15、16题按本轮口径复查，其余保留此前校准。",
+    "前12题及第15—18题按本轮口径复查，其余保留此前校准。",
     "这不是同一版本的一次完整运行，不可将变化全部归因于算法优化。",
     "历史Jev评分未重跑；最终分为基于既有来源的Codex校准，不等同独立专家审核。",
     "第4题采用原图重跑，不采用后续分辨率实验或挑最高分答案。",
