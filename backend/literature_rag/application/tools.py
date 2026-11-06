@@ -4,6 +4,7 @@ from dataclasses import asdict
 from datetime import datetime, UTC
 from hashlib import sha256
 import json
+import re
 from pathlib import Path
 import sqlite3
 from time import perf_counter
@@ -21,6 +22,20 @@ class Request(BaseModel):
 class Search(Request):
     tool: Literal['search_literature']
     query: str = Field(min_length=1, max_length=4000)
+    document_ids: list[str] | None = Field(default=None, min_length=1, max_length=20, description='Omit for all papers; use IDs returned by find_documents to restrict retrieval before candidate selection.')
+
+
+class FindDocuments(Request):
+    tool: Literal['find_documents']
+    query: str = Field(default='', max_length=500, description='Filename, title or author keywords; empty lists all papers.')
+    offset: int = Field(default=0, ge=0)
+
+
+class FindTable(Request):
+    tool: Literal['find_table']
+    document_id: str = Field(min_length=1, max_length=200)
+    table_number: str = Field(pattern=r'^[Ss]?[1-9]\d*(?:[.-]\d+)*[a-z]?$')
+    offset: int = Field(default=0, ge=0)
 
 
 class ReadSection(Request):
@@ -60,9 +75,9 @@ class Calculate(Request):
     source_call_ids: list[str] = Field(min_length=1, max_length=20)
 
 
-INPUT = TypeAdapter(Annotated[Search | ReadSection | ReadTable | ViewImage | FindFigure | Calculate, Field(discriminator='tool')])
+INPUT = TypeAdapter(Annotated[Search | ReadSection | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | Calculate, Field(discriminator='tool')])
 SCHEMAS = {c.model_fields['tool'].annotation.__args__[0]: c.model_json_schema()
-           for c in (Search, ReadSection, ReadTable, ViewImage, FindFigure, Calculate)}
+           for c in (Search, ReadSection, ReadTable, ViewImage, FindFigure, FindDocuments, FindTable, Calculate)}
 
 
 def encode(x):
@@ -180,6 +195,42 @@ class LiteratureTools:
         return output
 
     def execute(self, p):
+        if isinstance(p, FindDocuments):
+            if self.catalog is None: raise LookupError('Catalog unavailable')
+            rows = {}
+            for c in self.catalog.chunks.values():
+                row = rows.setdefault(c.document_id, dict(document_id=c.document_id, filename=c.filename, title='', authors=''))
+                if self.catalog.mapping.get(c.id, {}).get('content_role') == 'title':
+                    row['title'] = c.text[:1000]
+                if self.catalog.mapping.get(c.id, {}).get('content_role') == 'authors':
+                    row['authors'] += ' '+c.text[:1000]
+            for did, row in rows.items():
+                if not re.fullmatch(r'doc_[a-f0-9]+', did): continue
+                imported = self.root/'imports'/f'{did}.json'
+                if imported.is_file():
+                    info = json.loads(imported.read_text('utf-8'))
+                    row['title'] = ' / '.join(t['title'] for t in info.get('organization', {}).get('document_titles', []))[:1500]
+            terms = re.findall(r'[^\W_]+', p.query.casefold())
+            matches = [r for r in rows.values() if all(t in (r['filename']+' '+r['title']+' '+r['authors']).casefold() for t in terms)]
+            matches.sort(key=lambda r:r['document_id'])
+            end = min(p.offset+20, len(matches))
+            return dict(documents=matches[p.offset:end], total=len(matches), next_offset=end if end<len(matches) else None,
+                notice='Directory handles only, not scientific evidence. Confirm identity before restricting a search.'), None
+        if isinstance(p, FindTable):
+            if self.catalog is None: raise LookupError('Catalog unavailable')
+            from html import unescape
+            rows = []
+            for c in self.catalog.chunks.values():
+                if c.document_id != p.document_id or c.kind != 'table': continue
+                caption = unescape(re.sub(r'<[^>]+>', ' ', c.text.split('<table',1)[0]))
+                labels = re.findall(r'(?:\bTables?\s*|表\s*)([Ss]?\d+(?:[.-]\d+)*[a-z]?)(?![\w.-]\d)', caption, re.I)
+                if p.table_number.casefold() not in [x.casefold().rstrip('.') for x in labels]: continue
+                rows.append(dict(chunk_id=c.id, document_id=c.document_id, page_start=c.page_start,
+                    page_end=c.page_end, caption=caption[:1500], **self.locator(c.id)))
+            rows.sort(key=lambda r:(r['page_start'],r['chunk_id']))
+            end=min(p.offset+20,len(rows))
+            return dict(tables=rows[p.offset:end], total=len(rows), next_offset=end if end<len(rows) else None,
+                notice='Handles only. Read matching tables with read_table; multiple matches may be continued tables or ambiguous labels.'), None
         if isinstance(p, FindFigure):
             from .visual_evidence import locate_figures
             catalog = self.retriever.visual_catalog
@@ -204,7 +255,11 @@ class LiteratureTools:
                 source_call_ids=p.source_call_ids, undefined_reason='zero_initial_value' if not initial else None,
                 notice='Arithmetic only; source call existence is verified, but operand extraction and scientific comparability are not.'), None
         if isinstance(p, Search):
-            es = self.retriever.retrieve(p.query, self.top_k, self.min_score)
+            if p.document_ids:
+                if self.catalog is None or not set(p.document_ids) <= {c.document_id for c in self.catalog.chunks.values()}:
+                    raise LookupError('Unknown document; use find_documents')
+            es = self.retriever.retrieve(p.query, self.top_k, self.min_score,
+                **({'document_ids': p.document_ids} if p.document_ids else {}))
             return dict(evidence=[dict(**asdict(e), locator=self.locator(e.chunk_id),
                 source_locators={s.chunk_id:self.locator(s.chunk_id) for s in e.source_chunks}) for e in es],
                 automatic_context_expansion=True, reference_scope='this_call_only',

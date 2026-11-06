@@ -39,7 +39,7 @@ def table_rows(chunk):
     label=re.search(r'\bTable\s+(\d+)\b',caption,re.I)
     if not label:raise ValueError('Table has no explicit numeric caption label')
     descriptions={m.group(1).casefold():m.group(2).strip() for m in re.finditer(r'\(([a-z])\)\s*(.*?)(?=\([a-z]\)|$)',caption,re.I|re.S)}
-    group='';headers=[];pending={};result=[];data_index=0
+    group='';headers=[];pending={};result=[];data_index=0;definition_group=''
     for row_index,row in enumerate(re.finditer(r'<tr\b[^>]*>(.*?)</tr>',table.group(1),re.I|re.S)):
         grid={};new_pending={}
         for col,(cell,remaining) in pending.items():
@@ -65,8 +65,17 @@ def table_rows(chunk):
         nonempty=set(c for c in cells if c)
         if len(nonempty)==1 and re.fullmatch(r'\([a-z]\)',next(iter(nonempty)),re.I):
             group=next(iter(nonempty))[1:-1].casefold();headers=[];pending={};continue
+        # Variable-definition tables can have a spanning input/output group and
+        # symbol rows rather than ordinary column headings. Keep exact values.
+        if len(cells)>1 and len(nonempty)==1 and re.search(r'variables?|inputs?|outputs?', next(iter(nonempty)), re.I):
+            definition_group=next(iter(nonempty));headers=[];continue
+        symbol_row = len(cells)==2 and bool(re.fullmatch(r'\s*\$?\s*[A-Za-z](?:_?\{?\d+\}?)?\s*\$?\s*', cells[0])) and bool(cells[1])
+        definition_headers = bool(headers) and any(re.search(r'\b(variable|symbol|parameter|definition|description|unit|code)\b', h, re.I) for h in headers[-1])
+        definition = (symbol_row and bool(definition_group)) or (definition_headers and len(cells)==len(headers[-1]) and all(cells))
+        if symbol_row and definition_group and not headers:
+            headers=[['Column 1 (source symbol)', 'Column 2 (source definition)']]
         numeric=len(cells)>1 and all(re.fullmatch(r'[-−]?\d[\d,]*(?:\.\d+)?(?:[eE][+-]?\d+)?',c) for c in cells)
-        if not numeric:
+        if not numeric and not definition:
             headers.append(cells)
             continue
         if not headers or any(len(h)!=len(cells) for h in headers):raise ValueError('Numeric row lacks complete column headers')
@@ -79,6 +88,7 @@ def table_rows(chunk):
             labels.append(' > '.join(path))
         assignments=[dict(header=header,value=value) for header,value in zip(labels,cells,strict=True)]
         representation='[程序生成的表格行检索表示，非原文引文]\n表题与原有注释：'+caption
+        if definition_group:representation+='\n原文分组：'+definition_group
         if group:representation+='\n分组 ('+group+')：'+descriptions.get(group,'('+group+')')
         representation+='\n数据行：'+'；'.join(item['header']+' = '+item['value'] for item in assignments)
         start=table.start(1)+row.start();end=table.start(1)+row.end()
@@ -90,7 +100,7 @@ def table_rows(chunk):
             parent_text_start=start,parent_text_end=end,parent_raw_row=text[start:end],
             provenance='Offsets refer to the sealed parent chunk, including its program-labelled chapter prefix; raw-PDF locators remain in its quality provenance.'))
     if pending:raise ValueError('HTML rowspan extends beyond the table')
-    if not result:raise ValueError('No fully labelled numeric data rows found')
+    if not result:raise ValueError('No fully labelled numeric or definition data rows found')
     return result
 
 

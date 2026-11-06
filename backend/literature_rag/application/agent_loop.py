@@ -37,6 +37,13 @@ material, conditions and result. Split compound claims when their evidence diffe
 support a statement. If a requested fact is unavailable, say so; do not fill the gap with speculative detail.'''
 
 REVIEW_VERSION='focused-evidence-review-v1'
+PROMPT += """\nUse find_documents to discover paper IDs by filename/title/author keywords (empty query lists the library).
+Use search_literature without document_ids for broad discovery, or with document_ids for targeted follow-up
+within known papers. Filtering occurs before candidate selection. For a known table number, use find_table
+with document_id and table_number, then read_table with the returned chunk_id. Directory/table handles
+are not evidence until read. Do not guess IDs or resolve ambiguous papers/tables silently.
+"""
+
 REVIEW_PROMPT='''Review the draft against the user's question and the actual supplied evidence and images.
 First preserve the direct answer, required facts, relevant experimental conditions, limitations and uncertainty.
 Then check every retained factual claim, especially optional additions. Remove tangential background rather

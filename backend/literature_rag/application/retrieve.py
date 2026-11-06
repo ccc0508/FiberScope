@@ -65,7 +65,7 @@ class RetrievalService:
         self.last_query_embedding_calls: list[dict] = []
         self.last_candidate_evidences: list[Evidence] = []
 
-    def _search(self, question, min_score, branch):
+    def _search(self, question, min_score, branch, document_ids=None):
         started = perf_counter()
         call = dict(branch=branch, status='failed', usage=None)
         self.last_query_embedding_calls.append(call)
@@ -78,7 +78,7 @@ class RetrievalService:
             if hasattr(self.embedder, 'last_calls'):
                 from copy import deepcopy
                 call['provider_calls'] = deepcopy(self.embedder.last_calls)
-        candidates = self.vectors.search(query_embedding, VECTOR_CANDIDATE_LIMIT)[:VECTOR_CANDIDATE_LIMIT]
+        candidates = self.vectors.search(query_embedding, VECTOR_CANDIDATE_LIMIT, **({'document_ids': document_ids} if document_ids else {}))[:VECTOR_CANDIDATE_LIMIT]
         for match in candidates:
             if not _is_unit_interval_number(match.score):
                 raise InfrastructureError('vector search returned an invalid score')
@@ -101,6 +101,7 @@ class RetrievalService:
         question: str,
         top_k: int,
         min_score: float,
+        *, document_ids: list[str] | None = None,
     ) -> list[Evidence]:
         started = perf_counter()
         self.last_seed_evidences=[]
@@ -145,11 +146,11 @@ class RetrievalService:
             self.last_query_diagnostics.update(mode='rewrite_only', fusion='none_single_query',
                 original_query_searched=False, rerank_query='rewritten', rerank_query_text=rewritten,
                 uniqueness_comparison='not_applicable_without_original_query_search')
-            branches = [self._search(rewritten, min_score, 'rewritten')]
+            branches = [self._search(rewritten, min_score, 'rewritten', document_ids)]
         else:
-            branches = [self._search(question, min_score, 'original')]
+            branches = [self._search(question, min_score, 'original', document_ids)]
             if rewritten is not None:
-                branches.append(self._search(rewritten, min_score, 'rewritten'))
+                branches.append(self._search(rewritten, min_score, 'rewritten', document_ids))
         matches = branches[0]
         all_ids = list(dict.fromkeys(m.chunk_id for branch in branches for m in branch))
         chunks = self.metadata.get_chunks(all_ids)
