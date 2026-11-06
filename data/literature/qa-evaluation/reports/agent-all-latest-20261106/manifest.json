@@ -1,0 +1,212 @@
+[
+  {
+    "case_id": "FS8-001",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "21607943b5557f739f7483f2b65a0f6a6696ba3546e2c24dff622af936900fc2"
+  },
+  {
+    "case_id": "FS8-002",
+    "source_run": "agent-hash-refs-case2-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "8cc02be7247ed72cbb0f463170f80439f9a51269c53de9d971c357026ff36fa1"
+  },
+  {
+    "case_id": "FS8-003",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "5021892c335e9da999aead908501ee5dffe0df711d109dce8fef3fb11838b169"
+  },
+  {
+    "case_id": "FS8-004",
+    "source_run": "agent-figure-discovery-case4-20261106",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "d380ffd1ac55910c78ce84489b0c9ecec8eeeb788b4c8a27fb15c49f4ca58722"
+  },
+  {
+    "case_id": "FS8-005",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "2b50c042eb23b0295b5e7e71666ce4d0baf90f4261016f60724a01a99b81c5d4"
+  },
+  {
+    "case_id": "FS8-006",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "0169aa3ab5e70a463e3a45396d9d69753e021bd1d454751170db5629e5ed0de2"
+  },
+  {
+    "case_id": "FS8-007",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "515f6fa1dc690daeee7ac6aedfb9cd575ff29cb29902118bfa4dbe975e2fcf50"
+  },
+  {
+    "case_id": "FS8-008",
+    "source_run": "agent-current-case8-20261106",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "2166b96324c9ff1c6541d2cccc3f6ce2dd08bda48b9b57cb7dc2fc3e45313c2d"
+  },
+  {
+    "case_id": "FS8-009",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "ebad75043dfecc1d28e1ec511d1353b210666322d10b685f0c9a4e922235bf2c"
+  },
+  {
+    "case_id": "FS8-010",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "634a5012d8d4724255f1622f0d8bb277916702bf31845df46a8476d75e8d08f1"
+  },
+  {
+    "case_id": "FS8-011",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "c0db0177ef90a655cb9f3c0e1931fd13b36fa914307b10d4608bb216e0611a37"
+  },
+  {
+    "case_id": "FS8-012",
+    "source_run": "agent-current-case12-20261106",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "c3a19b115708545364cbf38f0319a402953e07584025c3bfe8d32fcfa4b8c0da"
+  },
+  {
+    "case_id": "FS8-013",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "5448b051af95c9b0813cac7ed08cee5c0f046299586cbf7af15078060a785fa9"
+  },
+  {
+    "case_id": "FS8-014",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "65e537be7b966fa3654bc3966cbef156ed4017a34732bc7566897d14ba726598"
+  },
+  {
+    "case_id": "FS8-015",
+    "source_run": "agent-current-case15-20261106",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "9e5912ff8d7714e964a935b02e996114369900bc0d8cc6ab99ba0cf3b1dadc0c"
+  },
+  {
+    "case_id": "FS8-016",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "52fa68d2a33ec3357546c6f7a0d31e641e08bbf90c61a797c4e6fcb259cdaeaa"
+  },
+  {
+    "case_id": "FS8-017",
+    "source_run": "agent-scoped-case17-repeat2-20261106",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-scoped-case17-repeat2-20261106/grading.json",
+    "grading_sha256": "32d57a95a971c542d2d45524c1ab59f3aeb7c1c14f6d3d07a0844e0fc3730c91",
+    "answer_sha256": "877cd958bfbaad91d3bdeb689e43a8ee0c51dd68fdcd3ca4b02779b013f63547"
+  },
+  {
+    "case_id": "FS8-018",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "4e681c11f32d885d9a16caac8608fb168a9394beb2fa89f56b3f507d924ee8de"
+  },
+  {
+    "case_id": "FS8-019",
+    "source_run": "agent-scoped-case19-20-20261106",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-scoped-case19-20-20261106/grading.json",
+    "grading_sha256": "d6585b160f62873bca4d5b50872caa183c74be3ee457dcf43c0f09875998d670",
+    "answer_sha256": "d411dc1ae29185ad8953f61101210dc7bd513f66afdae881bab0fbd8eec68538"
+  },
+  {
+    "case_id": "FS8-020",
+    "source_run": "agent-scoped-case19-20-20261106",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-scoped-case19-20-20261106/grading.json",
+    "grading_sha256": "d6585b160f62873bca4d5b50872caa183c74be3ee457dcf43c0f09875998d670",
+    "answer_sha256": "b2f2ef2d96245449ff29c6b89f32d1cbe32568e066dae344bb656273841115ce"
+  },
+  {
+    "case_id": "FS8-021",
+    "source_run": "agent-scoped-case21-22-20261106",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-scoped-case21-22-20261106/grading.json",
+    "grading_sha256": "e9c136378a0ae989df3c6076f69be84ef47c2db7d6cfe1fd6cede78f57ae1ac4",
+    "answer_sha256": "ba624d08e8bad3cd25acf8c957d71c835c2daee490d9e83c7d38b778d3c21fa4"
+  },
+  {
+    "case_id": "FS8-022",
+    "source_run": "agent-scoped-case21-22-20261106",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-scoped-case21-22-20261106/grading.json",
+    "grading_sha256": "e9c136378a0ae989df3c6076f69be84ef47c2db7d6cfe1fd6cede78f57ae1ac4",
+    "answer_sha256": "c4015c2c3127a104236975eb8b20e3c769843d24e6c49c73bfaf13c3e704b645"
+  },
+  {
+    "case_id": "FS8-023",
+    "source_run": "agent-scoped-case23-24-20261106",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-scoped-case23-24-20261106/grading.json",
+    "grading_sha256": "de7b7795a2d85b8f775c76f2c7e4dbbe2d93841a546bfc9361436e8cd27840d7",
+    "answer_sha256": "f64b50ef9d0ac5461d7c5b0883947e6981d72e0ed0386eec9d6e2b9d90b1f0a0"
+  },
+  {
+    "case_id": "FS8-024",
+    "source_run": "agent-section-recovery-case24-20261106",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-section-recovery-case24-20261106/grading.json",
+    "grading_sha256": "9eb4fec232bde1d1779dddfe2ac6b8c2dbdc5d34adf18520dd4346dbd2d70764",
+    "answer_sha256": "c61a4fa7aa88df4329410fa3a9fa3ee88787948b29da1fdeef5360c40b246092"
+  },
+  {
+    "case_id": "FS8-025",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "8fcc64401543ac19da983ef519faaf12c6ef93da26da7f02d90094a6f4b12e38"
+  },
+  {
+    "case_id": "FS8-026",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "5c5161892b72559bbd2289cab4eb3ba0189085d81fe02631d7d57b4ed10ffbd2"
+  },
+  {
+    "case_id": "FS8-027",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "c8373c7e46ebf35f4b7f8e31fe8b088d448031f3eafbe45e64a15d659f58bc13"
+  },
+  {
+    "case_id": "FS8-028",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "4f3430d4dd56aef2412423214051c90ca4ff0987208db4102ebe32658f4f3294"
+  },
+  {
+    "case_id": "FS8-029",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "706f6392634760720d8e4bfecd7edf5c9ca44652e0c69db9fd1ffa2d76573626"
+  },
+  {
+    "case_id": "FS8-030",
+    "source_run": "agent-eightpapers-20261105",
+    "grading_source": "data/literature/qa-evaluation/reports/agent-eightpapers-latest-20261106/results.json",
+    "grading_sha256": "d3df6245d17a1b04c02111d5d5719535b61cef912339ff73f8697cbd71f86e27",
+    "answer_sha256": "0fc9f22791ac9746e84981f656bdce0304da284461190dbcda79ce020f8eb0cb"
+  }
+]

@@ -1,0 +1,143 @@
+{
+  "report_type": "latest selected mixed-version results; not a new end-to-end test",
+  "answer_regenerated": false,
+  "judge_rerun": false,
+  "latest": {
+    "count": 30,
+    "point_score": 99.16666666666667,
+    "strict_pass_count": 14,
+    "boundary_mean": 1.9666666666666666,
+    "fact_support": {
+      "percent": 84.29752066115702,
+      "numerator": 102,
+      "denominator": 121
+    },
+    "citation_precision": {
+      "percent": 96.09375,
+      "numerator": 246,
+      "denominator": 256
+    },
+    "citation_coverage": {
+      "percent": 83.63636363636364,
+      "numerator": 92,
+      "denominator": 110
+    }
+  },
+  "previous_summary": {
+    "count": 30,
+    "point_score": 94.58333333333333,
+    "strict_pass_count": 12,
+    "boundary_mean": 1.8666666666666667,
+    "fact_support": {
+      "percent": 77.77777777777777,
+      "numerator": 98,
+      "denominator": 126
+    },
+    "citation_precision": {
+      "percent": 92.88702928870293,
+      "numerator": 222,
+      "denominator": 239
+    },
+    "citation_coverage": {
+      "percent": 71.1864406779661,
+      "numerator": 84,
+      "denominator": 118
+    }
+  },
+  "groups": {
+    "single": {
+      "count": 16,
+      "point_score": 98.4375,
+      "strict_pass_count": 6,
+      "boundary_mean": 1.9375,
+      "fact_support": {
+        "percent": 82.66666666666667,
+        "numerator": 62,
+        "denominator": 75
+      },
+      "citation_precision": {
+        "percent": 93.75,
+        "numerator": 135,
+        "denominator": 144
+      },
+      "citation_coverage": {
+        "percent": 84.0,
+        "numerator": 63,
+        "denominator": 75
+      }
+    },
+    "cross": {
+      "count": 8,
+      "point_score": 100,
+      "strict_pass_count": 2,
+      "boundary_mean": 2,
+      "fact_support": {
+        "percent": 84.21052631578948,
+        "numerator": 32,
+        "denominator": 38
+      },
+      "citation_precision": {
+        "percent": 99.10714285714286,
+        "numerator": 111,
+        "denominator": 112
+      },
+      "citation_coverage": {
+        "percent": 82.85714285714286,
+        "numerator": 29,
+        "denominator": 35
+      }
+    },
+    "no_paper": {
+      "count": 6,
+      "point_score": 100,
+      "strict_pass_count": 6,
+      "boundary_mean": 2,
+      "fact_support": {
+        "percent": 100.0,
+        "numerator": 8,
+        "denominator": 8
+      },
+      "citation_precision": {
+        "percent": null,
+        "numerator": 0,
+        "denominator": 0
+      },
+      "citation_coverage": {
+        "percent": null,
+        "numerator": 0,
+        "denominator": 0
+      }
+    }
+  },
+  "below_full_points": [
+    {
+      "id": "FS8-003",
+      "score": 75.0
+    }
+  ],
+  "strict_pass_cases": [
+    "FS8-001",
+    "FS8-009",
+    "FS8-010",
+    "FS8-012",
+    "FS8-014",
+    "FS8-016",
+    "FS8-019",
+    "FS8-021",
+    "FS8-025",
+    "FS8-026",
+    "FS8-027",
+    "FS8-028",
+    "FS8-029",
+    "FS8-030"
+  ],
+  "limitations": [
+    "不同版本、不同时间的指定结果合并，不是最新版一次完整30题端到端测试。",
+    "按题选择最新指定回答，不按最高分挑选；保留各题已确认校准。",
+    "非论文题不适用引用指标，不以100填补N/A。",
+    "要点分按题平均；事实/引用按有效分子分母合并，不平均百分比。",
+    "第17题沿用已确认的算术及局部证据不足说明引用分母豁免。",
+    "事实核查单位是复合语义段，不是单句；Codex校准不等于独立人类专家审核。",
+    "第24题等历史失败尝试保留在原报告；本汇总不用于估计首次运行成功率。"
+  ]
+}
