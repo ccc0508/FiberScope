@@ -1,0 +1,1173 @@
+[
+  {
+    "case": {
+      "id": "FS8-021",
+      "group": "cross",
+      "question": "Li、Zhao与He（2020）和Motamedian等（2019）都使用PFI打浆。两篇数据能仅按“转数”对齐后直接拟合统一强度曲线吗？",
+      "reference_answer": "不能仅凭转数。前者是漂白针/阔叶木硫酸盐浆，0至16000转且两种浆的作用力不同；后者是云杉CTMP，0/1000/2000转并有0或25kg/t淀粉添加剂。需控制浆种、制浆过程、PFI条件、添加剂及性能定义；同转数不能假定同打浆度或同能量。",
+      "key_points": [
+        "D7漂白硫酸盐浆及两种不同作用力",
+        "D8云杉CTMP和淀粉添加条件",
+        "两篇转数范围不同",
+        "不能仅按转数合并因果曲线，需保留条件且不等同°SR/能量"
+      ],
+      "critical_errors": [
+        "同转数等于同打浆度",
+        "忽略D8添加剂"
+      ],
+      "evidence": [
+        {
+          "document": "D7",
+          "pages": [
+            2
+          ],
+          "locator": "材料与打浆方法"
+        },
+        {
+          "document": "D8",
+          "pages": [
+            4
+          ],
+          "locator": "材料、表1"
+        }
+      ],
+      "checks": "跨篇实验可比性",
+      "grading_notes": "允许等价表述；推断必须与论文直接结果区分。不得把参考答案措辞当成唯一正确表达。",
+      "tool_expectation": "从所涉论文取得证据；可一次检索覆盖多篇，不规定固定调用次数。需要可追溯的文献与页码/表图定位。",
+      "citation_applicable": true
+    },
+    "answer": "**不能。** 在这两篇论文中，仅以“PFI转数”为唯一自变量来拟合统一强度曲线，前提不成立，原因如下：\n\n1. **浆料不同。** Li等（2020）分别针对软木纤维和硬木纤维做了两套打浆实验 [6][7]；Motamedian等（2019）使用的只有一种**云杉CTMP**（化机浆，保留木质素）[2]。两者不是同一种浆；相同转数下两者的纤维分离与细纤维化程度不会相同。这一点是根据两种浆的差异推断出的可比性问题，并非两篇论文的直接对比实验。\n\n2. **转数区间几乎不重叠。** Li等（2020）采用 0、4000、8000、12000、16000 转（其Table 1）[5]；Motamedian等（2019）采用 0、1000、2000 转（其Table 1）[2]。两篇只有0转重合，因此“按转数对齐”实际上没有可比的数据点。\n\n3. **打浆条件与添加剂不同。** Li等（2020）指出，对硬木纤维施加了比软木更低的打浆压力，并把硬木纤维形貌参数无显著变化**归因于**该较低压力（属作者解释）[6][7]；因此，就同一篇论文内部而言，转数也不能作为等效能耗或等效打浆强度的单位。Motamedian等（2019）的六组材料中，一半加入**25 kg/t 马铃薯阳离子淀粉（DS 0.045–0.049）**，另一半不加，并与 0、1000、2000 转交叉组合 [2]；若只按转数合并，就会把淀粉的增强效应混入打浆效应。\n\n4. **强度指标是否同义未核实。** Li等（2020）报告的是抗张指数，同时报告零距抗张指数与湿纸幅强度 [1]；Motamedian等（2019）研究纸张强度与刚度的提升机制，并重点关注细组分（fines）的作用（据其他文献对其标题的著录）[3][4]。两篇论文手抄片的定量（克重）、压榨与干燥条件，我在所查证据中未逐项核对，因此即使都写作“tensile index”，也不能保证定义与测试条件一致。\n\n**可行的替代做法（尚未验证）：**如果想跨文献比较，应改为使用能反映实际打浆程度的量，例如打浆度（°SR）、WRV、比表面积或单位质量打浆能耗。Li等（2020）报告打浆度与WRV随PFI转数增加而显著上升（Figure 2）[9][12]，可考虑用作“等效打浆水平”的中间变量；但两篇论文是否在同一打浆度水平上给出可比数据，所查证据中并未验证，这仍是未解决的缺口。\n\n此外，Motamedian等（2019）的转数最高只到2000转，Li等（2020）则到16000转，因此也不宜把两篇合并外推成单一“强度—转数”曲线。",
+    "draft": "结论已经足够清楚：两篇在浆种、转数范围、打浆压力、添加剂和强度指标上都不一致，因此仅按转数对齐后拟合统一曲线并不成立。\n\n**不能。** 仅用“PFI转数”作为唯一自变量对两篇数据做统一拟合，前提不成立；原因有四点：\n\n1. **浆料不同。** Li等（2020）分别测了软木纤维和硬木纤维两套样品 [6][7]；Motamedian等（2019）只测一种**云杉CTMP**（化机浆，保留木质素）[2]。云杉CTMP的纤维、木质素和结合能力与漂白化学浆差别很大，因此相同转数下纤维的分离和细纤维化程度不会相同。\n\n2. **两篇使用的转数区间几乎不重叠。** Li等（2020）的转数为 0、4000、8000、12000、16000（见其Table 1，表1按转数列出CI与晶粒尺寸）[5]；Motamedian等（2019）的转数为 0、1000、2000（其Table 1）[2]。两篇只有0转重合，因此所谓“按转数对齐”实际上没有可比的数据点。\n\n3. **打浆强度和添加剂不同。** Li等（2020）明确提到，对软木和硬木施加了**不同的打浆压力**（hardwood用较低压力），并把硬木纤维形貌“无显著变化”归因于此 [6][7]；因此，同一篇内部的转数本身就不是等效能耗单位。Motamedian等（2019）的六组材料中，一半加了**25 kg/t 马铃薯阳离子淀粉（DS 0.045–0.049）**，另一半不加 [2]；而且淀粉与打浆在实验设计上是交叉组合的变量，如果只按转数合并，就会把淀粉的增强效应混入打浆效应。\n\n4. **强度指标名称虽同、测量方式未核。** Li等（2020）报告的是**抗张指数**，以及零距抗张指数和湿纸幅强度 [1]；Motamedian等（2019）研究的是纸张的强度和刚度提升机制，并强调细组分（fines）的作用（论文题目所示，见其他文献的参考文献条目）[3][4]。两篇手抄片的定量（克重）、压榨和干燥条件我未逐项核对，因此即便都写成“tensile index”，也不能保证含义一致。\n\n**可以做的替代方案：** 若要做跨文献比较，应改用**能反映实际打浆程度的强度量**，例如打浆度（°SR）、WRV、比表面积或单位质量打浆能耗；Li等（2020）报告了打浆度和WRV随转数显著上升（Figure 2）[9][12]，可以作为“等效打浆水平”的中间变量。不过，两篇是否在同一打浆度下给出可比数据，在本轮所查证据中没有被验证，因此属于未确认的缺口。\n\n另外，Li等（2020）采用0–16000转，Motamedian等（2019）只到2000转，因此也不宜把两篇数据外推成单一“强度—转数”曲线。",
+    "raw_jev": {
+      "key_point_scores": {
+        "K1": 0.5,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "**不能。** 在这两篇论文中，仅以“PFI转数”为唯一自变量来拟合统一强度曲线，前提不成立，原因如下：\n\n1. **浆料不同。** Li等（2020）分别针对软木纤维和硬木纤维做了两套打浆实验 [6][7]；Motamedian等（2019）使用的只有一种**云杉CTMP**（化机浆，保留木质素）[2]。两者不是同一种浆；相同转数下两者的纤维分离与细纤维化程度不会相同。这一点是根据两种浆的差异推断出的可比性问题，并非两篇论文的直接对比实验。\n\n2. **转数区间几乎不重叠。** Li等（2020）采用 0、4000、8000、12000、16000 转（其Table 1）[5]；Motamedian等（2019）采用 0、1000、2000 转（其Table 1）[2]。两篇只有0转重合，因此“按转数对齐”实际上没有可比的数据点。\n\n3. **打浆条件与添加剂不同。** Li等（2020）指出，对硬木纤维施加了比软木更低的打浆压力，并把硬木纤维形貌参数无显著变化**归因于**该较低压力（属作者解释）[6][7]；因此，就同一篇论文内部而言，转数也不能作为等效能耗或等效打浆强度的单位。Motamedian等（2019）的六组材料中，一半加入**25 kg/t 马铃薯阳离子淀粉（DS 0.045–0.049）**，另一半不加，并与 0、1000、2000 转交叉组合 [2]；若只按转数合并，就会把淀粉的增强效应混入打浆效应。\n\n4. **强度指标是否同义未核实。** Li等（2020）报告的是抗张指数，同时报告零距抗张指数与湿纸幅强度 [1]；Motamedian等（2019）研究纸张强度与刚度的提升机制，并重点关注细组分（fines）的作用（据其他文献对其标题的著录）[3][4]。两篇论文手抄片的定量（克重）、压榨与干燥条件，我在所查证据中未逐项核对，因此即使都写作“tensile index”，也不能保证定义与测试条件一致。",
+          "citation_refs": [
+            "[6]",
+            "[7]",
+            "[2]",
+            "[5]",
+            "[1]",
+            "[3]",
+            "[4]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "**可行的替代做法（尚未验证）：**如果想跨文献比较，应改为使用能反映实际打浆程度的量，例如打浆度（°SR）、WRV、比表面积或单位质量打浆能耗。Li等（2020）报告打浆度与WRV随PFI转数增加而显著上升（Figure 2）[9][12]，可考虑用作“等效打浆水平”的中间变量；但两篇论文是否在同一打浆度水平上给出可比数据，所查证据中并未验证，这仍是未解决的缺口。",
+          "citation_refs": [
+            "[9]",
+            "[12]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "B007"
+        },
+        {
+          "id": "C3",
+          "text": "此外，Motamedian等（2019）的转数最高只到2000转，Li等（2020）则到16000转，因此也不宜把两篇合并外推成单一“强度—转数”曲线。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B004"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C1",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[7]",
+          "score": 0
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[5]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[3]",
+          "score": 0
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[4]",
+          "score": 0
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[9]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[12]",
+          "score": 0
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "missing"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false,
+      "decisions": {
+        "boundary": "appropriate",
+        "reference_check": "sound",
+        "point_K1": "partial",
+        "point_K2": "complete",
+        "point_K3": "complete",
+        "point_K4": "complete",
+        "kind_C1": "fact",
+        "support_C1": "partially_supported",
+        "basis_C1": "NONE",
+        "group_C1": "partial",
+        "citation_C1_1": "supported",
+        "citation_C1_2": "unsupported",
+        "citation_C1_3": "supported",
+        "citation_C1_4": "supported",
+        "citation_C1_5": "supported",
+        "citation_C1_6": "unsupported",
+        "citation_C1_7": "unsupported",
+        "kind_C2": "fact",
+        "support_C2": "partially_supported",
+        "basis_C2": "B007",
+        "group_C2": "partial",
+        "citation_C2_1": "supported",
+        "citation_C2_2": "unsupported",
+        "kind_C3": "fact",
+        "support_C3": "supported",
+        "basis_C3": "B004",
+        "group_C3": "missing"
+      }
+    },
+    "calibrated": {
+      "key_point_scores": {
+        "K1": 0.5,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "**不能。** 在这两篇论文中，仅以“PFI转数”为唯一自变量来拟合统一强度曲线，前提不成立，原因如下：\n\n1. **浆料不同。** Li等（2020）分别针对软木纤维和硬木纤维做了两套打浆实验 [6][7]；Motamedian等（2019）使用的只有一种**云杉CTMP**（化机浆，保留木质素）[2]。两者不是同一种浆；相同转数下两者的纤维分离与细纤维化程度不会相同。这一点是根据两种浆的差异推断出的可比性问题，并非两篇论文的直接对比实验。\n\n2. **转数区间几乎不重叠。** Li等（2020）采用 0、4000、8000、12000、16000 转（其Table 1）[5]；Motamedian等（2019）采用 0、1000、2000 转（其Table 1）[2]。两篇只有0转重合，因此“按转数对齐”实际上没有可比的数据点。\n\n3. **打浆条件与添加剂不同。** Li等（2020）指出，对硬木纤维施加了比软木更低的打浆压力，并把硬木纤维形貌参数无显著变化**归因于**该较低压力（属作者解释）[6][7]；因此，就同一篇论文内部而言，转数也不能作为等效能耗或等效打浆强度的单位。Motamedian等（2019）的六组材料中，一半加入**25 kg/t 马铃薯阳离子淀粉（DS 0.045–0.049）**，另一半不加，并与 0、1000、2000 转交叉组合 [2]；若只按转数合并，就会把淀粉的增强效应混入打浆效应。\n\n4. **强度指标是否同义未核实。** Li等（2020）报告的是抗张指数，同时报告零距抗张指数与湿纸幅强度 [1]；Motamedian等（2019）研究纸张强度与刚度的提升机制，并重点关注细组分（fines）的作用（据其他文献对其标题的著录）[3][4]。两篇论文手抄片的定量（克重）、压榨与干燥条件，我在所查证据中未逐项核对，因此即使都写作“tensile index”，也不能保证定义与测试条件一致。",
+          "citation_refs": [
+            "[6]",
+            "[7]",
+            "[2]",
+            "[5]",
+            "[1]",
+            "[3]",
+            "[4]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "**可行的替代做法（尚未验证）：**如果想跨文献比较，应改为使用能反映实际打浆程度的量，例如打浆度（°SR）、WRV、比表面积或单位质量打浆能耗。Li等（2020）报告打浆度与WRV随PFI转数增加而显著上升（Figure 2）[9][12]，可考虑用作“等效打浆水平”的中间变量；但两篇论文是否在同一打浆度水平上给出可比数据，所查证据中并未验证，这仍是未解决的缺口。",
+          "citation_refs": [
+            "[9]",
+            "[12]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B007"
+        },
+        {
+          "id": "C3",
+          "text": "此外，Motamedian等（2019）的转数最高只到2000转，Li等（2020）则到16000转，因此也不宜把两篇合并外推成单一“强度—转数”曲线。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B004"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C1",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[5]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[4]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[9]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[12]",
+          "score": 1
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "complete"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false
+    },
+    "summary": {
+      "id": "FS8-021",
+      "group": "cross",
+      "status": "completed",
+      "review_status": "completed",
+      "stop_reason": null,
+      "jev": {
+        "point_score": 87.5,
+        "point_count": 4,
+        "fact_count": 3,
+        "supported_facts": 1,
+        "pair_count": 9,
+        "supported_pairs": 5,
+        "group_count": 3,
+        "covered_groups": 0,
+        "boundary": 2,
+        "fact_support": 33.333333333333336,
+        "citation_precision": 55.55555555555556,
+        "citation_coverage": 0.0,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "final": {
+        "point_score": 87.5,
+        "point_count": 4,
+        "fact_count": 3,
+        "supported_facts": 1,
+        "pair_count": 9,
+        "supported_pairs": 5,
+        "group_count": 3,
+        "covered_groups": 0,
+        "boundary": 2,
+        "fact_support": 33.333333333333336,
+        "citation_precision": 55.55555555555556,
+        "citation_coverage": 0.0,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "tools": [
+        "search_literature",
+        "read_section"
+      ],
+      "routing_ok": true,
+      "elapsed_ms": 35004,
+      "changes": [],
+      "reason": "正确区分转数范围、CTMP与添加剂，明确不能按转数统一；但未说明Li所用漂白硫酸盐浆条件，K1保留0.5。额外等效水平建议不构成已验证控制方案，保留部分支持。"
+    },
+    "result_sha256": "e19b79622965cc09804644832e35333948d64c17593b9ca8bd49185502b0c071",
+    "judge_input_sha256": "1ca52dc7b06b33ca297ad515f8c6ac59e8814bbf708bd5ff61d4000d3911e7d4",
+    "source_calibrated": {
+      "key_point_scores": {
+        "K1": 0.5,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "**不能。** 在这两篇论文中，仅以“PFI转数”为唯一自变量来拟合统一强度曲线，前提不成立，原因如下：\n\n1. **浆料不同。** Li等（2020）分别针对软木纤维和硬木纤维做了两套打浆实验 [6][7]；Motamedian等（2019）使用的只有一种**云杉CTMP**（化机浆，保留木质素）[2]。两者不是同一种浆；相同转数下两者的纤维分离与细纤维化程度不会相同。这一点是根据两种浆的差异推断出的可比性问题，并非两篇论文的直接对比实验。\n\n2. **转数区间几乎不重叠。** Li等（2020）采用 0、4000、8000、12000、16000 转（其Table 1）[5]；Motamedian等（2019）采用 0、1000、2000 转（其Table 1）[2]。两篇只有0转重合，因此“按转数对齐”实际上没有可比的数据点。\n\n3. **打浆条件与添加剂不同。** Li等（2020）指出，对硬木纤维施加了比软木更低的打浆压力，并把硬木纤维形貌参数无显著变化**归因于**该较低压力（属作者解释）[6][7]；因此，就同一篇论文内部而言，转数也不能作为等效能耗或等效打浆强度的单位。Motamedian等（2019）的六组材料中，一半加入**25 kg/t 马铃薯阳离子淀粉（DS 0.045–0.049）**，另一半不加，并与 0、1000、2000 转交叉组合 [2]；若只按转数合并，就会把淀粉的增强效应混入打浆效应。\n\n4. **强度指标是否同义未核实。** Li等（2020）报告的是抗张指数，同时报告零距抗张指数与湿纸幅强度 [1]；Motamedian等（2019）研究纸张强度与刚度的提升机制，并重点关注细组分（fines）的作用（据其他文献对其标题的著录）[3][4]。两篇论文手抄片的定量（克重）、压榨与干燥条件，我在所查证据中未逐项核对，因此即使都写作“tensile index”，也不能保证定义与测试条件一致。",
+          "citation_refs": [
+            "[6]",
+            "[7]",
+            "[2]",
+            "[5]",
+            "[1]",
+            "[3]",
+            "[4]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "**可行的替代做法（尚未验证）：**如果想跨文献比较，应改为使用能反映实际打浆程度的量，例如打浆度（°SR）、WRV、比表面积或单位质量打浆能耗。Li等（2020）报告打浆度与WRV随PFI转数增加而显著上升（Figure 2）[9][12]，可考虑用作“等效打浆水平”的中间变量；但两篇论文是否在同一打浆度水平上给出可比数据，所查证据中并未验证，这仍是未解决的缺口。",
+          "citation_refs": [
+            "[9]",
+            "[12]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "B007"
+        },
+        {
+          "id": "C3",
+          "text": "此外，Motamedian等（2019）的转数最高只到2000转，Li等（2020）则到16000转，因此也不宜把两篇合并外推成单一“强度—转数”曲线。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B004"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C1",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[7]",
+          "score": 0
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[5]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[3]",
+          "score": 0
+        },
+        {
+          "claim_id": "C1",
+          "ref": "[4]",
+          "score": 0
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[9]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[12]",
+          "score": 0
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "missing"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false,
+      "decisions": {
+        "boundary": "appropriate",
+        "reference_check": "sound",
+        "point_K1": "partial",
+        "point_K2": "complete",
+        "point_K3": "complete",
+        "point_K4": "complete",
+        "kind_C1": "fact",
+        "support_C1": "partially_supported",
+        "basis_C1": "NONE",
+        "group_C1": "partial",
+        "citation_C1_1": "supported",
+        "citation_C1_2": "unsupported",
+        "citation_C1_3": "supported",
+        "citation_C1_4": "supported",
+        "citation_C1_5": "supported",
+        "citation_C1_6": "unsupported",
+        "citation_C1_7": "unsupported",
+        "kind_C2": "fact",
+        "support_C2": "partially_supported",
+        "basis_C2": "B007",
+        "group_C2": "partial",
+        "citation_C2_1": "supported",
+        "citation_C2_2": "unsupported",
+        "kind_C3": "fact",
+        "support_C3": "supported",
+        "basis_C3": "B004",
+        "group_C3": "missing"
+      }
+    },
+    "source_run": "agent-eightpapers-20261105",
+    "baseline_metrics": {
+      "point_score": 87.5,
+      "point_count": 4,
+      "fact_count": 3,
+      "supported_facts": 1,
+      "pair_count": 9,
+      "supported_pairs": 5,
+      "group_count": 3,
+      "covered_groups": 0,
+      "boundary": 2,
+      "fact_support": 33.333333333333336,
+      "citation_precision": 55.55555555555556,
+      "citation_coverage": 0.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "pre_audit_metrics": {
+      "point_score": 87.5,
+      "point_count": 4,
+      "fact_count": 3,
+      "supported_facts": 1,
+      "pair_count": 9,
+      "supported_pairs": 5,
+      "group_count": 3,
+      "covered_groups": 0,
+      "boundary": 2,
+      "fact_support": 33.333333333333336,
+      "citation_precision": 55.55555555555556,
+      "citation_coverage": 0.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "latest_audit": {
+      "reason": "K1半分保留：未说明漂白硫酸盐浆这一实质材料条件。C1仍部分支持：只有0转共同采样不等于完全没有可比点；不同浆料不能推出同转数细纤维化程度必然不相同。补充方案明确尚未验证，不把探索建议当成已证实等效换算。引用[7]支持低压力解释，[3][4]支持明确注明来自著录的论文标题，[12]支持Figure 2对象；恢复其单引分。总结承接前文。",
+      "metrics": {
+        "point_score": 87.5,
+        "point_count": 4,
+        "fact_count": 3,
+        "supported_facts": 2,
+        "pair_count": 9,
+        "supported_pairs": 9,
+        "group_count": 3,
+        "covered_groups": 2,
+        "boundary": 2,
+        "fact_support": 66.66666666666667,
+        "citation_precision": 100.0,
+        "citation_coverage": 66.66666666666667,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "answer_regenerated": false,
+      "judge_rerun": false
+    },
+    "answer_sha256": "7a1aa92aaf0fe210d51de0fb959e4fce320d1eb51b60a1e4d8901676e0224701"
+  },
+  {
+    "case": {
+      "id": "FS8-022",
+      "group": "cross",
+      "question": "Morais与Curto（2022）的三维纤维模拟，与2020年CLSM纸张三维结构研究，获得结构信息的方式有什么不同？二者能直接互相替代吗？",
+      "reference_answer": "Morais用基于纤维尺寸等的3D网络模拟得到计算结构性质，并与实验结构比较验证；CLSM研究通过显微成像实现结构表征并计算孔隙率，与实验比较报告相对误差小于8%。一个是计算模拟，一个是成像表征，可互相校验而非无需验证地替代；该误差也不是所有纸张的通用保证。",
+      "key_points": [
+        "D1为基于纤维参数的3D计算网络",
+        "D2为CLSM成像结构/孔隙率表征",
+        "D2报告本文五种浆孔隙率相对误差小于8%",
+        "不能无条件替代或泛化误差保证"
+      ],
+      "critical_errors": [
+        "把CLSM称为ANN模拟器",
+        "把8%说成所有性能预测误差"
+      ],
+      "evidence": [
+        {
+          "document": "D1",
+          "pages": [
+            4,
+            9
+          ],
+          "locator": "§3.3、表3"
+        },
+        {
+          "document": "D2",
+          "pages": [
+            7
+          ],
+          "locator": "§3.1结论"
+        }
+      ],
+      "checks": "跨篇方法、实验与模拟",
+      "grading_notes": "允许等价表述；推断必须与论文直接结果区分。不得把参考答案措辞当成唯一正确表达。",
+      "tool_expectation": "从所涉论文取得证据；可一次检索覆盖多篇，不规定固定调用次数。需要可追溯的文献与页码/表图定位。",
+      "citation_applicable": true
+    },
+    "answer": "## 结论\n\n两者获取结构信息的方式根本不同：Morais & Curto（2022）是用实测纤维参数**模拟生成**三维纤维网络，结构参数由模拟器算出；2020年CLSM研究是对真实纸样做荧光染色、Z向断层扫描与图像分割，从成像中**直接得到**三维结构与孔隙率。基于方法学差异，二者不能直接互相替代（此判断为对两文方法的比较推断，两文本身并未互相比对）。\n\n### 1. Morais 与 Curto（2022）：由纤维参数“构造”三维结构\n\n- 使用开源三维纤维模拟器 voxelfiber（由 Conceição 2010、Curto 2011 开发并验证），以元胞自动机为基础，把纤维表示为一串体素；用**实测得到的纤维尺寸与性质**（长宽比、柔软性、壁厚、腔径、分辨率）生成平面随机网络[7]。\n- 验证方式：用 MorFi 分析仪测纤维形态，抄造 20 g/m² 各向同性实验室纸页作实测对照，再将模拟结构的有效厚度、紧度、表观孔隙率与实测值比较（表3）[2]。\n- 结构参数的获取路径：表观孔隙率由模拟直接得出；紧度由“计算出的有效厚度”间接换算[2]。论文称该模拟器可在不做大量实验、不制备实验室纸页的情况下快速评价不同情境[2]。\n- 这些是计算值，仅在与实测结构参数对照时作为验证（表3：0、500、1000、1500 PFI 时实测厚度 101、93、85、77 μm，模拟有效厚度 99、94、85、76 μm 等）[2]。这属于模拟—实测数值比较，不是对真实纸页内部结构的成像。\n\n### 2. 2020年 CLSM 研究：对真实纸页“成像+图像分割”\n\n- 用激光扫描共聚焦显微镜对纸张作 **Z 向断层扫描**，借助荧光特异性染色、按荧光强弱提高纤维与孔隙的区分度实现三维可视化；作者与 Micro-CT 对比，指出 X 射线对纤维/孔隙穿透性差别小、阈值分割繁琐[6][1]。\n- 流程：导入断层图像 → 中值滤波平滑（避免未染色/光漂白）→ 自动阈值统计体素灰度 0~255 → 二值化分割（灰度大于阈值的点设为纤维，小于设为孔隙）→ 统计体积分数，即纤维像素数占比，据此得孔隙率[3]。\n- 结果：CLSM 计算孔隙率与实验值的相对误差小于 8%[11]。研究目的是表征纤维间相对结合面积/孔隙率，并与纤维形态及纸页物理性能关联[18][11]。\n\n### 3. 能否直接互相替代——不能\n\n1. **信息来源性质不同**：CLSM 针对某一种真实纸页，测其结构；模拟器是由纤维参数生成的理想化平面随机网络[7]，其结构是输入参数的计算结果。\n2. **可比性仅限特定条件**：Morais 的验证限于 20 g/m² 各向同性手抄片、漂白桉木硫酸盐浆、0–1500 PFI 打浆、平面随机网络假设[2][7]；CLSM 研究用棉浆、马尾松浆、竹浆、桉木浆、蔗渣浆及其配抄纸页[18][11]。样本、浆种与成形条件不同，未见交叉验证。\n3. **可得结构量不同**：CLSM 给出体素级纤维/孔隙分割与孔隙率（误差 <8%）[3][11]；模拟器孔隙率为模拟直接值、紧度经有效厚度间接换算[2]。模拟替代不了对实际结构的成像观测，CLSM 也替代不了模拟用于外推未做实验的配方（后者正是其宣称的用途[2]）。\n4. **不确定性**：CLSM 结果受染色质量、阈值分割与体素分辨率影响，其可靠性仅以孔隙率相对误差 <8% 体现[11]；已读章节中未见 Z 向扫描厚度/分辨率等可与模拟逐点对照的细节。Morais 文中模拟与实测偏差仅以表格数值呈现，未给统计不确定性[2]。这些限制意味着二者的对应关系只是近似。",
+    "draft": "## 结论\n\n两者获取结构信息的方式根本不同：Morais & Curto（2022）是用实测纤维参数**生成（模拟）**三维纤维网络，结构参数由模拟器算出；2020年CLSM研究是对真实纸样进行荧光染色、Z向断层扫描与图像分割，**直接观测得到**三维结构和孔隙率。\n\n### 1. Morais 与 Curto（2022）：由纤维参数“构造”出三维结构\n\n- 使用的是开源三维纤维模拟器 voxelfiber（Conceição 2010、Curto 2011 开发并验证），以元胞自动机为基础，把纤维表示为一串体素（voxel）；用**实测得到的纤维尺寸与性质**（长宽比、柔软性、壁厚、腔径、分辨率）生成平面随机网络[7]。\n- 用 MorFi 分析仪测纤维形态，并抄造 20 g/m² 各向同性实验室纸页做实测对照；然后用模拟结构的有效厚度、紧度和表观孔隙率与实测值比较，进行验证（表3）[2]。\n- 结构参数的获取路径：模拟器直接输出表观孔隙率；紧度由“计算出的有效厚度”间接换算[2]。论文明确说该模拟器可在不做大量实验、不制备实验室纸页的情况下快速评价不同情境[2]。\n- 这些都是“计算值”，只是在验证时与实测结构参数对照（表3 中 0–1500 PFI 条件下，实测厚度为 101、93、85、77 μm；模拟有效厚度为 99、94、85、76 μm 等）[2]。这属于图/表读数与模拟—实测比较，不是对真实纸页内部结构的成像。\n\n### 2. 2020年 CLSM 研究：对真实纸页做“成像+图像分割”\n\n- 用激光扫描共聚焦显微镜（CLSM）对纸张做 **Z 向断层扫描**，共聚焦显微镜采用荧光特异性染色，按荧光强弱提高纤维与孔隙之间的区分度，从而实现三维可视化；作者将其与 Micro-CT 对比，指出 X 射线对纤维/孔隙穿透性差别小、阈值分割繁琐[6][1]。\n- 处理流程：导入断层图像 → 中值滤波平滑（避免未染色/光漂白）→ 自动阈值统计体素灰度 0~255 → 二值化分割（灰度大于阈值的点设为纤维，小于阈值的点设为孔隙）→ 体积分数统计，即纤维像素数占比，进而得到孔隙率[3]。\n- 结果：CLSM 计算的孔隙率与实验值相对误差小于 8%[11]。研究目标是表征纤维间的相对结合面积/孔隙率，并与纤维形态（纤维筛分仪、纤维质量分析仪）及纸页物理性能关联[18][11]。\n\n### 3. 能否直接互相替代——不能\n\n理由与前提如下：\n\n1. **信息来源性质不同**：CLSM 面向某一种真实纸页样本，测量其结构（含实际成形、配抄带来的不均一性）；模拟器面向由纤维参数生成的理想化平面随机网络[7]，其结构是“由输入参数算出的结果”，不包含真实纸页中未被模型参数覆盖的因素。二者不能互证“真实结构”，只能做趋势/量级比对。\n2. **可比性只在特定条件下成立**：Morais 的验证在 20 g/m² 各向同性手抄片、漂白桉木硫酸盐浆、0–1500 PFI 打浆、平面随机网络假设下进行[2][7]；CLSM 研究用的是棉浆、马尾松、竹浆、桉木浆、蔗渣浆及其配抄纸页[18][11]。样本、浆种和成形条件均不同，未做交叉验证，因此二者不能直接互换。\n3. **可获取的结构量不同**：CLSM 直接给出体素级纤维/孔隙分割与孔隙率（并有 <8% 误差量化）[3][11]；模拟器给出的孔隙率为模拟直接值、紧度经有效厚度间接换算[2]。模拟不能替代对实际结合面积等的实测，CLSM 也不能替代模拟来“外推未做实验的配方”（模拟的用途正是免去制备纸页[2]）。\n4. **不确定性**：CLSM 的结果受染色质量、阈值分割与体素分辨率影响，其可靠性仅以孔隙率与实验值 <8% 的相对误差体现[11]；论文未给出 Z 向扫描厚度/分辨率等使模拟器可逐点对照的细节（在已读章节中未见）。Morais 文中模拟与实测的偏差仅以表格数值呈现、未给出统计不确定性[2]。这些限制意味着二者“校准”关系都只是近似。\n\n**说明**：以上为对两文方法学描述的比较；两文并未互相比对，因此“能否替代”是基于方法学差异的推断，而非任一文的结论。",
+    "raw_jev": {
+      "key_point_scores": {
+        "K1": 1,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "## 结论\n\n两者获取结构信息的方式根本不同：Morais & Curto（2022）是用实测纤维参数**模拟生成**三维纤维网络，结构参数由模拟器算出；2020年CLSM研究是对真实纸样做荧光染色、Z向断层扫描与图像分割，从成像中**直接得到**三维结构与孔隙率。基于方法学差异，二者不能直接互相替代（此判断为对两文方法的比较推断，两文本身并未互相比对）。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "### 1. Morais 与 Curto（2022）：由纤维参数“构造”三维结构\n\n- 使用开源三维纤维模拟器 voxelfiber（由 Conceição 2010、Curto 2011 开发并验证），以元胞自动机为基础，把纤维表示为一串体素；用**实测得到的纤维尺寸与性质**（长宽比、柔软性、壁厚、腔径、分辨率）生成平面随机网络[7]。\n- 验证方式：用 MorFi 分析仪测纤维形态，抄造 20 g/m² 各向同性实验室纸页作实测对照，再将模拟结构的有效厚度、紧度、表观孔隙率与实测值比较（表3）[2]。\n- 结构参数的获取路径：表观孔隙率由模拟直接得出；紧度由“计算出的有效厚度”间接换算[2]。论文称该模拟器可在不做大量实验、不制备实验室纸页的情况下快速评价不同情境[2]。\n- 这些是计算值，仅在与实测结构参数对照时作为验证（表3：0、500、1000、1500 PFI 时实测厚度 101、93、85、77 μm，模拟有效厚度 99、94、85、76 μm 等）[2]。这属于模拟—实测数值比较，不是对真实纸页内部结构的成像。",
+          "citation_refs": [
+            "[7]",
+            "[2]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B020"
+        },
+        {
+          "id": "C3",
+          "text": "### 2. 2020年 CLSM 研究：对真实纸页“成像+图像分割”\n\n- 用激光扫描共聚焦显微镜对纸张作 **Z 向断层扫描**，借助荧光特异性染色、按荧光强弱提高纤维与孔隙的区分度实现三维可视化；作者与 Micro-CT 对比，指出 X 射线对纤维/孔隙穿透性差别小、阈值分割繁琐[6][1]。\n- 流程：导入断层图像 → 中值滤波平滑（避免未染色/光漂白）→ 自动阈值统计体素灰度 0~255 → 二值化分割（灰度大于阈值的点设为纤维，小于设为孔隙）→ 统计体积分数，即纤维像素数占比，据此得孔隙率[3]。\n- 结果：CLSM 计算孔隙率与实验值的相对误差小于 8%[11]。研究目的是表征纤维间相对结合面积/孔隙率，并与纤维形态及纸页物理性能关联[18][11]。",
+          "citation_refs": [
+            "[6]",
+            "[1]",
+            "[3]",
+            "[11]",
+            "[18]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B042"
+        },
+        {
+          "id": "C4",
+          "text": "### 3. 能否直接互相替代——不能\n\n1. **信息来源性质不同**：CLSM 针对某一种真实纸页，测其结构；模拟器是由纤维参数生成的理想化平面随机网络[7]，其结构是输入参数的计算结果。\n2. **可比性仅限特定条件**：Morais 的验证限于 20 g/m² 各向同性手抄片、漂白桉木硫酸盐浆、0–1500 PFI 打浆、平面随机网络假设[2][7]；CLSM 研究用棉浆、马尾松浆、竹浆、桉木浆、蔗渣浆及其配抄纸页[18][11]。样本、浆种与成形条件不同，未见交叉验证。\n3. **可得结构量不同**：CLSM 给出体素级纤维/孔隙分割与孔隙率（误差 <8%）[3][11]；模拟器孔隙率为模拟直接值、紧度经有效厚度间接换算[2]。模拟替代不了对实际结构的成像观测，CLSM 也替代不了模拟用于外推未做实验的配方（后者正是其宣称的用途[2]）。\n4. **不确定性**：CLSM 结果受染色质量、阈值分割与体素分辨率影响，其可靠性仅以孔隙率相对误差 <8% 体现[11]；已读章节中未见 Z 向扫描厚度/分辨率等可与模拟逐点对照的细节。Morais 文中模拟与实测偏差仅以表格数值呈现，未给统计不确定性[2]。这些限制意味着二者的对应关系只是近似。",
+          "citation_refs": [
+            "[7]",
+            "[2]",
+            "[18]",
+            "[11]",
+            "[3]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C2",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[11]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[18]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[18]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[11]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[3]",
+          "score": 0
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "partial"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false,
+      "decisions": {
+        "boundary": "appropriate",
+        "reference_check": "sound",
+        "point_K1": "complete",
+        "point_K2": "complete",
+        "point_K3": "complete",
+        "point_K4": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "NONE",
+        "group_C1": "missing",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "B020",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "citation_C2_2": "supported",
+        "kind_C3": "fact",
+        "support_C3": "supported",
+        "basis_C3": "B042",
+        "group_C3": "complete",
+        "citation_C3_1": "supported",
+        "citation_C3_2": "supported",
+        "citation_C3_3": "supported",
+        "citation_C3_4": "supported",
+        "citation_C3_5": "supported",
+        "kind_C4": "fact",
+        "support_C4": "partially_supported",
+        "basis_C4": "NONE",
+        "group_C4": "partial",
+        "citation_C4_1": "supported",
+        "citation_C4_2": "supported",
+        "citation_C4_3": "supported",
+        "citation_C4_4": "supported",
+        "citation_C4_5": "unsupported"
+      }
+    },
+    "calibrated": {
+      "key_point_scores": {
+        "K1": 1,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "## 结论\n\n两者获取结构信息的方式根本不同：Morais & Curto（2022）是用实测纤维参数**模拟生成**三维纤维网络，结构参数由模拟器算出；2020年CLSM研究是对真实纸样做荧光染色、Z向断层扫描与图像分割，从成像中**直接得到**三维结构与孔隙率。基于方法学差异，二者不能直接互相替代（此判断为对两文方法的比较推断，两文本身并未互相比对）。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "### 1. Morais 与 Curto（2022）：由纤维参数“构造”三维结构\n\n- 使用开源三维纤维模拟器 voxelfiber（由 Conceição 2010、Curto 2011 开发并验证），以元胞自动机为基础，把纤维表示为一串体素；用**实测得到的纤维尺寸与性质**（长宽比、柔软性、壁厚、腔径、分辨率）生成平面随机网络[7]。\n- 验证方式：用 MorFi 分析仪测纤维形态，抄造 20 g/m² 各向同性实验室纸页作实测对照，再将模拟结构的有效厚度、紧度、表观孔隙率与实测值比较（表3）[2]。\n- 结构参数的获取路径：表观孔隙率由模拟直接得出；紧度由“计算出的有效厚度”间接换算[2]。论文称该模拟器可在不做大量实验、不制备实验室纸页的情况下快速评价不同情境[2]。\n- 这些是计算值，仅在与实测结构参数对照时作为验证（表3：0、500、1000、1500 PFI 时实测厚度 101、93、85、77 μm，模拟有效厚度 99、94、85、76 μm 等）[2]。这属于模拟—实测数值比较，不是对真实纸页内部结构的成像。",
+          "citation_refs": [
+            "[7]",
+            "[2]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "B020"
+        },
+        {
+          "id": "C3",
+          "text": "### 2. 2020年 CLSM 研究：对真实纸页“成像+图像分割”\n\n- 用激光扫描共聚焦显微镜对纸张作 **Z 向断层扫描**，借助荧光特异性染色、按荧光强弱提高纤维与孔隙的区分度实现三维可视化；作者与 Micro-CT 对比，指出 X 射线对纤维/孔隙穿透性差别小、阈值分割繁琐[6][1]。\n- 流程：导入断层图像 → 中值滤波平滑（避免未染色/光漂白）→ 自动阈值统计体素灰度 0~255 → 二值化分割（灰度大于阈值的点设为纤维，小于设为孔隙）→ 统计体积分数，即纤维像素数占比，据此得孔隙率[3]。\n- 结果：CLSM 计算孔隙率与实验值的相对误差小于 8%[11]。研究目的是表征纤维间相对结合面积/孔隙率，并与纤维形态及纸页物理性能关联[18][11]。",
+          "citation_refs": [
+            "[6]",
+            "[1]",
+            "[3]",
+            "[11]",
+            "[18]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B042"
+        },
+        {
+          "id": "C4",
+          "text": "### 3. 能否直接互相替代——不能\n\n1. **信息来源性质不同**：CLSM 针对某一种真实纸页，测其结构；模拟器是由纤维参数生成的理想化平面随机网络[7]，其结构是输入参数的计算结果。\n2. **可比性仅限特定条件**：Morais 的验证限于 20 g/m² 各向同性手抄片、漂白桉木硫酸盐浆、0–1500 PFI 打浆、平面随机网络假设[2][7]；CLSM 研究用棉浆、马尾松浆、竹浆、桉木浆、蔗渣浆及其配抄纸页[18][11]。样本、浆种与成形条件不同，未见交叉验证。\n3. **可得结构量不同**：CLSM 给出体素级纤维/孔隙分割与孔隙率（误差 <8%）[3][11]；模拟器孔隙率为模拟直接值、紧度经有效厚度间接换算[2]。模拟替代不了对实际结构的成像观测，CLSM 也替代不了模拟用于外推未做实验的配方（后者正是其宣称的用途[2]）。\n4. **不确定性**：CLSM 结果受染色质量、阈值分割与体素分辨率影响，其可靠性仅以孔隙率相对误差 <8% 体现[11]；已读章节中未见 Z 向扫描厚度/分辨率等可与模拟逐点对照的细节。Morais 文中模拟与实测偏差仅以表格数值呈现，未给统计不确定性[2]。这些限制意味着二者的对应关系只是近似。",
+          "citation_refs": [
+            "[7]",
+            "[2]",
+            "[18]",
+            "[11]",
+            "[3]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C2",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[11]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[18]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[18]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[11]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[3]",
+          "score": 1
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "partial"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false
+    },
+    "summary": {
+      "id": "FS8-022",
+      "group": "cross",
+      "status": "completed",
+      "review_status": "completed",
+      "stop_reason": null,
+      "jev": {
+        "point_score": 100,
+        "point_count": 4,
+        "fact_count": 4,
+        "supported_facts": 3,
+        "pair_count": 12,
+        "supported_pairs": 11,
+        "group_count": 4,
+        "covered_groups": 2,
+        "boundary": 2,
+        "fact_support": 75.0,
+        "citation_precision": 91.66666666666667,
+        "citation_coverage": 50.0,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "final": {
+        "point_score": 100,
+        "point_count": 4,
+        "fact_count": 4,
+        "supported_facts": 2,
+        "pair_count": 12,
+        "supported_pairs": 11,
+        "group_count": 4,
+        "covered_groups": 1,
+        "boundary": 2,
+        "fact_support": 50.0,
+        "citation_precision": 91.66666666666667,
+        "citation_coverage": 25.0,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "tools": [
+        "search_literature",
+        "read_section"
+      ],
+      "routing_ok": true,
+      "elapsed_ms": 40196,
+      "changes": [
+        {
+          "path": "claim_assessments.C2.support",
+          "value": "partially_supported",
+          "reason": "bulk=松厚度，非紧度；表3是cm³/g而非g/cm³。"
+        },
+        {
+          "path": "citation_group_assessments.C2.coverage",
+          "value": "partial",
+          "reason": "所引来源支持松厚度，不能支持改成紧度的陈述。"
+        }
+      ],
+      "reason": "模拟与成像两种方式、孔隙率8%和不可直接替代均答全；但将Morais bulk译成紧度，bulk是松厚度，不能与密度/紧度互换。Jev将该段全支持过宽。"
+    },
+    "result_sha256": "46dd7e36935ffb31e5b4f30f5b75d8de13356638ed2e5bac911bda0289c90e3b",
+    "judge_input_sha256": "2bbd56d5b53fe39d696ce258cc497fb00f7f4384f32e6d6f6006f36fbe536b26",
+    "source_calibrated": {
+      "key_point_scores": {
+        "K1": 1,
+        "K2": 1,
+        "K3": 1,
+        "K4": 1
+      },
+      "claim_assessments": [
+        {
+          "id": "C1",
+          "text": "## 结论\n\n两者获取结构信息的方式根本不同：Morais & Curto（2022）是用实测纤维参数**模拟生成**三维纤维网络，结构参数由模拟器算出；2020年CLSM研究是对真实纸样做荧光染色、Z向断层扫描与图像分割，从成像中**直接得到**三维结构与孔隙率。基于方法学差异，二者不能直接互相替代（此判断为对两文方法的比较推断，两文本身并未互相比对）。",
+          "citation_refs": [],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "NONE"
+        },
+        {
+          "id": "C2",
+          "text": "### 1. Morais 与 Curto（2022）：由纤维参数“构造”三维结构\n\n- 使用开源三维纤维模拟器 voxelfiber（由 Conceição 2010、Curto 2011 开发并验证），以元胞自动机为基础，把纤维表示为一串体素；用**实测得到的纤维尺寸与性质**（长宽比、柔软性、壁厚、腔径、分辨率）生成平面随机网络[7]。\n- 验证方式：用 MorFi 分析仪测纤维形态，抄造 20 g/m² 各向同性实验室纸页作实测对照，再将模拟结构的有效厚度、紧度、表观孔隙率与实测值比较（表3）[2]。\n- 结构参数的获取路径：表观孔隙率由模拟直接得出；紧度由“计算出的有效厚度”间接换算[2]。论文称该模拟器可在不做大量实验、不制备实验室纸页的情况下快速评价不同情境[2]。\n- 这些是计算值，仅在与实测结构参数对照时作为验证（表3：0、500、1000、1500 PFI 时实测厚度 101、93、85、77 μm，模拟有效厚度 99、94、85、76 μm 等）[2]。这属于模拟—实测数值比较，不是对真实纸页内部结构的成像。",
+          "citation_refs": [
+            "[7]",
+            "[2]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "B020"
+        },
+        {
+          "id": "C3",
+          "text": "### 2. 2020年 CLSM 研究：对真实纸页“成像+图像分割”\n\n- 用激光扫描共聚焦显微镜对纸张作 **Z 向断层扫描**，借助荧光特异性染色、按荧光强弱提高纤维与孔隙的区分度实现三维可视化；作者与 Micro-CT 对比，指出 X 射线对纤维/孔隙穿透性差别小、阈值分割繁琐[6][1]。\n- 流程：导入断层图像 → 中值滤波平滑（避免未染色/光漂白）→ 自动阈值统计体素灰度 0~255 → 二值化分割（灰度大于阈值的点设为纤维，小于设为孔隙）→ 统计体积分数，即纤维像素数占比，据此得孔隙率[3]。\n- 结果：CLSM 计算孔隙率与实验值的相对误差小于 8%[11]。研究目的是表征纤维间相对结合面积/孔隙率，并与纤维形态及纸页物理性能关联[18][11]。",
+          "citation_refs": [
+            "[6]",
+            "[1]",
+            "[3]",
+            "[11]",
+            "[18]"
+          ],
+          "claim_type": "fact",
+          "support": "supported",
+          "basis": "B042"
+        },
+        {
+          "id": "C4",
+          "text": "### 3. 能否直接互相替代——不能\n\n1. **信息来源性质不同**：CLSM 针对某一种真实纸页，测其结构；模拟器是由纤维参数生成的理想化平面随机网络[7]，其结构是输入参数的计算结果。\n2. **可比性仅限特定条件**：Morais 的验证限于 20 g/m² 各向同性手抄片、漂白桉木硫酸盐浆、0–1500 PFI 打浆、平面随机网络假设[2][7]；CLSM 研究用棉浆、马尾松浆、竹浆、桉木浆、蔗渣浆及其配抄纸页[18][11]。样本、浆种与成形条件不同，未见交叉验证。\n3. **可得结构量不同**：CLSM 给出体素级纤维/孔隙分割与孔隙率（误差 <8%）[3][11]；模拟器孔隙率为模拟直接值、紧度经有效厚度间接换算[2]。模拟替代不了对实际结构的成像观测，CLSM 也替代不了模拟用于外推未做实验的配方（后者正是其宣称的用途[2]）。\n4. **不确定性**：CLSM 结果受染色质量、阈值分割与体素分辨率影响，其可靠性仅以孔隙率相对误差 <8% 体现[11]；已读章节中未见 Z 向扫描厚度/分辨率等可与模拟逐点对照的细节。Morais 文中模拟与实测偏差仅以表格数值呈现，未给统计不确定性[2]。这些限制意味着二者的对应关系只是近似。",
+          "citation_refs": [
+            "[7]",
+            "[2]",
+            "[18]",
+            "[11]",
+            "[3]"
+          ],
+          "claim_type": "fact",
+          "support": "partially_supported",
+          "basis": "NONE"
+        }
+      ],
+      "citation_assessments": [
+        {
+          "claim_id": "C2",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C2",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[6]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[1]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[3]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[11]",
+          "score": 1
+        },
+        {
+          "claim_id": "C3",
+          "ref": "[18]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[7]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[2]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[18]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[11]",
+          "score": 1
+        },
+        {
+          "claim_id": "C4",
+          "ref": "[3]",
+          "score": 0
+        }
+      ],
+      "citation_group_assessments": [
+        {
+          "claim_id": "C1",
+          "coverage": "missing"
+        },
+        {
+          "claim_id": "C2",
+          "coverage": "partial"
+        },
+        {
+          "claim_id": "C3",
+          "coverage": "complete"
+        },
+        {
+          "claim_id": "C4",
+          "coverage": "partial"
+        }
+      ],
+      "answerability_score": 2,
+      "reference_concern": false,
+      "decisions": {
+        "boundary": "appropriate",
+        "reference_check": "sound",
+        "point_K1": "complete",
+        "point_K2": "complete",
+        "point_K3": "complete",
+        "point_K4": "complete",
+        "kind_C1": "fact",
+        "support_C1": "supported",
+        "basis_C1": "NONE",
+        "group_C1": "missing",
+        "kind_C2": "fact",
+        "support_C2": "supported",
+        "basis_C2": "B020",
+        "group_C2": "complete",
+        "citation_C2_1": "supported",
+        "citation_C2_2": "supported",
+        "kind_C3": "fact",
+        "support_C3": "supported",
+        "basis_C3": "B042",
+        "group_C3": "complete",
+        "citation_C3_1": "supported",
+        "citation_C3_2": "supported",
+        "citation_C3_3": "supported",
+        "citation_C3_4": "supported",
+        "citation_C3_5": "supported",
+        "kind_C4": "fact",
+        "support_C4": "partially_supported",
+        "basis_C4": "NONE",
+        "group_C4": "partial",
+        "citation_C4_1": "supported",
+        "citation_C4_2": "supported",
+        "citation_C4_3": "supported",
+        "citation_C4_4": "supported",
+        "citation_C4_5": "unsupported"
+      }
+    },
+    "source_run": "agent-eightpapers-20261105",
+    "baseline_metrics": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 2,
+      "pair_count": 12,
+      "supported_pairs": 11,
+      "group_count": 4,
+      "covered_groups": 1,
+      "boundary": 2,
+      "fact_support": 50.0,
+      "citation_precision": 91.66666666666667,
+      "citation_coverage": 25.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "pre_audit_metrics": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 4,
+      "supported_facts": 2,
+      "pair_count": 12,
+      "supported_pairs": 11,
+      "group_count": 4,
+      "covered_groups": 1,
+      "boundary": 2,
+      "fact_support": 50.0,
+      "citation_precision": 91.66666666666667,
+      "citation_coverage": 25.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "latest_audit": {
+      "reason": "要点100保留。bulk为松厚度(cm³/g)，被写成紧度，C2/C4部分支持保留。C4-[3]明确支持体素分割与孔隙率计算这一子事实，不要求独自支持整段比较，恢复单引。开头结论继承后文引用，恢复覆盖。",
+      "metrics": {
+        "point_score": 100,
+        "point_count": 4,
+        "fact_count": 4,
+        "supported_facts": 2,
+        "pair_count": 12,
+        "supported_pairs": 12,
+        "group_count": 4,
+        "covered_groups": 2,
+        "boundary": 2,
+        "fact_support": 50.0,
+        "citation_precision": 100.0,
+        "citation_coverage": 50.0,
+        "strict_pass": false,
+        "format_ok": true
+      },
+      "answer_regenerated": false,
+      "judge_rerun": false
+    },
+    "answer_sha256": "3fce601c299ebb566a1ac2fbdc2696ce9bec78e227f46ba398195e02e48a5a5a"
+  }
+]
