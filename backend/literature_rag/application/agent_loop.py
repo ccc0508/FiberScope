@@ -22,7 +22,11 @@ verified matches; inspect their pixels and do not assume the requested number. D
 viewing a figure while only calling read_section.'''
 PROMPT += '''\nRequest at most ONE tool per turn. After each result, check whether the question's required facts,
 conditions and uncertainties are supported. If sufficient, answer now. Otherwise identify the specific
-remaining gap in the next tool's reason. Do not search merely for extra background.
+remaining gap in the next tool's reason.
+For facts the question explicitly asks you to establish, if you have identified missing evidence,
+budget remains, and an untried targeted follow-up is available, perform that follow-up first.
+End with the gap unresolved only if targeted follow-up fails, no viable path is available,
+or the remaining budget is insufficient.
 Tool evidence may reuse exact text parts via internal txt_<hash> keys; these are NOT citation IDs.
 Cite only the enclosing evidence ref [n].'''
 
