@@ -15,6 +15,7 @@ RERUNS = {
     4: 'agent-figure-discovery-case4-20261106',
     8: 'agent-current-case8-20261106',
     12: 'agent-current-case12-20261106',
+    15: 'agent-current-case15-20261106',
 }
 
 # Each audit applies to the selected answer, never to another run's claim IDs.
@@ -51,6 +52,13 @@ AUDIT = {
     ]),
     11: ('已接受总结和同表说明继承引用；仍保留把Table 5行说成列，以及将正文MLR数值误述为0.31范围的实质问题。实际正文给杨氏模量0.33，Table 5给0.31。', []),
     12: ('采用新回答且维持满分；Table 2支持Fibre_cont定义，原文100 and 10 mm的单位歧义属于来源问题，新答未擅自改为μm。', []),
+    15: ('采用当前版本重跑及最新校准：开头结论承接[1]，[8]支持SR/CSF测量方法。保留末段仅凭表9引用作者差异不显著判断的支持不足；不是编号错配。', []),
+    16: ('接受有界仪器差异及不能直接换算的谨慎说明；[6][7]直接支持两台仪器各自的测量均值，结合[1]检测限制共同覆盖末段，恢复满分。', [
+        ('claim_assessments.C4.support', 'supported', '完整上下文明确有两仪器测量；非直接对比实测指形态解释及检测限制的推论，不能误读成否认实验。所引证据未显示校正关系是限定范围的说明。'),
+        ('citation_assessments.C4.[6].score', 1, 'Table 3直接支持Kajaani测量均值，承担实质子事实。'),
+        ('citation_assessments.C4.[7].score', 1, 'Table 4直接支持L&W测量均值，承担实质子事实。'),
+        ('citation_group_assessments.C4.coverage', 'complete', '[1]方法与检测限制及[6][7]表格联合支持；不要求推论在论文中逐字重述。'),
+    ]),
 }
 
 
@@ -101,32 +109,33 @@ def main():
         row['baseline_metrics'] = baseline[number-1]['summary']['final']
         row['pre_audit_metrics'] = metrics(row['case'], source_calibrated, row['summary'] | {'answer': row['answer']})
         before_rows.append({'final': row['pre_audit_metrics']})
-        reason, items = AUDIT.get(number, ('第13—30题沿用原报告最新校准，本次未重审。', []))
+        reason, items = AUDIT.get(number, ('未列入本轮复查的题目沿用此前校准。', []))
         changes = [{'path': p, 'value': v, 'reason': why} for p, v, why in items]
         current = calibrate(source_calibrated, {'changes': changes})
         # Raw decision labels can conflict with later human-readable calibration fields.
         # Preserve them in raw_jev/source_calibrated, not in the authoritative current view.
         current.pop('decisions', None)
         row['calibrated'] = current
-        row['latest_audit'] = {'reviewed': number <= 12, 'reason': reason, 'changes': changes}
+        row['latest_audit'] = {'reviewed': number in AUDIT, 'reason': reason, 'changes': changes}
         row['summary']['final'] = metrics(row['case'], current, row['summary'] | {'answer': row['answer']})
         row['summary']['jev'] = metrics(row['case'], row['raw_jev'], row['summary'] | {'answer': row['answer']})
-        row['summary']['reason'] = reason if number <= 12 else baseline[number-1]['summary']['reason']
-        row['summary']['changes'] = changes if number <= 12 else baseline[number-1]['summary']['changes']
+        row['summary']['reason'] = reason if number in AUDIT else baseline[number-1]['summary']['reason']
+        row['summary']['changes'] = changes if number in AUDIT else baseline[number-1]['summary']['changes']
         row['answer_sha256'] = hashlib.sha256(row['answer'].encode('utf-8')).hexdigest()
         manifest.append({'case_id': tid, 'source_run': source, 'answer_sha256': row['answer_sha256'], 'source_artifacts': [{'path': p.relative_to(ROOT).as_posix(), 'sha256': sha(p)} for p in paths]})
-        if number <= 12:
+        if number in AUDIT:
             audit_rows.append({'case_id': tid, 'source_run': source, **row['latest_audit'], 'before': row['pre_audit_metrics'], 'after': row['summary']['final']})
     final_rows = [r['summary'] for r in rows]
     totals = {
         'report_type': 'mixed-version selected-results snapshot, not a single-version end-to-end run',
         'answer_regenerated': False, 'judge_rerun': False,
+        'scoring_policy': read(ROOT / 'fiberscope-eval-8papers-v1/rubric.json'),
         'baseline': summary([r['summary'] for r in baseline], 'final'),
         'selected_before_audit': summary(before_rows, 'final'),
         'latest': summary(final_rows, 'final'),
         'groups': {g: summary([r for r in final_rows if r['group'] == g], 'final') for g in ['single', 'cross', 'no_paper']},
         'strict_pass_cases': [r['id'] for r in final_rows if r['final']['strict_pass']],
-        'limitations': ['仅前12题按本轮口径复查，13—30题保留此前校准。', '这不是同一版本的一次完整运行，不可将变化全部归因于算法优化。', '历史Jev评分未重跑；最终分为基于既有来源的Codex校准，不等同独立专家审核。', '第4题采用原图重跑，不采用后续分辨率实验或挑最高分答案。', '不混算不同批次Token、费用与时延。', '事实核查单位为冻结语义段落组，不是逐句正确率。'],
+        'limitations': ['前12题及第15、16题按本轮口径复查，其余保留此前校准。', '这不是同一版本的一次完整运行，不可将变化全部归因于算法优化。', '历史Jev评分未重跑；最终分为基于既有来源的Codex校准，不等同独立专家审核。', '第4题采用原图重跑，不采用后续分辨率实验或挑最高分答案。', '不混算不同批次Token、费用与时延。', '事实核查单位为冻结语义段落组，不是逐句正确率。'],
     }
     OUT.mkdir(parents=True, exist_ok=True)
     write(OUT / 'results.json', rows)
@@ -148,19 +157,19 @@ def main():
     for r in rows:
         c = r['case']; a = r['latest_audit']
         articles.append(f'<article id="q{c["id"]}"><h2>{c["id"]} · {esc(c["question"])}</h2><p>答案来源：{esc(r["source_run"])}</p><p>原30题对应分：{score(r["baseline_metrics"])}<br>选定回答复查前：{score(r["pre_audit_metrics"])}<br><b>最新校准：{score(r["summary"]["final"])}</b></p><p>{esc(r["summary"]["reason"])}</p><details open><summary>完整回答</summary><pre>{esc(r["answer"])}</pre></details><details><summary>题目参考答案与评分要点</summary><pre>{esc(json.dumps(c,ensure_ascii=False,indent=2))}</pre></details><details><summary>本轮调整、历史Jev及当前核查</summary><pre>{esc(json.dumps({"本轮复查":a,"历史Jev":r["raw_jev"],"选定版本校准":r["source_calibrated"],"当前校准":r["calibrated"]},ensure_ascii=False,indent=2))}</pre></details></article>')
-    intro = '第2、4、8、12题使用指定重跑，其余保留原答案；前12题按最新口径复查。原30题报告未修改。此为不同版本合并快照，不是一次新的端到端测试。'
+    intro = '第2、4、8、12、15题使用指定重跑，其余保留原答案；前12题及15、16题按最新口径复查。原30题报告未修改。此为不同版本合并快照，不是一次新的端到端测试。'
     page = '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>八篇论文·最新结果汇总</title><style>body{font:16px/1.65 system-ui,"Microsoft YaHei";color:#24344a;background:#f3f6fa;margin:0}main{max-width:1200px;margin:auto;padding:28px}article{background:white;padding:24px;border:1px solid #d6e0ed;border-radius:12px;margin:20px 0}table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid #ccd7e3;padding:8px;text-align:left;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.7 system-ui}summary{cursor:pointer;color:#25639a}details{margin:12px 0}</style><main><h1>八篇论文 · 最新结果汇总</h1><p>'+intro+'</p><p>六维顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过。</p>'+overall+'<details><summary>分组统计、分子分母与限制</summary><pre>'+esc(json.dumps(totals,ensure_ascii=False,indent=2))+'</pre></details>'+table+''.join(articles)+'</main></html>'
     (OUT / 'report.html').write_text(page, encoding='utf-8')
     md = '# 八篇论文：最新结果汇总\n\n' + intro + '\n\n## 汇总\n\n| 阶段 | 要点 | 事实充分支持 | 单引有效 | 引用组覆盖 | 严格通过 |\n|---|---:|---:|---:|---:|---:|\n'
     for label, key in [('原30题最新校准', 'baseline'), ('合并指定新回答，复查前', 'selected_before_audit'), ('合并并复查后', 'latest')]:
         t = totals[key]
         md += f'| {label} | {t["point_score"]:.2f} | {t["fact_support"]["percent"]:.2f}% | {t["citation_precision"]["percent"]:.2f}% | {t["citation_coverage"]["percent"]:.2f}% | {t["strict_pass_count"]}/30 |\n'
-    md += '\n## 前12题复查\n\n' + '\n'.join(f'- {a["case_id"]}：{a["reason"]}' for a in audit_rows)
-    md += '\n\n## 限制与文件\n\n' + '\n'.join('- '+s for s in totals['limitations']) + '\n\nreport.html包含完整题目、答案、参考标准及逐项核查；results.json保存全部30题；audit.json记录前12题变更；manifest.json标记来源及哈希；summary.json保存分子分母。\n'
+    md += '\n## 逐题复查\n\n' + '\n'.join(f'- {a["case_id"]}：{a["reason"]}' for a in audit_rows)
+    md += '\n\n## 限制与文件\n\n' + '\n'.join('- '+s for s in totals['limitations']) + '\n\nreport.html包含完整题目、答案、参考标准及逐项核查；results.json保存全部30题；audit.json记录本轮复查变更；manifest.json标记来源及哈希；summary.json保存分子分母。\n'
     (OUT / 'README.md').write_text(md, encoding='utf-8')
     assert len(rows) == 30
     assert all(rows[i-1]['answer'] == baseline[i-1]['answer'] for i in range(1,31) if i not in RERUNS)
-    assert all(rows[i]['summary']['final'] == baseline[i]['summary']['final'] for i in range(12,30))
+    assert all(rows[i]['summary']['final'] == baseline[i]['summary']['final'] for i in range(30) if i+1 not in AUDIT)
     print(json.dumps(totals, ensure_ascii=False, indent=2))
 
 
