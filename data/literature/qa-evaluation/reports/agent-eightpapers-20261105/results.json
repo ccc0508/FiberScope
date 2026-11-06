@@ -5573,7 +5573,7 @@
       "citation_group_assessments": [
         {
           "claim_id": "C1",
-          "coverage": "missing"
+          "coverage": "complete"
         },
         {
           "claim_id": "C2",
@@ -5660,11 +5660,11 @@
         "pair_count": 7,
         "supported_pairs": 4,
         "group_count": 4,
-        "covered_groups": 1,
+        "covered_groups": 2,
         "boundary": 2,
         "fact_support": 50.0,
         "citation_precision": 57.142857142857146,
-        "citation_coverage": 25.0,
+        "citation_coverage": 50.0,
         "strict_pass": false,
         "format_ok": true
       },
@@ -5673,8 +5673,14 @@
       ],
       "routing_ok": true,
       "elapsed_ms": 26609,
-      "changes": [],
-      "reason": "转数、浓度、间隙与两种作用力正确。额外把CI-XI/CI-XA间的0.919/0.925写成CI与氢键含量相关，是对象错配；保留C3部分支持。只按°SR对齐也不能消除浆种与处理混杂。"
+      "changes": [
+        {
+          "path": "citation_group_assessments.C1.coverage",
+          "value": "complete",
+          "reason": "开头结论由后文引用及实验条件完整支持，不因未重复挂引扣分。"
+        }
+      ],
+      "reason": "核心条件与要点均正确；开头结论承接后文实验条件和引用，不要求重复挂引，C1覆盖改complete。保留CI-XI/CI-XA相关系数被错配到氢键含量、全文未报告范围判断及匹配基准不足以排除混杂等实质问题。"
     },
     "result_sha256": "f9a7870b912f352edf88cbf51d3c5a7bc19e6b3c97634bead738a3d94e3bc113",
     "judge_input_sha256": "11055fdb55085f73aac44bc9893a99284e358c60b6fbfa0ac2594b721c3c0b3e"
@@ -5967,7 +5973,7 @@
             "[1]"
           ],
           "claim_type": "fact",
-          "support": "partially_supported",
+          "support": "supported",
           "basis": "B006"
         },
         {
@@ -6050,11 +6056,11 @@
         },
         {
           "claim_id": "C5",
-          "coverage": "partial"
+          "coverage": "complete"
         },
         {
           "claim_id": "C6",
-          "coverage": "missing"
+          "coverage": "complete"
         }
       ],
       "answerability_score": 2,
@@ -6128,16 +6134,16 @@
         "point_score": 100,
         "point_count": 4,
         "fact_count": 6,
-        "supported_facts": 5,
+        "supported_facts": 6,
         "pair_count": 10,
         "supported_pairs": 10,
         "group_count": 6,
-        "covered_groups": 4,
+        "covered_groups": 6,
         "boundary": 2,
-        "fact_support": 83.33333333333333,
+        "fact_support": 100.0,
         "citation_precision": 100.0,
-        "citation_coverage": 66.66666666666667,
-        "strict_pass": false,
+        "citation_coverage": 100.0,
+        "strict_pass": true,
         "format_ok": true
       },
       "tools": [
@@ -6145,8 +6151,24 @@
       ],
       "routing_ok": true,
       "elapsed_ms": 28238,
-      "changes": [],
-      "reason": "非单调反例、晶型未变及数值均正确。额外把统计不确定性推为小波动不宜当确定物理变化缺乏明确误差估计，按有界推断看待，保留Jev部分支持与引用不足。"
+      "changes": [
+        {
+          "path": "claim_assessments.C5.support",
+          "value": "supported",
+          "reason": "接受不宜当作确定物理变化的有界谨慎解释；没有声称回升不存在或不显著。"
+        },
+        {
+          "path": "citation_group_assessments.C5.coverage",
+          "value": "complete",
+          "reason": "论文事实由现有引用支持；上述谨慎解释不要求论文原句逐字重复。"
+        },
+        {
+          "path": "citation_group_assessments.C6.coverage",
+          "value": "complete",
+          "reason": "页码定位总结承接前文证据，不属于必须另附引用的新科学结论。"
+        }
+      ],
+      "reason": "数值反例、非单调变化与晶型未变均正确。C5的不确定性提醒未否定表中回升，也未断言变化不显著，应作为有界谨慎解释接受，不以缺少误差数据反向判其错误；现有引用已覆盖论文事实。C6为前文来源页码定位汇总，不要求重复引用。六维恢复满分。"
     },
     "result_sha256": "2eba5399706a1d72073344b79b80544eddb9b5199dc2b59d16fc108fcefab314",
     "judge_input_sha256": "c007811fa729f226d4e3dea9f2c5dd3f47143e1423e91a6c3604b9f0953ecd50"

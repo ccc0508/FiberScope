@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>八篇论文 Agentic RAG 30题评测</title><style>body{font:16px/1.7 system-ui,"Microsoft YaHei";background:#f3f6fa;color:#22334a;margin:0}main{max-width:1100px;margin:auto;padding:28px}article{background:white;border:1px solid #d8e1ec;border-radius:10px;padding:22px;margin:20px 0}h2{font-size:19px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.7 system-ui}summary{cursor:pointer;color:#25639a}details{margin:12px 0}table{border-collapse:collapse}td,th{padding:8px;border:1px solid #ccd7e3}</style><main><h1>八篇论文 · Agentic RAG 30题评测</h1><p>完成30/30；完整复核30/30。校准后要点分92.50，严格通过7/30。</p><p>同一最新版运行时，每题独立上下文、首次作答，不挑最佳答案。Jev独立评分后由Codex逐题校准；这不是独立人类专家审核。没有重跑答得差的题。非论文题引用指标为N/A。</p><details><summary>总体分组指标、资源用量与限制</summary><pre>{
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>八篇论文 Agentic RAG 30题评测</title><style>body{font:16px/1.7 system-ui,"Microsoft YaHei";background:#f3f6fa;color:#22334a;margin:0}main{max-width:1100px;margin:auto;padding:28px}article{background:white;border:1px solid #d8e1ec;border-radius:10px;padding:22px;margin:20px 0}h2{font-size:19px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.7 system-ui}summary{cursor:pointer;color:#25639a}details{margin:12px 0}table{border-collapse:collapse}td,th{padding:8px;border:1px solid #ccd7e3}</style><main><h1>八篇论文 · Agentic RAG 30题评测</h1><p>完成30/30；完整复核30/30。校准后要点分92.50，严格通过8/30。</p><p>同一最新版运行时，每题独立上下文、首次作答，不挑最佳答案。Jev独立评分后由Codex逐题校准；这不是独立人类专家审核。没有重跑答得差的题。非论文题引用指标为N/A。</p><details><summary>总体分组指标、资源用量与限制</summary><pre>{
   &quot;suite&quot;: &quot;FS8-v1&quot;,
   &quot;runtime&quot;: &quot;frozen latest Agentic RAG, 2026-11-05&quot;,
   &quot;answer_model&quot;: &quot;deepseek-flash&quot;,
@@ -32,11 +32,11 @@
   &quot;calibrated&quot;: {
     &quot;count&quot;: 30,
     &quot;point_score&quot;: 92.5,
-    &quot;strict_pass_count&quot;: 7,
+    &quot;strict_pass_count&quot;: 8,
     &quot;boundary_mean&quot;: 1.8,
     &quot;fact_support&quot;: {
-      &quot;percent&quot;: 68.54838709677419,
-      &quot;numerator&quot;: 85,
+      &quot;percent&quot;: 69.35483870967742,
+      &quot;numerator&quot;: 86,
       &quot;denominator&quot;: 124
     },
     &quot;citation_precision&quot;: {
@@ -45,8 +45,8 @@
       &quot;denominator&quot;: 243
     },
     &quot;citation_coverage&quot;: {
-      &quot;percent&quot;: 44.827586206896555,
-      &quot;numerator&quot;: 52,
+      &quot;percent&quot;: 47.41379310344828,
+      &quot;numerator&quot;: 55,
       &quot;denominator&quot;: 116
     }
   },
@@ -54,11 +54,11 @@
     &quot;single&quot;: {
       &quot;count&quot;: 16,
       &quot;point_score&quot;: 95.3125,
-      &quot;strict_pass_count&quot;: 1,
+      &quot;strict_pass_count&quot;: 2,
       &quot;boundary_mean&quot;: 1.8125,
       &quot;fact_support&quot;: {
-        &quot;percent&quot;: 69.86301369863014,
-        &quot;numerator&quot;: 51,
+        &quot;percent&quot;: 71.23287671232876,
+        &quot;numerator&quot;: 52,
         &quot;denominator&quot;: 73
       },
       &quot;citation_precision&quot;: {
@@ -67,8 +67,8 @@
         &quot;denominator&quot;: 148
       },
       &quot;citation_coverage&quot;: {
-        &quot;percent&quot;: 50.68493150684932,
-        &quot;numerator&quot;: 37,
+        &quot;percent&quot;: 54.794520547945204,
+        &quot;numerator&quot;: 40,
         &quot;denominator&quot;: 73
       }
     },
@@ -4549,7 +4549,7 @@ Morais与Curto（2022，PDF第4页，3.2节）在ANN方法部分统一说明：�
       &quot;group_C4&quot;: &quot;partial&quot;
     }
   }
-}</pre></details></article><article><h2>FS8-013 · Li、Zhao与He（2020）的PFI研究，针叶木和阔叶木的打浆转数相同，就能视作相同处理强度、只比较浆种差异吗？请给出关键实验条件。</h2><p><b>Jev：</b>100.00 / 50.00 / 57.14 / 25.00 / 2 / 未通过<br><b>校准：</b>100.00 / 50.00 / 57.14 / 25.00 / 2 / 未通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>转数、浓度、间隙与两种作用力正确。额外把CI-XI/CI-XA间的0.919/0.925写成CI与氢键含量相关，是对象错配；保留C3部分支持。只按°SR对齐也不能消除浆种与处理混杂。</p><ul><li>维持Jev评分，理由见下。</li></ul><p>状态：completed · 复核：completed · 工具：search_literature · 26.6秒</p><details><summary>完整回答</summary><pre>**不能。** 转数（revolutions）相同并不等于处理强度相同，因此不能把“同转数”当作控制变量，只比较针叶木与阔叶木的浆种差异。
+}</pre></details></article><article><h2>FS8-013 · Li、Zhao与He（2020）的PFI研究，针叶木和阔叶木的打浆转数相同，就能视作相同处理强度、只比较浆种差异吗？请给出关键实验条件。</h2><p><b>Jev：</b>100.00 / 50.00 / 57.14 / 25.00 / 2 / 未通过<br><b>校准：</b>100.00 / 50.00 / 57.14 / 50.00 / 2 / 未通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>核心条件与要点均正确；开头结论承接后文实验条件和引用，不要求重复挂引，C1覆盖改complete。保留CI-XI/CI-XA相关系数被错配到氢键含量、全文未报告范围判断及匹配基准不足以排除混杂等实质问题。</p><ul><li>citation_group_assessments.C1.coverage → complete：开头结论由后文引用及实验条件完整支持，不因未重复挂引扣分。</li></ul><p>状态：completed · 复核：completed · 工具：search_literature · 26.6秒</p><details><summary>完整回答</summary><pre>**不能。** 转数（revolutions）相同并不等于处理强度相同，因此不能把“同转数”当作控制变量，只比较针叶木与阔叶木的浆种差异。
 
 **关键实验条件（Li, Zhao &amp; He, 2020, *Polymers* 12:2912, 第2页 §2.1 PFI Refining）**[2]：
 - 原料：商业漂白针叶木与阔叶木硫酸盐浆（Zhongzhirenhe，济南）。
@@ -4822,7 +4822,7 @@ Morais与Curto（2022，PDF第4页，3.2节）在ANN方法部分统一说明：�
     &quot;citation_group_assessments&quot;: [
       {
         &quot;claim_id&quot;: &quot;C1&quot;,
-        &quot;coverage&quot;: &quot;missing&quot;
+        &quot;coverage&quot;: &quot;complete&quot;
       },
       {
         &quot;claim_id&quot;: &quot;C2&quot;,
@@ -4879,7 +4879,7 @@ Morais与Curto（2022，PDF第4页，3.2节）在ANN方法部分统一说明：�
       &quot;citation_C5_1&quot;: &quot;unsupported&quot;
     }
   }
-}</pre></details></article><article><h2>FS8-014 · Li、Zhao与He（2020）表1(a)中，针叶木的CI-XI是否随每一步打浆都下降？请给一个数值反例，并说明这与“打浆改变了纤维素晶型”是否同一件事。</h2><p><b>Jev：</b>100.00 / 83.33 / 100.00 / 66.67 / 2 / 未通过<br><b>校准：</b>100.00 / 83.33 / 100.00 / 66.67 / 2 / 未通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>非单调反例、晶型未变及数值均正确。额外把统计不确定性推为小波动不宜当确定物理变化缺乏明确误差估计，按有界推断看待，保留Jev部分支持与引用不足。</p><ul><li>维持Jev评分，理由见下。</li></ul><p>状态：completed · 复核：completed · 工具：search_literature · 28.2秒</p><details><summary>完整回答</summary><pre>**结论：不是每一步都下降。** Li、Zhao 与 He（2020）表 1(a) 中，针叶木的 CI-XI 在打浆（PFI 精磨）过程中先降、后升、再降，表现为波动，不是单调下降[1][2]。
+}</pre></details></article><article><h2>FS8-014 · Li、Zhao与He（2020）表1(a)中，针叶木的CI-XI是否随每一步打浆都下降？请给一个数值反例，并说明这与“打浆改变了纤维素晶型”是否同一件事。</h2><p><b>Jev：</b>100.00 / 83.33 / 100.00 / 66.67 / 2 / 未通过<br><b>校准：</b>100.00 / 100.00 / 100.00 / 100.00 / 2 / 通过</p><p>指标顺序：要点% / 事实充分支持% / 单引有效% / 引用组覆盖% / 边界0–2 / 严格通过</p><p><b>校准说明：</b>数值反例、非单调变化与晶型未变均正确。C5的不确定性提醒未否定表中回升，也未断言变化不显著，应作为有界谨慎解释接受，不以缺少误差数据反向判其错误；现有引用已覆盖论文事实。C6为前文来源页码定位汇总，不要求重复引用。六维恢复满分。</p><ul><li>claim_assessments.C5.support → supported：接受不宜当作确定物理变化的有界谨慎解释；没有声称回升不存在或不显著。</li><li>citation_group_assessments.C5.coverage → complete：论文事实由现有引用支持；上述谨慎解释不要求论文原句逐字重复。</li><li>citation_group_assessments.C6.coverage → complete：页码定位总结承接前文证据，不属于必须另附引用的新科学结论。</li></ul><p>状态：completed · 复核：completed · 工具：search_literature · 28.2秒</p><details><summary>完整回答</summary><pre>**结论：不是每一步都下降。** Li、Zhao 与 He（2020）表 1(a) 中，针叶木的 CI-XI 在打浆（PFI 精磨）过程中先降、后升、再降，表现为波动，不是单调下降[1][2]。
 
 **数值反例（表 1(a)，软木/针叶木纤维）**[1]：0 转 73.23% → 4000 转 70.42% → **8000 转 72.54%** → 12,000 转 70.93% → 16,000 转 69.82%。其中，从 4000 转到 8000 转，CI-XI 上升（约 2.12 个百分点；这一差值由我根据表值计算，不是原文引用）。作者本人也在正文中把 CI 与 CI-XA 的趋势描述为“先降后升、随后下降”[2]。
 
@@ -5152,7 +5152,7 @@ Morais与Curto（2022，PDF第4页，3.2节）在ANN方法部分统一说明：�
           &quot;[1]&quot;
         ],
         &quot;claim_type&quot;: &quot;fact&quot;,
-        &quot;support&quot;: &quot;partially_supported&quot;,
+        &quot;support&quot;: &quot;supported&quot;,
         &quot;basis&quot;: &quot;B006&quot;
       },
       {
@@ -5235,11 +5235,11 @@ Morais与Curto（2022，PDF第4页，3.2节）在ANN方法部分统一说明：�
       },
       {
         &quot;claim_id&quot;: &quot;C5&quot;,
-        &quot;coverage&quot;: &quot;partial&quot;
+        &quot;coverage&quot;: &quot;complete&quot;
       },
       {
         &quot;claim_id&quot;: &quot;C6&quot;,
-        &quot;coverage&quot;: &quot;missing&quot;
+        &quot;coverage&quot;: &quot;complete&quot;
       }
     ],
     &quot;answerability_score&quot;: 2,

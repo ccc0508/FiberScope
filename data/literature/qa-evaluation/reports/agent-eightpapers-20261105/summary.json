@@ -32,11 +32,11 @@
   "calibrated": {
     "count": 30,
     "point_score": 92.5,
-    "strict_pass_count": 7,
+    "strict_pass_count": 8,
     "boundary_mean": 1.8,
     "fact_support": {
-      "percent": 68.54838709677419,
-      "numerator": 85,
+      "percent": 69.35483870967742,
+      "numerator": 86,
       "denominator": 124
     },
     "citation_precision": {
@@ -45,8 +45,8 @@
       "denominator": 243
     },
     "citation_coverage": {
-      "percent": 44.827586206896555,
-      "numerator": 52,
+      "percent": 47.41379310344828,
+      "numerator": 55,
       "denominator": 116
     }
   },
@@ -54,11 +54,11 @@
     "single": {
       "count": 16,
       "point_score": 95.3125,
-      "strict_pass_count": 1,
+      "strict_pass_count": 2,
       "boundary_mean": 1.8125,
       "fact_support": {
-        "percent": 69.86301369863014,
-        "numerator": 51,
+        "percent": 71.23287671232876,
+        "numerator": 52,
         "denominator": 73
       },
       "citation_precision": {
@@ -67,8 +67,8 @@
         "denominator": 148
       },
       "citation_coverage": {
-        "percent": 50.68493150684932,
-        "numerator": 37,
+        "percent": 54.794520547945204,
+        "numerator": 40,
         "denominator": 73
       }
     },
