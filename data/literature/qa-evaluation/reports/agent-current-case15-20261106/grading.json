@@ -1,0 +1,382 @@
+{
+  "jev": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": 1
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "## 结论\n\n**区别**：R1000 与 SR1000 的唯一差别在于是否加入增强剂（阳离子马铃薯淀粉）；两者的打浆程度相同。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B004"
+      },
+      {
+        "id": "C2",
+        "text": "- 表1（s10570-019-02349-5.pdf，第4页，Table 1）中，R 系列（R0/R1000/R2000）的增强剂添加量为 0 kg/t，SR 系列（SR0/SR1000/SR2000）为 25 kg/t；两者的打浆（PFI 磨转数）分别对应 0、1000、2000 转 [1]。因此，R1000 = 不加增强剂 + 1000 转 PFI 打浆；SR1000 = 加入 25 kg/t 淀粉增强剂 + 同样 1000 转 PFI 打浆 [1]。原文说明该表给出的是“strength additive 与 refining level 各种组合的命名约定”，即名称中的“S”指增强剂（strength additive），而不是打浆度 [1]。",
+        "citation_refs": [
+          "[1]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B004"
+      },
+      {
+        "id": "C3",
+        "text": "**SR1000 不是打浆度 1000 °SR**：\n\n1. 名称中的“1000”对应 PFI 磨的 1000 转，属于打浆水平标号；原文打浆水平只有 0、1000、2000 PFI 转三档 [1]。\n2. 论文确实另测了 SR（Schopper-Riegler，打浆度/°SR）与 CSF 两种滤水性能，但表6只给出 R 系列的数值：R0 = 20.8 mL、R1000 = 25.6 mL、R2000 = 30.8 mL（对应 CSF 590、500、410 mL）[4][8]。这些数值与“1000 °SR”完全不在一个量级，而且表中没有 SR1000 样品的 Schopper-Riegler 值。",
+        "citation_refs": [
+          "[1]",
+          "[4]",
+          "[8]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B010"
+      },
+      {
+        "id": "C4",
+        "text": "**需要注意的限制**：论文正文没有提示“SR”作为样品名前缀与 Schopper-Riegler 缩写为同一形式可能引起混淆。表6表头“SR (mL)”指 Schopper-Riegler 滤水值 [4][8]；表9则用 SR0/SR1000/SR2000 指含增强剂样品，给出其淀粉留着率依次为 1.1%、1.12%、1.21%，作者据此认为不同打浆水平间差异不显著 [5]。因此文中“SR”需按语境区分。至于 SR1000 样品的 °SR 具体数值，论文未报道，无法确定。",
+        "citation_refs": [
+          "[4]",
+          "[8]",
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C2",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[4]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[8]",
+        "score": 0
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[4]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[8]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[5]",
+        "score": 1
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "missing"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "partial"
+      }
+    ],
+    "answerability_score": 2,
+    "reference_concern": false,
+    "decisions": {
+      "boundary": "appropriate",
+      "reference_check": "sound",
+      "point_K1": "complete",
+      "point_K2": "complete",
+      "point_K3": "complete",
+      "point_K4": "complete",
+      "kind_C1": "fact",
+      "support_C1": "supported",
+      "basis_C1": "B004",
+      "group_C1": "missing",
+      "kind_C2": "fact",
+      "support_C2": "supported",
+      "basis_C2": "B004",
+      "group_C2": "complete",
+      "citation_C2_1": "supported",
+      "kind_C3": "fact",
+      "support_C3": "supported",
+      "basis_C3": "B010",
+      "group_C3": "complete",
+      "citation_C3_1": "supported",
+      "citation_C3_2": "supported",
+      "citation_C3_3": "unsupported",
+      "kind_C4": "fact",
+      "support_C4": "partially_supported",
+      "basis_C4": "NONE",
+      "group_C4": "partial",
+      "citation_C4_1": "supported",
+      "citation_C4_2": "supported",
+      "citation_C4_3": "supported"
+    }
+  },
+  "calibrated": {
+    "key_point_scores": {
+      "K1": 1,
+      "K2": 1,
+      "K3": 1,
+      "K4": 1
+    },
+    "claim_assessments": [
+      {
+        "id": "C1",
+        "text": "## 结论\n\n**区别**：R1000 与 SR1000 的唯一差别在于是否加入增强剂（阳离子马铃薯淀粉）；两者的打浆程度相同。",
+        "citation_refs": [],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B004"
+      },
+      {
+        "id": "C2",
+        "text": "- 表1（s10570-019-02349-5.pdf，第4页，Table 1）中，R 系列（R0/R1000/R2000）的增强剂添加量为 0 kg/t，SR 系列（SR0/SR1000/SR2000）为 25 kg/t；两者的打浆（PFI 磨转数）分别对应 0、1000、2000 转 [1]。因此，R1000 = 不加增强剂 + 1000 转 PFI 打浆；SR1000 = 加入 25 kg/t 淀粉增强剂 + 同样 1000 转 PFI 打浆 [1]。原文说明该表给出的是“strength additive 与 refining level 各种组合的命名约定”，即名称中的“S”指增强剂（strength additive），而不是打浆度 [1]。",
+        "citation_refs": [
+          "[1]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B004"
+      },
+      {
+        "id": "C3",
+        "text": "**SR1000 不是打浆度 1000 °SR**：\n\n1. 名称中的“1000”对应 PFI 磨的 1000 转，属于打浆水平标号；原文打浆水平只有 0、1000、2000 PFI 转三档 [1]。\n2. 论文确实另测了 SR（Schopper-Riegler，打浆度/°SR）与 CSF 两种滤水性能，但表6只给出 R 系列的数值：R0 = 20.8 mL、R1000 = 25.6 mL、R2000 = 30.8 mL（对应 CSF 590、500、410 mL）[4][8]。这些数值与“1000 °SR”完全不在一个量级，而且表中没有 SR1000 样品的 Schopper-Riegler 值。",
+        "citation_refs": [
+          "[1]",
+          "[4]",
+          "[8]"
+        ],
+        "claim_type": "fact",
+        "support": "supported",
+        "basis": "B010"
+      },
+      {
+        "id": "C4",
+        "text": "**需要注意的限制**：论文正文没有提示“SR”作为样品名前缀与 Schopper-Riegler 缩写为同一形式可能引起混淆。表6表头“SR (mL)”指 Schopper-Riegler 滤水值 [4][8]；表9则用 SR0/SR1000/SR2000 指含增强剂样品，给出其淀粉留着率依次为 1.1%、1.12%、1.21%，作者据此认为不同打浆水平间差异不显著 [5]。因此文中“SR”需按语境区分。至于 SR1000 样品的 °SR 具体数值，论文未报道，无法确定。",
+        "citation_refs": [
+          "[4]",
+          "[8]",
+          "[5]"
+        ],
+        "claim_type": "fact",
+        "support": "partially_supported",
+        "basis": "NONE"
+      }
+    ],
+    "citation_assessments": [
+      {
+        "claim_id": "C2",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[1]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[4]",
+        "score": 1
+      },
+      {
+        "claim_id": "C3",
+        "ref": "[8]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[4]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[8]",
+        "score": 1
+      },
+      {
+        "claim_id": "C4",
+        "ref": "[5]",
+        "score": 1
+      }
+    ],
+    "citation_group_assessments": [
+      {
+        "claim_id": "C1",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C2",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C3",
+        "coverage": "complete"
+      },
+      {
+        "claim_id": "C4",
+        "coverage": "partial"
+      }
+    ],
+    "answerability_score": 2,
+    "reference_concern": false
+  },
+  "changes": [
+    {
+      "path": "citation_group_assessments.C1.coverage",
+      "value": "complete",
+      "reason": "开头实验条件总结承接后文[1]表1，无需重复引用。"
+    },
+    {
+      "path": "citation_assessments.C3.[8].score",
+      "value": 1,
+      "reason": "[8]明确说明SR与CSF两种滤水方法及Table 6，对该段方法陈述有实质支持；不要求每个引用独立提供全部数值。"
+    }
+  ],
+  "raw_metrics": {
+    "point_score": 100,
+    "point_count": 4,
+    "fact_count": 4,
+    "supported_facts": 3,
+    "pair_count": 7,
+    "supported_pairs": 6,
+    "group_count": 4,
+    "covered_groups": 2,
+    "boundary": 2,
+    "fact_support": 75.0,
+    "citation_precision": 85.71428571428571,
+    "citation_coverage": 50.0,
+    "strict_pass": false,
+    "format_ok": true
+  },
+  "final_metrics": {
+    "point_score": 100,
+    "point_count": 4,
+    "fact_count": 4,
+    "supported_facts": 3,
+    "pair_count": 7,
+    "supported_pairs": 7,
+    "group_count": 4,
+    "covered_groups": 3,
+    "boundary": 2,
+    "fact_support": 75.0,
+    "citation_precision": 100.0,
+    "citation_coverage": 75.0,
+    "strict_pass": false,
+    "format_ok": true
+  },
+  "model": "deepseek-flash",
+  "budget": {
+    "max_model_calls": 6,
+    "max_tool_calls": 8,
+    "max_search_calls": 2,
+    "total_seconds": 240.0,
+    "reserve_seconds": 45,
+    "max_output_tokens": 8192,
+    "max_context_chars": 160000
+  },
+  "tools": [
+    {
+      "query": "Motamedian 2019 refining pulp SR freeness R1000 SR1000 table 1",
+      "reason": "需要找到Motamedian等（2019）的论文并查看其表1中R1000与SR1000的定义",
+      "tool": "search_literature"
+    }
+  ],
+  "evidence_map": [
+    {
+      "ref": "[1]",
+      "filename": "s10570-019-02349-5.pdf",
+      "pages": [
+        4,
+        4
+      ]
+    },
+    {
+      "ref": "[2]",
+      "filename": "s10570-019-02349-5.pdf",
+      "pages": [
+        7,
+        9
+      ]
+    },
+    {
+      "ref": "[3]",
+      "filename": "s10570-019-02349-5.pdf",
+      "pages": [
+        9,
+        9
+      ]
+    },
+    {
+      "ref": "[4]",
+      "filename": "s10570-019-02349-5.pdf",
+      "pages": [
+        7,
+        7
+      ]
+    },
+    {
+      "ref": "[5]",
+      "filename": "s10570-019-02349-5.pdf",
+      "pages": [
+        9,
+        9
+      ]
+    },
+    {
+      "ref": "[6]",
+      "filename": "s10570-019-02349-5.pdf",
+      "pages": [
+        4,
+        6
+      ]
+    },
+    {
+      "ref": "[7]",
+      "filename": "05_2024_纤维质量参数与纸浆性能预测_Uddin.pdf",
+      "pages": [
+        4,
+        4
+      ]
+    },
+    {
+      "ref": "[8]",
+      "filename": "s10570-019-02349-5.pdf",
+      "pages": [
+        6,
+        7
+      ]
+    }
+  ],
+  "remaining_issue": "C4引用[5]只有表9的1.1/1.12/1.21，没有作者差异不显著的解释或检验，不能仅由接近的数值推出；全篇未报道的范围判断也未由所引片段完整确立。保留部分支持/部分覆盖。",
+  "caveat": "打浆程度相同应按后文理解为PFI转数相同，不代表实测°SR相等；原表SR(mL)单位疑点仍存在，跨单位量级比较并非否定1000°SR误读的有效依据，核心判断依据为表1命名。",
+  "result_sha256": "546a43b8c670beee6a448cf2daae01b8b0ef9492884c81ccc07bf8cac7e0da3c",
+  "merged_into_latest_summary": false
+}
