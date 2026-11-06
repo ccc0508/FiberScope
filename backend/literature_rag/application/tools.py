@@ -93,7 +93,7 @@ class DescribeExperiments(Request):
 
 class QueryExperiments(Request):
     tool: Literal['query_experiment_data']
-    sql: str = Field(min_length=1, max_length=8000, description='One PostgreSQL SELECT over one allowed fiber view. Read describe_experiment_data first for real columns and units.')
+    sql: str = Field(min_length=1, max_length=8000, description='One PostgreSQL SELECT over allowed fiber views; joins and nested/correlated subqueries allowed. Read describe_experiment_data first for real columns, units and row grain.')
 
 
 INPUT = TypeAdapter(Annotated[Search | ListSections | ReadSection | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | Calculate | DescribeExperiments | QueryExperiments, Field(discriminator='tool')])

@@ -10,7 +10,7 @@ from app.agent_answer import adapt_run
 ])
 def test_allowed_queries(query):
     normalized, view=validate_sql(query)
-    assert normalized.startswith('SELECT') and view.startswith('v_')
+    assert normalized.startswith('SELECT') and all(v.startswith('v_') for v in view)
 
 def test_known_unqualified_view_is_qualified():
     normalized,_=validate_sql('SELECT count(*) FROM v_sample_overview')
@@ -26,14 +26,45 @@ def test_known_unqualified_view_is_qualified():
     'SELECT public.myfunc() FROM fiber.v_sample_overview',
     'SELECT * FROM fiber.v_sample_overview FOR UPDATE',
     'WITH x AS (DELETE FROM fiber.sample RETURNING *) SELECT * FROM x',
-    'SELECT (SELECT 1) FROM fiber.v_sample_overview',
-    'SELECT * FROM fiber.v_sample_overview a JOIN fiber.v_sample_overview b ON true',
     "SELECT 'x'::regclass FROM fiber.v_sample_overview",
     'SELECT * FROM fiber.v_sample_overview LIMIT -1',
     'SELECT * FROM fiber.v_sample_overview UNION SELECT * FROM pg_catalog.pg_authid',
 ])
 def test_reject_queries(query):
     with pytest.raises(ValueError): validate_sql(query)
+
+@pytest.mark.parametrize('query', [
+    'SELECT a.sample_id FROM v_sample_overview a JOIN v_data_lineage b ON a.sample_id=b.sample_id',
+    'SELECT a.sample_id FROM v_sample_overview a LEFT JOIN v_fiber_paper_analysis b USING(sample_id)',
+    'SELECT * FROM v_sample_overview a CROSS JOIN v_sample_overview b',
+    'SELECT * FROM v_sample_overview a FULL OUTER JOIN v_data_lineage b ON a.sample_id=b.sample_id',
+    'SELECT * FROM v_fiber_paper_analysis WHERE tensile_index > (SELECT AVG(tensile_index) FROM v_fiber_paper_analysis)',
+    'SELECT * FROM v_sample_overview s WHERE EXISTS (SELECT 1 FROM v_data_lineage l WHERE l.sample_id=s.sample_id)',
+    'SELECT * FROM v_sample_overview WHERE sample_id IN (SELECT sample_id FROM v_data_lineage)',
+    'SELECT * FROM (SELECT sample_id FROM v_sample_overview LIMIT 5) q',
+    'SELECT (SELECT 1) FROM v_sample_overview',
+    'SELECT * FROM v_sample_overview s JOIN LATERAL (SELECT sample_id FROM v_data_lineage l WHERE l.sample_id=s.sample_id LIMIT 1) q ON true',
+])
+def test_joins_and_subqueries(query):
+    normalized, views=validate_sql(query)
+    assert views and 'fiber.' in normalized
+
+@pytest.mark.parametrize('query', [
+    'SELECT * FROM v_sample_overview WHERE EXISTS (SELECT 1 FROM pg_catalog.pg_authid)',
+    'SELECT (SELECT pg_read_file(\'/etc/passwd\')) FROM v_sample_overview',
+    'SELECT * FROM (SELECT * FROM public.secret) q JOIN v_sample_overview s ON true',
+    'SELECT * FROM v_sample_overview WHERE sample_id IN (SELECT sample_id FROM fiber.sample)',
+    'SELECT * FROM v_sample_overview WHERE EXISTS (SELECT * INTO stolen FROM v_data_lineage)',
+    'SELECT * FROM (SELECT * FROM v_sample_overview LIMIT -1) q',
+    'SELECT * FROM (SELECT * FROM v_sample_overview FOR UPDATE) q',
+    'SELECT * FROM v_sample_overview s JOIN LATERAL pg_ls_dir(\'/\') f ON true',
+])
+def test_nested_rejections(query):
+    with pytest.raises(ValueError): validate_sql(query)
+
+def test_all_views_are_recorded():
+    _,views=validate_sql('SELECT * FROM v_sample_overview s JOIN v_data_lineage l USING(sample_id) WHERE EXISTS (SELECT 1 FROM v_fiber_paper_analysis f WHERE f.sample_id=s.sample_id)')
+    assert views==['v_data_lineage','v_fiber_paper_analysis','v_sample_overview']
 
 def test_snapshot_and_display(tmp_path):
     store=ToolTraceStore(tmp_path/'trace.db')
