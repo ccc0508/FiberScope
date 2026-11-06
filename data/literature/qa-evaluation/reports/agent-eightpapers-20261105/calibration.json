@@ -126,18 +126,42 @@
     "changes": []
   },
   "FS8-011": {
-    "reason": "表5与表7四个抗张NRMSE及优劣关系正确。正文额外称表5抗张是首列，实际是首行，属于图表布局叙述错误；不影响核心数值但影响额外事实充分支持。",
+    "reason": "核心数值与优劣答全。总结承接前文引用，C9改complete；同表说明承接表格引用，C5由missing改partial，不再因没有重复引用扣分，但布局说错仍保留事实及完整覆盖缺陷。C6额外正文数值表述仍保留部分支持。",
     "changes": [
       {
         "path": "claim_assessments.C5.support",
         "value": "partially_supported",
         "reason": "表5按性能行组织，抗张指数是首行，不是与表7同类意义的首列。"
+      },
+      {
+        "path": "citation_group_assessments.C9.coverage",
+        "value": "complete",
+        "reason": "用户确认总结不必重复引用：该段只重述前文已附表5/表7证据的结论，承接前文引用。"
+      },
+      {
+        "path": "citation_group_assessments.C5.coverage",
+        "value": "partial",
+        "reason": "同表说明可承接前面的表5[4]/表7[6]引用，不判missing；但首行说成首列的错误仍未获支持，故不是complete。"
       }
-    ]
+    ],
+    "previous_calibration": {
+      "reason": "表5与表7四个抗张NRMSE及优劣关系正确。正文额外称表5抗张是首列，实际是首行，属于图表布局叙述错误；不影响核心数值但影响额外事实充分支持。",
+      "changes": [
+        {
+          "path": "claim_assessments.C5.support",
+          "value": "partially_supported",
+          "reason": "表5按性能行组织，抗张指数是首行，不是与表7同类意义的首列。"
+        }
+      ]
+    }
   },
   "FS8-012": {
-    "reason": "检测不到全部纳米纤维及5µm限制答全。额外将100到10µm作为纤维区间是错误的单位/范围复述，原文涉及100µm到10mm；并把代理假设讲成无法可靠验证过强，保留部分支持。",
-    "changes": []
+    "reason": "核心测量限制答全。2026-11-06查看原PDF第5/12页：原页面即印between 100 and 10 mm，100后单位不明确；MinerU及实际上下文保留mm。初稿擅自改成100–10 μm，复核未改正。不能将100μm到10mm说成原文明确写法。引用初稿[1]本为Influence of fibre content，复核改成[2]（实际为力学制备/测试与参数表），主要错引发生于复核。保留原评分，修正诊断表述。",
+    "changes": [],
+    "previous_calibration": {
+      "reason": "检测不到全部纳米纤维及5µm限制答全。额外将100到10µm作为纤维区间是错误的单位/范围复述，原文涉及100µm到10mm；并把代理假设讲成无法可靠验证过强，保留部分支持。",
+      "changes": []
+    }
   },
   "FS8-013": {
     "reason": "转数、浓度、间隙与两种作用力正确。额外把CI-XI/CI-XA间的0.919/0.925写成CI与氢键含量相关，是对象错配；保留C3部分支持。只按°SR对齐也不能消除浆种与处理混杂。",
