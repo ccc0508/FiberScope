@@ -757,5 +757,50 @@
       "strict_pass": false,
       "format_ok": true
     }
+  },
+  {
+    "case_id": "FS8-020",
+    "source_run": "agent-eightpapers-20261105",
+    "reviewed": true,
+    "reason": "修正预设标准过严：来源追溯是可选建议，未提及不扣要点分；其余事实和引用评分保留。",
+    "changes": [
+      {
+        "path": "key_point_scores.K4",
+        "value": 1,
+        "reason": "题目要求保留研究区别，已说明条件、单位和目标；来源追溯不是论文明确要求或题目必答。"
+      }
+    ],
+    "before": {
+      "point_score": 87.5,
+      "point_count": 4,
+      "fact_count": 5,
+      "supported_facts": 3,
+      "pair_count": 12,
+      "supported_pairs": 11,
+      "group_count": 5,
+      "covered_groups": 2,
+      "boundary": 2,
+      "fact_support": 60.0,
+      "citation_precision": 91.66666666666667,
+      "citation_coverage": 40.0,
+      "strict_pass": false,
+      "format_ok": true
+    },
+    "after": {
+      "point_score": 100,
+      "point_count": 4,
+      "fact_count": 5,
+      "supported_facts": 3,
+      "pair_count": 12,
+      "supported_pairs": 11,
+      "group_count": 5,
+      "covered_groups": 2,
+      "boundary": 2,
+      "fact_support": 60.0,
+      "citation_precision": 91.66666666666667,
+      "citation_coverage": 40.0,
+      "strict_pass": false,
+      "format_ok": true
+    }
   }
 ]
