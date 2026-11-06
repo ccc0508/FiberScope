@@ -87,9 +87,18 @@ class Calculate(Request):
     source_call_ids: list[str] = Field(min_length=1, max_length=20)
 
 
-INPUT = TypeAdapter(Annotated[Search | ListSections | ReadSection | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | Calculate, Field(discriminator='tool')])
+class DescribeExperiments(Request):
+    tool: Literal['describe_experiment_data']
+
+
+class QueryExperiments(Request):
+    tool: Literal['query_experiment_data']
+    sql: str = Field(min_length=1, max_length=8000, description='One PostgreSQL SELECT over one allowed fiber view. Read describe_experiment_data first for real columns and units.')
+
+
+INPUT = TypeAdapter(Annotated[Search | ListSections | ReadSection | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | Calculate | DescribeExperiments | QueryExperiments, Field(discriminator='tool')])
 SCHEMAS = {c.model_fields['tool'].annotation.__args__[0]: c.model_json_schema()
-           for c in (Search, ListSections, ReadSection, ReadTable, ViewImage, FindFigure, FindDocuments, FindTable, Calculate)}
+           for c in (Search, ListSections, ReadSection, ReadTable, ViewImage, FindFigure, FindDocuments, FindTable, Calculate, DescribeExperiments, QueryExperiments)}
 
 
 def encode(x):

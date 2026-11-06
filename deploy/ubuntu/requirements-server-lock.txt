@@ -101,3 +101,4 @@ yarl==1.25.1
 
 # Agent image/PDF support (2026-11-06)
 PyMuPDF==1.28.0
+sqlglot==30.30.0

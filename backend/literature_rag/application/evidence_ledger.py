@@ -45,7 +45,9 @@ def register_result(db, record):
             images=e.get('visual_assets',[])))
 
     tool=record['input']['tool']
-    if tool=='search_literature':
+    if tool=='query_experiment_data':
+        result['ref']=add('experiment_query',dict(result))
+    elif tool=='search_literature':
         mapping={}
         for e in result['evidence']:
             old=e['ref'];e['ref']=text_ref(e);mapping[old]=e['ref']
