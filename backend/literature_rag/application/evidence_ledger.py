@@ -69,6 +69,8 @@ def register_result(db, record):
         result['ref']=add('calculation',dict(result))
     result['evidence_scope']=dict(run_id=run,reference_policy='immutable_exact_snapshot',
         notice='References are unique only within this run. Text availability is not proof of visual inspection.')
+    from .citation_policy import citation_records
+    result['citation_records']=citation_records(tool, dict(status='completed',result=result))
     return result
 
 
