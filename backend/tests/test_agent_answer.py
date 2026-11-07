@@ -26,3 +26,14 @@ def test_agent_citation_identity_and_calculation():
 def test_incomplete_run_not_reported_success():
     r=adapt_run(dict(status='partial',answer='draft',review_status='failed'),[],[],1)
     assert r['status']=='failed' and r['review_summary']['status']=='incomplete'
+
+
+def test_specialist_route_direct_is_not_falsely_marked_reviewed():
+    r=adapt_run(dict(status='completed',answer='你好',review_status='not_required',pipeline_version='specialists-v1'),[],[],1)
+    assert r['status']=='answered' and r['review_summary']['status']=='not_required'
+    assert r['configuration']['pipeline_version']=='specialists-v1'
+
+
+def test_architecture_switch_is_explicit():
+    assert literature.LiteratureSettings(_env_file=None).agent_architecture=='single'
+    assert literature.LiteratureSettings(_env_file=None,agent_architecture='specialists').agent_architecture=='specialists'

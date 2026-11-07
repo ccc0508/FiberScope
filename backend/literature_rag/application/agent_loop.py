@@ -140,16 +140,20 @@ class AgentBudget:
 
 
 class AgentLoop:
-    def __init__(self,adapter,executor,checkpoint,budget=None,clock=monotonic,paper_directory=None):
+    def __init__(self,adapter,executor,checkpoint,budget=None,clock=monotonic,paper_directory=None,
+                 allowed_tools=None,system_prompt=None,review_enabled=True):
         self.adapter,self.executor,self.checkpoint=adapter,executor,checkpoint
         self.budget=budget or AgentBudget();self.clock=clock
         self.paper_directory=deepcopy(paper_directory)
+        self.allowed_tools=set(SCHEMAS) if allowed_tools is None else set(allowed_tools)
+        self.system_prompt=system_prompt
+        self.review_enabled=review_enabled
 
     def run(self,question,run_id):
         b=self.budget;deadline=self.clock()+b.total_seconds
         state=dict(run_id=run_id,question=question,status='running',model_calls=[],tool_calls=[],
             answer='',draft='',stop_reason=None,review_status='not_started',review_version=REVIEW_VERSION)
-        messages=[dict(role='system',content=PROMPT+f'\nYou may execute search_literature at most {b.max_search_calls} times per question, including failed searches. After that use acquired evidence or other available reading/calculation tools; state unresolved gaps.'),dict(role='user',content=question)]
+        messages=[dict(role='system',content=(self.system_prompt or PROMPT)+f'\nYou may execute search_literature at most {b.max_search_calls} times per question, including failed searches. After that use acquired evidence or other available reading/calculation tools; state unresolved gaps.'),dict(role='user',content=question)]
         if self.paper_directory is not None:
             state['paper_directory']=self.paper_directory
             state['directory_policy']='provided-at-start-v1'
@@ -198,11 +202,11 @@ class AgentLoop:
             finally:save()
         save()
         try:
-            while len(state['model_calls'])<b.max_model_calls-2 and tool_count<b.max_tool_calls and deadline-self.clock()>b.reserve_seconds:
+            while len(state['model_calls'])<b.max_model_calls-(2 if self.review_enabled else 1) and tool_count<b.max_tool_calls and deadline-self.clock()>b.reserve_seconds:
                 if size(messages)>=stop_threshold:
                     state['stop_reason']='context_budget';break
                 schemas={name:schema for name,schema in SCHEMAS.items()
-                    if (name!='search_literature' or search_count<b.max_search_calls)
+                    if name in self.allowed_tools and (name!='search_literature' or search_count<b.max_search_calls)
                     and (name!='find_documents' or self.paper_directory is None)}
                 d=model('decide',schemas);messages.append(d.message)
                 if not d.calls:
@@ -215,7 +219,9 @@ class AgentLoop:
                     # Reason text does not turn a repeated operation into a new operation.
                     semantic=json.dumps({k:v for k,v in request.items() if k!='reason'},sort_keys=True)
                     event=dict(provider_call_id=c.id,request=request,status='started');state['tool_calls'].append(event)
-                    if c.name=='find_documents' and self.paper_directory is not None:
+                    if c.name not in self.allowed_tools:
+                        result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
+                    elif c.name=='find_documents' and self.paper_directory is not None:
                         result=dict(status='blocked',error_code='directory_already_provided',notice='Use the complete paper directory supplied at the start; no directory tool call is needed.')
                     elif call_index>0:
                         result=dict(status='blocked',error_code='one_tool_per_turn',notice='Only the first tool request may execute. Reassess its result before requesting another.')
@@ -271,7 +277,9 @@ class AgentLoop:
                 d=model('finalize',{});state['draft']=d.text;messages.append(d.message)
                 if d.calls or not d.text.strip():raise ValueError('Invalid draft')
             state['answer']=state['draft'];save()
-            if len(state['model_calls'])<b.max_model_calls and deadline-self.clock()>2:
+            if not self.review_enabled:
+                state['review_status']='delegated_to_parent'
+            elif len(state['model_calls'])<b.max_model_calls and deadline-self.clock()>2:
                 review=dict(role='user',content=REVIEW_PROMPT)
                 if size(messages+[review])>b.max_context_chars:
                     state.update(review_status='skipped_context_budget',stop_reason='context_budget')
@@ -281,7 +289,7 @@ class AgentLoop:
                     if not d.text.strip() or d.calls:raise ValueError('Invalid final review')
                     state.update(answer=d.text,review_status='completed')
             else:state['review_status']='skipped_budget'
-            state['status']='completed' if state['review_status']=='completed' else 'partial'
+            state['status']='completed' if state['review_status'] in ('completed','delegated_to_parent') else 'partial'
         except Exception as e:
             state.update(status='partial' if state['answer'] else 'failed',stop_reason=type(e).__name__)
             if state['review_status']=='not_started':state['review_status']='incomplete'
