@@ -55,22 +55,10 @@ def execute(request, run_id, store):
         p = INPUT.validate_python(request)
         normalized, view = validate_sql(p.sql) if p.tool == 'query_experiment_data' else (None, None)
         with connect() as db:
-            db.execute('SET TRANSACTION READ ONLY')
+            db.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY')
             if p.tool == 'describe_experiment_data':
-                rows = db.execute("SELECT table_name,column_name,data_type FROM information_schema.columns WHERE table_schema='fiber' AND table_name=ANY(%s) ORDER BY table_name,ordinal_position", (sorted(ALLOWED),)).fetchall()
-                result = dict(views={'fiber.'+name:dict(columns=[dict(name=c,type=t) for v,c,t in rows if v==name],
-                    default_order=list(spec.order)) for _,spec in VIEWS.items() for name in [spec.view]},
-                    indicators=INDICATORS, notes=NOTES, material_codes={'SW':'针叶木','HW':'阔叶木'},
-                    grains={'v_sample_overview':'one canonical sample; use this for sample counts',
-                        'v_beating_analysis':'one experiment display row; samples may appear in multiple experiments',
-                        'v_blend_analysis':'one blend experiment row including pure-pulp endpoints; not the number of blend-only samples',
-                        'v_fiber_paper_analysis':'one canonical sample with fiber/paper measurements',
-                        'v_recycled_cycle_summary':'one data block and cycle summary',
-                        'v_recycled_cycle_detail':'one raw replicate per block and cycle',
-                        'v_recycled_data_quality':'one flagged raw observation',
-                        'v_data_lineage':'one source usage association; multiple usages can share a sample or source row'},
-                    sample_types=['softwood','hardwood','blend'],
-                    policy='SELECT over allowed fiber views, arbitrary joins between those views and nested/correlated SELECT subqueries permitted. WHERE/GROUP BY/HAVING/ORDER BY; COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF. No CTEs, set operations or casts. Include sample IDs for raw rows. Add ORDER BY for deterministic results. Explain join keys and resulting grain; one-to-many joins can multiply samples and bias counts/averages. lineage has multiple usages per sample. Max 100 returned rows; truncated results are not the full population.')
+                from app.experiment_directory import describe
+                result = json.loads(encode(describe(db, p.views)))
             else:
                 with db.cursor(name='agent_experiment_rows') as cur:
                     cur.execute(normalized)
