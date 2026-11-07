@@ -39,3 +39,21 @@ def test_details_only_actual_columns_and_live_values():
     v=r['views']['fiber.v_beating_analysis'];assert len(v['columns'])==2
     assert v['columns'][0]['enum']==dict(values=['SW'],has_null=True,truncated=False,limit=200,labels={'SW':'针叶木'})
     assert v['beating_levels_by_material']['rows']==[['SW',4000],['HW',2000]]
+    assert not any('百分比' in n or '再生' in n or '透气' in n for n in r['notes'])
+    assert 'notes' not in v
+
+
+def test_notes_follow_field():
+    assert 'unit_note' not in column_info('v_fiber_paper_analysis','tensile_index','numeric')
+    assert '10%' in column_info('v_fiber_paper_analysis','fines_length_pct','numeric')['unit_note']
+    assert '暂定' in column_info('v_fiber_paper_analysis','air_permeability','numeric')['unit_note']
+    assert '未确认' in column_info('v_fiber_paper_analysis','folding_endurance_raw','numeric')['unit_note']
+
+
+def test_recycled_notes_are_scoped_to_selected_view():
+    class DB:
+        def execute(self,*args):return self
+        def fetchall(self):return [('v_recycled_cycle_detail','fiber_length_weighted_mm','numeric')]
+    r=describe(DB(),['v_recycled_cycle_detail'])
+    assert any('处理条件未知' in n for n in r['views']['fiber.v_recycled_cycle_detail']['notes'])
+    assert all('再生' not in n and '异常' not in n for n in r['notes'])
