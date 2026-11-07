@@ -12,6 +12,14 @@ ROOT=Path(__file__).resolve().parents[2]
 
 
 def adapt_run(state, evidence, trace, elapsed_ms):
+    from literature_rag.application.citation_policy import CITABLE_KINDS, invalid_references
+    # Last boundary: validate against the persisted ledger, not only model-facing
+    # tool outputs. Never silently drop unresolved refs from the citation list.
+    invalid=invalid_references(state.get('answer',''),
+        {e['ref'] for e in evidence if e['kind'] in CITABLE_KINDS})
+    if invalid:
+        state=dict(state,answer='',status='failed',stop_reason='invalid_citations',
+            citation_boundary_failure=dict(invalid_refs=invalid,rejected_answer=state.get('answer','')))
     used=set(re.findall(r'\[\d+\]', state.get('answer','')))
     citations=[]; snapshots=[]
     for e in evidence:
@@ -36,7 +44,7 @@ def adapt_run(state, evidence, trace, elapsed_ms):
         if e['ref'] in used:citations.append(row)
     completed=state.get('status')=='completed' and bool(state.get('answer','').strip())
     return dict(status='answered' if completed else 'failed',answer=state.get('answer',''),citations=citations,
-        latency_ms=elapsed_ms,reason_code=None if completed else 'agent_incomplete',
+        latency_ms=elapsed_ms,reason_code=None if completed else ('invalid_citations' if state.get('stop_reason')=='invalid_citations' else 'agent_incomplete'),
         **({} if completed else dict(error_status=503)),
         configuration=dict(pipeline_version='agentic-rag-directory-v1',model=state.get('model'),budget=state.get('budget'),directory_policy=state.get('directory_policy')),
         generation_calls=state.get('model_calls',[]),retrieved_evidence=snapshots,claims=[],

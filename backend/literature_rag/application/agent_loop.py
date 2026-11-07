@@ -45,7 +45,9 @@ budget remains, and an untried targeted follow-up is available, perform that fol
 End with the gap unresolved only if targeted follow-up fails, no viable path is available,
 or the remaining budget is insufficient.
 Tool evidence may reuse exact text parts via internal txt_<hash> keys; these are NOT citation IDs.
-Cite only the enclosing evidence ref [n].'''
+Cite only the enclosing evidence ref [n]. Each tool response lists its citable records and types.
+Directory/schema information and failed calls add no citable evidence. Never number citations by tool-call order.
+Write separate numeric brackets, e.g. [1][2], not grouped or range citations.'''
 
 PROMPT += '''\nAnswer the question first, then only the evidence, conditions, limitations and uncertainty needed
 to interpret that answer. Do not summarize the whole paper or add unrelated numerical/mechanistic background.
@@ -130,6 +132,9 @@ class AgentLoop:
         state['search_calls']=0
         state['max_search_calls']=b.max_search_calls
         projection=EvidenceProjection()
+        from .citation_policy import citation_records, invalid_references
+        delivered_refs={}
+        state['citation_validation']=dict(status='pending',available_records=[],attempts=[])
         # Reserve space for a draft and review instruction; do not spend the
         # entire input budget on evidence. Review has a second explicit check.
         collection_limit=b.max_context_chars-min(b.max_context_chars//2,max(4096,b.max_output_tokens*8))
@@ -207,6 +212,9 @@ class AgentLoop:
                     event.update(status=result['status'],result={k:v for k,v in result.items() if k!='image'});save()
                     trial=deepcopy(projection)
                     compact=trial.project(result)
+                    records=citation_records(c.name,result)
+                    compact['citation_policy']=dict(records=records,
+                        notice='Only these explicit refs may be cited. No records means this call adds no citable evidence. Never infer refs from call order or numbers in source text.')
                     outgoing=self.adapter.tool_messages(c,compact)
                     prospective=messages+image_messages+outgoing
                     withheld=None
@@ -217,7 +225,9 @@ class AgentLoop:
                         compact=dict(status='withheld',call_id=result.get('call_id'),error_code=withheld,
                             notice='Full result is stored but NOT supplied to the model. Answer from previously supplied evidence and state gaps.')
                         outgoing=self.adapter.tool_messages(c,compact)
-                    else:projection=trial
+                    else:
+                        projection=trial
+                        delivered_refs.update({r['ref']:r for r in records})
                     event['model_delivery']=dict(status='withheld' if withheld else 'delivered',reason=withheld,
                         messages=trace_messages(outgoing))
                     state['context_events'].append(dict(provider_call_id=c.id,
@@ -249,5 +259,29 @@ class AgentLoop:
         except Exception as e:
             state.update(status='partial' if state['answer'] else 'failed',stop_reason=type(e).__name__)
             if state['review_status']=='not_started':state['review_status']='incomplete'
+        # Runs even when review failed and the draft is retained. Stored but
+        # withheld evidence is deliberately excluded from the allowed set.
+        validation=state['citation_validation']
+        validation['available_records']=list(delivered_refs.values())
+        invalid=invalid_references(state['answer'],delivered_refs)
+        if invalid:
+            validation['attempts'].append(dict(stage='initial',invalid_refs=invalid,answer=state['answer']))
+            if len(state['model_calls'])<b.max_model_calls and deadline-self.clock()>2:
+                messages.append(dict(role='user',content=json.dumps(dict(
+                    task='Correct citation identities in this complete answer. Return only the complete Chinese answer. Use only the allowed refs and their supplied evidence. Do not mechanically substitute refs or merely strip citations to retain unsupported claims. Remove unsupported optional claims; explicitly state unavailable evidence for requested facts. Use [n] separately, not grouped/range refs. Do not call tools.',
+                    answer=state['answer'],invalid_refs=invalid,allowed_records=list(delivered_refs.values())),ensure_ascii=False)))
+                try:
+                    d=model('citation_repair',{})
+                    if d.calls or not d.text.strip():raise ValueError('Invalid citation repair')
+                    invalid=invalid_references(d.text,delivered_refs)
+                    validation['attempts'].append(dict(stage='repair',invalid_refs=invalid,answer=d.text))
+                    if not invalid:state['answer']=d.text
+                except Exception as error:
+                    validation['repair_error']=type(error).__name__
+            if invalid:
+                validation['status']='failed'
+                state.update(answer='',status='failed',stop_reason='invalid_citations')
+            else:validation['status']='repaired'
+        else:validation['status']='passed' if state['answer'] else 'not_applicable'
         state['tool_attempts']=tool_count;save()
         return state
