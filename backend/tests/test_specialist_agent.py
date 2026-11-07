@@ -103,7 +103,7 @@ def test_deadline_includes_routing():
     now=[0]
     class Slow(Fake):
         def decide(self,*args):
-            now[0]=241
+            now[0]=361
             return super().decide(*args)
     a=Slow([route('sql',sql_task='count')])
     r=SpecialistCoordinator(a,lambda *a:1/0,lambda s:None,clock=lambda:now[0]).run('q','r')
@@ -173,7 +173,7 @@ def test_repair_does_not_consume_reserved_calls_or_time():
     now=[0]
     class Slow(Fake):
         def decide(self,*args):
-            now[0]=220
+            now[0]=340
             return super().decide(*args)
     a=Slow([tool('route_task',{})])
     r=SpecialistCoordinator(a,lambda *a:1/0,lambda s:None,clock=lambda:now[0]).run('q','r')
@@ -187,3 +187,37 @@ def test_do_not_extract_json_from_surrounding_prose():
     a=Fake([route('sql',sql_task='count'),answer(text),answer(text)])
     r=SpecialistCoordinator(a,lambda *a:1/0,lambda s:None).run('q','r')
     assert r['status']=='failed' and r['format_checks'][1]['repair_attempted']
+
+
+def test_mixed_can_correct_sql_then_preserves_literature_budget():
+    a=Fake([route('both',sql_task='count',literature_task='paper'),
+        tool('describe_experiment_data',dict(reason='directory')),
+        tool('describe_experiment_data',dict(reason='fields',views=['fiber.v_recycled_cycle_summary'])),
+        tool('query_experiment_data',dict(sql='bad',reason='query')),
+        tool('query_experiment_data',dict(sql='fixed',reason='correct field')),
+        result(summary='61 [1]'),result('insufficient_evidence','缺论文'),answer('61 [1]')])
+    def execute(req,*args):
+        if req['tool']=='describe_experiment_data':return dict(status='completed',result={})
+        if req['sql']=='bad':return dict(status='failed',error_code='undefined_column')
+        return dict(status='completed',result=dict(ref='[1]',rows=[[61]]))
+    r=SpecialistCoordinator(a,execute,lambda s:None).run('q','r')
+    assert r['status']=='completed'
+    assert r['children'][0]['allocation']['max_model_calls']==9
+    assert r['children'][0]['allocation']['reserved_for_remaining']==10
+    assert r['children'][1]['allocation']['max_model_calls']==11
+    assert r['budget_usage']['model']==8 and r['budget_usage']['tools']==4
+
+
+def test_bibliography_correction_preserves_json_handoff():
+    a=Fake([route('literature',literature_task='explain'),
+        tool('search_literature',dict(query='q',reason='find')),
+        result(summary='文献[45–47]使用实验数据 [1]'),
+        result(summary='原论文参考文献第45—47号使用实验数据 [1]'),answer('解释 [1]')])
+    r=SpecialistCoordinator(a,lambda *args:dict(status='completed',result=dict(evidence=[dict(ref='[1]',text='prior studies [45–47]',document_id='d')])),lambda s:None).run('q','r')
+    assert r['status']=='completed'
+    assert r['children'][0]['trace']['citation_validation']['status']=='repaired'
+    assert r['format_checks'][1]['status']=='valid'
+    repair=json.loads(a.requests[3][0][-1]['content'])
+    assert repair['output_schema']['title']=='SpecialistResult'
+    assert '原论文参考文献第45—47号' in repair['bibliography_policy']
+    assert r['budget_usage']['model']==5

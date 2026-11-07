@@ -4,7 +4,7 @@ from app import literature, agent_answer
 
 def test_default_website_routes_to_agent(monkeypatch):
     config=literature.LiteratureSettings(_env_file=None)
-    assert config.engine=='agent' and config.timeout_seconds==300
+    assert config.engine=='agent' and config.timeout_seconds==370
     monkeypatch.setattr(agent_answer,'run_agent_answer',lambda c,q:dict(answer=q,engine=c.engine))
     assert literature.run_answer(config,'测试')['engine']=='agent'
 

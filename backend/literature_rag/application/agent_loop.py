@@ -132,7 +132,7 @@ class AgentBudget:
     max_context_chars: int=160000
 
     def __post_init__(self):
-        if not (3<=self.max_model_calls<=12 and 1<=self.max_tool_calls<=20 and
+        if not (3<=self.max_model_calls<=20 and 1<=self.max_tool_calls<=20 and
                 1<=self.max_search_calls<=2 and
                 30<=self.total_seconds<=600 and 5<=self.reserve_seconds<self.total_seconds and
                 1024<=self.max_output_tokens<=65536 and 1000<=self.max_context_chars<=500000):
@@ -141,13 +141,14 @@ class AgentBudget:
 
 class AgentLoop:
     def __init__(self,adapter,executor,checkpoint,budget=None,clock=monotonic,paper_directory=None,
-                 allowed_tools=None,system_prompt=None,review_enabled=True):
+                 allowed_tools=None,system_prompt=None,review_enabled=True,output_schema=None):
         self.adapter,self.executor,self.checkpoint=adapter,executor,checkpoint
         self.budget=budget or AgentBudget();self.clock=clock
         self.paper_directory=deepcopy(paper_directory)
         self.allowed_tools=set(SCHEMAS) if allowed_tools is None else set(allowed_tools)
         self.system_prompt=system_prompt
         self.review_enabled=review_enabled
+        self.output_schema=output_schema
 
     def run(self,question,run_id):
         b=self.budget;deadline=self.clock()+b.total_seconds
@@ -202,7 +203,7 @@ class AgentLoop:
             finally:save()
         save()
         try:
-            while len(state['model_calls'])<b.max_model_calls-(2 if self.review_enabled else 1) and tool_count<b.max_tool_calls and deadline-self.clock()>b.reserve_seconds:
+            while len(state['model_calls'])<b.max_model_calls-(2 if self.review_enabled or self.output_schema else 1) and tool_count<b.max_tool_calls and deadline-self.clock()>b.reserve_seconds:
                 if size(messages)>=stop_threshold:
                     state['stop_reason']='context_budget';break
                 schemas={name:schema for name,schema in SCHEMAS.items()
@@ -247,6 +248,7 @@ class AgentLoop:
                     records=citation_records(c.name,result)
                     compact['citation_policy']=dict(records=records,
                         notice='Only these explicit refs may be cited. No records means this call adds no citable evidence. Never infer refs from call order or numbers in source text.')
+                    compact['citation_namespace_notice']='Only explicit ref fields are platform citations. Bracketed numbers inside source text are original-paper bibliography numbers; when discussing them write 原论文参考文献第45—47号, not [45–47]. Keep source text unchanged.'
                     outgoing=self.adapter.tool_messages(c,compact)
                     prospective=messages+image_messages+outgoing
                     withheld=None
@@ -302,7 +304,10 @@ class AgentLoop:
             validation['attempts'].append(dict(stage='initial',invalid_refs=invalid,answer=state['answer']))
             if len(state['model_calls'])<b.max_model_calls and deadline-self.clock()>2:
                 messages.append(dict(role='user',content=json.dumps(dict(
-                    task='Correct citation identities in this complete answer. Return only the complete Chinese answer. Use only the allowed refs and their supplied evidence. Do not mechanically substitute refs or merely strip citations to retain unsupported claims. Remove unsupported optional claims; explicitly state unavailable evidence for requested facts. Use [n] separately, not grouped/range refs. Do not call tools.',
+                    output_schema=self.output_schema,
+                    output_format='Return ONLY the complete JSON object matching output_schema; preserve status, summary, missing_choices and limitations.' if self.output_schema else 'Return the complete Chinese answer.',
+                    bibliography_policy='If an invalid ref is actually a bibliography number in supplied source text, express it as 原论文参考文献第45—47号 without square brackets, and cite the supporting run-local ref. Never blindly relabel an unknown ref.',
+                    task='Correct citation identities in this complete answer. Use only the allowed refs and their supplied evidence. Do not mechanically substitute refs or merely strip citations to retain unsupported claims. Remove unsupported optional claims; explicitly state unavailable evidence for requested facts. Use [n] separately, not grouped/range refs. Do not call tools.',
                     answer=state['answer'],invalid_refs=invalid,allowed_records=list(delivered_refs.values())),ensure_ascii=False)))
                 try:
                     d=model('citation_repair',{})
