@@ -12,6 +12,8 @@ def main():
     folder=ROOT/'.rag-data/text-to-sql-evaluation'/a.run
     data=ROOT/'data/text-to-sql-evaluation'
     cases=json.loads((data/'cases-v1.json').read_text('utf8'))
+    manifest=json.loads((folder/'manifest.json').read_text('utf8'))
+    if manifest.get('selected_cases'):cases=[c for c in cases if c['id'] in manifest['selected_cases']]
     scores=json.loads((data/'reports'/a.run/'reviews.json').read_text('utf8'))
     references=json.loads((folder/'references.json').read_text('utf8'))
     results=[json.loads((folder/(c['id']+'.json')).read_text('utf8')) for c in cases]
@@ -35,7 +37,7 @@ def main():
     (dest/'results.json').write_text(json.dumps(dict(cases=cases,results=results,references=references,review=scores),ensure_ascii=False,indent=2),encoding='utf8')
     def pre(value):return '<pre>'+escape(value if isinstance(value,str) else json.dumps(value,ensure_ascii=False,indent=2))+'</pre>'
     html=['<!doctype html><html lang="zh"><meta charset="utf-8"><title>Text-to-SQL 基线</title><style>body{max-width:1100px;margin:40px auto;padding:0 24px;font:16px/1.7 system-ui;color:#22334a;background:#f5f7fa}article{background:white;padding:24px;margin:24px 0;border:1px solid #dce2ea;border-radius:10px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.65 system-ui}summary{cursor:pointer}h1,h2{line-height:1.4}small{color:#52657c}</style><h1>Text-to-SQL 开发基线 v1</h1>']
-    html.append('<p>固定20题，每题独立上下文，参考答案不提供给答题模型。每题一次，不挑选结果。评分为人工校准；不是Jev评分，不是holdout，也不是稳定性结论。</p>')
+    html.append(f'<p>本轮固定{len(cases)}题，每题独立上下文，参考答案不提供给答题模型。每题一次，不挑选结果。评分为人工校准；不是Jev评分，不是holdout，也不是稳定性结论。</p>')
     html.append(pre(summary))
     html.append('<p>每题10分：核心结果4、查询口径3、单位与解释2、来源可追溯1。重点看实质错误，不要求字面SQL相同或每句重复引用。完整规则见同目录上两级README.md。</p>')
     for case,r in zip(cases,results):

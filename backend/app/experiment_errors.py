@@ -6,6 +6,22 @@ from sqlglot import exp
 from sqlglot.optimizer.scope import traverse_scope, Scope
 
 
+def execution_diagnostic(sqlstate):
+    errors={
+        '42883':('operator_or_function_mismatch','运算符或函数参数类型不匹配；核对真实字段类型及支持函数，不要重复同一表达式。'),
+        '42804':('datatype_mismatch','字段或表达式类型不匹配；按真实类型比较，不能凭猜测转换业务含义。'),
+        '22P02':('invalid_input_value','输入值无法解释为目标字段类型；按目录中的真实类型和枚举重写条件。'),
+        '22012':('division_by_zero','分母为0；仅当业务口径允许时用NULLIF(分母,0)表示不可计算，不可将结果伪造为0。'),
+        '42803':('grouping_error','聚合与非聚合列不匹配；核对GROUP BY及目标统计粒度。'),
+        '57014':('query_timeout_or_cancelled','查询被取消或超时；减少无关连接、先按目标粒度聚合，不要擅自缩小总体或改变筛选以得到答案。'),
+        '55P03':('lock_timeout','等待锁失败；请稍后重试，不代表没有数据。'),
+        '21000':('scalar_subquery_multiple_rows','标量子查询返回多行；核对唯一性或按真实问题聚合，不可随意LIMIT 1掩盖多行。'),
+    }
+    if sqlstate not in errors:return {}
+    code,message=errors[sqlstate]
+    return dict(error_code=code,message=message)
+
+
 def field_diagnostic(error, query, schema):
     code={'42703':'undefined_column','42702':'ambiguous_column'}.get(error.sqlstate)
     if not code:return None
