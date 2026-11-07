@@ -49,7 +49,7 @@ class EvidenceProjection:
         output = {k: deepcopy(v) for k,v in result.items() if k not in ('result','image')}
         if 'image' in result: output['image'] = result['image']
         r = deepcopy(result.get('result', {}))
-        for key in ('local_to_run_refs','evidence_scope'):r.pop(key, None)
+        for key in ('local_to_run_refs','evidence_scope','citation_records'):r.pop(key, None)
         if 'evidence' in r:r['evidence'] = [self.evidence(e) for e in r['evidence']]
         if 'sources' in r:r['sources'] = [self.evidence(e) for e in r['sources']]
         if 'table' in r:r['table'] = self.evidence(r['table'])

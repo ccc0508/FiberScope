@@ -15,7 +15,7 @@ def decision(text='',calls=None):
 def test_native_tool_then_draft_review():
     call=ToolCall('a','search_literature',dict(query='q',reason='find'))
     a=Fake([decision(calls=[call]),decision('draft [1]'),decision('reviewed [1]')]);executed=[];states=[]
-    def execute(*args):executed.append(args);return dict(status='completed',call_id='c',result=dict(ref='[1]'))
+    def execute(*args):executed.append(args);return dict(status='completed',call_id='c',result=dict(evidence=[dict(ref='[1]',text='source')]))
     result=AgentLoop(a,execute,lambda s:states.append(s['status'])).run('q','r')
     assert result['answer']=='reviewed [1]' and result['review_status']=='completed'
     assert len(executed)==1 and len(a.requests)==3
