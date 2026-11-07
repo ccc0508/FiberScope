@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from datetime import datetime, timezone
 from psycopg import sql
-from app.catalog import INDICATORS, VIEWS, NOTES
+from app.catalog import INDICATORS, VIEWS
 
 SEMANTICS=json.loads(Path(__file__).with_name('experiment_semantics.json').read_text('utf8'))
 SPECS={spec.view:spec for spec in VIEWS.values()}
@@ -33,6 +33,9 @@ def column_info(view, name, kind):
     else: out.update(description='字段含义尚未整理，请勿按名称推断',semantic_status='unconfirmed')
     if name=='replicate_count' and view=='v_recycled_cycle_summary':
         out['description']='该数据块×循环的原始观测行数；各指标非空值数量可能不同'
+    if out.get('unit')=='%':out['unit_note']='源字段采用百分数口径，10表示10%，不是0.10；不是所有指标都使用百分比。'
+    if out.get('unit_status')=='tentative':out['unit_note']='该字段单位暂定，解释结果时须保留此限制。'
+    if out.get('unit_status')=='unconfirmed':out['unit_note']='该字段单位尚未确认，不可自行补充单位。'
     return out
 
 def describe(db, views=None):
@@ -49,6 +52,10 @@ def describe(db, views=None):
         entry=result['views']['fiber.'+name]
         columns=[column_info(name,c,t) for v,c,t in rows if v==name]
         entry.update(columns=columns,default_order=list(SPECS[name].order))
+        if name.startswith('v_recycled_'):
+            entry['notes']=['数据块处理条件未知，不可凭编号推断工艺。','原始值保留；长度分布异常应按质量字段或质量视图核对，不自动剔除。']
+            if name in ('v_recycled_cycle_summary','v_recycled_cycle_detail'):
+                entry['notes'].append('再生纸浆强度与核心实验的强度指数不是同一指标，不可直接混用。')
         for c in columns:
             if c['name'] not in SEMANTICS['enum_fields']: continue
             query=sql.SQL('SELECT DISTINCT {} FROM {} ORDER BY {} NULLS LAST LIMIT 201').format(
@@ -65,6 +72,7 @@ def describe(db, views=None):
         if {'material_code','beating_revolutions'}<=fields:
             pairs=db.execute(sql.SQL('SELECT DISTINCT material_code,beating_revolutions FROM {} ORDER BY material_code,beating_revolutions NULLS LAST LIMIT 501').format(sql.Identifier('fiber',name))).fetchall()
             entry['beating_levels_by_material']=dict(rows=[list(r) for r in pairs[:500]],columns=['material_code','beating_revolutions'],truncated=len(pairs)>500)
-    result.update(enums_queried_at=datetime.now(timezone.utc).isoformat(),notes=NOTES,
+    result.update(enums_queried_at=datetime.now(timezone.utc).isoformat(),
+        notes=['空值表示缺失，不等于0；AVG忽略NULL。','统计须遵守所选视图的数据粒度；观测关联不代表因果关系。'],
         enum_notice='Live DISTINCT values from selected views in this transaction. Not legal ranges; individual enum membership does not guarantee a combination exists. Truncated enums are not complete; use targeted SQL. Continuous measurements are not enumerated.')
     return result
