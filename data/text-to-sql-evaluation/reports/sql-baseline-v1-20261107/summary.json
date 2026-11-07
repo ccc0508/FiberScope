@@ -1,0 +1,17 @@
+{
+  "run": "sql-baseline-v1-20261107",
+  "cases": 20,
+  "score": 196,
+  "max_score": 200,
+  "normalized_score": 98.0,
+  "completed": 20,
+  "sql_attempts": 22,
+  "sql_successes": 19,
+  "citation_passed": 20,
+  "citation_repairs": 1,
+  "total_tokens": 755370,
+  "usage_records_missing": 0,
+  "cost": "unknown",
+  "end_to_end_seconds": "unknown",
+  "grader": "Codex manual review against reference SQL and actual tool traces; no Jev/Luna scoring"
+}
