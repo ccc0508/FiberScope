@@ -6,6 +6,13 @@ import psycopg
 import sqlglot
 from sqlglot import exp
 from app.catalog import VIEWS
+from app.experiment_preflight import preflight, QueryPlanRejected
+
+
+class UnsupportedSQL(ValueError):
+    def __init__(self,nodes):
+        self.nodes=nodes
+        super().__init__('Unsupported SQL nodes: '+', '.join(nodes)+'. CASE and explicit CAST are not supported. Use supported GROUP BY/WHERE queries or COALESCE for null fallback. Do not retry the same unsupported construct.')
 
 ALLOWED = {v.view for v in VIEWS.values()}
 # Every nested node and physical relation is checked, not just the outer SELECT.
@@ -20,8 +27,8 @@ def validate_sql(text):
     if len(trees) != 1 or not isinstance(trees[0], exp.Select):
         raise ValueError('Only one SELECT is allowed')
     tree = trees[0]
-    if any(n.key not in NODES for n in tree.walk()):
-        raise ValueError('Unsupported SQL: SELECT with joins/subqueries allowed; no CTEs, set operations, casts, writes or arbitrary functions')
+    unsupported=sorted({n.key for n in tree.walk() if n.key not in NODES})
+    if unsupported:raise UnsupportedSQL(unsupported)
     tables = list(tree.find_all(exp.Table))
     if not tables or any(t.db not in ('', 'fiber') or t.catalog or t.name not in ALLOWED for t in tables):
         raise ValueError('Every relation, including inside subqueries, must be an allowed fiber analysis view; call describe_experiment_data')
@@ -52,6 +59,7 @@ def execute(request, run_id, store):
         started_at=datetime.now(timezone.utc).isoformat(), input=request)
     store.save(record)
     normalized = None
+    stage='validation'
     try:
         p = INPUT.validate_python(request)
         normalized, view = validate_sql(p.sql) if p.tool == 'query_experiment_data' else (None, None)
@@ -61,6 +69,9 @@ def execute(request, run_id, store):
                 from app.experiment_directory import describe
                 result = json.loads(encode(describe(db, p.views)))
             else:
+                stage='explain'
+                plan=preflight(db,normalized)
+                stage='execute'
                 with db.cursor(name='agent_experiment_rows') as cur:
                     cur.execute(normalized)
                     rows=cur.fetchmany(101)
@@ -77,17 +88,29 @@ def execute(request, run_id, store):
                 column_metadata=describe_outputs(db,normalized,columns,view)
                 result=dict(sql=normalized, view=', '.join(views), views=views, columns=columns, rows=data,
                     column_metadata=column_metadata,
+                    preflight=plan,
                     row_count=len(data), truncated=truncated, row_limit=100,
                     queried_at=datetime.now(timezone.utc).isoformat(),
                     notice='Database result snapshot, not paper text. Decimal values may be strings. Missing values are null. A truncated result cannot support population-wide conclusions; use SQL aggregates.')
+                result['result_state']='truncated' if truncated else 'empty' if not data else 'rows_returned'
+                if not data:result['result_notice']='当前精确筛选未匹配记录；不代表整个数据库无相关数据，不得自动放宽条件。'
+                elif truncated:result['result_notice']='仅返回部分行，不可据此计算总体统计；保持原筛选条件在SQL中聚合。'
+                if data and any(value is None for row in data for value in row):
+                    result['null_notice']='结果含NULL，不等于0。空集聚合可能返回一行NULL，不能把返回一行当成存在一个观测。'
         record.update(status='completed',result=result)
         store.complete(record)
         return dict(call_id=record['call_id'],status='completed',result=record['result'])
+    except QueryPlanRejected as error:
+        record.update(status='failed',error_code='query_plan_rejected',message=str(error),diagnostic=dict(preflight=error.summary))
+    except UnsupportedSQL as error:
+        record.update(status='failed',error_code='unsupported_sql',message=str(error),diagnostic=dict(unsupported_nodes=error.nodes))
     except (ValueError, sqlglot.errors.SqlglotError) as error:
         record.update(status='failed',error_code='invalid_query',message=str(error)[:1000])
     except psycopg.Error as error:
         record.update(status='failed',error_code='database_query_failed',sqlstate=error.sqlstate,
             message='Query failed or timed out. Check columns with describe_experiment_data, simplify SQL and retry. Raw database errors are not exposed.')
+        from app.experiment_errors import execution_diagnostic
+        record.update(execution_diagnostic(error.sqlstate))
         if normalized:
             try:
                 from app.experiment_errors import diagnose
@@ -98,5 +121,6 @@ def execute(request, run_id, store):
                 record['diagnostic_status']='unavailable'
     except Exception:
         record.update(status='failed',error_code='query_execution_failed',message='Experimental data tool unavailable; no raw infrastructure details are exposed.')
+    record['failure_stage']=stage
     store.save(record)
-    return {k:record[k] for k in ('call_id','status','error_code','message','sqlstate','diagnostic','diagnostic_status') if k in record}
+    return {k:record[k] for k in ('call_id','status','error_code','message','sqlstate','diagnostic','diagnostic_status','failure_stage') if k in record}

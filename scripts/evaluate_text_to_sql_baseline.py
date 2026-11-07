@@ -21,11 +21,15 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument('--run',required=True)
     p.add_argument('--workers',type=int,default=2,choices=[1,2])
+    p.add_argument('--cases',nargs='+',help='Optional fixed subset, e.g. SQL04 SQL16; use a fresh run id')
     a=p.parse_args()
     if not a.run.replace('-','').isalnum():raise ValueError('Invalid run id')
     out=ROOT/'.rag-data/text-to-sql-evaluation'/a.run
     out.mkdir(parents=True,exist_ok=True)
     cases=json.loads(CASES.read_text('utf8'))
+    if a.cases:
+        if not set(a.cases)<={c['id'] for c in cases}:raise ValueError('Unknown case id')
+        cases=[c for c in cases if c['id'] in a.cases]
     manifest=out/'manifest.json'
     hashes={str(f.relative_to(ROOT)):sha256(f.read_bytes()).hexdigest()
         for folder in ('backend/app','backend/literature_rag') for f in (ROOT/folder).rglob('*.py')}
@@ -34,8 +38,11 @@ def main():
         frozen=json.loads(manifest.read_text('utf8'))
         if frozen['code_hashes']!=hashes or frozen['cases_sha256']!=sha256(CASES.read_bytes()).hexdigest():
             raise ValueError('Frozen code or questions changed; use a new run id rather than mixing baseline versions')
+        if frozen.get('selected_cases',[f'SQL{i:02d}' for i in range(1,21)])!=[c['id'] for c in cases]:
+            raise ValueError('Cannot change case selection within an existing run')
     if not manifest.exists():
         manifest.write_text(json.dumps(dict(created_at=datetime.now(timezone.utc).isoformat(),
+            selected_cases=[c['id'] for c in cases],
             cases_sha256=sha256(CASES.read_bytes()).hexdigest(),code_hashes=hashes,
             policy='Each case independent context; current model/config and full paper directory; no reference answers supplied; max tools 8, model calls 10, 240s. One answer per case; resume completed runs without regeneration.'),indent=2),encoding='utf8')
     # Capture the full allowed-view data snapshot for provenance, without publishing it.

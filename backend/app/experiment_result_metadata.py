@@ -21,6 +21,10 @@ def output_metadata(query, columns, schema_rows):
         def resolve(node, scope):
             if isinstance(node, (exp.Alias, exp.Paren)):
                 return resolve(node.this, scope)
+            # PostgreSQL rendering inserts a DECIMAL cast around AVG for ROUND.
+            # Numeric representation conversion preserves physical dimensions.
+            if isinstance(node, exp.Cast) and node.args['to'].sql().upper().split('(')[0] in ('DECIMAL','NUMERIC'):
+                return resolve(node.this,scope)
             if isinstance(node, exp.Column):
                 source = scope.sources.get(node.table)
                 if isinstance(source, exp.Table) and node.name in schema.get(source.name, {}):

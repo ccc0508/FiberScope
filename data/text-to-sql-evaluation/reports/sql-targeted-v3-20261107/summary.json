@@ -1,0 +1,17 @@
+{
+  "run": "sql-targeted-v3-20261107",
+  "cases": 3,
+  "score": 28,
+  "max_score": 30,
+  "normalized_score": 93.33333333333333,
+  "completed": 3,
+  "sql_attempts": 2,
+  "sql_successes": 2,
+  "citation_passed": 3,
+  "citation_repairs": 0,
+  "total_tokens": 91542,
+  "usage_records_missing": 0,
+  "cost": "unknown",
+  "end_to_end_seconds": "unknown",
+  "grader": "Codex manual review against reference SQL and actual tool traces; no Jev/Luna scoring"
+}

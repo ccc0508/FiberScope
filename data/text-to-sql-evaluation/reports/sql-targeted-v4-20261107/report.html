@@ -1,0 +1,47 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><title>Text-to-SQL 基线</title><style>body{max-width:1100px;margin:40px auto;padding:0 24px;font:16px/1.7 system-ui;color:#22334a;background:#f5f7fa}article{background:white;padding:24px;margin:24px 0;border:1px solid #dce2ea;border-radius:10px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.65 system-ui}summary{cursor:pointer}h1,h2{line-height:1.4}small{color:#52657c}</style><h1>Text-to-SQL 开发基线 v1</h1>
+<p>本轮固定1题，每题独立上下文，参考答案不提供给答题模型。每题一次，不挑选结果。评分为人工校准；不是Jev评分，不是holdout，也不是稳定性结论。</p>
+<pre>{
+  &quot;run&quot;: &quot;sql-targeted-v4-20261107&quot;,
+  &quot;cases&quot;: 1,
+  &quot;score&quot;: 8,
+  &quot;max_score&quot;: 10,
+  &quot;normalized_score&quot;: 80.0,
+  &quot;completed&quot;: 1,
+  &quot;sql_attempts&quot;: 0,
+  &quot;sql_successes&quot;: 0,
+  &quot;citation_passed&quot;: 1,
+  &quot;citation_repairs&quot;: 0,
+  &quot;total_tokens&quot;: 6965,
+  &quot;usage_records_missing&quot;: 0,
+  &quot;cost&quot;: &quot;unknown&quot;,
+  &quot;end_to_end_seconds&quot;: &quot;unknown&quot;,
+  &quot;grader&quot;: &quot;Codex manual review against reference SQL and actual tool traces; no Jev/Luna scoring&quot;
+}</pre>
+<p>每题10分：核心结果4、查询口径3、单位与解释2、来源可追溯1。重点看实质错误，不要求字面SQL相同或每句重复引用。完整规则见同目录上两级README.md。</p>
+<article><h2>SQL16 · 变量歧义 · 8/10</h2>
+<h3>题目</h3><pre>高转速的针叶木浆强度平均是多少？</pre><h3>参考要求</h3><pre>说明只有累计打浆转数不是rpm；高的阈值和强度指标不明确，需澄清，不擅自设阈值给确定均值。允许先查目录。</pre>
+<details><summary>参考 SQL 与真实结果</summary><pre>[]</pre></details>
+<h3>完整回答</h3><pre>“高转速”和“强度”在现有数据与文献中都不是唯一确定的对应字段，因此无法给出确切的平均值；需要先确认口径才能查询：
+
+1. **“高转速”**指哪个指标、以何阈值划为“高组”？是打浆转数（累计转数，而非转速）还是设备转速；单位与分组界限是什么？
+2. **“强度”**指哪一项力学性能？例如抗张强度、耐破强度或撕裂强度，以及具体字段与单位。
+3. **“针叶木浆”**按哪个样品属性筛选（如浆种/原料字段及取值）？
+
+在上述口径未确认前，任何平均值或分组比较都可能对应错误的指标或单位，故不提供数值。</pre><h3>人工评分与依据</h3><pre>{
+  &quot;scores&quot;: [
+    4,
+    2,
+    1,
+    1
+  ],
+  &quot;reason&quot;: &quot;停止给替代均值、范围和SQL查询，也未再给出错误的kPa/MPa单位。仍未先调用目录核对可用字段，反问了用户已指定的针叶木浆筛选，并把设备转速作为待选项而未明确库内是否可用；统计口径澄清与解释各扣1。此项仅部分改善，不得报告彻底修复。&quot;
+}</pre>
+<details><summary>实际 SQL、结果、单位和引用检查</summary><pre>{
+  &quot;queries&quot;: [],
+  &quot;citation_validation&quot;: {
+    &quot;status&quot;: &quot;passed&quot;,
+    &quot;available_records&quot;: [],
+    &quot;attempts&quot;: []
+  }
+}</pre></details></article>
+</html>
