@@ -1,0 +1,408 @@
+{
+  "policy": "仅授权重跑MIX17/18，各独立新上下文一次，配置/预算不变，原始70题基线保留。更新完成率为补跑合并视角，不能当首轮完成率或质量通过率。",
+  "original_mixed_completed": 13,
+  "latest_mixed_completed": 15,
+  "mixed_total": 20,
+  "original_all_completed": 54,
+  "latest_all_completed": 56,
+  "all_total": 70,
+  "rag_score_unchanged": 79.16666666666667,
+  "sql_score_unchanged": 79,
+  "mixed_quality_score": null,
+  "integrity": {
+    "runtime_unchanged": true,
+    "database_unchanged": true,
+    "metadata_unchanged": true
+  },
+  "rows": [
+    {
+      "id": "MIX17",
+      "question": "查本地针叶木浆累计打浆12345转的抗张指数，再查看Li、Zhao与He（2020）实际采用的PFI转数。如果本地没有这条精确记录，能否直接用论文里相邻转数的数据填成我们的实测值？请按精确条件查询，不要自行换档位或插值。",
+      "old_status": "failed",
+      "old_reason": "SQL child APIConnectionError",
+      "status": "completed",
+      "answer": "按精确条件在本地打浆实验视图 fiber.v_beating_analysis 中，以 sample_type='softwood'（针叶木浆）且 beating_revolutions = 12345（累计打浆转数，单位“转”）过滤，匹配行数为 0，涉及规范样本数为 0 [1]。因此本地没有针叶木浆累计打浆 12345 转的记录，也就没有该条件下的抗张指数（tensile_index，单位 N·m/g）实测值 [1]。需要说明，该 0 行结果仅表示当前库快照在该视图内没有此精确记录，并不意味着数据在任何来源中都不存在 [1]。\n\nLi、Zhao 与 He（2020）实际采用的 PFI 打浆转数序列为 0、4000、8000、12,000、16,000 转（原文以 revolutions 记）[2][3][6]；该论文的转数集合中不含 12345 转 [2][3]。该文抗张指数是以打浆转数为自变量的曲线图（Figure 3）呈现，正文未给出逐点数值 [7]，本次也未读取图内像素，故无法给出各转数对应的抗张指数具体数值 [7]。此外，这些数据是论文作者的实验室实测，不属于本地实测记录 [2][7]。\n\n因此不能把论文中相邻转数的数据填为本地 12345 转的“实测值”：论文转数集合中没有 12345 转 [2][3]，而用户已明确禁止换档位或插值；无精确匹配即应报告本地缺失，而非以论文数值替代 [1]。",
+      "review": "主要要求完成：精确12345转查得0行；论文PFI档位0/4000/8000/12000/16000正确；不换档、不插值、不把论文数据填成本地实测。无连接异常。部分额外引用[3][6]针对氢键章节，引用范围仍可收敛。",
+      "end_to_end_ms": 107612,
+      "budget_usage": {
+        "model": 11,
+        "tools": 7,
+        "search": 1,
+        "seconds_remaining": 141.45852089999244
+      },
+      "result_sha256": "212dde69862d9cd0ca6058b9e19e4cb966400d7a36376d13b57185b3b4a37822",
+      "tools": [
+        {
+          "request": {
+            "reason": "Inspect available views to find softwood pulp beating experiment tables with cumulative PFI revolutions and tensile index.",
+            "tool": "describe_experiment_data"
+          },
+          "status": "completed"
+        },
+        {
+          "request": {
+            "reason": "Get actual columns, units and enums for beating analysis and sample overview views.",
+            "views": [
+              "fiber.v_beating_analysis",
+              "fiber.v_sample_overview",
+              "fiber.v_fiber_paper_analysis"
+            ],
+            "tool": "describe_experiment_data"
+          },
+          "status": "completed"
+        },
+        {
+          "request": {
+            "reason": "Exact match check: softwood pulp records with cumulative beating revolutions exactly 12345, plus count of such records and tensile index values.",
+            "sql": "SELECT COUNT(*) AS matched_rows, COUNT(DISTINCT sample_id) AS matched_samples FROM fiber.v_beating_analysis WHERE sample_type = 'softwood' AND beating_revolutions = 12345",
+            "tool": "query_experiment_data"
+          },
+          "status": "completed"
+        },
+        {
+          "request": {
+            "document_id": "doc_0fcf2a50cfa02d21",
+            "reason": "Locate methods section describing PFI refining revolutions in Li 2020 paper",
+            "tool": "list_sections"
+          },
+          "status": "completed"
+        },
+        {
+          "request": {
+            "document_id": "doc_0fcf2a50cfa02d21",
+            "section_id": "sec_cc39ad2e800e9268",
+            "reason": "Read PFI refining methods to get revolutions and pulp type",
+            "tool": "read_section"
+          },
+          "status": "completed"
+        },
+        {
+          "request": {
+            "document_ids": [
+              "doc_0fcf2a50cfa02d21"
+            ],
+            "query": "tensile index softwood refining revolutions 12000 16000 tensile strength MPa sheet properties",
+            "reason": "Get tensile index values at each PFI revolution and confirm journal/DOI metadata",
+            "tool": "search_literature"
+          },
+          "status": "completed"
+        },
+        {
+          "request": {
+            "document_id": "doc_0fcf2a50cfa02d21",
+            "section_id": "sec_1bde6666475f11ad",
+            "reason": "Get title, authors, journal, DOI metadata from first page/introduction header",
+            "max_chars": 6000,
+            "tool": "read_section"
+          },
+          "status": "completed"
+        }
+      ],
+      "usage": [
+        {
+          "prompt_tokens": 644,
+          "completion_tokens": 458,
+          "total_tokens": 1102,
+          "cached_tokens": 510
+        },
+        {
+          "prompt_tokens": 1549,
+          "completion_tokens": 68,
+          "total_tokens": 1617,
+          "cached_tokens": 1280
+        },
+        {
+          "prompt_tokens": 2342,
+          "completion_tokens": 97,
+          "total_tokens": 2439,
+          "cached_tokens": 1536
+        },
+        {
+          "prompt_tokens": 8997,
+          "completion_tokens": 265,
+          "total_tokens": 9262,
+          "cached_tokens": 2432
+        },
+        {
+          "prompt_tokens": 9299,
+          "completion_tokens": 485,
+          "total_tokens": 9784,
+          "cached_tokens": 256
+        },
+        {
+          "prompt_tokens": 2870,
+          "completion_tokens": 209,
+          "total_tokens": 3079,
+          "cached_tokens": 2432
+        },
+        {
+          "prompt_tokens": 4448,
+          "completion_tokens": 104,
+          "total_tokens": 4552,
+          "cached_tokens": 3072
+        },
+        {
+          "prompt_tokens": 5403,
+          "completion_tokens": 118,
+          "total_tokens": 5521,
+          "cached_tokens": 4480
+        },
+        {
+          "prompt_tokens": 15889,
+          "completion_tokens": 127,
+          "total_tokens": 16016,
+          "cached_tokens": 5504
+        },
+        {
+          "prompt_tokens": 16538,
+          "completion_tokens": 792,
+          "total_tokens": 17330,
+          "cached_tokens": 640
+        },
+        {
+          "prompt_tokens": 24348,
+          "completion_tokens": 352,
+          "total_tokens": 24700,
+          "cached_tokens": 256
+        }
+      ],
+      "citation_validation": {
+        "status": "passed",
+        "available_records": [
+          {
+            "ref": "[1]",
+            "kind": "experiment_query",
+            "citable": true
+          },
+          {
+            "ref": "[2]",
+            "kind": "source_text",
+            "citable": true
+          },
+          {
+            "ref": "[3]",
+            "kind": "source_text",
+            "citable": true
+          },
+          {
+            "ref": "[4]",
+            "kind": "source_text",
+            "citable": true
+          },
+          {
+            "ref": "[5]",
+            "kind": "source_text",
+            "citable": true
+          },
+          {
+            "ref": "[6]",
+            "kind": "source_text",
+            "citable": true
+          },
+          {
+            "ref": "[7]",
+            "kind": "source_text",
+            "citable": true
+          },
+          {
+            "ref": "[8]",
+            "kind": "source_text",
+            "citable": true
+          },
+          {
+            "ref": "[9]",
+            "kind": "source_text",
+            "citable": true
+          },
+          {
+            "ref": "[10]",
+            "kind": "source_text",
+            "citable": true
+          },
+          {
+            "ref": "[11]",
+            "kind": "source_text",
+            "citable": true
+          }
+        ],
+        "attempts": []
+      }
+    },
+    {
+      "id": "MIX18",
+      "question": "有人说“本地针叶木浆从4000转到8000转，打浆电耗必然翻倍”，并建议用Li、Zhao与He（2020）和Motamedian等（2019）的PFI试验作为证明。请检查本地可用字段与两篇论文的处理条件，判断这句话是否成立；如果证据不足，请明确缺什么，不要把打浆度或转数当成电耗。",
+      "old_status": "failed",
+      "old_reason": "SQL child APIConnectionError",
+      "status": "completed",
+      "answer": "**结论：这句话不能成立，现有证据既无法证明也无法否定“从4000转到8000转打浆电耗必然翻倍”。**\n\n**一、本地字段无法检验电耗**\n\n本地打浆相关视图（`fiber.v_beating_analysis`、`fiber.v_sample_overview`、`fiber.v_fiber_paper_analysis`、`fiber.v_data_lineage`）只包含：\n\n- 累计打浆转数 `beating_revolutions`（单位“转”，明确不是每分钟转速rpm）；\n- 打浆度 `beating_degree_sr`（°SR，测量指标，不是转数）；\n- 纤维形态、纸张性能等指标及来源追溯字段。\n\n这些视图中没有任何磨浆功率、电耗、比能耗或能量输入字段（kWh、kW、J/kg 等），也没有浆浓、浆量、磨盘间隙/压力、打浆次数等处理条件列 [1][2][3]。因此本地既无直接能耗测量值，也无法间接换算能耗；转数和打浆度都不是电耗，不能替代。\n\n本地档位枚举确实包含 SW 的 4000 转与 8000 转 [2]，但这只说明档位存在，不能证明两档电耗的比值。此外，按档位的实际记录数与非空覆盖统计未取得，不能声称某档位有或没有观测。\n\n**二、两篇文献都不能作为“必翻倍”的证明**\n\n（1）Li, Zhao & He（2020）：采用商品漂白针叶木与阔叶木硫酸盐浆，PFI 磨（Hamjern Maskin A/S，挪威），按 TAPPI T248 wd-97，浆浓 10%、磨盘间隙 0.2 mm、每齿长作用力 3.33 N/mm（针叶木）与 1.77 N/mm（阔叶木）；针叶木转数档为 0/4000/8000/12000/16000，对应打浆度 16/20/40/63/79 °SR [1]。该节只交代转数梯度与打浆度关系，未给电耗或比能量数值、单位或测量方式。它含 4000 与 8000 转，但只提供“转数—打浆度”关系，不能提供“转数—实测能耗”依据 [1]。\n\n（2）Motamedian 等（2019）：材料为云杉 CTMP（化学机械浆，非化学浆），加阳离子马铃薯淀粉 25 kg/t；在 PFI 磨中于两旋转圆筒间机械打浆，仅设 0、1000、2000 转三个水平（Table 1：R0/R1000/R2000 与 SR0/SR1000/SR2000）[2][3][4]。它既不含 4000、8000 转，也未报告能耗/比能量或功率测量 [2][3][4]。\n\n两文的浆种与转数条件均与本地说法不匹配：Li（2020）有 4000/8000 转但无能耗数据，且为化学软木浆；Motamedian（2019）转数只到 2000 转且无能耗数据。二者都未给出转数与实测能耗之间的关系，也未从能耗角度讨论加倍效应。\n\n**三、缺什么证据**\n\n要检验该说法，至少需要：\n\n1. 本地 PFI 磨的实测功率/电流或比磨浆能量（kWh/t 或 kWh/转），含空载功率扣除；\n2. 4000 转与 8000 转条件下的直接能耗测量；\n3. 浆浓、浆量、磨盘间隙/压力、打浆次数等处理条件，以便核对与文献的对应关系；\n4. 按档位的记录数与非空覆盖统计。\n\n在这些证据补齐前，不能把“必然翻倍”表述为规律，也不能用打浆度或转数当成电耗。",
+      "review": "主要判断正确：真实目录没有电耗字段，不能由转数翻倍证明能耗翻倍，两文PFI条件已核对。但本地字段说明附[1][2][3]，实际这些编号是论文文本而非目录，存在语义错配。还将Motamedian的有/无淀粉两组概括为加淀粉，遗漏对照条件；本地未知条件不能直接称与论文不同。",
+      "end_to_end_ms": 108086,
+      "budget_usage": {
+        "model": 11,
+        "tools": 7,
+        "search": 0,
+        "seconds_remaining": 140.8480030996725
+      },
+      "result_sha256": "9e2631fa50566aa77a19e6f34529834b4dd071be92be21d33435a3646326709c",
+      "tools": [
+        {
+          "request": {
+            "reason": "Inspect directory to find PFI beating/refining views and available fields",
+            "tool": "describe_experiment_data"
+          },
+          "status": "completed"
+        },
+        {
+          "request": {
+            "reason": "Get actual columns, units and live values for beating and sample views",
+            "views": [
+              "fiber.v_beating_analysis",
+              "fiber.v_sample_overview",
+              "fiber.v_fiber_paper_analysis"
+            ],
+            "tool": "describe_experiment_data"
+          },
+          "status": "completed"
+        },
+        {
+          "request": {
+            "reason": "Check data lineage view for source/batch info and whether any energy/power fields exist anywhere",
+            "views": [
+              "fiber.v_data_lineage"
+            ],
+            "tool": "describe_experiment_data"
+          },
+          "status": "completed"
+        },
+        {
+          "request": {
+            "reason": "Locate PFI refining experimental sections in Li 2020 paper",
+            "document_id": "doc_0fcf2a50cfa02d21",
+            "tool": "list_sections"
+          },
+          "status": "completed"
+        },
+        {
+          "request": {
+            "document_id": "doc_0fcf2a50cfa02d21",
+            "section_id": "sec_cc39ad2e800e9268",
+            "reason": "Read PFI refining method details in Li 2020",
+            "tool": "read_section"
+          },
+          "status": "completed"
+        },
+        {
+          "request": {
+            "document_id": "doc_95f63c52fdb78ea6",
+            "reason": "Locate PFI refining / methods sections in Motamedian 2019",
+            "tool": "list_sections"
+          },
+          "status": "completed"
+        },
+        {
+          "request": {
+            "document_id": "doc_95f63c52fdb78ea6",
+            "reason": "Read experiments and measurements section (PFI refining conditions) in Motamedian 2019",
+            "section_id": "sec_9ffc33b06476756d",
+            "tool": "read_section"
+          },
+          "status": "completed"
+        }
+      ],
+      "usage": [
+        {
+          "prompt_tokens": 662,
+          "completion_tokens": 696,
+          "total_tokens": 1358,
+          "cached_tokens": 512
+        },
+        {
+          "prompt_tokens": 1613,
+          "completion_tokens": 60,
+          "total_tokens": 1673,
+          "cached_tokens": 1280
+        },
+        {
+          "prompt_tokens": 2397,
+          "completion_tokens": 95,
+          "total_tokens": 2492,
+          "cached_tokens": 1664
+        },
+        {
+          "prompt_tokens": 9052,
+          "completion_tokens": 238,
+          "total_tokens": 9290,
+          "cached_tokens": 2432
+        },
+        {
+          "prompt_tokens": 9868,
+          "completion_tokens": 978,
+          "total_tokens": 10846,
+          "cached_tokens": 256
+        },
+        {
+          "prompt_tokens": 2987,
+          "completion_tokens": 161,
+          "total_tokens": 3148,
+          "cached_tokens": 2432
+        },
+        {
+          "prompt_tokens": 4515,
+          "completion_tokens": 104,
+          "total_tokens": 4619,
+          "cached_tokens": 3072
+        },
+        {
+          "prompt_tokens": 5471,
+          "completion_tokens": 80,
+          "total_tokens": 5551,
+          "cached_tokens": 4608
+        },
+        {
+          "prompt_tokens": 6994,
+          "completion_tokens": 110,
+          "total_tokens": 7104,
+          "cached_tokens": 5504
+        },
+        {
+          "prompt_tokens": 6941,
+          "completion_tokens": 849,
+          "total_tokens": 7790,
+          "cached_tokens": 640
+        },
+        {
+          "prompt_tokens": 15870,
+          "completion_tokens": 863,
+          "total_tokens": 16733,
+          "cached_tokens": 256
+        }
+      ],
+      "citation_validation": {
+        "status": "passed",
+        "available_records": [
+          {
+            "ref": "[1]",
+            "kind": "source_text",
+            "citable": true
+          },
+          {
+            "ref": "[2]",
+            "kind": "source_text",
+            "citable": true
+          },
+          {
+            "ref": "[3]",
+            "kind": "source_text",
+            "citable": true
+          },
+          {
+            "ref": "[4]",
+            "kind": "source_text",
+            "citable": true
+          }
+        ],
+        "attempts": []
+      }
+    }
+  ]
+}
