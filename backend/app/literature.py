@@ -32,6 +32,7 @@ class LiteratureSettings(BaseSettings):
     library_dir: Path | None = None
     timeout_seconds: int = Field(300, ge=5, le=300)
     engine: Literal['agent', 'legacy'] = 'agent'
+    agent_architecture: Literal['single','specialists'] = 'single'
     extraction_timeout_seconds: int = Field(180, ge=10, le=300)
     document_extraction_timeout_seconds: int = Field(1800, ge=60, le=3600)
 

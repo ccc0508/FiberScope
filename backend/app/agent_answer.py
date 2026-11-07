@@ -46,11 +46,11 @@ def adapt_run(state, evidence, trace, elapsed_ms):
     return dict(status='answered' if completed else 'failed',answer=state.get('answer',''),citations=citations,
         latency_ms=elapsed_ms,reason_code=None if completed else ('invalid_citations' if state.get('stop_reason')=='invalid_citations' else 'agent_incomplete'),
         **({} if completed else dict(error_status=503)),
-        configuration=dict(pipeline_version='agentic-rag-directory-v1',model=state.get('model'),budget=state.get('budget'),directory_policy=state.get('directory_policy')),
+        configuration=dict(pipeline_version=state.get('pipeline_version','agentic-rag-directory-v1'),model=state.get('model'),budget=state.get('budget'),directory_policy=state.get('directory_policy')),
         generation_calls=state.get('model_calls',[]),retrieved_evidence=snapshots,claims=[],
         agent_run=state,agent_tool_trace=trace,agent_evidence=evidence,
-        review_summary=dict(status='completed' if state.get('review_status')=='completed' else 'incomplete',
-            notice='已完成答案复核；复核不保证所有陈述正确。' if state.get('review_status')=='completed' else '答案复核未完成，请核对引用原文。',
+        review_summary=dict(status='not_required' if state.get('review_status')=='not_required' else 'completed' if state.get('review_status')=='completed' else 'incomplete',
+            notice='本次为直接答复或澄清，未调用研究子任务。' if state.get('review_status')=='not_required' else '已完成答案复核；复核不保证所有陈述正确。' if state.get('review_status')=='completed' else '答案复核未完成，请核对引用原文。',
             unresolved=[],supplement_rounds=0,review_rounds=int(state.get('review_status')=='completed')))
 
 
@@ -61,7 +61,9 @@ def run_agent_answer(config, question):
     start=perf_counter()
     # The CLI owns the process-tree deadline; do not kill only its parent.
     result=subprocess.run([sys.executable,'-X','utf8',str(ROOT/'scripts/run_literature_agent.py'),
-        '--question',question,'--library',str(config.library_root),'--run-id',rid,'--seconds',str(seconds)],
+        '--question',question,'--library',str(config.library_root),'--run-id',rid,'--seconds',str(seconds),
+        '--architecture',getattr(config,'agent_architecture','single'),
+        '--max-model-calls','12' if getattr(config,'agent_architecture','single')=='specialists' else '10'],
         capture_output=True,text=True,encoding='utf-8',creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
     folder=ROOT/'.rag-data/agent-runs'/rid
     if result.returncode or not (folder/'state.json').is_file():

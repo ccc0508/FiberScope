@@ -34,7 +34,7 @@ export interface Answer {
   citations: Citation[];
   latency_ms: number;
   review_summary?: {
-    status: "completed" | "unresolved" | "incomplete";
+    status: "completed" | "unresolved" | "incomplete" | "not_required";
     notice: string;
     unresolved: { id: string; requirement: string; reason: string }[];
     supplement_rounds: number;
