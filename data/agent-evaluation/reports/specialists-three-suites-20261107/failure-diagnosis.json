@@ -1,0 +1,146 @@
+[
+  {
+    "id": "FS8-004",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "literature_handoff",
+    "details": [
+      "1 validation error for SpecialistResult\n  Invalid JSON: trailing characters at line 1 column 3736 [type=json_invalid, input_value='{\"status\":\"ok\",\"summary\"...上趋势未知。\"]}', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid"
+    ]
+  },
+  {
+    "id": "FS8-008",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "literature_handoff",
+    "details": [
+      "1 validation error for SpecialistResult\n  Invalid JSON: expected value at line 1 column 1 [type=json_invalid, input_value='Ayaliew等（2026，PDF...R²可比性结论。', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid"
+    ]
+  },
+  {
+    "id": "FS8-009",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "literature_handoff",
+    "details": [
+      "1 validation error for SpecialistResult\n  Invalid JSON: expected `,` or `}` at line 1 column 286 [type=json_invalid, input_value='{\"status\":\"ok\",\"summary\"...为结论依据。\"]}', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid"
+    ]
+  },
+  {
+    "id": "FS8-013",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "literature_handoff",
+    "details": [
+      "1 validation error for SpecialistResult\n  Invalid JSON: control character (\\u0000-\\u001F) found while parsing a string at line 2 column 0 [type=json_invalid, input_value='{\"status\":\"ok\",\"summary\"...数未做图读。\"]}', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid"
+    ]
+  },
+  {
+    "id": "FS8-020",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "literature_handoff",
+    "details": [
+      "1 validation error for SpecialistResult\n  Invalid JSON: trailing characters at line 3 column 1 [type=json_invalid, input_value='{\"status\":\"ok\",\"summary\"...接数值比较。\"]}', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid"
+    ]
+  },
+  {
+    "id": "MIX04",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "planner",
+    "details": [
+      "2 validation errors for Plan\nroute\n  Input should be 'direct', 'clarify', 'sql', 'literature' or 'both' [type=literal_error, input_value={'route': 'both', 'reason...最优”的结论。'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nreason\n  Field required [type=missing, input_value={'route': {'route': 'both...最优”的结论。'}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+    ]
+  },
+  {
+    "id": "MIX06",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "planner",
+    "details": [
+      "2 validation errors for Plan\nroute\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing\nreason\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+    ]
+  },
+  {
+    "id": "MIX13",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "literature_handoff",
+    "details": [
+      "1 validation error for SpecialistResult\n  Invalid JSON: expected `,` or `}` at line 1 column 2359 [type=json_invalid, input_value='{\"status\":\"ok\",\"summary\"...多划分细节。\"]}', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid"
+    ]
+  },
+  {
+    "id": "MIX14",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "literature_handoff",
+    "details": [
+      "1 validation error for SpecialistResult\n  Invalid JSON: expected ident at line 1 column 2 [type=json_invalid, input_value='I have both authors\\' fi...标为待确认。\"]}', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid"
+    ]
+  },
+  {
+    "id": "MIX17",
+    "status": "failed",
+    "stop_reason": "ValueError",
+    "stage": "sql_execution",
+    "details": [
+      "APIConnectionError"
+    ]
+  },
+  {
+    "id": "MIX18",
+    "status": "failed",
+    "stop_reason": "ValueError",
+    "stage": "sql_execution",
+    "details": [
+      "APIConnectionError"
+    ]
+  },
+  {
+    "id": "MIX20",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "sql_handoff",
+    "details": [
+      "1 validation error for SpecialistResult\nnote_on_refs\n  Extra inputs are not permitted [type=extra_forbidden, input_value='可引用证据：[1] ...段非空计数）。', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden"
+    ]
+  },
+  {
+    "id": "SQL05",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "sql_handoff",
+    "details": [
+      "1 validation error for SpecialistResult\nmissing_choices_note\n  Extra inputs are not permitted [type=extra_forbidden, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden"
+    ]
+  },
+  {
+    "id": "SQL08",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "sql_handoff",
+    "details": [
+      "1 validation error for SpecialistResult\n  Invalid JSON: expected value at line 1 column 1 [type=json_invalid, input_value='```json\\n{\"status\":\"ok\",...另行指定。\"]}\\n```', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid"
+    ]
+  },
+  {
+    "id": "SQL12",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "planner",
+    "details": [
+      "2 validation errors for Plan\nroute\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing\nreason\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+    ]
+  },
+  {
+    "id": "SQL14",
+    "status": "failed",
+    "stop_reason": "ValidationError",
+    "stage": "sql_handoff",
+    "details": [
+      "1 validation error for SpecialistResult\n  Invalid JSON: expected value at line 1 column 1 [type=json_invalid, input_value='```json\\n{\"status\":\"ok\",...题范围内。\"]}\\n```', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid"
+    ]
+  }
+]
