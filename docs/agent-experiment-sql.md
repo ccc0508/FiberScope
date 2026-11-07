@@ -2,6 +2,16 @@
 
 新增 `describe_experiment_data`（真实字段目录、单位、统计粒度）与 `query_experiment_data`（受限 SQL）。模型生成 SQL，程序解析、校验后重新生成 PostgreSQL SQL，再交给数据库执行。
 
+## 2026-11-07：按需目录与真实枚举
+
+`describe_experiment_data` 不传 `views` 时仅返回八个视图的用途和数据粒度，当前约1400字符；传 `views: ["fiber.v_beating_analysis"]` 时仅返回所选视图的真实字段、类型、中文说明、单位、相关歧义规则及离散字段真实取值，当前打浆详情约7400字符。一次可选择多个视图，重复视图合并，未知视图拒绝。
+
+字段名和类型来自 information_schema；测量指标名称/单位继续复用 catalog.py；补充含义、视图用途、枚举字段名单与歧义规则保存在 `backend/app/experiment_semantics.json`。新出现但尚未解释的字段明确标为未确认，不猜含义。同名字段可按视图覆盖，例如再生循环汇总的 replicate_count 是观测行数，不等同于纸张重复次数元数据。
+
+枚举每次在同一 REPEATABLE READ 只读事务内执行 DISTINCT，避免静态枚举过期。返回 NULL 是否存在、截断标识、读取时间；单字段最多200个值，超出需针对性SQL查询。连续测量值不枚举；打浆转数额外按原料给出真实组合，最多500组。实际值不代表业务允许范围，枚举中各值存在也不保证任意组合有数据。Decimal 枚举编码为字符串，与SQL数值快照保持一致。
+
+本次没有实施EXPLAIN预检或改动引用策略。
+
 当前允许 catalog.py 中八个 fiber 分析视图之间的任意连接，包括自连接、内外连接、交叉连接和 LATERAL SELECT；支持标量子查询、派生表、IN/EXISTS 及相关子查询。无需预先定义连接组合或连接键。支持筛选、排序、GROUP BY/HAVING，以及 COUNT、SUM、AVG、MIN、MAX、ROUND、ABS、COALESCE、NULLIF。仍不支持 CTE、集合操作（如 UNION）、类型转换或任意函数。
 
 程序检查整棵语法树：所有层级的实际视图引用均须在白名单内，省略 schema 的白名单视图会补为 fiber；每层 LIMIT/OFFSET 都验证。不能通过子查询绕过函数、写入或系统表限制。执行重新生成的 SQL，不直接执行原始字符串。连接后的统计粒度由模型根据字段目录判断，程序不会保证任意连接在业务上合理；一对多连接可能重复计数，应在正确粒度聚合或去重。

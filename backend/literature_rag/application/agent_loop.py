@@ -16,6 +16,10 @@ relative quantities, uncertainty, correlation and causation. If evidence is miss
 Return a concise Chinese answer with [n] citations when ready. Tool arguments require a reason.
 For calculations source_call_ids are the executor call_id values returned in tool results.
 For project experimental data questions, call describe_experiment_data to obtain actual schema, units and caveats,
+first omit views for a compact directory, then pass selected views to obtain their detailed columns and live
+enum values. Reuse those details; do not assume a column exists in another view. Do not invent thresholds
+for vague terms or confuse cumulative beating revolutions with rotational speed. Enum values describe
+observed data, not legal ranges; their combinations may still have no records.
 then query_experiment_data with a PostgreSQL SELECT over allowed views. Joins between any allowed views and
 nested/correlated SELECT subqueries are supported. Never invent columns or values. Choose join keys from
 actual fields and check one-to-many multiplicity; deduplicate or aggregate at the intended sample grain
