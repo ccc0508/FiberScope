@@ -117,3 +117,73 @@ def test_parent_never_cites_payload_omitted_by_context_budget():
     r=SpecialistCoordinator(a,lambda *a:raw,lambda s:None,budget=AgentBudget(max_context_chars=24000)).run('q','r')
     assert r['status']=='completed' and r['citation_validation']['available_records']==[]
     assert r['answer']=='无法确认'
+
+
+def test_fenced_child_normalized_without_model_repair():
+    original='\ufeff```json\n'+result(summary='无证据').text+'\n```'
+    a=Fake([route('sql',sql_task='count'),answer(original),answer('无法确认')])
+    r=SpecialistCoordinator(a,lambda *a:1/0,lambda s:None).run('q','r')
+    assert r['status']=='completed' and len(a.requests)==3
+    assert r['children'][0]['trace']['answer']==original
+    assert r['format_checks'][1]['wrapper_removed']
+
+
+def test_empty_route_one_format_repair_no_tools():
+    a=Fake([tool('route_task',{}),answer('{"route":"direct","reason":"greeting","answer":"你好"}')])
+    r=SpecialistCoordinator(a,lambda *a:1/0,lambda s:None).run('你好','r')
+    assert r['status']=='completed' and r['answer']=='你好'
+    assert r['budget_usage']['model']==2 and a.requests[1][1]=={}
+    assert r['format_checks'][0]['raw_output']=={}
+    assert r['format_checks'][0]['status']=='repaired'
+
+
+def test_malformed_native_arguments_preserved_and_repaired():
+    d=tool('route_task',{})
+    d.message['tool_calls']=[dict(function=dict(name='route_task',arguments='{"route":'))]
+    a=Fake([d,answer('{"route":"direct","reason":"greeting","answer":"你好"}')])
+    r=SpecialistCoordinator(a,lambda *a:1/0,lambda s:None).run('你好','r')
+    assert r['status']=='completed'
+    assert r['format_checks'][0]['raw_output']=='{"route":'
+    assert r['model_calls'][0]['raw_message']==d.message
+
+
+def test_child_repair_once_preserves_initial_output():
+    a=Fake([route('sql',sql_task='count'),answer('发现信息不足'),result('insufficient_evidence','信息不足'),answer('信息不足')])
+    r=SpecialistCoordinator(a,lambda *a:1/0,lambda s:None).run('q','r')
+    assert r['status']=='completed' and r['budget_usage']['model']==4
+    assert r['children'][0]['trace']['answer']=='发现信息不足'
+    assert r['format_checks'][1]['status']=='repaired'
+    assert r['model_calls'][2]['stage']=='sql_format_repair'
+
+
+def test_irrecoverable_output_stops_after_one_correction():
+    a=Fake([route('sql',sql_task='count'),answer('{broken'),answer('{still broken')])
+    r=SpecialistCoordinator(a,lambda *a:1/0,lambda s:None).run('q','r')
+    assert r['status']=='failed' and len(a.requests)==3
+    check=r['format_checks'][1]
+    assert check['status']=='repair_failed' and check['raw_output']=='{broken'
+    assert check['repair_output']=='{still broken'
+    assert r['children'][0]['status']=='failed'
+
+
+def test_repair_does_not_consume_reserved_calls_or_time():
+    a=Fake([tool('route_task',{})])
+    r=SpecialistCoordinator(a,lambda *a:1/0,lambda s:None,budget=AgentBudget(max_model_calls=3)).run('q','r')
+    assert len(a.requests)==1 and r['format_checks'][0]['status']=='repair_skipped_budget'
+    now=[0]
+    class Slow(Fake):
+        def decide(self,*args):
+            now[0]=220
+            return super().decide(*args)
+    a=Slow([tool('route_task',{})])
+    r=SpecialistCoordinator(a,lambda *a:1/0,lambda s:None,clock=lambda:now[0]).run('q','r')
+    assert len(a.requests)==1 and r['format_checks'][0]['status']=='repair_skipped_budget'
+
+
+def test_do_not_extract_json_from_surrounding_prose():
+    from literature_rag.application.specialist_agent import unwrap_json
+    text='explanation\n```json\n{}\n```'
+    assert unwrap_json(text)==text
+    a=Fake([route('sql',sql_task='count'),answer(text),answer(text)])
+    r=SpecialistCoordinator(a,lambda *a:1/0,lambda s:None).run('q','r')
+    assert r['status']=='failed' and r['format_checks'][1]['repair_attempted']
