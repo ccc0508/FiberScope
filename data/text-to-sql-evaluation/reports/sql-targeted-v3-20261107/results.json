@@ -1,0 +1,483 @@
+{
+  "cases": [
+    {
+      "id": "SQL12",
+      "category": "空集聚合",
+      "question": "计算样本代码为NO_SUCH_SAMPLE的抗张指数均值。结果为空的话请区分缺失与数值0。",
+      "reference_sql": [
+        "SELECT AVG(tensile_index) FROM fiber.v_fiber_paper_analysis WHERE canonical_code='NO_SUCH_SAMPLE'"
+      ],
+      "criteria": "NULL表示没有可用观测，不能回答0。"
+    },
+    {
+      "id": "SQL13",
+      "category": "总体统计",
+      "question": "再生纸浆原始观测的总行数和长度加权纤维长度总体均值是多少？必须基于全部原始观测，不要用前100行计算，也不要对各数据块均值再平均。",
+      "reference_sql": [
+        "SELECT COUNT(*),AVG(fiber_length_weighted_mm) FROM fiber.v_recycled_cycle_detail"
+      ],
+      "criteria": "数据库聚合131行，均值容差0.0001，单位mm；不能用汇总视图均值。"
+    },
+    {
+      "id": "SQL16",
+      "category": "变量歧义",
+      "question": "高转速的针叶木浆强度平均是多少？",
+      "reference_sql": [],
+      "criteria": "说明只有累计打浆转数不是rpm；高的阈值和强度指标不明确，需澄清，不擅自设阈值给确定均值。允许先查目录。"
+    }
+  ],
+  "results": [
+    {
+      "id": "SQL12",
+      "run_id": "sql-targeted-v3-20261107-SQL12",
+      "status": "completed",
+      "answer": "**结果：无法计算——按样本代码 `NO_SUCH_SAMPLE` 查询，没有任何匹配记录，因此抗张指数均值为“缺失”，不是 0。**\n\n- 我在配对样本视图 `fiber.v_fiber_paper_analysis` 中，按规范样本代码 `canonical_code` = 'NO_SUCH_SAMPLE' 进行分组，统计样本行数、非空抗张指数数量并取抗张指数（`tensile_index`，单位 N·m/g）的平均值；结果返回 0 行 [1]。\n- 缺失与 0 的区分：本次没有任何行，说明该规范样本代码下没有匹配样本，属于无观测值；这不能解释为“均值为 0”，也不能解释为“该样本的抗张指数测量值为 0”。若存在样本行但抗张指数字段为空，结果应表现为样本行数大于 0、非空值数量为 0、均值为 NULL（AVG 忽略空值）；当前结果不属于此情况 [1]。\n- 局限：空结果只说明在当前精确筛选条件下没有匹配记录，不代表整个数据库不存在相关数据，也未检查其他视图（如打浆实验视图 `fiber.v_beating_analysis`）中是否存在相同代码 [1]。若该代码可能存在拼写或格式差异，请提供准确的样本代码。",
+      "model": "deepseek-flash",
+      "budget": {
+        "max_model_calls": 10,
+        "max_tool_calls": 8,
+        "max_search_calls": 2,
+        "total_seconds": 240.0,
+        "reserve_seconds": 45,
+        "max_output_tokens": 8192,
+        "max_context_chars": 160000
+      },
+      "citation_validation": {
+        "status": "passed",
+        "available_records": [
+          {
+            "ref": "[1]",
+            "kind": "experiment_query",
+            "citable": true
+          }
+        ],
+        "attempts": []
+      },
+      "tool_calls": 3,
+      "sql_attempts": 1,
+      "sql_successes": 1,
+      "usage": [
+        {
+          "prompt_tokens": 4124,
+          "completion_tokens": 61,
+          "total_tokens": 4185,
+          "cached_tokens": 128
+        },
+        {
+          "prompt_tokens": 4906,
+          "completion_tokens": 102,
+          "total_tokens": 5008,
+          "cached_tokens": 4096
+        },
+        {
+          "prompt_tokens": 10479,
+          "completion_tokens": 160,
+          "total_tokens": 10639,
+          "cached_tokens": 4992
+        },
+        {
+          "prompt_tokens": 11467,
+          "completion_tokens": 271,
+          "total_tokens": 11738,
+          "cached_tokens": 10624
+        },
+        {
+          "prompt_tokens": 9982,
+          "completion_tokens": 290,
+          "total_tokens": 10272,
+          "cached_tokens": 1792
+        }
+      ],
+      "queries": [
+        {
+          "request": {
+            "reason": "Compute mean tensile index for canonical sample code NO_SUCH_SAMPLE, plus row count and count of non-null tensile_index to distinguish \"no such sample\" from \"sample present but measurement missing\" and from a true 0.",
+            "sql": "SELECT canonical_code, COUNT(*) AS sample_rows, COUNT(tensile_index) AS n_tensile_values, AVG(tensile_index) AS avg_tensile_index FROM fiber.v_fiber_paper_analysis WHERE canonical_code = 'NO_SUCH_SAMPLE' GROUP BY canonical_code",
+            "tool": "query_experiment_data"
+          },
+          "response": {
+            "call_id": "a4c44127-7118-4f70-bc72-329ac657453b",
+            "status": "completed",
+            "result": {
+              "sql": "SELECT canonical_code, COUNT(*) AS sample_rows, COUNT(tensile_index) AS n_tensile_values, AVG(tensile_index) AS avg_tensile_index FROM fiber.v_fiber_paper_analysis WHERE canonical_code = 'NO_SUCH_SAMPLE' GROUP BY canonical_code",
+              "view": "fiber.v_fiber_paper_analysis",
+              "views": [
+                "fiber.v_fiber_paper_analysis"
+              ],
+              "columns": [
+                "canonical_code",
+                "sample_rows",
+                "n_tensile_values",
+                "avg_tensile_index"
+              ],
+              "rows": [],
+              "column_metadata": [
+                {
+                  "type": "character varying",
+                  "description": "面向用户的规范样本代码；用户指定按样本代码排序时使用此列",
+                  "unit": null,
+                  "unit_status": "not_applicable",
+                  "source_columns": [
+                    "fiber.v_fiber_paper_analysis.canonical_code"
+                  ],
+                  "position": 0,
+                  "name": "canonical_code"
+                },
+                {
+                  "unit": "个",
+                  "unit_status": "confirmed",
+                  "description": "SQL计数结果；计数对象由表达式与连接后的行粒度决定，不自动等同样本数",
+                  "position": 1,
+                  "name": "sample_rows"
+                },
+                {
+                  "unit": "个",
+                  "unit_status": "confirmed",
+                  "description": "SQL计数结果；计数对象由表达式与连接后的行粒度决定，不自动等同样本数",
+                  "position": 2,
+                  "name": "n_tensile_values"
+                },
+                {
+                  "type": "numeric",
+                  "description": "AVG(抗张指数)",
+                  "unit": "N·m/g",
+                  "unit_status": "confirmed",
+                  "source_columns": [
+                    "fiber.v_fiber_paper_analysis.tensile_index"
+                  ],
+                  "position": 3,
+                  "name": "avg_tensile_index"
+                }
+              ],
+              "preflight": {
+                "status": "passed",
+                "analyze": false,
+                "total_cost": 6.0,
+                "max_node_rows": 70,
+                "node_count": 12,
+                "node_types": [
+                  "Aggregate",
+                  "Hash",
+                  "Hash Join",
+                  "Index Scan",
+                  "Nested Loop",
+                  "Seq Scan",
+                  "Subquery Scan"
+                ],
+                "limits": {
+                  "total_cost": 1000000,
+                  "max_node_rows": 1000000
+                },
+                "notice": "仅优化器估计，不是实际行数或耗时；顺序扫描不单独拒绝，预检不证明统计口径正确。"
+              },
+              "row_count": 0,
+              "truncated": false,
+              "row_limit": 100,
+              "queried_at": "2026-11-07T06:45:24.299956+00:00",
+              "notice": "Database result snapshot, not paper text. Decimal values may be strings. Missing values are null. A truncated result cannot support population-wide conclusions; use SQL aggregates.",
+              "result_state": "empty",
+              "result_notice": "当前精确筛选未匹配记录；不代表整个数据库无相关数据，不得自动放宽条件。",
+              "ref": "[1]",
+              "evidence_scope": {
+                "run_id": "sql-targeted-v3-20261107-SQL12",
+                "reference_policy": "immutable_exact_snapshot",
+                "notice": "References are unique only within this run. Text availability is not proof of visual inspection."
+              },
+              "citation_records": [
+                {
+                  "ref": "[1]",
+                  "kind": "experiment_query",
+                  "citable": true
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "manual_review": "pending"
+    },
+    {
+      "id": "SQL13",
+      "run_id": "sql-targeted-v3-20261107-SQL13",
+      "status": "completed",
+      "answer": "**结果（再生纸浆数据集 RECYCLED_SUMMARY_2025）**\n\n- 原始观测总行数：**131 行**，并且是在原始观测粒度 `fiber.v_recycled_cycle_detail` 上直接执行 COUNT(*) 得到的 [1]。\n- 长度加权纤维长度总体均值：**1.3358 mm**，并且是对全部 131 条原始观测直接计算 AVG 得出的；其中 `fiber_length_weighted_mm` 非空值有 131 个 [1]。\n\n说明：该均值基于原始观测行，不是用前 100 行抽样计算的，也没有先对“数据块×循环”的均值表取平均再求均值；该汇总表有 47 行，这里只是作为对照列出 [1]。该指标采用长度加权口径，不等于算术平均口径；按视图目录说明，原始行保留了重复观测，因此这些行并不代表独立规范样本 [1]。",
+      "model": "deepseek-flash",
+      "budget": {
+        "max_model_calls": 10,
+        "max_tool_calls": 8,
+        "max_search_calls": 2,
+        "total_seconds": 240.0,
+        "reserve_seconds": 45,
+        "max_output_tokens": 8192,
+        "max_context_chars": 160000
+      },
+      "citation_validation": {
+        "status": "passed",
+        "available_records": [
+          {
+            "ref": "[1]",
+            "kind": "experiment_query",
+            "citable": true
+          }
+        ],
+        "attempts": []
+      },
+      "tool_calls": 3,
+      "sql_attempts": 1,
+      "sql_successes": 1,
+      "usage": [
+        {
+          "prompt_tokens": 4137,
+          "completion_tokens": 89,
+          "total_tokens": 4226,
+          "cached_tokens": 128
+        },
+        {
+          "prompt_tokens": 4950,
+          "completion_tokens": 129,
+          "total_tokens": 5079,
+          "cached_tokens": 4224
+        },
+        {
+          "prompt_tokens": 10689,
+          "completion_tokens": 189,
+          "total_tokens": 10878,
+          "cached_tokens": 4992
+        },
+        {
+          "prompt_tokens": 11799,
+          "completion_tokens": 191,
+          "total_tokens": 11990,
+          "cached_tokens": 10752
+        },
+        {
+          "prompt_tokens": 10233,
+          "completion_tokens": 203,
+          "total_tokens": 10436,
+          "cached_tokens": 1792
+        }
+      ],
+      "queries": [
+        {
+          "request": {
+            "reason": "在原始观测粒度上直接对全部行计数并提供长度加权纤维长度的总体均值；同时给出非空观测数与汇总表的行数，用于说明均值是基于原始行而非数据块均值再平均。",
+            "sql": "SELECT dataset_code, COUNT(*) AS total_raw_rows, COUNT(fiber_length_weighted_mm) AS weighted_length_nonnull_rows, ROUND(AVG(fiber_length_weighted_mm),4) AS mean_weighted_length_mm, (SELECT COUNT(*) FROM fiber.v_recycled_cycle_summary s) AS summary_rows FROM fiber.v_recycled_cycle_detail GROUP BY dataset_code",
+            "tool": "query_experiment_data"
+          },
+          "response": {
+            "call_id": "12a37df6-b00b-4219-a404-b6a8297c1f46",
+            "status": "completed",
+            "result": {
+              "sql": "SELECT dataset_code, COUNT(*) AS total_raw_rows, COUNT(fiber_length_weighted_mm) AS weighted_length_nonnull_rows, ROUND(CAST(AVG(fiber_length_weighted_mm) AS DECIMAL), 4) AS mean_weighted_length_mm, (SELECT COUNT(*) FROM fiber.v_recycled_cycle_summary AS s) AS summary_rows FROM fiber.v_recycled_cycle_detail GROUP BY dataset_code",
+              "view": "fiber.v_recycled_cycle_detail, fiber.v_recycled_cycle_summary",
+              "views": [
+                "fiber.v_recycled_cycle_detail",
+                "fiber.v_recycled_cycle_summary"
+              ],
+              "columns": [
+                "dataset_code",
+                "total_raw_rows",
+                "weighted_length_nonnull_rows",
+                "mean_weighted_length_mm",
+                "summary_rows"
+              ],
+              "rows": [
+                [
+                  "RECYCLED_SUMMARY_2025",
+                  131,
+                  131,
+                  "1.3358",
+                  47
+                ]
+              ],
+              "column_metadata": [
+                {
+                  "type": "character varying",
+                  "description": "再生纸浆数据集编码",
+                  "unit": null,
+                  "unit_status": "not_applicable",
+                  "source_columns": [
+                    "fiber.v_recycled_cycle_detail.dataset_code"
+                  ],
+                  "position": 0,
+                  "name": "dataset_code"
+                },
+                {
+                  "unit": "个",
+                  "unit_status": "confirmed",
+                  "description": "SQL计数结果；计数对象由表达式与连接后的行粒度决定，不自动等同样本数",
+                  "position": 1,
+                  "name": "total_raw_rows"
+                },
+                {
+                  "unit": "个",
+                  "unit_status": "confirmed",
+                  "description": "SQL计数结果；计数对象由表达式与连接后的行粒度决定，不自动等同样本数",
+                  "position": 2,
+                  "name": "weighted_length_nonnull_rows"
+                },
+                {
+                  "type": "numeric",
+                  "description": "ROUND(AVG(纤维长度（长度加权）))",
+                  "unit": "mm",
+                  "unit_status": "confirmed",
+                  "source_columns": [
+                    "fiber.v_recycled_cycle_detail.fiber_length_weighted_mm"
+                  ],
+                  "position": 3,
+                  "name": "mean_weighted_length_mm"
+                },
+                {
+                  "unit": null,
+                  "unit_status": "unconfirmed",
+                  "description": "表达式单位无法可靠推断，请核对计算定义；不要按别名猜测单位",
+                  "position": 4,
+                  "name": "summary_rows"
+                }
+              ],
+              "preflight": {
+                "status": "passed",
+                "analyze": false,
+                "total_cost": 49.58,
+                "max_node_rows": 131,
+                "node_count": 17,
+                "node_types": [
+                  "Aggregate",
+                  "Index Scan",
+                  "Memoize",
+                  "Nested Loop",
+                  "Seq Scan"
+                ],
+                "limits": {
+                  "total_cost": 1000000,
+                  "max_node_rows": 1000000
+                },
+                "notice": "仅优化器估计，不是实际行数或耗时；顺序扫描不单独拒绝，预检不证明统计口径正确。"
+              },
+              "row_count": 1,
+              "truncated": false,
+              "row_limit": 100,
+              "queried_at": "2026-11-07T06:45:24.986759+00:00",
+              "notice": "Database result snapshot, not paper text. Decimal values may be strings. Missing values are null. A truncated result cannot support population-wide conclusions; use SQL aggregates.",
+              "result_state": "rows_returned",
+              "ref": "[1]",
+              "evidence_scope": {
+                "run_id": "sql-targeted-v3-20261107-SQL13",
+                "reference_policy": "immutable_exact_snapshot",
+                "notice": "References are unique only within this run. Text availability is not proof of visual inspection."
+              },
+              "citation_records": [
+                {
+                  "ref": "[1]",
+                  "kind": "experiment_query",
+                  "citable": true
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "manual_review": "pending"
+    },
+    {
+      "id": "SQL16",
+      "run_id": "sql-targeted-v3-20261107-SQL16",
+      "status": "completed",
+      "answer": "这个问题存在歧义，在明确判定标准前我无法给出数值答案。\n\n需要先确认以下字段含义：\n\n1. **“高转速”指什么？** 是指磨浆的累计转数（cumulative beating revolutions），还是设备的转速（rpm）？这两者在数据库中是不同概念，不能混用。若按累计转数划分，分界值是多少（例如 ≥ 某转数，还是取最接近某转数的档位）？\n\n2. **“强度”指哪个指标？** 抗张指数（N·m/g）、抗张强度（kPa 或 MPa）、耐破强度、撕裂强度等指标的单位和测量定义不同，不能合并比较。请指定其中一个指标。\n\n3. **浆种与范围：** 是否仅限针叶木浆（softwood）？是限定在某个实验或数据视图内，还是跨所有含针叶木浆的实验？\n\n4. **输出内容：** 只需平均值（并给出样本数），还是同时需要实验条件（打浆设备、浆浓、定量等）？\n\n在这些标准明确之前，我不会给出任何替代数值、分组统计或示例阈值。",
+      "model": "deepseek-flash",
+      "budget": {
+        "max_model_calls": 10,
+        "max_tool_calls": 8,
+        "max_search_calls": 2,
+        "total_seconds": 240.0,
+        "reserve_seconds": 45,
+        "max_output_tokens": 8192,
+        "max_context_chars": 160000
+      },
+      "citation_validation": {
+        "status": "passed",
+        "available_records": [],
+        "attempts": []
+      },
+      "tool_calls": 0,
+      "sql_attempts": 0,
+      "sql_successes": 0,
+      "usage": [
+        {
+          "prompt_tokens": 4111,
+          "completion_tokens": 192,
+          "total_tokens": 4303,
+          "cached_tokens": 3968
+        },
+        {
+          "prompt_tokens": 2546,
+          "completion_tokens": 242,
+          "total_tokens": 2788,
+          "cached_tokens": 1792
+        }
+      ],
+      "queries": [],
+      "manual_review": "pending"
+    }
+  ],
+  "references": {
+    "SQL12": [
+      {
+        "sql": "SELECT AVG(tensile_index) FROM fiber.v_fiber_paper_analysis WHERE canonical_code = 'NO_SUCH_SAMPLE'",
+        "columns": [
+          "avg"
+        ],
+        "rows": [
+          [
+            null
+          ]
+        ]
+      }
+    ],
+    "SQL13": [
+      {
+        "sql": "SELECT COUNT(*), AVG(fiber_length_weighted_mm) FROM fiber.v_recycled_cycle_detail",
+        "columns": [
+          "count",
+          "avg"
+        ],
+        "rows": [
+          [
+            131,
+            "1.3357896031359695"
+          ]
+        ]
+      }
+    ],
+    "SQL16": []
+  },
+  "review": {
+    "SQL12": {
+      "scores": [
+        4,
+        3,
+        2,
+        1
+      ],
+      "reason": "改用规范样本配对视图，精确代码筛选后分组返回0行，明确无观测不是0；覆盖范围恢复。"
+    },
+    "SQL13": {
+      "scores": [
+        4,
+        3,
+        2,
+        1
+      ],
+      "reason": "131行直接聚合1.3358mm正确，无再次宣称组大小相同；47汇总行有子查询支持，未据其计算总体均值。"
+    },
+    "SQL16": {
+      "scores": [
+        4,
+        3,
+        0,
+        1
+      ],
+      "reason": "已停止SQL查询，不再选阈值或给替代数字；但未先读目录就提供抗张强度kPa/MPa等不符合当前字段目录的选项，并提及未确认设备参数。解释/单位扣2，需要只提供实际字段及其单位；不因澄清缺引用扣分。"
+    }
+  }
+}

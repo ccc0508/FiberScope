@@ -1,0 +1,67 @@
+{
+  "cases": [
+    {
+      "id": "SQL16",
+      "category": "变量歧义",
+      "question": "高转速的针叶木浆强度平均是多少？",
+      "reference_sql": [],
+      "criteria": "说明只有累计打浆转数不是rpm；高的阈值和强度指标不明确，需澄清，不擅自设阈值给确定均值。允许先查目录。"
+    }
+  ],
+  "results": [
+    {
+      "id": "SQL16",
+      "run_id": "sql-targeted-v4-20261107-SQL16",
+      "status": "completed",
+      "answer": "“高转速”和“强度”在现有数据与文献中都不是唯一确定的对应字段，因此无法给出确切的平均值；需要先确认口径才能查询：\n\n1. **“高转速”**指哪个指标、以何阈值划为“高组”？是打浆转数（累计转数，而非转速）还是设备转速；单位与分组界限是什么？\n2. **“强度”**指哪一项力学性能？例如抗张强度、耐破强度或撕裂强度，以及具体字段与单位。\n3. **“针叶木浆”**按哪个样品属性筛选（如浆种/原料字段及取值）？\n\n在上述口径未确认前，任何平均值或分组比较都可能对应错误的指标或单位，故不提供数值。",
+      "model": "deepseek-flash",
+      "budget": {
+        "max_model_calls": 10,
+        "max_tool_calls": 8,
+        "max_search_calls": 2,
+        "total_seconds": 240.0,
+        "reserve_seconds": 45,
+        "max_output_tokens": 8192,
+        "max_context_chars": 160000
+      },
+      "citation_validation": {
+        "status": "passed",
+        "available_records": [],
+        "attempts": []
+      },
+      "tool_calls": 0,
+      "sql_attempts": 0,
+      "sql_successes": 0,
+      "usage": [
+        {
+          "prompt_tokens": 4158,
+          "completion_tokens": 124,
+          "total_tokens": 4282,
+          "cached_tokens": 128
+        },
+        {
+          "prompt_tokens": 2525,
+          "completion_tokens": 158,
+          "total_tokens": 2683,
+          "cached_tokens": 1792
+        }
+      ],
+      "queries": [],
+      "manual_review": "pending"
+    }
+  ],
+  "references": {
+    "SQL16": []
+  },
+  "review": {
+    "SQL16": {
+      "scores": [
+        4,
+        2,
+        1,
+        1
+      ],
+      "reason": "停止给替代均值、范围和SQL查询，也未再给出错误的kPa/MPa单位。仍未先调用目录核对可用字段，反问了用户已指定的针叶木浆筛选，并把设备转速作为待选项而未明确库内是否可用；统计口径澄清与解释各扣1。此项仅部分改善，不得报告彻底修复。"
+    }
+  }
+}
