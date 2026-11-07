@@ -1,0 +1,335 @@
+{
+  "SQL01": [
+    {
+      "sql": "SELECT sample_type,COUNT(*) FROM fiber.v_sample_overview GROUP BY sample_type ORDER BY sample_type",
+      "columns": [
+        "sample_type",
+        "count"
+      ],
+      "rows": [
+        [
+          "blend",
+          9
+        ],
+        [
+          "hardwood",
+          24
+        ],
+        [
+          "softwood",
+          28
+        ]
+      ]
+    }
+  ],
+  "SQL02": [
+    {
+      "sql": "SELECT beating_revolutions,fiber_length_weighted_mm,tensile_index FROM fiber.v_beating_analysis WHERE material_code='SW' AND beating_revolutions IN (4000,6000,8000) ORDER BY beating_revolutions",
+      "columns": [
+        "beating_revolutions",
+        "fiber_length_weighted_mm",
+        "tensile_index"
+      ],
+      "rows": [
+        [
+          4000,
+          "2.1360",
+          "50.3200"
+        ],
+        [
+          6000,
+          "2.1260",
+          "60.7700"
+        ],
+        [
+          8000,
+          "2.0780",
+          "69.1000"
+        ]
+      ]
+    }
+  ],
+  "SQL03": [
+    {
+      "sql": "SELECT canonical_code,tensile_index FROM fiber.v_fiber_paper_analysis WHERE tensile_index IS NOT NULL ORDER BY tensile_index DESC,canonical_code LIMIT 3",
+      "columns": [
+        "canonical_code",
+        "tensile_index"
+      ],
+      "rows": [
+        [
+          "HW_R27000",
+          "95.6500"
+        ],
+        [
+          "HW_R30000",
+          "95.2500"
+        ],
+        [
+          "HW_R17000",
+          "93.0900"
+        ]
+      ]
+    }
+  ],
+  "SQL04": [
+    {
+      "sql": "SELECT sample_type,AVG(tensile_index),COUNT(tensile_index),COUNT(*) FROM fiber.v_fiber_paper_analysis GROUP BY sample_type ORDER BY sample_type",
+      "columns": [
+        "sample_type",
+        "avg",
+        "count",
+        "count"
+      ],
+      "rows": [
+        [
+          "blend",
+          "82.2644444444444444",
+          9,
+          9
+        ],
+        [
+          "hardwood",
+          "74.7670833333333333",
+          24,
+          24
+        ],
+        [
+          "softwood",
+          "71.1789285714285714",
+          28,
+          28
+        ]
+      ]
+    }
+  ],
+  "SQL05": [
+    {
+      "sql": "SELECT canonical_code,sw_proportion_pct,hw_proportion_pct,sw_beating_revolutions,hw_beating_revolutions,tensile_index FROM fiber.v_blend_analysis WHERE sw_proportion_pct=10 AND hw_proportion_pct=90",
+      "columns": [
+        "canonical_code",
+        "sw_proportion_pct",
+        "hw_proportion_pct",
+        "sw_beating_revolutions",
+        "hw_beating_revolutions",
+        "tensile_index"
+      ],
+      "rows": [
+        [
+          "BLEND_SW010_HW090",
+          "10.00",
+          "90.00",
+          14000,
+          8000,
+          "84.1500"
+        ]
+      ]
+    }
+  ],
+  "SQL06": [
+    {
+      "sql": "SELECT COUNT(*) FROM fiber.v_blend_analysis",
+      "columns": [
+        "count"
+      ],
+      "rows": [
+        [
+          11
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT COUNT(*) FROM fiber.v_blend_analysis WHERE sw_proportion_pct>0 AND hw_proportion_pct>0",
+      "columns": [
+        "count"
+      ],
+      "rows": [
+        [
+          9
+        ]
+      ]
+    }
+  ],
+  "SQL07": [
+    {
+      "sql": "SELECT f.canonical_code,f.tensile_index,l.file_name,l.sheet_name,l.source_row FROM fiber.v_fiber_paper_analysis f JOIN fiber.v_data_lineage l ON f.paper_source_id=l.source_id WHERE f.canonical_code='BLEND_SW010_HW090' AND l.usage_type='paper_measurement'",
+      "columns": [
+        "canonical_code",
+        "tensile_index",
+        "file_name",
+        "sheet_name",
+        "source_row"
+      ],
+      "rows": [
+        [
+          "BLEND_SW010_HW090",
+          "84.1500",
+          "data5-针阔-复配-纸张特性0110(1).xlsx",
+          "Sheet1",
+          3
+        ]
+      ]
+    }
+  ],
+  "SQL08": [
+    {
+      "sql": "SELECT COUNT(DISTINCT s.sample_id) FROM fiber.v_sample_overview s JOIN fiber.v_data_lineage l ON s.sample_id=l.sample_id",
+      "columns": [
+        "count"
+      ],
+      "rows": [
+        [
+          61
+        ]
+      ]
+    }
+  ],
+  "SQL09": [
+    {
+      "sql": "SELECT AVG(tensile_index) FROM fiber.v_fiber_paper_analysis",
+      "columns": [
+        "avg"
+      ],
+      "rows": [
+        [
+          "74.2262295081967213"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT COUNT(*) FROM fiber.v_fiber_paper_analysis WHERE tensile_index>(SELECT AVG(tensile_index) FROM fiber.v_fiber_paper_analysis)",
+      "columns": [
+        "count"
+      ],
+      "rows": [
+        [
+          38
+        ]
+      ]
+    }
+  ],
+  "SQL10": [
+    {
+      "sql": "SELECT COUNT(*) FROM fiber.v_recycled_cycle_detail",
+      "columns": [
+        "count"
+      ],
+      "rows": [
+        [
+          131
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT COUNT(*) FROM fiber.v_recycled_cycle_summary",
+      "columns": [
+        "count"
+      ],
+      "rows": [
+        [
+          47
+        ]
+      ]
+    }
+  ],
+  "SQL11": [
+    {
+      "sql": "SELECT tensile_index FROM fiber.v_beating_analysis WHERE material_code='SW' AND beating_revolutions=12345",
+      "columns": [
+        "tensile_index"
+      ],
+      "rows": []
+    }
+  ],
+  "SQL12": [
+    {
+      "sql": "SELECT AVG(tensile_index) FROM fiber.v_fiber_paper_analysis WHERE canonical_code='NO_SUCH_SAMPLE'",
+      "columns": [
+        "avg"
+      ],
+      "rows": [
+        [
+          null
+        ]
+      ]
+    }
+  ],
+  "SQL13": [
+    {
+      "sql": "SELECT COUNT(*),AVG(fiber_length_weighted_mm) FROM fiber.v_recycled_cycle_detail",
+      "columns": [
+        "count",
+        "avg"
+      ],
+      "rows": [
+        [
+          131,
+          "1.3357896031359695"
+        ]
+      ]
+    }
+  ],
+  "SQL14": [
+    {
+      "sql": "SELECT COUNT(*) FROM fiber.v_recycled_data_quality",
+      "columns": [
+        "count"
+      ],
+      "rows": [
+        [
+          4
+        ]
+      ]
+    }
+  ],
+  "SQL15": [
+    {
+      "sql": "SELECT air_permeability,folding_endurance_raw FROM fiber.v_fiber_paper_analysis WHERE canonical_code='BLEND_SW010_HW090'",
+      "columns": [
+        "air_permeability",
+        "folding_endurance_raw"
+      ],
+      "rows": [
+        [
+          "5.6300",
+          "1.5800"
+        ]
+      ]
+    }
+  ],
+  "SQL16": [],
+  "SQL17": [
+    {
+      "sql": "SELECT fiber_length_weighted_mm FROM fiber.v_fiber_paper_analysis WHERE canonical_code='BLEND_SW010_HW090'",
+      "columns": [
+        "fiber_length_weighted_mm"
+      ],
+      "rows": [
+        [
+          "0.8170"
+        ]
+      ]
+    }
+  ],
+  "SQL18": [
+    {
+      "sql": "SELECT beating_revolutions,tensile_index FROM fiber.v_beating_analysis WHERE material_code='SW' AND beating_revolutions IN (4000,8000) ORDER BY beating_revolutions",
+      "columns": [
+        "beating_revolutions",
+        "tensile_index"
+      ],
+      "rows": [
+        [
+          4000,
+          "50.3200"
+        ],
+        [
+          8000,
+          "69.1000"
+        ]
+      ]
+    }
+  ],
+  "SQL19": [],
+  "SQL20": []
+}
