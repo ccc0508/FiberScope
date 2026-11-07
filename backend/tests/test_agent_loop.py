@@ -61,7 +61,8 @@ def test_oversized_tool_result_is_saved_but_not_sent_and_finalizes():
     call=ToolCall('a','search_literature',dict(query='q',reason='find'))
     raw=dict(status='completed',call_id='stored',result=dict(evidence=[dict(ref='[1]',document_id='d',text='x'*50000)]))
     a=Fake([decision(calls=[call]),decision('Evidence unavailable; cannot conclude.'),decision('Evidence unavailable; cannot conclude.')])
-    r=AgentLoop(a,lambda *args:raw,lambda s:None,AgentBudget(max_context_chars=12000)).run('q','r')
+    # Leave room for the real system/tool policy; the 50k payload still exceeds collection capacity.
+    r=AgentLoop(a,lambda *args:raw,lambda s:None,AgentBudget(max_context_chars=24000)).run('q','r')
     assert r['status']=='completed' and r['stop_reason']=='context_budget'
     assert r['tool_calls'][0]['result']==raw
     assert r['tool_calls'][0]['model_delivery']['status']=='withheld'

@@ -89,6 +89,7 @@ class Calculate(Request):
 
 class DescribeExperiments(Request):
     tool: Literal['describe_experiment_data']
+    views: list[str] | None = Field(default=None, max_length=8, description='Omit for a compact view directory. Supply selected view names, e.g. ["fiber.v_beating_analysis"], for actual fields, descriptions, units and live discrete values. Reuse details within this question.')
 
 
 class QueryExperiments(Request):
