@@ -23,6 +23,7 @@ def main():
     p.add_argument('--seconds',type=float,default=240);p.add_argument('--max-tools',type=int,default=8)
     p.add_argument('--max-model-calls',type=int,default=10);p.add_argument('--run-id',default=None)
     p.add_argument('--child',action='store_true',help=argparse.SUPPRESS)
+    p.add_argument('--prompt-file',type=Path,help='Evaluation only: frozen PROMPT and REVIEW_PROMPT JSON; does not change website defaults')
     a=p.parse_args();run_id=a.run_id or str(uuid4())
     if not run_id.replace('-','').replace('_','').isalnum() or len(run_id)>100:raise ValueError('Invalid run ID')
     b=AgentBudget(total_seconds=a.seconds,max_tool_calls=a.max_tools,max_model_calls=a.max_model_calls,
@@ -34,6 +35,7 @@ def main():
         args=[sys.executable,'-X','utf8',__file__,'--child','--run-id',run_id,'--question',a.question,
             '--library',str(a.library.resolve()),'--seconds',str(a.seconds),'--max-tools',str(a.max_tools),
             '--max-model-calls',str(a.max_model_calls)]
+        if a.prompt_file:args.extend(['--prompt-file',str(a.prompt_file.resolve())])
         proc=subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
             start_new_session=os.name!='nt',
             creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
@@ -50,8 +52,17 @@ def main():
             state_path.write_text(json.dumps(state,ensure_ascii=False,indent=2),encoding='utf-8')
         print(json.dumps(dict(run_id=run_id,state_file=str(state_path)),ensure_ascii=False));return
     settings=Settings(_env_file=ROOT/'backend/.env.literature')
+    prompt_identity=None
+    if a.prompt_file:
+        from hashlib import sha256
+        import literature_rag.application.agent_loop as loop_module
+        raw=a.prompt_file.read_bytes();prompts=json.loads(raw)
+        if set(prompts)!={'PROMPT','REVIEW_PROMPT'} or any(not isinstance(v,str) or not v.strip() for v in prompts.values()):
+            raise ValueError('Invalid frozen prompts')
+        loop_module.PROMPT=prompts['PROMPT'];loop_module.REVIEW_PROMPT=prompts['REVIEW_PROMPT']
+        prompt_identity=dict(file=str(a.prompt_file.resolve()),sha256=sha256(raw).hexdigest())
     def checkpoint(state):
-        payload=dict(state,budget=asdict(b),model=settings.llm_model,mode='native-tools-agent-v2',
+        payload=dict(state,budget=asdict(b),model=settings.llm_model,prompt_override=prompt_identity,mode='native-tools-agent-v2',
             review_policy='one full-answer review, no content gate; not legacy structured corrective review')
         tmp=state_path.with_suffix('.tmp');tmp.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding='utf-8');tmp.replace(state_path)
     def execute(request,rid,timeout):
