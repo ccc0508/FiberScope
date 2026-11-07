@@ -20,13 +20,15 @@ from literature_rag.application.paper_directory import load_paper_directory
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--question',required=True);p.add_argument('--library',type=Path,required=True)
-    p.add_argument('--seconds',type=float,default=240);p.add_argument('--max-tools',type=int,default=8)
+    p.add_argument('--seconds',type=float,default=None);p.add_argument('--max-tools',type=int,default=None)
     p.add_argument('--max-model-calls',type=int,default=None);p.add_argument('--run-id',default=None)
     p.add_argument('--child',action='store_true',help=argparse.SUPPRESS)
     p.add_argument('--prompt-file',type=Path,help='Evaluation only: frozen PROMPT and REVIEW_PROMPT JSON; does not change website defaults')
     p.add_argument('--architecture',choices=['single','specialists'],default='single')
     a=p.parse_args();run_id=a.run_id or str(uuid4())
-    if a.max_model_calls is None:a.max_model_calls=12 if a.architecture=='specialists' else 10
+    if a.max_model_calls is None:a.max_model_calls=20 if a.architecture=='specialists' else 10
+    if a.seconds is None:a.seconds=360 if a.architecture=='specialists' else 240
+    if a.max_tools is None:a.max_tools=12 if a.architecture=='specialists' else 8
     if not run_id.replace('-','').replace('_','').isalnum() or len(run_id)>100:raise ValueError('Invalid run ID')
     b=AgentBudget(total_seconds=a.seconds,max_tool_calls=a.max_tools,max_model_calls=a.max_model_calls,
         reserve_seconds=min(45,a.seconds/3))

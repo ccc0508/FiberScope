@@ -56,14 +56,15 @@ def adapt_run(state, evidence, trace, elapsed_ms):
 
 def run_agent_answer(config, question):
     rid='web-'+uuid4().hex
-    seconds=min(240,config.timeout_seconds-10)
+    specialists=getattr(config,'agent_architecture','single')=='specialists'
+    seconds=min(360 if specialists else 240,config.timeout_seconds-10)
     if seconds<30:raise HTTPException(503,'Agent问答超时配置至少需要40秒。')
     start=perf_counter()
     # The CLI owns the process-tree deadline; do not kill only its parent.
     result=subprocess.run([sys.executable,'-X','utf8',str(ROOT/'scripts/run_literature_agent.py'),
         '--question',question,'--library',str(config.library_root),'--run-id',rid,'--seconds',str(seconds),
         '--architecture',getattr(config,'agent_architecture','single'),
-        '--max-model-calls','12' if getattr(config,'agent_architecture','single')=='specialists' else '10'],
+        '--max-model-calls','20' if specialists else '10'],
         capture_output=True,text=True,encoding='utf-8',creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
     folder=ROOT/'.rag-data/agent-runs'/rid
     if result.returncode or not (folder/'state.json').is_file():

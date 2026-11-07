@@ -30,7 +30,7 @@ class LiteratureSettings(BaseSettings):
     enabled: bool = False
     data_dir: Path = BACKEND.parent / '.rag-data'
     library_dir: Path | None = None
-    timeout_seconds: int = Field(300, ge=5, le=300)
+    timeout_seconds: int = Field(370, ge=5, le=600)
     engine: Literal['agent', 'legacy'] = 'agent'
     agent_architecture: Literal['single','specialists'] = 'single'
     extraction_timeout_seconds: int = Field(180, ge=10, le=300)
