@@ -51,6 +51,7 @@ def execute(request, run_id, store):
     record = dict(call_id=str(uuid4()), run_id=run_id, status='started',
         started_at=datetime.now(timezone.utc).isoformat(), input=request)
     store.save(record)
+    normalized = None
     try:
         p = INPUT.validate_python(request)
         normalized, view = validate_sql(p.sql) if p.tool == 'query_experiment_data' else (None, None)
@@ -84,7 +85,15 @@ def execute(request, run_id, store):
     except psycopg.Error as error:
         record.update(status='failed',error_code='database_query_failed',sqlstate=error.sqlstate,
             message='Query failed or timed out. Check columns with describe_experiment_data, simplify SQL and retry. Raw database errors are not exposed.')
+        if normalized:
+            try:
+                from app.experiment_errors import diagnose
+                diagnostic=diagnose(error,normalized,connect,ALLOWED)
+                if diagnostic:record.update(diagnostic)
+            except Exception:
+                # Diagnostic failure must not hide the original failure or leak credentials.
+                record['diagnostic_status']='unavailable'
     except Exception:
         record.update(status='failed',error_code='query_execution_failed',message='Experimental data tool unavailable; no raw infrastructure details are exposed.')
     store.save(record)
-    return {k:record[k] for k in ('call_id','status','error_code','message')}
+    return {k:record[k] for k in ('call_id','status','error_code','message','sqlstate','diagnostic','diagnostic_status') if k in record}
