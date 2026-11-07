@@ -5,7 +5,7 @@ from uuid import uuid4
 import psycopg
 import sqlglot
 from sqlglot import exp
-from app.catalog import VIEWS, INDICATORS, NOTES
+from app.catalog import VIEWS
 
 ALLOWED = {v.view for v in VIEWS.values()}
 # Every nested node and physical relation is checked, not just the outer SELECT.
@@ -73,9 +73,12 @@ def execute(request, run_id, store):
                         truncated=True; break
                     data.append(values)
                 views=['fiber.'+name for name in view]
+                from app.experiment_result_metadata import describe_outputs
+                column_metadata=describe_outputs(db,normalized,columns,view)
                 result=dict(sql=normalized, view=', '.join(views), views=views, columns=columns, rows=data,
+                    column_metadata=column_metadata,
                     row_count=len(data), truncated=truncated, row_limit=100,
-                    queried_at=datetime.now(timezone.utc).isoformat(), notes=NOTES,
+                    queried_at=datetime.now(timezone.utc).isoformat(),
                     notice='Database result snapshot, not paper text. Decimal values may be strings. Missing values are null. A truncated result cannot support population-wide conclusions; use SQL aggregates.')
         record.update(status='completed',result=result)
         store.complete(record)
