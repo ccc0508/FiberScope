@@ -1,5 +1,5 @@
 import json
-from literature_rag.application.paper_directory import routing_catalog
+from literature_rag.application.paper_directory import routing_catalog, routing_catalog_prompt
 from literature_rag.application.task_coverage import CoverageItem, coverage_report, completion_feedback
 from literature_rag.application.specialist_agent import SpecialistCoordinator
 from tests.test_specialist_agent import Fake, route, answer, tool
@@ -15,6 +15,10 @@ def test_catalog_only_includes_active_documents_and_preserves_unknown_identity()
     assert items[0]['label'] == 'Morais与Curto（2022）'
     assert items[1]['title'] == 'New study' and items[1]['topics'] == ''
     assert routing_catalog([]) == []
+    prompt = routing_catalog_prompt(items)
+    assert 'Morais与Curto' in prompt and 'New study' in prompt
+    assert 'doc_cec3e2f8b5abaa89' not in prompt and 'renamed.pdf' not in prompt
+    assert 'metadata_status' not in prompt
 
 
 def test_planner_sees_catalog_without_forwarding_it_to_sql():

@@ -10,7 +10,7 @@ from .tools import SCHEMAS
 from .citation_policy import citation_records, invalid_references
 from .agent_context import EvidenceProjection
 from .task_coverage import Requirement, CoverageItem, ground_requirements, coverage_report, completion_feedback
-from .paper_directory import routing_catalog
+from .paper_directory import routing_catalog, routing_catalog_prompt
 
 SQL_TOOLS={'describe_experiment_data','query_experiment_data','calculate_change'}
 PAPER_TOOLS=set(SCHEMAS)-{'describe_experiment_data','query_experiment_data'}
@@ -204,7 +204,7 @@ class SpecialistCoordinator:
         try:
             catalog=routing_catalog(self.paper_directory)
             state['routing_catalog']=catalog
-            d=call('route',[dict(role='system',content=ROUTER+'\nTopic catalog (routing metadata only):\n'+json.dumps(catalog,ensure_ascii=False)),dict(role='user',content=question)],{'route_task':Plan.model_json_schema()})
+            d=call('route',[dict(role='system',content=ROUTER+routing_catalog_prompt(catalog)),dict(role='user',content=question)],{'route_task':Plan.model_json_schema()})
             raw=d.text
             if len(d.calls)==1 and d.calls[0].name=='route_task':
                 raw=d.calls[0].arguments
