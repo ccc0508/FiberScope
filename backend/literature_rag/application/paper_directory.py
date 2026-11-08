@@ -5,6 +5,20 @@ import sqlite3
 from pathlib import Path
 
 
+def routing_catalog(directory):
+    """Topic hints only for active documents; new documents retain their real identity."""
+    hints = json.loads(Path(__file__).with_name('routing_catalog.json').read_text('utf8'))
+    result = []
+    for item in directory or []:
+        did = item.get('document_id', '')
+        hint = hints.get(did, {})
+        result.append(dict(document_id=did, filename=str(item.get('filename', ''))[:200],
+                           title=str(hint.get('title') or item.get('title', ''))[:350],
+                           label=hint.get('label', ''), topics=hint.get('topics', ''),
+                           metadata_status='curated_topic_hint' if hint else 'identity_only'))
+    return result
+
+
 def load_paper_directory(root):
     root = Path(root)
     with sqlite3.connect((root/'metadata.sqlite3').resolve().as_uri()+'?mode=ro', uri=True) as db:
