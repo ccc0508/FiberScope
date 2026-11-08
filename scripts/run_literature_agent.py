@@ -15,6 +15,7 @@ from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter
 from literature_rag.config import Settings
 from literature_rag.application.tools import ToolTraceStore
 from literature_rag.application.paper_directory import load_paper_directory
+from literature_rag.state_io import save_state
 
 
 def main():
@@ -46,15 +47,24 @@ def main():
             creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
         try:
             stdout,stderr=proc.communicate(timeout=a.seconds+5)
-            if proc.returncode:raise RuntimeError('Agent worker failed; inspect saved state')
+            (out/'worker.stdout.log').write_bytes(stdout)
+            (out/'worker.stderr.log').write_bytes(stderr)
+            if proc.returncode:
+                state=json.loads(state_path.read_text('utf-8')) if state_path.exists() else dict(run_id=run_id,answer='')
+                state.update(status='failed',stop_reason='worker_process_failed',worker_returncode=proc.returncode,
+                             diagnostic_file='worker.stderr.log',previous_stop_reason=state.get('stop_reason'))
+                save_state(state_path,state)
+                raise RuntimeError('Agent worker failed; inspect worker.stderr.log and state-errors.log')
         except subprocess.TimeoutExpired:
             # Kill the process tree on Windows, including any outstanding tool worker.
             if os.name=='nt':subprocess.run(['taskkill','/PID',str(proc.pid),'/T','/F'],capture_output=True)
             else:os.killpg(proc.pid,signal.SIGKILL)
-            proc.wait()
+            stdout,stderr=proc.communicate()
+            (out/'worker.stdout.log').write_bytes(stdout)
+            (out/'worker.stderr.log').write_bytes(stderr)
             state=json.loads(state_path.read_text('utf-8')) if state_path.exists() else dict(run_id=run_id,answer='')
             state.update(status='partial' if state.get('answer') else 'failed',stop_reason='hard_deadline')
-            state_path.write_text(json.dumps(state,ensure_ascii=False,indent=2),encoding='utf-8')
+            save_state(state_path,state)
         print(json.dumps(dict(run_id=run_id,state_file=str(state_path)),ensure_ascii=False));return
     settings=Settings(_env_file=ROOT/'backend/.env.literature')
     prompt_identity=None
@@ -70,7 +80,7 @@ def main():
     def checkpoint(state):
         payload=dict(state,budget=asdict(b),model=settings.llm_model,prompt_override=prompt_identity,mode=a.architecture,
             review_policy='parent synthesis and evidence review; no repeated child review' if a.architecture=='specialists' else 'one full-answer review, no content gate; not legacy structured corrective review')
-        tmp=state_path.with_suffix('.tmp');tmp.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding='utf-8');tmp.replace(state_path)
+        save_state(state_path,payload)
     def execute(request,rid,timeout):
         body=dict(tool_call=request,run_id=rid,data_dir=str(a.library.resolve()))
         try:
