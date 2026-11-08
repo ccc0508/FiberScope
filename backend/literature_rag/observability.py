@@ -1,5 +1,6 @@
 """Optional live checkpoint projection. Local records remain authoritative."""
 import logging
+import json
 import os
 import re
 from pathlib import Path
@@ -73,7 +74,8 @@ class LangfuseTrace:
 
     def _update(self, state):
         if not self.root:
-            self.root = self.client.start_observation(name='FiberScope question', as_type='agent',
+            inherited=json.loads(os.environ.get('FIBERSCOPE_TRACE_CONTEXT','null'))
+            self.root = self.client.start_observation(trace_context=inherited, name='FiberScope question', as_type='agent',
                 input=redact(state.get('question')), metadata={'run_id': state['run_id'],
                 'pipeline_version': state.get('pipeline_version'), 'source': 'live-checkpoints'})
             self.url = self.client.get_trace_url(trace_id=self.root.trace_id)

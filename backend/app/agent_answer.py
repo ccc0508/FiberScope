@@ -1,5 +1,6 @@
 """Adapt the evaluated agent run to the website/history answer contract."""
 import json
+import os
 import re
 import subprocess
 import sys
@@ -61,15 +62,21 @@ def run_agent_answer(config, question):
     if seconds<30:raise HTTPException(503,'Agent问答超时配置至少需要40秒。')
     start=perf_counter()
     # The CLI owns the process-tree deadline; do not kill only its parent.
-    result=subprocess.run([sys.executable,'-X','utf8',str(ROOT/'scripts/run_literature_agent.py'),
+    from .qa_tracing import step, context
+    with step('qa.agent_process', run_id=rid):
+        env=dict(os.environ)
+        if context():env['FIBERSCOPE_TRACE_CONTEXT']=json.dumps(context())
+        result=subprocess.run([sys.executable,'-X','utf8',str(ROOT/'scripts/run_literature_agent.py'),
         '--question',question,'--library',str(config.library_root),'--run-id',rid,'--seconds',str(seconds),
         '--architecture',getattr(config,'agent_architecture','single'),
         '--max-model-calls','20' if specialists else '10'],
-        capture_output=True,text=True,encoding='utf-8',creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
+        env=env,capture_output=True,text=True,encoding='utf-8',creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
     folder=ROOT/'.rag-data/agent-runs'/rid
     if result.returncode or not (folder/'state.json').is_file():
         raise HTTPException(503,'文献问答服务暂不可用，请稍后重试。')
-    state=json.loads((folder/'state.json').read_text('utf-8'))
+    with step('qa.read_agent_state', run_id=rid):
+        state=json.loads((folder/'state.json').read_text('utf-8'))
     from literature_rag.application.tools import ToolTraceStore
     store=ToolTraceStore(ROOT/'.rag-data/tool-traces.sqlite3')
-    return adapt_run(state,store.evidence(rid),store.read(rid),round((perf_counter()-start)*1000))
+    with step('qa.adapt_answer', run_id=rid):
+        return adapt_run(state,store.evidence(rid),store.read(rid),round((perf_counter()-start)*1000))

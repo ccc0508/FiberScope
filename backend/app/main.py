@@ -100,6 +100,8 @@ def create_app(settings: Settings | None = None):
     app = FastAPI(title='植物纤维数据分析 API', version='1.0.0', lifespan=lifespan)
     app.state.pool = pool
     app.add_middleware(CORSMiddleware, allow_origins=config.cors_origins, allow_credentials=True, allow_methods=['GET','POST'], allow_headers=['Accept','Content-Type'])
+    from .qa_tracing import QATraceMiddleware
+    app.add_middleware(QATraceMiddleware)
     app.include_router(literature_router(allowed_origins=config.cors_origins))
 
     @app.middleware('http')

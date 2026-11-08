@@ -7,6 +7,8 @@ import subprocess
 import sys
 from contextlib import contextmanager, asynccontextmanager
 from concurrent.futures import ThreadPoolExecutor
+from contextvars import copy_context
+from .qa_tracing import step, context
 from pathlib import Path
 from threading import BoundedSemaphore, Lock
 from time import perf_counter
@@ -167,26 +169,37 @@ class QuestionRunner:
         return owner
 
     def perform(self, record_id, question, configuration, started):
+        with step("qa.background_job", record_id=record_id):
+            self._perform(record_id, question, configuration, started)
+
+    def _perform(self, record_id, question, configuration, started):
         try:
             try:
-                if not documents(self.config):
+                with step('qa.library_check'):
+                    available_documents = documents(self.config)
+                if not available_documents:
                     result = {'status': 'refused', 'answer': '文献库中暂无已完成导入的文献，请先补充文献。', 'citations': [],
                               'latency_ms': 0, 'reason_code': 'empty_library', 'retrieved_evidence': [], 'claims': [], 'generation_calls': []}
                 else:
                     result = run_answer(self.config, question)
                 from .qa_images import cache_answer_images
-                cache_answer_images(result,self.config.library_root,self.config.root)
+                with step("qa.cache_images"):
+                    cache_answer_images(result,self.config.library_root,self.config.root)
                 result.setdefault('configuration', configuration)
-                self.store.complete(record_id, result, int((perf_counter() - started) * 1000))
+                result.setdefault("configuration", {}).update({"observability": configuration.get("observability")})
+                with step("qa.save_result", record_id=record_id):
+                    self.store.complete(record_id, result, int((perf_counter() - started) * 1000))
             except HTTPException as error:
                 reason = 'timeout' if error.status_code == 504 else 'worker_error'
-                self.store.fail(record_id, reason, error.status_code, int((perf_counter() - started) * 1000))
+                with step('qa.save_failure', reason=reason, record_id=record_id):
+                    self.store.fail(record_id, reason, error.status_code, int((perf_counter() - started) * 1000))
         except (sqlite3.Error, OSError):
             with self.lock:
                 self.save_errors.add(record_id)
         except Exception:
             try:
-                self.store.fail(record_id, 'worker_error', 503, int((perf_counter() - started) * 1000))
+                with step('qa.save_failure', reason='worker_error', record_id=record_id):
+                    self.store.fail(record_id, 'worker_error', 503, int((perf_counter() - started) * 1000))
             except (sqlite3.Error, OSError):
                 with self.lock:
                     self.save_errors.add(record_id)
@@ -211,8 +224,11 @@ class QuestionRunner:
                     configuration = configuration_snapshot(BACKEND / '.env.literature')
                 except Exception:
                     configuration = {'pipeline_version': 'literature-history-v1', 'configuration_available': False}
-                record = self.store.create(owner, key, body.question, configuration)
-                self.executor.submit(self.perform, record['id'], body.question, configuration, started)
+                if context():configuration['observability']=context()
+                with step('qa.create_record'):
+                    record = self.store.create(owner, key, body.question, configuration)
+                with step('qa.schedule', record_id=record['id']):
+                    self.executor.submit(copy_context().run, self.perform, record['id'], body.question, configuration, started)
                 return record
             except Exception:
                 self.slot.release()
@@ -286,8 +302,9 @@ def router(config: LiteratureSettings | None = None, allowed_origins: list[str] 
     @routes.post('/ask')
     def ask(body: Question, request: Request, response: Response):
         started = perf_counter()
-        check_origin(request)
-        owner = runner.session(request, response)
+        with step('qa.validate_origin_and_session'):
+            check_origin(request)
+            owner = runner.session(request, response)
         try:
             record = runner.submit(owner, body, started)
         except (sqlite3.Error, OSError):
@@ -315,7 +332,8 @@ def router(config: LiteratureSettings | None = None, allowed_origins: list[str] 
     @routes.get('/history/{record_id}')
     def record(record_id: str, request: Request, response: Response):
         owner = runner.session(request, response)
-        return detail(owner, record_id)
+        with step('qa.read_history', record_id=record_id):
+            return detail(owner, record_id)
 
     @routes.post('/history/{record_id}/feedback')
     def feedback(record_id: str, body: Feedback, request: Request, response: Response):
