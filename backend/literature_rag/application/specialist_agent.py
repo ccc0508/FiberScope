@@ -2,7 +2,7 @@
 from copy import deepcopy
 import json
 import re
-from time import monotonic
+from time import monotonic, time_ns
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Literal
 from .agent_loop import AgentLoop, AgentBudget, REVIEW_PROMPT, trace_messages
@@ -268,7 +268,8 @@ class SpecialistCoordinator:
                     seconds=deadline-self.clock()-b.reserve_seconds
                     tool_quota=(b.max_tool_calls-counters['tools'])//remaining_children
                     if quota<3 or seconds<30 or tool_quota<1:raise BudgetExhausted('specialist allocation')
-                    child=dict(id=f'{run_id}/{name}',role=name,task=task,status='running',result=None,
+                    child_started=self.clock()
+                    child=dict(id=f'{run_id}/{name}',role=name,task=task,status='running',result=None,started_at_ns=time_ns(),
                         allocation=dict(base_model_calls=7,max_model_calls=quota,reserved_for_remaining=reserve,
                             max_tool_calls=tool_quota,model_start=counters['model']))
                     state['children'].append(child);save()
@@ -323,6 +324,7 @@ class SpecialistCoordinator:
                         if len(json.dumps(context+[compact],ensure_ascii=False))>b.max_context_chars//2:continue
                         projection=trial;context.append(compact)
                         refs.update({r['ref']:r for r in citation_records(event['request']['tool'],raw)})
+                    child.update(ended_at_ns=time_ns(),duration_ms=(self.clock()-child_started)*1000)
                     save()
                     if parsed.status=='needs_clarification':break
                 payload=dict(question=question,task_contract=state['task_contract'],specialists=[dict(role=c['role'],result=c['result'],coverage_report=c.get('coverage_report')) for c in state['children']],
@@ -367,6 +369,9 @@ Paper bibliography numbers in source text are not run-local refs: express them a
                 state.update(status='completed',review_status='completed')
             state['citation_validation'].update(status='repaired' if state['citation_validation']['attempts'] else 'passed',available_records=list(refs.values()))
         except Exception as error:
+            for active_child in state.get('children',[]):
+                if 'ended_at_ns' not in active_child:
+                    active_child.update(status='failed',ended_at_ns=time_ns(),duration_ms=(self.clock()-child_started)*1000)
             state.update(status='failed',answer='',stop_reason=type(error).__name__)
             state['citation_validation']['status']='incomplete'
         save();return state

@@ -91,6 +91,8 @@ def main():
                 pass  # Optional remote link must never fail the local answer.
     def execute(request,rid,timeout):
         body=dict(tool_call=request,run_id=rid,data_dir=str(a.library.resolve()))
+        context=telemetry.active_tool_context()
+        if context:body['trace_context']=context
         try:
             r=subprocess.run([sys.executable,'-I','-X','utf8',str(ROOT/'backend/literature_worker.py')],
                 input=json.dumps(body,ensure_ascii=False),text=True,encoding='utf-8',capture_output=True,timeout=timeout,
