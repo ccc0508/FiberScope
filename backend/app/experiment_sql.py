@@ -1,3 +1,4 @@
+from literature_rag.stage_trace import stage as trace_stage, records as trace_records
 """Read-only PostgreSQL SELECTs over allowlisted views, including joins/subqueries."""
 import json
 from datetime import datetime, timezone
@@ -61,31 +62,45 @@ def execute(request, run_id, store):
     normalized = None
     stage='validation'
     try:
-        p = INPUT.validate_python(request)
-        normalized, view = validate_sql(p.sql) if p.tool == 'query_experiment_data' else (None, None)
-        with connect() as db:
-            db.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY')
+        with trace_stage('sql.validation') as trace:
+            p = INPUT.validate_python(request)
+            normalized, view = validate_sql(p.sql) if p.tool == 'query_experiment_data' else (None, None)
+            trace.update(sql=normalized, views=view)
+        with trace_stage('sql.connection'):
+            connection = connect()
+        with connection as db:
+            with trace_stage('sql.transaction_setup'):
+                db.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY')
             if p.tool == 'describe_experiment_data':
                 from app.experiment_directory import describe
-                result = json.loads(encode(describe(db, p.views)))
+                with trace_stage('sql.describe', views=p.views):
+                    result = json.loads(encode(describe(db, p.views)))
             else:
                 stage='explain'
-                plan=preflight(db,normalized)
+                with trace_stage('sql.explain', sql=normalized) as trace:
+                    plan=preflight(db,normalized)
+                    trace.update(plan)
                 stage='execute'
                 with db.cursor(name='agent_experiment_rows') as cur:
-                    cur.execute(normalized)
-                    rows=cur.fetchmany(101)
+                    with trace_stage('sql.execute', sql=normalized):
+                        cur.execute(normalized)
+                    with trace_stage('sql.fetch', limit=101) as trace:
+                        rows=cur.fetchmany(101)
+                        trace['fetched_rows']=len(rows)
                     columns=[c.name for c in cur.description]
-                data=[]; size=0; truncated=len(rows)>100
-                for row in rows[:100]:
-                    values=json.loads(encode(list(row)))
-                    size += len(encode(values))
-                    if size>24000:
-                        truncated=True; break
-                    data.append(values)
+                with trace_stage('sql.result_processing') as trace:
+                    data=[]; size=0; truncated=len(rows)>100
+                    for row in rows[:100]:
+                        values=json.loads(encode(list(row)))
+                        size += len(encode(values))
+                        if size>24000:
+                            truncated=True; break
+                        data.append(values)
+                    trace.update(returned_rows=len(data), truncated=truncated, serialized_chars=size)
                 views=['fiber.'+name for name in view]
                 from app.experiment_result_metadata import describe_outputs
-                column_metadata=describe_outputs(db,normalized,columns,view)
+                with trace_stage('sql.output_metadata', columns=columns):
+                    column_metadata=describe_outputs(db,normalized,columns,view)
                 result=dict(sql=normalized, view=', '.join(views), views=views, columns=columns, rows=data,
                     column_metadata=column_metadata,
                     preflight=plan,
@@ -97,7 +112,7 @@ def execute(request, run_id, store):
                 elif truncated:result['result_notice']='仅返回部分行，不可据此计算总体统计；保持原筛选条件在SQL中聚合。'
                 if data and any(value is None for row in data for value in row):
                     result['null_notice']='结果含NULL，不等于0。空集聚合可能返回一行NULL，不能把返回一行当成存在一个观测。'
-        record.update(status='completed',result=result)
+        record.update(status='completed',result=result,internal_steps=trace_records())
         store.complete(record)
         return dict(call_id=record['call_id'],status='completed',result=record['result'])
     except QueryPlanRejected as error:
@@ -121,6 +136,7 @@ def execute(request, run_id, store):
                 record['diagnostic_status']='unavailable'
     except Exception:
         record.update(status='failed',error_code='query_execution_failed',message='Experimental data tool unavailable; no raw infrastructure details are exposed.')
+    record['internal_steps']=trace_records()
     record['failure_stage']=stage
     store.save(record)
     return {k:record[k] for k in ('call_id','status','error_code','message','sqlstate','diagnostic','diagnostic_status','failure_stage') if k in record}

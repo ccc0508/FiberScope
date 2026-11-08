@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 os.environ['ANONYMIZED_TELEMETRY'] = 'False'
 
 
-def main():
+def main(body):
     from time import perf_counter
     worker_started=perf_counter()
     import sqlite3
@@ -26,7 +26,6 @@ def main():
     from literature_rag.diagnostics import configuration_snapshot, combined_usage
     from literature_rag.domain.errors import ProviderError, InfrastructureError
 
-    body = json.loads(sys.stdin.read())
     if body.get('tool_call', {}).get('tool') in ('describe_experiment_data', 'query_experiment_data'):
         from app.experiment_sql import execute
         from literature_rag.application.tools import ToolTraceStore
@@ -238,7 +237,16 @@ def main():
 
 if __name__ == '__main__':
     try:
-        main()
+        body = json.loads(sys.stdin.read())
+        from literature_rag.stage_trace import StageTrace
+        from literature_rag.observability import LangfuseTrace
+        context = body.pop('trace_context', None)
+        telemetry = LangfuseTrace.configured(Path(__file__).resolve().parents[1]) if context else LangfuseTrace()
+        try:
+            with StageTrace(telemetry.client, context):
+                main(body)
+        finally:
+            telemetry.flush()
     except Exception as error:
         # Intentionally no traceback, question text, key or provider response in HTTP output.
         print(type(error).__name__, file=sys.stderr)

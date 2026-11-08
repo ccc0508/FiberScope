@@ -1,3 +1,4 @@
+from literature_rag.stage_trace import stage
 import logging
 from math import isfinite
 from time import perf_counter
@@ -70,7 +71,9 @@ class RetrievalService:
         call = dict(branch=branch, status='failed', usage=None)
         self.last_query_embedding_calls.append(call)
         try:
-            query_embedding = self.embedder.embed_query(question)
+            with stage('retrieval.embedding', query=question, branch=branch) as trace:
+                query_embedding = self.embedder.embed_query(question)
+                trace.update(dimensions=len(query_embedding), usage=getattr(self.embedder, 'last_usage', None))
             call['status'] = 'completed'
         finally:
             call.update(usage=getattr(self.embedder, 'last_usage', None),
@@ -78,16 +81,20 @@ class RetrievalService:
             if hasattr(self.embedder, 'last_calls'):
                 from copy import deepcopy
                 call['provider_calls'] = deepcopy(self.embedder.last_calls)
-        candidates = self.vectors.search(query_embedding, VECTOR_CANDIDATE_LIMIT, **({'document_ids': document_ids} if document_ids else {}))[:VECTOR_CANDIDATE_LIMIT]
-        for match in candidates:
-            if not _is_unit_interval_number(match.score):
-                raise InfrastructureError('vector search returned an invalid score')
-        ordered = sorted((m for m in candidates if m.score >= min_score), key=lambda m: -m.score)
-        matches, seen = [], set()
-        for match in ordered:
-            if match.chunk_id not in seen:
-                matches.append(match)
-                seen.add(match.chunk_id)
+        with stage('retrieval.vector_search', limit=VECTOR_CANDIDATE_LIMIT, document_ids=document_ids) as trace:
+            candidates = self.vectors.search(query_embedding, VECTOR_CANDIDATE_LIMIT, **({'document_ids': document_ids} if document_ids else {}))[:VECTOR_CANDIDATE_LIMIT]
+            trace['candidates'] = [dict(chunk_id=m.chunk_id, score=m.score) for m in candidates]
+        with stage('retrieval.filter_deduplicate', min_score=min_score) as trace:
+            for match in candidates:
+                if not _is_unit_interval_number(match.score):
+                    raise InfrastructureError('vector search returned an invalid score')
+            ordered = sorted((m for m in candidates if m.score >= min_score), key=lambda m: -m.score)
+            matches, seen = [], set()
+            for match in ordered:
+                if match.chunk_id not in seen:
+                    matches.append(match)
+                    seen.add(match.chunk_id)
+            trace['selected_ids'] = [m.chunk_id for m in matches]
         if self.query_rewriter is not None:
             from copy import deepcopy
             self.last_query_diagnostics['branches'].append(dict(branch=branch, query=question,
@@ -153,7 +160,9 @@ class RetrievalService:
                 branches.append(self._search(rewritten, min_score, 'rewritten', document_ids))
         matches = branches[0]
         all_ids = list(dict.fromkeys(m.chunk_id for branch in branches for m in branch))
-        chunks = self.metadata.get_chunks(all_ids)
+        with stage('retrieval.metadata', chunk_ids=all_ids) as trace:
+            chunks = self.metadata.get_chunks(all_ids)
+            trace['returned_chunk_ids'] = [c.id for c in chunks]
         chunks_by_id = {chunk.id: chunk for chunk in chunks}
         if self.query_rewriter is not None:
             from literature_rag.application.query_rewrite import fuse_candidates
@@ -196,7 +205,9 @@ class RetrievalService:
         if self.reranker is not None:
             from literature_rag.application.rerank import rank_candidates
             self.last_rerank_diagnostics={'enabled':True,'status':'started','candidate_count':len(evidences)}
-            evidences,self.last_rerank_diagnostics=rank_candidates(rerank_question,evidences,self.reranker,top_k)
+            with stage('retrieval.rerank', query=rerank_question, candidate_ids=[e.chunk_id for e in evidences]) as trace:
+                evidences,self.last_rerank_diagnostics=rank_candidates(rerank_question,evidences,self.reranker,top_k)
+                trace.update(self.last_rerank_diagnostics)
             if self.query_rewriter is not None:
                 if rewrite_only:
                     self.last_rerank_diagnostics.update(candidate_order='rewritten-query cosine ranks',
@@ -208,18 +219,23 @@ class RetrievalService:
                         input_policy='Unmodified user question and full source chunks; candidate pool includes a bounded query rewrite.',
                         vector_rank_note='vector_rank denotes input position in the fused candidate pool, not original-query vector rank')
         self.last_candidate_evidences = list(evidences)
-        evidences = evidences[:top_k]
-        self.last_seed_evidences = list(evidences)
-        if self.body_context_catalog is None:
-            evidences,self.last_context_diagnostics=assemble(evidences,self.metadata,self.context_options)
-            if self.table_relations is not None:
-                from literature_rag.application.table_evidence import append_related_tables
-                evidences,self.last_context_diagnostics=append_related_tables(evidences,self.table_relations,
-                    self.context_options,self.last_context_diagnostics)
-        else:
-            from literature_rag.application.body_context import assemble_body_context
-            evidences,self.last_context_diagnostics=assemble_body_context(evidences,self.body_context_catalog,
-                self.context_options,table_relations=self.table_relations)
+        with stage('retrieval.select_seeds', top_k=top_k) as trace:
+            evidences = evidences[:top_k]
+            self.last_seed_evidences = list(evidences)
+            trace['selected_ids'] = [e.chunk_id for e in evidences]
+        with stage('retrieval.context_assembly', seed_ids=[e.chunk_id for e in evidences]) as trace:
+            if self.body_context_catalog is None:
+                evidences,self.last_context_diagnostics=assemble(evidences,self.metadata,self.context_options)
+                if self.table_relations is not None:
+                    from literature_rag.application.table_evidence import append_related_tables
+                    evidences,self.last_context_diagnostics=append_related_tables(evidences,self.table_relations,
+                        self.context_options,self.last_context_diagnostics)
+            else:
+                from literature_rag.application.body_context import assemble_body_context
+                evidences,self.last_context_diagnostics=assemble_body_context(evidences,self.body_context_catalog,
+                    self.context_options,table_relations=self.table_relations)
+            trace.update(diagnostics=self.last_context_diagnostics, result_ids=[e.chunk_id for e in evidences],
+                source_ids=[s.chunk_id for e in evidences for s in e.source_chunks], total_chars=sum(len(e.text) for e in evidences))
         if self.table_relations is not None:
             self.last_context_diagnostics['table_retrieval']=self.vectors.last_diagnostics
         if self.reranker is not None:
@@ -235,8 +251,10 @@ class RetrievalService:
                     rewritten_final_source_ids=sorted(final_ids))
             self.last_context_diagnostics['query_rewrite'] = self.last_query_diagnostics
         if self.visual_catalog is not None:
-            evidences,visual_info=self.visual_catalog.attach(evidences,self.last_seed_evidences,question,
-                self.visual_max_images,self.visual_max_total_bytes)
+            with stage('retrieval.visual_association') as trace:
+                evidences,visual_info=self.visual_catalog.attach(evidences,self.last_seed_evidences,question,
+                    self.visual_max_images,self.visual_max_total_bytes)
+                trace.update(visual_info)
             self.last_context_diagnostics['visual_evidence']=visual_info
             self.last_context_diagnostics['visual_retrieval']=getattr(self.vectors,'last_visual_diagnostics',{})
         logger.info(

@@ -49,10 +49,18 @@ class LangfuseTrace:
             self.nodes[key] = parent.start_observation(name=name, as_type=kind, input=redact(input))
         return self.nodes[key]
 
-    def end(self, key, node):
+    def end(self, key, node, end_time=None):
         if key not in self.ended:
-            node.end()
+            node.end(**({'end_time':end_time} if end_time else {}))
             self.ended.add(key)
+
+    def active_tool_context(self):
+        if self.disabled:
+            return None
+        for key, node in reversed(list(self.nodes.items())):
+            if key.startswith('tool:') and key not in self.ended:
+                return {'trace_id': node.trace_id, 'parent_span_id': node.id}
+        return None
 
     def update(self, state):
         if not self.client or self.disabled:
@@ -75,8 +83,12 @@ class LangfuseTrace:
             node = self.node(key, self.root, child['role']+' agent', 'agent', child.get('task'))
             parents[child['role']] = node
             parents[child['id']] = node
+            if key in self.ended:
+                continue
             node.update(output=redact(child.get('result')), metadata=redact({
                 'status': child['status'], 'coverage': child.get('coverage_report'),
+                'duration_ms': child.get('duration_ms'),
+                'started_at_ns': child.get('started_at_ns'), 'ended_at_ns':child.get('ended_at_ns'),
                 'allocation': child.get('allocation'),
                 'evidence_delivery': [{k:e.get(k) for k in ('request','model_delivery')}
                     for e in child.get('trace',{}).get('tool_calls',[])]}))
@@ -107,6 +119,11 @@ class LangfuseTrace:
                 level='ERROR' if call['status']=='failed' else 'DEFAULT')
             if call['status'] != 'started':
                 self.end(key,node)
+        # End the specialist only after all its final observations have been updated.
+        for child in state.get('children', []):
+            key='child:'+child['id']
+            if child.get('ended_at_ns'):
+                self.end(key,self.nodes[key],child['ended_at_ns'])
         self.root.update(output=redact(state.get('answer')), metadata=redact({
             'status':state['status'], 'budget':state.get('budget_usage'),
             'plan':state.get('plan'), 'stop_reason':state.get('stop_reason'),

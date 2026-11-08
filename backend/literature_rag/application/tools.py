@@ -206,6 +206,8 @@ class LiteratureTools:
                     query_rewrite=getattr(getattr(r, 'query_rewriter', None), 'last_call', None),
                     rerank=getattr(getattr(r, 'reranker', None), 'last_call', None),
                     embedding=getattr(getattr(r, 'embedder', None), 'last_usage', None))
+            from literature_rag.stage_trace import records
+            record['internal_steps'] = records()
             record.update(finished_at=datetime.now(UTC).isoformat(), duration_ms=round((perf_counter()-start)*1000))
             if record['status']=='completed':self.store.complete(record)
             else:self.store.save(record)
