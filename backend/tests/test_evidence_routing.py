@@ -65,3 +65,30 @@ def test_partial_evidence_reaches_parent_with_gap_and_no_new_budget():
     parent=json.loads(a.requests[-1][0][1]['content'])
     assert parent['specialists'][0]['coverage_report']['items'][0]['reported']['gap']=='没有因果证据'
     assert parent['allowed_refs'][0]['ref']=='[1]'
+
+
+def test_unresolved_origin_check_overrides_self_reported_verified():
+    needs = [dict(requirement_id='need_1', role='literature', source_quote='比较来源', paper_quote='A')]
+    event = dict(request={'tool':'read_section'}, model_delivery={'status':'delivered'},
+        result={'status':'completed','result':{'sources':[{'ref':'[1]','document_id':'A','text':'Public dataset'}]}})
+    item = CoverageItem(requirement_id='need_1', status='verified', document_id='A',
+        refs=['[1]'], finding='公开数据集', checks=[dict(aspect='data_origin', status='missing',
+        refs=[], finding='', gap='生成方式未说明')])
+    report = coverage_report(needs, [item], {'tool_calls':[event]})
+    assert report['evidence_adequacy'] == 'partial'
+    assert not report['complete']
+    assert report['items'][0]['reported']['checks'][0]['gap'] == '生成方式未说明'
+
+
+def test_facet_evidence_must_have_been_delivered():
+    needs = [dict(requirement_id='need_1', role='literature', source_quote='范围', paper_quote='A')]
+    event = dict(request={'tool':'read_section'}, model_delivery={'status':'delivered'},
+        result={'status':'completed','result':{'sources':[{'ref':'[1]','document_id':'A','text':'table'}]}})
+    item = CoverageItem(requirement_id='need_1', status='verified', document_id='A',
+        refs=['[1]'], finding='范围', checks=[dict(aspect='numeric_range', status='verified',
+        refs=['[2]'], finding='A:1 B:2; min=1 max=2', gap='')])
+    report = coverage_report(needs, [item], {'tool_calls':[event]})
+    assert 'check_0_unavailable_ref' in report['items'][0]['errors']
+    assert not report['complete']
+    item.checks[0].refs = ['[1]']
+    assert coverage_report(needs, [item], {'tool_calls':[event]})['complete']
