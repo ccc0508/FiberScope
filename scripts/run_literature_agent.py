@@ -67,6 +67,8 @@ def main():
             save_state(state_path,state)
         print(json.dumps(dict(run_id=run_id,state_file=str(state_path)),ensure_ascii=False));return
     settings=Settings(_env_file=ROOT/'backend/.env.literature')
+    from literature_rag.observability import LangfuseTrace
+    telemetry=LangfuseTrace.configured(ROOT, settings.llm_model)
     prompt_identity=None
     if a.prompt_file:
         if a.architecture!='single':raise ValueError('Prompt overrides apply only to frozen single-agent evaluation')
@@ -81,6 +83,12 @@ def main():
         payload=dict(state,budget=asdict(b),model=settings.llm_model,prompt_override=prompt_identity,mode=a.architecture,
             review_policy='parent synthesis and evidence review; no repeated child review' if a.architecture=='specialists' else 'one full-answer review, no content gate; not legacy structured corrective review')
         save_state(state_path,payload)
+        telemetry.update(payload)
+        if telemetry.url:
+            try:
+                (out/'langfuse.json').write_text(json.dumps({'url':telemetry.url},ensure_ascii=False),encoding='utf8')
+            except OSError:
+                pass  # Optional remote link must never fail the local answer.
     def execute(request,rid,timeout):
         body=dict(tool_call=request,run_id=rid,data_dir=str(a.library.resolve()))
         try:
@@ -94,7 +102,11 @@ def main():
     if a.architecture=='specialists':
         from literature_rag.application.specialist_agent import SpecialistCoordinator
         loop=SpecialistCoordinator
-    result=loop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory).run(a.question,run_id)
+    try:
+        result=loop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory).run(a.question,run_id)
+    finally:
+        telemetry.close()
+        telemetry.flush()
     store=ToolTraceStore(ROOT/'.rag-data/tool-traces.sqlite3')
     (out/'evidence.json').write_text(json.dumps(store.evidence(run_id),ensure_ascii=False,indent=2),encoding='utf-8')
     print(json.dumps(dict(status=result['status'],run_id=run_id)))
