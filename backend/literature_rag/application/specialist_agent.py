@@ -97,6 +97,41 @@ after each result. Reserve remaining tools for uncovered papers/facts. A verifie
 refs and its exact document_id; match the identity to paper_quote, not just any paper with similar content.
 Do not substitute supplementary tables for an available main-text definition without checking it.'''
 
+PAPER_EVIDENCE_CHECKS = """
+Refine assigned requirements into evidence questions, not anticipated answers, before retrieval.
+For data-source/design/generalisation comparisons, check separately per paper: study_object,
+data_origin (measured/industrial/simulated/synthetic/mixed/unknown), and validation (split versus
+independent measured validation). Public availability is NOT a data-generation method. Check
+sample_scope only when relevant to the requested comparison. If present evidence resolves a check,
+reuse it; otherwise target dataset/methods or limitations/discussion using the actual missing concept,
+not mandatory fixed keywords. Do not force a classification when the paper does not specify it.
+For causal recommendations from associations, check author_explanation, measurement_limits and
+confounders as relevant. A correlation table alone does not resolve these questions.
+Record these compact checks inside the corresponding coverage item as checks:[{aspect,status,
+refs,finding,gap}]; aspect is study_object|data_origin|validation|sample_scope|author_explanation|
+measurement_limits|confounders|numeric_range|consistency; status is verified|partial|missing.
+Use existing run-local refs for verified/partial findings, and explicit gaps for unresolved checks.
+Do not mark the parent requirement verified if a necessary check is unresolved. After each tool
+result update missing checks; continue targeted lookup if a useful untried path and budget remain.
+If no path or budget remains, stop with the gap, not a fabricated completion. Avoid checks irrelevant
+to the user's task. These are source-based records, not hidden reasoning or expected gold answers.
+"""
+
+EVIDENCE_OUTPUT_RULES = """
+For any table-derived range you choose to report, first verify table, row/column labels, population,
+model/sample, metric and units. Keep a compact labelled value list with its source refs in the
+numeric_range check before deriving min/max; never mix comparison groups. Do not add optional
+ranges. The final answer need not repeat every component value. If labels/values are ambiguous,
+read the table or image where tools permit, otherwise omit the range or state uncertainty.
+Check summary claims against the detailed results and sources, especially only/all/none claims.
+Exclusivity requires evidence covering the claimed scope, not necessarily the literal word 'only'.
+An author focusing on one model does not imply other models were not validated. Correct contradictions
+rather than hiding them with hedges. A valid checklist/ref is not proof of factual correctness.
+Do not append a stock disclaimer. If a provenance qualification is useful, say 文献报告的数据与结果;
+call results 实测 only when their measured origin is established. Never relabel mixed/synthetic results
+as measurements. Keep recommendations distinct from paper findings and omit unsupported extras.
+"""
+
 SQL_PROMPT=COMMON+'''
 You handle experimental SQL only. First describe_experiment_data for directory then selected view details.
 Use real columns, units, enums and grain. If metric/threshold is ambiguous, inspect directory then stop with
@@ -140,7 +175,7 @@ class SpecialistCoordinator:
     def run(self,question,run_id):
         b=self.budget;deadline=self.clock()+b.total_seconds
         state=dict(run_id=run_id,question=question,status='running',answer='',draft='',model_calls=[],tool_calls=[],
-            children=[],plan=None,format_checks=[],review_status='not_started',stop_reason=None,pipeline_version='specialists-v4-evidence-routing',
+            children=[],plan=None,format_checks=[],review_status='not_started',stop_reason=None,pipeline_version='specialists-v5-evidence-checks',
             citation_validation=dict(status='pending',available_records=[],attempts=[]))
         counters=dict(model=0,tools=0,search=0)
         def save():
@@ -265,7 +300,7 @@ class SpecialistCoordinator:
                         AgentBudget(max_model_calls=quota,max_tool_calls=tool_quota,total_seconds=min(600,seconds),
                             reserve_seconds=min(15,seconds/3),max_context_chars=b.max_context_chars,max_output_tokens=b.max_output_tokens),
                         clock=self.clock,paper_directory=self.paper_directory if name=='literature' else None,
-                        allowed_tools=allowed,system_prompt=SQL_PROMPT if name=='sql' else PAPER_PROMPT+PAPER_COVERAGE,review_enabled=False,
+                        allowed_tools=allowed,system_prompt=SQL_PROMPT if name=='sql' else PAPER_PROMPT+PAPER_COVERAGE+PAPER_EVIDENCE_CHECKS+EVIDENCE_OUTPUT_RULES,review_enabled=False,
                         output_schema=SpecialistResult.model_json_schema(),
                         completion_check=completion_feedback(assigned) if assigned else None).run(
                             'Original user question: '+question+'\nAssigned task: '+task,run_id)
@@ -292,8 +327,10 @@ class SpecialistCoordinator:
                     if parsed.status=='needs_clarification':break
                 payload=dict(question=question,task_contract=state['task_contract'],specialists=[dict(role=c['role'],result=c['result'],coverage_report=c.get('coverage_report')) for c in state['children']],
                     evidence=context,allowed_refs=list(refs.values()))
-                messages=[dict(role='system',content=REVIEW_PROMPT+'''
+                messages=[dict(role='system',content=REVIEW_PROMPT+EVIDENCE_OUTPUT_RULES+'''
 You are the parent coordinator. Review and synthesize specialist findings against the exact supplied evidence.
+Use child checks as an audit aid, not authority. Resolve numeric checks against evidence internally; return
+normal prose, not a checks JSON. Preserve unresolved origin/validation gaps rather than copying verified labels.
 Answer supported parts with their evidence and preserve them even when other parts are unresolved.
 For missing or partial evidence, report precisely which part remains unverified. If useful for the user's
 explanatory question, you MAY add a concise separately labelled "一般原理解释（非本次文献证实）" based on

@@ -11,6 +11,15 @@ class Requirement(BaseModel):
     paper_quote: str = Field(default='', max_length=200)
 
 
+class EvidenceCheck(BaseModel):
+    model_config = ConfigDict(extra='forbid', strict=True)
+    aspect: Literal['study_object', 'data_origin', 'validation', 'sample_scope', 'author_explanation', 'measurement_limits', 'confounders', 'numeric_range', 'consistency']
+    status: Literal['verified', 'partial', 'missing']
+    refs: list[str] = Field(default_factory=list, max_length=12)
+    finding: str = Field(default='', max_length=800)
+    gap: str = Field(default='', max_length=800)
+
+
 class CoverageItem(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)
     requirement_id: str
@@ -19,6 +28,7 @@ class CoverageItem(BaseModel):
     refs: list[str] = Field(default_factory=list, max_length=12)
     finding: str = Field(default='', max_length=800)
     gap: str = Field(default='', max_length=800)
+    checks: list[EvidenceCheck] = Field(default_factory=list, max_length=12)
 
 
 def ground_requirements(requirements, question):
@@ -75,8 +85,21 @@ def coverage_report(requirements, coverage, trace):
                 elif item.get('document_id') and not any(item['document_id'] in documents.get(ref, set()) for ref in item['refs']):
                     errors.append('document_not_supported_by_refs')
             elif not item['refs'] and not described: errors.append('no_query_or_directory_evidence')
-        rows.append(dict(requirement=need, reported=item,
-                         status='missing' if errors else item['status'], errors=errors))
+        check_errors = []
+        checks = item.get('checks', [])
+        for index, check in enumerate(checks):
+            if check['status'] in ('verified', 'partial'):
+                if not check.get('finding') or not check.get('refs'):
+                    check_errors.append(f'check_{index}_missing_evidence')
+                if any(ref not in available for ref in check['refs']):
+                    check_errors.append(f'check_{index}_unavailable_ref')
+            if check['status'] != 'verified' and not check.get('gap'):
+                check_errors.append(f'check_{index}_missing_gap')
+        effective = 'missing' if errors else item['status']
+        if effective == 'verified' and (check_errors or any(c['status'] != 'verified' for c in checks)):
+            effective = 'partial'
+        rows.append(dict(requirement=need, reported=item, status=effective,
+                         errors=errors + check_errors))
     complete=bool(rows) and all(r['status']=='verified' for r in rows)
     adequacy='sufficient' if complete else ('partial' if any(r['status'] in ('verified','partial') for r in rows) else 'insufficient')
     return dict(items=rows, complete=complete, evidence_adequacy=adequacy,
