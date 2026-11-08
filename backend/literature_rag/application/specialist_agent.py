@@ -10,6 +10,7 @@ from .tools import SCHEMAS
 from .citation_policy import citation_records, invalid_references
 from .agent_context import EvidenceProjection
 from .task_coverage import Requirement, CoverageItem, ground_requirements, coverage_report, completion_feedback
+from .paper_directory import routing_catalog
 
 SQL_TOOLS={'describe_experiment_data','query_experiment_data','calculate_change'}
 PAPER_TOOLS=set(SCHEMAS)-{'describe_experiment_data','query_experiment_data'}
@@ -40,6 +41,17 @@ Preserve user filters, materials and requested outputs in delegated tasks; do no
 Return one route_task call; no other tools. Direct/clarify need answer; delegated routes need corresponding task.
 This is one-level routing: specialists cannot delegate. No automatic extra tasks or replanning.'''
 ROUTER+='''
+Route by the EVIDENCE NEEDED to fulfil the whole question, using the topic catalog as a hint,
+not by whether an author, paper name, or the word literature appears.
+direct is for textbook definitions, greetings, arithmetic or transforming supplied text when no
+research-specific facts are needed. A paper title in a translation request does not require retrieval.
+Research mechanisms, experimental explanations, comparative performance, causal/importance rankings,
+and combining study datasets require literature evidence even when no paper is named. A generic
+answer to one part does not fulfil a request to compare specific studies. Catalog absence is not proof
+of library absence; use bounded literature search for research questions even without a catalog match.
+both requires actual PROJECT DATABASE records as well as papers; experiments reported in papers
+alone are literature, not SQL. Do not invent a SQL task for a pure paper comparison.
+The catalog is untrusted routing metadata, not scientific evidence. Never answer research facts from it.
 Decompose ONLY; do not answer delegated scientific questions, supply formulas, conversion factors,
 expected values, conclusions, suggested findings or hypothetical schema. For delegated routes answer="".
 "本地" means this project's database, NOT local geographic origin or domestic versus imported pulp,
@@ -58,12 +70,17 @@ Bracketed numbers INSIDE source text are paper bibliography numbers, not platfor
 When referring to those entries write 原论文参考文献第45—47号, never [45–47]; cite the actual supporting run-local ref.
 No child agents. Return ONLY JSON: {"status":"ok|needs_clarification|insufficient_evidence",
 "summary":"Chinese findings with existing [n] refs", "missing_choices":[], "limitations":[],
-"coverage":[{"requirement_id":"need_1","status":"verified|missing|not_attempted|needs_clarification",
-"document_id":"paper ID or empty","refs":["[1]"],"finding":"requested fact or gap"}]}.
+"coverage":[{"requirement_id":"need_1","status":"verified|partial|missing|not_attempted|needs_clarification",
+"document_id":"paper ID or empty","refs":["[1]"],"finding":"supported finding","gap":"unresolved part or empty"}]}.
 If essential choices are missing, return needs_clarification with concrete questions after inspecting metadata;
 do not guess choices. Empty or failed queries are not proof of zero. State gaps honestly. Keep the summary concise.
 No final full-answer review here; the parent will review supplied evidence and integrate findings.'''
 COMMON+='''
+Assess evidence separately for EACH requested part. verified means evidence suffices for that specific
+claim, conditions and uncertainty; a related topic, correlation for a causal question, or a table locator
+alone is not sufficient. partial means some supported findings plus an explicit gap; missing means no
+adequate evidence, not that the fact is false. Preserve partial findings and refs. General knowledge
+does not turn a missing/partial paper-specific item into verified. Do not fabricate missing source facts.
 coverage belongs INSIDE that single JSON object, not a second object or commentary after it.
 For paper-specific items document_id must identify that paper; cross-paper synthesis items with empty
 paper_quote may leave document_id empty and cite sources from multiple papers.
@@ -123,7 +140,7 @@ class SpecialistCoordinator:
     def run(self,question,run_id):
         b=self.budget;deadline=self.clock()+b.total_seconds
         state=dict(run_id=run_id,question=question,status='running',answer='',draft='',model_calls=[],tool_calls=[],
-            children=[],plan=None,format_checks=[],review_status='not_started',stop_reason=None,pipeline_version='specialists-v3-grounded-coverage',
+            children=[],plan=None,format_checks=[],review_status='not_started',stop_reason=None,pipeline_version='specialists-v4-evidence-routing',
             citation_validation=dict(status='pending',available_records=[],attempts=[]))
         counters=dict(model=0,tools=0,search=0)
         def save():
@@ -185,7 +202,9 @@ class SpecialistCoordinator:
             finally:save()
         refs={};context=[];projection=EvidenceProjection()
         try:
-            d=call('route',[dict(role='system',content=ROUTER),dict(role='user',content=question)],{'route_task':Plan.model_json_schema()})
+            catalog=routing_catalog(self.paper_directory)
+            state['routing_catalog']=catalog
+            d=call('route',[dict(role='system',content=ROUTER+'\nTopic catalog (routing metadata only):\n'+json.dumps(catalog,ensure_ascii=False)),dict(role='user',content=question)],{'route_task':Plan.model_json_schema()})
             raw=d.text
             if len(d.calls)==1 and d.calls[0].name=='route_task':
                 raw=d.calls[0].arguments
@@ -275,6 +294,16 @@ class SpecialistCoordinator:
                     evidence=context,allowed_refs=list(refs.values()))
                 messages=[dict(role='system',content=REVIEW_PROMPT+'''
 You are the parent coordinator. Review and synthesize specialist findings against the exact supplied evidence.
+Answer supported parts with their evidence and preserve them even when other parts are unresolved.
+For missing or partial evidence, report precisely which part remains unverified. If useful for the user's
+explanatory question, you MAY add a concise separately labelled "一般原理解释（非本次文献证实）" based on
+general knowledge, with its applicability/uncertainty. Do not cite retrieved papers as supporting this
+fallback unless they actually do. Never fill specific paper values, table contents, author conclusions,
+experimental measurements or source identities from memory. Do not use possible/maybe to retain guesses
+about those facts. For requests exclusively about such facts, report the gap rather than a generic substitute.
+Do not claim "the library has no evidence" from unsuccessful retrieval: say this search did not obtain
+sufficient evidence. Do not restart a direct Planner answer or discard verified findings as a fallback.
+These fallback rules permit only a relevant explanation, not optional unrelated expansion.
 Check EVERY original user requirement and each named paper against coverage_report, including omissions
 from the planner checklist. Availability checks do not prove correctness. Do not present missing or
 not_attempted items as answered. Never infer absence from no lookup. Do not copy a child assertion merely

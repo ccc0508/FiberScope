@@ -14,10 +14,11 @@ class Requirement(BaseModel):
 class CoverageItem(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)
     requirement_id: str
-    status: Literal['verified', 'missing', 'not_attempted', 'needs_clarification']
+    status: Literal['verified', 'partial', 'missing', 'not_attempted', 'needs_clarification']
     document_id: str = ''
     refs: list[str] = Field(default_factory=list, max_length=12)
     finding: str = Field(default='', max_length=800)
+    gap: str = Field(default='', max_length=800)
 
 
 def ground_requirements(requirements, question):
@@ -64,8 +65,9 @@ def coverage_report(requirements, coverage, trace):
         errors = []
         item = matches[0].model_dump() if len(matches) == 1 else dict(status='not_attempted', refs=[])
         if len(matches) != 1: errors.append('missing_or_duplicate_coverage_item')
-        if item['status'] == 'verified':
+        if item['status'] in ('verified', 'partial'):
             if not item.get('finding'): errors.append('missing_finding')
+            if item['status'] == 'partial' and not item.get('gap'): errors.append('missing_gap')
             if any(ref not in available for ref in item['refs']): errors.append('unavailable_ref')
             if need['role'] == 'literature':
                 if not item['refs']: errors.append('missing_source_refs')
@@ -75,7 +77,9 @@ def coverage_report(requirements, coverage, trace):
             elif not item['refs'] and not described: errors.append('no_query_or_directory_evidence')
         rows.append(dict(requirement=need, reported=item,
                          status='missing' if errors else item['status'], errors=errors))
-    return dict(items=rows, complete=all(r['status']=='verified' for r in rows),
+    complete=bool(rows) and all(r['status']=='verified' for r in rows)
+    adequacy='sufficient' if complete else ('partial' if any(r['status'] in ('verified','partial') for r in rows) else 'insufficient')
+    return dict(items=rows, complete=complete, evidence_adequacy=adequacy,
                 unknown_ids=[c.requirement_id for c in coverage if c.requirement_id not in {r['requirement_id'] for r in requirements}],
                 scope='Availability/coverage checks only; correctness and paper identity require evidence review.')
 

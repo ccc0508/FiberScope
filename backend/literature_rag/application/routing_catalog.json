@@ -1,0 +1,50 @@
+{
+  "doc_cec3e2f8b5abaa89": {
+    "title": "Challenges in computational materials modelling and simulation: A case-study to predict tissue paper properties",
+    "label": "Morais与Curto（2022）",
+    "topics": "生活用纸；纤维形态、粗度、松厚度、孔隙率、柔软度、吸水、毛细上升；MLR、ANN、三维网络模拟",
+    "provenance": "Curated topic-only routing metadata for this document ID; verify scientific facts in source text."
+  },
+  "doc_fc10c27084432887": {
+    "title": "纸张三维结构的CLSM表征及纸张特性研究",
+    "label": "李佳庆等（2020）",
+    "topics": "蔗渣浆与其他植物纤维配抄；CLSM三维成像、孔隙率、纤维结合与纸张性能",
+    "provenance": "Curated topic-only routing metadata for this document ID; verify scientific facts in source text."
+  },
+  "doc_347aacf900c9ab36": {
+    "title": "Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning",
+    "label": "Li、Hu与Shao（2023）",
+    "topics": "木材与非木材回收纤维；回收循环、WRV、RBA、损伤指标与抗张预测；机器学习",
+    "provenance": "Curated topic-only routing metadata for this document ID; verify scientific facts in source text."
+  },
+  "doc_f499d471c51c051a": {
+    "title": "Predicting tensile strength in fiber-reinforced composites using machine learning and deep learning models",
+    "label": "Ayaliew等（2026）",
+    "topics": "纤维增强聚合物复合材料；拉伸强度、机器学习与深度学习、数据来源、模型验证",
+    "provenance": "Curated topic-only routing metadata for this document ID; verify scientific facts in source text."
+  },
+  "doc_8234f8075c2e184f": {
+    "title": "Effect of fibre-quality parameters on pulp properties by using multiple linear regression and artificial neural network",
+    "label": "Uddin等（2024）",
+    "topics": "纤维质量参数与纸浆性能；细小纤维、长度、宽度、卷曲、扭结、粗度；MLR与ANN",
+    "provenance": "Curated topic-only routing metadata for this document ID; verify scientific facts in source text."
+  },
+  "doc_99f8d919ba6bf8bc": {
+    "title": "Assessing cellulose micro/nanofibre morphology using a high throughput fibre analysis device to predict nanopaper performance",
+    "label": "Pennells等（2022）",
+    "topics": "微纳纤维与纳米纸；光学纤维形态测量、扭结、细小纤维、高压均质；MLR、SVR、模型验证",
+    "provenance": "Curated topic-only routing metadata for this document ID; verify scientific facts in source text."
+  },
+  "doc_0fcf2a50cfa02d21": {
+    "title": "Probing Effect of Papirindustriens Forskningsinstitut (PFI) Refining on Aggregation Structure of Cellulose: Crystal Packing and Hydrogen-Bonding Network",
+    "label": "Li、Zhao与He（2020）",
+    "topics": "针阔叶木浆PFI打浆；打浆度、纤维形态、纤维素结晶结构、氢键与纸张性能",
+    "provenance": "Curated topic-only routing metadata for this document ID; verify scientific facts in source text."
+  },
+  "doc_95f63c52fdb78ea6": {
+    "title": "Mechanisms of strength and stiffness improvement of paper after PFI refining with a focus on the effect of fines",
+    "label": "Motamedian等（2019）",
+    "topics": "PFI打浆后的强度与刚度；细小纤维、检测方法、淀粉添加与纤维结合",
+    "provenance": "Curated topic-only routing metadata for this document ID; verify scientific facts in source text."
+  }
+}
