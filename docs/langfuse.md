@@ -35,3 +35,14 @@ Internal stage records also persist in `.rag-data/tool-traces.sqlite3` under eac
 
 
 Verification for internal tracing: 154 tests passed across observer/coordinator, retrieval, tools, SQL, rerank, context and visual evidence. An actual read-only PostgreSQL COUNT and one actual Qwen/retrieval/reranker call completed; decision/answer models were mocked (no answering-model charge). Cloud readback returned HTTP 200 and confirmed internal nodes share the tool parent, and child-agent end precedes parent synthesis. Seed-selection instrumentation was added after this smoke and covered by tests, not a second paid retrieval. These runs do not measure answer quality.
+
+
+## Website HTTP / background lifecycle
+
+The main FastAPI app now traces POST /api/v1/literature/ask and individual history requests, including validation errors and ASGI response send. No headers, cookies or raw HTTP bodies are exported. Accepted asynchronous jobs retain a copied ContextVar context in the executor thread. Stages cover session/origin checks, record creation, scheduling, library check, process invocation, state reading, answer adaptation, image caching and result/failure persistence.
+
+The agent launcher receives trace/span IDs through a child-specific environment (not global environment mutation), inherited by the CLI worker. A history configuration stores only the original trace correlation IDs. Detail polling reads them via a read-only lookup and attaches HTTP spans to the same trace; old records without IDs get independent HTTP traces. This does not bypass history endpoint authorization. Repeated idempotent submissions do not schedule another agent job.
+
+HTTP POST correctly ends when its 202 response is sent; the background job can outlive it. Thus the HTTP span duration is not the end-to-end answer latency. Browser network/render timings and the history list/export/feedback/image requests are not fully instrumented. Polling generates multiple observation nodes. Running backend processes must reload/restart to pick up middleware; this change has not been deployed remotely.
+
+Verification: 31 API/history/observability tests passed. A TestClient HTTP submission with a temporary real history database and a real separate Python process (mock answering model) returned 202 then answered; cloud readback confirmed POST → schedule → background job → agent process → FiberScope agent, plus save_result and subsequent polling in the same trace. This was an ASGI integration check, not a browser/socket measurement; no answering-model call was made.
