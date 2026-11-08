@@ -19,6 +19,14 @@ def routing_catalog(directory):
     return result
 
 
+def routing_catalog_prompt(catalog):
+    """Planner needs scope anchors; full identities remain in the trace and specialist directory."""
+    anchors = [[item['label'] or item['title'] or item['filename'] or item['document_id'],
+                item['topics']] for item in catalog]
+    return '\nCatalog [paper, scope]; routing hints only, not evidence:\n' + json.dumps(
+        anchors, ensure_ascii=False, separators=(',', ':'))
+
+
 def load_paper_directory(root):
     root = Path(root)
     with sqlite3.connect((root/'metadata.sqlite3').resolve().as_uri()+'?mode=ro', uri=True) as db:
