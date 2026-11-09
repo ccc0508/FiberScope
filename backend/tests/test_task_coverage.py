@@ -81,3 +81,23 @@ def test_figure_ref_uses_asset_document_identity():
     items=[CoverageItem(requirement_id='need_1',status='verified',document_id='A',refs=['[1]'],finding='图中趋势')]
     event=dict(request={'tool':'view_image'},model_delivery={'status':'delivered'},result=dict(status='completed',result={'ref':'[1]','asset':{'document_id':'A'}}))
     assert coverage_report(req,items,{'tool_calls':[event]})['complete']
+
+
+def test_coverage_reference_lists_preserve_more_than_twelve_sources():
+    from literature_rag.application.task_coverage import EvidenceCheck
+    refs = [f'[{i}]' for i in range(1, 14)]
+    check = EvidenceCheck(aspect='validation', status='verified', refs=refs)
+    item = CoverageItem(requirement_id='need_1', status='verified', refs=refs, checks=[check])
+    assert item.refs == refs
+    assert item.checks[0].refs == refs
+    schema = CoverageItem.model_json_schema()
+    assert 'maxItems' not in schema['properties']['refs']
+    assert 'maxItems' not in schema['$defs']['EvidenceCheck']['properties']['refs']
+
+
+def test_online_coverage_schema_has_no_reference_count_cap():
+    from literature_rag.application.coverage_priority import CoveragePriority
+    schema = {'type': 'object', 'properties': {}, 'required': []}
+    enriched = CoveragePriority([]).schemas({'read_section': schema})['read_section']
+    refs = enriched['properties']['coverage_updates']['items']['properties']['refs']
+    assert 'maxItems' not in refs
