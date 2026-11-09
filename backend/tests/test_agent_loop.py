@@ -169,7 +169,7 @@ def test_failed_retries_still_exhaust_tool_budget():
     c = ToolCall('a', 'read_section', dict(document_id='d', section_id='s', reason='read'))
     a = Fake([decision(calls=[c]), decision(calls=[c]), decision('draft'), decision('final')])
     executed = []
-    r = AgentLoop(a, lambda *args: executed.append(args) or dict(status='failed'), lambda s: None,
+    r = AgentLoop(a, lambda *args: executed.append(args) or dict(status='failed', error_code='tool_timeout'), lambda s: None,
                   AgentBudget(max_tool_calls=2)).run('q', 'r')
     assert len(executed) == 2 and r['tool_attempts'] == 2
     assert r['stop_reason'] == 'collection_budget'
