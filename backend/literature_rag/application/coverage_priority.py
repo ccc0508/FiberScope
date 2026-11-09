@@ -60,6 +60,23 @@ class CoveragePriority:
                 attempted.add(row['requirement']['requirement_id'])
         return sorted(paper_ids-attempted)
 
+    def needs_targeted_search(self,request,targets,unresolved,trace):
+        if request.get('tool')!='read_section' or not set(targets).intersection(unresolved):return False
+        if trace.get('search_calls',0)>=trace.get('max_search_calls',2):return False
+        doc=request.get('document_id');reads=[]
+        for event in reversed(trace.get('tool_calls',[])):
+            previous=event.get('request',{})
+            if previous.get('tool')=='search_literature' and (not previous.get('document_ids') or doc in previous['document_ids']):break
+            if previous.get('tool')!='read_section' or previous.get('document_id')!=doc:continue
+            if event.get('model_delivery',{}).get('status')!='delivered' or event.get('result',{}).get('status')!='completed':continue
+            if set(event.get('coverage_schedule',{}).get('target_requirements',[])).intersection(targets):reads.append(event)
+        if len(reads)<2:return False
+        last=reads[0]
+        # Following a returned pagination cursor is not guessing another section.
+        next_offset=last.get('result',{}).get('result',{}).get('next_offset')
+        if request.get('section_id')==last['request'].get('section_id') and next_offset is not None and request.get('offset',0)==next_offset:return False
+        return True
+
     def prepare(self, request,trace):
         request=dict(request)
         targets=request.pop('target_requirements',[])
@@ -84,14 +101,16 @@ class CoveragePriority:
         paper_targets={r['requirement_id'] for r in self.requirements if r.get('paper_quote')} & set(targets)
         first_coverage=bool(no_source and paper_targets and not set(targets).intersection(no_source))
         covered=bool(targets and all(t in verified for t in targets) and unresolved)
-        block=bool((first_coverage or covered) and not reason.strip())
+        search_needed=self.needs_targeted_search(request,targets,unresolved,trace)
+        redirect='paper_without_source' if first_coverage else 'covered_targets' if covered else 'targeted_search_before_more_sections' if search_needed else None
+        block=bool(redirect and not reason.strip())
         # One redirect for this covered-target set, then avoid a policy deadlock.
-        signature=tuple(sorted(targets))
+        signature=(redirect,request.get('document_id') if search_needed else None,tuple(sorted(targets)))
         repeated=block and signature in self.warned
         if block:self.warned.add(signature)
         decision=dict(target_requirements=targets,coverage_updates=updates,revisit_reason=reason,
                       errors=errors,unresolved=unresolved,papers_without_source=no_source,
-                      redirect_reason='paper_without_source' if first_coverage else 'covered_targets' if covered else None,blocked=block and not repeated,
+                      redirect_reason=redirect,blocked=block and not repeated,
                       repeated_warning=repeated,report=report)
         trace.setdefault('coverage_priority_events',[]).append(decision)
         return request,decision

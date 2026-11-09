@@ -6,6 +6,25 @@ from literature_rag.adapters.providers.agent_chat import ToolCall
 REQ=[dict(requirement_id='need_1',role='literature',paper_quote='A',source_quote='输入'),
      dict(requirement_id='need_2',role='literature',paper_quote='B',source_quote='输出')]
 UPDATE=dict(requirement_id='need_1',status='verified',document_id='A',refs=['[1]'],finding='input',gap='')
+
+def test_section_streak_redirect_and_exceptions():
+    def setup():
+        p=CoveragePriority(REQ[:1]);t=dict(search_calls=0,max_search_calls=2,tool_calls=[])
+        for sid in ['a','b']:
+            t['tool_calls'].append(dict(request=dict(tool='read_section',document_id='A',section_id=sid),coverage_schedule=dict(target_requirements=['need_1']),model_delivery=dict(status='delivered'),result=dict(status='completed',result=dict(next_offset=200))))
+        return p,t
+    req=dict(tool='read_section',document_id='A',section_id='c',target_requirements=['need_1'],coverage_updates=[],revisit_reason='')
+    p,t=setup();d=p.prepare(req,t)[1]
+    assert d['blocked'] and d['redirect_reason']=='targeted_search_before_more_sections'
+    assert not p.prepare(req,t)[1]['blocked']  # bounded warning
+    p,t=setup();t['search_calls']=2
+    assert not p.prepare(req,t)[1]['blocked']
+    p,t=setup()
+    assert not p.prepare(dict(req,section_id='b',offset=200),t)[1]['blocked']
+    p,t=setup()
+    assert not p.prepare(dict(req,revisit_reason='Check a concrete contradictory value'),t)[1]['blocked']
+    p,t=setup();t['tool_calls'].append(dict(request=dict(tool='search_literature',document_ids=['A'])))
+    assert not p.prepare(req,t)[1]['blocked']
 def trace(delivered=True):
     return {'tool_calls':[dict(request={'tool':'search_literature'},model_delivery={'status':'delivered' if delivered else 'withheld'},
         result=dict(status='completed',result={'evidence':[dict(ref='[1]',document_id='A',text='input')]}))]}

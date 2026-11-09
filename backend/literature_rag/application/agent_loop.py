@@ -243,8 +243,8 @@ class AgentLoop:
                     elif call_index>0:
                         result=dict(status='blocked',error_code='one_tool_per_turn',notice='Only the first tool request may execute. Reassess its result before requesting another.')
                     elif schedule and schedule['blocked']:
-                        result=dict(status='blocked',error_code='prioritize_uncovered_requirements',
-                            notice='Another requested paper has no delivered source evidence, or these targets are already covered. Target an uncovered paper/fact before deepening this one, or explain a specific essential contradiction in revisit_reason.')
+                        result=dict(status='blocked',error_code='prioritize_uncovered_requirements',redirect_reason=schedule['redirect_reason'],
+                            notice=('Two section reads have not resolved this need. Use search_literature with a targeted query and this document_id in document_ids before guessing another section, or give a concrete essential continuation/contradiction in revisit_reason.' if schedule['redirect_reason']=='targeted_search_before_more_sections' else 'Another requested paper has no delivered source evidence, or these targets are already covered. Target an uncovered paper/fact before deepening this one, or explain a specific essential contradiction in revisit_reason.'))
                     elif size(messages+image_messages)>=stop_threshold:
                         result=dict(status='blocked',error_code='context_budget')
                         state['stop_reason']='context_budget';stop_collection=True
