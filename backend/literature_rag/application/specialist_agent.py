@@ -13,7 +13,7 @@ from .task_coverage import Requirement, CoverageItem, ground_requirements, cover
 from .paper_directory import routing_catalog, routing_catalog_prompt
 from .coverage_priority import CoveragePriority, INSTRUCTIONS as COVERAGE_PRIORITY_INSTRUCTIONS
 
-SQL_TOOLS={'describe_experiment_data','query_experiment_data','calculate_change'}
+SQL_TOOLS={'describe_experiment_data','query_experiment_data','calculate_change','convert_units'}
 PAPER_TOOLS=set(SCHEMAS)-{'describe_experiment_data','query_experiment_data'}
 
 class Plan(BaseModel):
@@ -76,6 +76,13 @@ No child agents. Return ONLY JSON: {"status":"ok|needs_clarification|insufficien
 If essential choices are missing, return needs_clarification with concrete questions after inspecting metadata;
 do not guess choices. Empty or failed queries are not proof of zero. State gaps honestly. Keep the summary concise.
 No final full-answer review here; the parent will review supplied evidence and integrate findings.'''
+COMMON+='''
+Use convert_units for requested unit conversions: give the original value, from_unit and to_unit;
+the program calculates the factor and converted value. Never prefill the answer as calculate_change.final.
+calculate_change only compares two observations already in the SAME unit; it does not validate operands
+or conversion reasoning. A successful tool call does not validate a scientific interpretation.
+Use the returned converted_value and distinguish hypothetical user examples from measured paper values.
+'''
 COMMON+='''
 Assess evidence separately for EACH requested part. verified means evidence suffices for that specific
 claim, conditions and uncertainty; a related topic, correlation for a causal question, or a table locator
@@ -154,6 +161,14 @@ locate missing figures by find_figure then view_image. Captions are not viewed p
 view_image. Distinguish author explanation, correlation and causation; preserve conditions and uncertainty.
 If a requested fact lacks evidence and a targeted path/budget remains, check it. Never claim absence from
 one missed search. Do not treat project experimental values as published paper results.'''
+PAPER_PROMPT+='''
+Choose search_literature to LOCATE a specific missing fact; use read_section to COMPLETE context at an
+identified location. After up to two sections fail to resolve the same required gap, use a targeted query
+expressing that gap (with document_ids when known), rather than guessing more headings, if search budget
+remains. Valid continuation pages or a concrete contradiction may justify more section reading; say why.
+When search budget is exhausted, use available exact locators or finish with a bounded gap. Failure to find
+a statement never establishes that the author did not discuss it. Stop optional background expansion.
+'''
 
 
 class BudgetExhausted(RuntimeError):pass
@@ -176,7 +191,7 @@ class SpecialistCoordinator:
     def run(self,question,run_id):
         b=self.budget;deadline=self.clock()+b.total_seconds
         state=dict(run_id=run_id,question=question,status='running',answer='',draft='',model_calls=[],tool_calls=[],
-            children=[],plan=None,format_checks=[],review_status='not_started',stop_reason=None,pipeline_version='specialists-v6-coverage-priority',
+            children=[],plan=None,format_checks=[],review_status='not_started',stop_reason=None,pipeline_version='specialists-v7-tool-selection',
             citation_validation=dict(status='pending',available_records=[],attempts=[]))
         counters=dict(model=0,tools=0,search=0)
         def save():

@@ -10,7 +10,7 @@ def citation_records(tool, response):
     result = response.get('result', {})
     kind = {'search_literature': 'source_text', 'read_section': 'source_text',
         'read_table': 'source_text', 'view_image': 'source_image',
-        'query_experiment_data': 'experiment_query', 'calculate_change': 'calculation'}.get(tool)
+        'query_experiment_data': 'experiment_query', 'calculate_change': 'calculation', 'convert_units':'calculation'}.get(tool)
     if not kind:
         return []
     if tool == 'search_literature':

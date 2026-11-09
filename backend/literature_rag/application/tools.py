@@ -80,11 +80,21 @@ class FindFigure(Request):
 
 
 class Calculate(Request):
+    """Difference/relative change between observations ALREADY IN THE SAME UNIT. Not a unit converter."""
     tool: Literal['calculate_change']
     initial: str = Field(pattern=r'^-?\d{1,15}(\.\d{1,15})?$')
     final: str = Field(pattern=r'^-?\d{1,15}(\.\d{1,15})?$')
-    unit: str = Field(max_length=100)
+    unit: str = Field(max_length=100, description='One shared unit for BOTH values. No conversion arrows; use convert_units for unit conversion.')
     source_call_ids: list[str] = Field(min_length=1, max_length=20)
+
+
+class ConvertUnits(Request):
+    """Convert one value using program-defined unit factors. Never supply an expected answer."""
+    tool: Literal['convert_units']
+    value: str = Field(pattern=r'^-?\d{1,15}(\.\d{1,15})?$')
+    from_unit: str = Field(min_length=1,max_length=40,description='Supported: nm, μm, mm, cm, m, km; mg, g, kg; mg/100m, mg/m, mg/km, g/m, g/km, tex; Pa, kPa, MPa; N*m/g, kN*m/kg.')
+    to_unit: str = Field(min_length=1,max_length=40,description='Destination must be the same quantity group; MPa cannot convert to N*m/g without additional physical information.')
+    source_call_ids: list[str] = Field(default_factory=list,max_length=20,description='Existing source call IDs if from retrieved data. [] for a user-provided hypothetical value.')
 
 
 class DescribeExperiments(Request):
@@ -97,9 +107,9 @@ class QueryExperiments(Request):
     sql: str = Field(min_length=1, max_length=8000, description='One PostgreSQL SELECT over allowed fiber views; joins and nested/correlated subqueries allowed. Read describe_experiment_data first for real columns, units and row grain.')
 
 
-INPUT = TypeAdapter(Annotated[Search | ListSections | ReadSection | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | Calculate | DescribeExperiments | QueryExperiments, Field(discriminator='tool')])
+INPUT = TypeAdapter(Annotated[Search | ListSections | ReadSection | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | Calculate | ConvertUnits | DescribeExperiments | QueryExperiments, Field(discriminator='tool')])
 SCHEMAS = {c.model_fields['tool'].annotation.__args__[0]: c.model_json_schema()
-           for c in (Search, ListSections, ReadSection, ReadTable, ViewImage, FindFigure, FindDocuments, FindTable, Calculate, DescribeExperiments, QueryExperiments)}
+           for c in (Search, ListSections, ReadSection, ReadTable, ViewImage, FindFigure, FindDocuments, FindTable, Calculate, ConvertUnits, DescribeExperiments, QueryExperiments)}
 
 
 def encode(x):
@@ -183,7 +193,7 @@ class LiteratureTools:
         self.store.save(record)  # If persistence fails, do not start a paid operation.
         image_bytes = None
         try:
-            if isinstance(parsed, Calculate):
+            if isinstance(parsed, (Calculate,ConvertUnits)):
                 known = {r['call_id'] for r in self.store.read(run_id) if r['status']=='completed'}
                 if not set(parsed.source_call_ids) <= known: raise ValueError('Unknown source calls')
             result, image_bytes = self.execute(parsed)
@@ -290,7 +300,16 @@ class LiteratureTools:
                     page=a.page, kind=a.kind, match_status=status) for a,status in rows[p.offset:end]],
                 next_offset=end if end < len(rows) else None,
                 notice='Handles only, not viewed pixels. Unconfirmed candidates may be unrelated; inspect with view_image. Never infer a missing figure number from ordering.'), None
+        if isinstance(p, ConvertUnits):
+            from .unit_conversion import convert,UnitConversionError,UNITS
+            try:result=convert(p.value,p.from_unit,p.to_unit)
+            except UnitConversionError as error:
+                raise SectionLookupError(error.code,dict(supported_units=list(UNITS),notice='Supply compatible units, not a guessed conversion factor. Different quantities require more information.')) from error
+            return dict(result,source_call_ids=p.source_call_ids),None
         if isinstance(p, Calculate):
+            if re.search(r'->|→|⇒|\bto\b|换算|转[为换成]',p.unit,re.I):
+                raise SectionLookupError('unit_conversion_requires_convert_units',dict(suggested_tool='convert_units',
+                    notice='calculate_change compares two values already in one unit. For conversion supply value, from_unit, to_unit; do NOT supply a guessed final value.'))
             from decimal import Decimal, localcontext
             with localcontext() as ctx:
                 ctx.prec = 40

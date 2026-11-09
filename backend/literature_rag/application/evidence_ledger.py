@@ -60,7 +60,7 @@ def register_result(db, record):
         a=result['asset']
         result['ref']=add('source_image',dict(asset=a,document_hash=hashes.get(a['document_id']),
             image_sha256=result['image_sha256'],image_bytes=result['image_bytes']))
-    elif tool=='calculate_change':
+    elif tool in ('calculate_change','convert_units'):
         origins=[]
         for source_call in result['source_call_ids']:
             origins.extend(r[0] for r in db.execute('SELECT ordinal FROM evidence_origins WHERE run_id=? AND call_id=?',(run,source_call)))
