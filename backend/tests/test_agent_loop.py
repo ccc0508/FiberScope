@@ -136,3 +136,40 @@ def test_failed_search_consumes_search_budget():
     r=AgentLoop(a,lambda request,*args:executed.append(request) or dict(status='failed',error_code='worker_failed'),lambda s:None,AgentBudget(max_model_calls=8)).run('q','r')
     assert len(executed)==2 and r['search_calls']==2
     assert r['tool_calls'][2]['result']['error_code']=='search_budget'
+
+
+def test_invalid_arguments_can_be_corrected_and_retried():
+    # MIX17: first search omitted reason; adding it must not be deduplicated.
+    first = ToolCall('a', 'search_literature', dict(query='PFI', document_ids=['d']))
+    second = ToolCall('b', 'search_literature', dict(query='PFI', document_ids=['d'], reason='Find methods'))
+    a = Fake([decision(calls=[first]), decision(calls=[second]), decision('draft'), decision('final')])
+    executed = []
+    def execute(request, *args):
+        executed.append(request)
+        return dict(status='invalid_arguments' if len(executed) == 1 else 'completed')
+    r = AgentLoop(a, execute, lambda s: None).run('q', 'r')
+    assert len(executed) == 2
+    assert [e['status'] for e in r['tool_calls']] == ['invalid_arguments', 'completed']
+    assert r['search_calls'] == 2 and r['tool_attempts'] == 2
+
+
+def test_failed_tool_retry_succeeds_then_is_deduplicated():
+    calls = [ToolCall(str(i), 'read_section', dict(document_id='d', section_id='s', reason=str(i))) for i in range(3)]
+    a = Fake([*(decision(calls=[c]) for c in calls), decision('draft'), decision('final')])
+    executed = []
+    def execute(*args):
+        executed.append(args)
+        return dict(status='failed', error_code='tool_timeout') if len(executed) == 1 else dict(status='completed')
+    r = AgentLoop(a, execute, lambda s: None).run('q', 'r')
+    assert len(executed) == 2
+    assert r['tool_calls'][2]['result']['error_code'] == 'duplicate_call'
+
+
+def test_failed_retries_still_exhaust_tool_budget():
+    c = ToolCall('a', 'read_section', dict(document_id='d', section_id='s', reason='read'))
+    a = Fake([decision(calls=[c]), decision(calls=[c]), decision('draft'), decision('final')])
+    executed = []
+    r = AgentLoop(a, lambda *args: executed.append(args) or dict(status='failed'), lambda s: None,
+                  AgentBudget(max_tool_calls=2)).run('q', 'r')
+    assert len(executed) == 2 and r['tool_attempts'] == 2
+    assert r['stop_reason'] == 'collection_budget'
