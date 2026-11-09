@@ -167,9 +167,12 @@ class AgentLoop:
         from .citation_policy import citation_records, invalid_references
         delivered_refs={}
         state['citation_validation']=dict(status='pending',available_records=[],attempts=[])
-        # Reserve space for a draft and review instruction; do not spend the
-        # entire input budget on evidence. Review has a second explicit check.
-        collection_limit=b.max_context_chars-min(b.max_context_chars//2,max(4096,b.max_output_tokens*8))
+        # Reserve 16,384 characters for closing output/instructions, independent
+        # of the token output limit. Keep half available for small test budgets.
+        # Any same-context review still has its own explicit size check.
+        context_reserve=min(b.max_context_chars//2,16384)
+        collection_limit=b.max_context_chars-context_reserve
+        state['collection_reserved_chars']=context_reserve
         state['context_events']=[]
         state['context_policy']='compact-exact-text-reuse-single-tool-v2'
         state['collection_context_limit']=collection_limit

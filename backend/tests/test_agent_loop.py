@@ -76,6 +76,20 @@ def test_large_draft_survives_when_review_cannot_fit():
     assert r['answer']=='d'*15000 and r['status']=='partial'
     assert r['review_status']=='skipped_context_budget' and len(a.requests)==1
 
+def test_large_evidence_can_continue_collection_with_16k_reserve():
+    first=ToolCall('a','search_literature',dict(query='q',reason='find'))
+    second=ToolCall('b','read_section',dict(document_id='d',section_id='s',reason='fill gap'))
+    a=Fake([decision(calls=[first]),decision(calls=[second]),decision('draft [1]'),decision('final [1]')])
+    executed=[]
+    def execute(request,*args):
+        executed.append(request)
+        return dict(status='completed',call_id=str(len(executed)),result=dict(evidence=[dict(ref='[1]',document_id='d',text='x'*100000)])) if len(executed)==1 else dict(status='completed',result={})
+    r=AgentLoop(a,execute,lambda s:None,AgentBudget(max_output_tokens=8192)).run('q','r')
+    assert len(executed)==2 and r['tool_calls'][0]['model_delivery']['status']=='delivered'
+    assert r['status']=='completed' and r['review_status']=='completed'
+    assert r['collection_reserved_chars']==16384
+    assert r['collection_context_limit']==143616 and r['collection_stop_threshold']==135616
+
 def test_failed_review_retains_draft():
     a=Fake([decision('draft'),Decision('cut',[],dict(role='assistant',content='cut'),None,'length')])
     r=AgentLoop(a,lambda *a:None,lambda s:None).run('q','r')
