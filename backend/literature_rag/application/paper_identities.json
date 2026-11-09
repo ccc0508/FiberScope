@@ -1,0 +1,140 @@
+{
+  "doc_0fcf2a50cfa02d21": {
+    "pdf_sha256": "0fcf2a50cfa02d214b53a8c2d40ed3f660a41b1c81b3fbea04120a81dc09d4d4",
+    "title": "Probing Effect of Papirindustriens Forskningsinstitut (PFI) Refining on Aggregation Structure of Cellulose: Crystal Packing and Hydrogen-Bonding Network",
+    "authors": [
+      "Kunpeng Li",
+      "Lihong Zhao",
+      "Beihai He"
+    ],
+    "year": 2020,
+    "label": "Li、Zhao与He（2020）",
+    "provenance": {
+      "source": "PDF title/citation page",
+      "page": 1,
+      "method": "manually_verified",
+      "year_basis": "publication/citation year, not received year or DOI year"
+    }
+  },
+  "doc_cec3e2f8b5abaa89": {
+    "pdf_sha256": "cec3e2f8b5abaa89bc7e660731bc343cd5d35b7be5ebc8e39c8f78e229c0f7aa",
+    "title": "Challenges in computational materials modelling and simulation: A case-study to predict tissue paper properties",
+    "authors": [
+      "Flávia P. Morais",
+      "Joana M.R. Curto"
+    ],
+    "year": 2022,
+    "label": "Morais与Curto（2022）",
+    "provenance": {
+      "source": "PDF title/citation page",
+      "page": 1,
+      "method": "manually_verified",
+      "year_basis": "publication/citation year, not received year or DOI year"
+    }
+  },
+  "doc_fc10c27084432887": {
+    "pdf_sha256": "fc10c2708443288753194dcd4d00b5182bea67a126fe33f230d6ffca2f07850c",
+    "title": "纸张三维结构的CLSM表征及纸张特性研究",
+    "authors": [
+      "李嘉庆",
+      "沈文浩",
+      "郭启"
+    ],
+    "year": 2020,
+    "label": "李嘉庆等（2020）",
+    "provenance": {
+      "source": "PDF title/citation page",
+      "page": 1,
+      "method": "manually_verified",
+      "year_basis": "publication/citation year, not received year or DOI year"
+    }
+  },
+  "doc_347aacf900c9ab36": {
+    "pdf_sha256": "347aacf900c9ab366e02c1c2320ae856bd090a9b8f1e961fe798802bc289de93",
+    "title": "Tensile strength estimation of paper sheets made from recycled wood and non-wood fibers using machine learning",
+    "authors": [
+      "Ming Li",
+      "Kaitang Hu",
+      "Suying Shao"
+    ],
+    "year": 2023,
+    "label": "Li、Hu与Shao（2023）",
+    "provenance": {
+      "source": "PDF title/citation page",
+      "page": 1,
+      "method": "manually_verified",
+      "year_basis": "publication/citation year, not received year or DOI year"
+    }
+  },
+  "doc_f499d471c51c051a": {
+    "pdf_sha256": "f499d471c51c051a2fb1419c80f49557ec8c477778a8197114964ce413915bd0",
+    "title": "Predicting tensile strength in fiber-reinforced composites using machine learning and deep learning models",
+    "authors": [
+      "Tesfa Guadie Ayaliew",
+      "Tibebu Alene Asresa",
+      "Melese Shiferaw Kebede",
+      "Fikadu Mequant Kidie"
+    ],
+    "year": 2026,
+    "label": "Ayaliew等（2026）",
+    "provenance": {
+      "source": "PDF title/citation page",
+      "page": 1,
+      "method": "manually_verified",
+      "year_basis": "publication/citation year, not received year or DOI year"
+    }
+  },
+  "doc_8234f8075c2e184f": {
+    "pdf_sha256": "8234f8075c2e184f7b34df5b6336578b325a510d7dc6a78cad42868f00f9be96",
+    "title": "Effect of fibre-quality parameters on pulp properties by using multiple linear regression and artificial neural network",
+    "authors": [
+      "Mohammad Nashir Uddin",
+      "Md. Nur Alam Likhon",
+      "Md. Mostafizur Rahman",
+      "Md. Sarwar Jahan"
+    ],
+    "year": 2024,
+    "label": "Uddin等（2024）",
+    "provenance": {
+      "source": "PDF title/citation page",
+      "page": 1,
+      "method": "manually_verified",
+      "year_basis": "publication/citation year, not received year or DOI year"
+    }
+  },
+  "doc_99f8d919ba6bf8bc": {
+    "pdf_sha256": "99f8d919ba6bf8bc293dcf969169305e73e575771694b6be198768895e45ecdc",
+    "title": "Assessing cellulose micro/nanofibre morphology using a high throughput fibre analysis device to predict nanopaper performance",
+    "authors": [
+      "Jordan Pennells",
+      "Bérénice Heuberger",
+      "Céline Chaléat",
+      "Darren J. Martin"
+    ],
+    "year": 2022,
+    "label": "Pennells等（2022）",
+    "provenance": {
+      "source": "PDF title/citation page",
+      "page": 1,
+      "method": "manually_verified",
+      "year_basis": "publication/citation year, not received year or DOI year"
+    }
+  },
+  "doc_95f63c52fdb78ea6": {
+    "pdf_sha256": "95f63c52fdb78ea6acad05b2b2bf3b2d3493679ac8834afd603a00f86485b735",
+    "title": "Mechanisms of strength and stiffness improvement of paper after PFI refining with a focus on the effect of fines",
+    "authors": [
+      "Hamid Reza Motamedian",
+      "Armin E. Halilovic",
+      "Artem Kulachenko"
+    ],
+    "year": 2019,
+    "label": "Motamedian等（2019）",
+    "provenance": {
+      "source": "PDF title/citation page",
+      "page": 1,
+      "method": "manually_verified",
+      "year_basis": "publication/citation year, not received year or DOI year"
+    }
+  }
+}
