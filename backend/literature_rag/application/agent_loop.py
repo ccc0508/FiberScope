@@ -141,7 +141,7 @@ class AgentBudget:
 
 class AgentLoop:
     def __init__(self,adapter,executor,checkpoint,budget=None,clock=monotonic,paper_directory=None,
-                 allowed_tools=None,system_prompt=None,review_enabled=True,output_schema=None,completion_check=None):
+                 allowed_tools=None,system_prompt=None,review_enabled=True,output_schema=None,completion_check=None,coverage_priority=None):
         self.adapter,self.executor,self.checkpoint=adapter,executor,checkpoint
         self.budget=budget or AgentBudget();self.clock=clock
         self.paper_directory=deepcopy(paper_directory)
@@ -150,6 +150,7 @@ class AgentLoop:
         self.review_enabled=review_enabled
         self.output_schema=output_schema
         self.completion_check=completion_check
+        self.coverage_priority=coverage_priority
 
     def run(self,question,run_id):
         b=self.budget;deadline=self.clock()+b.total_seconds
@@ -213,6 +214,7 @@ class AgentLoop:
                 schemas={name:schema for name,schema in SCHEMAS.items()
                     if name in self.allowed_tools and (name!='search_literature' or search_count<b.max_search_calls)
                     and (name!='find_documents' or self.paper_directory is None)}
+                if self.coverage_priority:schemas=self.coverage_priority.schemas(schemas)
                 d=model('decide',schemas);messages.append(d.message)
                 if not d.calls:
                     if not d.text.strip():raise ValueError('Empty draft')
@@ -227,15 +229,22 @@ class AgentLoop:
                 stop_collection=False
                 for call_index,c in enumerate(d.calls):
                     request=dict(c.arguments,tool=c.name)
+                    schedule=None
+                    if self.coverage_priority and call_index==0:
+                        request,schedule=self.coverage_priority.prepare(request,state)
                     # Reason text does not turn a repeated operation into a new operation.
                     semantic=json.dumps({k:v for k,v in request.items() if k!='reason'},sort_keys=True)
                     event=dict(provider_call_id=c.id,request=request,status='started');state['tool_calls'].append(event)
+                    if schedule:event['coverage_schedule']=schedule
                     if c.name not in self.allowed_tools:
                         result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
                     elif c.name=='find_documents' and self.paper_directory is not None:
                         result=dict(status='blocked',error_code='directory_already_provided',notice='Use the complete paper directory supplied at the start; no directory tool call is needed.')
                     elif call_index>0:
                         result=dict(status='blocked',error_code='one_tool_per_turn',notice='Only the first tool request may execute. Reassess its result before requesting another.')
+                    elif schedule and schedule['blocked']:
+                        result=dict(status='blocked',error_code='prioritize_uncovered_requirements',
+                            notice='Another requested paper has no delivered source evidence, or these targets are already covered. Target an uncovered paper/fact before deepening this one, or explain a specific essential contradiction in revisit_reason.')
                     elif size(messages+image_messages)>=stop_threshold:
                         result=dict(status='blocked',error_code='context_budget')
                         state['stop_reason']='context_budget';stop_collection=True
@@ -255,6 +264,7 @@ class AgentLoop:
                     event.update(status=result['status'],result={k:v for k,v in result.items() if k!='image'});save()
                     trial=deepcopy(projection)
                     compact=trial.project(result)
+                    if self.coverage_priority:compact['coverage_priority']=self.coverage_priority.snapshot(state)
                     records=citation_records(c.name,result)
                     compact['citation_policy']=dict(records=records,
                         notice='Only these explicit refs may be cited. No records means this call adds no citable evidence. Never infer refs from call order or numbers in source text.')

@@ -11,6 +11,7 @@ from .citation_policy import citation_records, invalid_references
 from .agent_context import EvidenceProjection
 from .task_coverage import Requirement, CoverageItem, ground_requirements, coverage_report, completion_feedback
 from .paper_directory import routing_catalog, routing_catalog_prompt
+from .coverage_priority import CoveragePriority, INSTRUCTIONS as COVERAGE_PRIORITY_INSTRUCTIONS
 
 SQL_TOOLS={'describe_experiment_data','query_experiment_data','calculate_change'}
 PAPER_TOOLS=set(SCHEMAS)-{'describe_experiment_data','query_experiment_data'}
@@ -175,7 +176,7 @@ class SpecialistCoordinator:
     def run(self,question,run_id):
         b=self.budget;deadline=self.clock()+b.total_seconds
         state=dict(run_id=run_id,question=question,status='running',answer='',draft='',model_calls=[],tool_calls=[],
-            children=[],plan=None,format_checks=[],review_status='not_started',stop_reason=None,pipeline_version='specialists-v5-evidence-checks',
+            children=[],plan=None,format_checks=[],review_status='not_started',stop_reason=None,pipeline_version='specialists-v6-coverage-priority',
             citation_validation=dict(status='pending',available_records=[],attempts=[]))
         counters=dict(model=0,tools=0,search=0)
         def save():
@@ -297,13 +298,14 @@ class SpecialistCoordinator:
                         event.update(status=result['status'],result={k:v for k,v in result.items() if k!='image'});save()
                         return result
                     def checkpoint(s):child['trace']=deepcopy(s);save()
+                    priority=CoveragePriority(assigned) if name=='literature' and assigned else None
                     result=AgentLoop(Adapter(),execute,checkpoint,
                         AgentBudget(max_model_calls=quota,max_tool_calls=tool_quota,total_seconds=min(600,seconds),
                             reserve_seconds=min(15,seconds/3),max_context_chars=b.max_context_chars,max_output_tokens=b.max_output_tokens),
                         clock=self.clock,paper_directory=self.paper_directory if name=='literature' else None,
-                        allowed_tools=allowed,system_prompt=SQL_PROMPT if name=='sql' else PAPER_PROMPT+PAPER_COVERAGE+PAPER_EVIDENCE_CHECKS+EVIDENCE_OUTPUT_RULES,review_enabled=False,
+                        allowed_tools=allowed,system_prompt=SQL_PROMPT if name=='sql' else PAPER_PROMPT+PAPER_COVERAGE+PAPER_EVIDENCE_CHECKS+EVIDENCE_OUTPUT_RULES+(COVERAGE_PRIORITY_INSTRUCTIONS if priority else ''),review_enabled=False,
                         output_schema=SpecialistResult.model_json_schema(),
-                        completion_check=completion_feedback(assigned) if assigned else None).run(
+                        completion_check=completion_feedback(assigned) if assigned else None,coverage_priority=priority).run(
                             'Original user question: '+question+'\nAssigned task: '+task,run_id)
                     child['status']=result['status']
                     if result['status']!='completed':raise ValueError('Incomplete specialist')
