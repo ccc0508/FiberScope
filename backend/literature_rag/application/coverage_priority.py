@@ -27,7 +27,7 @@ class CoveragePriority:
         item=dict(type='object',additionalProperties=False,properties={
             'requirement_id':{'type':'string'},
             'status':{'type':'string','enum':['verified','partial','missing','not_attempted']},
-            'document_id':{'type':'string'},'refs':{'type':'array','items':{'type':'string'},'maxItems':12},
+            'document_id':{'type':'string'},'refs':{'type':'array','items':{'type':'string'}},
             'finding':{'type':'string','maxLength':800},'gap':{'type':'string','maxLength':800}},
             required=['requirement_id','status','document_id','refs','finding','gap'])
         for schema in out.values():

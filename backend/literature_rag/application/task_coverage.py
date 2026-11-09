@@ -15,7 +15,7 @@ class EvidenceCheck(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)
     aspect: Literal['study_object', 'data_origin', 'validation', 'sample_scope', 'author_explanation', 'measurement_limits', 'confounders', 'numeric_range', 'consistency']
     status: Literal['verified', 'partial', 'missing']
-    refs: list[str] = Field(default_factory=list, max_length=12)
+    refs: list[str] = Field(default_factory=list)
     finding: str = Field(default='', max_length=800)
     gap: str = Field(default='', max_length=800)
 
@@ -25,7 +25,7 @@ class CoverageItem(BaseModel):
     requirement_id: str
     status: Literal['verified', 'partial', 'missing', 'not_attempted', 'needs_clarification']
     document_id: str = ''
-    refs: list[str] = Field(default_factory=list, max_length=12)
+    refs: list[str] = Field(default_factory=list)
     finding: str = Field(default='', max_length=800)
     gap: str = Field(default='', max_length=800)
     checks: list[EvidenceCheck] = Field(default_factory=list, max_length=12)
