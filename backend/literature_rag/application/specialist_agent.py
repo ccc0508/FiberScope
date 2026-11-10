@@ -201,12 +201,15 @@ class SpecialistCoordinator:
             if counters['model']>=b.max_model_calls-reserve or self.clock()>=deadline:raise BudgetExhausted()
             if len(json.dumps(trace_messages(messages),ensure_ascii=False))>b.max_context_chars:raise BudgetExhausted('context')
             counters['model']+=1
-            entry=dict(stage=stage,status='started',input_messages=trace_messages(messages),available_tools=list(schemas),usage=None)
+            max_output_tokens = (b.synthesis_max_output_tokens if stage in {'synthesis_review', 'citation_repair'}
+                                 else b.max_output_tokens)
+            entry=dict(stage=stage,status='started',input_messages=trace_messages(messages),available_tools=list(schemas),
+                       usage=None,max_output_tokens=max_output_tokens)
             state['model_calls'].append(entry);save()
             try:
                 timeout=max(.01,deadline-self.clock())
                 if timeout_limit is not None:timeout=min(timeout,timeout_limit)
-                d=self.adapter.decide(messages,schemas,timeout,b.max_output_tokens)
+                d=self.adapter.decide(messages,schemas,timeout,max_output_tokens)
                 entry.update(status='completed',text=d.text,usage=d.usage,finish_reason=d.finish_reason,
                     raw_message=deepcopy(d.message),
                     calls=[dict(id=c.id,name=c.name,arguments=c.arguments) for c in d.calls])

@@ -130,12 +130,14 @@ class AgentBudget:
     reserve_seconds: float=45
     max_output_tokens: int=8192
     max_context_chars: int=160000
+    synthesis_max_output_tokens: int=16384
 
     def __post_init__(self):
         if not (3<=self.max_model_calls<=20 and 1<=self.max_tool_calls<=20 and
                 1<=self.max_search_calls<=2 and
                 30<=self.total_seconds<=600 and 5<=self.reserve_seconds<self.total_seconds and
-                1024<=self.max_output_tokens<=65536 and 1000<=self.max_context_chars<=500000):
+                1024<=self.max_output_tokens<=65536 and 1000<=self.max_context_chars<=500000 and
+                1024<=self.synthesis_max_output_tokens<=65536):
             raise ValueError('Invalid agent budget')
 
 

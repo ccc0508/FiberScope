@@ -6,8 +6,9 @@ from literature_rag.adapters.providers.agent_chat import Decision,ToolCall,ChatA
 
 class Fake:
     tool_messages=staticmethod(ChatAgentAdapter.tool_messages)
-    def __init__(self,decisions):self.decisions=iter(decisions);self.requests=[]
+    def __init__(self,decisions):self.decisions=iter(decisions);self.requests=[];self.output_limits=[]
     def decide(self,messages,schemas,timeout,max_tokens):
+        self.output_limits.append(max_tokens)
         self.requests.append((messages,schemas,timeout));return next(self.decisions)
 
 
@@ -77,6 +78,7 @@ def test_invalid_parent_reference_repaired_with_shared_budget():
     r=SpecialistCoordinator(a,lambda *a:dict(status='completed',result=dict(ref='[1]',rows=[[61]])),lambda s:None).run('q','r')
     assert r['status']=='completed' and r['citation_validation']['status']=='repaired'
     assert r['budget_usage']['model']==5
+    assert a.output_limits==[8192,8192,8192,16384,16384]
 
 
 def test_bad_route_or_child_json_fails_without_replanning():
