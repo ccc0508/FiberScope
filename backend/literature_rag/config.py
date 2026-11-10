@@ -133,9 +133,9 @@ class Settings(BaseSettings):
             raise ValueError("chunk_overlap must be smaller than chunk_size")
         if self.corrective_review_enabled and not (self.evidence_review_enabled and self.rerank_enabled):
             raise ValueError('corrective review requires evidence review and reranking')
-        if self.evidence_review_enabled and (self.llm_provider!='deepseek' or self.llm_model!='deepseek-flash'
+        if self.evidence_review_enabled and (self.llm_provider!='deepseek' or self.llm_model not in {'deepseek-flash', 'deepseek-v4-pro'}
                 or not self.llm_api_key or not self.llm_api_key.get_secret_value().strip()):
-            raise ValueError('evidence review requires configured DeepSeek Flash credentials')
+            raise ValueError('evidence review requires DeepSeek Flash or Pro and configured credentials')
         if self.embedding_provider == 'dashscope':
             if self.embedding_model != 'qwen3-vl-embedding' or self.embedding_dimensions not in {256,512,768,1024,1536,2048,2560}:
                 raise ValueError('DashScope requires qwen3-vl-embedding with a supported dimension')
