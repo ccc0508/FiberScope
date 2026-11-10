@@ -1,15 +1,27 @@
 """Twenty fresh independent mixed regression attempts; preserve all prior runs."""
 from concurrent.futures import ThreadPoolExecutor
-import json, subprocess, sys, time
+import argparse, json, re, subprocess, sys, time
 from hashlib import sha256
 from run_specialists_three_suites import ROOT,OUT as BASE,LIB,runtime,db_snapshot,write,ToolTraceStore
-OUT=BASE/'mixed-full-v7-20261109'
+DEFAULT_RUN='mixed-full-v7-20261109'
+
+def runtime_snapshot():
+    snapshot=runtime()
+    for filename in ('application/routing_catalog.json','application/paper_identities.json','state_io.py'):
+        path=ROOT/'backend/literature_rag'/filename
+        snapshot[str(path.relative_to(ROOT))]=sha256(path.read_bytes()).hexdigest()
+    return snapshot
+
 def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--run', required=True)
+    args=parser.parse_args()
+    if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,79}',args.run) or args.run==DEFAULT_RUN:
+        parser.error('Provide a new run ID; the original baseline is frozen.')
+    OUT=BASE/args.run
     manifest=json.loads((BASE/'manifest.json').read_text('utf8'))
-    current_runtime=runtime()
-    current_runtime['routing_catalog_sha256']=sha256((ROOT/'backend/literature_rag/application/routing_catalog.json').read_bytes()).hexdigest()
-    current_runtime['state_io_sha256']=sha256((ROOT/'backend/literature_rag/state_io.py').read_bytes()).hexdigest()
-    original=BASE
+    current_runtime=runtime_snapshot()
+    original=BASE/DEFAULT_RUN
     original_hashes={p.name:sha256(p.read_bytes()).hexdigest() for p in original.glob('MIX*.json')}
     assert db_snapshot()==manifest['database'],'Database changed'
     assert sha256((LIB/'metadata.sqlite3').read_bytes()).hexdigest()==manifest['metadata_hash']
@@ -23,7 +35,7 @@ def main():
     write(OUT/'sql-references.json',json.loads((BASE/'sql-references.json').read_text('utf8')))
     write(OUT/'rubric.json',json.loads((ROOT/'data/mixed-agent-evaluation/rubric-v1.json').read_text('utf8')))
     def one(c):
-        target=OUT/(c['id']+'.json');rid='mixed-full-v7-20261109-'+c['id']
+        target=OUT/(c['id']+'.json');rid=args.run+'-'+c['id']
         if target.exists():return json.loads(target.read_text('utf8'))
         statepath=ROOT/'.rag-data/agent-runs'/rid/'state.json'
         assert not statepath.parent.exists(),'Inspect interrupted attempt before resuming'
@@ -38,5 +50,5 @@ def main():
         write(target,x);return x
     with ThreadPoolExecutor(max_workers=2) as pool:
         for x in pool.map(one,cases):print(json.dumps(dict(id=x['case_id'],status=x['status'],reason=x.get('stop_reason'),formats=[dict(stage=f['stage'],status=f['status']) for f in x.get('format_checks',[])]),ensure_ascii=False),flush=True)
-    write(OUT/'integrity.json',dict(runtime_unchanged=dict(runtime(),routing_catalog_sha256=sha256((ROOT/'backend/literature_rag/application/routing_catalog.json').read_bytes()).hexdigest(),state_io_sha256=sha256((ROOT/'backend/literature_rag/state_io.py').read_bytes()).hexdigest())==current_runtime,original_answers_unchanged=all(sha256((original/name).read_bytes()).hexdigest()==digest for name,digest in original_hashes.items()),database_unchanged=db_snapshot()==manifest['database'],metadata_unchanged=sha256((LIB/'metadata.sqlite3').read_bytes()).hexdigest()==manifest['metadata_hash']))
+    write(OUT/'integrity.json',dict(runtime_unchanged=runtime_snapshot()==current_runtime,original_answers_unchanged=all(sha256((original/name).read_bytes()).hexdigest()==digest for name,digest in original_hashes.items()),database_unchanged=db_snapshot()==manifest['database'],metadata_unchanged=sha256((LIB/'metadata.sqlite3').read_bytes()).hexdigest()==manifest['metadata_hash']))
 if __name__=='__main__':main()

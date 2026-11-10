@@ -1,14 +1,19 @@
 """Publish mixed rubric-v1: raw Jev decisions, calibrated dimensions and full answers."""
-import json,html,hashlib,statistics
+import argparse,json,html,hashlib,re,statistics
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-BASE=ROOT/'.rag-data/evaluations/specialists-three-suites-20261107/mixed-full-v7-20261109'
-OUT=ROOT/'data/mixed-agent-evaluation/reports/mixed-full-v7-20261109'
+DEFAULT_RUN='mixed-full-v7-20261109'
 def read(p):return json.loads(p.read_text('utf8'))
 def write(p,x):p.write_text(json.dumps(x,ensure_ascii=False,indent=2),encoding='utf8')
 def main():
+ parser=argparse.ArgumentParser(description=__doc__)
+ parser.add_argument('--run',default=DEFAULT_RUN)
+ args=parser.parse_args()
+ if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,79}',args.run):parser.error('Invalid run ID')
+ BASE=ROOT/'.rag-data/evaluations/specialists-three-suites-20261107'/args.run
+ OUT=ROOT/'data/mixed-agent-evaluation/reports'/args.run
  OUT.mkdir(parents=True,exist_ok=True)
- rubric=read(ROOT/'data/mixed-agent-evaluation/rubric-v1.json');notes=read(ROOT/'data/mixed-agent-evaluation/calibration-mixed-full-v7-20261109.json');selection={c['id']:str((BASE/(c['id']+'.json')).relative_to(ROOT)) for c in read(BASE/'cases.json')}
+ rubric=read(BASE/'rubric.json');notes=read(ROOT/'data/mixed-agent-evaluation'/f'calibration-{args.run}.json');selection={c['id']:str((BASE/(c['id']+'.json')).relative_to(ROOT)) for c in read(BASE/'cases.json')}
  rows=[];cost=0;unknown=0
  for case in read(BASE/'cases.json'):
   if case['suite']!='mixed':continue
@@ -24,11 +29,16 @@ def main():
  summary['integrity']=read(BASE/'integrity.json')
  old={r['id']:r for r in read(ROOT/'data/mixed-agent-evaluation/reports/grounded-coverage-full-20261108/results.json')}
  old.update({r['id']:r for r in read(ROOT/'data/mixed-agent-evaluation/reports/state-retry-20261108/retry-results.json')})
+ if args.run!=DEFAULT_RUN:
+  old={r['id']:r for r in read(OUT.parent/DEFAULT_RUN/'results.json')}
+  summary['limitations'][1]='Fresh twenty-case first-attempt run compared with the previous full run. Failures count zero. This is a single run on the same development set.'
+  summary['comparison_run']=DEFAULT_RUN
  summary['previous_mean']=sum(old[r['id']]['total'] for r in rows)/len(rows)
  summary['delta']=summary['calibrated_mean']-summary['previous_mean']
  successful=[r for r in rows if r['status']=='completed']
  summary['completed_subset']={'count':len(successful),'current_mean':statistics.mean(r['total'] for r in successful),'previous_same_cases_mean':statistics.mean(old[r['id']]['total'] for r in successful)}
  summary['unfinished_cases']=[{'id':r['id'],'saved_status':r['status'],'worker_returncode':read(BASE/(r['id']+'.json')).get('worker_returncode'),'stop_reason':read(BASE/(r['id']+'.json')).get('stop_reason')} for r in rows if r['status']!='completed']
+ summary['incomplete_deliveries']=[dict(id=r['id'],saved_status=r['status'],reason=r['final']['delivery_issue']) for r in rows if r['final'].get('delivery_issue')]
  summary['paired']=[dict(id=r['id'],before=old[r['id']]['total'],after=r['total'],delta=r['total']-old[r['id']]['total']) for r in rows]
  summary['first_attempt_completed']=sum(read(BASE/(r['id']+'.json'))['status']=='completed' for r in rows)
  summary['first_attempt_mean']=summary['calibrated_mean']
@@ -54,6 +64,9 @@ def main():
  (OUT/'report.html').write_text(page,encoding='utf8')
  lines=['# 当前v7：全量20题评分 v1','',f"Jev初评均分：{summary['raw_jev_mean']:.2f}；校准后：{summary['calibrated_mean']:.2f}（{summary['score_sum']}/2000）。",'', '每题实验数据30、文献证据30、综合判断20、引用追溯10、边界诚实10分。按0/25/50/75/100%五档评分。第20题正确澄清后暂停文献为允许行为，不扣未检索。诚实缺口扣内容完整性，不重复扣诚实性。','', '| 题号 | Jev | 校准 |','|---|---:|---:|']
  for r in rows:lines.append(f"| {r['id']} | {r['raw_jev']['total']} | {r['total']} |")
- lines+=['',f"上轮校准均分：{summary['previous_mean']:.2f}；本轮变化：{summary['delta']:+.2f}。首轮完成{summary['first_attempt_completed']}/20；本轮完成{summary['completed']}/20。",'','本标准建立于已有答案之后，属于开发集试行口径；不是预注册验证或独立专家评分。今后修改须升级版本、全量重评。文献要点分与本评分不是相同维度，不机械合成70题统一准确率。完整扣分原因及答案见report.html。']
+ lines+=['',f"上轮校准均分：{summary['previous_mean']:.2f}；本轮变化：{summary['delta']:+.2f}。程序记录完成{summary['completed']}/20。"]
+ for item in summary['incomplete_deliveries']:
+  lines.append(f"- {item['id']} 实际交付不完整。{item['reason']}")
+ lines+=['','本标准建立于已有答案之后，属于开发集试行口径；不是预注册验证或独立专家评分。今后修改须升级版本、全量重评。文献要点分与本评分不是相同维度，不机械合成70题统一准确率。完整扣分原因及答案见report.html。']
  (OUT/'README.md').write_text('\n'.join(lines)+'\n',encoding='utf8');print(json.dumps(summary,ensure_ascii=False))
 if __name__=='__main__':main()
