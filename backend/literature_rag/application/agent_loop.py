@@ -146,6 +146,9 @@ class AgentLoop:
         self.budget=budget or AgentBudget();self.clock=clock
         self.paper_directory=deepcopy(paper_directory)
         self.allowed_tools=set(SCHEMAS) if allowed_tools is None else set(allowed_tools)
+        self.image_input_unavailable = 'view_image' in self.allowed_tools and not getattr(adapter, 'supports_image_input', True)
+        if self.image_input_unavailable:
+            self.allowed_tools.remove('view_image')
         self.system_prompt=system_prompt
         self.review_enabled=review_enabled
         self.output_schema=output_schema
@@ -157,6 +160,8 @@ class AgentLoop:
         state=dict(run_id=run_id,question=question,status='running',model_calls=[],tool_calls=[],
             answer='',draft='',stop_reason=None,review_status='not_started',review_version=REVIEW_VERSION)
         messages=[dict(role='system',content=(self.system_prompt or PROMPT)+f'\nYou may execute search_literature at most {b.max_search_calls} times per question, including failed searches. After that use acquired evidence or other available reading/calculation tools; state unresolved gaps.'),dict(role='user',content=question)]
+        if self.image_input_unavailable:
+            messages[0]['content'] += '\nThe active model accepts text only. The view_image tool is unavailable. If the question requires direct figure inspection, disclose this limitation. Use relevant text, tables or captions with their citations and never claim to have inspected image pixels.'
         if self.paper_directory is not None:
             state['paper_directory']=self.paper_directory
             state['directory_policy']='provided-at-start-v1'

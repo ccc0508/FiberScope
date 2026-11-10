@@ -27,6 +27,10 @@ class ChatAgentAdapter:
         self.client=client or OpenAI(api_key=settings.llm_api_key.get_secret_value(),
             base_url=settings.llm_base_url,max_retries=0)
 
+    @property
+    def supports_image_input(self) -> bool:
+        return not (self.settings.llm_provider == 'deepseek' and self.settings.llm_model == 'deepseek-v4-pro')
+
     def decide(self,messages,schemas,timeout,max_tokens):
         tools=[]
         for name,schema in schemas.items():

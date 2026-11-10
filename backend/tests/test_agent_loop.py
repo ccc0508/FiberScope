@@ -32,6 +32,18 @@ def test_directory_provided_without_tool_call():
     assert 'search_literature' in a.requests[0][1]
 
 
+def test_text_only_model_cannot_request_pixels():
+    image_call = ToolCall('image', 'view_image', dict(document_id='doc_123', asset_id='img_123', reason='read figure'))
+    adapter = Fake([decision(calls=[image_call]), decision('Only the caption is available.'), decision('Only the caption is available.')])
+    adapter.supports_image_input = False
+    executed = []
+    result = AgentLoop(adapter, lambda *args: executed.append(args), lambda state: None).run('Read the figure', 'r')
+    assert not executed
+    assert 'view_image' not in adapter.requests[0][1]
+    assert 'read_section' in adapter.requests[0][1]
+    assert result['tool_calls'][0]['result']['error_code'] == 'tool_not_allowed'
+
+
 def test_directory_redundant_call_not_executed():
     a=Fake([decision(calls=[ToolCall('a','find_documents',dict(reason='list'))]),decision('draft'),decision('final')])
     r=AgentLoop(a,lambda *args:(_ for _ in ()).throw(AssertionError()),lambda s:None,paper_directory=[]).run('q','r')
