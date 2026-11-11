@@ -58,12 +58,10 @@ def test_all_owners_visible_after_cookie_clear_and_service_restart(configured, m
         b = finished(second, second.post(BASE+'/ask', json={'question':'第二位访问者的问题', 'request_id':key}).json()['id'])
         assert a['id'] != b['id']
         assert first.get(BASE+'/history').json()['pagination']['total'] == 2
-        assert second.get(BASE+'/history/'+a['id']).json()['can_feedback'] is False
-        assert first.post(BASE+'/history/'+a['id']+'/feedback', json={'rating':'helpful'}).status_code == 200
+        assert second.get(BASE+'/history/'+a['id']).json()['result'] == a['result']
         first.cookies.clear()
         shared = first.get(BASE+'/history/'+a['id']).json()
-        assert shared['feedback']['rating'] == 'helpful' and not shared['can_feedback']
-        assert first.post(BASE+'/history/'+a['id']+'/feedback', json={'rating':'inaccurate'}).status_code == 403
+        assert shared['result'] == a['result'] and 'can_feedback' not in shared
         assert len(first.get(BASE+'/history/export').text.splitlines()) == 2
     restarted = FastAPI()
     restarted.include_router(literature.router(configured))
@@ -74,7 +72,7 @@ def test_all_owners_visible_after_cookie_clear_and_service_restart(configured, m
         assert fresh.get(BASE+'/history/missing').status_code == 404
 
 
-def test_public_history_export_with_session_owned_feedback(configured, monkeypatch):
+def test_public_history_exports_legacy_feedback_but_rejects_new_submissions(configured, monkeypatch):
     monkeypatch.setattr(literature, 'run_answer', lambda *a: json.loads(json.dumps(RESULT)))
     owner = client_for(configured)
     response = owner.get(BASE + '/history')
@@ -85,21 +83,24 @@ def test_public_history_export_with_session_owned_feedback(configured, monkeypat
     record_id = record['id']
     assert record['result']['retrieved_evidence'] == RESULT['retrieved_evidence']
     assert 'owner_id' not in record and 'request_key' not in record
-    assert record['can_feedback'] is True
+    assert 'can_feedback' not in record
     app = owner.app
     with TestClient(app) as stranger:
         assert stranger.get(BASE + '/history').json()['pagination']['total'] == 1
         public = stranger.get(BASE + '/history/' + record_id).json()
-        assert public['result'] == record['result'] and public['can_feedback'] is False
-        assert stranger.post(BASE + '/history/' + record_id + '/feedback', json={'rating': 'helpful'}).status_code == 403
+        assert public['result'] == record['result'] and 'can_feedback' not in public
+        assert stranger.post(BASE + '/history/' + record_id + '/feedback', json={'rating': 'helpful'}).status_code == 404
         assert json.loads(stranger.get(BASE + '/history/export').text)['id'] == record_id
         stranger.cookies.set('fiber_qa_session', 'invented-token', path='/api/v1/literature')
-        assert stranger.get(BASE + '/history/' + record_id).json()['can_feedback'] is False
-    # Original owner continues to work after another browser disconnects.
-    feedback = {'rating': 'inaccurate', 'tags': ['unsupported_citation'], 'note': '原文不支持该结论'}
-    assert owner.post(BASE + '/history/' + record_id + '/feedback', json=feedback).status_code == 200
-    assert owner.get(BASE + '/history/' + record_id).json()['feedback']['note'] == feedback['note']
-    assert owner.post(BASE + '/history/' + record_id + '/feedback', json={'rating': 'helpful', 'tags': [], 'note': '已核对'}).status_code == 200
+        assert stranger.get(BASE + '/history/' + record_id).json()['result'] == record['result']
+    # Records written before feedback removal remain readable and exportable.
+    store = HistoryStore(configured.root / 'qa_history.sqlite3')
+    owner_id, _ = store.session(owner.cookies.get('fiber_qa_session'))
+    store.feedback(owner_id, record_id, 'helpful', [], '已核对')
+    assert owner.get(BASE + '/history/' + record_id).json()['feedback']['note'] == '已核对'
+    assert owner.post(BASE + '/history/' + record_id + '/feedback', json={'rating': 'inaccurate'}).status_code == 404
+    assert owner.get(BASE + '/history/' + record_id).json()['feedback']['rating'] == 'helpful'
+    assert all(not path.endswith('/feedback') for path in owner.app.openapi()['paths'])
     response = owner.get(BASE + '/history/export')
     assert response.headers['cache-control'] == 'no-store'
     assert response.headers['content-type'].startswith('application/x-ndjson')
@@ -133,9 +134,7 @@ def test_idempotency_in_progress_after_completion_and_origin(configured, monkeyp
         assert duplicate.status_code == 202 and duplicate.json()['id'] == record_id
         assert client.post(BASE + '/ask', json={**payload, 'question': '不同问题'}).status_code == 409
         assert client.post(BASE + '/ask', json={'question': '另一个问题'}).status_code == 429
-        assert client.post(BASE + '/history/' + record_id + '/feedback', json={'rating': 'helpful'}).status_code == 409
-        for path, body in [(BASE + '/ask', payload), (BASE + '/history/' + record_id + '/feedback', {'rating': 'helpful'})]:
-            assert client.post(path, json=body, headers={'Origin': 'https://evil.example'}).status_code == 403
+        assert client.post(BASE + '/ask', json=payload, headers={'Origin': 'https://evil.example'}).status_code == 403
     finally:
         release.set()
     finished(client, record_id)
@@ -216,7 +215,7 @@ def test_save_failure_is_explicit_to_all_visitors(configured, monkeypatch):
     assert stranger.get(BASE + '/history/' + record_id).status_code == 503
 
 
-def test_recovery_pagination_literal_search_and_feedback_validation(configured):
+def test_recovery_pagination_and_literal_search(configured):
     store = HistoryStore(configured.root / 'qa_history.sqlite3')
     store.initialize()
     owner, token = store.session(None)
@@ -233,10 +232,6 @@ def test_recovery_pagination_literal_search_and_feedback_validation(configured):
     page2 = client.get(BASE + '/history', params={'page_size': 3, 'page': 2}).json()
     assert page1['pagination']['total'] == 7 and page1['pagination']['total_pages'] == 3
     assert set(x['id'] for x in page1['data']).isdisjoint(x['id'] for x in page2['data'])
-    for payload in [{'rating': 'wrong'}, {'rating': 'helpful', 'tags': ['numeric_error']},
-                    {'rating': 'inaccurate', 'tags': ['numeric_error', 'numeric_error']},
-                    {'rating': 'inaccurate', 'tags': ['unknown']}, {'rating': 'helpful', 'note': 'x' * 2001}]:
-        assert client.post(BASE + '/history/' + record['id'] + '/feedback', json=payload).status_code == 422
 
 
 def test_single_process_lock_prevents_false_recovery(configured, monkeypatch):

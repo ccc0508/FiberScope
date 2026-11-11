@@ -1,4 +1,4 @@
-"""Durable public question records, with session-owned feedback and submissions."""
+"""Durable public question records with session-owned submissions and legacy feedback."""
 from __future__ import annotations
 
 from contextlib import contextmanager
@@ -115,7 +115,6 @@ class HistoryStore:
             if not row:
                 return None
             item = self.decode(row)
-            item['can_feedback'] = row['owner_id'] == owner
             feedback = conn.execute('SELECT rating,tags_json,note,updated_at FROM feedback WHERE question_id=?', (record_id,)).fetchone()
             if feedback:
                 item['feedback'] = dict(feedback)
