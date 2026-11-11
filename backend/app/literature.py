@@ -90,7 +90,8 @@ def pdf_path(config: LiteratureSettings, document_id: str):
         row = conn.execute("SELECT file_path,filename FROM documents WHERE id=? AND status='completed'", (document_id,)).fetchone()
     if row is None:
         raise HTTPException(404, '没有找到这篇文献。')
-    path = Path(row['file_path'])
+    # Imported libraries may retain Windows separators after migration to Linux.
+    path = Path(row['file_path'].replace('\\', '/'))
     if not path.is_absolute():
         path = config.library_root / path
     path = path.resolve()
