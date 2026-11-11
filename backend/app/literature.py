@@ -18,7 +18,7 @@ from urllib.parse import urlsplit
 
 from fastapi import APIRouter, HTTPException, Request, Response, Query
 from fastapi.responses import FileResponse, StreamingResponse
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from filelock import FileLock, Timeout as LockTimeout
 from .qa_history import HistoryStore
@@ -51,19 +51,6 @@ class Question(BaseModel):
     model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
     question: str = Field(min_length=2, max_length=2000)
     request_id: UUID = Field(default_factory=uuid4)
-
-
-class Feedback(BaseModel):
-    model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
-    rating: Literal['helpful', 'inaccurate']
-    tags: list[Literal['numeric_error', 'unsupported_citation', 'irrelevant', 'incomplete', 'wrong_refusal']] = Field(default_factory=list, max_length=5)
-    note: str = Field(default='', max_length=2000)
-
-    @model_validator(mode='after')
-    def validate_tags(self):
-        if len(set(self.tags)) != len(self.tags) or (self.rating == 'helpful' and self.tags):
-            raise ValueError('评价标签无效')
-        return self
 
 
 @contextmanager
@@ -311,7 +298,6 @@ def router(config: LiteratureSettings | None = None, allowed_origins: list[str] 
         except (sqlite3.Error, OSError):
             raise HTTPException(503, '问答保存失败，请稍后重试。') from None
         response.status_code = 202 if record['status'] == 'processing' else 200
-        record['can_feedback'] = True
         return record
 
     @routes.get('/history')
@@ -335,19 +321,6 @@ def router(config: LiteratureSettings | None = None, allowed_origins: list[str] 
         owner = runner.session(request, response)
         with step('qa.read_history', record_id=record_id):
             return detail(owner, record_id)
-
-    @routes.post('/history/{record_id}/feedback')
-    def feedback(record_id: str, body: Feedback, request: Request, response: Response):
-        check_origin(request)
-        owner = runner.session(request, response)
-        try:
-            result = runner.database(runner.store.feedback, owner, record_id, body.rating, body.tags, body.note)
-        except ValueError:
-            raise HTTPException(409, '该记录尚未生成可评价的回答。') from None
-        if result is None:
-            detail(owner, record_id)
-            raise HTTPException(403, '该记录公开可查看，评价仅限原提交浏览器修改。')
-        return result
 
     from .extraction import router as extraction_router
     routes.include_router(extraction_router(config, check_origin))

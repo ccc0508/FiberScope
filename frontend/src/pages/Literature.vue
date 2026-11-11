@@ -11,7 +11,7 @@ import { get } from "../api";
 import { apiPath } from "../urls";
 import LiteratureHistory from "../components/LiteratureHistory.vue";
 import EvidenceExcerpt from "../components/EvidenceExcerpt.vue";
-import { literatureRequest, feedbackTags, timeLabel, type Answer, type HistoryRecord, type HistoryItem, type Feedback } from "../literature";
+import { literatureRequest, timeLabel, type Answer, type HistoryRecord, type HistoryItem } from "../literature";
 
 interface Document {
   id: string;
@@ -30,8 +30,6 @@ const question = ref(""),
   answer = ref<Answer | null>(null);
 const historyPanel = ref<InstanceType<typeof LiteratureHistory>>();
 const historyReady = ref(false), selected = ref<HistoryRecord | null>(null);
-const rating = ref<Feedback["rating"] | "">(""), tags = ref<string[]>([]), note = ref("");
-const feedbackSaving = ref(false), feedbackError = ref(""), feedbackSaved = ref(false);
 let pendingSubmission: { question: string; request_id: string } | undefined;
 let pollTimer: number | undefined, disposed = false, selectionVersion = 0;
 const canAsk = computed(
@@ -91,11 +89,6 @@ function showRecord(record: HistoryRecord) {
   submitted.value = record.question;
   answer.value = record.status === "answered" || record.status === "refused" ? record.result : null;
   asking.value = record.status === "processing";
-  rating.value = record.feedback?.rating ?? "";
-  tags.value = [...(record.feedback?.tags ?? [])];
-  note.value = record.feedback?.note ?? "";
-  feedbackSaved.value = !!record.feedback;
-  feedbackError.value = "";
   const failures: Record<string, string> = {
     timeout: "本次问答超时，记录已保存，可以重新提问。",
     provider_error: "模型服务暂不可用，本次失败记录已保存。",
@@ -175,23 +168,6 @@ function reask() {
   if (!selected.value || asking.value) return;
   question.value = selected.value.question;
   ask(true);
-}
-async function saveFeedback(value?: Feedback["rating"]) {
-  if (!selected.value || !selected.value.can_feedback || feedbackSaving.value) return;
-  if (value) { rating.value = value; tags.value = []; }
-  if (!rating.value) return;
-  const id = selected.value.id;
-  feedbackSaving.value = true; feedbackError.value = ""; feedbackSaved.value = false;
-  const controller = new AbortController();
-  const timer = window.setTimeout(() => controller.abort(), 15000);
-  try {
-    const feedback = await literatureRequest<Feedback>(`history/${id}/feedback`, { rating: rating.value, tags: rating.value === "helpful" ? [] : tags.value, note: note.value }, controller.signal);
-    if (disposed || selected.value?.id !== id) return;
-    selected.value.feedback = feedback;
-    feedbackSaved.value = true;
-  } catch (e) {
-    if (!disposed && selected.value?.id === id) feedbackError.value = e instanceof Error ? e.message : "评价保存失败，请重试。";
-  } finally { clearTimeout(timer); feedbackSaving.value = false; }
 }
 function focusCitation(ref: string) {
   document.getElementById(`literature-citation-${ref.slice(1, -1)}`)?.focus();
@@ -356,36 +332,8 @@ load();
       </p>
       <div v-if="selected" class="record-info">
         <span>已保存 · {{ timeLabel(selected.created_at) }}<template v-if="selected.latency_ms != null"> · 用时 {{ (selected.latency_ms / 1000).toFixed(1) }} 秒</template></span>
-        <button class="button" :disabled="asking || feedbackSaving" @click="reask">重新提问</button>
+        <button class="button" :disabled="asking" @click="reask">重新提问</button>
       </div>
-      <section v-if="selected?.can_feedback" class="feedback-section" aria-label="用户反馈">
-        <h3>这个回答对你有帮助吗？</h3>
-        <div class="feedback-actions">
-          <button :class="['button', { chosen: rating === 'helpful' }]" :disabled="feedbackSaving" @click="saveFeedback('helpful')">有帮助</button>
-          <button :class="['button', { chosen: rating === 'inaccurate' }]" :disabled="feedbackSaving" @click="rating = 'inaccurate'; feedbackSaved = false">不准确</button>
-          <span v-if="feedbackSaving" role="status">正在保存…</span><span v-else-if="feedbackSaved" role="status">评价已保存，可修改</span>
-        </div>
-        <form v-if="rating === 'inaccurate'" @submit.prevent="saveFeedback()">
-          <fieldset :disabled="feedbackSaving"><legend>哪些地方需要改进？（可多选）</legend>
-            <label v-for="tag in feedbackTags" :key="tag.key"><input v-model="tags" type="checkbox" :value="tag.key" @change="feedbackSaved = false" />{{ tag.label }}</label>
-          </fieldset>
-          <label class="feedback-note" for="feedback-note">补充说明（选填）</label>
-          <textarea id="feedback-note" v-model="note" maxlength="2000" rows="3" :disabled="feedbackSaving" placeholder="例如：这项数值与原文表格不一致。" @input="feedbackSaved = false" />
-          <button class="button" :disabled="feedbackSaving" type="submit">保存评价</button>
-        </form>
-        <p v-if="feedbackError" class="feedback-error" role="alert">{{ feedbackError }}</p>
-        <p class="answer-note">评价用于改进问答，不代表专家审核或标准答案。</p>
-      </section>
-      <section v-else-if="selected" class="feedback-section" aria-label="已保存的用户反馈">
-        <h3>用户反馈</h3>
-        <p v-if="selected.feedback" class="answer-note">
-          {{ selected.feedback.rating === 'helpful' ? '有帮助' : '不准确' }}
-          <template v-if="selected.feedback.tags.length"> · {{ selected.feedback.tags.map(t => feedbackTags.find(tag => tag.key === t)?.label ?? t).join('、') }}</template>
-          <template v-if="selected.feedback.note"> · {{ selected.feedback.note }}</template>
-        </p>
-        <p v-else class="answer-note">尚无用户反馈。</p>
-        <p class="answer-note">所有访问者可查看，评价仅限原提交浏览器修改。</p>
-      </section>
     </section>
     <section
       v-if="answer?.citations.length"
@@ -464,16 +412,8 @@ load();
 .source-parts { margin-top: 12px; color: var(--ink-2); font-size: 13px; }
 .source-parts summary { cursor: pointer; }
 .source-parts > div { margin-top: 12px; }
-.record-info, .feedback-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 18px; font-size: 12px; color: var(--muted); }
+.record-info { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 18px; font-size: 12px; color: var(--muted); }
 .record-info { justify-content: space-between; }
-.feedback-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid #f5f2ed; }
-.feedback-section h3 { font-size: 14px; margin: 0; }
-.chosen { background: #e3efec; border-color: #5fa8a2; color: #0b6e68; }
-.feedback-section fieldset { display: flex; flex-wrap: wrap; gap: 12px; border: 0; padding: 12px 0; margin: 14px 0 0; font-size: 12px; }
-.feedback-section legend, .feedback-note { color: var(--muted); font-size: 12px; }
-.feedback-section fieldset label { display: inline-flex; align-items: center; gap: 5px; }
-.feedback-section textarea { box-sizing: border-box; width: 100%; margin: 8px 0 12px; border: 1px solid #dcebe7; border-radius: 6px; padding: 10px; font: inherit; font-size: 13px; resize: vertical; }
-.feedback-error { color: #b16642; font-size: 12px; }
 .literature-page {
   display: flex;
   flex-direction: column;

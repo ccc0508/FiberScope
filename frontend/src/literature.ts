@@ -41,12 +41,6 @@ export interface Answer {
     review_rounds: number;
   };
 }
-export interface Feedback {
-  rating: "helpful" | "inaccurate";
-  tags: string[];
-  note: string;
-  updated_at?: string;
-}
 export interface HistoryItem {
   id: string;
   question: string;
@@ -57,20 +51,11 @@ export interface HistoryItem {
   reason_code: string | null;
 }
 export interface HistoryRecord extends HistoryItem {
-  can_feedback?: boolean;
   result: Answer | null;
-  feedback: Feedback | null;
 }
 export const stateNames: Record<HistoryItem["status"], string> = {
   processing: "处理中", answered: "已回答", refused: "未能可靠回答", failed: "处理失败", interrupted: "处理中断",
 };
-export const feedbackTags = [
-  { key: "numeric_error", label: "数值错误" },
-  { key: "unsupported_citation", label: "引用不支持" },
-  { key: "irrelevant", label: "答非所问" },
-  { key: "incomplete", label: "遗漏内容" },
-  { key: "wrong_refusal", label: "不该拒答" },
-];
 export const timeLabel = (value: string) => new Date(value).toLocaleString("zh-CN", { hour12: false });
 
 export async function literatureRequest<T>(path: string, body?: unknown, signal?: AbortSignal): Promise<T> {
