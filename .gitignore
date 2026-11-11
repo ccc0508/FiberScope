@@ -43,3 +43,25 @@ Thumbs.db
 /项目交接文档.md
 /fiber-lab-ui*.html
 /000?-frontend-*.patch
+
+# Private materials and generated reports are kept locally, outside published Git history.
+/论文合集/
+/data/**/reports/
+/database/importer/reports/
+/data/literature/parsing-comparisons/
+/data/literature/embedding-migrations/
+/data/literature/visual-integration/
+/data/**/calibration-*.json
+/data/agent-evaluation/catalog-routing-smoke-*.json
+/docs/examples/
+/docs/agentic-rag-server-deployment-*.md
+/docs/SERVER_DEPLOYMENT.md
+/docs/*20[0-9][0-9][0-9][0-9][0-9][0-9].*
+!/docs/*_METHOD_*.md
+/docs/*_VALIDATION.md
+/docs/VALIDATION_REPORT.md
+/项目交接文档.md
+/项目说明与分工.pdf
+/output/
+*.ppt
+*.pptx
