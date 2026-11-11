@@ -66,6 +66,24 @@ def test_documents_and_pdf_do_not_expose_local_paths(configured):
     assert client.get('/api/v1/literature/documents/doc1/pdf').status_code == 404
 
 
+@pytest.mark.parametrize('stored_path', ['papers/paper.pdf', r'papers\paper.pdf'])
+def test_pdf_accepts_portable_imported_paths(configured, stored_path):
+    with sqlite3.connect(configured.root / 'metadata.sqlite3') as conn:
+        conn.execute('UPDATE documents SET file_path=?', (stored_path,))
+    response = client_for(configured).get('/api/v1/literature/documents/doc1/pdf')
+    assert response.status_code == 200
+    assert response.headers['content-type'] == 'application/pdf'
+    assert response.content.startswith(b'%PDF')
+
+
+@pytest.mark.parametrize('stored_path', ['../outside.pdf', r'..\outside.pdf', r'papers\..\outside.pdf'])
+def test_pdf_rejects_traversal_after_separator_normalization(configured, stored_path):
+    (configured.root / 'outside.pdf').write_bytes(b'%PDF-1.4\noutside papers')
+    with sqlite3.connect(configured.root / 'metadata.sqlite3') as conn:
+        conn.execute('UPDATE documents SET file_path=?', (stored_path,))
+    assert client_for(configured).get('/api/v1/literature/documents/doc1/pdf').status_code == 404
+
+
 @pytest.mark.parametrize('payload', [{}, {'question':' '}, {'question':'x'}, {'question':'x'*2001}, {'question':'有效问题','path':'../../secret'}])
 def test_question_validation(configured, monkeypatch, payload):
     monkeypatch.setattr(literature, 'run_answer', lambda *a: pytest.fail('invalid input reached provider'))
