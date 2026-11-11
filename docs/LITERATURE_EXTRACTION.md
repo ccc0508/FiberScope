@@ -131,4 +131,4 @@ SQLite记录库独立于实验PostgreSQL和问答历史，整个目录均被Git�
 
 ## 验证记录
 
-提取后端的初始模型结果见[提取验证记录](LITERATURE_EXTRACTION_VALIDATION.md)；页面、审核版本和导出的完整流程见[审核页面验证记录](LITERATURE_REVIEW_VALIDATION.md)；整篇模式的测试结果和未完成实测见[整篇验证记录](LITERATURE_DOCUMENT_VALIDATION.md)。
+提取后端的初始模型结果见提取验证记录（资料保存在本地）；页面、审核版本和导出的完整流程见审核页面验证记录（资料保存在本地）；整篇模式的测试结果和未完成实测见整篇验证记录（资料保存在本地）。
