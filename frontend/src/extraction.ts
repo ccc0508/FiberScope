@@ -43,6 +43,10 @@ export interface ExtractionTask {
   id: string;
   status: "processing" | "completed" | "failed" | "interrupted";
   created_at: string;
+  /** set once the task stops processing (list and detail responses) */
+  completed_at?: string | null;
+  /** processing time in ms; null while processing */
+  latency_ms?: number | null;
   message: string | null;
   has_reviewable_result?: boolean;
   can_review?: boolean;
@@ -174,4 +178,38 @@ export async function extractionRequest<T>(
     );
   if (!body) throw new Error("无法读取服务响应，请刷新任务列表重试。");
   return body as T;
+}
+
+export interface ReviewCounts {
+  confirmed: number;
+  pending: number;
+  rejected: number;
+}
+/**
+ * Garden hero signature: one dot per candidate (or one per `per` candidates when there are
+ * more than `max`), confirmed first, then rejected, then pending, on a 10-unit grid about
+ * 2.8 times as wide as it is tall. Returns zero-length path data for the filled dots and
+ * ring path data for the pending ones, or null when there is nothing to draw.
+ */
+export function waffleLayout(c: ReviewCounts, max = 900) {
+  const total = c.confirmed + c.pending + c.rejected;
+  if (!total) return null;
+  const per = Math.max(1, Math.ceil(total / max));
+  const dots = Math.ceil(total / per);
+  const share = (n: number) => (n > 0 ? Math.min(dots, Math.max(1, Math.round(n / per))) : 0);
+  const ok = share(c.confirmed);
+  const bad = Math.min(dots - ok, share(c.rejected));
+  const cols = Math.max(10, Math.min(60, Math.ceil(Math.sqrt(dots * 2.8))));
+  const rows = Math.ceil(dots / cols);
+  let okPath = "",
+    badPath = "",
+    waitPath = "";
+  for (let i = 0; i < dots; i++) {
+    const x = (i % cols) * 10 + 5,
+      y = Math.floor(i / cols) * 10 + 5;
+    if (i < ok) okPath += `M${x},${y}h0`;
+    else if (i < ok + bad) badPath += `M${x},${y}h0`;
+    else waitPath += `M${x - 2.5},${y}a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0`;
+  }
+  return { per, width: cols * 10, height: rows * 10, ok: okPath, bad: badPath, wait: waitPath };
 }
