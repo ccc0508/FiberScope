@@ -26,7 +26,9 @@ def main():
     p.add_argument('--child',action='store_true',help=argparse.SUPPRESS)
     p.add_argument('--prompt-file',type=Path,help='Evaluation only: frozen PROMPT and REVIEW_PROMPT JSON; does not change website defaults')
     p.add_argument('--architecture',choices=['single','specialists'],default='single')
+    p.add_argument('--no-task-feedback',action='store_true',help='Specialists only: disable the optional follow-up for comparison; keep all other current code.')
     a=p.parse_args();run_id=a.run_id or str(uuid4())
+    if a.no_task_feedback and a.architecture!='specialists':p.error('--no-task-feedback requires --architecture specialists')
     if a.max_model_calls is None:a.max_model_calls=20 if a.architecture=='specialists' else 10
     if a.seconds is None:a.seconds=360 if a.architecture=='specialists' else 240
     if a.max_tools is None:a.max_tools=12 if a.architecture=='specialists' else 8
@@ -41,6 +43,7 @@ def main():
             '--library',str(a.library.resolve()),'--seconds',str(a.seconds),'--max-tools',str(a.max_tools),
             '--max-model-calls',str(a.max_model_calls)]
         args.extend(['--architecture',a.architecture])
+        if a.no_task_feedback:args.append('--no-task-feedback')
         if a.prompt_file:args.extend(['--prompt-file',str(a.prompt_file.resolve())])
         proc=subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
             start_new_session=os.name!='nt',
@@ -81,6 +84,8 @@ def main():
         prompt_identity=dict(file=str(a.prompt_file.resolve()),sha256=sha256(raw).hexdigest())
     def checkpoint(state):
         payload=dict(state,budget=asdict(b),model=settings.llm_model,prompt_override=prompt_identity,mode=a.architecture,
+            task_feedback_enabled=a.architecture=='specialists' and not a.no_task_feedback,
+            model_options=dict(thinking_enabled=settings.llm_thinking_enabled,reasoning_effort=settings.llm_reasoning_effort),
             review_policy='parent synthesis and evidence review; no repeated child review' if a.architecture=='specialists' else 'one full-answer review, no content gate; not legacy structured corrective review')
         save_state(state_path,payload)
         telemetry.update(payload)
@@ -105,7 +110,8 @@ def main():
         from literature_rag.application.specialist_agent import SpecialistCoordinator
         loop=SpecialistCoordinator
     try:
-        result=loop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory).run(a.question,run_id)
+        options=dict(feedback_enabled=not a.no_task_feedback) if a.architecture=='specialists' else {}
+        result=loop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory,**options).run(a.question,run_id)
     finally:
         telemetry.close()
         telemetry.flush()

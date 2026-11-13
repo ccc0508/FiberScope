@@ -64,7 +64,7 @@ class CoveragePriority:
         if request.get('tool')!='read_section' or not set(targets).intersection(unresolved):return False
         if trace.get('search_calls',0)>=trace.get('max_search_calls',2):return False
         doc=request.get('document_id');reads=[]
-        for event in reversed(trace.get('tool_calls',[])):
+        for event in reversed([*trace.get('inherited_tool_calls',[]),*trace.get('tool_calls',[])]):
             previous=event.get('request',{})
             if previous.get('tool')=='search_literature' and (not previous.get('document_ids') or doc in previous['document_ids']):break
             if previous.get('tool')!='read_section' or previous.get('document_id')!=doc:continue

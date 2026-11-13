@@ -82,23 +82,27 @@ class LangfuseTrace:
         parents = {}
         for child in state.get('children', []):
             key = 'child:'+child['id']
-            node = self.node(key, self.root, child['role']+' agent', 'agent', child.get('task'))
+            name=child['role']+' agent'+(' follow-up' if child.get('phase')=='followup' else '')
+            node = self.node(key, self.root, name, 'agent', child.get('task'))
             parents[child['role']] = node
             parents[child['id']] = node
             if key in self.ended:
                 continue
             node.update(output=redact(child.get('result')), metadata=redact({
                 'status': child['status'], 'coverage': child.get('coverage_report'),
+                'child_id': child['id'], 'phase': child.get('phase'),
                 'duration_ms': child.get('duration_ms'),
                 'started_at_ns': child.get('started_at_ns'), 'ended_at_ns':child.get('ended_at_ns'),
                 'allocation': child.get('allocation'),
+                'inherited_evidence': [{k:e.get(k) for k in ('request','model_delivery')}
+                    for e in child.get('trace',{}).get('inherited_tool_calls',[])],
                 'evidence_delivery': [{k:e.get(k) for k in ('request','model_delivery')}
                     for e in child.get('trace',{}).get('tool_calls',[])]}))
         for i, call in enumerate(state.get('model_calls', [])):
             key = f'model:{i}'
             if key in self.ended:
                 continue
-            node = self.node(key, parents.get(call.get('stage'), self.root),
+            node = self.node(key, parents.get(call.get('child_id'), parents.get(call.get('stage'), self.root)),
                              call.get('stage', 'model'), 'generation', call.get('input_messages'))
             usage = call.get('usage') or {}
             counts = {k: usage[v] for k, v in [('input','prompt_tokens'), ('output','completion_tokens')]
@@ -129,7 +133,8 @@ class LangfuseTrace:
         self.root.update(output=redact(state.get('answer')), metadata=redact({
             'status':state['status'], 'budget':state.get('budget_usage'),
             'plan':state.get('plan'), 'stop_reason':state.get('stop_reason'),
-            'citation_validation':state.get('citation_validation')}))
+            'citation_validation':state.get('citation_validation'),
+            'feedback':state.get('feedback'), 'task_schedule':state.get('task_schedule')}))
         if state['status'] != 'running':
             self.close()
 

@@ -37,6 +37,23 @@ def test_projection_parentage_usage_and_no_duplicate_model_calls():
     assert not t.disabled and t.root.ends==1
 
 
+def test_same_role_followup_generations_attach_to_exact_child_id():
+    t=LangfuseTrace(Node(),'model')
+    s=dict(run_id='r',question='q',status='running',
+        children=[dict(id='r/sql',role='sql',status='completed',ended_at_ns=123),
+                  dict(id='r/sql/followup-1',role='sql',phase='followup',status='running')],
+        model_calls=[dict(stage='sql',child_id='r/sql',status='completed',text='initial'),
+                     dict(stage='sql',child_id='r/sql/followup-1',status='completed',text='followup')],tool_calls=[],
+        feedback=dict(used=1,status='executing'))
+    t.update(s)
+    assert not t.disabled
+    assert t.nodes['model:0'] in t.nodes['child:r/sql'].children
+    assert t.nodes['model:1'] in t.nodes['child:r/sql/followup-1'].children
+    assert t.nodes['child:r/sql/followup-1'].values['name']=='sql agent follow-up'
+    assert t.nodes['child:r/sql/followup-1'].values['metadata']['phase']=='followup'
+    assert t.root.values['metadata']['feedback']['used']==1
+
+
 def test_observability_failure_is_isolated():
     class Broken:
         def start_observation(self,**kwargs):raise RuntimeError('network')

@@ -12,6 +12,8 @@ from .agent_context import EvidenceProjection
 from .task_coverage import Requirement, CoverageItem, ground_requirements, coverage_report, completion_feedback
 from .paper_directory import routing_catalog, routing_catalog_prompt
 from .coverage_priority import CoveragePriority, INSTRUCTIONS as COVERAGE_PRIORITY_INSTRUCTIONS
+from .task_feedback import (InformationNeed, FollowupRequest, FinishTasks, FEEDBACK_PROMPT,
+                            actionable_feedback, validate_followup)
 
 SQL_TOOLS={'describe_experiment_data','query_experiment_data','calculate_change','convert_units'}
 PAPER_TOOLS=set(SCHEMAS)-{'describe_experiment_data','query_experiment_data'}
@@ -24,6 +26,7 @@ class Plan(BaseModel):
     literature_task:str=Field(default='',max_length=4000)
     answer:str=Field(default='',max_length=4000)
     requirements:list[Requirement]=Field(default_factory=list,max_length=20)
+    dependency:Literal['independent','sql_to_literature','literature_to_sql']='independent'
 
 class SpecialistResult(BaseModel):
     model_config=ConfigDict(extra='forbid',strict=True)
@@ -32,6 +35,8 @@ class SpecialistResult(BaseModel):
     missing_choices:list[str]=Field(default_factory=list,max_length=8)
     limitations:list[str]=Field(default_factory=list,max_length=10)
     coverage:list[CoverageItem]=Field(default_factory=list,max_length=20)
+    unresolved_items:list[str]=Field(default_factory=list,max_length=10)
+    next_information:list[InformationNeed]=Field(default_factory=list,max_length=6)
 
 ROUTER='''You coordinate a plant-fiber research platform. Choose exactly one route using route_task.
 direct: greetings or general knowledge not requiring project records or papers. clarify: essential user intent
@@ -40,7 +45,10 @@ both: question explicitly needs both experimental records and literature explana
 facts or fields. Delegate schema-dependent ambiguity to SQL specialist so it can inspect actual directory.
 Preserve user filters, materials and requested outputs in delegated tasks; do not invent thresholds.
 Return one route_task call; no other tools. Direct/clarify need answer; delegated routes need corresponding task.
-This is one-level routing: specialists cannot delegate. No automatic extra tasks or replanning.'''
+This is one-level routing: specialists cannot delegate. The coordinator may later authorize one bounded follow-up.
+For both, set dependency=sql_to_literature when actual project values must guide paper checks;
+literature_to_sql when paper prerequisites must be known before the project lookup; otherwise independent.
+Independent tasks remain isolated and execute sequentially. Do not invent dependencies or prerequisites.'''
 ROUTER+='''
 Route by the EVIDENCE NEEDED to fulfil the whole question, using the topic catalog as a hint,
 not by whether an author, paper name, or the word literature appears.
@@ -76,6 +84,20 @@ No child agents. Return ONLY JSON: {"status":"ok|needs_clarification|insufficien
 If essential choices are missing, return needs_clarification with concrete questions after inspecting metadata;
 do not guess choices. Empty or failed queries are not proof of zero. State gaps honestly. Keep the summary concise.
 No final full-answer review here; the parent will review supplied evidence and integrate findings.'''
+COMMON+='''
+Also return unresolved_items: concise unanswered information questions, and next_information:
+[{role:"sql|literature",requirement_ids:["need_1"],question:"specific information needed",
+reason:"why required for the original question",source_refs:["[1]"]}]. Use [] when none.
+Only reference original requirement IDs supplied in the task contract. Request information,
+never anticipated values/conclusions or new user goals. Do not call another agent yourself.
+Inherited exact tool results are reusable evidence; child summaries alone are not source proof.
+Use prior schema details instead of repeating describe. Do not relabel a scientific unknown as
+a missing user choice. If this is a follow-up, no further delegation will occur; retain any gap.
+For a follow-up, fulfil followup.task within the original scope, not the whole question again.
+An assigned requirement with execution_scope=prerequisite_only belongs to owner_role: verify only
+the concrete prerequisite within YOUR role. Its local verified status is not completion of the
+original scientific requirement. Preserve that distinction in findings and unresolved_items.
+'''
 COMMON+='''
 Use convert_units for requested unit conversions: give the original value, from_unit and to_unit;
 the program calculates the factor and converted value. Never prefill the answer as calculate_change.final.
@@ -183,17 +205,22 @@ def unwrap_json(value):
 
 
 class SpecialistCoordinator:
-    def __init__(self,adapter,executor,checkpoint,budget=None,clock=monotonic,paper_directory=None):
+    def __init__(self,adapter,executor,checkpoint,budget=None,clock=monotonic,paper_directory=None,feedback_enabled=True):
         self.adapter=adapter;self.executor=executor;self.checkpoint=checkpoint
         self.budget=budget or AgentBudget(max_model_calls=20,max_tool_calls=12,total_seconds=360)
         self.clock=clock;self.paper_directory=paper_directory
+        self.feedback_enabled=feedback_enabled
 
     def run(self,question,run_id):
         b=self.budget;deadline=self.clock()+b.total_seconds
         state=dict(run_id=run_id,question=question,status='running',answer='',draft='',model_calls=[],tool_calls=[],
-            children=[],plan=None,format_checks=[],review_status='not_started',stop_reason=None,pipeline_version='specialists-v7-tool-selection',
+            children=[],plan=None,format_checks=[],review_status='not_started',stop_reason=None,
+            pipeline_version='specialists-v8-bounded-feedback',
+            feedback=dict(max_followups=1 if self.feedback_enabled else 0,used=0,status='not_started',decisions=[],stop_reason=None),
             citation_validation=dict(status='pending',available_records=[],attempts=[]))
         counters=dict(model=0,tools=0,search=0)
+        active_child_id=None
+        active_child_started=None
         def save():
             state['budget_usage']=dict(counters,seconds_remaining=max(0,deadline-self.clock()))
             self.checkpoint(state)
@@ -205,6 +232,7 @@ class SpecialistCoordinator:
                                  else b.max_output_tokens)
             entry=dict(stage=stage,status='started',input_messages=trace_messages(messages),available_tools=list(schemas),
                        usage=None,max_output_tokens=max_output_tokens)
+            if active_child_id is not None:entry['child_id']=active_child_id
             state['model_calls'].append(entry);save()
             try:
                 timeout=max(.01,deadline-self.clock())
@@ -275,12 +303,24 @@ class SpecialistCoordinator:
                 state.update(answer=plan.answer,status='completed',review_status='not_required')
             else:
                 names=['sql','literature'] if plan.route=='both' else [plan.route]
-                for index,name in enumerate(names):
-                    assigned=[r for r in requirements if r['role']==name]
+                if plan.route=='both' and plan.dependency=='literature_to_sql':names.reverse()
+                if plan.route!='both' and plan.dependency!='independent':
+                    raise ValueError('Dependency requires both specialists')
+                state['task_schedule']=dict(dependency=plan.dependency,initial_order=names,
+                    execution='sequential',max_additional_invocations=1 if self.feedback_enabled else 0)
+                feedback_reserve=(4 if self.feedback_enabled and plan.route=='both' and requirements
+                    and b.max_model_calls-counters['model']>=7*(len(names)-1)+10 else 0)
+
+                def run_child(name,assigned,remaining_children,followup=None):
+                    nonlocal active_child_id,active_child_started,projection
+                    prior=list(state['children'])
+                    handoff=prior if followup or plan.dependency!='independent' else []
                     task=json.dumps(dict(role=name,requirements=assigned,
+                        task_contract=requirements,followup=followup,
+                        previous_results=[dict(child_id=c['id'],role=c['role'],
+                            result=c.get('result'),coverage_report=c.get('coverage_report')) for c in handoff],
                         instruction='Fulfil this role in the ORIGINAL user question. Checklist may be incomplete: also inspect original question. Do not treat task routing as scientific evidence.'),ensure_ascii=False)
-                    remaining_children=len(names)-index
-                    parent_reserve=3
+                    parent_reserve=2 if followup else 3+feedback_reserve
                     future_reserve=7*(remaining_children-1)
                     reserve=parent_reserve+future_reserve
                     quota=b.max_model_calls-counters['model']-reserve
@@ -288,10 +328,13 @@ class SpecialistCoordinator:
                     tool_quota=(b.max_tool_calls-counters['tools'])//remaining_children
                     if quota<3 or seconds<30 or tool_quota<1:raise BudgetExhausted('specialist allocation')
                     child_started=self.clock()
-                    child=dict(id=f'{run_id}/{name}',role=name,task=task,status='running',result=None,started_at_ns=time_ns(),
+                    active_child_started=child_started
+                    child=dict(id=f'{run_id}/{name}'+('/followup-1' if followup else ''),
+                        role=name,phase='followup' if followup else 'initial',task=task,status='running',result=None,started_at_ns=time_ns(),
                         allocation=dict(base_model_calls=7,max_model_calls=quota,reserved_for_remaining=reserve,
                             max_tool_calls=tool_quota,model_start=counters['model']))
                     state['children'].append(child);save()
+                    active_child_id=child['id']
                     allowed=SQL_TOOLS if name=='sql' else PAPER_TOOLS
                     outer=self
                     class Adapter:
@@ -317,14 +360,17 @@ class SpecialistCoordinator:
                         return result
                     def checkpoint(s):child['trace']=deepcopy(s);save()
                     priority=CoveragePriority(assigned) if name=='literature' and assigned else None
+                    inherited=[e for c in handoff for e in c.get('trace',{}).get('tool_calls',[])]
                     result=AgentLoop(Adapter(),execute,checkpoint,
                         AgentBudget(max_model_calls=quota,max_tool_calls=tool_quota,total_seconds=min(600,seconds),
+                            max_search_calls=max(0,b.max_search_calls-counters['search']),
                             reserve_seconds=min(15,seconds/3),max_context_chars=b.max_context_chars,max_output_tokens=b.max_output_tokens),
                         clock=self.clock,paper_directory=self.paper_directory if name=='literature' else None,
                         allowed_tools=allowed,system_prompt=SQL_PROMPT if name=='sql' else PAPER_PROMPT+PAPER_COVERAGE+PAPER_EVIDENCE_CHECKS+EVIDENCE_OUTPUT_RULES+(COVERAGE_PRIORITY_INSTRUCTIONS if priority else ''),review_enabled=False,
                         output_schema=SpecialistResult.model_json_schema(),
                         completion_check=completion_feedback(assigned) if assigned else None,coverage_priority=priority).run(
-                            'Original user question: '+question+'\nAssigned task: '+task,run_id)
+                            'Original user question: '+question+'\nAssigned task: '+task,run_id,
+                            inherited_tool_calls=inherited)
                     child['status']=result['status']
                     if result['status']!='completed':raise ValueError('Incomplete specialist')
                     try:
@@ -345,12 +391,81 @@ class SpecialistCoordinator:
                         projection=trial;context.append(compact)
                         refs.update({r['ref']:r for r in citation_records(event['request']['tool'],raw)})
                     child.update(ended_at_ns=time_ns(),duration_ms=(self.clock()-child_started)*1000)
+                    active_child_id=None
+                    active_child_started=None
                     save()
+                    return parsed
+
+                for index,name in enumerate(names):
+                    assigned=[r for r in requirements if r['role']==name]
+                    parsed=run_child(name,assigned,len(names)-index)
                     if parsed.status=='needs_clarification':break
-                payload=dict(question=question,task_contract=state['task_contract'],specialists=[dict(role=c['role'],result=c['result'],coverage_report=c.get('coverage_report')) for c in state['children']],
+
+                feedback=state['feedback']
+                if not self.feedback_enabled:
+                    feedback.update(status='disabled',stop_reason='disabled')
+                elif any((c.get('result') or {}).get('status')=='needs_clarification' for c in state['children']):
+                    feedback.update(status='skipped',stop_reason='needs_clarification')
+                elif not requirements or not actionable_feedback(state['children']):
+                    feedback.update(status='skipped',stop_reason='no_open_information_need')
+                elif (b.max_model_calls-counters['model']<6 or counters['tools']>=b.max_tool_calls
+                      or deadline-self.clock()<b.reserve_seconds+45):
+                    feedback.update(status='skipped',stop_reason='insufficient_remaining_budget')
+                else:
+                    feedback.update(status='planning');save()
+                    schemas={'finish_tasks':FinishTasks.model_json_schema()}
+                    for role in ('sql','literature'):
+                        if any(r['role']==role for r in requirements):schemas[f'ask_{role}_agent']=FollowupRequest.model_json_schema()
+                    messages=[dict(role='system',content=FEEDBACK_PROMPT),dict(role='user',content=json.dumps(dict(
+                        question=question,task_contract=state['task_contract'],remaining_budget=dict(
+                            model_calls=b.max_model_calls-counters['model'],tool_calls=b.max_tool_calls-counters['tools'],
+                            search_calls=b.max_search_calls-counters['search'],seconds=deadline-self.clock()),
+                        specialists=[dict(child_id=c['id'],role=c['role'],result=c.get('result'),coverage_report=c.get('coverage_report'))
+                                     for c in state['children']],evidence=context,allowed_refs=list(refs.values())),ensure_ascii=False))]
+                    try:
+                        d=call('feedback_plan',messages,schemas,reserve=5,timeout_limit=30)
+                        record=dict(calls=[dict(name=t.name,arguments=t.arguments) for t in d.calls],status='checking')
+                        feedback['decisions'].append(record)
+                        if len(d.calls)!=1 or d.calls[0].name not in schemas:raise ValueError('One allowed feedback action required')
+                        action=d.calls[0]
+                        if action.name=='finish_tasks':
+                            done=structured('feedback_plan',action.arguments,FinishTasks,question,reserve=2)
+                            record.update(status='accepted',result=done.model_dump())
+                            feedback.update(status='finished',stop_reason=done.stop_condition)
+                        else:
+                            request=structured('feedback_plan',action.arguments,FollowupRequest,question,reserve=2)
+                            role={'ask_sql_agent':'sql','ask_literature_agent':'literature'}[action.name]
+                            assigned=validate_followup(request,role,requirements,state['children'],refs)
+                            record.update(status='accepted',result=request.model_dump())
+                            feedback.update(used=1,status='executing');save()
+                            tool_start=len(state['tool_calls']);old_refs=set(refs)
+                            run_child(role,assigned,1,followup=request.model_dump())
+                            successes=sum(t['status']=='completed' for t in state['tool_calls'][tool_start:])
+                            feedback.update(status='completed',new_refs=sorted(set(refs)-old_refs),
+                                new_successful_tool_calls=successes,
+                                stop_reason='max_followups_reached' if successes else 'no_new_information')
+                    except Exception as error:
+                        if active_child_id:
+                            failed_child=next(c for c in state['children'] if c['id']==active_child_id)
+                            failed_child.update(status='failed',error_type=type(error).__name__,ended_at_ns=time_ns(),
+                                duration_ms=(self.clock()-active_child_started)*1000)
+                            active_child_id=None
+                            active_child_started=None
+                        feedback.update(status='failed',stop_reason=type(error).__name__)
+                        if feedback['decisions'] and feedback['decisions'][-1]['status']=='checking':
+                            feedback['decisions'][-1].update(status='rejected',error_type=type(error).__name__)
+                    save()
+                payload=dict(question=question,task_contract=state['task_contract'],feedback=feedback,
+                    specialists=[dict(child_id=c['id'],role=c['role'],phase=c.get('phase'),status=c['status'],
+                        result=c.get('result'),coverage_report=c.get('coverage_report')) for c in state['children']],
                     evidence=context,allowed_refs=list(refs.values()))
                 messages=[dict(role='system',content=REVIEW_PROMPT+EVIDENCE_OUTPUT_RULES+'''
 You are the parent coordinator. Review and synthesize specialist findings against the exact supplied evidence.
+Preserve all successful initial findings when an optional follow-up fails or is skipped. Feedback
+decisions and follow-up task wording are not evidence. Resolve conflicting child findings using sources;
+report any unresolved gap/contradiction and never treat a follow-up as automatically overriding earlier facts.
+Follow-up prerequisite_only coverage verifies only the delegated prerequisite, not completion of the
+original requirement owned by another role. Evaluate the original task contract against all actual sources.
 Use child checks as an audit aid, not authority. Resolve numeric checks against evidence internally; return
 normal prose, not a checks JSON. Preserve unresolved origin/validation gaps rather than copying verified labels.
 Answer supported parts with their evidence and preserve them even when other parts are unresolved.
@@ -391,7 +506,8 @@ Paper bibliography numbers in source text are not run-local refs: express them a
         except Exception as error:
             for active_child in state.get('children',[]):
                 if 'ended_at_ns' not in active_child:
-                    active_child.update(status='failed',ended_at_ns=time_ns(),duration_ms=(self.clock()-child_started)*1000)
+                    active_child.update(status='failed',ended_at_ns=time_ns(),
+                        duration_ms=(self.clock()-active_child_started)*1000 if active_child_started is not None else 0)
             state.update(status='failed',answer='',stop_reason=type(error).__name__)
             state['citation_validation']['status']='incomplete'
         save();return state

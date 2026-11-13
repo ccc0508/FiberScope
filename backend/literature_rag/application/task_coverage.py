@@ -61,7 +61,7 @@ def coverage_report(requirements, coverage, trace):
             for child in value.values(): walk(child, document)
         elif isinstance(value, list):
             for child in value: walk(child, document)
-    for event in trace.get('tool_calls', []):
+    for event in [*trace.get('inherited_tool_calls', []), *trace.get('tool_calls', [])]:
         if event.get('model_delivery', {}).get('status') != 'delivered': continue
         result = event.get('result', {})
         if result.get('status') != 'completed': continue
@@ -98,11 +98,14 @@ def coverage_report(requirements, coverage, trace):
         effective = 'missing' if errors else item['status']
         if effective == 'verified' and (check_errors or any(c['status'] != 'verified' for c in checks)):
             effective = 'partial'
-        rows.append(dict(requirement=need, reported=item, status=effective,
-                         errors=errors + check_errors))
+        row=dict(requirement=need, reported=item, status=effective, errors=errors + check_errors)
+        if need.get('execution_scope') == 'prerequisite_only':
+            row['fulfills_original_requirement']=False
+        rows.append(row)
     complete=bool(rows) and all(r['status']=='verified' for r in rows)
     adequacy='sufficient' if complete else ('partial' if any(r['status'] in ('verified','partial') for r in rows) else 'insufficient')
     return dict(items=rows, complete=complete, evidence_adequacy=adequacy,
+                original_requirements_complete=complete and not any(r.get('fulfills_original_requirement') is False for r in rows),
                 unknown_ids=[c.requirement_id for c in coverage if c.requirement_id not in {r['requirement_id'] for r in requirements}],
                 scope='Availability/coverage checks only; correctness and paper identity require evidence review.')
 
