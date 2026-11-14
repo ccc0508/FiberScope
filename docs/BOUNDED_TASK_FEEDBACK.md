@@ -52,3 +52,9 @@
 - 真实 MIX15 本地探针：`bounded-feedback-MIX15-20261113-01`，SQL → 文献顺序，文献子任务继承 3 份已交付工具结果，14 次模型调用、8 次工具执行，约 148 秒完成。Planner 选择 `finish_tasks(sufficient)`，没有实际补派；补派行为由上述自动化测试验证。
 - 原始轨迹：`.rag-data/agent-runs/bounded-feedback-MIX15-20261113-01/state.json`；全后端测试记录：`.rag-data/bounded-feedback-backend-tests.txt`。这些运行数据不提交 Git。
 - 此轮未重跑 70 题质量评测，不能根据流程跑通宣称答案分数提升；未部署到公网服务器。
+
+## 旧测试入口兼容性修复（2026-11-14）
+
+此前 10 项失败已修复：5 个测试文件改为显式调用 `literature_worker.main(body)`，不再通过替换 stdin 向该函数传参；配置快照的测试替身同步接受当前的 `settings=` 关键字参数。生产 worker 入口与业务逻辑未修改，原有断言保留。
+
+相关 94 项测试通过；全后端回归为 **1429 通过、29 跳过、0 失败**（3 条依赖弃用警告）。测试记录保存在 `.rag-data/worker-test-compatibility-20261114.txt`，不提交 Git。本次是程序测试修复，不是重新进行 70 题模型质量评测。

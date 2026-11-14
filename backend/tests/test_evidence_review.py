@@ -1,7 +1,6 @@
 """Source provenance, conservative edits, review failure isolation and actual image delivery."""
 from dataclasses import asdict
 import base64
-import io
 import json
 from pathlib import Path
 from types import SimpleNamespace as NS
@@ -229,15 +228,15 @@ def test_worker_returns_revised_claims_and_history_preserves_review(monkeypatch,
             self.last_seed_evidences=SOURCES;self.last_context_diagnostics={}
         def retrieve(self,*_):return SOURCES
     monkeypatch.setattr(config,'Settings',lambda **_:settings)
-    monkeypatch.setattr(diagnostics,'configuration_snapshot',lambda *_:dict(evidence_review=dict(enabled=True)))
+    monkeypatch.setattr(diagnostics,'configuration_snapshot',lambda _path,*,settings:dict(evidence_review=dict(enabled=True)))
     monkeypatch.setattr(metadata,'SqliteMetadataStore',Metadata)
     monkeypatch.setattr(vectors,'ChromaVectorStore',lambda *_:NS())
     monkeypatch.setattr(embeddings,'OpenAIEmbedder',lambda *_:NS(last_usage=None))
     monkeypatch.setattr(generators,'DeepSeekGenerator',lambda *args,**kwargs:NS(model_name='deepseek-flash',generate=lambda *_:DRAFT))
     monkeypatch.setattr(reviews,'DeepSeekEvidenceReviewer',lambda *args,**kwargs:provider(proposal()))
     monkeypatch.setattr(retrieval,'RetrievalService',Retriever)
-    monkeypatch.setattr('sys.stdin',io.StringIO(json.dumps(dict(question='Question',data_dir=str(tmp_path)))))
-    literature_worker.main();body=json.loads(capsys.readouterr().out)
+    literature_worker.main(dict(question='Question',data_dir=str(tmp_path)))
+    body=json.loads(capsys.readouterr().out)
     assert 'might be explained' in body['claims'][0]['text']
     assert 'established' not in body['answer'] and body['evidence_review']['status']=='revised'
     assert len(body['generation_calls'])==1 and body['evidence_review']['api_calls']==1

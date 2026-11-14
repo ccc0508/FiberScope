@@ -4,7 +4,6 @@ from hashlib import sha256
 import json
 from pathlib import Path
 from types import SimpleNamespace as NS
-from io import StringIO
 import sys
 
 import pytest
@@ -165,8 +164,7 @@ def test_worker_combines_row_search_and_body_context_in_its_actual_entrypoint(tm
     monkeypatch.setattr('literature_rag.adapters.providers.openai.OpenAIEmbedder',Embedder)
     monkeypatch.setattr('literature_rag.adapters.providers.openai.OpenAIGenerator',Generator)
     monkeypatch.setattr('literature_rag.adapters.chroma.vector_store.ChromaVectorStore',lambda *args:NS(search=lambda *_:[]))
-    monkeypatch.setattr(sys,'stdin',StringIO(json.dumps(dict(data_dir=str(source),question='Crystallinity?'))))
-    literature_worker.main()
+    literature_worker.main(dict(data_dir=str(source),question='Crystallinity?'))
     result=json.loads(capsys.readouterr().out)
     assert result['status']=='answered' and result['configuration']['pipeline_version']==BODY_TABLE_VERSION
     assert result['context_assembly']['decisions'][0]['mode']=='section'

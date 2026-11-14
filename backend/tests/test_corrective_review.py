@@ -299,7 +299,6 @@ def test_supplement_images_preserve_previous_image_refs_and_limit(tmp_path):
 
 
 def test_worker_publishes_new_evidence_and_history_keeps_both_rounds(monkeypatch,tmp_path,capsys):
-    import io
     import literature_worker
     import literature_rag.config as config
     import literature_rag.diagnostics as diagnostics
@@ -329,7 +328,7 @@ def test_worker_publishes_new_evidence_and_history_keeps_both_rounds(monkeypatch
             self.last_query_embedding_calls=[]
         def retrieve(self,*_):return SOURCES
     monkeypatch.setattr(config,'Settings',lambda **_:settings)
-    monkeypatch.setattr(diagnostics,'configuration_snapshot',lambda *_:{})
+    monkeypatch.setattr(diagnostics,'configuration_snapshot',lambda _path,*,settings:{})
     monkeypatch.setattr(metadata,'SqliteMetadataStore',Metadata)
     monkeypatch.setattr(vectors,'ChromaVectorStore',lambda *_:NS())
     monkeypatch.setattr(embeddings,'OpenAIEmbedder',lambda *_:NS(last_usage=None))
@@ -337,8 +336,8 @@ def test_worker_publishes_new_evidence_and_history_keeps_both_rounds(monkeypatch
     monkeypatch.setattr(reviews,'DeepSeekEvidenceReviewer',lambda *args,**kwargs:p)
     monkeypatch.setattr(retrieval,'RetrievalService',Retriever)
     monkeypatch.setattr(correction,'TargetedEvidenceReader',lambda *_:Reader())
-    monkeypatch.setattr('sys.stdin',io.StringIO(json.dumps(dict(question='Question',data_dir=str(tmp_path)))))
-    literature_worker.main();body=json.loads(capsys.readouterr().out)
+    literature_worker.main(dict(question='Question',data_dir=str(tmp_path)))
+    body=json.loads(capsys.readouterr().out)
     assert body['status']=='answered' and body['review_summary']['review_rounds']==2
     assert body['citations'][-1]['ref']=='[2]' and body['citations'][-1]['excerpt'].startswith('It measures')
     assert len(body['retrieved_evidence'])==2 and len(body['generation_calls'])==1

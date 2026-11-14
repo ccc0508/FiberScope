@@ -1,8 +1,6 @@
 """Reranking selects primary roots before the single bounded context pass."""
-from io import StringIO
 import json
 from types import SimpleNamespace as NS
-import sys
 
 import pytest
 
@@ -125,8 +123,8 @@ def test_worker_applies_row_search_rerank_and_unified_context_together(tmp_path,
     monkeypatch.setattr('literature_rag.adapters.providers.rerank.SiliconFlowReranker',Reranker)
     monkeypatch.setattr('literature_rag.adapters.chroma.vector_store.ChromaVectorStore',
         lambda *args:NS(search=lambda *_:[VectorMatch(chunks[1].id,.9)]))
-    monkeypatch.setattr(sys,'stdin',StringIO(json.dumps(dict(data_dir=str(source),question='Measured values?'))))
-    literature_worker.main();result=json.loads(capsys.readouterr().out)
+    literature_worker.main(dict(data_dir=str(source),question='Measured values?'))
+    result=json.loads(capsys.readouterr().out)
     assert result['status']=='answered' and len(calls)==1 and len(result['rerank_calls'])==1
     assert result['configuration']['pipeline_version']==('mineru-rewrite-only-v1' if rewrite_mode=='rewrite_only'
         else 'mineru-dual-query-v1' if rewrite_enabled else 'mineru-unified-rerank-v1')

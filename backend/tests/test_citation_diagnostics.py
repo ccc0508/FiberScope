@@ -1,7 +1,6 @@
 """Synthetic failures only; no model calls or retrospective benchmark repairs."""
 from dataclasses import replace
 from hashlib import sha256
-import io
 import json
 from types import SimpleNamespace as NS
 
@@ -113,14 +112,13 @@ def test_worker_serializes_failed_drafts_even_after_success_refusal_or_provider_
             self.last_seed_evidences=[make_evidence()];self.last_context_diagnostics={}
         def retrieve(self,*args):return [make_evidence()]
     monkeypatch.setattr(config,'Settings',lambda **_:settings)
-    monkeypatch.setattr(diagnostics,'configuration_snapshot',lambda *_:dict(pipeline_version='synthetic-test'))
+    monkeypatch.setattr(diagnostics,'configuration_snapshot',lambda _path,*,settings:dict(pipeline_version='synthetic-test'))
     monkeypatch.setattr(metadata,'SqliteMetadataStore',FakeMetadata)
     monkeypatch.setattr(vectors,'ChromaVectorStore',lambda *_:NS())
     monkeypatch.setattr(providers,'OpenAIEmbedder',lambda *_:NS(last_usage=None))
     monkeypatch.setattr(providers,'OpenAIGenerator',lambda *args,**kwargs:generator)
     monkeypatch.setattr(retrieval,'RetrievalService',FakeRetriever)
-    monkeypatch.setattr('sys.stdin',io.StringIO(json.dumps(dict(question='Synthetic question?',data_dir=str(tmp_path)))))
-    literature_worker.main()
+    literature_worker.main(dict(question='Synthetic question?',data_dir=str(tmp_path)))
     body=json.loads(capsys.readouterr().out)
     trace=body['citation_validation']
     assert trace['attempts'][0]['rule_code']=='missing_answer_reference'
