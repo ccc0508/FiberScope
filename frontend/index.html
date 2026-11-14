@@ -2,13 +2,63 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta
       name="description"
-      content="植物纤维可视化分析平台 · 实验数据总览与样本查询"
+      content="植物纤维可视化分析平台 · 实验数据总览与样本查询（偏光 / 纤维花园 两种界面）"
     />
+    <meta name="theme-color" content="#FBF4F6" />
+    <meta name="color-scheme" content="dark light" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>数据总览 · 植物纤维可视化分析平台</title>
+    <script>
+      // Pick the visual mode before any CSS loads (no flash of the wrong mode).
+      // Same order as src/modeResolve.ts: ?mode= → stored choice → colour scheme.
+      (function () {
+        var key = "fiberscope-mode",
+          valid = function (v) {
+            return v === "polarized" || v === "garden";
+          },
+          mode = null;
+        try {
+          var q = new URLSearchParams(location.search).get("mode");
+          if (valid(q)) {
+            mode = q;
+            try {
+              localStorage.setItem(key, q);
+            } catch (e) {}
+          }
+        } catch (e) {}
+        if (!mode) {
+          try {
+            var s = localStorage.getItem(key);
+            if (valid(s)) mode = s;
+          } catch (e) {}
+        }
+        if (!mode) {
+          try {
+            mode = matchMedia("(prefers-color-scheme: dark)").matches ? "polarized" : "garden";
+          } catch (e) {
+            mode = "garden";
+          }
+        }
+        var root = document.documentElement;
+        root.setAttribute("data-mode", mode);
+        root.style.colorScheme = mode === "polarized" ? "dark" : "light";
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute("content", mode === "polarized" ? "#06070A" : "#FBF4F6");
+      })();
+    </script>
+    <style>
+      html[data-mode="polarized"] {
+        background: #06070a;
+        color: #eceff4;
+      }
+      html[data-mode="garden"] {
+        background: #f6f1f5;
+        color: #2a2238;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>

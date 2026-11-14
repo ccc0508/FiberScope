@@ -1,4 +1,4 @@
-import type { Lineage } from "./api";
+import type { Lineage, SampleType } from "./api";
 
 export interface SourceUsage extends Lineage {
   source_version: string;
@@ -6,6 +6,8 @@ export interface SourceUsage extends Lineage {
   experiment_code: string | null;
   display_code: string | null;
   material_code: string | null;
+  /** material of the linked sample (null for source-only rows) */
+  sample_type?: SampleType | null;
 }
 export interface SourceObservation {
   file_name: string;
@@ -100,4 +102,72 @@ export function matchesSource(row: SourceRow, query: string) {
     .toLowerCase()
     .split(/\s+/)
     .every((word) => text.includes(word));
+}
+
+/** Material of a source file or target: the three pulps, recycled pulp, or unknown. */
+export type SourceKind = SampleType | "recycled" | "other";
+export interface SourceTarget {
+  label: string;
+  kind: SourceKind;
+}
+/** Linked samples (with their material) and recycled block · cycle labels of one source row, without repeats. */
+export function sourceTargets(row: SourceRow): SourceTarget[] {
+  const seen = new Map<string, SourceTarget>();
+  for (const u of row.usages)
+    if (u.canonical_code && !seen.has(u.canonical_code))
+      seen.set(u.canonical_code, {
+        label: u.canonical_code,
+        kind: u.sample_type ?? "other",
+      });
+  for (const o of row.observations) {
+    const label = `${o.block_code} · 第 ${o.cycle_no} 次循环`;
+    if (!seen.has(label)) seen.set(label, { label, kind: "recycled" });
+  }
+  return [...seen.values()];
+}
+/**
+ * Material of a whole source file from its rows: one material when every linked sample
+ * shares it, "blend" for blend files (they also list the reused pure-pulp end points),
+ * "recycled" for recycled observations, otherwise "other".
+ */
+export function sourceKind(rows: SourceRow[]): SourceKind {
+  const kinds = new Set<SourceKind>();
+  for (const r of rows) {
+    if (r.observations.length) kinds.add("recycled");
+    for (const u of r.usages) if (u.sample_type) kinds.add(u.sample_type);
+  }
+  if (kinds.size === 1) return [...kinds][0]!;
+  return kinds.has("blend") && !kinds.has("recycled") ? "blend" : "other";
+}
+export type MaterialCounts = Record<SampleType, number>;
+export interface Provenance {
+  /** unique linked samples per material */
+  samples: MaterialCounts;
+  /** experiment display points per experiment group and material */
+  beating: MaterialCounts;
+  blend: MaterialCounts;
+}
+/** How linked samples become experiment display points, from the source usages alone. */
+export function provenance(rows: SourceRow[]): Provenance {
+  const empty = (): MaterialCounts => ({ softwood: 0, hardwood: 0, blend: 0 });
+  const result: Provenance = { samples: empty(), beating: empty(), blend: empty() };
+  const samples = new Map<string, SampleType>();
+  const points = new Set<string>();
+  for (const r of rows)
+    for (const u of r.usages) {
+      if (!u.sample_type) continue;
+      if (u.canonical_code) samples.set(u.canonical_code, u.sample_type);
+      if (u.usage_type !== "experiment_sample" || !u.experiment_code) continue;
+      const group = /blend/i.test(u.experiment_code)
+        ? "blend"
+        : /beating/i.test(u.experiment_code)
+          ? "beating"
+          : null;
+      const id = JSON.stringify([u.experiment_code, u.canonical_code, u.display_code]);
+      if (!group || points.has(id)) continue;
+      points.add(id);
+      result[group][u.sample_type]++;
+    }
+  for (const type of samples.values()) result.samples[type]++;
+  return result;
 }

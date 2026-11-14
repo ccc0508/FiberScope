@@ -1,0 +1,421 @@
+/* ==========================================================================
+   「偏光 · Polarized」 mode character for the global classes.
+   Every selector starts with :where(:root[data-mode="polarized"]) — the :where()
+   keeps the specificity of the plain global class, so a page's scoped CSS still wins.
+   Tokens live in style.css.
+   ========================================================================== */
+
+:where(:root[data-mode="polarized"]) body {
+  font-size: 14px;
+}
+:where(:root[data-mode="polarized"]) ::selection {
+  background: rgba(46, 196, 214, 0.32);
+  color: #fff;
+}
+:where(:root[data-mode="polarized"]) a {
+  color: var(--accent-ink);
+}
+
+/* ---------------------------------------------------------------- headings (unported pages) */
+:where(:root[data-mode="polarized"]) h1 {
+  font-family: var(--font-display-cn);
+  font-weight: 900;
+  font-size: clamp(30px, 3.2vw, 44px);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+:where(:root[data-mode="polarized"]) h2 {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+:where(:root[data-mode="polarized"]) .page-heading p {
+  font-weight: 300;
+  font-size: 15px;
+  color: var(--text-2);
+}
+:where(:root[data-mode="polarized"]) .eyebrow,
+:where(:root[data-mode="polarized"]) .heading-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+/* ---------------------------------------------------------------- cards: dark glass + interference edge */
+:where(:root[data-mode="polarized"]) .card,
+:where(:root[data-mode="polarized"]) .metric {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(180deg, rgba(22, 25, 34, 0.9), rgba(11, 13, 18, 0.94));
+  border: 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 60px -36px rgba(0, 0, 0, 0.9);
+}
+:where(:root[data-mode="polarized"]) .card::before,
+:where(:root[data-mode="polarized"]) .metric::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: var(--ifc);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.3;
+  z-index: -1;
+  transition: opacity 0.3s;
+}
+:where(:root[data-mode="polarized"]) .metric {
+  padding: 22px 22px 20px;
+}
+:where(:root[data-mode="polarized"]) .metric-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+}
+:where(:root[data-mode="polarized"]) .metric-value {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(40px, 4.4vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+  color: var(--text);
+}
+:where(:root[data-mode="polarized"]) .metric-value small {
+  font-family: var(--font-body);
+  letter-spacing: 0;
+}
+:where(:root[data-mode="polarized"]) .coverage-main strong {
+  font-family: var(--font-display);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+}
+:where(:root[data-mode="polarized"]) .coverage-track span {
+  background: var(--ifl);
+}
+
+/* ---------------------------------------------------------------- buttons */
+/* v1 .btn: 38px pill, 14px / 500 */
+:where(:root[data-mode="polarized"]) .button {
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-color: var(--line-strong);
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+:where(:root[data-mode="polarized"]) .button:active {
+  transform: translateY(1px);
+}
+:where(:root[data-mode="polarized"]) .button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.32);
+}
+:where(:root[data-mode="polarized"]) .button.primary {
+  color: var(--text);
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#0b0d12, #0b0d12) padding-box,
+    var(--ifl) border-box;
+  box-shadow: 0 8px 30px -12px rgba(224, 71, 158, 0.55);
+}
+:where(:root[data-mode="polarized"]) .button.primary:hover {
+  background:
+    linear-gradient(#141722, #141722) padding-box,
+    var(--ifl) border-box;
+  box-shadow: 0 10px 40px -10px rgba(46, 196, 214, 0.45);
+}
+/* v1 .btn-icon: 36px bordered circle (not the small in-field clear / row-detail glyphs) */
+:where(:root[data-mode="polarized"]) .icon-button:where(:not(.clear-search):not(.row-detail)) {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+}
+:where(:root[data-mode="polarized"]) .icon-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+:where(:root[data-mode="polarized"]) .icon-button:where(:not(.clear-search):not(.row-detail)):hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ---------------------------------------------------------------- inputs */
+:where(:root[data-mode="polarized"]) .search-field {
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border-color: var(--line);
+}
+:where(:root[data-mode="polarized"]) .search-field:hover {
+  border-color: var(--line-strong);
+}
+:where(:root[data-mode="polarized"]) .filter-chips button {
+  border: 1px solid rgba(46, 196, 214, 0.35);
+  background: rgba(46, 196, 214, 0.08);
+}
+:where(:root[data-mode="polarized"]) .pagination select {
+  border-radius: var(--radius-xs);
+  border-color: var(--line);
+}
+:where(:root[data-mode="polarized"]) .count-badge,
+:where(:root[data-mode="polarized"]) .quiet-tag {
+  background: transparent;
+}
+
+/* ---------------------------------------------------------------- tables: hairlines, mono header */
+:where(:root[data-mode="polarized"]) th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  background: #0f1219;
+  border-bottom-color: var(--line);
+}
+:where(:root[data-mode="polarized"]) th small {
+  font-family: var(--font-body);
+  letter-spacing: 0;
+}
+:where(:root[data-mode="polarized"]) td {
+  border-bottom-color: var(--line-soft);
+}
+:where(:root[data-mode="polarized"]) tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.015);
+}
+:where(:root[data-mode="polarized"]) tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.045);
+}
+
+/* type tags: transparent chip + shape marker (circle / square / triangle) */
+:where(:root[data-mode="polarized"]) .type-tag,
+:where(:root[data-mode="polarized"]) .type-tag.hardwood,
+:where(:root[data-mode="polarized"]) .type-tag.blend {
+  /* v1 .tchip: the same neutral chip for every material, only the marker is coloured
+     (.type-tag.hardwood / .blend are listed so they beat the tinted base rules) */
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+:where(:root[data-mode="polarized"]) .type-tag i {
+  width: 8px;
+  height: 8px;
+  background: var(--sw);
+}
+:where(:root[data-mode="polarized"]) .type-tag.hardwood i {
+  background: var(--hw);
+}
+:where(:root[data-mode="polarized"]) .type-tag.blend i {
+  background: var(--bl);
+  width: 9px;
+  height: 9px;
+}
+
+/* ---------------------------------------------------------------- states */
+:where(:root[data-mode="polarized"]) .error-banner {
+  border-color: rgba(255, 122, 122, 0.35);
+}
+:where(:root[data-mode="polarized"]) .skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 200% 100%;
+}
+
+/* ---------------------------------------------------------------- dialogs & drawers */
+:where(:root[data-mode="polarized"]) dialog {
+  border: 0;
+  background: linear-gradient(180deg, #121520, #0a0c11);
+  color: var(--text-2);
+}
+:where(:root[data-mode="polarized"]) .info-dialog {
+  border-radius: var(--radius);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 0 1px var(--line),
+    var(--shadow-pop);
+}
+:where(:root[data-mode="polarized"]) .info-dialog::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--ifl);
+  opacity: 0.7;
+}
+:where(:root[data-mode="polarized"]) .info-dialog li::marker {
+  color: var(--bl);
+}
+:where(:root[data-mode="polarized"]) .detail-drawer {
+  border-left: 0;
+  box-shadow: -1px 0 0 var(--line), var(--shadow-pop);
+}
+/* v1 .dlg-head hairline; v1 .dr-hero: small mono code, then the 22px / 900 name */
+:where(:root[data-mode="polarized"]) .detail-drawer .dialog-heading,
+:where(:root[data-mode="polarized"]) .info-dialog .dialog-heading {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+:where(:root[data-mode="polarized"]) .detail-drawer h2 {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--text-2);
+}
+:where(:root[data-mode="polarized"]) .detail-name {
+  margin: 18px 0 12px;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.3;
+  color: var(--text);
+}
+/* the drawer slides in from the right, the centred dialog settles in (v1 drawerIn) */
+:where(:root[data-mode="polarized"]) .detail-drawer[open] {
+  animation: pz-drawer-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+:where(:root[data-mode="polarized"]) .info-dialog[open] {
+  animation: pz-dialog-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes pz-drawer-in {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+}
+@keyframes pz-dialog-in {
+  from {
+    transform: translateY(10px) scale(0.985);
+    opacity: 0;
+  }
+}
+:where(:root[data-mode="polarized"]) .detail-drawer::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  margin-left: -1px;
+  background: var(--ifl);
+  opacity: 0.6;
+  pointer-events: none;
+}
+:where(:root[data-mode="polarized"]) .lineage-list li {
+  background: rgba(255, 255, 255, 0.025);
+}
+:where(:root[data-mode="polarized"]) .source-icon {
+  background: transparent;
+}
+
+/* ---------------------------------------------------------------- shared primitives */
+:where(:root[data-mode="polarized"]) .seg > button {
+  background: rgba(255, 255, 255, 0.025);
+}
+:where(:root[data-mode="polarized"]) .seg > button[aria-pressed="true"],
+:where(:root[data-mode="polarized"]) .seg > button[aria-checked="true"],
+:where(:root[data-mode="polarized"]) .seg > button.on {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.34);
+}
+:where(:root[data-mode="polarized"]) .chip {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+:where(:root[data-mode="polarized"]) .field-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+:where(:root[data-mode="polarized"]) .big-number {
+  font-weight: 200;
+  letter-spacing: -0.05em;
+}
+:where(:root[data-mode="polarized"]) .caveat {
+  background: transparent;
+  border: 0;
+  border-left: 2px solid rgba(224, 71, 158, 0.55);
+  border-radius: 0;
+  padding: 2px 0 2px 12px;
+}
+
+/* ---------------------------------------------------------------- change objective = refocus
+   App.vue adds .pz-focus-in to #main for ~1s after every route change (never under reduced
+   motion): the page's top-level blocks below the header pull into focus one after another
+   (v1 focusIn). Zero specificity, so a page's own animation on a block wins; fill mode is
+   backwards only, so no transform or filter stays on the blocks afterwards. */
+:where(:root[data-mode="polarized"] #main.pz-focus-in > *) > :where(:not(.page-header, .page-heading)) {
+  animation: pz-focus-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+:where(:root[data-mode="polarized"] #main.pz-focus-in > *) > :where(:nth-child(3)) {
+  animation-delay: 0.05s;
+}
+:where(:root[data-mode="polarized"] #main.pz-focus-in > *) > :where(:nth-child(4)) {
+  animation-delay: 0.1s;
+}
+:where(:root[data-mode="polarized"] #main.pz-focus-in > *) > :where(:nth-child(n + 5)) {
+  animation-delay: 0.15s;
+}
+@keyframes pz-focus-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(10px);
+  }
+}
+
+/* ---------------------------------------------------------------- shell frame: HUD on top, turret on the left */
+:where(:root[data-mode="polarized"]) .app-frame {
+  padding: 0 clamp(20px, 4vw, 56px) 0 calc(236px + clamp(8px, 2vw, 32px));
+}
+:where(:root[data-mode="polarized"]) .app-frame > #main {
+  padding: calc(var(--chrome-top) + 26px) 0 40px;
+}
+:where(:root[data-mode="polarized"]) .overview {
+  margin-left: 0;
+}
+:where(:root[data-mode="polarized"]) .app-foot {
+  max-width: var(--page-max);
+  margin-top: 30px;
+  padding: 24px 0 34px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 11.5px;
+}
+:where(:root[data-mode="polarized"]) .app-foot-brand {
+  text-transform: uppercase;
+}
+@media (max-width: 1100px) {
+  :where(:root[data-mode="polarized"]) .app-frame {
+    padding-left: calc(212px + clamp(8px, 2vw, 32px));
+  }
+}
+@media (max-width: 720px) {
+  :root[data-mode="polarized"] {
+    --chrome-top: 54px;
+    --chrome-bottom: 78px;
+  }
+  :where(:root[data-mode="polarized"]) .app-frame {
+    padding: 0 16px;
+  }
+  :where(:root[data-mode="polarized"]) .app-frame > #main {
+    padding-top: calc(var(--chrome-top) + 14px);
+  }
+  :where(:root[data-mode="polarized"]) .app-foot {
+    padding-bottom: 100px;
+  }
+}

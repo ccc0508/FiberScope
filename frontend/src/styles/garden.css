@@ -1,0 +1,439 @@
+/* ==========================================================================
+   「纤维花园 · Soft Cellulose」 mode character for the global classes.
+   Every selector starts with :where(:root[data-mode="garden"]) — the :where()
+   keeps the specificity of the plain global class, so a page's scoped CSS still wins.
+   Tokens live in style.css.
+   ========================================================================== */
+
+:where(:root[data-mode="garden"]) body {
+  font-size: 14px;
+}
+:where(:root[data-mode="garden"]) ::selection {
+  background: #e3d6fa;
+}
+:where(:root[data-mode="garden"]) a {
+  color: var(--bl-ink);
+}
+
+/* ---------------------------------------------------------------- headings (unported pages) */
+:where(:root[data-mode="garden"]) h1 {
+  font-family: var(--font-display-cn);
+  font-weight: 400;
+  font-size: clamp(32px, 3.2vw, 44px);
+  letter-spacing: 0.08em;
+  line-height: 1.15;
+}
+:where(:root[data-mode="garden"]) h2,
+:where(:root[data-mode="garden"]) h3 {
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+:where(:root[data-mode="garden"]) .eyebrow,
+:where(:root[data-mode="garden"]) .heading-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display), var(--font-body);
+  font-style: italic;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  color: var(--text-2);
+}
+
+/* ---------------------------------------------------------------- glass tiles */
+:where(:root[data-mode="garden"]) .card,
+:where(:root[data-mode="garden"]) .metric {
+  border: 0;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 252, 253, 0.8) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    var(--shadow);
+}
+:where(:root[data-mode="garden"]) .metric {
+  padding: 22px 24px 20px;
+}
+:where(:root[data-mode="garden"]) .metric-label {
+  font-size: 14px;
+  color: var(--text-2);
+}
+:where(:root[data-mode="garden"]) .metric-value,
+:where(:root[data-mode="garden"]) .coverage-main strong {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100, "WONK" 0, "opsz" 144;
+  font-weight: 380;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: -0.035em;
+}
+:where(:root[data-mode="garden"]) .metric-value {
+  font-size: clamp(44px, 4.6vw, 72px);
+  line-height: 1;
+  color: var(--text);
+}
+:where(:root[data-mode="garden"]) .metric-value small {
+  font-family: var(--font-body);
+  font-variation-settings: normal;
+  letter-spacing: 0;
+}
+:where(:root[data-mode="garden"]) .bar-track,
+:where(:root[data-mode="garden"]) .coverage-track {
+  background: rgba(42, 34, 56, 0.07);
+}
+
+/* ---------------------------------------------------------------- pill controls */
+:where(:root[data-mode="garden"]) .button {
+  border: 0;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--text);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    0 6px 16px -10px rgba(74, 52, 110, 0.35);
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.45, 0.5, 1),
+    background 0.25s,
+    box-shadow 0.25s;
+}
+:where(:root[data-mode="garden"]) .button:hover {
+  background: #fff;
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    0 10px 22px -12px rgba(74, 52, 110, 0.45);
+}
+:where(:root[data-mode="garden"]) .button:active {
+  transform: scale(0.96);
+}
+:where(:root[data-mode="garden"]) .button.primary {
+  background: var(--text);
+  color: #fff7f2;
+  box-shadow:
+    0 12px 26px -14px rgba(42, 34, 56, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+:where(:root[data-mode="garden"]) .button.primary:hover {
+  background: #3a2f4e;
+}
+:where(:root[data-mode="garden"]) .icon-button:hover {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 0 0 1px #fff;
+}
+:where(:root[data-mode="garden"]) .search-field {
+  border: 0;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    0 6px 16px -12px rgba(74, 52, 110, 0.45);
+}
+:where(:root[data-mode="garden"]) .search-field:focus-within {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    0 0 0 3px rgba(106, 76, 192, 0.22);
+}
+:where(:root[data-mode="garden"]) .pagination select {
+  border: 0;
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 4px 10px -8px rgba(74, 52, 110, 0.4);
+}
+:where(:root[data-mode="garden"]) .count-badge,
+:where(:root[data-mode="garden"]) .quiet-tag {
+  border: 0;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95);
+}
+:where(:root[data-mode="garden"]) .filter-chips button {
+  background: var(--bl-tint);
+  color: var(--bl-ink);
+}
+:where(:root[data-mode="garden"]) .filter-chips .clear-all {
+  background: transparent;
+  color: var(--text-3);
+}
+
+/* ---------------------------------------------------------------- tables: soft rows, sticky glass header */
+:where(:root[data-mode="garden"]) th {
+  font-size: 12.5px;
+  color: var(--text-2);
+  background: #fbf6fa;
+  border-bottom: 1px solid var(--line);
+}
+:where(:root[data-mode="garden"]) tbody tr:nth-child(even) td {
+  background: rgba(248, 243, 248, 0.6);
+}
+:where(:root[data-mode="garden"]) tbody tr:hover td {
+  background: rgba(236, 229, 251, 0.55);
+}
+
+/* material chips (v4 .tchip + .mk): plum label on the stain tint, the marker in the stain colour */
+:where(:root[data-mode="garden"]) .type-tag,
+:where(:root[data-mode="garden"]) .type-tag.hardwood,
+:where(:root[data-mode="garden"]) .type-tag.blend {
+  gap: 7px;
+  padding: 3px 11px 3px 9px;
+  font-size: 12.5px;
+  color: var(--text);
+}
+:where(:root[data-mode="garden"]) .type-tag i {
+  width: 8px;
+  height: 8px;
+  background: var(--sw);
+}
+:where(:root[data-mode="garden"]) .type-tag.hardwood i {
+  border-radius: 2px;
+  background: var(--hw);
+}
+:where(:root[data-mode="garden"]) .type-tag.blend i {
+  width: 9px;
+  height: 9px;
+  background: var(--bl);
+}
+
+/* ---------------------------------------------------------------- states */
+:where(:root[data-mode="garden"]) .error-banner {
+  border: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+/* ---------------------------------------------------------------- dialogs & sheets */
+:where(:root[data-mode="garden"]) dialog {
+  border: 0;
+  color: var(--text-2);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.97), rgba(255, 248, 245, 0.95));
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    var(--shadow-pop);
+}
+:where(:root[data-mode="garden"]) dialog::backdrop {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+:where(:root[data-mode="garden"]) .info-dialog {
+  border-radius: 32px;
+  padding: 28px 30px;
+}
+/* v4 .modal h2: Noto Sans SC 500 (ZCOOL XiaoWei only from 30px up, and it orphaned 据 on phones) */
+:where(:root[data-mode="garden"]) .info-dialog h2 {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+  color: var(--text);
+  text-wrap: balance;
+}
+:where(:root[data-mode="garden"]) .info-dialog li::marker {
+  color: var(--accent);
+}
+/* the drawer floats as a rounded glass sheet */
+:where(:root[data-mode="garden"]) .detail-drawer {
+  margin: 12px 12px 12px auto;
+  width: min(560px, calc(100vw - 24px));
+  height: calc(100dvh - 24px);
+  max-height: calc(100dvh - 24px);
+  border-radius: 32px;
+  background: linear-gradient(170deg, rgba(255, 255, 255, 0.97), rgba(250, 246, 252, 0.96));
+}
+:where(:root[data-mode="garden"]) .lineage-list li {
+  border: 0;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95);
+}
+:where(:root[data-mode="garden"]) .source-icon {
+  border: 0;
+  background: var(--accent-tint);
+  color: var(--accent);
+}
+/* v4 sheetIn: the sheet glides in from the right */
+:where(:root[data-mode="garden"]) .detail-drawer[open] {
+  animation: gd-sheet-in 0.5s var(--ease);
+}
+@keyframes gd-sheet-in {
+  from {
+    translate: 40px 0;
+    opacity: 0;
+  }
+}
+@media (max-width: 720px) {
+  :where(:root[data-mode="garden"]) .info-dialog h2 {
+    font-size: 22px;
+  }
+  :where(:root[data-mode="garden"]) .detail-drawer {
+    margin: 8px 8px 8px auto;
+    width: calc(100vw - 16px);
+    height: calc(100dvh - 16px);
+    max-height: calc(100dvh - 16px);
+    border-radius: 26px;
+  }
+}
+
+/* ---------------------------------------------------------------- shared primitives */
+:where(:root[data-mode="garden"]) .seg {
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 2px 6px rgba(74, 52, 110, 0.07);
+}
+:where(:root[data-mode="garden"]) .seg > button {
+  border: 0;
+  min-height: 32px;
+  padding: 0 14px;
+}
+:where(:root[data-mode="garden"]) .seg > button[aria-pressed="true"],
+:where(:root[data-mode="garden"]) .seg > button[aria-checked="true"],
+:where(:root[data-mode="garden"]) .seg > button.on {
+  font-weight: 500;
+  background: linear-gradient(135deg, #fff 0%, #fff6f1 100%);
+  box-shadow:
+    0 6px 14px -8px rgba(74, 52, 110, 0.5),
+    inset 0 0 0 1px #fff;
+}
+/* v-seg (src/motion.ts) adds a sliding blob: the selection springs to the pressed button
+   and squashes on the way (v4 .seg-blob / .seg.morph) */
+:where(:root[data-mode="garden"]) .seg.has-blob {
+  position: relative;
+}
+:where(:root[data-mode="garden"]) .seg.has-blob > .seg-blob {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 999px;
+  pointer-events: none;
+  background: linear-gradient(135deg, #fff 0%, #fff6f1 100%);
+  box-shadow:
+    0 6px 14px -8px rgba(74, 52, 110, 0.5),
+    inset 0 0 0 1px #fff;
+  transition:
+    transform 0.5s var(--spring),
+    width 0.5s var(--spring),
+    height 0.3s;
+}
+:where(:root[data-mode="garden"]) .seg.has-blob > button {
+  position: relative;
+  z-index: 1;
+}
+/* same weight as the pressed-button rule above (and later), so the blob replaces the static
+   fill without outranking a page's own seg styling */
+:where(:root[data-mode="garden"]) .seg.blob-ready > button {
+  background: transparent;
+  box-shadow: none;
+}
+:where(:root[data-mode="garden"]) .seg.morph > .seg-blob {
+  animation: gd-seg-morph 0.55s var(--ease);
+}
+@keyframes gd-seg-morph {
+  35% {
+    border-radius: 40% 60% 55% 45% / 60% 45% 55% 40%;
+    scale: 1.06 0.9;
+  }
+}
+
+/* v-tilt (src/motion.ts): 3D pointer tilt and a glass sheen that follows the pointer */
+:where(:root[data-mode="garden"]) .tilt {
+  transition:
+    transform 0.6s var(--ease),
+    box-shadow 0.4s;
+}
+:where(:root[data-mode="garden"]) .tilt.tilting {
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition:
+    transform 0.12s linear,
+    box-shadow 0.4s;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 1px 0 #fff,
+    0 40px 70px -36px rgba(74, 52, 110, 0.5),
+    0 8px 20px -10px rgba(74, 52, 110, 0.18);
+}
+:where(:root[data-mode="garden"]) .tilt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.7), transparent 45%);
+  mix-blend-mode: soft-light;
+}
+:where(:root[data-mode="garden"]) .tilt.tilting::after {
+  opacity: 1;
+}
+
+/* tiles rise into place as they scroll in (v4 rise; the range is in px so tall tiles finish
+   after 160px instead of staying half-faded). Fill mode backwards: nothing stays applied. */
+@supports (animation-timeline: view()) {
+  :where(:root[data-mode="garden"]) :where(.card, .metric) {
+    animation: gd-rise linear backwards;
+    animation-timeline: view();
+    animation-range: entry 0% entry 160px;
+  }
+}
+@keyframes gd-rise {
+  from {
+    translate: 0 22px;
+    scale: 0.99;
+    opacity: 0.72;
+  }
+}
+
+:where(:root[data-mode="garden"]) .chip {
+  border: 0;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95);
+}
+:where(:root[data-mode="garden"]) .big-number {
+  font-variation-settings: "SOFT" 100, "WONK" 0, "opsz" 144;
+  font-weight: 380;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: -0.035em;
+}
+:where(:root[data-mode="garden"]) .caveat {
+  border: 0;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+/* ---------------------------------------------------------------- shell frame: glass header on top, dock at the bottom */
+:root[data-mode="garden"] {
+  --chrome-bottom: 112px;
+}
+:where(:root[data-mode="garden"]) .app-frame {
+  padding: 0 32px;
+}
+:where(:root[data-mode="garden"]) .app-frame > #main {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: calc(var(--chrome-top) + 18px) 0 40px;
+}
+:where(:root[data-mode="garden"]) .app-foot {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 8px 4px 136px;
+  color: var(--text-2);
+  font-size: 12.5px;
+}
+:where(:root[data-mode="garden"]) .app-foot-brand {
+  font-family: var(--font-display);
+  font-style: italic;
+  letter-spacing: 0;
+}
+@media (max-width: 720px) {
+  :root[data-mode="garden"] {
+    --chrome-top: 58px;
+    --chrome-bottom: 84px;
+  }
+  :where(:root[data-mode="garden"]) .app-frame {
+    padding: 0 14px;
+  }
+  :where(:root[data-mode="garden"]) .app-frame > #main {
+    padding-top: calc(var(--chrome-top) + 12px);
+  }
+  :where(:root[data-mode="garden"]) .app-foot {
+    padding-bottom: 104px;
+  }
+}
