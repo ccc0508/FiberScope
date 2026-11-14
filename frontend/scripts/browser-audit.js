@@ -152,7 +152,6 @@ async (page) => {
       },
       {
         path: "/blends",
-        id: "blend-metric",
         data: [...blends].sort(
           (a, b) =>
             a.sw_proportion_pct - b.sw_proportion_pct ||
@@ -164,7 +163,15 @@ async (page) => {
     ]) {
       await go(config.path, "main .sample-code");
       for (let i = 0; i < config.metrics.length; i++) {
-        await choose(config.id, i);
+        if (config.path === "/blends") {
+          const { group, name } = config.metrics[i];
+          const radio = page.locator(`[aria-labelledby="blend-group-${group}"]`)
+            .getByRole("radio", { name, exact: true });
+          await radio.click();
+          await radio.and(page.locator('[aria-checked="true"]')).waitFor();
+        } else {
+          await choose(config.id, i);
+        }
         const actual = await page
           .locator(config.rows ?? "main table tbody tr")
           .evaluateAll(
@@ -442,25 +449,36 @@ async (page) => {
           ),
           "page horizontal overflow " + width + " " + path,
         );
-        const trigger = page.getByRole("combobox").first();
-        await trigger.focus();
-        await page.keyboard.press("Enter");
-        const list = page.getByRole("listbox");
-        await list.waitFor();
-        check(
-          await list.evaluate((e) => {
-            const r = e.getBoundingClientRect();
-            return r.left >= 0 && r.right <= document.documentElement.clientWidth + 1;
-          }),
-          "filter outside viewport " + path + " " + width,
-        );
-        await page.keyboard.press("End");
-        await page.keyboard.press("Home");
-        await page.keyboard.press("Escape");
-        check(
-          await trigger.evaluate((e) => e === document.activeElement),
-          "filter focus not returned",
-        );
+        if (path === "/blends") {
+          const group = page.locator('.blend-chips[role="radiogroup"]').first();
+          const radios = group.getByRole("radio");
+          const selectedAndFocused = page.locator('[aria-checked="true"]:focus');
+          await group.locator('[role="radio"][tabindex="0"]').focus();
+          await page.keyboard.press("End");
+          await radios.last().and(selectedAndFocused).waitFor();
+          await page.keyboard.press("Home");
+          await radios.first().and(selectedAndFocused).waitFor();
+        } else {
+          const trigger = page.getByRole("combobox").first();
+          await trigger.focus();
+          await page.keyboard.press("Enter");
+          const list = page.getByRole("listbox");
+          await list.waitFor();
+          check(
+            await list.evaluate((e) => {
+              const r = e.getBoundingClientRect();
+              return r.left >= 0 && r.right <= document.documentElement.clientWidth + 1;
+            }),
+            "filter outside viewport " + path + " " + width,
+          );
+          await page.keyboard.press("End");
+          await page.keyboard.press("Home");
+          await page.keyboard.press("Escape");
+          check(
+            await trigger.evaluate((e) => e === document.activeElement),
+            "filter focus not returned",
+          );
+        }
         if (width <= 390) {
           const toggle = page.getByRole("button", { name: "展开导航" });
           const drawer = page.locator("#pz-turret");

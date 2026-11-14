@@ -1,4 +1,4 @@
-import { createApp, watch } from "vue";
+import { createApp, nextTick, watch } from "vue";
 import {
   createRouter,
   createWebHistory,
@@ -27,25 +27,41 @@ import "./styles/garden.css";
  *  - query-only changes (filters, pagination, ?mode=): stay where the reader is.
  * A mode switch is not a navigation: setMode keeps the position itself.
  */
-function settledHeight(top: number): Promise<void> {
+function settledHeight(top: number, isCurrent: () => boolean): Promise<void> {
   return new Promise((resolve) => {
     const deadline = performance.now() + 1500;
     const check = () => {
       const room = document.documentElement.scrollHeight - window.innerHeight;
-      if (room >= top || performance.now() > deadline) resolve();
+      if (!isCurrent() || room >= top || performance.now() > deadline) resolve();
       else requestAnimationFrame(check);
     };
     check();
   });
 }
 const scrollBehavior: RouterScrollBehavior = async (to, from, savedPosition) => {
+  const current = router.currentRoute.value;
+  if (current.fullPath !== to.fullPath) return false;
+  const isCurrent = () => router.currentRoute.value === current;
+
   if (savedPosition) {
-    await settledHeight(savedPosition.top);
-    return savedPosition;
+    await settledHeight(savedPosition.top, isCurrent);
+    return isCurrent() ? savedPosition : false;
   }
   if (to.hash) {
+    if (to.path === "/intro") {
+      try {
+        const { loadIntro } = await import("./pages/Intro.vue");
+        await loadIntro(mode.value);
+        await nextTick();
+      } catch {
+        return false;
+      }
+      if (!isCurrent()) return false;
+    }
+    const target = document.getElementById(to.hash.slice(1));
+    if (!target) return false;
     const padding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop);
-    return { el: to.hash, top: Number.isFinite(padding) ? padding : 0 };
+    return { el: target, top: Number.isFinite(padding) ? padding : 0 };
   }
   if (to.path !== from.path) return { top: 0, left: 0 };
   return false;

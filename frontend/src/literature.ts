@@ -176,9 +176,12 @@ export function citationTitle(c: Pick<Citation, "kind" | "document_id" | "filena
 export const pageRange = (start: number, end: number) => (end !== start ? `${start}–${end}` : `${start}`);
 
 export interface QueryField {
+  position: number | null;
   name: string;
   description: string;
   unit: string | null;
+  unitStatus: string | null;
+  unitNote: string | null;
 }
 export interface QueryExcerpt {
   sql: string | null;
@@ -210,8 +213,16 @@ export function parseQueryExcerpt(text: string): QueryExcerpt | null {
   const rows = o.rows.filter(Array.isArray) as unknown[][];
   const fields = (Array.isArray(o.column_metadata) ? o.column_metadata : [])
     .filter((m): m is Record<string, unknown> => !!m && typeof m === "object")
-    .map((m) => ({ name: str(m.name) ?? "", description: str(m.description) ?? "", unit: str(m.unit) }))
-    .filter((f) => f.name || f.description);
+    .map((m) => ({
+      position: typeof m.position === "number" && Number.isInteger(m.position) &&
+        m.position >= 0 && m.position < columns.length ? m.position : null,
+      name: str(m.name) ?? "",
+      description: str(m.description) ?? "",
+      unit: str(m.unit),
+      unitStatus: str(m.unit_status),
+      unitNote: str(m.unit_note),
+    }))
+    .filter((f) => f.position !== null || f.name || f.description);
   const views = Array.isArray(o.views) ? o.views.map(String) : str(o.view) ? [String(o.view)] : [];
   return {
     sql: str(o.sql),

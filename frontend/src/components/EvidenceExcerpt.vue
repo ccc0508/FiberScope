@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import EvidenceMath from './EvidenceMath.vue';
-import { cellText, parseQueryExcerpt, timeLabel } from '../literature';
+import { cellText, parseQueryExcerpt, timeLabel, type QueryField } from '../literature';
 
 const props = defineProps<{
   text: string;
@@ -11,7 +11,23 @@ const props = defineProps<{
   label?: string;
 }>();
 const snapshot = computed(() => (props.query ? parseQueryExcerpt(props.text) : null));
-const unitOf = (column: string) => snapshot.value?.fields.find((f) => f.name === column)?.unit ?? null;
+const headings = computed(() => {
+  if (!snapshot.value) return [];
+  const { columns, fields } = snapshot.value;
+  return columns.map((name, position) => {
+    const field = fields.find((f) => f.position === position) ??
+      // Older snapshots can omit positions. Only use a name that identifies one column.
+      (columns.indexOf(name) === columns.lastIndexOf(name)
+        ? fields.find((f) => f.position === null && f.name === name)
+        : undefined);
+    return { name, unit: field ? unitLabel(field) : null };
+  });
+});
+function unitLabel(field: QueryField) {
+  if (field.unitStatus === 'tentative') return field.unit ? `${field.unit}，单位暂定` : '单位暂定';
+  if (field.unitStatus === 'unconfirmed') return field.unit ? `${field.unit}，单位未确认` : '单位未确认';
+  return field.unit;
+}
 // Parse table structure only. Never insert source HTML into the live document:
 // cells are rendered through Vue text interpolation, without source attributes.
 const parts = computed(() => props.text.split(/(<table\b[^>]*>[\s\S]*?<\/table\s*>)/gi).filter(Boolean).map(text => {
@@ -43,8 +59,8 @@ const parts = computed(() => props.text.split(/(<table\b[^>]*>[\s\S]*?<\/table\s
       <table>
         <thead>
           <tr>
-            <th v-for="column in snapshot.columns" :key="column" scope="col">
-              {{ column }}<small v-if="unitOf(column)">（{{ unitOf(column) }}）</small>
+            <th v-for="(heading, position) in headings" :key="position" scope="col">
+              {{ heading.name }}<small v-if="heading.unit">（{{ heading.unit }}）</small>
             </th>
           </tr>
         </thead>
@@ -67,7 +83,10 @@ const parts = computed(() => props.text.split(/(<table\b[^>]*>[\s\S]*?<\/table\s
       <dl class="eq-fields">
         <div v-for="(field, f) in snapshot.fields" :key="f">
           <dt>{{ field.name || '—' }}</dt>
-          <dd>{{ field.description || '—' }}<span v-if="field.unit" class="eq-unit">单位 {{ field.unit }}</span></dd>
+          <dd>
+            {{ field.description || '—' }}<span v-if="unitLabel(field)" class="eq-unit">{{ unitLabel(field) }}</span>
+            <span v-if="field.unitNote" class="eq-unit">{{ field.unitNote }}</span>
+          </dd>
         </div>
       </dl>
     </template>

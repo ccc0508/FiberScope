@@ -13,7 +13,7 @@ const loaders: Record<Mode, () => Promise<{ default: Component }>> = {
 };
 const resolved = shallowReactive<Partial<Record<Mode, Component>>>({});
 const pending: Partial<Record<Mode, Promise<void>>> = {};
-function load(value: Mode): Promise<void> {
+export function loadIntro(value: Mode): Promise<void> {
   if (resolved[value]) return Promise.resolve();
   return (pending[value] ??= loaders[value]().then(
     (module) => {
@@ -48,7 +48,7 @@ watch(
   mode,
   (value) => {
     failed.value = false;
-    load(value).catch(() => {
+    loadIntro(value).catch(() => {
       if (mode.value === value) failed.value = true;
     });
   },
@@ -72,7 +72,7 @@ watch(shown, async (next, previous) => {
 
 onMounted(() => {
   const other: Mode = mode.value === "polarized" ? "garden" : "polarized";
-  const prefetch = () => void load(other).catch(() => undefined);
+  const prefetch = () => void loadIntro(other).catch(() => undefined);
   if (typeof window.requestIdleCallback === "function")
     window.requestIdleCallback(prefetch, { timeout: 3000 });
   else setTimeout(prefetch, 1500);

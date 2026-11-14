@@ -2052,7 +2052,6 @@ load();
     min-width: 0;
   }
   .src-scope {
-    flex-wrap: nowrap;
     gap: 4px;
   }
   .src-scope > button {

@@ -69,7 +69,7 @@ onBeforeUnmount(() => controller?.abort());
     ref="dialog"
     aria-label="样本详情与来源追溯"
     class="detail-drawer"
-    @close="emit('close')"
+    @cancel.prevent="close"
     @click="$event.target === dialog && close()"
   >
     <div v-if="sample" class="drawer-content">
