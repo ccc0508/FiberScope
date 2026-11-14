@@ -93,23 +93,23 @@ onBeforeUnmount(() => controller?.abort());
             <thead>
               <tr>
                 <th>原料</th>
-                <th>比例 / %</th>
-                <th>转数 / r</th>
-                <th>打浆度 / °SR</th>
+                <th class="num-col">比例 / %</th>
+                <th class="num-col">转数 / r</th>
+                <th class="num-col">打浆度 / °SR</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>针叶木浆</td>
-                <td>{{ number(sample.sw_proportion_pct) }}</td>
-                <td>{{ number(sample.sw_beating_revolutions) }}</td>
-                <td>{{ number(sample.sw_beating_degree_sr, 1) }}</td>
+                <td class="numeric">{{ number(sample.sw_proportion_pct) }}</td>
+                <td class="numeric">{{ number(sample.sw_beating_revolutions) }}</td>
+                <td class="numeric">{{ number(sample.sw_beating_degree_sr, 1) }}</td>
               </tr>
               <tr>
                 <td>阔叶木浆</td>
-                <td>{{ number(sample.hw_proportion_pct) }}</td>
-                <td>{{ number(sample.hw_beating_revolutions) }}</td>
-                <td>{{ number(sample.hw_beating_degree_sr, 1) }}</td>
+                <td class="numeric">{{ number(sample.hw_proportion_pct) }}</td>
+                <td class="numeric">{{ number(sample.hw_beating_revolutions) }}</td>
+                <td class="numeric">{{ number(sample.hw_beating_degree_sr, 1) }}</td>
               </tr>
             </tbody>
           </table>
@@ -159,3 +159,39 @@ onBeforeUnmount(() => controller?.abort());
     </div>
   </dialog>
 </template>
+
+<style scoped>
+.detail-section .table-scroll {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-soft);
+}
+.detail-section th {
+  position: static;
+}
+/* headings over number columns line up with the right-aligned mono values */
+.detail-section th.num-col {
+  text-align: right;
+}
+.drawer-foot {
+  border-top: 1px solid var(--line-soft);
+  margin-top: 28px;
+  padding-top: 16px;
+}
+:root[data-mode="polarized"] .drawer-content h2 {
+  letter-spacing: 0.02em;
+}
+:root[data-mode="polarized"] .detail-section h3 {
+  font-size: 13.5px;
+}
+:root[data-mode="garden"] .drawer-content h2 {
+  font-size: 22px;
+}
+:root[data-mode="garden"] .detail-section .table-scroll {
+  border: 0;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95);
+}
+:root[data-mode="garden"] .detail-section th {
+  background: rgba(255, 255, 255, 0.7);
+}
+</style>

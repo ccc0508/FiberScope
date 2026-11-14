@@ -1,239 +1,228 @@
 <script setup lang="ts">
-// 页头装饰：纤维显微示意图（AI 生成，非实测），WebGL 让纤维缓慢漂移，
-// 指针处是一枚约 1.8 倍的物镜视野。只做装饰，不承载数据；无 WebGL 时整块不显示。
-import { onBeforeUnmount, onMounted, ref } from "vue";
-import micrograph from "../assets/fiber-micrograph.jpg";
+/*
+ * 打浆页页头的数据签名（v4 beatingSig）：两条实测打浆度曲线、目标打浆度虚线，
+ * 以及两种原料首次达到目标的转数（相邻实测点线性插值，取整到百转）。
+ * 取代旧的显微图 WebGL 装饰：图形本身只做示意（aria-hidden），含义由图注文字承载。
+ * 颜色来自 palette.ts（随模式切换），坐标轴与文字用令牌；无数据时显示骨架。
+ */
+import { computed } from "vue";
+import { number } from "../api";
+import { firstReach, type CurvePoint } from "../beating";
+import { materialCodeColors } from "../palette";
 
-const canvas = ref<HTMLCanvasElement>();
-const failed = ref(false);
-let cleanup = () => {};
+type Material = "SW" | "HW";
+const props = defineProps<{
+  /** 打浆度曲线（x 转数，y °SR），已按转数升序、只含有效值 */
+  sw: CurvePoint[];
+  hw: CurvePoint[];
+  /** 目标打浆度 °SR */
+  target: number;
+  /** 横轴终点（转） */
+  xMax: number;
+}>();
 
-const VERTEX = `attribute vec2 p;varying vec2 v;void main(){v=p*.5+.5;gl_Position=vec4(p,0.,1.);}`;
-const FRAGMENT = `precision mediump float;varying vec2 v;
-uniform sampler2D T;uniform vec2 R,M,TS;uniform float t,L;uniform vec3 BG,LENS;
-// 铺满画布并放大 1/0.88，四周留出漂移余量
-vec2 cover(vec2 uv){float ra=R.x/R.y,ta=TS.x/TS.y;vec2 s=ra>ta?vec2(1.,ta/ra):vec2(ra/ta,1.);return (uv-.5)*s*.88+.5;}
-// 越界时镜像取样，避免拉出边缘像素条
-vec3 tex(vec2 uv){uv=1.-abs(1.-abs(uv));uv.y=1.-uv.y;return texture2D(T,uv).rgb;}
-void main(){
-  vec2 uv=v;
-  uv+=.0035*vec2(sin(uv.y*9.+t*.35)+.5*sin(uv.x*17.-t*.2),cos(uv.x*7.-t*.3));
-  uv.x+=.045*sin(t*.042);
-  vec2 px=v*R;float d=length(px-M);float k=smoothstep(L,L-1.5,d);
-  vec2 mu=cover(M/R+(uv-M/R)*.55);
-  float ab=.0025*smoothstep(L*.55,L,d)*k;
-  vec3 lens=vec3(tex(mu+vec2(ab,0.)).r,tex(mu).g,tex(mu-vec2(ab,0.)).b);
-  vec3 c=mix(tex(cover(uv)),lens,k);
-  c=mix(c,LENS,smoothstep(2.5,0.,abs(d-L))*.55*step(1.,L));
-  c*=1.-.06*smoothstep(L*.6,L,d)*k;
-  c=mix(c,BG,.1);
-  gl_FragColor=vec4(c,1.);
-}`;
+const W = 420,
+  L = 34,
+  R = W - 8,
+  TOP = 8,
+  BASE = 112;
+const NAMES: Record<Material, string> = { SW: "针叶木浆", HW: "阔叶木浆" };
+const X = (v: number) => L + (v / (props.xMax || 1)) * (R - L);
+const Y = (v: number) => BASE + (Math.max(0, Math.min(100, v)) / 100) * (TOP - BASE);
+const path = (points: CurvePoint[]) =>
+  points
+    .map((p, i) => `${i ? "L" : "M"}${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`)
+    .join("");
 
-onMounted(() => {
-  const cv = canvas.value;
-  const gl = cv?.getContext("webgl", { antialias: false });
-  if (!cv || !gl) {
-    failed.value = true;
-    return;
-  }
-  const shader = (type: number, src: string) => {
-    const s = gl.createShader(type)!;
-    gl.shaderSource(s, src);
-    gl.compileShader(s);
-    return s;
+const empty = computed(() => !props.sw.length && !props.hw.length);
+const reach = computed(() => {
+  const at = (points: CurvePoint[]) => {
+    const x = firstReach(points, props.target);
+    return x === null ? null : Math.round(x / 100) * 100;
   };
-  const program = gl.createProgram()!;
-  gl.attachShader(program, shader(gl.VERTEX_SHADER, VERTEX));
-  gl.attachShader(program, shader(gl.FRAGMENT_SHADER, FRAGMENT));
-  gl.linkProgram(program);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    failed.value = true;
-    return;
-  }
-  gl.useProgram(program);
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
-    gl.STATIC_DRAW,
-  );
-  const position = gl.getAttribLocation(program, "p");
-  gl.enableVertexAttribArray(position);
-  gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-  const u = (name: string) => gl.getUniformLocation(program, name);
-  const uniforms = {
-    R: u("R"),
-    M: u("M"),
-    TS: u("TS"),
-    t: u("t"),
-    L: u("L"),
-    BG: u("BG"),
-    LENS: u("LENS"),
-  };
-  gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
-  for (const [key, value] of [
-    [gl.TEXTURE_MIN_FILTER, gl.LINEAR],
-    [gl.TEXTURE_MAG_FILTER, gl.LINEAR],
-    [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE],
-    [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE],
-  ] as const)
-    gl.texParameteri(gl.TEXTURE_2D, key, value);
-
-  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const css = getComputedStyle(document.documentElement);
-  const rgb = (name: string, fallback: string) => {
-    const hex = (css.getPropertyValue(name).trim() || fallback).replace(
-      "#",
-      "",
-    );
-    return [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
-  };
-  const background = rgb("--canvas", "#f4efe4"),
-    ring = rgb("--signal-ink", "#0b5f5a");
-  let textureSize = [1, 1],
-    ready = false;
-  const lens = { x: -999, y: -999, r: 0, target: 0 };
-  let width = 0,
-    height = 0,
-    frame = 0,
-    visible = true;
-  const start = performance.now();
-
-  function resize() {
-    const dpr = Math.min(2, devicePixelRatio || 1);
-    width = Math.round(cv!.clientWidth * dpr);
-    height = Math.round(cv!.clientHeight * dpr);
-    cv!.width = width;
-    cv!.height = height;
-    gl!.viewport(0, 0, width, height);
-  }
-  function draw() {
-    if (!ready || !width) return;
-    const dpr = width / (cv!.clientWidth || 1);
-    lens.r += (lens.target - lens.r) * 0.18;
-    gl!.uniform2f(uniforms.R, width, height);
-    gl!.uniform2f(uniforms.TS, textureSize[0]!, textureSize[1]!);
-    gl!.uniform1f(
-      uniforms.t,
-      reduceMotion ? 0 : (performance.now() - start) / 1000,
-    );
-    gl!.uniform2f(uniforms.M, lens.x * dpr, height - lens.y * dpr);
-    gl!.uniform1f(uniforms.L, lens.r * dpr);
-    gl!.uniform3fv(uniforms.BG, background);
-    gl!.uniform3fv(uniforms.LENS, ring);
-    gl!.drawArrays(gl!.TRIANGLE_STRIP, 0, 4);
-  }
-  function loop() {
-    draw();
-    const settling = Math.abs(lens.target - lens.r) > 0.5;
-    frame =
-      visible && !document.hidden && (!reduceMotion || settling)
-        ? requestAnimationFrame(loop)
-        : 0;
-  }
-  const kick = () => {
-    if (!frame) frame = requestAnimationFrame(loop);
-  };
-  // 画布本身不接收指针（不挡标题和按钮），在整个页头上监听
-  const host = cv.closest(".page-heading") ?? cv.parentElement!;
-  const move = (event: Event) => {
-    const e = event as PointerEvent;
-    if (e.pointerType === "touch") return;
-    const box = cv.getBoundingClientRect();
-    lens.x = e.clientX - box.left;
-    lens.y = e.clientY - box.top;
-    const inside =
-      lens.x > box.width * 0.3 &&
-      lens.x < box.width &&
-      lens.y > 0 &&
-      lens.y < box.height;
-    lens.target = inside ? 60 : 0;
-    kick();
-  };
-  const leave = () => {
-    lens.target = 0;
-    kick();
-  };
-  host.addEventListener("pointermove", move);
-  host.addEventListener("pointerleave", leave);
-  const observer = new IntersectionObserver((entries) => {
-    visible = entries[0]?.isIntersecting ?? true;
-    if (visible) kick();
-  });
-  observer.observe(cv);
-  const sizeObserver = new ResizeObserver(() => {
-    resize();
-    draw();
-  });
-  sizeObserver.observe(cv);
-  document.addEventListener("visibilitychange", kick);
-
-  const image = new Image();
-  image.onload = () => {
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-    textureSize = [image.width, image.height];
-    ready = true;
-    resize();
-    kick();
-  };
-  image.onerror = () => (failed.value = true);
-  image.src = micrograph;
-
-  cleanup = () => {
-    cancelAnimationFrame(frame);
-    host.removeEventListener("pointermove", move);
-    host.removeEventListener("pointerleave", leave);
-    document.removeEventListener("visibilitychange", kick);
-    observer.disconnect();
-    sizeObserver.disconnect();
-    gl.getExtension("WEBGL_lose_context")?.loseContext();
-  };
+  return { SW: at(props.sw), HW: at(props.hw) } as Record<Material, number | null>;
 });
-onBeforeUnmount(() => cleanup());
+// 先达到的标在交点左上，后达到的标在右下，两枚标签不会相撞
+const marks = computed(() => {
+  const hits = (["SW", "HW"] as const)
+    .map((code) => ({ code, x: reach.value[code] }))
+    .filter((h): h is { code: Material; x: number } => h.x !== null)
+    .sort((a, b) => a.x - b.x);
+  return hits.map((h, i) => {
+    const px = X(h.x),
+      py = Y(props.target);
+    const first = hits.length > 1 && i === 0;
+    const label = `${number(h.x)} r`;
+    const startFits = px + 8 + label.length * 7 <= W;
+    const left = first || !startFits;
+    return {
+      ...h,
+      px,
+      py,
+      label,
+      lx: left ? px - 8 : px + 8,
+      ly: first ? py - 10 : py + 20,
+      anchor: left ? "end" : "start",
+    };
+  });
+});
+const lines = computed(() => [
+  { code: "HW" as const, d: path(props.hw) },
+  { code: "SW" as const, d: path(props.sw) },
+]);
+const xMaxLabel = computed(() => `${number(props.xMax / 1000)}k r`);
 </script>
 
 <template>
-  <div v-if="!failed" class="fiber-hero" aria-hidden="true">
-    <canvas ref="canvas"></canvas>
-    <span class="fiber-hero-note">纤维显微示意图，非实测</span>
-  </div>
+  <figure class="beating-sig">
+    <div v-if="empty" class="beating-sig-empty skeleton" aria-hidden="true"></div>
+    <svg
+      v-else
+      viewBox="0 0 420 132"
+      preserveAspectRatio="xMidYMid meet"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <line :x1="L" :x2="R" :y1="BASE" :y2="BASE" class="sg-base" />
+      <text class="sg-m" :x="L" y="128">0</text>
+      <text class="sg-m" :x="R" y="128" text-anchor="end">{{ xMaxLabel }}</text>
+      <line :x1="L" :x2="R" :y1="Y(target)" :y2="Y(target)" class="sg-target" />
+      <text class="sg-m" x="0" :y="Y(target) + 4">{{ target }}°</text>
+      <path
+        v-for="l in lines"
+        :key="l.code"
+        :d="l.d"
+        class="sg-line"
+        pathLength="1"
+        :stroke="materialCodeColors[l.code]"
+      />
+      <g v-for="m in marks" :key="m.code">
+        <line
+          :x1="m.px"
+          :x2="m.px"
+          :y1="m.py"
+          :y2="BASE"
+          class="sg-drop"
+          :stroke="materialCodeColors[m.code]"
+        />
+        <circle
+          v-if="m.code === 'SW'"
+          class="sg-pt"
+          :cx="m.px"
+          :cy="m.py"
+          r="4.6"
+          :fill="materialCodeColors.SW"
+        />
+        <rect
+          v-else
+          class="sg-pt"
+          :x="m.px - 4.2"
+          :y="m.py - 4.2"
+          width="8.4"
+          height="8.4"
+          rx="2"
+          :fill="materialCodeColors.HW"
+        />
+        <text class="sg-v" :x="m.lx" :y="m.ly" :text-anchor="m.anchor">
+          {{ m.label }}
+        </text>
+      </g>
+    </svg>
+    <figcaption>
+      达到 {{ target }} °SR（相邻实测点插值）：<span class="sg-nw"
+        >{{ NAMES.HW }}
+        <b>{{ reach.HW === null ? "未达到" : `≈ ${number(reach.HW)} r` }}</b></span
+      >
+      ·
+      <span class="sg-nw"
+        >{{ NAMES.SW }}
+        <b>{{ reach.SW === null ? "未达到" : `≈ ${number(reach.SW)} r` }}</b></span
+      >
+    </figcaption>
+  </figure>
 </template>
 
 <style scoped>
-.fiber-hero {
-  position: absolute;
-  z-index: 0;
-  inset: -28px -32px -10px 30%;
-  pointer-events: none;
+.beating-sig {
+  position: relative;
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
-/* 遮罩只作用在画布上：向左、向下渐隐到纸页底色，标注文字不受影响 */
-canvas {
-  -webkit-mask-image:
-    linear-gradient(90deg, transparent 0, #000 40%),
-    linear-gradient(0deg, transparent 0, #000 28%);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(90deg, transparent 0, #000 40%),
-    linear-gradient(0deg, transparent 0, #000 28%);
-  mask-composite: intersect;
+.beating-sig svg {
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
+  max-height: 142px;
+  overflow: visible;
 }
-.fiber-hero-note {
-  position: absolute;
-  right: 32px;
-  bottom: 2px;
-  font-size: 11px;
-  color: var(--muted);
+.beating-sig-empty {
+  height: 120px;
+  border-radius: var(--radius-sm);
 }
-@media (max-width: 720px) {
-  .fiber-hero {
-    inset: -16px -16px -6px 20%;
+.beating-sig figcaption {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+.beating-sig figcaption b {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--text);
+}
+.sg-nw {
+  white-space: nowrap;
+}
+.sg-base {
+  stroke: var(--chart-axis);
+  stroke-width: 1;
+}
+.sg-target {
+  stroke: var(--chart-target);
+  stroke-width: 1.2;
+  stroke-dasharray: 4 4;
+}
+.sg-line {
+  fill: none;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* the curves draw in once (killed by the global reduced-motion rule) */
+  stroke-dasharray: 1;
+  animation: sg-draw 1.4s var(--ease) backwards;
+}
+.sg-line:nth-of-type(2) {
+  animation-delay: 0.12s;
+}
+@keyframes sg-draw {
+  from {
+    stroke-dashoffset: 1;
   }
-  .fiber-hero-note {
-    display: none;
-  }
+}
+.sg-drop {
+  stroke-width: 1.3;
+  stroke-dasharray: 2 3;
+}
+.sg-pt {
+  stroke: var(--chart-paper);
+  stroke-width: 1.6;
+}
+.sg-m {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  fill: var(--text-2);
+}
+.sg-v {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  fill: var(--text);
+  paint-order: stroke;
+  stroke: var(--chart-paper);
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }
 </style>
