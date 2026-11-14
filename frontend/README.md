@@ -1,6 +1,6 @@
 # FiberScope 分析平台前端
 
-Vue 3 + TypeScript + Vite。已实现六个实验数据页面、文献问答和文献数据提取审核，共八个页面。实验数据保持只读。
+Vue 3 + TypeScript + Vite。偏光与纤维花园共用六个实验数据页面、文献问答、文献数据提取审核、[性能预测](../docs/PREDICTION.md)与[植物纤维术语](../docs/GLOSSARY.md)。实验数据保持只读。
 
 ## 启动
 

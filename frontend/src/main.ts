@@ -81,6 +81,8 @@ const router = createRouter({
     { path: "/sources", component: () => import("./pages/Sources.vue") },
     { path: "/literature", component: () => import("./pages/Literature.vue") },
     { path: "/literature-data", component: () => import("./pages/LiteratureData.vue") },
+    { path: "/prediction", component: () => import("./pages/Prediction.vue") },
+    { path: "/glossary", component: () => import("./pages/Glossary.vue") },
     { path: "/intro", component: () => import("./pages/Intro.vue"), meta: { bare: true } },
     // dev-only showcase of the shared building blocks in both modes (dropped from builds)
     ...(import.meta.env.DEV

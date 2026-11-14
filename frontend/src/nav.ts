@@ -1,6 +1,8 @@
 import type { Component } from "vue";
 import {
+  BookA,
   BookOpen,
+  Calculator,
   ChartNoAxesCombined,
   Combine,
   FileSpreadsheet,
@@ -30,7 +32,7 @@ export interface NavItem {
   short: string;
   group: NavGroup;
   icon: Component;
-  /** "01" … "08" */
+  /** Two-digit position in the workspace navigation. */
   index: string;
   /** Latin ghost word behind the polarized title (v1), e.g. "Beating" */
   english: string;
@@ -159,9 +161,37 @@ const items: Omit<NavItem, "index">[] = [
     retardation: 750,
     gardenLens: { image: "paper-network", position: "22% 76%", scale: 3.2 },
   },
+  {
+    path: "/prediction",
+    label: "性能预测",
+    short: "预测",
+    group: "科研助手",
+    icon: Calculator,
+    english: "Prediction",
+    gardenEnglish: "Paper properties",
+    magnification: "20×",
+    titleStrong: "性能",
+    titleLight: "预测",
+    retardation: 335,
+    gardenLens: { image: "paper-network", position: "43% 60%", scale: 2.1 },
+  },
+  {
+    path: "/glossary",
+    label: "植物纤维术语",
+    short: "术语",
+    group: "科研助手",
+    icon: BookA,
+    english: "Glossary",
+    gardenEnglish: "Fibre glossary",
+    magnification: "10×",
+    titleStrong: "植物纤维",
+    titleLight: "术语",
+    retardation: 465,
+    gardenLens: { image: "glass-leaves", position: "45% 52%", scale: 1.65 },
+  },
 ];
 
-/** The eight workspace routes, in navigation order. */
+/** Workspace routes in navigation order. */
 export const navItems: readonly NavItem[] = items.map((item, i) => ({
   ...item,
   index: String(i + 1).padStart(2, "0"),

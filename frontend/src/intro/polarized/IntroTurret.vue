@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { objectives, routeNote, turretTicks } from "./content";
 
 /*
- * Objective turret (final section of the prologue): the eight workspace pages sit on a
+ * Objective turret (final section of the prologue): the workspace pages sit on a
  * revolving nosepiece. Hovering or focusing a lens swings the needle and fills the eyepiece
  * with that page's analyzer colour; every lens is a plain link to its page.
  */
@@ -60,7 +60,7 @@ onBeforeUnmount(() => io?.disconnect());
           >
         </div>
       </div>
-      <ol class="lt-lenses" aria-label="物镜：工作台的 8 个页面">
+      <ol class="lt-lenses" :aria-label="`物镜：工作台的 ${objectives.length} 个页面`">
         <li
           v-for="(o, i) in objectives"
           :key="o.item.path"

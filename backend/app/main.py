@@ -19,6 +19,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from .catalog import INDICATORS, NOTES, VIEWS
 from .literature import router as literature_router
+from .prediction import router as prediction_router
 
 
 class Settings(BaseSettings):
@@ -103,6 +104,7 @@ def create_app(settings: Settings | None = None):
     from .qa_tracing import QATraceMiddleware
     app.add_middleware(QATraceMiddleware)
     app.include_router(literature_router(allowed_origins=config.cors_origins))
+    app.include_router(prediction_router)
 
     @app.middleware('http')
     async def request_id(request, call_next):

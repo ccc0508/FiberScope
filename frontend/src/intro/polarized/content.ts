@@ -47,7 +47,7 @@ export const MAGS: MagStage[] = [
   return { ...s, mag, scale: scaleLabel(mag) };
 });
 
-/* ---------------------------------------------------------------- objectives (the 8 workspace pages) */
+/* ---------------------------------------------------------------- workspace objectives */
 /** What each objective shows; the recycled note carries the live block count. */
 export function routeNote(path: string, recycledBlocks: number | null): string {
   switch (path) {
@@ -69,6 +69,10 @@ export function routeNote(path: string, recycledBlocks: number | null): string {
       return "基于本地文献库与实验数据库提问；回答分别标注文献与实验数据来源。";
     case "/literature-data":
       return "从论文 PDF 中提取表格与正文数值，逐条核对后再使用。";
+    case "/prediction":
+      return "使用实测纤维指标或打浆度估算纸张性能，查看模型适用范围。";
+    case "/glossary":
+      return "检索植物纤维术语，查看指标含义、单位和读数注意事项。";
     default:
       return "";
   }
