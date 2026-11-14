@@ -68,6 +68,7 @@
   --chart-axis: rgba(42, 34, 56, 0.28);
   --chart-text: #5e5670;
   --chart-target: #4a3b63;
+  --chart-guide: rgba(42, 34, 56, 0.35); /* hover crosshair / guide lines (chartColors.guide) */
   /* shell geometry (the shells size their fixed bars from these; pages use them for
      sticky offsets and scroll-margin) */
   --chrome-top: 68px;
@@ -135,6 +136,7 @@
   --chart-axis: rgba(255, 255, 255, 0.28);
   --chart-text: #9aa3b2;
   --chart-target: rgba(236, 239, 244, 0.6);
+  --chart-guide: rgba(236, 239, 244, 0.4);
   /* interference gradients (cards, lenses, primary buttons). --phase follows scroll,
      --sweep swings 200° → 0 after a route change (ShellPolarized analyzerSweep) */
   --phase: 0;

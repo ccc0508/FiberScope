@@ -56,6 +56,8 @@ const light = computed(() => {
   if (props.titleLight != null) return props.titleLight;
   return title.value === entry.value.label ? entry.value.titleLight : "";
 });
+/* garden: the title may only wrap between its two words (打浆 | 分析, 纤维—纸张 | 关联) */
+const split = computed(() => !!light.value && strong.value + light.value === title.value);
 const index = computed(() => props.index ?? entry.value.index);
 const english = computed(() => props.english ?? entry.value.english);
 const gardenEnglish = computed(
@@ -230,6 +232,7 @@ onBeforeUnmount(() => {
           <span class="ph-strong">{{ strong }}</span
           ><span v-if="light" class="ph-light">{{ light }}</span>
         </template>
+        <template v-else-if="split">{{ strong }}<wbr />{{ light }}</template>
         <template v-else>{{ title }}</template>
       </h1>
       <div v-if="$slots.description" class="ph-desc"><slot name="description" /></div>
@@ -260,6 +263,10 @@ onBeforeUnmount(() => {
 }
 .ph-title {
   margin: 0;
+  /* Chinese titles wrap between words only (at a <wbr>, a dash or a span edge), never inside
+     纸张 or 纸浆; a word wider than the column still breaks rather than overflowing */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 .ph-title:focus {
   outline: none;

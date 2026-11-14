@@ -14,7 +14,12 @@ const W = LAMBDAS.map((l) => [g(l, 602, 46) + 0.28 * g(l, 432, 20), g(l, 545, 40
 const SUM = W.reduce((a, w) => [a[0] + w[0], a[1] + w[1], a[2] + w[2]], [0, 0, 0]);
 const f5 = (x: number) => x.toFixed(5);
 
-const MICHEL_GLSL = `
+/**
+ * GLSL interference colour: `michel(G)` (Michel-Lévy colour for a retardation G in nm),
+ * `foldG`, `brandRamp` and `interf(G)` (the brand-tinted colour the field paints with), plus
+ * the helper `s2_`. Shared with the prologue's microfibril helix (src/intro/polarized/fibril3d.ts).
+ */
+export const INTERFERENCE_GLSL = `
 float s2_(float x){ float s = sin(x); return s*s; }
 vec3 michel(float G){
   vec3 c = vec3(0.0);
@@ -70,7 +75,7 @@ float fbm(vec2 p){
   for (int i = 0; i < 3; i++){ s += a * vnoise(p); p = mat2(1.62, 1.18, -1.18, 1.62) * p; a *= 0.5; }
   return s;
 }
-${MICHEL_GLSL}
+${INTERFERENCE_GLSL}
 
 vec3 fibres(vec2 p, float ang, float dens, float seed, float soft){
   float c = cos(ang), s = sin(ang);

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
-import { useRouter } from "vue-router";
-import { ArrowDown, ArrowRight, Info, RefreshCw, X } from "lucide-vue-next";
+import { ArrowDown, ArrowRight, Info, RefreshCw } from "lucide-vue-next";
 import ModeSwitch from "../components/ModeSwitch.vue";
+import DataNotes from "../components/DataNotes.vue";
 import { navItems, navTotal, platformName } from "../nav";
 import { reducedMotion } from "../mode";
 import { chartColors, materialColors } from "../palette";
@@ -34,7 +34,7 @@ import glassLeaves from "../assets/modes/garden/glass-leaves.jpg";
  */
 
 const data = useGardenIntroData();
-const { stats, composition, correlations, curves, beatingFacts, notes, loading } = data;
+const { stats, composition, correlations, curves, beatingFacts, loading } = data;
 const still = computed(() => reducedMotion.value);
 const fmt = (v: number | null | undefined, digits = 0) => number(v, digits);
 
@@ -351,15 +351,10 @@ function toEnter() {
   target.scrollIntoView({ block: "center", behavior: still.value ? "auto" : "smooth" });
 }
 
-/* ---------------------------------------------------------------- 关于数据 */
-const about = ref<HTMLDialogElement>();
-const aboutButton = ref<HTMLButtonElement>();
+/* ---------------------------------------------------------------- 数据说明 (shared with the shells) */
+const about = ref<InstanceType<typeof DataNotes> | null>(null);
 function openAbout() {
-  if (!about.value?.open) about.value?.showModal();
-}
-function onAboutClose() {
-  if (!document.activeElement || document.activeElement === document.body)
-    aboutButton.value?.focus({ preventScroll: true });
+  about.value?.open();
 }
 
 /* ---------------------------------------------------------------- lifecycle */
@@ -373,8 +368,6 @@ const onMobile = () => {
   schedule(true);
 };
 const onPointerQuery = () => (finePointer.value = !!pointerQuery?.matches);
-
-const router = useRouter();
 
 onMounted(() => {
   mobileQuery = window.matchMedia("(max-width: 720px)");
@@ -426,9 +419,7 @@ onBeforeUnmount(() => {
   fibers = null;
   pulp?.dispose();
   pulp = null;
-  // unmounted by a navigation (not by a mode switch, which swaps prologues in place): the
-  // workspace page opens at its top, not at the prologue's depth
-  if (!router.currentRoute.value.meta.bare) window.scrollTo(0, 0);
+  // leaving /intro: the router's scrollBehavior (main.ts) opens the next page at its top
 });
 </script>
 
@@ -458,8 +449,8 @@ onBeforeUnmount(() => {
         </span>
       </span>
       <div class="gi-top-r">
-        <button ref="aboutButton" class="gi-btn ghost sm gi-about" type="button" aria-haspopup="dialog" @click="openAbout">
-          <Info :size="16" aria-hidden="true" /><span class="gi-about-label">关于数据</span>
+        <button class="gi-btn ghost sm gi-about" type="button" aria-haspopup="dialog" @click="openAbout">
+          <Info :size="16" aria-hidden="true" /><span class="gi-about-label">数据说明</span>
         </button>
         <ModeSwitch compact />
         <RouterLink class="gi-btn primary sm" to="/"
@@ -769,27 +760,7 @@ onBeforeUnmount(() => {
       </section>
     </main>
 
-    <dialog ref="about" class="info-dialog gi-about-dialog" aria-labelledby="gi-about-title" @close="onAboutClose" @click="$event.target === about && about?.close()">
-      <div class="dialog-heading">
-        <div>
-          <span class="eyebrow">About the data · FiberScope</span>
-          <h2 id="gi-about-title">关于这些实验数据</h2>
-        </div>
-        <button class="icon-button" type="button" aria-label="关闭数据说明" @click="about?.close()">
-          <X :size="20" aria-hidden="true" />
-        </button>
-      </div>
-      <p>
-        核心样本保存 {{ fmt(stats.fiberProps) }} 项纤维特性和 {{ fmt(stats.paperProps) }} 项纸张性能；再生纸浆以逐行观测独立保存（{{
-          fmt(stats.recycledObs)
-        }} 条），循环均值由数据库汇总。
-      </p>
-      <ul v-if="notes.length">
-        <li v-for="note in notes" :key="note">{{ note }}</li>
-      </ul>
-      <p v-else class="gi-note">{{ loading.metadata.value ? "正在读取数据说明…" : "数据说明暂时无法读取。" }}</p>
-      <button class="button primary" type="button" @click="about?.close()">知道了</button>
-    </dialog>
+    <DataNotes ref="about" />
   </div>
 </template>
 
@@ -1839,10 +1810,6 @@ main {
 }
 
 /* ================================================================ dialog */
-.gi-about-dialog ul {
-  margin-bottom: 20px;
-}
-
 /* ================================================================ reduced motion: still frames */
 .gi-still .gi-gl,
 .gi-still .gi-pulp {
@@ -1876,11 +1843,19 @@ main {
     font-size: 18px;
   }
   .gi-brand-sub,
-  .gi-about-label,
   .gi-dots,
   .gi-hero-chips,
   .gi-cue {
     display: none;
+  }
+  /* icon-only button on phones: the label stays as its accessible name (like the shells) */
+  .gi-about-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
   }
   .gi-top-r {
     gap: 6px;

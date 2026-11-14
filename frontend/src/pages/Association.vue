@@ -1971,10 +1971,6 @@ onBeforeUnmount(() => {
   }
 }
 @media (max-width: 720px) {
-  /* garden phone title: break after the dash, never inside 纸张 (PageHeader workaround) */
-  :root[data-mode="garden"] .association-page :deep(.ph-title) {
-    word-break: keep-all;
-  }
   .as-controls,
   :root[data-mode="garden"] .as-controls {
     padding: 16px;

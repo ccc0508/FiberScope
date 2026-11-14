@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { X } from "lucide-vue-next";
 import ShellPolarized from "./components/shell/ShellPolarized.vue";
 import ShellGarden from "./components/shell/ShellGarden.vue";
+import DataNotes from "./components/DataNotes.vue";
 import { mode, reducedMotion } from "./mode";
 import { pageLabelFor, platformName } from "./nav";
 
@@ -40,9 +40,9 @@ function focusPull() {
 watch(() => route.path, focusPull, { flush: "post" });
 
 /* ---------------------------------------------------------------- data notes dialog */
-const info = ref<HTMLDialogElement>();
+const info = ref<InstanceType<typeof DataNotes> | null>(null);
 function openInfo() {
-  if (!info.value?.open) info.value?.showModal();
+  info.value?.open();
 }
 
 /* ---------------------------------------------------------------- mobile navigation drawer (polarized) */
@@ -53,7 +53,7 @@ function syncViewport() {
   if (!mobileViewport?.matches) navOpen.value = false;
 }
 function navigationKey(event: KeyboardEvent) {
-  if (!navOpen.value || info.value?.open) return;
+  if (!navOpen.value || document.querySelector("dialog[open]")) return;
   if (event.key === "Escape") {
     event.preventDefault();
     navOpen.value = false;
@@ -125,35 +125,6 @@ onBeforeUnmount(() => {
         >
       </footer>
     </div>
+    <DataNotes ref="info" />
   </template>
-  <dialog
-    ref="info"
-    aria-label="关于这些实验数据"
-    class="info-dialog"
-    @click="$event.target === info && info?.close()"
-  >
-    <div class="dialog-heading">
-      <div>
-        <span class="eyebrow">FIBERSCOPE</span>
-        <h2>关于这些实验数据</h2>
-      </div>
-      <button
-        class="icon-button"
-        aria-label="关闭数据说明"
-        @click="info?.close()"
-      >
-        <X :size="20" />
-      </button>
-    </div>
-    <p>
-      核心样本保存12项纤维特性和9项纸张性能。再生纸浆以逐行观测独立保存，循环均值由数据库汇总。
-    </p>
-    <ul>
-      <li>复配两端复用纯浆样本，物理样本数与实验展示点数不同。</li>
-      <li>空值显示为“—”，不替换为0；比例保持0—100%口径。</li>
-      <li>透气度与耐折度单位待复核，14个再生纸浆数据块的正式处理条件未知。</li>
-      <li>图表展示对应关系，不代表因果关系。</li>
-    </ul>
-    <button class="button primary" @click="info?.close()">知道了</button>
-  </dialog>
 </template>

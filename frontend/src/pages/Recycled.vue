@@ -1932,8 +1932,7 @@ load();
   fill: var(--text);
 }
 .guide-l {
-  stroke: var(--text);
-  stroke-opacity: 0.35;
+  stroke: var(--chart-guide);
   stroke-dasharray: 3 4;
 }
 .guide-focus {

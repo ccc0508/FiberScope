@@ -257,7 +257,7 @@ onBeforeUnmount(() => {
       <span class="pz-scale"><i :style="{ width: `${SCALEBAR_PX}px` }"></i><b>{{ scaleLabel }}</b></span>
       <span>θ {{ theta }}°</span>
     </div>
-    <button class="pz-about" type="button" @click="emit('about')">数据说明</button>
+    <button class="pz-about" type="button" aria-haspopup="dialog" @click="emit('about')">数据说明</button>
     <ModeSwitch class="pz-switch" compact />
   </header>
 

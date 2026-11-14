@@ -2,6 +2,10 @@
 // Requires the local frontend and real read-only API. No database mutations.
 async (page) => {
   const base = "http://127.0.0.1:5173";
+  // The UI has two display modes; the audit runs in polarized (the mobile navigation checks
+  // below use its objective-turret drawer). ?mode= is remembered for the rest of the session.
+  const mode = "polarized";
+  await page.goto(base + "/?mode=" + mode);
   const results = [],
     runtimeErrors = [];
   page.on("pageerror", (error) => runtimeErrors.push(error.message));
@@ -225,7 +229,11 @@ async (page) => {
       [2, 24],
       [3, 9],
     ]) {
-      await choose("association-type", index);
+      // the sample type control is a radiogroup: 0 = 全部样本类型, 1-3 = 针叶/阔叶/复配
+      await page
+        .locator("[aria-labelledby=as-type-label] [role=radio]")
+        .nth(index)
+        .click();
       check(
         (await page.locator("main .sample-code").count()) === count,
         "association type count",
@@ -259,7 +267,7 @@ async (page) => {
     for (let i = 0; i < metrics.length; i++) {
       await choose("recycled-metric", i);
       const actual = await page
-        .locator("main section table tbody tr")
+        .locator("main .rc-table tbody tr")
         .evaluateAll((rows) => rows.map((r) => r.cells[1].textContent.trim()));
       check(
         JSON.stringify(actual) ===
@@ -273,28 +281,32 @@ async (page) => {
     }
     let records = 0;
     for (let i = 0; i < metadata.blocks.length; i++) {
-      await choose("recycled-block", i);
+      // data blocks are a radiogroup of slides labelled "G01 · …"
+      await page
+        .getByRole("radiogroup", { name: "选择数据块" })
+        .locator(`[role=radio][aria-label^="${metadata.blocks[i].block_code} ·"]`)
+        .click();
       const expected = cycles.filter(
         (r) => r.block_code === metadata.blocks[i].block_code,
       );
       check(
-        (await page.locator("main section table tbody tr").count()) ===
+        (await page.locator("main .rc-table tbody tr").count()) ===
           expected.length,
         "block cycle count",
       );
       for (let j = 0; j < expected.length; j++) {
-        await page.locator("main section table tbody button").nth(j).click();
+        await page.locator("main .rc-table tbody button").nth(j).click();
         const raw = details.filter(
           (d) =>
             d.block_code === expected[j].block_code &&
             d.cycle_no === expected[j].cycle_no,
         );
         check(
-          (await page.locator(".observations-dialog tbody tr").count()) ===
+          (await page.locator(".rc-drawer[open] tbody tr").count()) ===
             raw.length,
           "raw observation count",
         );
-        const body = await page.locator(".observations-dialog").innerText();
+        const body = await page.locator(".rc-drawer[open]").innerText();
         for (const r of raw)
           check(
             body.includes("第 " + r.source_row + " 行"),
@@ -392,7 +404,10 @@ async (page) => {
           .getByRole("button", { name: "刷新数据", exact: true })
           .waitFor();
         await page.waitForFunction(
-          () => !document.querySelector(".page-heading button")?.disabled,
+          () =>
+            ![...document.querySelectorAll("main button")].find(
+              (b) => b.textContent.trim() === "刷新数据",
+            )?.disabled,
         );
         check(
           !(await page.locator("main [role=alert]").count()),
@@ -447,20 +462,27 @@ async (page) => {
           "filter focus not returned",
         );
         if (width <= 390) {
-          await page.getByRole("button", { name: "展开导航" }).click();
-          await page.keyboard.press('Escape');
-          check(!await page.locator('.sidebar').isVisible(), 'Escape does not close mobile navigation');
-          check(await page.getByRole('button', {name:'展开导航'}).evaluate(e=>e===document.activeElement), 'navigation focus not restored');
-          await page.getByRole("button", { name: "展开导航" }).click();
-          await page.locator('.sidebar-bottom button').focus();
-          await page.keyboard.press('Tab');
-          check(await page.locator('.brand-link').evaluate(e=>e===document.activeElement), 'mobile navigation focus escapes');
-          await page.locator('nav a[href="/sources"]').click();
-          await page.locator(".sources-table").waitFor();
+          const toggle = page.getByRole("button", { name: "展开导航" });
+          const drawer = page.locator("#pz-turret");
+          const isOpen = () => drawer.evaluate((e) => e.classList.contains("open"));
+          await toggle.click();
+          await page.keyboard.press("Escape");
+          check(!(await isOpen()), "Escape does not close mobile navigation");
           check(
-            !(await page.locator(".sidebar").isVisible()),
-            "mobile navigation remains open",
+            await toggle.evaluate((e) => e === document.activeElement),
+            "navigation focus not restored",
           );
+          await toggle.click();
+          const items = drawer.locator("a[href], button:not(:disabled)");
+          await items.last().focus();
+          await page.keyboard.press("Tab");
+          check(
+            await items.first().evaluate((e) => e === document.activeElement),
+            "mobile navigation focus escapes",
+          );
+          await drawer.locator('a[href="/sources"]').click();
+          await page.locator(".sources-table").waitFor();
+          check(!(await isOpen()), "mobile navigation remains open");
         }
         checked++;
       }

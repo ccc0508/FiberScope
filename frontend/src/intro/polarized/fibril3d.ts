@@ -27,38 +27,8 @@ import {
   WebGLRenderer,
   type IUniform,
 } from "three";
-
-/* ---------------------------------------------------------------- interference colour (Michel-Lévy) */
-// Same spectral model as src/ambient/field.ts (which does not export its GLSL).
-const LAMBDAS = [400, 428, 456, 484, 512, 540, 568, 596, 624, 652, 680];
-const gauss = (l: number, m: number, s: number) => Math.exp(-(((l - m) / s) ** 2));
-const W = LAMBDAS.map((l) => [gauss(l, 602, 46) + 0.28 * gauss(l, 432, 20), gauss(l, 545, 40), gauss(l, 452, 30)]);
-const SUM = W.reduce((a, w) => [a[0]! + w[0]!, a[1]! + w[1]!, a[2]! + w[2]!], [0, 0, 0]);
-const f5 = (x: number) => x.toFixed(5);
-const INTERF_GLSL = `
-float s2_(float x){ float s = sin(x); return s*s; }
-vec3 michel(float G){
-  vec3 c = vec3(0.0);
-${LAMBDAS.map((l, i) => `  c += vec3(${f5(W[i]![0]! / SUM[0]!)}, ${f5(W[i]![1]! / SUM[1]!)}, ${f5(W[i]![2]! / SUM[2]!)}) * s2_(G * ${f5(Math.PI / l)});`).join("\n")}
-  return c;
-}
-float foldG(float G){
-  if (G <= 280.0) return G;
-  float t = mod(G - 280.0, 960.0);
-  return 280.0 + (t < 480.0 ? t : 960.0 - t);
-}
-vec3 brandRamp(float t){
-  t = clamp(t, 0.0, 1.0) * 3.0;
-  vec3 a = vec3(0.949, 0.757, 0.306), b = vec3(0.878, 0.278, 0.620), c = vec3(0.357, 0.357, 0.839), d = vec3(0.180, 0.769, 0.839);
-  return t < 1.0 ? mix(a, b, t) : (t < 2.0 ? mix(b, c, t - 1.0) : mix(c, d, t - 2.0));
-}
-vec3 interf(float G){
-  float g = foldG(G);
-  vec3 m = michel(g);
-  float k = smoothstep(180.0, 320.0, g);
-  vec3 b = brandRamp((g - 280.0) / 480.0) * (0.25 + 1.2 * dot(m, vec3(0.3333)));
-  return mix(m, b, 0.45 * k);
-}`;
+// interference colour (Michel-Lévy): the same spectral model and GLSL as the 「偏光」 ambient field
+import { INTERFERENCE_GLSL } from "../../ambient/field";
 
 const VERT = `
 attribute vec4 aStrand;   // radius, phase, twist (rad / unit length), seed
@@ -106,7 +76,7 @@ varying float vLayer;
 varying float vZ;
 varying float vFres;
 varying float vDepth;
-${INTERF_GLSL}
+${INTERFERENCE_GLSL}
 void main(){
   float a = vLayer < 0.5 ? uAlpha.x : (vLayer < 1.5 ? uAlpha.y : (vLayer < 2.5 ? uAlpha.z : uAlpha.w));
   float fog = 1.0 - smoothstep(uFogNear, uFogFar, vDepth);

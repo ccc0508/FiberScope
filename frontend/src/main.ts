@@ -1,5 +1,10 @@
 import { createApp, watch } from "vue";
-import { createRouter, createWebHistory, type LocationQuery } from "vue-router";
+import {
+  createRouter,
+  createWebHistory,
+  type LocationQuery,
+  type RouterScrollBehavior,
+} from "vue-router";
 import App from "./App.vue";
 import { isMode, mode, setMode } from "./mode";
 // Fonts are bundled (@fontsource, no CDN) and split by unicode-range: a face is only
@@ -13,10 +18,44 @@ import "./style.css";
 import "./styles/polarized.css";
 import "./styles/garden.css";
 
+/*
+ * Scroll on navigation:
+ *  - back / forward (and a reload): the saved position, once the page is tall enough to hold
+ *    it (pages fill in after their data arrives; give up waiting after ~1.5 s);
+ *  - a #hash: that element, clear of the fixed chrome (html scroll-padding-top);
+ *  - another path: the top;
+ *  - query-only changes (filters, pagination, ?mode=): stay where the reader is.
+ * A mode switch is not a navigation: setMode keeps the position itself.
+ */
+function settledHeight(top: number): Promise<void> {
+  return new Promise((resolve) => {
+    const deadline = performance.now() + 1500;
+    const check = () => {
+      const room = document.documentElement.scrollHeight - window.innerHeight;
+      if (room >= top || performance.now() > deadline) resolve();
+      else requestAnimationFrame(check);
+    };
+    check();
+  });
+}
+const scrollBehavior: RouterScrollBehavior = async (to, from, savedPosition) => {
+  if (savedPosition) {
+    await settledHeight(savedPosition.top);
+    return savedPosition;
+  }
+  if (to.hash) {
+    const padding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop);
+    return { el: to.hash, top: Number.isFinite(padding) ? padding : 0 };
+  }
+  if (to.path !== from.path) return { top: 0, left: 0 };
+  return false;
+};
+
 // Pages are code-split: a page is only downloaded when visited, and one failing chunk
 // cannot take the others down.
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior,
   routes: [
     { path: "/", component: () => import("./pages/Overview.vue") },
     { path: "/beating", component: () => import("./pages/Beating.vue") },

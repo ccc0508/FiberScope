@@ -105,7 +105,7 @@ onBeforeUnmount(() => observer?.disconnect());
       <span class="gd-where" aria-hidden="true"
         ><span class="gd-where-n">{{ current.index }}</span>{{ current.label }}</span
       >
-      <button class="gd-btn" type="button" @click="emit('about')">
+      <button class="gd-btn" type="button" aria-haspopup="dialog" @click="emit('about')">
         <Info :size="17" /><span class="gd-btn-label">数据说明</span>
       </button>
       <ModeSwitch compact />
