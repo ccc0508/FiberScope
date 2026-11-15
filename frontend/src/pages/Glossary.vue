@@ -18,6 +18,9 @@ const links = computed(() => selected.value ? termLinks(selected.value) : []);
 const detailHeading = ref<HTMLElement>();
 const list = ref<HTMLElement>();
 const copied = ref(false);
+const manualLink = ref("");
+const manualLinkInput = ref<HTMLInputElement>();
+let copyAttempt = 0;
 let searchTimer: ReturnType<typeof setTimeout> | undefined;
 let copiedTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -33,7 +36,10 @@ watch(query, (value) => {
   search.value = value;
 });
 watch(() => selected.value?.id, async () => {
+  copyAttempt++;
+  clearTimeout(copiedTimer);
   copied.value = false;
+  manualLink.value = "";
   await nextTick();
   const active = list.value?.querySelector<HTMLElement>(".glossary-index-item.active");
   if (!active || !list.value) return;
@@ -68,18 +74,33 @@ async function choose(term: FiberTerm, fromRelated = false) {
 }
 async function copyLink() {
   if (!selected.value) return;
+  const attempt = ++copyAttempt;
+  clearTimeout(copiedTimer);
+  copied.value = false;
   const href = router.resolve({ path: "/glossary", query: { term: selected.value.id } }).href;
+  const url = new URL(href, window.location.href).href;
   try {
-    await navigator.clipboard.writeText(new URL(href, window.location.href).href);
-    copied.value = true;
-    clearTimeout(copiedTimer);
-    copiedTimer = setTimeout(() => { copied.value = false; }, 2200);
+    await navigator.clipboard.writeText(url);
   } catch {
-    await router.replace({ query: { ...route.query, term: selected.value.id } });
-    copied.value = false;
+    if (attempt !== copyAttempt) return;
+    manualLink.value = url;
+    await nextTick();
+    if (attempt === copyAttempt) {
+      manualLinkInput.value?.focus();
+      manualLinkInput.value?.select();
+    }
+    return;
   }
+  if (attempt !== copyAttempt) return;
+  manualLink.value = "";
+  copied.value = true;
+  copiedTimer = setTimeout(() => { copied.value = false; }, 2200);
 }
-onBeforeUnmount(() => { clearTimeout(searchTimer); clearTimeout(copiedTimer); });
+onBeforeUnmount(() => {
+  copyAttempt++;
+  clearTimeout(searchTimer);
+  clearTimeout(copiedTimer);
+});
 </script>
 
 <template>
@@ -156,7 +177,10 @@ onBeforeUnmount(() => { clearTimeout(searchTimer); clearTimeout(copiedTimer); })
 
         <footer class="glossary-detail-footer">
           <button class="text-button glossary-copy" type="button" @click="copyLink">{{ copied ? '已复制链接' : '复制本条链接' }}</button>
-          <span class="sr-only" role="status">{{ copied ? '术语链接已复制' : '' }}</span>
+          <div class="glossary-manual-link" :class="{ 'sr-only': !manualLink }">
+            <p role="status">{{ manualLink ? '无法自动复制，请手动复制下方链接。' : copied ? '术语链接已复制' : '' }}</p>
+            <input v-if="manualLink" ref="manualLinkInput" type="text" :value="manualLink" aria-label="术语链接" readonly />
+          </div>
         </footer>
       </article>
     </div>
@@ -227,8 +251,10 @@ onBeforeUnmount(() => { clearTimeout(searchTimer); clearTimeout(copiedTimer); })
 .glossary-page-links { display: flex; flex-wrap: wrap; gap: 11px 22px; margin-top: 22px; }
 .glossary-page-links a { display: inline-flex; gap: 5px; align-items: center; font-size: 12px; min-height: 28px; }
 .glossary-page-links a:hover { text-decoration: underline; }
-.glossary-detail-footer { display: flex; align-items: baseline; justify-content: flex-end; gap: 15px; padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--border); color: var(--muted); }
+.glossary-detail-footer { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: flex-end; gap: 15px; padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--border); color: var(--muted); }
 .glossary-copy { white-space: nowrap; font-size: 11px; flex-shrink: 0; min-height: 32px; }
+.glossary-manual-link { flex-basis: 100%; min-width: 0; font-size: 12px; }
+.glossary-manual-link input { display: block; width: 100%; margin-top: 8px; padding: 8px 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; }
 .glossary-empty { min-height: 330px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 35px 20px; gap: 15px; text-align: center; }
 .glossary-empty > svg { color: var(--signal); }
 .glossary-empty h2 { font-size: 20px; }
