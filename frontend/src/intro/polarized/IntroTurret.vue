@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { objectives, routeNote, turretTicks } from "./content";
 
 /*
- * Objective turret (final section of the prologue): the eight workspace pages sit on a
+ * Objective turret (final section of the prologue): the workspace pages sit on a
  * revolving nosepiece. Hovering or focusing a lens swings the needle and fills the eyepiece
  * with that page's analyzer colour; every lens is a plain link to its page.
  */
@@ -42,25 +42,27 @@ onBeforeUnmount(() => io?.disconnect());
     }"
   >
     <div class="lt-dial">
-      <svg class="lt-ring" viewBox="0 0 600 600" aria-hidden="true" focusable="false">
-        <circle cx="300" cy="300" r="296" class="lt-r0" />
-        <circle cx="300" cy="300" r="262" class="lt-r1" />
-        <circle cx="300" cy="300" r="214" class="lt-r2" />
-        <path :d="turretTicks.short" class="lt-tick" />
-        <path :d="turretTicks.long" class="lt-tick lt-tick-l" />
-      </svg>
-      <div class="lt-needle" aria-hidden="true"><i></i></div>
-      <div class="lt-eye" aria-hidden="true">
-        <div class="lt-eye-field"></div>
-        <div class="lt-eye-cross"></div>
-        <div class="lt-eye-txt">
-          <span class="lt-eye-mag">{{ current.item.magnification }}</span>
-          <span class="mono lt-eye-k"
-            ><span class="lt-tm">TOTAL MAG · </span>Γ <b>{{ current.item.retardation }}</b> nm</span
-          >
+      <div class="lt-dial-face" aria-hidden="true">
+        <svg class="lt-ring" viewBox="0 0 600 600" focusable="false">
+          <circle cx="300" cy="300" r="296" class="lt-r0" />
+          <circle cx="300" cy="300" r="262" class="lt-r1" />
+          <circle cx="300" cy="300" r="214" class="lt-r2" />
+          <path :d="turretTicks.short" class="lt-tick" />
+          <path :d="turretTicks.long" class="lt-tick lt-tick-l" />
+        </svg>
+        <div class="lt-needle"><i></i></div>
+        <div class="lt-eye">
+          <div class="lt-eye-field"></div>
+          <div class="lt-eye-cross"></div>
+          <div class="lt-eye-txt">
+            <span class="lt-eye-mag">{{ current.item.magnification }}</span>
+            <span class="mono lt-eye-k"
+              ><span class="lt-tm">TOTAL MAG · </span>Γ <b>{{ current.item.retardation }}</b> nm</span
+            >
+          </div>
         </div>
       </div>
-      <ol class="lt-lenses" aria-label="物镜：工作台的 8 个页面">
+      <ol class="lt-lenses" :aria-label="`物镜：工作台的 ${objectives.length} 个页面`">
         <li
           v-for="(o, i) in objectives"
           :key="o.item.path"
@@ -120,6 +122,10 @@ onBeforeUnmount(() => io?.disconnect());
   width: min(100%, 620px);
   aspect-ratio: 1;
   container-type: inline-size;
+}
+.lt-dial-face {
+  position: absolute;
+  inset: 0;
 }
 .lt-ring {
   position: absolute;
@@ -422,17 +428,42 @@ onBeforeUnmount(() => io?.disconnect());
     justify-self: center;
   }
 }
-@media (max-width: 560px) {
+@media (max-width: 600px) {
   .lt {
     margin-top: 10px;
     gap: 24px;
   }
-  .lt-lens {
-    width: max-content;
-    min-width: 84px;
-    /* clears the scaled active lens and its interference ring */
+  .lt-dial {
+    aspect-ratio: auto;
+  }
+  .lt-dial-face {
+    position: relative;
+    width: min(100%, 210px);
+    aspect-ratio: 1;
+    margin: 0 auto 16px;
+  }
+  .lt-lenses {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 84px), 1fr));
     gap: 8px;
-    transform: translate(-50%, -21px);
+  }
+  .lt-pos {
+    position: static;
+    width: auto;
+    height: auto;
+    transform: none;
+  }
+  .lt-lens {
+    position: static;
+    width: 100%;
+    height: 100%;
+    transform: none;
+    /* clears the scaled active lens and its interference ring */
+    padding: 8px 4px;
+    gap: 8px;
+    align-content: start;
+    border: 1px solid var(--line-soft);
+    background: var(--surface);
   }
   .lens {
     width: 40px;
@@ -443,6 +474,8 @@ onBeforeUnmount(() => io?.disconnect());
   }
   .lt-lbl {
     font-size: 11px;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
   .lt-idx {
     display: none;

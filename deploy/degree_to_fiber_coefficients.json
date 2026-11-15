@@ -1,0 +1,190 @@
+{
+  "softwood": {
+    "species_cn": "针叶木",
+    "n": 28,
+    "degree_range": [
+      12.0,
+      88.0
+    ],
+    "fiber": {
+      "算数平均长": {
+        "intercept": 1.470012,
+        "coef_degree": -0.002569,
+        "coef_degree2": -3.8e-05,
+        "cv_r2": 0.956,
+        "reliable": true
+      },
+      "长度加权长": {
+        "intercept": 2.158673,
+        "coef_degree": -0.001642,
+        "coef_degree2": -4.5e-05,
+        "cv_r2": 0.906,
+        "reliable": true
+      },
+      "宽度": {
+        "intercept": 29.926535,
+        "coef_degree": -0.018077,
+        "coef_degree2": -0.000408,
+        "cv_r2": 0.671,
+        "reliable": true
+      },
+      "粗度": {
+        "intercept": 0.161793,
+        "coef_degree": 0.000211,
+        "coef_degree2": -6e-06,
+        "cv_r2": 0.332,
+        "reliable": false
+      },
+      "扭结角度": {
+        "intercept": 136.92618,
+        "coef_degree": 0.016763,
+        "coef_degree2": -4.3e-05,
+        "cv_r2": -0.015,
+        "reliable": false
+      },
+      "扭结纤维占比": {
+        "intercept": 52.228381,
+        "coef_degree": -0.168242,
+        "coef_degree2": 7.5e-05,
+        "cv_r2": 0.33,
+        "reliable": false
+      },
+      "弯曲": {
+        "intercept": 17.116328,
+        "coef_degree": -0.039987,
+        "coef_degree2": -0.000122,
+        "cv_r2": 0.546,
+        "reliable": true
+      },
+      "分丝帚化长度比": {
+        "intercept": 1.968875,
+        "coef_degree": 0.019917,
+        "coef_degree2": -2.3e-05,
+        "cv_r2": 0.886,
+        "reliable": true
+      },
+      "折断纤维比": {
+        "intercept": 46.642975,
+        "coef_degree": -0.033535,
+        "coef_degree2": -0.001168,
+        "cv_r2": 0.816,
+        "reliable": true
+      },
+      "细小纤维长度比": {
+        "intercept": 26.994019,
+        "coef_degree": 0.291092,
+        "coef_degree2": 0.00028,
+        "cv_r2": 0.843,
+        "reliable": true
+      },
+      "细小纤维加权长度比": {
+        "intercept": 30.769262,
+        "coef_degree": 0.216139,
+        "coef_degree2": 0.000207,
+        "cv_r2": 0.851,
+        "reliable": true
+      },
+      "细小纤维面积比": {
+        "intercept": 1.181083,
+        "coef_degree": 0.01022,
+        "coef_degree2": 8e-06,
+        "cv_r2": 0.31,
+        "reliable": false
+      }
+    }
+  },
+  "hardwood": {
+    "species_cn": "阔叶木",
+    "n": 24,
+    "degree_range": [
+      11.5,
+      88.0
+    ],
+    "fiber": {
+      "算数平均长": {
+        "intercept": 0.677153,
+        "coef_degree": -0.000312,
+        "coef_degree2": -8e-06,
+        "cv_r2": 0.791,
+        "reliable": true
+      },
+      "长度加权长": {
+        "intercept": 0.759564,
+        "coef_degree": -0.000182,
+        "coef_degree2": -8e-06,
+        "cv_r2": 0.76,
+        "reliable": true
+      },
+      "宽度": {
+        "intercept": 15.970725,
+        "coef_degree": 0.012314,
+        "coef_degree2": 8.4e-05,
+        "cv_r2": 0.849,
+        "reliable": true
+      },
+      "粗度": {
+        "intercept": 0.0544,
+        "coef_degree": 9.7e-05,
+        "coef_degree2": 0.0,
+        "cv_r2": 0.293,
+        "reliable": false
+      },
+      "扭结角度": {
+        "intercept": 135.493846,
+        "coef_degree": -0.003333,
+        "coef_degree2": 4e-05,
+        "cv_r2": -0.218,
+        "reliable": false
+      },
+      "扭结纤维占比": {
+        "intercept": 46.756167,
+        "coef_degree": -0.031928,
+        "coef_degree2": 0.000839,
+        "cv_r2": -0.095,
+        "reliable": false
+      },
+      "弯曲": {
+        "intercept": 12.408178,
+        "coef_degree": 0.00507,
+        "coef_degree2": 5.4e-05,
+        "cv_r2": -0.123,
+        "reliable": false
+      },
+      "分丝帚化长度比": {
+        "intercept": 1.021306,
+        "coef_degree": 0.00488,
+        "coef_degree2": 9.7e-05,
+        "cv_r2": 0.921,
+        "reliable": true
+      },
+      "折断纤维比": {
+        "intercept": 25.361645,
+        "coef_degree": 0.060877,
+        "coef_degree2": 0.000165,
+        "cv_r2": 0.444,
+        "reliable": true
+      },
+      "细小纤维长度比": {
+        "intercept": 30.875632,
+        "coef_degree": 0.129424,
+        "coef_degree2": 0.00086,
+        "cv_r2": 0.497,
+        "reliable": true
+      },
+      "细小纤维加权长度比": {
+        "intercept": 38.707156,
+        "coef_degree": 0.106582,
+        "coef_degree2": 0.000833,
+        "cv_r2": 0.523,
+        "reliable": true
+      },
+      "细小纤维面积比": {
+        "intercept": 4.268106,
+        "coef_degree": 0.01744,
+        "coef_degree2": 5e-06,
+        "cv_r2": -0.077,
+        "reliable": false
+      }
+    }
+  }
+}

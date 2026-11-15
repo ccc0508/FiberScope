@@ -17,7 +17,7 @@ import type { FibrilScene } from "./polarized/fibril3d";
 /*
  * 序章 · 偏光 (v1 landing). Scrolling turns the analyzer and raises the magnification:
  * 10× fibre → 40× wall layers → 400× S2 helix → 4000× inside the microfibril helix, then the
- * objective turret leads into the eight workspace pages.
+ * objective turret leads into the workspace pages.
  *
  * Depth planes (back → front): L0 birefringence shader (ambient/field.ts) · L1 blurred far
  * fibres · L2 photograph · L3 crisp SVG strands · veil · content · microscope HUD.
@@ -39,8 +39,9 @@ const compositionRows = computed(
     composition.value ??
     typeKeys.map((type: SampleType) => ({ type, label: typeNames[type], n: null, share: null, range: null })),
 );
-const firstObjective = navItems[0]!,
-  lastObjective = navItems[navItems.length - 1]!;
+const magnifications = navItems.map((item) => parseFloat(item.magnification));
+const minMagnification = Math.min(...magnifications);
+const maxMagnification = Math.max(...magnifications);
 
 /* ---------------------------------------------------------------- element refs */
 const fieldCanvas = ref<HTMLCanvasElement>();
@@ -668,7 +669,7 @@ onBeforeUnmount(() => {
       >
         <p class="pzi-step mono">
           <span>07 物镜转盘 OBJECTIVES</span><i aria-hidden="true"></i
-          ><span>{{ navItems.length }} 个物镜 · 总放大 {{ firstObjective.magnification }}–{{ lastObjective.magnification }}</span>
+          ><span>{{ navItems.length }} 个物镜 · 总放大 {{ minMagnification }}×–{{ maxMagnification }}×</span>
         </p>
         <div class="pzi-enter-head">
           <h2 id="pzi-h2d" class="pzi-h2"><b>选择物镜</b> <i>进入工作台</i></h2>
