@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BrandMark from "../components/BrandMark.vue";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import ModeSwitch from "../components/ModeSwitch.vue";
 import { navItems, platformName } from "../nav";
@@ -486,11 +487,7 @@ onBeforeUnmount(() => {
 
     <header class="pzi-top">
       <span class="pzi-brand">
-        <svg class="pzi-pol" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-          <circle cx="16" cy="16" r="13.5" class="pol-o" />
-          <circle cx="16" cy="16" r="9" class="pol-i" />
-          <line x1="6" y1="26" x2="26" y2="6" class="pol-l" />
-        </svg>
+        <BrandMark class="pzi-pol" mode="polarized" />
         <span class="brand-word">FiberScope</span><span class="brand-cn">偏光</span>
       </span>
       <ol class="pzi-mags mono" aria-hidden="true">
@@ -957,23 +954,8 @@ onBeforeUnmount(() => {
   min-width: 0;
 }
 .pzi-pol {
-  width: 28px;
-  height: 28px;
-}
-.pol-o {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.2;
-  opacity: 0.55;
-}
-.pol-i {
-  fill: none;
-  stroke: var(--bl);
-  stroke-width: 2;
-}
-.pol-l {
-  stroke: currentColor;
-  stroke-width: 1.2;
+  width: 30px;
+  height: 30px;
 }
 .brand-word {
   font-family: var(--font-display);
@@ -1949,8 +1931,8 @@ onBeforeUnmount(() => {
     font-size: 13px;
   }
   .pzi-pol {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
   }
   .pzi-hero {
     justify-content: flex-end;

@@ -10,6 +10,7 @@
     <meta name="theme-color" content="#FBF4F6" />
     <meta name="color-scheme" content="dark light" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>数据总览 · 植物纤维可视化分析平台</title>
     <script>
       // Pick the visual mode before any CSS loads (no flash of the wrong mode).
@@ -47,6 +48,9 @@
         root.style.colorScheme = mode === "polarized" ? "dark" : "light";
         var meta = document.querySelector('meta[name="theme-color"]');
         if (meta) meta.setAttribute("content", mode === "polarized" ? "#06070A" : "#FBF4F6");
+        // the tab icon follows the mode as well (public/favicon-polarized.svg, favicon-garden.svg)
+        var icon = document.querySelector('link[rel="icon"]');
+        if (icon) icon.setAttribute("href", icon.getAttribute("href").replace(/favicon(-[a-z]+)?\.svg$/, "favicon-" + mode + ".svg"));
       })();
     </script>
     <style>

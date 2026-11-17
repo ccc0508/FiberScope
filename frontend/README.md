@@ -49,6 +49,7 @@ build先执行严格TypeScript检查，再生成dist；preview在4173端口预�
 | src/nav.ts | 8个页面与序章的导航数据（编号、分组、图标、放大倍率等） |
 | src/components/shell/ | 偏光外壳（顶栏+物镜转盘）、花园外壳（玻璃顶栏+底部Dock） |
 | src/components/ModeSwitch.vue | 偏光/花园模式切换控件 |
+| src/components/BrandMark.vue、public/favicon-*.svg | 品牌标志：显微镜视场里的三根纤维（对应三种原料）；标签页图标随模式切换，`apple-touch-icon.png` 用于手机主屏 |
 | src/components/PageHeader.vue | 各页页头：偏光为物镜读数式标题，花园为玻璃卡片式标题 |
 | src/components/DataNotes.vue | 数据说明弹窗，数量读取自metadata接口 |
 | src/ambient/、src/components/ambient/ | 背景着色器（偏光干涉场、花园纸浆悬浮液），不支持WebGL时用CSS渐变 |
