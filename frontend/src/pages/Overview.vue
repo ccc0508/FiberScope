@@ -381,6 +381,10 @@ function chooseType(type: string) {
   clearTimeout(timer);
   update({ type, q: search.value.trim(), page: 1 });
 }
+function choosePageSize(value: string) {
+  const nextSize = Number(value);
+  if (nextSize !== size.value) update({ size: nextSize, page: 1 });
+}
 function submitSearch() {
   clearTimeout(timer);
   update({ q: search.value.trim(), page: 1 });
@@ -834,7 +838,7 @@ onBeforeUnmount(() => {
               size="compact"
               :model-value="String(size)"
               :options="sizeOptions"
-              @update:model-value="update({ size: Number($event), page: 1 })"
+              @update:model-value="choosePageSize"
             /><span aria-hidden="true">条</span>
           </div>
           <div class="page-buttons">

@@ -359,12 +359,10 @@ function onKeydown(event: KeyboardEvent, from: "trigger" | "search" | "list") {
       if (!event.altKey) move(1);
       return;
     case "Home":
-      event.preventDefault();
-      move("first");
-      return;
     case "End":
+      if (from === "search") return;
       event.preventDefault();
-      move("last");
+      move(key === "Home" ? "first" : "last");
       return;
     case "PageUp":
       event.preventDefault();
@@ -877,6 +875,11 @@ onBeforeUnmount(() => {
 }
 .filter-trigger:focus-visible {
   outline: none;
+}
+@media (forced-colors: active) {
+  .filter-trigger:focus-visible {
+    outline: 2px solid CanvasText;
+  }
 }
 .filter-trigger:disabled {
   opacity: 0.5;
@@ -1558,6 +1561,8 @@ onBeforeUnmount(() => {
 }
 :root[data-mode="polarized"] .filter-search input {
   font-family: var(--font-mono);
+}
+:root[data-mode="polarized"] .filter-popover:not(.sheet) .filter-search input {
   font-size: 12.5px;
 }
 :root[data-mode="polarized"] .filter-search:focus-within {
