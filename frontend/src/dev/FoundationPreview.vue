@@ -47,9 +47,11 @@ const options = computed(() => [
     value: key,
     label: typeNames[key],
     count: counts.value[key] ?? 0,
-    color: materialColors[key],
+    marker: key,
   })),
 ]);
+const pageSize = ref("10");
+const sizeOptions = ["10", "25"].map((value) => ({ value, label: value }));
 const visible = computed(() =>
   rows.value.filter((r) => !type.value || r.sample_type === type.value).slice(0, 8),
 );
@@ -150,7 +152,7 @@ const bars = computed(() => {
       </div>
       <div class="table-toolbar">
         <label class="search-field"><Search :size="17" /><input placeholder="search-field…" aria-label="示例搜索框" /></label>
-        <FilterSelect id="pv-type" v-model="type" :options="options" label="样本类型" />
+        <FilterSelect id="pv-type" v-model="type" :options="options" label="样本类型" eyebrow="类型" />
         <span class="toolbar-spacer"></span>
         <button class="button primary">button.primary</button>
         <button class="icon-button" aria-label="icon-button"><RefreshCw :size="16" /></button>
@@ -189,7 +191,13 @@ const bars = computed(() => {
       <div class="table-footer">
         <span>显示前 {{ visible.length }} 行</span>
         <div class="pagination">
-          <label>每页 <select aria-label="每页条数"><option>10</option><option>25</option></select></label>
+          <div class="page-size">
+            <span aria-hidden="true">每页</span
+            ><FilterSelect id="pv-size" v-model="pageSize" :options="sizeOptions" label="每页条数" size="compact" /><span
+              aria-hidden="true"
+              >条</span
+            >
+          </div>
           <div class="page-buttons">
             <button class="icon-button" disabled aria-label="上一页">‹</button><span>1 <span>/ 1</span></span
             ><button class="icon-button" disabled aria-label="下一页">›</button>

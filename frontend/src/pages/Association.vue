@@ -88,6 +88,7 @@ const options = (items: Indicator[]) =>
   items.map((i) => ({
     value: i.key,
     label: unitFlagged(i) ? `${i.name}（单位待复核）` : i.name,
+    hint: i.unit ?? undefined,
   }));
 const value = (r: Row, i: Indicator): number | null =>
   typeof r[i.key] === "number" && Number.isFinite(r[i.key])

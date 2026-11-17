@@ -7,6 +7,7 @@ import { ArrowRight, RotateCcw, TriangleAlert } from "lucide-vue-next";
 import { get, number, type ListResult, type Sample } from "../api";
 import { mode, reducedMotion } from "../mode";
 import { paletteFor } from "../palette";
+import FilterSelect from "./FilterSelect.vue";
 import {
   buildDots,
   buildSpokes,
@@ -785,6 +786,19 @@ function pick(x: number, y: number): Hit | null {
 function observationTitle(o: DialObservation) {
   return `${o.block}，第 ${o.cycle} 次循环，重复 ${o.replicate}`;
 }
+const observationKey = (o: DialObservation) => `${o.block}:${o.cycle}:${o.replicate}`;
+const observationOptions = computed(() =>
+  observations.value.map((o) => ({
+    value: observationKey(o),
+    label: observationTitle(o),
+    group: `${o.block} · ${o.grade ?? "原料未注明"}`,
+    hint: o.review ? "待复核" : undefined,
+  })),
+);
+function pickObservation(key: string) {
+  selectedObservation.value =
+    observations.value.find((o) => observationKey(o) === key) ?? null;
+}
 function describeObservation(o: DialObservation) {
   return {
     title: observationTitle(o),
@@ -1072,19 +1086,17 @@ const total = (set: SetKey) =>
         ref="observationDetails"
         class="observation-details"
       >
-        <label>
-          观测详情
-          <select v-model="selectedObservation">
-            <option :value="null" disabled>选择一条观测</option>
-            <option
-              v-for="o in observations"
-              :key="`${o.block}:${o.cycle}:${o.replicate}`"
-              :value="o"
-            >
-              {{ observationTitle(o) }}
-            </option>
-          </select>
-        </label>
+        <div class="observation-pick">
+          <label for="dial-observation">观测详情</label>
+          <FilterSelect
+            id="dial-observation"
+            label="观测详情"
+            placeholder="选择一条观测"
+            :model-value="selectedObservation ? observationKey(selectedObservation) : ''"
+            :options="observationOptions"
+            @update:model-value="pickObservation"
+          />
+        </div>
         <output>
           <template v-if="selectedDetail">
             <span>{{ selectedDetail.subtitle }}</span>
@@ -1431,23 +1443,15 @@ const total = (set: SetKey) =>
   font-size: 13px;
   color: var(--text-2);
 }
-.observation-details label {
+.observation-pick {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 10px 14px;
+}
+.observation-pick > label {
   color: var(--text);
   font-weight: 500;
-}
-.observation-details select {
-  max-width: 100%;
-  min-height: 34px;
-  padding: 4px 10px;
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--line-strong);
-  background: var(--surface);
-  color: var(--text);
-  font-weight: 400;
   cursor: pointer;
 }
 .observation-details output,
@@ -1745,10 +1749,6 @@ const total = (set: SetKey) =>
   border: 0;
   background: color-mix(in oklab, var(--surface) 60%, transparent);
   box-shadow: inset 0 0 0 1px var(--surface);
-}
-:root[data-mode="garden"] .observation-details select {
-  border-radius: 999px;
-  border-color: var(--line);
 }
 :root[data-mode="garden"] .dial-tip {
   border: 0;

@@ -89,8 +89,18 @@ const target = computed(() => {
     ? Math.round(t)
     : 45;
 });
+const METRIC_GROUPS: Record<string, string> = {
+  condition: "打浆条件",
+  fiber: "纤维特性",
+  paper: "纸张性能",
+};
 const metricOptions = computed(() =>
-  metrics.value.map((i) => ({ value: i.key, label: i.name })),
+  metrics.value.map((i) => ({
+    value: i.key,
+    label: i.name,
+    hint: i.unit ?? undefined,
+    group: METRIC_GROUPS[i.group] ?? i.group,
+  })),
 );
 function update(key: string, next: string | undefined) {
   void router.replace({ query: { ...route.query, [key]: next } });

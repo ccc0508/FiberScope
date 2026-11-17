@@ -29,7 +29,6 @@ import SampleDetail from "../components/SampleDetail.vue";
 import FilterSelect from "../components/FilterSelect.vue";
 import OverviewDials from "../components/OverviewDials.vue";
 import PageHeader from "../components/PageHeader.vue";
-import { materialColors } from "../palette";
 import { isGarden, reducedMotion } from "../mode";
 import { useCountUp, vTilt } from "../motion";
 
@@ -77,9 +76,10 @@ const filterOptions = computed(() => [
     value: type,
     label: typeNames[type],
     count: counts.value ? typeCounts.value[type] : undefined,
-    color: materialColors[type],
+    marker: type,
   })),
 ]);
+const sizeOptions = [10, 25, 50].map((n) => ({ value: String(n), label: String(n) }));
 
 /* ---------------------------------------------------------------- 全库统计（metadata 实时计数） */
 const count = (key: string) => {
@@ -380,6 +380,10 @@ function update(values: {
 function chooseType(type: string) {
   clearTimeout(timer);
   update({ type, q: search.value.trim(), page: 1 });
+}
+function choosePageSize(value: string) {
+  const nextSize = Number(value);
+  if (nextSize !== size.value) update({ size: nextSize, page: 1 });
 }
 function submitSearch() {
   clearTimeout(timer);
@@ -826,24 +830,17 @@ onBeforeUnmount(() => {
                 : `显示 ${(page - 1) * size + 1}–${Math.min(page * size, total)}，共 ${total} 个样本`
         }}</span>
         <div class="pagination">
-          <label
-            >每页
-            <select
-              aria-label="每页条数"
-              :value="size"
-              @change="
-                update({
-                  size: Number(($event.target as HTMLSelectElement).value),
-                  page: 1,
-                })
-              "
-            >
-              <option :value="10">10</option>
-              <option :value="25">25</option>
-              <option :value="50">50</option>
-            </select>
-            条</label
-          >
+          <div class="page-size">
+            <span aria-hidden="true">每页</span
+            ><FilterSelect
+              id="page-size"
+              label="每页条数"
+              size="compact"
+              :model-value="String(size)"
+              :options="sizeOptions"
+              @update:model-value="choosePageSize"
+            /><span aria-hidden="true">条</span>
+          </div>
           <div class="page-buttons">
             <button
               class="icon-button"
@@ -1436,6 +1433,10 @@ onBeforeUnmount(() => {
 }
 
 /* ================================================================ sample library */
+/* the search field matches the 44px sample-type select beside it */
+.ov-library .table-toolbar .search-field {
+  height: 44px;
+}
 .ov-library .sample-title h2 {
   color: var(--text);
 }
