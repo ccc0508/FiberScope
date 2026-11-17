@@ -77,6 +77,38 @@
   --page-max: 1296px;
   --ease: cubic-bezier(0.22, 0.9, 0.25, 1);
   --spring: cubic-bezier(0.34, 1.45, 0.5, 1);
+  /* FilterSelect (select field + listbox): frosted glass field, lilac halo, glass card */
+  --sel-bg: rgba(255, 255, 255, 0.6);
+  --sel-bg-hover: rgba(255, 255, 255, 0.86);
+  --sel-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 62%);
+  --sel-sheen-soft: rgba(255, 255, 255, 0.75);
+  --sel-line: rgba(42, 34, 56, 0.08);
+  --sel-line-hover: rgba(42, 34, 56, 0.16);
+  --sel-edge: rgba(255, 255, 255, 0.95);
+  --sel-shadow:
+    0 12px 26px -18px rgba(74, 52, 110, 0.5),
+    0 2px 6px -4px rgba(74, 52, 110, 0.12);
+  --sel-shadow-hover:
+    0 18px 32px -18px rgba(74, 52, 110, 0.55),
+    0 3px 8px -5px rgba(74, 52, 110, 0.16);
+  --sel-halo: rgba(139, 108, 217, 0.2);
+  --sel-halo-edge: rgba(106, 76, 192, 0.45);
+  --sel-bead: rgba(238, 234, 246, 0.92);
+  --sel-tick: rgba(42, 34, 56, 0.3);
+  --sel-pop-bg: rgba(255, 252, 253, 0.9);
+  --sel-sheet-bg: rgba(255, 252, 253, 0.97);
+  --sel-pop-line: rgba(255, 255, 255, 0.9);
+  --sel-pop-shadow:
+    0 44px 80px -34px rgba(74, 52, 110, 0.55),
+    0 14px 30px -20px rgba(74, 52, 110, 0.3);
+  --sel-search-bg: rgba(248, 243, 248, 0.85);
+  --sel-row-active: rgba(255, 255, 255, 0.96);
+  --sel-row-shadow:
+    0 8px 18px -12px rgba(74, 52, 110, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 1);
+  --sel-row-glow: rgba(139, 108, 217, 0.3);
+  --sel-row-selected: var(--bl-tint);
+  --sel-mark: rgba(139, 108, 217, 0.22);
 }
 
 /* ---------------------------------------------------------------- tokens: polarized */
@@ -158,6 +190,34 @@
   );
   --chrome-top: 58px;
   --page-max: 1240px;
+  /* FilterSelect: dark instrument readout, HUD ticks, dark glass listbox */
+  --sel-bg: #11151e;
+  --sel-bg-hover: #161b26;
+  --sel-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 70%);
+  --sel-sheen-soft: rgba(255, 255, 255, 0.04);
+  --sel-line: rgba(255, 255, 255, 0.12);
+  --sel-line-hover: rgba(255, 255, 255, 0.24);
+  --sel-edge: rgba(255, 255, 255, 0.05);
+  --sel-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 1px 0 rgba(0, 0, 0, 0.35);
+  --sel-shadow-hover: var(--sel-shadow);
+  --sel-halo: rgba(46, 196, 214, 0.16);
+  --sel-halo-edge: rgba(46, 196, 214, 0.55);
+  --sel-bead: transparent;
+  --sel-tick: rgba(236, 239, 244, 0.55);
+  --sel-pop-bg: rgba(12, 15, 21, 0.95);
+  --sel-sheet-bg: rgba(12, 15, 21, 0.98);
+  --sel-pop-line: rgba(255, 255, 255, 0.12);
+  --sel-pop-shadow:
+    0 30px 70px -20px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(0, 0, 0, 0.5);
+  --sel-search-bg: rgba(255, 255, 255, 0.035);
+  --sel-row-active: rgba(255, 255, 255, 0.06);
+  --sel-row-shadow: none;
+  --sel-row-glow: rgba(46, 196, 214, 0.32);
+  --sel-row-selected: rgba(255, 255, 255, 0.03);
+  --sel-mark: rgba(46, 196, 214, 0.22);
 }
 
 /* ---------------------------------------------------------------- legacy names (unported pages keep rendering) */
@@ -925,20 +985,12 @@ tbody tr:hover td {
   align-items: center;
   gap: 22px;
 }
-.pagination label {
+.pagination label,
+.pagination .page-size {
   display: flex;
-  gap: 7px;
+  gap: 8px;
   align-items: center;
   white-space: nowrap;
-}
-.pagination select {
-  border: 1px solid var(--line-strong);
-  color: var(--text-2);
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 999px;
-  background: var(--surface-2);
-  cursor: pointer;
 }
 .page-buttons {
   display: flex;
@@ -1490,12 +1542,16 @@ dialog::backdrop {
 .tilt {
   position: relative;
 }
-/* a card with an open FilterSelect popover rises above the cards after it (polarized cards
-   and tilt tiles are stacking contexts, which would otherwise trap the popover), and drops
-   any half-finished scroll-rise, whose opacity would make the popover see-through */
-:where(.card, .metric, .tilt):has(.filter-popover) {
-  z-index: 25;
-  animation: none;
+/* FilterSelect's popover lives in the top layer (popover API), above every card and the
+   chrome. Without that API it stays inside its card: then the card rises above the cards
+   after it (polarized cards and tilt tiles are stacking contexts, which would otherwise trap
+   the popover) and drops any half-finished scroll-rise, whose opacity would make the popover
+   see-through */
+@supports not selector(:popover-open) {
+  :where(.card, .metric, .tilt):has(.filter-popover) {
+    z-index: 25;
+    animation: none;
+  }
 }
 /* static pill label / count */
 .chip {

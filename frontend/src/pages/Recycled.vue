@@ -45,6 +45,19 @@ const metrics = computed(
     metadata.value?.indicators.filter((i) => i.scope.includes("recycled")) ??
     [],
 );
+const METRIC_GROUPS: Record<string, string> = {
+  fiber: "纤维特性",
+  distribution: "长度分布",
+  strength: "纸张强度",
+};
+const metricOptions = computed(() =>
+  metrics.value.map((m) => ({
+    value: m.key,
+    label: m.name,
+    hint: m.unit ?? undefined,
+    group: METRIC_GROUPS[m.group] ?? m.group,
+  })),
+);
 const metric = computed(
   () =>
     metrics.value.find((i) => i.key === route.query.metric) ??
@@ -710,8 +723,8 @@ load();
             ><FilterSelect
               id="recycled-metric"
               :model-value="metric?.key ?? ''"
-              :options="metrics.map((m) => ({ value: m.key, label: m.name }))"
-              label="选择循环指标"
+              :options="metricOptions"
+              label="观察指标"
               @update:model-value="update('metric', $event)"
             />
           </div>

@@ -998,10 +998,11 @@ onBeforeUnmount(() => {
               <span class="ld-count">{{ grouped.length }} 个原料 / 处理组</span>
             </div>
             <div class="review-filters">
-              <FilterSelect id="review-source" label="筛选原文来源" :model-value="sourceFilter" :options="sourceOptions" @update:model-value="chooseSource" />
+              <FilterSelect id="review-source" label="筛选原文来源" eyebrow="来源" reset-value="all" :model-value="sourceFilter" :options="sourceOptions" @update:model-value="chooseSource" />
               <FilterSelect
                 id="review-material"
                 label="选择原料"
+                eyebrow="原料"
                 :model-value="groupName"
                 :options="groupOptions"
                 @update:model-value="chooseGroup"
@@ -1099,6 +1100,7 @@ onBeforeUnmount(() => {
                       id="review-metric"
                       v-model="draft.metric"
                       label="审核指标"
+                      block
                       :options="metricOptions"
                   /></div>
                   <div class="ld-field select-field">
@@ -1106,6 +1108,7 @@ onBeforeUnmount(() => {
                       id="review-measurement-state"
                       v-model="draft.measurement_state"
                       label="审核测量状态"
+                      block
                       :options="stateOptions"
                   /></div>
                   <label class="ld-field"
@@ -2704,16 +2707,6 @@ fieldset:disabled .ld-opt.on {
   gap: 8px;
   margin: 16px 0 10px;
 }
-.review-filters :deep(.filter-select) {
-  max-width: 100%;
-}
-.review-filters :deep(.filter-trigger) {
-  max-width: 100%;
-}
-.review-filters :deep(.filter-trigger > span) {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 .ld-status {
   margin-bottom: 12px;
 }
@@ -2985,20 +2978,9 @@ fieldset:disabled .ld-opt.on {
 .full-field {
   grid-column: 1 / -1;
 }
-.editor-fields :deep(.filter-select) {
-  width: 100%;
-}
+/* match the 40px review inputs beside it */
 .editor-fields :deep(.filter-trigger) {
-  width: 100%;
   height: 40px;
-  justify-content: space-between;
-}
-.editor-fields :deep(.filter-trigger > span) {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: left;
 }
 .conditions {
   margin-top: 16px;
@@ -3314,8 +3296,7 @@ fieldset:disabled .ld-opt.on {
     padding: 0 10px;
     font-size: 13px;
   }
-  .review-filters :deep(.filter-select),
-  .review-filters :deep(.filter-trigger) {
+  .review-filters :deep(.filter-select) {
     width: 100%;
   }
   .measurement-list {

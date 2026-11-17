@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { Calculator, Download, FlaskConical, TriangleAlert, X } from "lucide-vue-next";
 import PageHeader from "../components/PageHeader.vue";
+import FilterSelect from "../components/FilterSelect.vue";
 import { ApiError, get, number } from "../api";
 import { predict, predictionCsv, predictionNumber, validatePredictionInput, type Mode, type Species, type PredictionMetadata, type PredictionResult } from "../prediction";
 
@@ -15,6 +16,13 @@ const busy = ref(false), error = ref("");
 const form = ref<HTMLFormElement>();
 const attempted = ref(false), toast = ref("");
 const model = computed(() => metadata.value?.species.find((item) => item.key === species.value));
+const speciesOptions = computed(() => (metadata.value?.species ?? []).map((item) => ({
+  value: item.key, label: item.name, marker: item.key,
+})));
+function chooseSpecies(value: string) {
+  const next = metadata.value?.species.find((item) => item.key === value);
+  if (next) species.value = next.key;
+}
 const fieldErrors = computed(() => attempted.value
   ? validatePredictionInput(mode.value, model.value?.features ?? [], degree.value, features.value) : {});
 const rangeText = (bounds: [number, number]) => `${bounds[0]}–${bounds[1]}`;
@@ -131,10 +139,10 @@ onBeforeUnmount(() => { metadataController?.abort(); predictionController?.abort
             <button type="button" :aria-pressed="mode === 'degree'" :class="{ selected: mode === 'degree' }" @click="mode = 'degree'">只有打浆度</button>
           </div>
           <p class="prediction-help">{{ mode === 'fiber' ? '使用已测得的纤维指标直接预测。带 * 的指标为必填，其余可留空。' : '先预测纤维指标，再预测纸张性能；两步误差会叠加，整链结果仅供参考。' }}</p>
-          <label class="prediction-field" for="prediction-species">
-            <span>树种</span>
-            <select id="prediction-species" v-model="species"><option v-for="item in metadata.species" :key="item.key" :value="item.key">{{ item.name }}</option></select>
-          </label>
+          <div class="prediction-field">
+            <label for="prediction-species">树种</label>
+            <FilterSelect id="prediction-species" label="树种" block :model-value="species" :options="speciesOptions" @update:model-value="chooseSpecies" />
+          </div>
           <div class="prediction-input-heading"><span>训练样本 {{ model.sample_count }} 个</span><button type="button" class="text-button" @click="example"><FlaskConical :size="14" /> 填入示例</button></div>
           <div v-if="mode === 'fiber'" class="prediction-field-grid">
             <label v-for="field in model.features" :key="field.key" class="prediction-field" :for="`prediction-${field.key}`">
@@ -202,8 +210,8 @@ onBeforeUnmount(() => { metadataController?.abort(); predictionController?.abort
 .prediction-help { color: var(--muted); font-size: 12px; line-height: 1.8; }
 .prediction-field { display: grid; gap: 6px; min-width: 0; font-size: 13px; }
 .prediction-field small { font-size: 11px; color: var(--muted); }
-.prediction-field select, .prediction-input { background: var(--paper); border: 1px solid var(--border-strong); border-radius: var(--radius); min-height: 40px; }
-.prediction-field select { width: 100%; padding: 8px; color: var(--ink); }
+.prediction-input { background: var(--paper); border: 1px solid var(--border-strong); border-radius: var(--radius); min-height: 40px; }
+.prediction-field > label { width: fit-content; cursor: pointer; }
 .prediction-input { display: flex; align-items: center; padding-right: 9px; }
 .prediction-input input { width: 100%; min-width: 0; border: 0; background: transparent; padding: 10px; color: var(--ink); font-variant-numeric: tabular-nums; }
 .prediction-input > span { flex-shrink: 0; color: var(--muted); font-size: 12px; }

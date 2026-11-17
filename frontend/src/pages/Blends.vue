@@ -62,17 +62,19 @@ const metric = computed(
     metrics.value.find((i) => i.key === route.query.metric) ?? defaultMetric,
 );
 const unitFlagged = (i: Indicator) => i.unit_status !== "confirmed";
-const metricOptions = computed(() =>
-  metrics.value.map((i) => ({
-    value: i.key,
-    label: unitFlagged(i) ? `${i.name}（单位待复核）` : i.name,
-  })),
-);
-// 偏光：按指标组排成两组单选芯片（v1 mswitch）
+// 偏光：按指标组排成两组单选芯片（v1 mswitch）；下拉框按同样的组分段
 const GROUP_TITLES: Record<string, string> = {
   fiber: "纤维特性",
   paper: "纸张性能",
 };
+const metricOptions = computed(() =>
+  metrics.value.map((i) => ({
+    value: i.key,
+    label: unitFlagged(i) ? `${i.name}（单位待复核）` : i.name,
+    hint: i.unit ?? undefined,
+    group: GROUP_TITLES[i.group] ?? i.group,
+  })),
+);
 const metricGroups = computed(() => {
   const groups: { key: string; title: string; items: Indicator[] }[] = [];
   for (const i of metrics.value) {
