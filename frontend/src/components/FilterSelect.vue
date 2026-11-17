@@ -430,8 +430,9 @@ function place() {
   const width = Math.round(Math.min(maxW, Math.max(minW, naturalWidth)));
   const left = Math.round(Math.max(EDGE, Math.min(t.left, vw - EDGE - width)));
   const cap = searchable.value ? 440 : 380;
-  const below = vh - t.bottom - GAP - MARGIN,
-    above = t.top - GAP - MARGIN;
+  // keep clear of the fixed chrome: the garden dock / polarized pill below, the header above
+  const below = vh - chromeInset("--chrome-bottom") - t.bottom - GAP - MARGIN,
+    above = t.top - chromeInset("--chrome-top") - GAP - MARGIN;
   const natural = Math.min(cap, naturalHeight);
   up.value = natural > below && above > below;
   const room = Math.floor(up.value ? above : below);
@@ -986,6 +987,9 @@ onBeforeUnmount(() => {
 .filter-popover.up {
   transform-origin: var(--filter-origin-x, 24px) bottom;
 }
+.filter-popover .filter-panel {
+  transform-origin: inherit; /* the open animation runs on the panel */
+}
 .filter-panel {
   position: relative;
   display: flex;
@@ -1017,9 +1021,7 @@ onBeforeUnmount(() => {
   transition: box-shadow 0.18s;
 }
 .filter-search:focus-within {
-  box-shadow:
-    inset 0 0 0 1px var(--sel-halo-edge),
-    0 0 0 3px var(--sel-halo);
+  box-shadow: inset 0 0 0 1px var(--sel-halo-edge);
 }
 .filter-search input {
   flex: 1;
@@ -1319,24 +1321,36 @@ onBeforeUnmount(() => {
 }
 
 /* ---------------------------------------------------------------- open / close motion */
-.filter-pop-enter-active {
-  transition:
-    opacity 0.16s var(--ease),
-    transform 0.22s var(--ease);
+/* The open/close motion runs on the panel, not on the popover root: an opacity below 1 on
+   the root would make it the panel's backdrop root and switch the frosted blur off while it
+   animates. Keyframes rather than transitions: the panel enters the top layer in the same
+   frame, so a transition would have no starting style to run from. <Transition> gets its
+   durations explicitly (see `durations`). Each mode sets --pop-from / --pop-dur / --pop-ease. */
+.filter-popover {
+  --pop-from: translateY(-6px) scale(0.97);
+  --pop-dur: 0.22s;
+  --pop-ease: var(--ease);
 }
-.filter-pop-leave-active {
-  transition:
-    opacity 0.1s ease,
-    transform 0.12s ease;
+.filter-popover.up {
+  --pop-from: translateY(6px) scale(0.97);
 }
-.filter-pop-enter-from,
-.filter-pop-leave-to {
-  opacity: 0;
-  transform: translateY(-6px) scale(0.97);
+.filter-pop-enter-active .filter-panel {
+  animation: filter-pop-in var(--pop-dur) var(--pop-ease) both;
 }
-.filter-popover.up.filter-pop-enter-from,
-.filter-popover.up.filter-pop-leave-to {
-  transform: translateY(6px) scale(0.97);
+.filter-pop-leave-active .filter-panel {
+  animation: filter-pop-out 0.12s ease both;
+}
+@keyframes filter-pop-in {
+  from {
+    opacity: 0;
+    transform: var(--pop-from);
+  }
+}
+@keyframes filter-pop-out {
+  to {
+    opacity: 0;
+    transform: var(--pop-from);
+  }
 }
 .filter-sheet-enter-active,
 .filter-sheet-leave-active {
@@ -1362,6 +1376,12 @@ onBeforeUnmount(() => {
    ===================================================================== */
 :root[data-mode="polarized"] .filter-trigger {
   border-radius: var(--radius-sm);
+}
+:root[data-mode="polarized"] .filter-trigger {
+  height: 38px;
+}
+:root[data-mode="polarized"] .size-compact .filter-trigger {
+  height: 34px;
 }
 /* HUD corner ticks (a reticle that locks on when the field is focused or open) */
 :root[data-mode="polarized"] .filter-trigger::before {
@@ -1471,19 +1491,23 @@ onBeforeUnmount(() => {
   pointer-events: none;
 }
 :root[data-mode="polarized"] .filter-pop-enter-active .filter-panel::before {
-  transition: transform 0.36s var(--ease) 0.04s;
+  animation: filter-rail-in 0.36s var(--ease) 0.04s both;
 }
-:root[data-mode="polarized"] .filter-pop-enter-from .filter-panel::before {
-  transform: scaleX(0);
+@keyframes filter-rail-in {
+  from {
+    transform: scaleX(0);
+  }
 }
-:root[data-mode="polarized"] .filter-pop-enter-from,
-:root[data-mode="polarized"] .filter-popover.up.filter-pop-enter-from {
-  transform: translateY(-3px) scaleY(0.96);
+:root[data-mode="polarized"] .filter-popover {
+  --pop-from: translateY(-3px) scaleY(0.96);
+}
+:root[data-mode="polarized"] .filter-popover.up {
+  --pop-from: translateY(3px) scaleY(0.96);
 }
 :root[data-mode="polarized"] .filter-group {
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 :root[data-mode="polarized"] .filter-group::after {
@@ -1515,13 +1539,12 @@ onBeforeUnmount(() => {
 :root[data-mode="polarized"] .filter-option.selected::before {
   content: "";
   position: absolute;
-  left: -8px;
-  top: 50%;
-  width: 18px;
-  height: 2px;
-  background: var(--ifl);
+  left: 4px;
+  top: 9px;
+  bottom: 9px;
+  width: 2px;
+  background: var(--ifv);
   border-radius: 2px;
-  transform: translateY(-50%) rotate(90deg);
 }
 :root[data-mode="polarized"] .filter-label mark {
   background: transparent;
@@ -1542,7 +1565,7 @@ onBeforeUnmount(() => {
 }
 :root[data-mode="polarized"] .filter-foot {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -1589,16 +1612,25 @@ onBeforeUnmount(() => {
   background: var(--sel-sheen), var(--sel-bg-hover);
   box-shadow:
     inset 0 0 0 1px var(--sel-halo-edge),
-    0 0 0 4px var(--sel-halo),
+    var(--sel-shadow-hover);
+}
+/* keyboard focus on the closed field: one soft lilac halo (the open field needs none — the
+   popover itself shows where focus is) */
+:root[data-mode="garden"] .filter-trigger:focus-visible:not(.expanded) {
+  box-shadow:
+    inset 0 0 0 1px var(--sel-halo-edge),
+    0 0 0 3px var(--sel-halo),
     var(--sel-shadow-hover);
 }
 :root[data-mode="garden"] .filter-trigger:active {
   transform: translateY(0) scale(0.99);
 }
 :root[data-mode="garden"] .filter-eyebrow {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 13.5px;
+  font-family: var(--font-body);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  font-size: 12.5px;
   font-variation-settings:
     "SOFT" 100,
     "WONK" 1,
@@ -1618,16 +1650,16 @@ onBeforeUnmount(() => {
 }
 :root[data-mode="garden"] .filter-trigger:hover .filter-chevron,
 :root[data-mode="garden"] .expanded .filter-chevron {
-  background: var(--bl-tint);
+  background: var(--accent-tint);
 }
 :root[data-mode="garden"] .expanded .filter-chevron svg {
   transition: transform 0.46s var(--spring);
 }
 :root[data-mode="garden"] .filter-trigger.filtered .filter-value {
-  color: var(--bl-ink);
+  color: var(--accent-ink);
 }
 :root[data-mode="garden"] .filter-trigger.filtered .filter-chevron {
-  background: var(--bl-tint);
+  background: var(--accent-tint);
 }
 
 /* panel: frosted card, soft plum shadow */
@@ -1639,21 +1671,20 @@ onBeforeUnmount(() => {
     inset 0 0 0 1px var(--sel-edge),
     var(--sel-pop-shadow);
 }
-:root[data-mode="garden"] .filter-pop-enter-active {
-  transition:
-    opacity 0.2s var(--ease),
-    transform 0.44s var(--spring);
+:root[data-mode="garden"] .filter-popover {
+  --pop-from: translateY(-8px) scale(0.92);
+  --pop-dur: 0.44s;
+  --pop-ease: var(--spring);
 }
-:root[data-mode="garden"] .filter-pop-enter-from {
-  transform: translateY(-8px) scale(0.92);
-}
-:root[data-mode="garden"] .filter-popover.up.filter-pop-enter-from {
-  transform: translateY(8px) scale(0.92);
+:root[data-mode="garden"] .filter-popover.up {
+  --pop-from: translateY(8px) scale(0.92);
 }
 :root[data-mode="garden"] .filter-group {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 13px;
+  font-family: var(--font-body);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  font-size: 12px;
   padding: 10px 12px 4px;
   font-variation-settings:
     "SOFT" 100,
@@ -1668,16 +1699,19 @@ onBeforeUnmount(() => {
   padding-left: 14px;
 }
 :root[data-mode="garden"] .filter-option.highlighted {
-  box-shadow: var(--sel-row-shadow);
+  background: var(--accent-tint);
+  box-shadow:
+    inset 0 0 0 1px var(--sel-halo-edge),
+    var(--sel-row-shadow);
 }
 /* selected: a pastel stain blob with a filled check */
 :root[data-mode="garden"] .filter-option.selected {
   background:
     radial-gradient(120% 160% at 0% 0%, var(--sel-sheen-soft), transparent 60%),
-    var(--bl-tint);
+    var(--accent-tint);
 }
 :root[data-mode="garden"] .filter-check {
-  background: var(--bl);
+  background: var(--accent);
   color: var(--accent-contrast);
 }
 :root[data-mode="garden"] .filter-search {
@@ -1687,7 +1721,7 @@ onBeforeUnmount(() => {
 :root[data-mode="garden"] .filter-search:focus-within {
   box-shadow:
     inset 0 0 0 1px var(--sel-halo-edge),
-    0 0 0 4px var(--sel-halo);
+    inset 0 1px 3px var(--sel-line);
 }
 :root[data-mode="garden"] .filter-foot {
   display: none;

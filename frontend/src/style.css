@@ -188,6 +188,8 @@
     #5b5bd6 65%,
     #2ec4d6
   );
+  /* the same ramp running top to bottom (thin vertical rails, e.g. the selected select row) */
+  --ifv: linear-gradient(180deg, #f2c14e, #e0479e 35%, #5b5bd6 65%, #2ec4d6);
   --chrome-top: 58px;
   --page-max: 1240px;
   /* FilterSelect: dark instrument readout, HUD ticks, dark glass listbox */
