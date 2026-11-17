@@ -144,7 +144,7 @@ def test_supplements_cover_other_papers_before_spending_more_on_the_first_paper(
     assert info['context_chars'] <= 256
 
 
-def test_each_group_gets_one_supplement_then_remaining_budget_favors_explicit_links():
+def test_each_round_gives_groups_a_turn_and_prioritizes_their_own_explicit_links():
     a = chunk(1, 'a' * 30)
     near_a = chunk(2, 'x' * 60)
     farther_a = chunk(3, 'y' * 60)
@@ -157,8 +157,53 @@ def test_each_group_gets_one_supplement_then_remaining_budget_favors_explicit_li
     result, info = assemble_body_context([seed(a), seed(b)], cat,
         ContextOptions(True, max_evidence_chars=400, max_total_chars=380), relations(cat, [(b, tab1), (b, tab2)]))
 
-    assert [[part.chunk_id for part in e.source_chunks] for e in result] == [[a.id, near_a.id], [b.id, tab1.id, tab2.id]]
-    assert info['skipped_candidate_chunk_ids'] == [farther_a.id]
+    assert [[part.chunk_id for part in e.source_chunks] for e in result] == [[a.id, near_a.id, farther_a.id], [b.id, tab1.id]]
+    assert info['skipped_candidate_chunk_ids'] == [tab2.id]
+
+
+@pytest.mark.parametrize('budget, expected_counts', [(300, [3, 3]), (400, [4, 4])])
+def test_round_robin_continues_after_first_round_despite_candidate_distance(budget, expected_counts):
+    first = [chunk(i, 'a' * 40, doc='first') for i in range(1, 5)]
+    second = [chunk(i, 'b' * 40, doc='second') for i in (1, 21, 41, 61)]
+    cat = body_catalog(first + second, ['body'] * 8, assigned=False)
+    cat = assign_sections(cat, {**{c.id: 'a' for c in first}, **{c.id: 'b' for c in second}})
+
+    result, info = assemble_body_context([seed(first[0]), seed(second[0])], cat,
+        ContextOptions(True, max_evidence_chars=256, max_total_chars=budget))
+
+    assert [len(e.source_chunks) for e in result] == expected_counts
+    assert info['context_chars'] <= budget
+    assert info['supplement_allocation'] == ['evidence_round_robin', 'candidate_priority_within_evidence']
+
+
+def test_round_robin_skips_oversized_and_shared_candidates_and_redistributes_unused_turns():
+    from literature_rag.application.unified_context import PrimaryCandidateCatalog
+    a = chunk(1, 'Primary A.')
+    b = chunk(5, 'Primary B.')
+    shared = chunk(2, 'Shared supplement.')
+    oversized = chunk(6, 'x' * 300)
+    later = chunk(7, 'Later supplement.')
+    last = chunk(8, 'Final supplement.')
+    chunks = [a, b, shared, oversized, later, last]
+    cat = body_catalog(chunks, ['body'] * 6)
+    allocator = PrimaryCandidateCatalog([seed(a), seed(b)], cat)
+    allocator.origins = {
+        a.id: {shared.id: {'section'}},
+        b.id: {shared.id: {'section'}, oversized.id: {'section'}, later.id: {'section'}, last.id: {'section'}},
+    }
+    accepted = []
+    occupied = {a.id, b.id}
+
+    def try_add(group, c):
+        if c.id in occupied or c.id == oversized.id:
+            return False
+        occupied.add(c.id)
+        accepted.append((group, c.id))
+        return True
+
+    allocator.allocate_supplements([([seed(a)], [shared]), ([seed(b)], [shared, oversized, later, last])], try_add)
+
+    assert accepted == [(0, shared.id), (1, later.id), (1, last.id)]
 
 
 def test_link_candidates_are_bounded_per_primary_and_globally():

@@ -58,27 +58,20 @@ class PrimaryCandidateCatalog:
         return sorted(eligible, key=lambda c: (*self.candidate_rank(seeds, c), c.chunk_index, c.id))
 
     def allocate_supplements(self, groups, try_add):
-        # Use rerank order only to break ties between equally close candidates of equal priority.
-        ranked = sorted(
-            ((*self.candidate_rank(seeds, chunk), group, chunk.chunk_index, chunk.id),
-             group, seeds[0].document_id, chunk)
+        pending = [
+            (group, iter(self.order_candidates(seeds, candidates)))
             for group, (seeds, candidates) in enumerate(groups)
-            for chunk in self.order_candidates(seeds, candidates)
-            if chunk.id not in self.roots
-        )
-        covered_documents = set()
-        covered_groups = set()
-        for _, group, document_id, chunk in ranked:
-            if document_id not in covered_documents and try_add(group, chunk):
-                covered_documents.add(document_id)
-                covered_groups.add(group)
-
-        for _, group, _, chunk in ranked:
-            if group not in covered_groups and try_add(group, chunk):
-                covered_groups.add(group)
-
-        for _, group, _, chunk in ranked:
-            try_add(group, chunk)
+        ]
+        # Give each evidence group at most one successful addition per round.
+        # Failed or already-used candidates do not consume that group's turn.
+        while pending:
+            next_round = []
+            for group, candidates in pending:
+                for chunk in candidates:
+                    if chunk.id not in self.roots and try_add(group, chunk):
+                        next_round.append((group, candidates))
+                        break
+            pending = next_round
 
 
 def assemble_unified_context(seeds,catalog,options,relations=None):
@@ -89,7 +82,7 @@ def assemble_unified_context(seeds,catalog,options,relations=None):
     omitted=[dict(**link,reason='length_budget') for link in candidates.link_candidates
         if link['target_chunk_id'] not in present]
     info.update(assembly_passes=1,candidate_roots_only=True,
-        supplement_allocation=['document_coverage','evidence_coverage','candidate_priority'],
+        supplement_allocation=['evidence_round_robin','candidate_priority_within_evidence'],
         candidate_root_chunk_ids=[e.chunk_id for e in seeds],post_context_expansion=False,
         candidate_priority=['primary','explicit_table_link','section','body_continuation'],
         explicit_link_candidates=candidates.link_candidates,selected_explicit_links=selected,
