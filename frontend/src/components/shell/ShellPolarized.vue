@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BrandMark from "../BrandMark.vue";
 import {
   computed,
   onBeforeUnmount,
@@ -226,19 +227,7 @@ onBeforeUnmount(() => {
   />
   <header class="pz-top">
     <RouterLink class="pz-brand" to="/" aria-label="FiberScope 偏光 · 数据总览">
-      <svg class="pz-pol" viewBox="0 0 32 32" aria-hidden="true">
-        <defs>
-          <linearGradient id="pz-ifg" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#F2C14E" />
-            <stop offset=".4" stop-color="#E0479E" />
-            <stop offset=".7" stop-color="#5B5BD6" />
-            <stop offset="1" stop-color="#2EC4D6" />
-          </linearGradient>
-        </defs>
-        <circle cx="16" cy="16" r="13.5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
-        <circle cx="16" cy="16" r="9" fill="none" stroke="url(#pz-ifg)" stroke-width="2" />
-        <line x1="6" y1="26" x2="26" y2="6" stroke="currentColor" stroke-width="1.2" />
-      </svg>
+      <BrandMark class="pz-pol" mode="polarized" />
       <span class="pz-brand-word">FiberScope</span><span class="pz-brand-cn">偏光</span>
     </RouterLink>
     <div class="pz-crumb">
@@ -404,8 +393,8 @@ onBeforeUnmount(() => {
   flex-shrink: 0;
 }
 .pz-pol {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   color: var(--text);
 }
 .pz-brand-word {
@@ -758,8 +747,8 @@ onBeforeUnmount(() => {
     gap: 8px;
   }
   .pz-pol {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
   }
   .pz-brand-word {
     font-size: 13px;

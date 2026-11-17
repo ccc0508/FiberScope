@@ -78,11 +78,18 @@ function applyToDocument(value: Mode) {
     document.head.appendChild(meta);
   }
   meta.content = MODE_THEME[value].themeColor;
+  // tab icon: public/favicon-polarized.svg or favicon-garden.svg (same mark as BrandMark.vue)
+  const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+  const href = icon?.getAttribute("href");
+  if (icon && href) icon.setAttribute("href", href.replace(/favicon(-[a-z]+)?\.svg$/, `favicon-${value}.svg`));
 }
 applyToDocument(current.value);
 
 type TransitionDocument = Document & {
-  startViewTransition?: (update: () => Promise<void> | void) => unknown;
+  startViewTransition?: (update: () => Promise<void> | void) => {
+    ready?: Promise<unknown>;
+    finished?: Promise<unknown>;
+  } | void;
 };
 
 /**
@@ -119,13 +126,17 @@ export function setMode(
     try {
       let done!: () => void;
       const updated = new Promise<void>((resolve) => (done = resolve));
-      doc.startViewTransition(async () => {
+      const transition = doc.startViewTransition(async () => {
         try {
           await update();
         } finally {
           done();
         }
       });
+      // a quick second switch skips the running cross-fade; that rejects these promises with
+      // an AbortError, which is expected and must not surface as an unhandled rejection
+      transition?.ready?.catch(() => undefined);
+      transition?.finished?.catch(() => undefined);
       return updated;
     } catch {
       /* fall through to an instant switch */

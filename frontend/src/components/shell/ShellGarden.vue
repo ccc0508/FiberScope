@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BrandMark from "../BrandMark.vue";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { Info } from "lucide-vue-next";
@@ -90,11 +91,7 @@ onBeforeUnmount(() => observer?.disconnect());
   <header class="gd-top">
     <RouterLink class="gd-brand" to="/" aria-label="FiberScope 纤维花园 · 数据总览">
       <span class="gd-brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 32 32" fill="none" stroke-linecap="round">
-          <path d="M5 21c5-9 10 3 22-8" stroke="#DA6B3C" stroke-width="2.4" />
-          <path d="M5 14c6 6 12-7 22 1" stroke="#4E9A6A" stroke-width="2.4" />
-          <path d="M7 26c6-3 11-14 19-16" stroke="#8B6CD9" stroke-width="2.4" />
-        </svg>
+        <BrandMark mode="garden" />
       </span>
       <span class="gd-brand-text">
         <span class="gd-brand-name">FiberScope</span>
@@ -201,21 +198,18 @@ onBeforeUnmount(() => observer?.disconnect());
   text-decoration: none;
   border-radius: 14px;
 }
+/* the mark is a round field of view: no tile behind it, a soft plum shadow instead */
 .gd-brand-mark {
   width: 40px;
   height: 40px;
   flex: none;
-  border-radius: 14px;
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, 0.7);
-  box-shadow:
-    inset 0 0 0 1px #fff,
-    var(--shadow-sm);
 }
 .gd-brand-mark svg {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
+  filter: drop-shadow(0 6px 10px rgb(74 52 110 / 0.22));
 }
 .gd-brand-text {
   min-width: 0;
@@ -454,13 +448,12 @@ onBeforeUnmount(() => observer?.disconnect());
     font-size: 18px;
   }
   .gd-brand-mark {
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
+    width: 34px;
+    height: 34px;
   }
   .gd-brand-mark svg {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
   }
   .gd-top-r {
     gap: 6px;

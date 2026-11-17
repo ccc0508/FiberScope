@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BrandMark from "../components/BrandMark.vue";
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import { ArrowDown, ArrowRight, Info, RefreshCw } from "lucide-vue-next";
 import ModeSwitch from "../components/ModeSwitch.vue";
@@ -437,11 +438,7 @@ onBeforeUnmount(() => {
     <header class="gi-top" :class="{ solid }">
       <span class="gi-brand">
         <span class="gi-brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" fill="none" stroke-linecap="round">
-            <path class="t-sw" d="M5 21c5-9 10 3 22-8" stroke-width="2.4" />
-            <path class="t-hw" d="M5 14c6 6 12-7 22 1" stroke-width="2.4" />
-            <path class="t-bl" d="M7 26c6-3 11-14 19-16" stroke-width="2.4" />
-          </svg>
+          <BrandMark mode="garden" />
         </span>
         <span class="gi-brand-text">
           <span class="gi-brand-name">FiberScope</span>
@@ -887,15 +884,11 @@ onBeforeUnmount(() => {
   flex: none;
   width: 40px;
   height: 40px;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--surface) 72%, transparent);
-  box-shadow:
-    inset 0 0 0 1px var(--surface),
-    var(--shadow-sm);
 }
 .gi-brand-mark svg {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
+  filter: drop-shadow(0 6px 10px rgb(74 52 110 / 0.22));
 }
 .gi-brand-text {
   display: flex;
