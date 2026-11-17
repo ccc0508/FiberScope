@@ -89,7 +89,7 @@ class SectionCatalog:
         return sid, ordered, 'section'
 
 
-def assemble_sections(seeds: Sequence[Evidence], catalog: SectionCatalog, options: ContextOptions):
+def assemble_sections(seeds: Sequence[Evidence], catalog: SectionCatalog, options: ContextOptions, *, allocate=None):
     if not options.enabled:
         raise ValueError('Section experiment requires context assembly enabled')
     if len({e.chunk_id for e in seeds}) != len(seeds):
@@ -128,19 +128,29 @@ def assemble_sections(seeds: Sequence[Evidence], catalog: SectionCatalog, option
         raise ValueError('Primary hits exceed total budget; do not lose source evidence')
     occupied = {e.chunk_id for e in seeds}
     skipped = set()
+    def try_add(index, chunk):
+        nonlocal total
+        if chunk.id in occupied:
+            return False
+        proposed = len(join_chunks(order([*selections[index], chunk])))
+        new_total = total - sizes[index] + proposed
+        if proposed > options.max_evidence_chars or new_total > options.max_total_chars:
+            skipped.add(chunk.id)
+            return False
+        selections[index].append(chunk)
+        occupied.add(chunk.id)
+        total = new_total
+        sizes[index] = proposed
+        return True
+
     # All primary hits have already reserved their full space before expansion.
-    for i, g in enumerate(split):
-        for c in catalog.order_candidates([e for _, e in g['hits']], g['candidates']):
-            if c.id in occupied:
-                continue
-            proposed = len(join_chunks(order([*selections[i], c])))
-            if proposed > options.max_evidence_chars or total-sizes[i]+proposed > options.max_total_chars:
-                skipped.add(c.id)
-                continue
-            selections[i].append(c)
-            occupied.add(c.id)
-            total += proposed-sizes[i]
-            sizes[i] = proposed
+    groups = [([e for _, e in g['hits']], g['candidates']) for g in split]
+    if allocate is None:
+        for index, (hits, candidates) in enumerate(groups):
+            for chunk in catalog.order_candidates(hits, candidates):
+                try_add(index, chunk)
+    else:
+        allocate(groups, try_add)
     results = []
     for group, selected in zip(split, selections):
         chunks = order(selected)

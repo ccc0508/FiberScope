@@ -127,6 +127,40 @@ def test_primary_space_is_reserved_before_any_direct_link_or_section_supplement(
     assert not info['omitted_seed_chunk_ids']
 
 
+def test_supplements_cover_other_papers_before_spending_more_on_the_first_paper():
+    a = chunk(1, 'a' * 30, doc='first')
+    near_a = chunk(2, 'x' * 80, doc='first')
+    farther_a = chunk(3, 'y' * 80, doc='first')
+    b = chunk(1, 'b' * 30, doc='second')
+    near_b = chunk(8, 'z' * 80, doc='second')
+    cat = body_catalog([a, near_a, farther_a, b, near_b], ['body'] * 5, assigned=False)
+    cat = assign_sections(cat, {a.id: 'a', near_a.id: 'a', farther_a.id: 'a', b.id: 'b', near_b.id: 'b'})
+
+    result, info = assemble_body_context([seed(a), seed(b)], cat,
+        ContextOptions(True, max_evidence_chars=256, max_total_chars=256))
+
+    assert [[part.chunk_id for part in e.source_chunks] for e in result] == [[a.id, near_a.id], [b.id, near_b.id]]
+    assert info['skipped_candidate_chunk_ids'] == [farther_a.id]
+    assert info['context_chars'] <= 256
+
+
+def test_each_group_gets_one_supplement_then_remaining_budget_favors_explicit_links():
+    a = chunk(1, 'a' * 30)
+    near_a = chunk(2, 'x' * 60)
+    farther_a = chunk(3, 'y' * 60)
+    b = chunk(5, 'See Tables 1 and 2.')
+    tab1 = table(6)
+    tab2 = table(7, 2)
+    cat = body_catalog([a, near_a, farther_a, b, tab1, tab2], ['body'] * 4 + ['table'] * 2, assigned=False)
+    cat = assign_sections(cat, {a.id: 'a', near_a.id: 'a', farther_a.id: 'a', b.id: 'b', tab1.id: 'b', tab2.id: 'b'})
+
+    result, info = assemble_body_context([seed(a), seed(b)], cat,
+        ContextOptions(True, max_evidence_chars=400, max_total_chars=380), relations(cat, [(b, tab1), (b, tab2)]))
+
+    assert [[part.chunk_id for part in e.source_chunks] for e in result] == [[a.id, near_a.id], [b.id, tab1.id, tab2.id]]
+    assert info['skipped_candidate_chunk_ids'] == [farther_a.id]
+
+
 def test_link_candidates_are_bounded_per_primary_and_globally():
     bodies=[chunk(i,'See the numbered tables.') for i in range(1,6)]
     tables=[table(i+10,i) for i in range(1,16)]

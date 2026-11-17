@@ -74,7 +74,10 @@ def test_body_section_may_include_complete_table_and_caption_without_metadata():
     assert [s.chunk_id for s in out[0].source_chunks]==[n.id for n in cs[:3]]
     # A table already among primary hits remains a separate, intact source.
     out,_=assemble_body_context([seed(cs[0]),seed(cs[1],'[2]')],c,ContextOptions(True))
-    assert out[1].text==cs[1].text and out[1].seed_chunk_ids==(cs[1].id,)
+    assert out[1].seed_chunk_ids == (cs[1].id,)
+    assert [(source.chunk_id, source.text) for source in out[1].source_chunks] == [
+        (cs[1].id, cs[1].text), (cs[2].id, cs[2].text),
+    ]
     assert len({s.chunk_id for e in out for s in e.source_chunks})==sum(len(e.source_chunks) for e in out)
 
 

@@ -45,29 +45,51 @@ class PrimaryCandidateCatalog:
             mode='explicit_links'
         return sid,self.order_candidates([seed],list(unique.values())),mode
 
-    def order_candidates(self,seeds,candidates):
-        def key(c):
-            choices=[]
-            for seed in seeds:
-                reasons=self.origins.get(seed.chunk_id,{}).get(c.id)
-                if reasons:
-                    choices.append((min(PRIORITY[r] for r in reasons),
-                        abs(c.chunk_index-self.chunks[seed.chunk_id].chunk_index)))
-            priority,distance=min(choices)
-            return priority,distance,c.chunk_index,c.id
-        unique={c.id:c for c in candidates}
-        eligible=[c for c in unique.values() if any(c.id in self.origins.get(seed.chunk_id,{}) for seed in seeds)]
-        return sorted(eligible,key=key)
+    def candidate_rank(self, seeds, chunk):
+        return min(
+            (min(PRIORITY[reason] for reason in self.origins[seed.chunk_id][chunk.id]),
+             abs(chunk.chunk_index - self.chunks[seed.chunk_id].chunk_index))
+            for seed in seeds if chunk.id in self.origins.get(seed.chunk_id, {})
+        )
+
+    def order_candidates(self, seeds, candidates):
+        unique = {c.id: c for c in candidates}
+        eligible = [c for c in unique.values() if any(c.id in self.origins.get(seed.chunk_id, {}) for seed in seeds)]
+        return sorted(eligible, key=lambda c: (*self.candidate_rank(seeds, c), c.chunk_index, c.id))
+
+    def allocate_supplements(self, groups, try_add):
+        # Use rerank order only to break ties between equally close candidates of equal priority.
+        ranked = sorted(
+            ((*self.candidate_rank(seeds, chunk), group, chunk.chunk_index, chunk.id),
+             group, seeds[0].document_id, chunk)
+            for group, (seeds, candidates) in enumerate(groups)
+            for chunk in self.order_candidates(seeds, candidates)
+            if chunk.id not in self.roots
+        )
+        covered_documents = set()
+        covered_groups = set()
+        for _, group, document_id, chunk in ranked:
+            if document_id not in covered_documents and try_add(group, chunk):
+                covered_documents.add(document_id)
+                covered_groups.add(group)
+
+        for _, group, _, chunk in ranked:
+            if group not in covered_groups and try_add(group, chunk):
+                covered_groups.add(group)
+
+        for _, group, _, chunk in ranked:
+            try_add(group, chunk)
 
 
 def assemble_unified_context(seeds,catalog,options,relations=None):
     candidates=PrimaryCandidateCatalog(seeds,catalog,relations)
-    evidence,info=assemble_sections(seeds,candidates,options)
+    evidence,info=assemble_sections(seeds,candidates,options,allocate=candidates.allocate_supplements)
     present={s.chunk_id for e in evidence for s in e.source_chunks}
     selected=[link for link in candidates.link_candidates if link['target_chunk_id'] in present]
     omitted=[dict(**link,reason='length_budget') for link in candidates.link_candidates
         if link['target_chunk_id'] not in present]
     info.update(assembly_passes=1,candidate_roots_only=True,
+        supplement_allocation=['document_coverage','evidence_coverage','candidate_priority'],
         candidate_root_chunk_ids=[e.chunk_id for e in seeds],post_context_expansion=False,
         candidate_priority=['primary','explicit_table_link','section','body_continuation'],
         explicit_link_candidates=candidates.link_candidates,selected_explicit_links=selected,
