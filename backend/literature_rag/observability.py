@@ -1,10 +1,13 @@
 """Optional live checkpoint projection. Local records remain authoritative."""
+from contextvars import ContextVar
 import logging
 import json
 import os
 import re
 from pathlib import Path
 from threading import Thread
+
+current_tool_index = ContextVar("fiberscope_tool_index", default=None)
 
 log = logging.getLogger(__name__)
 
@@ -58,6 +61,11 @@ class LangfuseTrace:
     def active_tool_context(self):
         if self.disabled:
             return None
+        index=current_tool_index.get()
+        if index is not None:
+            key=f'tool:{index}'
+            node=self.nodes.get(key)
+            return {'trace_id':node.trace_id,'parent_span_id':node.id} if node and key not in self.ended else None
         for key, node in reversed(list(self.nodes.items())):
             if key.startswith('tool:') and key not in self.ended:
                 return {'trace_id': node.trace_id, 'parent_span_id': node.id}

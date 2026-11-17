@@ -47,7 +47,7 @@ def test_direct_route_uses_no_specialists():
 
 
 def test_planner_starts_literature_and_selects_only_the_exact_requested_excerpt_for_sql():
-    selection = dict(need='方法需要的字段', source_child_id='r/literature', ref='[1]', quote='方法需要真密度。')
+    selection = dict(input_id='input_1', need='required field', source_child_id='r/literature', ref='[1]', quote='方法需要真密度。')
     steps = [
         route('both', requirements=NEEDS, first_specialist='literature',
               dependency='literature_to_sql', dependency_checklist=['方法需要的字段']),
@@ -145,3 +145,81 @@ def test_parent_evidence_is_packed_per_record_and_selection_preserves_sql_units(
     data = selected[0]['result']['result']
     assert data['rows'] == [[1.2]] and data['columns'] == ['density']
     assert data['column_metadata'] == [dict(name='density', unit='g/cm³')]
+
+
+def test_bad_format_and_invalid_reference_get_one_combined_repair():
+    result, _ = run([route('sql', first_budget=dict(collection_rounds=2)), SQL_TOOL,
+                     answer('{"summary":"[99]"}'), answer('{"status":"ok","summary":"[3]"}'),
+                     tool('finish_tasks',dict(reason='complete',stop_condition='sufficient')), answer('结果[3]')])
+    child=result['children'][0]
+    assert result['status']=='completed'
+    assert child['allocation']['max_model_calls']==4
+    assert child['trace']['citation_validation']['status']=='repaired'
+    errors=child['trace']['citation_validation']['attempts'][0]['errors']
+    assert 'format' in errors and errors['invalid_refs']==['[99]']
+    assert [m['stage'] for m in child['trace']['model_calls']].count('result_repair')==1
+
+
+def test_parallel_roles_overlap_and_keep_their_own_evidence_and_budgets():
+    from threading import Barrier
+    rendezvous=Barrier(2)
+    class Parallel(Fake):
+        def decide(self,messages,schemas,timeout,max_tokens):
+            if 'route_task' in schemas:
+                return route('both',requirements=NEEDS,parallel_start=True,
+                             first_budget=dict(collection_rounds=3),second_budget=dict(collection_rounds=3))
+            if 'finish_tasks' in schemas:return tool('finish_tasks',dict(reason='done',stop_condition='sufficient'))
+            if not schemas:return answer('两项证据[1][3]')
+            is_sql='query_experiment_data' in schemas
+            if messages[-1]['role']=='tool':
+                return findings('[3]','need_2') if is_sql else findings('[1]','need_1',document_id='A')
+            rendezvous.wait(timeout=4)
+            return SQL_TOOL if is_sql else PAPER_TOOL
+    result=ResultDrivenCoordinator(Parallel([]),fake_executor,lambda s:None).run(QUESTION,'parallel')
+    assert result['status']=='completed'
+    children=result['children']
+    assert len(children)==2 and max(c['started_at_ns'] for c in children)<min(c['ended_at_ns'] for c in children)
+    assert all(c['allocation']['collection_rounds']==3 and not c['handoff'] for c in children)
+    assert {c['child_id'] for c in result['tool_calls']}=={c['id'] for c in children}
+    assert result['budget_usage']['model']==7 and result['budget_usage']['tools']==2
+
+
+def test_invalid_batch_member_does_not_discard_valid_dispatch():
+    batch=dispatch('literature',['need_1'])
+    batch.calls.extend(dispatch('sql',['nonexistent']).calls)
+    result,_=run([route('both',requirements=NEEDS),SQL_TOOL,findings('[3]','need_2'),
+                  batch,PAPER_TOOL,findings('[1]','need_1',document_id='A'),
+                  tool('finish_tasks',dict(reason='done',stop_condition='sufficient')),answer('结果[1][3]')])
+    assert result['status']=='completed'
+    assert [c['role'] for c in result['children']]==['sql','literature']
+    assert result['feedback']['decisions'][0]['status']=='partial'
+
+
+def test_continuation_retains_context_and_is_bounded():
+    report=answer(json.dumps(dict(status='insufficient_evidence',summary='schema only',
+        unresolved_items=['density'],next_information=[dict(role='sql',requirement_ids=['need_1'],
+        question='Count density records with query_experiment_data',reason='database count missing')])))
+    result,adapter=run([route('sql',first_budget=dict(collection_rounds=1,tool_calls=1)),
+        tool('describe_experiment_data',dict(reason='schema')),report,answer('{"approve":true}'),
+        SQL_TOOL,findings('[3]','need_1'),tool('finish_tasks',dict(reason='done',stop_condition='sufficient')),
+        answer('结果[3]')])
+    assert result['status']=='completed'
+    assert len(result['children'])==1
+    child=result['children'][0]
+    assert child['extension']['status']=='approved' and child['extension']['rounds']<=2
+    assert len([m for m in result['model_calls'] if m['stage']=='planner_extension'])==1
+    assert any(m['role']=='tool' for m in adapter.requests[4][0])
+
+
+def test_previous_dependency_does_not_block_next_independent_followup_in_batch():
+    first=dispatch('sql',['need_2'],inputs=[dict(input_id='input_1',need='actual field',
+                   source_child_id='r/literature',ref='[1]',quote='方法需要真密度。')])
+    batch=dispatch('sql',['need_2'])
+    batch.calls.extend(dispatch('literature',['need_1']).calls)
+    result,_=run([route('both',requirements=NEEDS,first_specialist='literature',
+                        dependency='literature_to_sql',dependency_checklist=['required property']),
+                  PAPER_TOOL,findings('[1]','need_1',document_id='A'),first,SQL_TOOL,findings('[3]','need_2'),
+                  batch,SQL_TOOL,findings('[3]','need_2'),answer('结果[1][3]')])
+    assert [c['role'] for c in result['children']]==['literature','sql','sql']
+    assert result['children'][-1]['handoff']==[]
+    assert result['task_schedule']['stops']=='max_specialist_calls'

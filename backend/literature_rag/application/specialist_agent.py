@@ -1,11 +1,12 @@
 """One-level routing with isolated specialists and a shared hard budget."""
 from copy import deepcopy
+from threading import RLock, local
 import json
-import re
 from time import monotonic, time_ns
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from typing import Annotated, Literal
-from .agent_loop import AgentLoop, AgentBudget, REVIEW_PROMPT, trace_messages
+from ..observability import current_tool_index
+from .agent_loop import AgentLoop, AgentBudget, REVIEW_PROMPT, trace_messages, unwrap_json
 from .tools import SCHEMAS
 from .citation_policy import citation_records, invalid_references
 from .agent_context import EvidenceProjection
@@ -32,12 +33,16 @@ class Plan(BaseModel):
 
 
 class ResultDrivenPlan(Plan):
+    parallel_start: bool = False
+    second_budget: SuggestedBudget = Field(default_factory=SuggestedBudget)
     first_specialist: Literal['sql', 'literature'] | None = None
     first_budget: SuggestedBudget = Field(default_factory=SuggestedBudget)
     dependency_checklist: list[Annotated[str, Field(min_length=1, max_length=240)]] = Field(default_factory=list, max_length=8)
 
     @model_validator(mode='after')
     def validate_execution_order(self):
+        if self.parallel_start and (self.route != 'both' or self.dependency != 'independent'):
+            raise ValueError('Parallel initial dispatch requires independent work in both roles')
         if self.route != 'both':
             if self.dependency != 'independent' or self.dependency_checklist:
                 raise ValueError('A cross-role dependency requires both specialists')
@@ -221,14 +226,6 @@ a statement never establishes that the author did not discuss it. Stop optional 
 class BudgetExhausted(RuntimeError):pass
 
 
-def unwrap_json(value):
-    """Remove only a whole Markdown code fence and transport whitespace/BOM."""
-    if not isinstance(value,str):return value
-    value=value.strip().lstrip('\ufeff').strip()
-    match=re.fullmatch(r'```(?:json)?\s*\n(.*?)\n\s*```',value,re.DOTALL|re.IGNORECASE)
-    return match.group(1).strip() if match else value
-
-
 class SpecialistCoordinator:
     result_driven = False
 
@@ -242,24 +239,29 @@ class SpecialistCoordinator:
         b=self.budget;deadline=self.clock()+b.total_seconds
         state=dict(run_id=run_id,question=question,status='running',answer='',draft='',model_calls=[],tool_calls=[],
             children=[],plan=None,format_checks=[],review_status='not_started',stop_reason=None,
-            pipeline_version='specialists-v9-result-driven' if self.result_driven else 'specialists-v8-bounded-feedback',
+            pipeline_version='specialists-v10-bounded-batches' if self.result_driven else 'specialists-v8-bounded-feedback',
             feedback=dict(max_followups=1 if self.feedback_enabled else 0,used=0,status='not_started',decisions=[],stop_reason=None),
             citation_validation=dict(status='pending',available_records=[],attempts=[]))
         counters=dict(model=0,tools=0,search=0)
+        worker=local()
+        lock=RLock()
         active_child_id=None
         active_child_started=None
         def save():
-            state['budget_usage']=dict(counters,seconds_remaining=max(0,deadline-self.clock()))
-            self.checkpoint(state)
+            with lock:
+                state['budget_usage']=dict(counters,seconds_remaining=max(0,deadline-self.clock()))
+                self.checkpoint(state)
         def call(stage,messages,schemas,reserve=0,timeout_limit=None):
-            if counters['model']>=b.max_model_calls-reserve or self.clock()>=deadline:raise BudgetExhausted()
-            if len(json.dumps(trace_messages(messages),ensure_ascii=False))>b.max_context_chars:raise BudgetExhausted('context')
-            counters['model']+=1
+            with lock:
+                if counters['model']>=b.max_model_calls-reserve or self.clock()>=deadline:raise BudgetExhausted()
+                if len(json.dumps(trace_messages(messages),ensure_ascii=False))>b.max_context_chars:raise BudgetExhausted('context')
+                counters['model']+=1
             max_output_tokens = (b.synthesis_max_output_tokens if stage in {'synthesis_review', 'citation_repair'}
                                  else b.max_output_tokens)
             entry=dict(stage=stage,status='started',input_messages=trace_messages(messages),available_tools=list(schemas),
                        usage=None,max_output_tokens=max_output_tokens)
-            if active_child_id is not None:entry['child_id']=active_child_id
+            owner = getattr(worker,'child_id',None) if self.result_driven else active_child_id
+            if owner is not None:entry['child_id']=owner
             state['model_calls'].append(entry);save()
             try:
                 timeout=max(.01,deadline-self.clock())
@@ -352,13 +354,14 @@ class SpecialistCoordinator:
                     and b.max_model_calls-counters['model']>=7*(len(names)-1)+10 else 0)
 
                 def run_child(name,assigned,remaining_children,followup=None,*,requested=None,
-                              selected_inputs=(),transfer=(),step=None,phase=None,reserve_next_decision=False):
+                              selected_inputs=(),transfer=(),step=None,phase=None,reserve_next_decision=False,allocation=None):
                     nonlocal active_child_id,active_child_started,projection
                     if self.result_driven:
                         data = dict(role=name, requirements=assigned, task_contract=requirements,
                                     delegation=step.task if step else None,
-                                    dependency_inputs=[dict(need=x['need'], ref=x['ref']) for x in transfer],
+                                    dependency_inputs=[dict(need=x.get('need'), input_id=x.get('input_id'), ref=x['ref']) for x in transfer],
                                     missing_inputs=step.missing_inputs if step else [],
+                                    dependency_slots=state['task_schedule'].get('dependency_slots',{}) if step and (transfer or step.missing_inputs) else {},
                                     followup=dict(task=step.task) if step and phase == 'followup' else None,
                                     instruction='Follow only the assigned requirements and delegation. '
                                     'Dependency inputs are selected source data; explicitly retain missing inputs. '
@@ -370,11 +373,17 @@ class SpecialistCoordinator:
                         reserve = 2 + 4*pending
                         if not pending and reserve_next_decision and model_room-reserve >= 4:
                             reserve += 1
-                        quota = min(model_room-reserve, max(3, requested.model_calls or 7))
+                        quota = min(model_room-reserve, requested.total_calls)
+                        protected = reserve
                         reserve = model_room-quota
                         tool_room = b.max_tool_calls-counters['tools']
                         tool_quota = min(max(1, tool_room-pending), tool_room,
                                          requested.tool_calls or max(1, tool_room//remaining_children))
+                        if allocation:
+                            quota,tool_quota=allocation
+                            pending=0
+                            protected=2+int(reserve_next_decision)
+                            reserve=2
                         inherited=list(selected_inputs)
                     else:
                         prior=list(state['children'])
@@ -393,7 +402,7 @@ class SpecialistCoordinator:
                     seconds=deadline-self.clock()-b.reserve_seconds
                     if quota<3 or seconds<30 or tool_quota<1:raise BudgetExhausted('specialist allocation')
                     child_started=self.clock()
-                    active_child_started=child_started
+                    if not self.result_driven:active_child_started=child_started
                     phase=phase or ('followup' if followup else 'initial')
                     suffix=f'/followup-{sum(c["role"] == name for c in state["children"])}' if phase=='followup' else ''
                     child=dict(id=f'{run_id}/{name}'+suffix,
@@ -401,10 +410,12 @@ class SpecialistCoordinator:
                         allocation=dict(base_model_calls=7,max_model_calls=quota,reserved_for_remaining=reserve,
                             max_tool_calls=tool_quota,model_start=counters['model']))
                     if self.result_driven:
-                        child['allocation']['requested']=requested.model_dump()
+                        child['allocation'].update(requested=requested.model_dump(),collection_rounds=quota-2,
+                                                   submission_reserve=1,repair_reserve=1,parallel=bool(allocation))
                         child['handoff']=list(transfer)
                     state['children'].append(child);save()
-                    active_child_id=child['id']
+                    if self.result_driven:worker.child_id=child['id']
+                    else:active_child_id=child['id']
                     allowed=SQL_TOOLS if name=='sql' else PAPER_TOOLS
                     outer=self
                     class Adapter:
@@ -414,21 +425,58 @@ class SpecialistCoordinator:
                                 timeout_limit=min(timeout,max(.01,deadline-outer.clock()-b.reserve_seconds)))
                     def execute(request,rid,timeout):
                         if request['tool'] not in allowed:return dict(status='blocked',error_code='specialist_tool_not_allowed')
-                        if counters['tools']>=b.max_tool_calls or deadline-outer.clock()<=b.reserve_seconds:
-                            return dict(status='blocked',error_code='shared_budget_exhausted')
-                        if request['tool']=='search_literature' and counters['search']>=b.max_search_calls:
-                            return dict(status='blocked',error_code='shared_search_budget')
-                        counters['tools']+=1
-                        if request['tool']=='search_literature':counters['search']+=1
-                        event=dict(child_id=child['id'],request=deepcopy(request),status='started')
-                        state['tool_calls'].append(event);save()
+                        with lock:
+                            if counters['tools']>=b.max_tool_calls or deadline-outer.clock()<=b.reserve_seconds:
+                                return dict(status='blocked',error_code='shared_budget_exhausted')
+                            if request['tool']=='search_literature' and counters['search']>=b.max_search_calls:
+                                return dict(status='blocked',error_code='shared_search_budget')
+                            counters['tools']+=1
+                            if request['tool']=='search_literature':counters['search']+=1
+                            event=dict(child_id=child['id'],request=deepcopy(request),status='started')
+                            index=len(state['tool_calls'])
+                            state['tool_calls'].append(event);save()
+                        token=current_tool_index.set(index)
                         try:
                             result=outer.executor(request,run_id,min(timeout,max(.01,deadline-outer.clock()-b.reserve_seconds)))
                         except Exception as error:
                             event.update(status='failed',error_type=type(error).__name__);save();raise
+                        finally:current_tool_index.reset(token)
                         event.update(status=result['status'],result={k:v for k,v in result.items() if k!='image'});save()
                         return result
-                    def checkpoint(s):child['trace']=deepcopy(s);save()
+                    def checkpoint(s):
+                        with lock:
+                            child['trace']=deepcopy(s)
+                            save()
+                    def extension(draft, used, attempts):
+                        nonlocal reserve
+                        try:
+                            report=SpecialistResult.model_validate_json(unwrap_json(draft))
+                        except ValueError:
+                            return None
+                        owned={r['requirement_id'] for r in assigned}
+                        needs=[n.model_dump() for n in report.next_information if n.role==name and set(n.requirement_ids)<=owned]
+                        if report.status!='insufficient_evidence' or not needs or not report.unresolved_items:
+                            return None
+                        log=child['extension']=dict(request=needs,status='denied_budget')
+                        room=b.max_model_calls-counters['model']-protected
+                        rounds=min(2,room-3,b.max_tool_calls-counters['tools']-pending,18-used)
+                        if (allocation and any(c is not child and c['status']=='running' for c in state['children'])) or rounds<1 or deadline-self.clock()<=b.reserve_seconds+15:
+                            return None
+                        try:
+                            decision=call('planner_extension',[dict(role='system',content='Decide whether the specified new lookup can resolve a required gap. Approve only a concrete, untried operation. Return only JSON {"approve":true} or {"approve":false}.'),
+                            dict(role='user',content=json.dumps(dict(requirements=assigned,needs=needs,gaps=report.unresolved_items,
+                                attempted=[e['request'] for e in attempts]),ensure_ascii=False))],{},reserve=protected+rounds+2)
+                        except Exception as error:
+                            log.update(status='approval_failed',error_type=type(error).__name__)
+                            return None
+                        try:approved=json.loads(decision.text).get('approve') is True and not decision.calls
+                        except (ValueError,AttributeError):approved=False
+                        log.update(status='approved' if approved else 'denied',rounds=rounds if approved else 0)
+                        if approved:
+                            reserve=b.max_model_calls-counters['model']-rounds-2
+                            child['allocation']['approved_extra_rounds']=rounds
+                            return rounds
+                        return None
                     priority=CoveragePriority(assigned) if name=='literature' and assigned else None
                     result=AgentLoop(Adapter(),execute,checkpoint,
                         AgentBudget(max_model_calls=quota,max_tool_calls=tool_quota,total_seconds=min(600,seconds),
@@ -437,6 +485,8 @@ class SpecialistCoordinator:
                         clock=self.clock,paper_directory=self.paper_directory if name=='literature' else None,
                         allowed_tools=allowed,system_prompt=SQL_PROMPT if name=='sql' else PAPER_PROMPT+PAPER_COVERAGE+PAPER_EVIDENCE_CHECKS+EVIDENCE_OUTPUT_RULES+(COVERAGE_PRIORITY_INSTRUCTIONS if priority else ''),review_enabled=False,
                         output_schema=SpecialistResult.model_json_schema(),
+                        result_validator=SpecialistResult if self.result_driven else None,
+                        extend=extension if self.result_driven else None,
                         completion_check=completion_feedback(assigned) if assigned else None,coverage_priority=priority).run(
                             'Original user question: '+question+'\nAssigned task: '+task,run_id,
                             inherited_tool_calls=inherited)
@@ -460,21 +510,20 @@ class SpecialistCoordinator:
                         projection=trial;context.append(compact)
                         refs.update({r['ref']:r for r in citation_records(event['request']['tool'],raw)})
                     child.update(ended_at_ns=time_ns(),duration_ms=(self.clock()-child_started)*1000)
-                    active_child_id=None
-                    active_child_started=None
+                    if self.result_driven:worker.child_id=None
+                    else:active_child_id=active_child_started=None
                     save()
                     return parsed
 
                 if self.result_driven:
                     def isolated_child(*args, **kwargs):
-                        nonlocal active_child_id, active_child_started
+                        start=self.clock()
                         try:
                             return run_child(*args, **kwargs)
                         finally:
-                            if active_child_id is not None:
-                                child = state['children'][-1]
-                                child['duration_ms'] = (self.clock()-active_child_started)*1000
-                            active_child_id = active_child_started = None
+                            child=next((c for c in state['children'] if c['id']==getattr(worker,'child_id',None)),None)
+                            if child:child['duration_ms']=(self.clock()-start)*1000
+                            worker.child_id=None
 
                     def remaining():
                         return dict(model_calls=b.max_model_calls-counters['model'],

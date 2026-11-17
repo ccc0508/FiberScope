@@ -1,6 +1,7 @@
 """Bounded agent policy, independent of native provider message formats."""
 from dataclasses import dataclass
 import json
+import re
 from hashlib import sha256
 from time import monotonic
 from copy import deepcopy
@@ -141,9 +142,17 @@ class AgentBudget:
             raise ValueError('Invalid agent budget')
 
 
+def unwrap_json(value):
+    """Remove only a whole Markdown code fence and transport whitespace/BOM."""
+    if not isinstance(value,str):return value
+    value=value.strip().lstrip('\ufeff').strip()
+    match=re.fullmatch(r'```(?:json)?\s*\n(.*?)\n\s*```',value,re.DOTALL|re.IGNORECASE)
+    return match.group(1).strip() if match else value
+
+
 class AgentLoop:
     def __init__(self,adapter,executor,checkpoint,budget=None,clock=monotonic,paper_directory=None,
-                 allowed_tools=None,system_prompt=None,review_enabled=True,output_schema=None,completion_check=None,coverage_priority=None):
+                 allowed_tools=None,system_prompt=None,review_enabled=True,output_schema=None,completion_check=None,coverage_priority=None,result_validator=None,extend=None):
         self.adapter,self.executor,self.checkpoint=adapter,executor,checkpoint
         self.budget=budget or AgentBudget();self.clock=clock
         self.paper_directory=deepcopy(paper_directory)
@@ -156,6 +165,8 @@ class AgentLoop:
         self.output_schema=output_schema
         self.completion_check=completion_check
         self.coverage_priority=coverage_priority
+        self.result_validator=result_validator
+        self.extend=extend
 
     def run(self,question,run_id,*,inherited_tool_calls=None):
         b=self.budget;deadline=self.clock()+b.total_seconds
@@ -239,8 +250,27 @@ class AgentLoop:
             if request.get('tool') in self.allowed_tools:
                 seen.add(json.dumps({k:v for k,v in request.items() if k!='reason'},sort_keys=True))
         save()
+        model_limit=b.max_model_calls
+        tool_limit=b.max_tool_calls
         try:
-            while len(state['model_calls'])<b.max_model_calls-(2 if self.review_enabled or self.output_schema else 1) and tool_count<b.max_tool_calls and deadline-self.clock()>b.reserve_seconds:
+            while True:
+                collection_limit_reached=len(state['model_calls'])>=model_limit-(2 if self.review_enabled or self.output_schema else 1) or tool_count>=tool_limit
+                if collection_limit_reached or deadline-self.clock()<=b.reserve_seconds:
+                    if self.extend and collection_limit_reached and not state.get('extension_checked') and deadline-self.clock()>b.reserve_seconds:
+                        messages.append(dict(role='user',content='Submit the structured result now. If an unfinished original requirement has a concrete untried lookup, mark insufficient_evidence, name it in unresolved_items and specify next_information for this role with the exact next tool and its purpose.'))
+                        d=model('finalize',{})
+                        if d.calls or not d.text.strip():raise ValueError('Invalid draft')
+                        messages.append(d.message)
+                        state['extension_checked']=True
+                        extra=self.extend(d.text,len(state['model_calls']),state['tool_calls'])
+                        if extra:
+                            model_limit=len(state['model_calls'])+extra+2
+                            tool_limit=tool_count+extra
+                            messages.append(dict(role='user',content='Continuation approved. Perform the specified lookup in this same context, then submit.'))
+                            continue
+                        state['draft']=d.text
+                        state['stop_reason']='collection_budget'
+                    break
                 if size(messages)>=stop_threshold:
                     state['stop_reason']='context_budget';break
                 schemas={name:schema for name,schema in SCHEMAS.items()
@@ -281,7 +311,7 @@ class AgentLoop:
                     elif size(messages+image_messages)>=stop_threshold:
                         result=dict(status='blocked',error_code='context_budget')
                         state['stop_reason']='context_budget';stop_collection=True
-                    elif tool_count>=b.max_tool_calls or deadline-self.clock()<=b.reserve_seconds:
+                    elif tool_count>=tool_limit or deadline-self.clock()<=b.reserve_seconds:
                         result=dict(status='blocked',error_code='tool_budget');state['stop_reason']='tool_budget'
                     elif c.name=='search_literature' and search_count>=b.max_search_calls:
                         tool_count+=1
@@ -358,6 +388,34 @@ class AgentLoop:
         # withheld evidence is deliberately excluded from the allowed set.
         validation=state['citation_validation']
         validation['available_records']=list(delivered_refs.values())
+        if self.result_validator and state['status']=='completed':
+            def errors(raw):
+                normalized=unwrap_json(raw)
+                problems={}
+                try:self.result_validator.model_validate_json(normalized)
+                except ValueError as error:problems['format']=str(error)[:2000]
+                try: json.loads(normalized)
+                except (TypeError,ValueError):return problems
+                invalid=invalid_references(normalized,delivered_refs)
+                if invalid:problems['invalid_refs']=invalid
+                return problems
+            problems=errors(state['answer'])
+            if problems and len(state['model_calls'])<model_limit and deadline-self.clock()>2:
+                validation['attempts'].append(dict(stage='combined',errors=problems,answer=state['answer']))
+                messages.append(dict(role='user',content=json.dumps(dict(task='Correct format and citation identities together. Return the full result JSON. Use only provided refs; remove unsupported statements or state gaps. No new research.',errors=problems,allowed_refs=list(delivered_refs),schema=self.output_schema),ensure_ascii=False)))
+                try:
+                    candidate=model('result_repair',{})
+                    if not candidate.calls and candidate.text.strip():
+                        problems=errors(candidate.text)
+                        if not problems:state['answer']=candidate.text
+                except Exception as error:validation['repair_error']=type(error).__name__
+            validation['status']='failed' if problems else 'repaired' if validation['attempts'] else 'passed'
+            if problems:
+                validation['errors']=problems
+                state.update(status='failed',answer='',stop_reason='invalid_specialist_result')
+            state['tool_attempts']=tool_count
+            save()
+            return state
         invalid=invalid_references(state['answer'],delivered_refs)
         if invalid:
             validation['attempts'].append(dict(stage='initial',invalid_refs=invalid,answer=state['answer']))

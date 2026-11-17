@@ -6,6 +6,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from pydantic.json_schema import SkipJsonSchema
+
 from .agent_context import EvidenceProjection
 from .citation_policy import citation_records
 
@@ -16,13 +18,20 @@ MAX_SPECIALIST_CALLS = 3
 
 class SuggestedBudget(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)
-    model_calls: int | None = Field(default=None, ge=1, le=20)
+    collection_rounds: int | None = Field(default=None, ge=1, le=18)
+    model_calls: SkipJsonSchema[int | None] = Field(default=None, ge=1, le=20)
     tool_calls: int | None = Field(default=None, ge=1, le=20)
+
+    @property
+    def total_calls(self):
+        return (self.collection_rounds + 2 if self.collection_rounds is not None else max(3,self.model_calls or 7))
 
 
 class InputSelection(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)
-    need: str = Field(min_length=1, max_length=240)
+    input_id: str | None = Field(default=None, pattern=r'^input_[1-9][0-9]*$')
+    need: str = Field(default='', max_length=240)
+
     source_child_id: str = Field(min_length=1, max_length=250)
     ref: str = Field(pattern=r'^\[[1-9][0-9]*\]$')
     quote: str | None = Field(default=None, min_length=1, max_length=2400)
@@ -33,6 +42,7 @@ class InputSelection(BaseModel):
 class DelegateStep(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)
     requirement_ids: list[str] = Field(min_length=1, max_length=20)
+    waits_for_batch_result: bool = False
     task: str = Field(min_length=1, max_length=1500)
     reason: str = Field(min_length=1, max_length=800)
     inputs: list[InputSelection] = Field(default_factory=list, max_length=8)
