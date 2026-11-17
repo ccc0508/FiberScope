@@ -45,29 +45,44 @@ class PrimaryCandidateCatalog:
             mode='explicit_links'
         return sid,self.order_candidates([seed],list(unique.values())),mode
 
-    def order_candidates(self,seeds,candidates):
-        def key(c):
-            choices=[]
-            for seed in seeds:
-                reasons=self.origins.get(seed.chunk_id,{}).get(c.id)
-                if reasons:
-                    choices.append((min(PRIORITY[r] for r in reasons),
-                        abs(c.chunk_index-self.chunks[seed.chunk_id].chunk_index)))
-            priority,distance=min(choices)
-            return priority,distance,c.chunk_index,c.id
-        unique={c.id:c for c in candidates}
-        eligible=[c for c in unique.values() if any(c.id in self.origins.get(seed.chunk_id,{}) for seed in seeds)]
-        return sorted(eligible,key=key)
+    def candidate_rank(self, seeds, chunk):
+        return min(
+            (min(PRIORITY[reason] for reason in self.origins[seed.chunk_id][chunk.id]),
+             abs(chunk.chunk_index - self.chunks[seed.chunk_id].chunk_index))
+            for seed in seeds if chunk.id in self.origins.get(seed.chunk_id, {})
+        )
+
+    def order_candidates(self, seeds, candidates):
+        unique = {c.id: c for c in candidates}
+        eligible = [c for c in unique.values() if any(c.id in self.origins.get(seed.chunk_id, {}) for seed in seeds)]
+        return sorted(eligible, key=lambda c: (*self.candidate_rank(seeds, c), c.chunk_index, c.id))
+
+    def allocate_supplements(self, groups, try_add):
+        pending = [
+            (group, iter(self.order_candidates(seeds, candidates)))
+            for group, (seeds, candidates) in enumerate(groups)
+        ]
+        # Give each evidence group at most one successful addition per round.
+        # Failed or already-used candidates do not consume that group's turn.
+        while pending:
+            next_round = []
+            for group, candidates in pending:
+                for chunk in candidates:
+                    if chunk.id not in self.roots and try_add(group, chunk):
+                        next_round.append((group, candidates))
+                        break
+            pending = next_round
 
 
 def assemble_unified_context(seeds,catalog,options,relations=None):
     candidates=PrimaryCandidateCatalog(seeds,catalog,relations)
-    evidence,info=assemble_sections(seeds,candidates,options)
+    evidence,info=assemble_sections(seeds,candidates,options,allocate=candidates.allocate_supplements)
     present={s.chunk_id for e in evidence for s in e.source_chunks}
     selected=[link for link in candidates.link_candidates if link['target_chunk_id'] in present]
     omitted=[dict(**link,reason='length_budget') for link in candidates.link_candidates
         if link['target_chunk_id'] not in present]
     info.update(assembly_passes=1,candidate_roots_only=True,
+        supplement_allocation=['evidence_round_robin','candidate_priority_within_evidence'],
         candidate_root_chunk_ids=[e.chunk_id for e in seeds],post_context_expansion=False,
         candidate_priority=['primary','explicit_table_link','section','body_continuation'],
         explicit_link_candidates=candidates.link_candidates,selected_explicit_links=selected,
