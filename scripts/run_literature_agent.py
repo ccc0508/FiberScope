@@ -26,7 +26,7 @@ def main():
     p.add_argument('--child',action='store_true',help=argparse.SUPPRESS)
     p.add_argument('--prompt-file',type=Path,help='Evaluation only: frozen PROMPT and REVIEW_PROMPT JSON; does not change website defaults')
     p.add_argument('--architecture',choices=['single','specialists'],default='single')
-    p.add_argument('--no-task-feedback',action='store_true',help='Specialists only: disable the optional follow-up for comparison; keep all other current code.')
+    p.add_argument('--no-task-feedback',action='store_true',help='Specialists only: limit each selected role to one invocation for comparison.')
     a=p.parse_args();run_id=a.run_id or str(uuid4())
     if a.no_task_feedback and a.architecture!='specialists':p.error('--no-task-feedback requires --architecture specialists')
     if a.max_model_calls is None:a.max_model_calls=20 if a.architecture=='specialists' else 10
@@ -107,8 +107,8 @@ def main():
     directory=load_paper_directory(a.library)
     loop=AgentLoop
     if a.architecture=='specialists':
-        from literature_rag.application.specialist_agent import SpecialistCoordinator
-        loop=SpecialistCoordinator
+        from literature_rag.application.specialist_agent import ResultDrivenCoordinator
+        loop=ResultDrivenCoordinator
     try:
         options=dict(feedback_enabled=not a.no_task_feedback) if a.architecture=='specialists' else {}
         result=loop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory,**options).run(a.question,run_id)

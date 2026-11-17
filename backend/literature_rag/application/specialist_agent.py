@@ -3,8 +3,8 @@ from copy import deepcopy
 import json
 import re
 from time import monotonic, time_ns
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Literal
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+from typing import Annotated, Literal
 from .agent_loop import AgentLoop, AgentBudget, REVIEW_PROMPT, trace_messages
 from .tools import SCHEMAS
 from .citation_policy import citation_records, invalid_references
@@ -14,6 +14,8 @@ from .paper_directory import routing_catalog, routing_catalog_prompt
 from .coverage_priority import CoveragePriority, INSTRUCTIONS as COVERAGE_PRIORITY_INSTRUCTIONS
 from .task_feedback import (InformationNeed, FollowupRequest, FinishTasks, FEEDBACK_PROMPT,
                             actionable_feedback, validate_followup)
+from .planner_inputs import SuggestedBudget, clean_references
+from .result_driven import ROUTING_RULES, plan_specialists
 
 SQL_TOOLS={'describe_experiment_data','query_experiment_data','calculate_change','convert_units'}
 PAPER_TOOLS=set(SCHEMAS)-{'describe_experiment_data','query_experiment_data'}
@@ -27,6 +29,29 @@ class Plan(BaseModel):
     answer:str=Field(default='',max_length=4000)
     requirements:list[Requirement]=Field(default_factory=list,max_length=20)
     dependency:Literal['independent','sql_to_literature','literature_to_sql']='independent'
+
+
+class ResultDrivenPlan(Plan):
+    first_specialist: Literal['sql', 'literature'] | None = None
+    first_budget: SuggestedBudget = Field(default_factory=SuggestedBudget)
+    dependency_checklist: list[Annotated[str, Field(min_length=1, max_length=240)]] = Field(default_factory=list, max_length=8)
+
+    @model_validator(mode='after')
+    def validate_execution_order(self):
+        if self.route != 'both':
+            if self.dependency != 'independent' or self.dependency_checklist:
+                raise ValueError('A cross-role dependency requires both specialists')
+            if self.first_specialist and self.first_specialist != self.route:
+                raise ValueError('First specialist must match the route')
+        elif self.dependency == 'independent':
+            if self.dependency_checklist:
+                raise ValueError('Independent tasks have no dependency checklist')
+        else:
+            producer = self.dependency.split('_to_')[0]
+            if self.first_specialist not in (None, producer) or not self.dependency_checklist:
+                raise ValueError('A dependent plan starts with its producer and requires an input checklist')
+        return self
+
 
 class SpecialistResult(BaseModel):
     model_config=ConfigDict(extra='forbid',strict=True)
@@ -205,6 +230,8 @@ def unwrap_json(value):
 
 
 class SpecialistCoordinator:
+    result_driven = False
+
     def __init__(self,adapter,executor,checkpoint,budget=None,clock=monotonic,paper_directory=None,feedback_enabled=True):
         self.adapter=adapter;self.executor=executor;self.checkpoint=checkpoint
         self.budget=budget or AgentBudget(max_model_calls=20,max_tool_calls=12,total_seconds=360)
@@ -215,7 +242,7 @@ class SpecialistCoordinator:
         b=self.budget;deadline=self.clock()+b.total_seconds
         state=dict(run_id=run_id,question=question,status='running',answer='',draft='',model_calls=[],tool_calls=[],
             children=[],plan=None,format_checks=[],review_status='not_started',stop_reason=None,
-            pipeline_version='specialists-v8-bounded-feedback',
+            pipeline_version='specialists-v9-result-driven' if self.result_driven else 'specialists-v8-bounded-feedback',
             feedback=dict(max_followups=1 if self.feedback_enabled else 0,used=0,status='not_started',decisions=[],stop_reason=None),
             citation_validation=dict(status='pending',available_records=[],attempts=[]))
         counters=dict(model=0,tools=0,search=0)
@@ -286,7 +313,15 @@ class SpecialistCoordinator:
         try:
             catalog=routing_catalog(self.paper_directory)
             state['routing_catalog']=catalog
-            d=call('route',[dict(role='system',content=ROUTER+routing_catalog_prompt(catalog)),dict(role='user',content=question)],{'route_task':Plan.model_json_schema()})
+            plan_schema = ResultDrivenPlan if self.result_driven else Plan
+            router = ROUTER
+            if self.result_driven:
+                router = router.replace(
+                    'This is one-level routing: specialists cannot delegate. The coordinator may later authorize one bounded follow-up.',
+                    'Specialists cannot delegate. The Planner may make at most three specialist calls in total.',
+                ) + ROUTING_RULES
+            router += routing_catalog_prompt(catalog)
+            d=call('route',[dict(role='system',content=router),dict(role='user',content=question)],{'route_task':plan_schema.model_json_schema()})
             raw=d.text
             if len(d.calls)==1 and d.calls[0].name=='route_task':
                 raw=d.calls[0].arguments
@@ -294,7 +329,7 @@ class SpecialistCoordinator:
                 if len(native)==1:raw=native[0].get('function',{}).get('arguments',raw)
             elif d.calls:
                 raw=dict(invalid_calls=[dict(name=c.name,arguments=c.arguments) for c in d.calls])
-            plan=structured('route',raw,Plan,question,reserve=3);state['plan']=plan.model_dump();save()
+            plan=structured('route',raw,plan_schema,question,reserve=3);state['plan']=plan.model_dump();save()
             requirements,rejected=ground_requirements(plan.requirements,question)
             state['task_contract']=dict(requirements=requirements,rejected=rejected,
                 notice='Only verbatim user requirements are delegated; generated task prose and answers are not forwarded.')
@@ -306,33 +341,68 @@ class SpecialistCoordinator:
                 if plan.route=='both' and plan.dependency=='literature_to_sql':names.reverse()
                 if plan.route!='both' and plan.dependency!='independent':
                     raise ValueError('Dependency requires both specialists')
+                if self.result_driven:
+                    for name in names:
+                        if not any(r['role'] == name for r in requirements):
+                            requirements.append(dict(role=name, paper_quote='', source_quote=question,
+                                                     requirement_id=f'need_{len(requirements)+1}'))
                 state['task_schedule']=dict(dependency=plan.dependency,initial_order=names,
                     execution='sequential',max_additional_invocations=1 if self.feedback_enabled else 0)
                 feedback_reserve=(4 if self.feedback_enabled and plan.route=='both' and requirements
                     and b.max_model_calls-counters['model']>=7*(len(names)-1)+10 else 0)
 
-                def run_child(name,assigned,remaining_children,followup=None):
+                def run_child(name,assigned,remaining_children,followup=None,*,requested=None,
+                              selected_inputs=(),transfer=(),step=None,phase=None,reserve_next_decision=False):
                     nonlocal active_child_id,active_child_started,projection
-                    prior=list(state['children'])
-                    handoff=prior if followup or plan.dependency!='independent' else []
-                    task=json.dumps(dict(role=name,requirements=assigned,
-                        task_contract=requirements,followup=followup,
-                        previous_results=[dict(child_id=c['id'],role=c['role'],
-                            result=c.get('result'),coverage_report=c.get('coverage_report')) for c in handoff],
-                        instruction='Fulfil this role in the ORIGINAL user question. Checklist may be incomplete: also inspect original question. Do not treat task routing as scientific evidence.'),ensure_ascii=False)
-                    parent_reserve=2 if followup else 3+feedback_reserve
-                    future_reserve=7*(remaining_children-1)
-                    reserve=parent_reserve+future_reserve
-                    quota=b.max_model_calls-counters['model']-reserve
+                    if self.result_driven:
+                        data = dict(role=name, requirements=assigned, task_contract=requirements,
+                                    delegation=step.task if step else None,
+                                    dependency_inputs=[dict(need=x['need'], ref=x['ref']) for x in transfer],
+                                    missing_inputs=step.missing_inputs if step else [],
+                                    followup=dict(task=step.task) if step and phase == 'followup' else None,
+                                    instruction='Follow only the assigned requirements and delegation. '
+                                    'Dependency inputs are selected source data; explicitly retain missing inputs. '
+                                    'Cite the supplied source excerpts only for what their actual contents support.')
+                        model_room = b.max_model_calls-counters['model']
+                        pending = remaining_children-1
+                        # Keep final synthesis and citation repair. A pending role needs
+                        # three model calls plus a new Planner decision.
+                        reserve = 2 + 4*pending
+                        if not pending and reserve_next_decision and model_room-reserve >= 4:
+                            reserve += 1
+                        quota = min(model_room-reserve, max(3, requested.model_calls or 7))
+                        reserve = model_room-quota
+                        tool_room = b.max_tool_calls-counters['tools']
+                        tool_quota = min(max(1, tool_room-pending), tool_room,
+                                         requested.tool_calls or max(1, tool_room//remaining_children))
+                        inherited=list(selected_inputs)
+                    else:
+                        prior=list(state['children'])
+                        handoff=prior if followup or plan.dependency!='independent' else []
+                        data=dict(role=name,requirements=assigned,task_contract=requirements,followup=followup,
+                                  previous_results=[dict(child_id=c['id'],role=c['role'],
+                                      result=c.get('result'),coverage_report=c.get('coverage_report')) for c in handoff],
+                                  instruction='Fulfil this role in the ORIGINAL user question. Checklist may be incomplete: also inspect original question. Do not treat task routing as scientific evidence.')
+                        parent_reserve=2 if followup else 3+feedback_reserve
+                        future_reserve=7*(remaining_children-1)
+                        reserve=parent_reserve+future_reserve
+                        quota=b.max_model_calls-counters['model']-reserve
+                        tool_quota=(b.max_tool_calls-counters['tools'])//remaining_children
+                        inherited=[e for c in handoff for e in c.get('trace',{}).get('tool_calls',[])]
+                    task=json.dumps(data,ensure_ascii=False)
                     seconds=deadline-self.clock()-b.reserve_seconds
-                    tool_quota=(b.max_tool_calls-counters['tools'])//remaining_children
                     if quota<3 or seconds<30 or tool_quota<1:raise BudgetExhausted('specialist allocation')
                     child_started=self.clock()
                     active_child_started=child_started
-                    child=dict(id=f'{run_id}/{name}'+('/followup-1' if followup else ''),
-                        role=name,phase='followup' if followup else 'initial',task=task,status='running',result=None,started_at_ns=time_ns(),
+                    phase=phase or ('followup' if followup else 'initial')
+                    suffix=f'/followup-{sum(c["role"] == name for c in state["children"])}' if phase=='followup' else ''
+                    child=dict(id=f'{run_id}/{name}'+suffix,
+                        role=name,phase=phase,task=task,status='running',result=None,started_at_ns=time_ns(),
                         allocation=dict(base_model_calls=7,max_model_calls=quota,reserved_for_remaining=reserve,
                             max_tool_calls=tool_quota,model_start=counters['model']))
+                    if self.result_driven:
+                        child['allocation']['requested']=requested.model_dump()
+                        child['handoff']=list(transfer)
                     state['children'].append(child);save()
                     active_child_id=child['id']
                     allowed=SQL_TOOLS if name=='sql' else PAPER_TOOLS
@@ -360,7 +430,6 @@ class SpecialistCoordinator:
                         return result
                     def checkpoint(s):child['trace']=deepcopy(s);save()
                     priority=CoveragePriority(assigned) if name=='literature' and assigned else None
-                    inherited=[e for c in handoff for e in c.get('trace',{}).get('tool_calls',[])]
                     result=AgentLoop(Adapter(),execute,checkpoint,
                         AgentBudget(max_model_calls=quota,max_tool_calls=tool_quota,total_seconds=min(600,seconds),
                             max_search_calls=max(0,b.max_search_calls-counters['search']),
@@ -383,7 +452,7 @@ class SpecialistCoordinator:
                     if assigned and not child['coverage_report']['complete'] and parsed.status=='ok':
                         child['result']['status']='insufficient_evidence'
                     # Transfer exact delivered tool payloads, independently projected for parent.
-                    for event in result['tool_calls']:
+                    for event in ([] if self.result_driven else result['tool_calls']):
                         if event.get('model_delivery',{}).get('status')!='delivered':continue
                         raw=event['result'];trial=deepcopy(projection);compact=trial.project(raw)
                         compact.pop('image',None)
@@ -396,13 +465,35 @@ class SpecialistCoordinator:
                     save()
                     return parsed
 
-                for index,name in enumerate(names):
+                if self.result_driven:
+                    def isolated_child(*args, **kwargs):
+                        nonlocal active_child_id, active_child_started
+                        try:
+                            return run_child(*args, **kwargs)
+                        finally:
+                            if active_child_id is not None:
+                                child = state['children'][-1]
+                                child['duration_ms'] = (self.clock()-active_child_started)*1000
+                            active_child_id = active_child_started = None
+
+                    def remaining():
+                        return dict(model_calls=b.max_model_calls-counters['model'],
+                                    tool_calls=b.max_tool_calls-counters['tools'],
+                                    search_calls=b.max_search_calls-counters['search'],
+                                    seconds=max(0,deadline-self.clock()), reserve_seconds=b.reserve_seconds)
+
+                    context,refs=plan_specialists(plan,names,state,requirements,call,structured,isolated_child,
+                                                   remaining,save,self.feedback_enabled,b.max_context_chars)
+
+                for index,name in enumerate([] if self.result_driven else names):
                     assigned=[r for r in requirements if r['role']==name]
                     parsed=run_child(name,assigned,len(names)-index)
                     if parsed.status=='needs_clarification':break
 
                 feedback=state['feedback']
-                if not self.feedback_enabled:
+                if self.result_driven:
+                    pass
+                elif not self.feedback_enabled:
                     feedback.update(status='disabled',stop_reason='disabled')
                 elif any((c.get('result') or {}).get('status')=='needs_clarification' for c in state['children']):
                     feedback.update(status='skipped',stop_reason='needs_clarification')
@@ -455,9 +546,11 @@ class SpecialistCoordinator:
                         if feedback['decisions'] and feedback['decisions'][-1]['status']=='checking':
                             feedback['decisions'][-1].update(status='rejected',error_type=type(error).__name__)
                     save()
-                payload=dict(question=question,task_contract=state['task_contract'],feedback=feedback,
-                    specialists=[dict(child_id=c['id'],role=c['role'],phase=c.get('phase'),status=c['status'],
-                        result=c.get('result'),coverage_report=c.get('coverage_report')) for c in state['children']],
+                specialists=[dict(child_id=c['id'],role=c['role'],phase=c.get('phase'),status=c['status'],
+                        result=c.get('result'),coverage_report=c.get('coverage_report')) for c in state['children']]
+                payload=dict(question=question,task_contract=state['task_contract'],
+                    feedback=({'stop_reason':state['task_schedule']['stops']} if self.result_driven else feedback),
+                    specialists=clean_references(specialists,refs) if self.result_driven else specialists,
                     evidence=context,allowed_refs=list(refs.values()))
                 messages=[dict(role='system',content=REVIEW_PROMPT+EVIDENCE_OUTPUT_RULES+'''
 You are the parent coordinator. Review and synthesize specialist findings against the exact supplied evidence.
@@ -511,3 +604,7 @@ Paper bibliography numbers in source text are not run-local refs: express them a
             state.update(status='failed',answer='',stop_reason=type(error).__name__)
             state['citation_validation']['status']='incomplete'
         save();return state
+
+
+class ResultDrivenCoordinator(SpecialistCoordinator):
+    result_driven = True
