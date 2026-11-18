@@ -31,7 +31,9 @@ class CoverageItem(BaseModel):
     finding: str = Field(default='', max_length=800)
     gap: str = Field(default='', max_length=800)
     checks: list[EvidenceCheck] = Field(default_factory=list, max_length=12)
-    cells: list[MetricCell] = Field(default_factory=list, max_length=100)
+    cells: list[MetricCell] = Field(default_factory=list, max_length=100, description='Primary cells from one complete SQL snapshot.')
+    corroborating_cells: list[MetricCell] = Field(default_factory=list, max_length=8,
+        description='Optional independent snapshots for the same single sample value, with the same metric, unit and filters.')
 
 
 def ground_requirements(requirements, question):

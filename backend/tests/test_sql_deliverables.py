@@ -78,3 +78,24 @@ def test_grouped_count_requires_all_groups_and_visible_group_keys():
     assert not grade([req],[event],[cells[:1]])['complete']
     event['model_delivery']['status']='withheld'
     assert not grade([req],[event],[cells])['complete']
+
+
+@pytest.mark.parametrize('other_value,unit,code,expected', [
+    (0.5,'mg/m','A',None), (0.4,'mg/m','A','numeric_corroboration_value_mismatch'),
+    (0.5,'mg/100m','A','numeric_corroboration_unit_mismatch'),
+    (0.5,'mg/m','B','numeric_corroboration_scope_mismatch'),
+])
+def test_corroborating_sample_measurement(other_value,unit,code,expected):
+    from literature_rag.application.sql_deliverables import verify_metric
+    col='fiber_coarseness_mg_m'
+    def measurement(view,ref,code,value,unit):
+        e=snapshot(f"SELECT {col} FROM fiber.{view} WHERE canonical_code='{code}'",[col],[[value]])
+        e['result']['result'].update(ref=ref,column_metadata=[dict(name=col,unit=unit)])
+        return e
+    req=dict(metric=dict(population='samples',operation='value',keys=[col],group_by=[],equals={'canonical_code':'A'}))
+    primary=cell(col,0.5)
+    secondary=dict(primary,ref='[16]',value=other_value)
+    trace=dict(tool_calls=[measurement('v_fiber_paper_analysis','[15]','A',0.5,'mg/m'),
+                           measurement('v_blend_analysis','[16]',code,other_value,unit)])
+    for fields in [dict(cells=[primary,secondary]), dict(cells=[primary],corroborating_cells=[secondary])]:
+        assert verify_metric(req,dict(refs=['[15]','[16]'],**fields),trace)==expected

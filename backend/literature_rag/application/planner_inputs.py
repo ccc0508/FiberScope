@@ -43,6 +43,8 @@ class InputSelection(BaseModel):
 class DelegateStep(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)
     requirement_ids: list[str] = Field(min_length=1, max_length=20)
+    independence_reason: str | None = Field(default=None, min_length=8, max_length=500,
+        description='Explicit correction of a mistaken initial dependency. Explain how the original question already fixes the consumer lookup and where the upstream result will actually be used.')
     waits_for_batch_result: bool = False
     fresh_query_ids: list[str] = Field(default_factory=list, max_length=20)
     task: str = Field(min_length=1, max_length=1500)
