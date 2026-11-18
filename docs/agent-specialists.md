@@ -36,8 +36,8 @@ Planner 可为每次派单建议模型调用和工具次数。程序根据剩余
 
 主Agent通过原生Function Calling输出唯一route_task，程序用Pydantic验证，route为direct/clarify/sql/literature/both。直接回答或澄清不创建子任务、不虚称完成研究复核。需要实际字段知识的歧义交给SQL子Agent先读目录。
 
-- SQL子Agent仅可调用describe_experiment_data、query_experiment_data、calculate_change，没有论文目录上下文。要求先读真实字段、单位和统计粒度；缺条件时返回needs_clarification。权限不仅由提示词约束，工具schema和执行端都检查。
-- 文献子Agent只得到文献工具与现有论文目录，不能调用数据库工具。保留检索、目录/章节、表格、原图和计算能力。
+- SQL子Agent仅可调用describe_experiment_data、query_experiment_data，没有论文目录上下文。要求先读真实字段、单位和统计粒度；缺条件时返回needs_clarification。权限不仅由提示词约束，工具schema和执行端都检查。
+- 文献子Agent只得到文献工具与现有论文目录，不能调用数据库工具。保留检索、目录/章节、表格和原图工具；目录与章节支持批量调用。
 - 混合任务先SQL后文献，顺序执行。SQL需要澄清时不继续执行文献任务。两者返回status、summary、missing_choices、limitations的JSON。格式处理见下节；子任务执行未完成不会伪装成格式问题重试。
 - 主Agent统一核对证据并组织最终回答，不把数据库观测与论文机理混成因果证明。子Agent不做完整答案复核，避免每层重复审校。父Agent仅获得实际送达子Agent、且在父上下文预算内的工具结果；图片结论明确为子Agent的视觉解释，父Agent没有重新看原图，不得声称直接查看。
 

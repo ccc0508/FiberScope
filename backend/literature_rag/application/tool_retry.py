@@ -6,11 +6,17 @@ TRANSIENT = {'tool_timeout', 'TimeoutError', 'TimeoutException', 'ReadTimeout', 
              'ConnectionError', 'ConnectError', 'APIConnectionError', 'APITimeoutError',
              'RemoteProtocolError', 'InternalServerError', 'ServiceUnavailableError', 'RateLimitError'}
 PARAMETER_ERRORS = {'invalid_arguments', 'invalid_query', 'unsupported_sql', 'unknown_section',
-                    'unknown_document', 'unknown_asset', 'ValueError'}
+                    'unknown_document', 'unknown_asset', 'ValueError', 'batch_lookup_failed',
+                    'offset_outside_section', 'exclusions_outside_section'}
 
 
 def signature(request):
-    return json.dumps({k:v for k,v in request.items() if k != 'reason'}, sort_keys=True)
+    operation = {k:v for k,v in request.items() if k != 'reason'}
+    # Reordering independent lookups does not make a second call necessary.
+    batch_field = {'list_sections': 'document_ids', 'read_section': 'targets'}.get(request.get('tool'))
+    if batch_field and isinstance(operation.get(batch_field), list):
+        operation[batch_field] = sorted(operation[batch_field], key=lambda x: json.dumps(x,sort_keys=True))
+    return json.dumps(operation, sort_keys=True)
 
 
 class ToolRetryPolicy:

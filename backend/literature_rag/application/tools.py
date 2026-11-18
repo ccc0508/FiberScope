@@ -11,7 +11,17 @@ from time import perf_counter
 from uuid import uuid4
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, model_validator
+
+
+SECTION_BATCH_GUIDANCE = """
+When independent lookups are already known, batch them in one tool call. Pass document_ids to
+list_sections for up to four papers; follow later directory pages one paper at a time using offset.
+Pass targets to read_section for up to three exact document_id + section_id pairs, with per-target
+offset/exclude_chunk_ids and one max_chars budget for all. Read the returned sources by their
+document_id and section_id. Each item has its own status and pagination cursor; retry only needed
+failed items. Do not batch speculative sections, or lookups that depend on earlier results.
+"""
 
 
 class Request(BaseModel):
@@ -40,8 +50,19 @@ class FindTable(Request):
 
 class ListSections(Request):
     tool: Literal['list_sections']
-    document_id: str = Field(min_length=1, max_length=200)
-    offset: int = Field(default=0, ge=0)
+    document_id: str | None = Field(default=None, min_length=1, max_length=200,
+        description='Single paper ID. Use either document_id or document_ids, never both.')
+    document_ids: list[Annotated[str, Field(min_length=1, max_length=200)]] | None = Field(
+        default=None, min_length=1, max_length=4, description='Up to four known papers. Gets the first page for each.')
+    offset: int = Field(default=0, ge=0, description='Use with one document_id to continue that paper’s directory.')
+
+    @model_validator(mode='after')
+    def check_target(self):
+        if (self.document_id is None) == (self.document_ids is None):
+            raise ValueError('Supply either document_id or document_ids')
+        if self.document_ids is not None and (self.offset or len(set(self.document_ids)) != len(self.document_ids)):
+            raise ValueError('Use unique document_ids at offset zero; paginate one paper at a time')
+        return self
 
 
 class SectionLookupError(LookupError):
@@ -50,13 +71,36 @@ class SectionLookupError(LookupError):
         super().__init__(code)
 
 
+class SectionTarget(BaseModel):
+    model_config = ConfigDict(extra='forbid', strict=True)
+    document_id: str = Field(min_length=1, max_length=200)
+    section_id: str = Field(min_length=1, max_length=200, description='Exact section ID from the directory or evidence locator.')
+    offset: int = Field(default=0, ge=0)
+    exclude_chunk_ids: list[str] = Field(default_factory=list, max_length=1000)
+
+
 class ReadSection(Request):
     tool: Literal['read_section']
-    document_id: str = Field(min_length=1, max_length=200)
-    section_id: str = Field(min_length=1, max_length=200, description='Exact ID returned by list_sections or evidence locator; never infer from chapter number.')
-    offset: int = Field(default=0, ge=0)
-    max_chars: int = Field(default=12000, ge=256, le=24000)
+    document_id: str | None = Field(default=None, min_length=1, max_length=200)
+    section_id: str | None = Field(default=None, min_length=1, max_length=200,
+        description='Exact ID returned by list_sections or an evidence locator; never infer from a chapter number.')
+    offset: int = Field(default=0, ge=0, description='For a single target only; in a batch use each target’s own offset.')
     exclude_chunk_ids: list[str] = Field(default_factory=list, max_length=1000)
+    targets: list[SectionTarget] | None = Field(default=None, min_length=1, max_length=3,
+        description='Up to three independently chosen document_id + section_id pairs. Use instead of the single target fields.')
+    max_chars: int = Field(default=12000, ge=256, le=24000,
+        description='One source text budget for this entire call, including all batch targets.')
+
+    @model_validator(mode='after')
+    def check_target(self):
+        if self.targets is None:
+            if self.document_id is None or self.section_id is None:
+                raise ValueError('A single target needs document_id and section_id')
+        elif self.document_id is not None or self.section_id is not None or self.offset or self.exclude_chunk_ids:
+            raise ValueError('Put all target fields inside targets for a batch')
+        elif len({(t.document_id, t.section_id) for t in self.targets}) != len(self.targets):
+            raise ValueError('Read each section at most once in a batch')
+        return self
 
 
 class ReadTable(Request):
@@ -79,24 +123,6 @@ class FindFigure(Request):
     offset: int = Field(default=0, ge=0)
 
 
-class Calculate(Request):
-    """Difference/relative change between observations ALREADY IN THE SAME UNIT. Not a unit converter."""
-    tool: Literal['calculate_change']
-    initial: str = Field(pattern=r'^-?\d{1,15}(\.\d{1,15})?$')
-    final: str = Field(pattern=r'^-?\d{1,15}(\.\d{1,15})?$')
-    unit: str = Field(max_length=100, description='One shared unit for BOTH values. No conversion arrows; use convert_units for unit conversion.')
-    source_call_ids: list[str] = Field(min_length=1, max_length=20)
-
-
-class ConvertUnits(Request):
-    """Convert one value using program-defined unit factors. Never supply an expected answer."""
-    tool: Literal['convert_units']
-    value: str = Field(pattern=r'^-?\d{1,15}(\.\d{1,15})?$')
-    from_unit: str = Field(min_length=1,max_length=40,description='Supported: nm, μm, mm, cm, m, km; mg, g, kg; mg/100m, mg/m, mg/km, g/m, g/km, tex; Pa, kPa, MPa; N*m/g, kN*m/kg.')
-    to_unit: str = Field(min_length=1,max_length=40,description='Destination must be the same quantity group; MPa cannot convert to N*m/g without additional physical information.')
-    source_call_ids: list[str] = Field(default_factory=list,max_length=20,description='Existing source call IDs if from retrieved data. [] for a user-provided hypothetical value.')
-
-
 class DescribeExperiments(Request):
     tool: Literal['describe_experiment_data']
     views: list[str] | None = Field(default=None, max_length=8, description='Omit for a compact view directory. Supply selected view names, e.g. ["fiber.v_beating_analysis"], for actual fields, descriptions, units and live discrete values. Reuse details within this question.')
@@ -107,9 +133,9 @@ class QueryExperiments(Request):
     sql: str = Field(min_length=1, max_length=8000, description='One PostgreSQL SELECT over allowed fiber views; joins and nested/correlated subqueries allowed. Read describe_experiment_data first for real columns, units and row grain.')
 
 
-INPUT = TypeAdapter(Annotated[Search | ListSections | ReadSection | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | Calculate | ConvertUnits | DescribeExperiments | QueryExperiments, Field(discriminator='tool')])
+INPUT = TypeAdapter(Annotated[Search | ListSections | ReadSection | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | DescribeExperiments | QueryExperiments, Field(discriminator='tool')])
 SCHEMAS = {c.model_fields['tool'].annotation.__args__[0]: c.model_json_schema()
-           for c in (Search, ListSections, ReadSection, ReadTable, ViewImage, FindFigure, FindDocuments, FindTable, Calculate, ConvertUnits, DescribeExperiments, QueryExperiments)}
+           for c in (Search, ListSections, ReadSection, ReadTable, ViewImage, FindFigure, FindDocuments, FindTable, DescribeExperiments, QueryExperiments)}
 
 
 def encode(x):
@@ -193,9 +219,6 @@ class LiteratureTools:
         self.store.save(record)  # If persistence fails, do not start a paid operation.
         image_bytes = None
         try:
-            if isinstance(parsed, (Calculate,ConvertUnits)):
-                known = {r['call_id'] for r in self.store.read(run_id) if r['status']=='completed'}
-                if not set(parsed.source_call_ids) <= known: raise ValueError('Unknown source calls')
             result, image_bytes = self.execute(parsed)
             result = json.loads(encode(result))
             record.update(status='completed', result=result, result_sha256=sha256(encode(result).encode()).hexdigest())
@@ -235,7 +258,7 @@ class LiteratureTools:
         if self.catalog is None: raise LookupError('Section catalog unavailable')
         chunks = sorted((c for c in self.catalog.chunks.values() if c.document_id == document_id), key=lambda c:c.chunk_index)
         if not chunks:
-            raise SectionLookupError('unknown_document', dict(message='Unknown document_id; call find_documents for a real paper ID.', document_id=document_id, sections=[]))
+            raise SectionLookupError('unknown_document', dict(message='Unknown document_id; choose an exact ID from the paper directory.', document_id=document_id, sections=[]))
         rows = {}
         for c in chunks:
             m = self.catalog.mapping[c.id]; sid = m.get('section_id')
@@ -251,7 +274,9 @@ class LiteratureTools:
 
     def execute(self, p):
         if isinstance(p, ListSections):
-            return self.section_directory(p.document_id, p.offset), None
+            if p.document_ids is None:
+                return self.section_directory(p.document_id, p.offset), None
+            return self.list_section_batch(p.document_ids), None
         if isinstance(p, FindDocuments):
             if self.catalog is None: raise LookupError('Catalog unavailable')
             rows = {}
@@ -300,26 +325,6 @@ class LiteratureTools:
                     page=a.page, kind=a.kind, match_status=status) for a,status in rows[p.offset:end]],
                 next_offset=end if end < len(rows) else None,
                 notice='Handles only, not viewed pixels. Unconfirmed candidates may be unrelated; inspect with view_image. Never infer a missing figure number from ordering.'), None
-        if isinstance(p, ConvertUnits):
-            from .unit_conversion import convert,UnitConversionError,UNITS
-            try:result=convert(p.value,p.from_unit,p.to_unit)
-            except UnitConversionError as error:
-                raise SectionLookupError(error.code,dict(supported_units=list(UNITS),notice='Supply compatible units, not a guessed conversion factor. Different quantities require more information.')) from error
-            return dict(result,source_call_ids=p.source_call_ids),None
-        if isinstance(p, Calculate):
-            if re.search(r'->|→|⇒|\bto\b|换算|转[为换成]',p.unit,re.I):
-                raise SectionLookupError('unit_conversion_requires_convert_units',dict(suggested_tool='convert_units',
-                    notice='calculate_change compares two values already in one unit. For conversion supply value, from_unit, to_unit; do NOT supply a guessed final value.'))
-            from decimal import Decimal, localcontext
-            with localcontext() as ctx:
-                ctx.prec = 40
-                initial, final = Decimal(p.initial), Decimal(p.final)
-                delta = final-initial
-                relative = str(delta/initial*100) if initial else None
-            return dict(initial=p.initial, final=p.final, difference=str(delta), unit=p.unit,
-                relative_change_percent=relative, formula='difference=final-initial; relative=(final-initial)/initial*100',
-                source_call_ids=p.source_call_ids, undefined_reason='zero_initial_value' if not initial else None,
-                notice='Arithmetic only; source call existence is verified, but operand extraction and scientific comparability are not.'), None
         if isinstance(p, Search):
             if p.document_ids:
                 if self.catalog is None or not set(p.document_ids) <= {c.document_id for c in self.catalog.chunks.values()}:
@@ -348,25 +353,102 @@ class LiteratureTools:
             return dict(table=self.source(c), truncated=False,
                 assets=[asdict(a) for a in getattr(self.retriever.visual_catalog, 'assets', []) if a.parent_chunk_id==c.id],
                 notice='Preserves stored table text; does not infer missing cells or units.'), None
-        chunks = sorted([c for c in self.catalog.chunks.values() if c.document_id == p.document_id
-            and self.catalog.mapping[c.id].get('section_id') == p.section_id], key=lambda c:c.chunk_index)
+        if isinstance(p, ReadSection):
+            if p.targets is None:
+                target = SectionTarget(document_id=p.document_id, section_id=p.section_id,
+                    offset=p.offset, exclude_chunk_ids=p.exclude_chunk_ids)
+                return self.read_section(target, *self.section_plan(target), p.max_chars), None
+            return self.read_section_batch(p.targets, p.max_chars), None
+        raise ValueError('Unsupported literature tool')
+
+    def list_section_batch(self, document_ids):
+        items = []
+        for document_id in document_ids:
+            try:
+                directory = self.section_directory(document_id)
+            except SectionLookupError as error:
+                items.append(dict(document_id=document_id, status='failed', error_code=error.code,
+                    message=error.recovery['message']))
+            else:
+                directory.pop('notice')
+                for row in directory['sections']:
+                    row.pop('chunk_count', None)
+                items.append(dict(status='completed', **directory))
+        result = dict(documents=items, notice='Directory only. Use each paper’s own next_offset with a single document_id to continue.')
+        if all(item['status']=='failed' for item in items):
+            raise SectionLookupError('batch_lookup_failed', result)
+        return result
+
+    def section_plan(self, target):
+        chunks = sorted((c for c in self.catalog.chunks.values() if c.document_id == target.document_id
+            and self.catalog.mapping[c.id].get('section_id') == target.section_id), key=lambda c:c.chunk_index)
         if not chunks:
-            recovery = self.section_directory(p.document_id)
-            recovery.update(message='Unknown section_id for this document. Choose an exact ID from sections and retry read_section; do not guess chapter IDs.', requested_section_id=p.section_id)
+            recovery = self.section_directory(target.document_id)
+            recovery.update(message='Unknown section_id for this document. Choose an exact ID from sections and retry read_section; do not guess chapter IDs.', requested_section_id=target.section_id)
             raise SectionLookupError('unknown_section', recovery)
-        excluded = set(p.exclude_chunk_ids)
-        if not excluded <= {c.id for c in chunks}: raise ValueError('Exclusions outside section')
+        excluded = set(target.exclude_chunk_ids)
+        if not excluded <= {c.id for c in chunks}:
+            raise SectionLookupError('exclusions_outside_section', dict(message='Use only exclusions from this section.'))
         rows = [c for c in chunks if c.id not in excluded]
         total = sum(len(c.text) for c in rows)
-        if p.offset > total: raise ValueError('Offset outside section')
-        end = min(total, p.offset+p.max_chars); cursor=0; sources=[]
+        if target.offset > total:
+            raise SectionLookupError('offset_outside_section', dict(message='Use the returned cursor with the same exclusions.', total_chars=total))
+        return rows, total
+
+    def read_section(self, target, rows, total, allowance):
+        end = min(total, target.offset+allowance); cursor=0; sources=[]
         for c in rows:
-            left, right = max(0,p.offset-cursor), min(len(c.text),end-cursor)
+            left, right = max(0,target.offset-cursor), min(len(c.text),end-cursor)
             if left < right:
                 sources.append(dict(self.source(c), text=c.text[left:right],
                     start_char=left, end_char=right, source_full_chars=len(c.text)))
             cursor += len(c.text)
-        return dict(document_id=p.document_id, section_id=p.section_id, sources=sources,
-            offset=p.offset, next_offset=end if end<total else None, truncated=end<total,
-            total_chars=total, excluded_chunk_ids=p.exclude_chunk_ids,
-            notice='Offsets apply to this same section and exclusion list; full-source hashes identify original chunks.'), None
+        return dict(document_id=target.document_id, section_id=target.section_id, sources=sources,
+            offset=target.offset, next_offset=end if end<total else None, truncated=end<total,
+            total_chars=total, excluded_chunk_ids=target.exclude_chunk_ids,
+            notice='Offsets apply to this same section and exclusion list; full-source hashes identify original chunks.')
+
+    def read_section_batch(self, targets, budget):
+        items = [None] * len(targets)
+        valid = []
+        for i, target in enumerate(targets):
+            try:
+                rows, total = self.section_plan(target)
+            except SectionLookupError as error:
+                recovery = {k:v for k,v in error.recovery.items() if k != 'notice'}
+                if len(recovery.get('sections',[]))>6:
+                    recovery['sections'] = recovery['sections'][:6]
+                    recovery['message'] = 'Unknown section ID. Use these examples or call list_sections for the remaining exact IDs.'
+                items[i] = dict(document_id=target.document_id, section_id=target.section_id,
+                    status='failed', error_code=error.code, recovery=recovery)
+            else:
+                valid.append((i, target, rows, total))
+        if not valid:
+            raise SectionLookupError('batch_lookup_failed', dict(sections=items,
+                message='Correct the individual targets and retry only what you still need.'))
+        sources = []
+        needs = [total-target.offset for _,target,_,total in valid]
+        shares = share_char_budget(needs, budget)
+        for (i, target, rows, total), allowance in zip(valid, shares):
+            item = self.read_section(target, rows, total, allowance)
+            pieces = item.pop('sources')
+            item.pop('notice')
+            item.pop('excluded_chunk_ids')
+            items[i] = dict(status='completed', returned_chars=sum(len(s['text']) for s in pieces), **item)
+            sources.extend(pieces)
+        return dict(sections=items, sources=sources, max_chars=budget,
+            notice='Each source belongs to its own document_id and section_id. Each next_offset applies to the same section and exclusions. Correct or paginate only items still needed.')
+
+
+def share_char_budget(needs, budget):
+    """Divide one budget evenly, then redistribute the unused share of short sections."""
+    shares = [0] * len(needs)
+    pending = [i for i,n in enumerate(needs) if n]
+    while budget and pending:
+        each, remainder = divmod(budget, len(pending))
+        for rank, i in enumerate(pending):
+            take = min(needs[i]-shares[i], each+(rank<remainder))
+            shares[i] += take
+            budget -= take
+        pending = [i for i in pending if shares[i]<needs[i]]
+    return shares

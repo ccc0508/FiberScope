@@ -8,6 +8,7 @@ def citation_records(tool, response):
     if response.get('status') != 'completed':
         return []
     result = response.get('result', {})
+    # Calculation types are retained here only for already recorded tool results.
     kind = {'search_literature': 'source_text', 'read_section': 'source_text',
         'read_table': 'source_text', 'view_image': 'source_image',
         'query_experiment_data': 'experiment_query', 'calculate_change': 'calculation', 'convert_units':'calculation'}.get(tool)

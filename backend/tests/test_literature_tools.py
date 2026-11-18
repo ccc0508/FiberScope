@@ -105,14 +105,64 @@ def test_interrupted_record_remains_visible(kit):
     kit.store.save(dict(call_id='c',run_id='r',status='started'))
     assert kit.store.read('r')[0]['status']=='started'
 
-def test_calculation_and_provenance(kit):
-    source=kit.call(dict(tool='read_table',document_id='doc',chunk_id='1',reason='values'),run_id='r')
-    p=dict(tool='calculate_change',initial='47.16',final='42.35',unit='%',source_call_ids=[source['call_id']],reason='compute change')
-    result=kit.call(p,run_id='r')['result']
-    assert result['difference']=='-4.81'
-    assert float(result['relative_change_percent'])==pytest.approx(-10.1993214588)
-    assert kit.call(dict(p,initial='0'),run_id='r')['result']['relative_change_percent'] is None
-    assert kit.call(p,run_id='other')['status']=='failed'
+@pytest.mark.parametrize('tool,args',[
+    ('calculate_change',dict(initial='47.16',final='42.35',unit='%',source_call_ids=['source'])),
+    ('convert_units',dict(value='10',from_unit='mg/100m',to_unit='mg/m')),
+])
+def test_retired_calculation_tools_unavailable(kit,tool,args):
+    from literature_rag.application.specialist_agent import SQL_TOOLS,PAPER_TOOLS
+    from literature_rag.application.tools import SCHEMAS
+    assert tool not in SCHEMAS and tool not in SQL_TOOLS and tool not in PAPER_TOOLS
+    assert kit.call(dict(tool=tool,reason='calculation',**args),run_id='r')['status']=='invalid_arguments'
+    assert not kit.store.evidence('r')
+
+
+def add_second_paper(kit, text='y'*300):
+    c=Chunk('b','doc_b','b.pdf',1,1,0,text,50,'test',kind='paragraph')
+    kit.catalog.chunks[c.id]=c
+    kit.catalog.mapping[c.id]=dict(section_id='methods',section_path=['Methods'],content_role='body')
+
+
+def test_directory_batch_keeps_valid_papers_and_separate_errors(kit):
+    add_second_paper(kit)
+    res=kit.call(dict(tool='list_sections',document_ids=['doc','missing','doc_b'],reason='find sections'),run_id='r')
+    assert res['status']=='completed'
+    first,invalid,last=res['result']['documents']
+    assert [first['sections'][0]['section_id'],last['sections'][0]['section_id']]==['s','methods']
+    assert invalid['status']=='failed' and invalid['error_code']=='unknown_document'
+    assert len(kit.store.read('r'))==1 and not kit.store.evidence('r')
+
+
+def test_section_batch_shares_budget_and_preserves_refs_for_multiple_papers(kit):
+    from literature_rag.application.agent_context import EvidenceProjection
+    add_second_paper(kit)
+    targets=[dict(document_id='doc',section_id='s',exclude_chunk_ids=['0']),
+             dict(document_id='doc_b',section_id='missing'),dict(document_id='doc_b',section_id='methods',offset=50)]
+    r=kit.call(dict(tool='read_section',targets=targets,max_chars=320,reason='compare'),run_id='r')
+    assert r['status']=='completed'
+    a,b,c=r['result']['sections']
+    assert (a['returned_chars'],c['returned_chars'])==(160,160)
+    assert (a['next_offset'],c['next_offset'])==(160,210)
+    assert b['status']=='failed' and b['recovery']['sections'][0]['section_id']=='methods'
+    sources=EvidenceProjection().project(r)['result']['sources']
+    assert [(s['document_id'],s['section_id'],s['chunk_id'],s['ref']) for s in sources]==[
+        ('doc','s','1','[1]'),('doc_b','methods','b','[2]')]
+    assert len(kit.store.read('r'))==1
+    assert len(kit.store.evidence('r'))==2
+    continuation=kit.call(dict(tool='read_section',**{**targets[2],'offset':c['next_offset']},reason='continue'),run_id='r')
+    assert continuation['result']['sources'][0]['start_char']==210
+
+
+def test_short_section_donates_remaining_budget_and_all_invalid_add_no_citations(kit):
+    add_second_paper(kit,'y'*40)
+    targets=[dict(document_id='doc',section_id='s'),dict(document_id='doc_b',section_id='methods')]
+    r=kit.call(dict(tool='read_section',targets=targets,max_chars=280,reason='compare'),run_id='r')
+    assert [s['returned_chars'] for s in r['result']['sections']]==[240,40]
+    bad=[dict(t,section_id='unknown') for t in targets]
+    error=kit.call(dict(tool='read_section',targets=bad,reason='compare'),run_id='r')
+    assert error['status']=='failed' and error['error_code']=='batch_lookup_failed'
+    assert all(s['error_code']=='unknown_section' for s in error['result']['sections'])
+    assert len(kit.store.evidence('r'))==2
 
 def test_ledger_dedup_content_change_and_run_isolation(kit):
     p=dict(tool='search_literature',query='q',reason='search')

@@ -25,6 +25,25 @@ def test_section_streak_redirect_and_exceptions():
     assert not p.prepare(dict(req,revisit_reason='Check a concrete contradictory value'),t)[1]['blocked']
     p,t=setup();t['tool_calls'].append(dict(request=dict(tool='search_literature',document_ids=['A'])))
     assert not p.prepare(req,t)[1]['blocked']
+
+
+def test_batch_reads_count_actual_sections_for_redirect_and_allow_pagination():
+    p=CoveragePriority(REQ[:1])
+    sections=[dict(document_id='A',section_id='a',status='completed',returned_chars=200,next_offset=200),
+              dict(document_id='A',section_id='b',status='completed',returned_chars=100,next_offset=None),
+              dict(document_id='A',section_id='wrong',status='failed',error_code='unknown_section')]
+    trace=dict(tool_calls=[dict(request=dict(tool='read_section',targets=[dict(document_id='A',section_id=x['section_id']) for x in sections]),
+        model_delivery=dict(status='delivered'),coverage_schedule=dict(target_requirements=['need_1']),
+        result=dict(status='completed',result=dict(sections=sections)))])
+    req=dict(tool='read_section',targets=[dict(document_id='A',section_id='a',offset=200)],
+        target_requirements=['need_1'],coverage_updates=[],revisit_reason='')
+    assert not p.prepare(req,trace)[1]['blocked']
+    req['targets']=[dict(document_id='A',section_id='unrelated')]
+    assert p.prepare(req,trace)[1]['redirect_reason']=='targeted_search_before_more_sections'
+    sections[1]['returned_chars']=0
+    assert not p.prepare(req,trace)[1]['redirect_reason']
+
+
 def trace(delivered=True):
     return {'tool_calls':[dict(request={'tool':'search_literature'},model_delivery={'status':'delivered' if delivered else 'withheld'},
         result=dict(status='completed',result={'evidence':[dict(ref='[1]',document_id='A',text='input')]}))]}

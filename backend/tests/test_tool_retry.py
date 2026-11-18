@@ -44,6 +44,18 @@ def test_database_timeout_vs_permission():
         assert (p.block(req) is None)==allowed
 
 
+def test_reordering_same_targets_does_not_redispatch_a_batch():
+    first=[dict(document_id='a',section_id='s'),dict(document_id='b',section_id='t')]
+    calls=[ToolCall('1','read_section',dict(targets=first,reason='read')),
+           ToolCall('2','read_section',dict(targets=list(reversed(first)),reason='again'))]
+    a=Fake([*(decision(calls=[c]) for c in calls),decision('draft')]);executed=[]
+    def execute(request,*_):
+        executed.append(request)
+        return dict(status='completed',result=dict(sources=[]))
+    r=AgentLoop(a,execute,lambda s:None,review_enabled=False).run('q','r')
+    assert len(executed)==1 and r['tool_calls'][1]['result']['error_code']=='duplicate_call'
+
+
 def test_loop_records_and_blocks_third_transient_attempt():
     calls=[ToolCall(str(i),'read_section',dict(document_id='d',section_id='s',reason='read')) for i in range(3)]
     a=Fake([*(decision(calls=[c]) for c in calls),decision('draft'),decision('final')]);executed=[]

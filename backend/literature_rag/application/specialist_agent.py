@@ -17,8 +17,9 @@ from .task_feedback import (InformationNeed, FollowupRequest, FinishTasks, FEEDB
                             actionable_feedback, validate_followup)
 from .planner_inputs import SuggestedBudget, clean_references
 from .result_driven import ROUTING_RULES, plan_specialists
+from .tools import SECTION_BATCH_GUIDANCE
 
-SQL_TOOLS={'describe_experiment_data','query_experiment_data','calculate_change','convert_units'}
+SQL_TOOLS={'describe_experiment_data','query_experiment_data'}
 PAPER_TOOLS=set(SCHEMAS)-{'describe_experiment_data','query_experiment_data'}
 
 class Plan(BaseModel):
@@ -129,11 +130,9 @@ the concrete prerequisite within YOUR role. Its local verified status is not com
 original scientific requirement. Preserve that distinction in findings and unresolved_items.
 '''
 COMMON+='''
-Use convert_units for requested unit conversions: give the original value, from_unit and to_unit;
-the program calculates the factor and converted value. Never prefill the answer as calculate_change.final.
-calculate_change only compares two observations already in the SAME unit; it does not validate operands
-or conversion reasoning. A successful tool call does not validate a scientific interpretation.
-Use the returned converted_value and distinguish hypothetical user examples from measured paper values.
+For requested arithmetic, check compatible units and show the formula or conversion factor where useful.
+For relative change, state the baseline and do not divide by zero. A derived value is not a source quotation;
+cite its inputs and distinguish hypothetical examples from measured paper or database values.
 '''
 COMMON+='''
 Assess evidence separately for EACH requested part. verified means evidence suffices for that specific
@@ -204,7 +203,7 @@ CTE, UNION or arbitrary functions. EXPLAIN estimates work, not statistical corre
 specific diagnostic without altering the intended population. Truncated data require SQL aggregates over
 the same filters. Preserve units, tentative/unknown status. Strength/index caveats apply only to those metrics.
 Return requested facts only; do not invent group sizes, causal claims, ranges or SQL examples. SQL refs are
-database snapshots, not paper quotations. calculate_change handles differences/relative changes only.'''
+database snapshots, not paper quotations.'''
 
 PAPER_PROMPT=COMMON+'''
 You handle literature only. Use provided paper IDs; search_literature expands evidence. Use document filters
@@ -212,7 +211,7 @@ when known. read_section requires real IDs from list_sections. Locate tables by 
 locate missing figures by find_figure then view_image. Captions are not viewed pixels; visual claims require
 view_image. Distinguish author explanation, correlation and causation; preserve conditions and uncertainty.
 If a requested fact lacks evidence and a targeted path/budget remains, check it. Never claim absence from
-one missed search. Do not treat project experimental values as published paper results.'''
+one missed search. Do not treat project experimental values as published paper results.''' + SECTION_BATCH_GUIDANCE
 PAPER_PROMPT+='''
 Choose search_literature to LOCATE a specific missing fact; use read_section to COMPLETE context at an
 identified location. After up to two sections fail to resolve the same required gap, use a targeted query
