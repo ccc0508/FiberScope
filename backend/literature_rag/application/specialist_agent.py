@@ -224,6 +224,14 @@ the same filters. Preserve units, tentative/unknown status. Strength/index cavea
 Return requested facts only; do not invent group sizes, causal claims, ranges or SQL examples. SQL refs are
 database snapshots, not paper quotations. calculate_change handles differences/relative changes only.'''
 
+SQL_BATCH_PROMPT=SQL_PROMPT.replace('one per turn.', 'one per turn except for independent SELECTs.')+'''
+Once the schema and all parameters are known, request independent query_experiment_data SELECTs
+in the same turn; set independent_in_turn=true for each. They execute sequentially and each costs
+one tool call. If parameters, filters or the decision to query depend on a sibling result, wait
+until that result is available. Keep directory lookups and calculations in separate turns.
+PostgreSQL || is supported for string concatenation. For distinct tuples prefer COUNT(DISTINCT
+(key1,key2)) or count grouped rows; concatenated values need not uniquely identify a tuple.'''
+
 PAPER_PROMPT=COMMON+'''
 You handle literature only. Use provided paper IDs; search_literature expands evidence. Use document filters
 when known. read_section requires real IDs from list_sections. Locate tables by find_table then read_table;
@@ -501,7 +509,8 @@ class SpecialistCoordinator:
                             max_search_calls=max(0,b.max_search_calls-counters['search']),
                             reserve_seconds=min(15,seconds/3),max_context_chars=b.max_context_chars,max_output_tokens=b.max_output_tokens),
                         clock=self.clock,paper_directory=self.paper_directory if name=='literature' else None,
-                        allowed_tools=allowed,system_prompt=SQL_PROMPT if name=='sql' else PAPER_PROMPT+PAPER_COVERAGE+PAPER_EVIDENCE_CHECKS+EVIDENCE_OUTPUT_RULES+(COVERAGE_PRIORITY_INSTRUCTIONS if priority else ''),review_enabled=False,
+                        sql_batches=self.result_driven and name=='sql',
+                        allowed_tools=allowed,system_prompt=(SQL_BATCH_PROMPT if self.result_driven else SQL_PROMPT) if name=='sql' else PAPER_PROMPT+PAPER_COVERAGE+PAPER_EVIDENCE_CHECKS+EVIDENCE_OUTPUT_RULES+(COVERAGE_PRIORITY_INSTRUCTIONS if priority else ''),review_enabled=False,
                         output_schema=SpecialistResult.model_json_schema(),
                         result_validator=SpecialistResult if self.result_driven else None,
                         extend=extension if self.result_driven else None,

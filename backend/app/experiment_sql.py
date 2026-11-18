@@ -18,7 +18,7 @@ class UnsupportedSQL(ValueError):
 ALLOWED = {v.view for v in VIEWS.values()}
 # Every nested node and physical relation is checked, not just the outer SELECT.
 NODES = set('select from table identifier column star alias tablealias literal null boolean where and or not paren eq neq gt gte lt lte is in between like ilike order ordered group having distinct limit offset add sub mul div neg count sum avg min max round abs coalesce nullif'.split())
-NODES.update('join subquery exists any all tuple lateral'.split())
+NODES.update('join subquery exists any all tuple lateral dpipe'.split())
 
 
 def validate_sql(text):

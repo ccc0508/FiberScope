@@ -125,6 +125,10 @@ def test_adapter_conversion_and_no_retry_options():
     assert d.calls[0].arguments=={'chunk_id':'x'} and d.message['reasoning_content']=='continuation'
     assert captured['timeout']==10
     assert captured['parallel_tool_calls'] is False
+    query_schema=SCHEMAS['query_experiment_data']
+    batch_schema=dict(query_schema,properties=dict(query_schema['properties'],independent_in_turn={'type':'boolean'}))
+    adapter.decide([],{'query_experiment_data':batch_schema},10,1000)
+    assert captured['parallel_tool_calls'] is True
 
 
 def test_search_cap_blocks_third_but_allows_reading():
