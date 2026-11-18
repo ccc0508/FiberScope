@@ -10,6 +10,7 @@ from pydantic.json_schema import SkipJsonSchema
 
 from .agent_context import EvidenceProjection
 from .citation_policy import citation_records
+from .sql_deliverables import signatures
 
 
 Role = Literal['sql', 'literature']
@@ -43,6 +44,7 @@ class DelegateStep(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)
     requirement_ids: list[str] = Field(min_length=1, max_length=20)
     waits_for_batch_result: bool = False
+    fresh_query_ids: list[str] = Field(default_factory=list, max_length=20)
     task: str = Field(min_length=1, max_length=1500)
     reason: str = Field(min_length=1, max_length=800)
     inputs: list[InputSelection] = Field(default_factory=list, max_length=8)
@@ -111,6 +113,9 @@ def select_evidence(event, ref, choice=None):
             if 'column_metadata' in payload:
                 payload['column_metadata'] = [m for m in payload['column_metadata'] if m.get('name') in payload.get('columns', [])]
             payload['selected_row_indices'] = picked
+            proof = signatures(result.get('sql',''),cols)
+            payload['metric_signatures'] = {name:proof[name] for name in payload['columns'] if name in proof} if cols else {}
+            payload['row_count'] = result.get('row_count',len(rows))
     else:
         if choice and (choice.quote is not None or choice.columns or choice.row_indices is not None or tool == 'view_image'):
             raise ValueError('This source does not support the requested selector; for figures select textual evidence')
