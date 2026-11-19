@@ -17,8 +17,10 @@ def section_handoff(children, assigned, task):
         if child['role'] != 'literature':
             continue
         for event in child.get('trace', {}).get('tool_calls', []):
+            if event.get('model_delivery', {}).get('status') != 'delivered':
+                continue
             request, result = event['request'], event['result']
-            if result.get('status') != 'completed' or event.get('model_delivery', {}).get('status') != 'delivered':
+            if result.get('status') != 'completed':
                 continue
             doc = request.get('document_id')
             if request['tool'] == 'read_section':
