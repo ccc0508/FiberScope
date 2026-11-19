@@ -59,3 +59,28 @@ $common = @(
 包含论文原文的输出位于 Git 忽略的 `output/`，不随代码推送。只有脚本、测试、方法与不含论文正文的汇总可以进入仓库。
 
 接口依据：[百炼重排 API](https://help.aliyun.com/zh/model-studio/text-rerank-api)、[TypeSafe Score](https://docs.typesafe.ai/primitives/score)。
+
+## 逐要点语义核对
+
+页码指标之后，使用 `audit_reranker_evidence.py` 核对前 8 块是否包含每个必答要点所需的事实。本次由 Codex 阅读原文作内容判断，单独保存“要点—子事实—可支持该事实的块”映射；程序只检查块是否已被选出并汇总。没有新增 Jev 或其他 API 裁判调用，也没有再次生成答案。这不是独立盲评，映射与判断说明均可展开复查。
+
+映射以 `semantic-audit-annotations.json` 保存，绑定冻结候选池和 gold 的 SHA256，防止旧编号应用到其他论文内容。每个子事实可由多个等价块之一支持；一个要点可需要多个子事实，也可由多个块共同支持。允许基于原文事实作合理推论，不要求原文逐字复述参考答案。仅包含关键词、位于同页或引用另一项研究，不算目标事实证据。
+
+- 完整：所有必要子事实均有依据，1 分。
+- 部分：具有实质证据，但缺少必要数值、对象、条件或某个子事实，0.5 分。
+- 缺失：没有实质支持，0 分。
+- 不适用：纯回答行为、题目给定数值的换算或没有具体论文事实断言的数据管理建议，不要求从论文中检索，单独列明，不计分母。
+
+完整覆盖率为完整要点数除以适用要点数；加权覆盖率为“完整数＋0.5×部分数”除以适用要点数。另按每题平均给出宏平均口径，避免混淆两种分母。它们均是证据可用性，不是生成答案的要点得分或准确率。
+
+同时用全部冻结候选作检查：如果 50 块中能支持、前 8 块不能，则记录重排漏选；如果 50 块也只有部分或没有证据，记录候选池缺口。这个结论仅针对本次原问题检索得到的候选池，不能代替整个 Agent 多次补查后的召回评估。
+
+本地复跑仅汇总已有材料，不发送请求：
+
+```powershell
+& ./.venv/Scripts/python.exe -X utf8 scripts/audit_reranker_evidence.py `
+  --output 'D:/develop/srp2.0/output/reranker-comparison-20261119' `
+  --gold 'D:/develop/srp2.0/fiberscope-eval-8papers-v1/gold.jsonl'
+```
+
+结果为 `semantic-audit.html`、`semantic-audit-details.json`、`semantic-audit-summary.json`，分别提供逐题原文、明细和汇总。涉及图像的要点只按实际传给这三个文本重排器的文字检查；不会把未提供的 PDF 图片视为已召回证据。可由领域人员复查并修订映射，重新汇总时保留新的注释文件哈希。
