@@ -35,6 +35,7 @@ VIEWS = {
 }
 
 FIELD_TERMS = {
+    '样本标识':'canonical_code', '样本编号':'canonical_code', '纤维粗度':'fiber_coarseness_mg_m',
     '规范样本':'canonical_code', '样本':'canonical_code', '样本类型':'sample_type',
     '数据块':'block_code', '数据块编号':'block_code', '块编号':'block_code',
     '循环':'cycle_no', '循环编号':'cycle_no', '重复观测编号':'replicate_no',
@@ -138,11 +139,44 @@ def verify_metric(need, item, trace):
     cells = item.get('cells', [])
     if not cells:
         return 'numeric_cell_missing'
+    # For a point measurement the sample selector belongs in equals, not in the value projection.
+    if spec['operation']=='value' and 'canonical_code' in spec['equals'] and len(spec['keys'])>1:
+        selector=spec['equals']['canonical_code']
+        spec['keys']=[key for key in spec['keys'] if key!='canonical_code' and not
+                      (key.endswith(' '+selector) and FIELD_TERMS.get(key.rsplit(' ',1)[0])=='canonical_code')]
+    corroboration=list(item.get('corroborating_cells', []))
+    primary=cells[0]['ref']
+    if len({c['ref'] for c in cells})>1 and spec['operation']=='value' and not spec['group_by']:
+        corroboration.extend(c for c in cells if c['ref']!=primary)
+        cells=[c for c in cells if c['ref']==primary]
+    error=verify_snapshot(spec,cells,item,trace, fresh=need.get("fresh_query",False))
+    if error or not corroboration:
+        return error
+    if (len(cells)!=1 or spec['operation']!='value' or 'canonical_code' not in spec['equals']
+            or len({primary,*[c['ref'] for c in corroboration]})!=len(corroboration)+1):
+        return 'numeric_corroboration_scope_mismatch'
+    def unit(cell):
+        for event in trace.get('tool_calls',[])+trace.get('inherited_tool_calls',[]):
+            data=event.get('result',{}).get('result',{})
+            if data.get('ref')==cell['ref']:
+                return next((m.get('unit') for m in data.get('column_metadata',[]) if m['name']==cell['column']),None)
+    primary_unit=unit(cells[0])
+    for other in corroboration:
+        if not primary_unit or primary_unit!=unit(other):
+            return 'numeric_corroboration_unit_mismatch'
+        if verify_snapshot(spec,[other],item,trace,same_sample=True, fresh=need.get("fresh_query",False)):
+            return 'numeric_corroboration_scope_mismatch'
+        if Decimal(str(cells[0]['value']))!=Decimal(str(other['value'])):
+            return 'numeric_corroboration_value_mismatch'
+    return None
+
+
+def verify_snapshot(spec,cells,item,trace,*,same_sample=False,fresh=False):
     refs = {cell['ref'] for cell in cells}
     if len(refs)!=1 or not refs.issubset(item.get('refs', [])):
         return 'numeric_snapshot_mismatch'
     events = list(trace.get('tool_calls', []))
-    if not need.get('fresh_query'):
+    if not fresh:
         events += trace.get('inherited_tool_calls', [])
     for event in events:
         raw=event.get('result', {})
@@ -161,6 +195,10 @@ def verify_metric(need, item, trace):
             continue
         proof=data.get('metric_signatures') if 'selected_row_indices' in data else None
         proof=proof if proof is not None else signatures(data.get('sql',''), columns)
+        # A sample identified by its canonical code can also be corroborated in a typed sample view.
+        if same_sample and spec['population'] in ('samples','blends','beating'):
+            proof={col:dict(sig,population=spec['population']) if sig['population'] in ('samples','blends','beating')
+                   else sig for col,sig in proof.items()}
         if not all(any(p==dict(spec,operation='value',keys=[key]) for p in proof.values())
                    for key in spec['group_by']):
             continue

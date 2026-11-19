@@ -45,7 +45,7 @@ class ChatAgentAdapter:
         if self.settings.llm_reasoning_effort:options['reasoning_effort']=self.settings.llm_reasoning_effort
         response=self.client.chat.completions.create(model=self.settings.llm_model,messages=messages,
             **({'tools':tools,'tool_choice':'auto','parallel_tool_calls':
-                'independent_in_turn' in schemas.get('query_experiment_data',{}).get('properties',{})} if tools else {}),max_tokens=max_tokens,timeout=timeout,**options)
+                any('independent_in_turn' in schema.get('properties',{}) for schema in schemas.values())} if tools else {}),max_tokens=max_tokens,timeout=timeout,**options)
         choice=response.choices[0];m=choice.message
         calls=[]
         for c in m.tool_calls or []:

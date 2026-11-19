@@ -223,3 +223,52 @@ def test_previous_dependency_does_not_block_next_independent_followup_in_batch()
     assert [c['role'] for c in result['children']]==['literature','sql','sql']
     assert result['children'][-1]['handoff']==[]
     assert result['task_schedule']['stops']=='max_specialist_calls'
+
+
+def test_mistaken_prerequisite_can_be_explicitly_retracted_after_empty_handoff_rejected():
+    steps = [
+        route('both', requirements=NEEDS, first_specialist='sql',
+              dependency='sql_to_literature', dependency_checklist=['sample unit']),
+        SQL_TOOL, findings('[3]', 'need_2'),
+        dispatch('literature', ['need_1']),
+        dispatch('literature', ['need_1'], independence_reason='The named paper and indicator already determine the lookup.'),
+        PAPER_TOOL, findings('[1]', 'need_1', document_id='A'),
+        tool('finish_tasks', dict(reason='covered', stop_condition='sufficient')),
+        answer('文献[1]与本地[3]'),
+    ]
+    state,_=run(steps)
+    assert state['status']=='completed'
+    assert state['feedback']['decisions'][0]['rejected_actions']
+    assert state['task_schedule']['dependency_corrections'][0]['role']=='literature'
+    assert not state['children'][1]['handoff']
+
+
+def test_literature_followup_recovers_after_executor_exception():
+    adapter = Fake([
+        route('literature', requirements=[NEEDS[0]]),
+        PAPER_TOOL,
+        dispatch('literature', ['need_1']),
+        PAPER_TOOL, findings('[1]', 'need_1', document_id='A'),
+        tool('finish_tasks', dict(reason='covered', stop_condition='sufficient')),
+        answer('文献方法[1]'),
+    ])
+    attempts = []
+
+    def execute(req, rid, timeout):
+        attempts.append(req)
+        if len(attempts) == 1:
+            raise RuntimeError('temporary literature failure')
+        return fake_executor(req, rid, timeout)
+
+    state = ResultDrivenCoordinator(adapter, execute, lambda s: None).run('查A论文的方法条件', 'r')
+
+    assert state['status'] == 'completed'
+    assert len(attempts) == 2
+    failed, recovered = state['children']
+    assert failed['status'] == 'failed'
+    event = failed['trace']['tool_calls'][0]
+    assert event['status'] == 'started' and 'result' not in event
+    assert recovered['id'] == 'r/literature/followup-1'
+    assert recovered['status'] == 'completed'
+    assert recovered['coverage_report']['complete']
+    assert state['task_schedule']['stops'] == 'sufficient'

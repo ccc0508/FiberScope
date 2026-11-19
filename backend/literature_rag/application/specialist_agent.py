@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from typing import Annotated, Literal
 from ..observability import current_tool_index
 from .agent_loop import AgentLoop, AgentBudget, REVIEW_PROMPT, trace_messages, unwrap_json
+from .literature_handoff import section_handoff
 from .tools import SCHEMAS
 from .citation_policy import citation_records, invalid_references
 from .agent_context import EvidenceProjection
@@ -33,6 +34,8 @@ class Plan(BaseModel):
 
 
 class ResultDrivenPlan(Plan):
+    downstream_lookup_parameter: str = Field(default='', max_length=350, description=
+        'For a dependency, name the downstream lookup parameter whose value is unknown before the producer runs. Leave empty for independent retrieval or synthesis-only comparisons.')
     parallel_start: bool = False
     second_budget: SuggestedBudget = Field(default_factory=SuggestedBudget)
     first_specialist: Literal['sql', 'literature'] | None = None
@@ -56,6 +59,8 @@ class ResultDrivenPlan(Plan):
             if self.dependency_checklist:
                 raise ValueError('Independent tasks have no dependency checklist')
         else:
+            if 'downstream_lookup_parameter' in self.model_fields_set and not self.downstream_lookup_parameter.strip():
+                raise ValueError('No unknown lookup parameter: declare independent collection or identify the required selector')
             producer = self.dependency.split('_to_')[0]
             if self.first_specialist not in (None, producer) or not self.dependency_checklist:
                 raise ValueError('A dependent plan starts with its producer and requires an input checklist')
@@ -232,6 +237,8 @@ Once the schema and all parameters are known, request independent query_experime
 in the same turn; set independent_in_turn=true for each. They execute sequentially and each costs
 one tool call. If parameters, filters or the decision to query depend on a sibling result, wait
 until that result is available. Keep directory lookups and calculations in separate turns.
+Put the primary numeric snapshot in cells. For a second check of the same sample value, put its cells in
+corroborating_cells, cite both refs and report any scope, unit or value conflict.
 PostgreSQL || is supported for string concatenation. For distinct tuples prefer COUNT(DISTINCT
 (key1,key2)) or count grouped rows; concatenated values need not uniquely identify a tuple.'''
 
@@ -250,6 +257,12 @@ remains. Valid continuation pages or a concrete contradiction may justify more s
 When search budget is exhausted, use available exact locators or finish with a bounded gap. Failure to find
 a statement never establishes that the author did not discuss it. Stop optional background expansion.
 '''
+
+
+PAPER_BATCH_PROMPT=PAPER_PROMPT.replace('one per turn.', 'one per turn except independent reads of the same tool.')+'''
+Use prior_section_locators directly when relevant; already_read means previously opened, not evidence of a finding.
+When selectors are already known, batch independent requests of the same literature tool in one decision and mark
+independent_in_turn=true. Each actual lookup costs one tool call. Wait for results needed to choose a new ID or query.'''
 
 
 class BudgetExhausted(RuntimeError):pass
@@ -350,7 +363,8 @@ class SpecialistCoordinator:
                 router = router.replace(
                     'This is one-level routing: specialists cannot delegate. The coordinator may later authorize one bounded follow-up.',
                     'Specialists cannot delegate. The Planner may make at most three specialist calls in total.',
-                ) + ROUTING_RULES
+                ).replace('Independent tasks remain isolated and execute sequentially.',
+                          'Independent tasks can start together.') + ROUTING_RULES
             router += routing_catalog_prompt(catalog)
             d=call('route',[dict(role='system',content=router),dict(role='user',content=question)],{'route_task':plan_schema.model_json_schema()})
             raw=d.text
@@ -427,6 +441,10 @@ class SpecialistCoordinator:
                         quota=b.max_model_calls-counters['model']-reserve
                         tool_quota=(b.max_tool_calls-counters['tools'])//remaining_children
                         inherited=[e for c in handoff for e in c.get('trace',{}).get('tool_calls',[])]
+                    directory_pages = {}
+                    if self.result_driven and name=='literature' and phase=='followup':
+                        directory_pages, locators = section_handoff(state['children'],assigned,step.task)
+                        data['prior_section_locators'] = locators
                     task=json.dumps(data,ensure_ascii=False)
                     seconds=deadline-self.clock()-b.reserve_seconds
                     if quota<3 or seconds<30 or tool_quota<1:raise BudgetExhausted('specialist allocation')
@@ -512,8 +530,9 @@ class SpecialistCoordinator:
                             max_search_calls=max(0,b.max_search_calls-counters['search']),
                             reserve_seconds=min(15,seconds/3),max_context_chars=b.max_context_chars,max_output_tokens=b.max_output_tokens),
                         clock=self.clock,paper_directory=self.paper_directory if name=='literature' else None,
-                        sql_batches=self.result_driven and name=='sql',
-                        allowed_tools=allowed,system_prompt=(SQL_BATCH_PROMPT if self.result_driven else SQL_PROMPT) if name=='sql' else PAPER_PROMPT+PAPER_COVERAGE+PAPER_EVIDENCE_CHECKS+EVIDENCE_OUTPUT_RULES+(COVERAGE_PRIORITY_INSTRUCTIONS if priority else ''),review_enabled=False,
+                        sql_batches=self.result_driven and name=='sql', literature_batches=self.result_driven and name=='literature',
+                        directory_pages=directory_pages,
+                        allowed_tools=allowed,system_prompt=(SQL_BATCH_PROMPT if self.result_driven else SQL_PROMPT) if name=='sql' else (PAPER_BATCH_PROMPT if self.result_driven else PAPER_PROMPT)+PAPER_COVERAGE+PAPER_EVIDENCE_CHECKS+EVIDENCE_OUTPUT_RULES+(COVERAGE_PRIORITY_INSTRUCTIONS if priority else ''),review_enabled=False,
                         output_schema=SpecialistResult.model_json_schema(),
                         result_validator=SpecialistResult if self.result_driven else None,
                         extend=extension if self.result_driven else None,
