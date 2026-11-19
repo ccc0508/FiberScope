@@ -207,6 +207,7 @@ SQL_PROMPT=COMMON+'''
 For EVERY numeric requirement report coverage.cells as a list of {ref,row,column,value}.
 row is the zero-based position IN THE SUPPLIED snapshot, column its exact output label. For grouped
 outputs list one cell per group and SELECT the grouping field too. Cite the same ref in coverage.refs.
+Use JSON null for a SQL NULL cell; never replace it with zero or the string "NULL".
 Do not invent rows. Check actual schema, population, grouping keys, filters and units. One SQL may satisfy
 several metrics via different columns. A selected historical result may satisfy only the metrics it contains.
 When fresh_query is true, run the query yourself. Report missing/partial for an unsupported metric;
@@ -217,6 +218,8 @@ needs_clarification; do not compute substitute values. Ask only missing choices,
 Only cumulative beating revolutions are recorded, not rpm. For canonical samples use sample/paired views;
 one experiment's empty result cannot establish absence everywhere. Use JOIN/EXISTS for sample membership,
 COUNT DISTINCT where joins multiply rows. COUNT(*) differs from COUNT(metric); AVG ignores NULL.
+For recycled measurement metrics use v_recycled_cycle_detail. The summary view contains per-block/cycle
+means; its measurements and aggregates cannot certify raw-observation metrics. Its counts remain usable.
 Allowed SELECT joins/subqueries and COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF; no CASE, explicit CAST,
 CTE, UNION or arbitrary functions. EXPLAIN estimates work, not statistical correctness. On errors use the
 specific diagnostic without altering the intended population. Truncated data require SQL aggregates over

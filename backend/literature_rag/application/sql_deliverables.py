@@ -21,7 +21,7 @@ class MetricCell(BaseModel):
     ref: str = Field(pattern=r'^\[[1-9][0-9]*\]$')
     row: int = Field(ge=0)
     column: str
-    value: int | float | str
+    value: int | float | str | None
 
 
 # Certified populations and natural row grains, not expected answers.
@@ -111,10 +111,23 @@ def signatures(sql, columns):
                 operation, keys = 'value', [node.name]
             else:
                 continue
+            # Summary measurements are already per-block/cycle averages. The
+            # metric schema cannot express that grain. Only certify counts and
+            # values over natural keys, with filters/grouping on those same keys.
+            if (table.name == 'v_recycled_cycle_summary' and
+                    (operation not in ('count', 'value') or
+                     not set(keys + groups + list(predicates)).issubset(natural))):
+                continue
             result[name] = dict(population=population, operation=operation, keys=keys, group_by=groups, equals=predicates)
     except (ValueError, KeyError, AttributeError, sqlglot.errors.SqlglotError):
         return {}
     return result
+
+
+def same_value(actual, claimed):
+    if actual is None or claimed is None:
+        return actual is None and claimed is None
+    return Decimal(str(actual)) == Decimal(str(claimed))
 
 
 def verify_metric(need, item, trace):
@@ -153,7 +166,7 @@ def verify_metric(need, item, trace):
             continue
         try:
             if all(columns.count(cell['column'])==1 and proof.get(cell['column'])==spec and
-                   Decimal(str(rows[cell['row']][columns.index(cell['column'])]))==Decimal(str(cell['value']))
+                   same_value(rows[cell['row']][columns.index(cell['column'])], cell['value'])
                    for cell in cells):
                 return None
         except (IndexError, InvalidOperation, TypeError):
