@@ -1,0 +1,222 @@
+{
+  "SQL01": [
+    [
+      {
+        "sql": "SELECT sample_type, COUNT(*) AS sample_count, COUNT(DISTINCT sample_id) AS distinct_sample_ids FROM fiber.v_sample_overview GROUP BY sample_type ORDER BY sample_type",
+        "columns": [
+          "sample_type",
+          "sample_count"
+        ]
+      }
+    ]
+  ],
+  "SQL02": [
+    [
+      {
+        "sql": "SELECT experiment_code, canonical_code, display_code, sample_type, beating_revolutions, fiber_length_weighted_mm, tensile_index, beating_degree_sr FROM fiber.v_beating_analysis WHERE sample_type = 'softwood' AND beating_revolutions IN (4000, 6000, 8000) ORDER BY beating_revolutions, canonical_code, display_order",
+        "columns": [
+          "beating_revolutions",
+          "fiber_length_weighted_mm",
+          "tensile_index"
+        ]
+      }
+    ]
+  ],
+  "SQL03": [
+    [
+      {
+        "sql": "SELECT canonical_code, sample_type, tensile_index FROM fiber.v_fiber_paper_analysis WHERE tensile_index IS NOT NULL ORDER BY tensile_index DESC, canonical_code ASC LIMIT 3",
+        "columns": [
+          "canonical_code",
+          "tensile_index"
+        ]
+      }
+    ]
+  ],
+  "SQL04": [
+    [
+      {
+        "sql": "SELECT s.sample_type, COUNT(*) AS total_samples, COUNT(p.tensile_index) AS nonnull_tensile_samples, ROUND(AVG(p.tensile_index), 4) AS avg_tensile_index, MIN(p.tensile_index) AS min_ti, MAX(p.tensile_index) AS max_ti FROM fiber.v_sample_overview s LEFT JOIN fiber.v_fiber_paper_analysis p ON p.sample_id = s.sample_id GROUP BY s.sample_type ORDER BY s.sample_type",
+        "columns": [
+          "sample_type",
+          "avg_tensile_index",
+          "nonnull_tensile_samples",
+          "total_samples"
+        ]
+      }
+    ]
+  ],
+  "SQL05": [
+    [
+      {
+        "sql": "SELECT b.canonical_code, b.display_name, b.sample_type, b.sw_proportion_pct, b.hw_proportion_pct, b.sw_beating_revolutions, b.hw_beating_revolutions, b.tensile_index, p.tensile_index AS tensile_paired, b.replicate_count, b.aggregation_method FROM fiber.v_blend_analysis b LEFT JOIN fiber.v_fiber_paper_analysis p ON p.sample_id = b.sample_id WHERE b.sw_proportion_pct = 10 AND b.hw_proportion_pct = 90 ORDER BY b.canonical_code",
+        "columns": [
+          "canonical_code",
+          "sw_proportion_pct",
+          "hw_proportion_pct",
+          "sw_beating_revolutions",
+          "hw_beating_revolutions",
+          "tensile_index"
+        ]
+      }
+    ]
+  ],
+  "SQL06": [
+    [
+      {
+        "sql": "SELECT (SELECT COUNT(*) FROM fiber.v_blend_analysis) AS total_rows,\n (SELECT COUNT(DISTINCT experiment_id) FROM fiber.v_blend_analysis) AS distinct_experiments,\n (SELECT COUNT(DISTINCT sample_id) FROM fiber.v_blend_analysis) AS distinct_samples,\n (SELECT COUNT(*) FROM fiber.v_blend_analysis WHERE sw_proportion_pct > 0 AND hw_proportion_pct > 0) AS truly_mixed_rows,\n (SELECT COUNT(DISTINCT sample_id) FROM fiber.v_blend_analysis WHERE sw_proportion_pct > 0 AND hw_proportion_pct > 0) AS truly_mixed_samples,\n (SELECT COUNT(*) FROM fiber.v_blend_analysis WHERE sw_proportion_pct = 0 OR hw_proportion_pct = 0) AS endpoint_rows,\n (SELECT COUNT(DISTINCT sample_id) FROM fiber.v_blend_analysis WHERE sw_proportion_pct = 0 OR hw_proportion_pct = 0) AS endpoint_samples",
+        "columns": [
+          "total_rows"
+        ]
+      }
+    ],
+    [
+      {
+        "sql": "SELECT (SELECT COUNT(*) FROM fiber.v_blend_analysis) AS total_rows,\n (SELECT COUNT(DISTINCT experiment_id) FROM fiber.v_blend_analysis) AS distinct_experiments,\n (SELECT COUNT(DISTINCT sample_id) FROM fiber.v_blend_analysis) AS distinct_samples,\n (SELECT COUNT(*) FROM fiber.v_blend_analysis WHERE sw_proportion_pct > 0 AND hw_proportion_pct > 0) AS truly_mixed_rows,\n (SELECT COUNT(DISTINCT sample_id) FROM fiber.v_blend_analysis WHERE sw_proportion_pct > 0 AND hw_proportion_pct > 0) AS truly_mixed_samples,\n (SELECT COUNT(*) FROM fiber.v_blend_analysis WHERE sw_proportion_pct = 0 OR hw_proportion_pct = 0) AS endpoint_rows,\n (SELECT COUNT(DISTINCT sample_id) FROM fiber.v_blend_analysis WHERE sw_proportion_pct = 0 OR hw_proportion_pct = 0) AS endpoint_samples",
+        "columns": [
+          "truly_mixed_rows"
+        ]
+      }
+    ]
+  ],
+  "SQL07": [
+    [
+      {
+        "sql": "SELECT canonical_code, sample_type, display_name, tensile_index, paper_source_id, fiber_source_id, replicate_count, aggregation_method FROM fiber.v_fiber_paper_analysis WHERE canonical_code = 'BLEND_SW010_HW090'",
+        "columns": [
+          "canonical_code",
+          "tensile_index"
+        ],
+        "join_key": "paper_source_id"
+      },
+      {
+        "sql": "SELECT l.source_id, l.file_name, l.sheet_name, l.source_row, l.source_version, l.usage_type, l.experiment_code, l.display_code, l.canonical_code FROM fiber.v_data_lineage l WHERE l.source_id IN (SELECT p.paper_source_id FROM fiber.v_fiber_paper_analysis p WHERE p.canonical_code = 'BLEND_SW010_HW090') AND l.usage_type = 'paper_measurement'",
+        "columns": [
+          "file_name",
+          "sheet_name",
+          "source_row"
+        ],
+        "join_key": "source_id"
+      }
+    ]
+  ],
+  "SQL08": [
+    [
+      {
+        "sql": "SELECT COUNT(*) AS canonical_samples_with_lineage FROM fiber.v_sample_overview s WHERE EXISTS (SELECT 1 FROM fiber.v_data_lineage l WHERE l.sample_id = s.sample_id)",
+        "columns": [
+          "canonical_samples_with_lineage"
+        ]
+      }
+    ]
+  ],
+  "SQL09": [
+    [
+      {
+        "sql": "SELECT ROUND(AVG(tensile_index), 4) AS avg_tensile_index_all, COUNT(tensile_index) AS n_with_tensile, COUNT(*) AS n_samples FROM fiber.v_fiber_paper_analysis",
+        "columns": [
+          "avg_tensile_index_all"
+        ]
+      }
+    ],
+    [
+      {
+        "sql": "SELECT COUNT(*) AS n_above_avg FROM fiber.v_fiber_paper_analysis WHERE tensile_index > (SELECT AVG(tensile_index) FROM fiber.v_fiber_paper_analysis)",
+        "columns": [
+          "n_above_avg"
+        ]
+      }
+    ]
+  ],
+  "SQL10": [
+    [
+      {
+        "sql": "SELECT (SELECT COUNT(*) FROM fiber.v_recycled_cycle_detail) AS raw_obs_rows, (SELECT COUNT(*) FROM fiber.v_recycled_cycle_summary) AS block_cycle_rows, (SELECT COUNT(DISTINCT block_code) FROM fiber.v_recycled_cycle_detail) AS distinct_blocks, (SELECT COUNT(DISTINCT cycle_no) FROM fiber.v_recycled_cycle_detail) AS distinct_cycles, (SELECT SUM(replicate_count) FROM fiber.v_recycled_cycle_summary) AS sum_replicate_count, (SELECT MIN(replicate_count) FROM fiber.v_recycled_cycle_summary) AS min_rep, (SELECT MAX(replicate_count) FROM fiber.v_recycled_cycle_summary) AS max_rep, (SELECT COUNT(DISTINCT source_row) FROM fiber.v_recycled_cycle_detail) AS distinct_source_rows",
+        "columns": [
+          "raw_obs_rows"
+        ]
+      }
+    ],
+    [
+      {
+        "sql": "SELECT (SELECT COUNT(*) FROM fiber.v_recycled_cycle_detail) AS raw_obs_rows, (SELECT COUNT(*) FROM fiber.v_recycled_cycle_summary) AS block_cycle_rows, (SELECT COUNT(DISTINCT block_code) FROM fiber.v_recycled_cycle_detail) AS distinct_blocks, (SELECT COUNT(DISTINCT cycle_no) FROM fiber.v_recycled_cycle_detail) AS distinct_cycles, (SELECT SUM(replicate_count) FROM fiber.v_recycled_cycle_summary) AS sum_replicate_count, (SELECT MIN(replicate_count) FROM fiber.v_recycled_cycle_summary) AS min_rep, (SELECT MAX(replicate_count) FROM fiber.v_recycled_cycle_summary) AS max_rep, (SELECT COUNT(DISTINCT source_row) FROM fiber.v_recycled_cycle_detail) AS distinct_source_rows",
+        "columns": [
+          "block_cycle_rows"
+        ]
+      }
+    ]
+  ],
+  "SQL11": [
+    [
+      {
+        "sql": "SELECT experiment_code, canonical_code, sample_type, material_code, beating_revolutions, tensile_index FROM fiber.v_beating_analysis WHERE sample_type = 'softwood' AND beating_revolutions = 12345",
+        "columns": [
+          "tensile_index"
+        ]
+      }
+    ]
+  ],
+  "SQL12": [
+    [
+      {
+        "sql": "SELECT (SELECT COUNT(*) FROM fiber.v_fiber_paper_analysis f WHERE f.canonical_code = 'NO_SUCH_SAMPLE') AS paired_rows,\n       (SELECT COUNT(*) FROM fiber.v_sample_overview s WHERE s.canonical_code = 'NO_SUCH_SAMPLE') AS overview_samples,\n       (SELECT COUNT(*) FROM fiber.v_fiber_paper_analysis f WHERE f.canonical_code = 'NO_SUCH_SAMPLE' AND f.tensile_index IS NOT NULL) AS paired_nonnull_tensile,\n       (SELECT COUNT(*) FROM fiber.v_fiber_paper_analysis f WHERE f.canonical_code = 'NO_SUCH_SAMPLE' AND f.tensile_index = 0) AS paired_zero_tensile,\n       (SELECT AVG(f.tensile_index) FROM fiber.v_fiber_paper_analysis f WHERE f.canonical_code = 'NO_SUCH_SAMPLE') AS tensile_index_avg",
+        "columns": [
+          "tensile_index_avg"
+        ]
+      }
+    ]
+  ],
+  "SQL13": [
+    [
+      {
+        "sql": "SELECT COUNT(*) AS total_rows, COUNT(fiber_length_weighted_mm) AS weighted_nonnull_rows, ROUND(AVG(fiber_length_weighted_mm), 4) AS weighted_mean_mm, COUNT(DISTINCT block_code) AS blocks FROM fiber.v_recycled_cycle_detail",
+        "columns": [
+          "total_rows",
+          "weighted_mean_mm"
+        ]
+      }
+    ]
+  ],
+  "SQL14": [
+    [
+      {
+        "sql": "SELECT COUNT(*) AS anomaly_rows, COUNT(DISTINCT source_row) AS distinct_source_rows, MIN(deviation_from_100_pct) AS min_dev, MAX(deviation_from_100_pct) AS max_dev, MIN(length_distribution_sum_pct) AS min_sum_pct, MAX(length_distribution_sum_pct) AS max_sum_pct FROM fiber.v_recycled_data_quality",
+        "columns": [
+          "anomaly_rows"
+        ]
+      }
+    ]
+  ],
+  "SQL15": [
+    [
+      {
+        "sql": "SELECT canonical_code, sample_type, sw_proportion_pct, hw_proportion_pct, air_permeability, folding_endurance_raw, replicate_count, aggregation_method, paper_source_id FROM fiber.v_fiber_paper_analysis WHERE canonical_code = 'BLEND_SW010_HW090'",
+        "columns": [
+          "air_permeability",
+          "folding_endurance_raw"
+        ]
+      }
+    ]
+  ],
+  "SQL17": [
+    [
+      {
+        "sql": "SELECT canonical_code, sample_type, sw_proportion_pct, hw_proportion_pct, sw_beating_revolutions, hw_beating_revolutions, fiber_length_arithmetic_mm, fiber_length_weighted_mm FROM fiber.v_blend_analysis WHERE canonical_code = 'BLEND_SW010_HW090' ORDER BY display_order",
+        "columns": [
+          "fiber_length_weighted_mm"
+        ]
+      }
+    ]
+  ],
+  "SQL18": [
+    [
+      {
+        "sql": "SELECT canonical_code, display_code, beating_revolutions, tensile_index, replicate_count FROM fiber.v_beating_analysis WHERE sample_type = 'softwood' AND beating_revolutions IN (4000, 8000) AND tensile_index IS NOT NULL ORDER BY beating_revolutions, canonical_code",
+        "columns": [
+          "beating_revolutions",
+          "tensile_index"
+        ]
+      }
+    ]
+  ]
+}

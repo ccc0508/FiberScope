@@ -1,0 +1,1256 @@
+{
+  "MIX01": {
+    "fingerprint": "538c4581b969552c45a659741adc75af27f734e6ad3b2ebd63e99eef6610cce1",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Find views for beating, pulp type, freeness, fiber length, tensile index"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Inspect columns of beating analysis view"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Get beating degree, length-weighted fiber length, tensile index at 8000 cumulative revolutions for softwood and hardwood"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：undefined_column"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Inspect columns of paired view to find beating degree and revolutions fields"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Cross-check paired sample-grain view for pure hardwood/softwood at 8000 revolutions"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate sections of the Li, Zhao & He 2020 PFI refining paper relevant to refining conditions (PFI revolutions, specific refining energy, pulp types, consistency, load) and conclusions about whether equal revolutions equal equal refining intensity."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Get exact PFI refining conditions (pulp types, consistency, load, revolution counts, energy) to compare with local records."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": false,
+        "reason": "两种浆的结果段不能进一步确定设备载荷，关键方法段已经读过。"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：prioritize_uncovered_requirements"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Targeted search for the paper's statements on refining intensity/energy vs revolutions and on species-dependent response, to judge whether equal revolutions can equal equal treatment intensity."
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e4"
+        ],
+        "reason": "本地两种浆8000转的样本、打浆度、长度、抗张指数：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e9"
+        ],
+        "reason": "PFI论文两种浆处理的载荷等工艺条件：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX02": {
+    "fingerprint": "c8a85d29097f4df5fe92f791a0e3460efda3c5c237807a8710a98e2b6f4b97df",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need directory of local experiment views to find fiber length, tensile index, beating revolutions for softwood pulp."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Let me inspect fiber and paper metric fields in paired and beating views."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Get canonical softwood samples at 4000 and 8000 cumulative beating revolutions with length-weighted fiber length and tensile index."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Absolute change in length-weighted fiber length between 4000 and 8000 revolutions for local softwood pulp."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Absolute change in tensile index between 4000 and 8000 revolutions for local softwood pulp."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate crystallinity index (CI) and crystallinity index difference/XI data for softwood (针叶木) at 4000 and 8000 PFI revolutions in Li, Zhao & He 2020."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Verify Table 1(a) softwood CI-XI values at 4000 and 8000 revolutions, row/column labels and units (%), so the two-row pairing can be supported by exact locators."
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "本地针叶木4000转和8000转的长度、抗张指数：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e7",
+          "e9"
+        ],
+        "reason": "PFI论文两档CI-XI的数值与对象：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX03": {
+    "fingerprint": "9028f42d2aee3b5156544757eff60514422b458993f0bd30b819661ead8f610b",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Inspect available views to find local softwood pulp fines length/area share and tensile index data at 4000 and 8000 revolutions"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need columns, units and enums for beating analysis and paired fiber-paper view to locate fines length/area share and tensile index"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：undefined_column"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Retrieving softwood records at 4000 and 8000 cumulative revolutions with fines length %, weighted fines length %, fines area %, tensile index and paper aggregation metadata"
+      },
+      {
+        "correct": false,
+        "reason": "第一次有效查询已按指定两档取齐该组指标。"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate Motamedian 2019 fines definition and measurement method"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Get Motamedian 2019 pulp characterization: how fines length/area percentages were measured"
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e4"
+        ],
+        "reason": "本地两档细小纤维长度占比、面积占比及抗张指数：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e7"
+        ],
+        "reason": "Motamedian对fines的定义与仪器限制：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX04": {
+    "fingerprint": "e7a9457143cc7420dc92933f5224bf1c0eaf90ddc0cea4b16c49a8818053421d",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Find views for blended-pulp handsheet analysis with softwood ratio and tensile/burst/tear indices"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Inspect blend analysis view columns, units, enums for softwood ratio and tensile/burst/tear indices"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：List blend experiment records with softwood proportion 0/50/100% and their tensile, burst, tear indices"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate sections and figure references in the CLSM 2020 paper to find 图3 about 棉浆/马尾松浆配抄."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate 图3 to actually view the 棉浆/马尾松浆配抄 trend."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：View the (a) tensile strength subfigure of 图3 to read the 棉浆/马尾松浆 blending trend."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：View (c) 耐破度 subfigure trends for 棉浆 vs 马尾松浆."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：View (b)/(d) subfigures with 透气度 and 撕裂度 to check 棉浆 vs 马尾松浆 tearing trend."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Read the 抗张强度和耐破度 results text for figure numbering and author explanation of the 棉浆 vs 马尾松浆 trends."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate the printed figure number (图3) and any printed numeric values / repetition or standard deviation statements for the 马尾松浆 vs 棉浆 blending curves, to firm up need_2 figure identity and need_3 measurement-limit checks."
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "本地0%、50%、100%配比与三项纸张指标：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e6",
+          "e7",
+          "e8",
+          "e9"
+        ],
+        "reason": "实际查看CLSM论文图3，取得棉浆与马尾松配抄曲线：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX05": {
+    "fingerprint": "4c62983e4988d1b3680fd198adddc4471cc7c1438124347532311da29567de2e",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need to find views containing fiber index metrics (tensile/tear/burst index) and furnish composition (softwood share) to compute relative changes."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Inspect blend and paired views for exact columns, units, and softwood ratio enums needed to select 50% softwood blends and pure hardwood endpoints."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Identify blend records with 50% softwood and pure hardwood endpoints (sw_proportion_pct=0) and their index values."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Check whether the paired view also contains the 50% softwood blend and pure hardwood endpoint, to cross-check values and confirm sample membership."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：ValueError"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：ValueError"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：定位2020年CLSM论文中蔗渣浆配抄马尾松浆50%的三项性能数据所在章节"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：查找蔗渣浆配抄50%马尾松浆的抗张强度与耐破度数据"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：抗张/耐破章节为定性的纤维形态比较讨论，未见配抄50%的数值；用定向检索定位蔗渣浆+马尾松配抄的三项提升数据（可能在表中）"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：invalid_arguments"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：search_budget"
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "本地针叶木50%复配记录和阔叶木端点的三项指数：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e12"
+        ],
+        "reason": "CLSM论文50%马尾松配抄三项独立提升：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX06": {
+    "fingerprint": "3f0f14ea2b47705b84da7afe32274780167c58a6a6b14a9228d59f40d4c8a463",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate views containing fiber fineness/coarseness for sample BLEND_SW010_HW090"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need actual columns and units for fiber coarseness in the paired and blend views"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Retrieve fiber coarseness (mg/m) plus conditions for canonical sample BLEND_SW010_HW090"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate fibre coarseness definition, values and units in Morais & Curto 2022 tissue prediction paper and Uddin 2024 fibre-quality parameters paper."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Identify whether Morais & Curto 2022 uses fibre coarseness as a model input and with which unit."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Find methods/results sections where fibre coarseness input variables and their units are defined in Morais 2022."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Morais 2022 MLR section likely lists input variables (X1..X9) for coarseness with units; needed to determine coarseness unit and conversion rule."
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "本地指定样本的粗度值和单位：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e5"
+        ],
+        "reason": "Morais粗度的原文单位：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e4"
+        ],
+        "reason": "Uddin粗度的原文单位：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX07": {
+    "fingerprint": "781f3ef04b7d5e6a832096b16b2b3aa9740102cf51c0e28d732072c9b99b3341",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate canonical sample paired views and fiber/paper target fields for the correspondence table."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Get actual columns/units for the canonical paired view and the overview view."
+      },
+      {
+        "correct": false,
+        "reason": "任务为字段映射，额外计算记录覆盖数没有补充新字段定义。"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：tool_not_allowed"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate Uddin 2024's seven fibre-quality input parameters and three pulp/paper target outputs used in MLR and ANN models."
+      },
+      {
+        "correct": false,
+        "reason": "视图字段映射与论文参数已可核对，未要求再查看相关图像。"
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e2"
+        ],
+        "reason": "本地配对视图的字段、单位及缺失项：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e5"
+        ],
+        "reason": "Uddin的七个输入和三个输出：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX08": {
+    "fingerprint": "8c87e0be3a6897d5de10d279df3a4d5fb95e7daa210140424699769084c48c48",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：了解本地实验数据目录，定位针叶木浆打浆转数与扭结、抗张强度相关视图"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：查看打浆分析与配对样本视图的实际字段、单位和枚举值，确认扭结指标与抗张指数的列名"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：查询本地针叶木浆在累计打浆转数4000、8000、14000转时的扭结相关指标（扭结角、扭结纤维比例）与抗张指数"
+      },
+      {
+        "correct": false,
+        "reason": "重复核对已获的本地三档指标。"
+      },
+      {
+        "correct": false,
+        "reason": "题目未要求端点变化计算，已具备三档数值。"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": false,
+        "reason": "额外计算未补充所需证据。"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate Figure 5 in Uddin 2024 for kink/fibre-quality vs pulp properties."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：View Figure 5 pixels to read normalized importance of fibre-quality parameters including kink."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Find Pennells 2022 sections on kink for strength discussion."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Read Pennells 2022 dedicated section \"Influence of kinked fibres\" to capture direction, limits and conditions of kink effect."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need Uddin 2024's text interpretation of Figure 5: kink's influence on pulp/tensile properties, sample/process scope and whether positive or negative."
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "本地针叶木三档的扭结指标及抗张指数：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e10",
+          "e13"
+        ],
+        "reason": "实际查看Uddin图5，取得归一化重要性：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e12"
+        ],
+        "reason": "Pennells的扭结关系及混杂条件：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX09": {
+    "fingerprint": "8252850065e531680da10b350cb73d2d074c971a97c5efe0d35fc49a370e137f",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Inspect project experiment data views to find recycled pulp raw observations and block/cycle aggregated views"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Get columns/units/enums for recycled pulp raw detail, cycle summary and sample overview views"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Count raw recycled pulp observation rows and distinct block/cycle blocks, plus replicate count stats"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Assess non-null coverage of tensile strength and fiber-form variables in recycled detail, and confirm dataset scope"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Identify sections of the Li 2023 recycled-fiber ML paper to locate WRV, RBA, damage index, tensile strength chain."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Read section 4.3 quantitative expression of damage index to capture WRV/RBA → damage index relationship."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Capture measured inputs WRV, RBA, fiber length, tensile strength, recycling cycles in methods."
+      }
+    ],
+    "needs": [
+      {
+        "sources": [],
+        "reason": "运行未进入最终综合作答，子任务中的证据未送达该环节。"
+      },
+      {
+        "sources": [],
+        "reason": "运行未进入最终综合作答，子任务中的证据未送达该环节。"
+      },
+      {
+        "sources": [],
+        "reason": "运行未进入最终综合作答，子任务中的证据未送达该环节。"
+      }
+    ]
+  },
+  "MIX10": {
+    "fingerprint": "779a34c4a611a0b1fc70c094cd136878748e93ae04bd0cd7055fc134c22c70c4",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Inspect available views to find tensile strength/index measurements for recycled pulp G01 and softwood pulp."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need columns/units/enums for recycled cycle summary and paired analysis views."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Get mean tensile strength (kN/m) per cycle for recycled pulp block G01, from the cycle summary view (one row per block×cycle, metrics are means)."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Tensile index (N·m/g) for softwood pulp at 8000 cumulative beating revolutions, from the paired canonical sample view, joined with beating view to confirm coexistence."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate methods/target definition for Li 2023 tensile strength prediction of recycled fiber sheets."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need the exact tensile target definition (tensile strength vs tensile index), sheet basis weight, recycling cycles, fiber types for Li 2023."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need Li 2023 predicted target (tensile strength, recycled sheets) vs Uddin 2024 predicted pulp properties/targets, to judge mergeability into one tensile column."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Find Uddin materials/refining variables section to confirm PFI revolutions (8000) and raw materials, and whether tensile index is grammage-normalized (Nm/g)."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Confirm Uddin refining levels (PFI revolutions, e.g., 8000), raw materials and how tensile index is measured/normalized."
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "G01各循环抗张强度均值及单位：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e4"
+        ],
+        "reason": "本地8000转针叶木的抗张指数及单位：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [],
+        "reason": "最终上下文未完整保留可核对目标量与单位的对应原文；子任务自己的断言不计来源。"
+      },
+      {
+        "sources": [],
+        "reason": "最终上下文未完整保留可核对目标量与单位的对应原文；子任务自己的断言不计来源。"
+      }
+    ]
+  },
+  "MIX11": {
+    "fingerprint": "a0ab8126d7d8f4ac518b884181d9ad8c996a04ab5557cf18fe9b49fc5ebe4223",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：需要了解规范样本与来源追溯记录相关的视图结构、字段与粒度，才能正确统计去重样本数。"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：查看来源追溯视图与规范样本视图的实际字段、单位与枚举值，判断如何去重统计有来源追溯的规范样本。"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：统计规范样本总数、有来源追溯记录的去重规范样本数，以及来源关联行数与去重源行数，用于对比行数放大。"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：核对来源追溯用途分布、每个样本的来源用途关联行数放大情况，以支持\"来源关联行数���能当作样本数\"的解释。"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate methods/data description sections in Ayaliew 2026 to find dataset origin, sample count and train-test split."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Read data preparation section for dataset origin and sample counts."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Read data splitting and validation strategy section for train/test proportions and validation type."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Targeted search for limitations of synthetic data and absence of independent experimental validation."
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "去重后有来源的本地样本数：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e6",
+          "e8",
+          "e9"
+        ],
+        "reason": "Ayaliew的数据生成性质、规模及划分：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX12": {
+    "fingerprint": "c1dae4f1352604bd0c7a7511833b19ec1ca969f869875c76fa31124d8144461d",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need to find canonical sample views and tensile index metric columns to count samples."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need actual columns in the canonical sample view and the paired sample view to count samples with tensile index records."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Count canonical samples total and how many have a tensile index record, plus breakdown by sample type."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": false,
+        "reason": "按样本类型额外展开，与题目所问的两个全体计数无关。"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate Ayaliew 2026 model comparison (ANN vs other models, R2, validation) and Pennells 2022 Table 5/Table 7 tensile prediction results."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Find sections around Table 5 and Table 7 tensile/nanopaper prediction in Pennells."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Read nanopaper regression models section to capture Table 5/Table 7 tensile prediction results and model types."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need Table 7 (validation of model predictions) and model validation section to assess whether SVR/MLR predictions were independently validated and sample scope."
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "本地总样本及非空抗张指数数量：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e6"
+        ],
+        "reason": "Ayaliew的数据来源、模型验证：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e9",
+          "e10"
+        ],
+        "reason": "Pennells表5与表7的抗张预测误差：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX13": {
+    "fingerprint": "a9d5c7121575fb8f7a48ea6da11b2e26579187369af118758a7172e6d765251b",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need the directory of local experiment views to find canonical sample type counts and recycled pulp raw observation grain."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need columns and live enums for sample overview (canonical sample types) and recycled detail (raw observation grain / blocks / cycles)."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Count canonical samples by sample_type in the sample overview (one canonical sample per row)."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：unsupported_sql"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Requirement 2: raw row total, distinct blocks and cycles; block×cycle combinations counted by grouping (no string concatenation)."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Count distinct data block × cycle combinations by grouping rows on both keys (grouped subquery avoids string concatenation)."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate methods/splitting sections in Morais 2022 tissue paper prediction paper"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate methods/data splitting sections in Uddin 2024 paper"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Find Uddin 2024 data partition (train/test split) description"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：prioritize_uncovered_requirements"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Morais 2022 ANN section: training/validation split description"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Uddin 2024 ANN results: look for train/test split proportion and validation approach"
+      },
+      {
+        "correct": false,
+        "reason": "补查转向未被要求的第三篇回收论文。"
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "各规范样本类型及样本数：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e6"
+        ],
+        "reason": "原始明细的独立数据块数：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e7"
+        ],
+        "reason": "独立块×循环组合数：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e13"
+        ],
+        "reason": "Morais的训练测试划分：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e14"
+        ],
+        "reason": "Uddin的训练验证划分：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX14": {
+    "fingerprint": "f2a3e867d16893aa8346607149fc4181f453dd60680d12591473e14baed14de5",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Find views for recycled pulp raw observations with fines metrics"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Inspect recycled pulp raw observation and cycle summary view columns, units and sample codes"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：G01 cycle 1 fines metrics: raw observations (count of non-null, values) and summary means"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：G01 cycle 1 summary row for the three fines metrics plus replicate count and metadata status"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：invalid_arguments"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：invalid_arguments"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Check available sections of Pennells 2022 to locate fines definition, instrument (fibre analyser) and detection limits"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Pennells 2022 definition of nanofibre/fines morphology classes and analyser limits"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：prioritize_uncovered_requirements"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Motamedian等（2019）不在提供的目录中；检查 s10570-019-02349-5（Cellulose 2019，PFI精磨与细小纤维）是否为该文以便承接 need_3"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：读 s10570-019-02349-5 的“Formation of fines”章节，获取细小纤维定义（尺寸界定）与测量仪器，判断是否为Motamedian等2019"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：读 Pulp characterization 方法部分，确认细小纤维测量仪器、量纲与检出/分档阈值，以备与本地记录对齐"
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e2",
+          "e5"
+        ],
+        "reason": "本地再生视图细小纤维指标、单位及G01循环1数值：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e9"
+        ],
+        "reason": "Pennells的细小纤维测量限制：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e12",
+          "e13"
+        ],
+        "reason": "Motamedian的细小纤维定义与仪器限制：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX15": {
+    "fingerprint": "1952ce726029d53cbec52f512051294ec63337addb78ddbb813f4a3d1f9b7713",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need directory of available views to find fields for sample BLEND_SW050_HW050 (length, width, basis weight / quantitative fields)."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need actual columns/units for the canonical sample view and paired view to check length, width, basis weight fields for BLEND_SW050_HW050."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Retrieve existing fiber length, width and basis weight (plus thickness) for canonical sample BLEND_SW050_HW050 from the paired sample view."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate methods sections of Morais & Curto 2022 on tissue paper prediction / 3D network simulation."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Read the 3D fiber-based modeling simulation section to understand how Morais & Curto 2022 obtain structure information."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate methods sections of the 2020 CLSM paper on 3D structure characterization and paper properties."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Read the dedicated porosity determination section of the 2020 CLSM paper."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Read the CLSM sample preparation and Z-direction section scanning sections to see how structural information (including porosity) is obtained via CLSM."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Read section 4.3 on validation using experimental and 3D fiber-based modeling to see whether structural properties (e.g., porosity) from simulation are compared with measured values."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：prioritize_uncovered_requirements"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Resolve whether the 2020 CLSM paper derives porosity/structure from CLSM image analysis or only from benzene immersion measurement."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：ValueError"
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "本地指定样本已有长度、宽度与定量字段：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e6",
+          "e10"
+        ],
+        "reason": "Morais三维网络模拟的输入与验证：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e8",
+          "e9"
+        ],
+        "reason": "CLSM论文结构信息的成像与处理方法：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX16": {
+    "fingerprint": "ff166bf3e6811cb6d62431e2e1699f07e92e2e4f1a2ed59e67693017e331b565",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Inspect view directory to find suitable views for sample tensile index and paper measurement provenance (file, sheet, row)."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need real columns, units and lineage fields for sample tensile index plus paper measurement provenance."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Retrieve tensile index and paper-measurement provenance (file, sheet, row) for canonical sample BLEND_SW010_HW090."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": false,
+        "reason": "前一查询已经返回指定样本的纸张来源行及抗张指数。"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate sections describing prediction performance for different tissue paper targets."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Read the industrial base tissue papers MLR results, which should report per-target model performance and explanatory power."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Read the conclusion to get the authors' own synthesis of per-target predictability for industrial base tissue papers, needed for the recommendation judgement."
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "指定样本的抗张指数：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "对应纸张测量的文件、表和行号：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e7"
+        ],
+        "reason": "Morais对工业原纸各目标的预测表现：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX17": {
+    "fingerprint": "7cf8953d2c1606781b5cbe535781f632f1b9daaed277e88cffca5f26de56de7c",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate views for softwood pulp beating revolutions and tensile index"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need real columns, units, enums for beating analysis and paired views"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Exact query: softwood pulp, cumulative beating revolutions = 12345, tensile index"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": false,
+        "reason": "重复核对已确认的精确空结果。"
+      },
+      {
+        "correct": false,
+        "reason": "额外计数未改变精确条件的空结果。"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：invalid_arguments"
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：duplicate_call"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Identify sections likely naming PFI refining revolution levels in the Li/Zhao/He 2020 PFI refining paper."
+      },
+      {
+        "correct": false,
+        "reason": "读到了Motamedian，题目指定Li的论文。"
+      },
+      {
+        "correct": false,
+        "reason": "仍在错误论文内核对作者。"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Check whether this other Li-2020 PFI refining paper states its own PFI revolution levels, to see if it is the paper cited as Li, Zhao & He (2020)."
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "本地指定12345转精确查询的行数或结果：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [],
+        "reason": "取到了其他论文的PFI条件，不能替代题目指定论文。"
+      }
+    ]
+  },
+  "MIX18": {
+    "fingerprint": "ff3568cba30ccbcda2ad1ae8df725c6b862cf7eacfc512d7132ee00c2244512b",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Inspect local views to see what fields exist, especially any energy consumption (kWh), beating revolutions, freeness fields."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need actual columns, units, enums for beating analysis and sample overview to check for energy consumption fields and beating revolution/freeness fields."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Check whether softwood (SW) beating experiments actually cover 4000 and 8000 revolutions, what measurements exist at those levels, and how many distinct samples/experiments. Also list all column names in beating analysis to confirm no energy field beyond those described (the describe output showed the full column list, but row counts and coverage are needed)."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": false,
+        "reason": "统计全部转数的样本数与判断电耗字段无关。"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate whether Li, Zhao & He (2020) PFI refining paper reports refining energy consumption (kWh) or beating degree/revolution only."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Motamedian et al. 2019 (s10570-019-02349-5, mechanisms of strength/stiffness improvement after PFI refining) — locate methods/energy discussion sections to determine whether refining energy consumption is reported and at what revolution levels."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Check Motamedian et al. 2019 experimental section: whether refining energy consumption (specific energy, kWh/t) is measured/reported, and what refining levels (revolutions) were used."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Targeted check whether either paper reports refining energy consumption (kWh/t, Wh) or measured power alongside PFI revolutions; needed to judge whether the \"electricity doubles\" claim is supported."
+      },
+      {
+        "correct": false,
+        "reason": "论文条件已有定向检索和方法段，末次只列目录。"
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e1",
+          "e2",
+          "e3"
+        ],
+        "reason": "本地目录对打浆转数和电耗可用性的区分：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e6",
+          "e10"
+        ],
+        "reason": "Li论文中PFI实验条件及测量量：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e9"
+        ],
+        "reason": "Motamedian论文PFI工艺、添加剂和测量量：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX19": {
+    "fingerprint": "890775f2d2c46c1c6213c1c04de79068fe88421749a93a91e3f18b114a57e3b9",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need directory to find canonical sample views and tensile index metric"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Get actual columns/units for paired canonical sample view"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Top-3 canonical samples by tensile index, excluding missing tensile index, ties broken by canonical_code ascending"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Locate methods/dataset and results sections of Ayaliew 2026 to verify whether reported samples are measured experimental specimens and to check the R²≈0.9975 claim."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Check data preparation/dataset description: whether data are experimental measurements, where they come from, and sample counts."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：one_tool_per_turn"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Check validation strategy and dataset splitting to assess whether the reported R² is a held-out test metric on synthetic data."
+      },
+      {
+        "correct": false,
+        "reason": "该提案违反本轮工具约束或参数无效：prioritize_uncovered_requirements"
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Targeted search for the specific R² ≈0.9975 value and which model/dataset it refers to, since the results tables may be in later sections."
+      }
+    ],
+    "needs": [
+      {
+        "sources": [
+          "e3"
+        ],
+        "reason": "本地非空且按题意排序的抗张指数前三样本：依据所列最终上下文来源核对。"
+      },
+      {
+        "sources": [
+          "e5",
+          "e7",
+          "e9"
+        ],
+        "reason": "Ayaliew的数据来源、目标及验证范围：依据所列最终上下文来源核对。"
+      }
+    ]
+  },
+  "MIX20": {
+    "fingerprint": "ce8e19a98ac0cd03633082d55c40e46ef9e04cb51dd16dfbf0089173b72cd5ab",
+    "calls": [
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need to find views with strength and beating/high-speed refining data for softwood (针叶木) pulp."
+      },
+      {
+        "correct": true,
+        "reason": "按题目要求执行：Need actual columns, units and enums for beating and paired sample views."
+      },
+      {
+        "correct": false,
+        "reason": "歧义未解除，列出各档记录超出澄清所需信息。"
+      }
+    ],
+    "needs": []
+  }
+}
