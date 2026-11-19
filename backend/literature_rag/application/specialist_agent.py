@@ -42,6 +42,10 @@ class ResultDrivenPlan(Plan):
 
     @model_validator(mode='after')
     def validate_execution_order(self):
+        for req in self.requirements:
+            if req.role=='sql' and req.metric is None and any(word in req.source_quote for word in
+                    ('多少个','各有多少','有多少条','how many')):
+                raise ValueError('Split requested counts into individual requirements with a metric for each')
         if self.parallel_start and (self.route != 'both' or self.dependency != 'independent'):
             raise ValueError('Parallel initial dispatch requires independent work in both roles')
         if self.route != 'both':
@@ -99,6 +103,13 @@ unless the user explicitly asks about origin. Never add that filter or clarifica
 For delegated routes fill requirements: each item has role, source_quote (EXACT contiguous user text),
 and paper_quote (EXACT user text naming the paper, or empty for SQL). Split independently requested facts;
 for multiple papers create a separate item for EACH named paper even if source_quote is shared.
+For SQL, split every independently requested number/measure into its OWN requirement with a metric.
+A joint counting key is ONE entity, but counting an entity and counting its combinations are TWO deliverables.
+Grouped counts of the same entity use one metric with group_by. Reuse an exact source_quote when necessary.
+Metric = population, operation, keys (what identifies one counted entity or which measurement),
+group_by (breakdown axes, NOT the counting keys), equals (user filters). No assumed result values.
+Use known field identifiers or domain names: 规范样本, 样本类型, 数据块, 循环, 重复观测编号.
+Choose unmapped for unsupported definitions/filters; omit metric only for non-numeric tasks.
 Include table/figure requests, calculations and comparison needs; include no inferred answers.
 sql_task/literature_task are only brief task descriptions, never scientific answers. Original user text
 is authoritative; preserve it without adding extra metadata requests or changing scope.'''
@@ -192,18 +203,36 @@ as measurements. Keep recommendations distinct from paper findings and omit unsu
 """
 
 SQL_PROMPT=COMMON+'''
+For EVERY numeric requirement report coverage.cells as a list of {ref,row,column,value}.
+row is the zero-based position IN THE SUPPLIED snapshot, column its exact output label. For grouped
+outputs list one cell per group and SELECT the grouping field too. Cite the same ref in coverage.refs.
+Use JSON null for a SQL NULL cell; never replace it with zero or the string "NULL".
+Do not invent rows. Check actual schema, population, grouping keys, filters and units. One SQL may satisfy
+several metrics via different columns. A selected historical result may satisfy only the metrics it contains.
+When fresh_query is true, run the query yourself. Report missing/partial for an unsupported metric;
+verified must have no unresolved gap. For unfiltered counts avoid synthetic LIMIT, WHERE or extra joins.
 You handle experimental SQL only. First describe_experiment_data for directory then selected view details.
 Use real columns, units, enums and grain. If metric/threshold is ambiguous, inspect directory then stop with
 needs_clarification; do not compute substitute values. Ask only missing choices, not specified material.
 Only cumulative beating revolutions are recorded, not rpm. For canonical samples use sample/paired views;
 one experiment's empty result cannot establish absence everywhere. Use JOIN/EXISTS for sample membership,
 COUNT DISTINCT where joins multiply rows. COUNT(*) differs from COUNT(metric); AVG ignores NULL.
+For recycled measurement metrics use v_recycled_cycle_detail. The summary view contains per-block/cycle
+means; its measurements and aggregates cannot certify raw-observation metrics. Its counts remain usable.
 Allowed SELECT joins/subqueries and COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF; no CASE, explicit CAST,
 CTE, UNION or arbitrary functions. EXPLAIN estimates work, not statistical correctness. On errors use the
 specific diagnostic without altering the intended population. Truncated data require SQL aggregates over
 the same filters. Preserve units, tentative/unknown status. Strength/index caveats apply only to those metrics.
 Return requested facts only; do not invent group sizes, causal claims, ranges or SQL examples. SQL refs are
 database snapshots, not paper quotations.'''
+
+SQL_BATCH_PROMPT=SQL_PROMPT.replace('one per turn.', 'one per turn except for independent SELECTs.')+'''
+Once the schema and all parameters are known, request independent query_experiment_data SELECTs
+in the same turn; set independent_in_turn=true for each. They execute sequentially and each costs
+one tool call. If parameters, filters or the decision to query depend on a sibling result, wait
+until that result is available. Keep directory lookups and calculations in separate turns.
+PostgreSQL || is supported for string concatenation. For distinct tuples prefer COUNT(DISTINCT
+(key1,key2)) or count grouped rows; concatenated values need not uniquely identify a tuple.'''
 
 PAPER_PROMPT=COMMON+'''
 You handle literature only. Use provided paper IDs; search_literature expands evidence. Use document filters
@@ -482,7 +511,8 @@ class SpecialistCoordinator:
                             max_search_calls=max(0,b.max_search_calls-counters['search']),
                             reserve_seconds=min(15,seconds/3),max_context_chars=b.max_context_chars,max_output_tokens=b.max_output_tokens),
                         clock=self.clock,paper_directory=self.paper_directory if name=='literature' else None,
-                        allowed_tools=allowed,system_prompt=SQL_PROMPT if name=='sql' else PAPER_PROMPT+PAPER_COVERAGE+PAPER_EVIDENCE_CHECKS+EVIDENCE_OUTPUT_RULES+(COVERAGE_PRIORITY_INSTRUCTIONS if priority else ''),review_enabled=False,
+                        sql_batches=self.result_driven and name=='sql',
+                        allowed_tools=allowed,system_prompt=(SQL_BATCH_PROMPT if self.result_driven else SQL_PROMPT) if name=='sql' else PAPER_PROMPT+PAPER_COVERAGE+PAPER_EVIDENCE_CHECKS+EVIDENCE_OUTPUT_RULES+(COVERAGE_PRIORITY_INSTRUCTIONS if priority else ''),review_enabled=False,
                         output_schema=SpecialistResult.model_json_schema(),
                         result_validator=SpecialistResult if self.result_driven else None,
                         extend=extension if self.result_driven else None,

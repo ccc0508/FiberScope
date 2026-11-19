@@ -2,6 +2,7 @@
 import json
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Literal
+from .sql_deliverables import Metric, MetricCell, verify_metric
 
 
 class Requirement(BaseModel):
@@ -9,6 +10,7 @@ class Requirement(BaseModel):
     role: Literal['sql', 'literature']
     source_quote: str = Field(min_length=1, max_length=1500)
     paper_quote: str = Field(default='', max_length=200)
+    metric: Metric | None = None
 
 
 class EvidenceCheck(BaseModel):
@@ -29,16 +31,17 @@ class CoverageItem(BaseModel):
     finding: str = Field(default='', max_length=800)
     gap: str = Field(default='', max_length=800)
     checks: list[EvidenceCheck] = Field(default_factory=list, max_length=12)
+    cells: list[MetricCell] = Field(default_factory=list, max_length=100)
 
 
 def ground_requirements(requirements, question):
     accepted, rejected = [], []
     for r in requirements:
-        item = r.model_dump()
+        item = r.model_dump(exclude_none=True)
         if r.source_quote not in question or (r.paper_quote and r.paper_quote not in question):
             rejected.append(dict(item, reason='not_verbatim_user_text'))
             continue
-        if any(all(a[k] == item[k] for k in item) for a in accepted):
+        if any({k:v for k,v in a.items() if k!='requirement_id'} == item for a in accepted):
             continue
         accepted.append(dict(item, requirement_id=f'need_{len(accepted)+1}'))
     return accepted, rejected
@@ -85,6 +88,10 @@ def coverage_report(requirements, coverage, trace):
                 elif item.get('document_id') and not any(item['document_id'] in documents.get(ref, set()) for ref in item['refs']):
                     errors.append('document_not_supported_by_refs')
             elif not item['refs'] and not described: errors.append('no_query_or_directory_evidence')
+            if need['role']=='sql' and need.get('metric'):
+                problem=verify_metric(need,item,trace)
+                if problem: errors.append(problem)
+                if item['status']=='verified' and item.get('gap'): errors.append('verified_with_unresolved_gap')
         check_errors = []
         checks = item.get('checks', [])
         for index, check in enumerate(checks):
@@ -118,7 +125,8 @@ def completion_feedback(requirements):
         report = coverage_report(requirements, parsed.coverage, trace)
         trace.setdefault('coverage_checks', []).append(report)
         if parsed.status == 'needs_clarification' or report['complete']: return None
-        return ('Coverage is incomplete. Within the REMAINING budget, prioritize unattempted papers and '
+        return ('Coverage is incomplete. For a missing SQL metric run a targeted query or supply the correct existing result cells; '
+                'do not mark unrelated results verified. Within the REMAINING budget, prioritize unattempted papers and '
                 'requested facts over further detail on covered items. Use targeted document/table/figure '
                 'lookup. If no useful path remains, report missing honestly; never invent a verified item. '
                 'Return the full result with one coverage entry per requirement.\n'+json.dumps(report, ensure_ascii=False))
