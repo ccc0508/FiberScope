@@ -84,3 +84,28 @@ $common = @(
 ```
 
 结果为 `semantic-audit.html`、`semantic-audit-details.json`、`semantic-audit-summary.json`，分别提供逐题原文、明细和汇总。涉及图像的要点只按实际传给这三个文本重排器的文字检查；不会把未提供的 PDF 图片视为已召回证据。可由领域人员复查并修订映射，重新汇总时保留新的注释文件哈希。
+
+## Qwen3.7 补测
+
+支持 `--model qwen37`，对应百炼 `qwen3.7-text-rerank`，使用已有百炼密钥和同一个原生端点。主对照保持原始问题、候选正文、候选顺序及默认问答排序指令，仅更换请求中的模型名称。不额外设置 `instruct`，避免把模型更新和提示词调整混在一起。
+
+默认运行仍为原来的 BGE/Qwen/Jev 三模型；不会因增加此选项意外多发付费请求。报告发现 `calls/qwen37` 后才增加新版结果，旧的三模型输出仍可复算。逐要点汇总会识别新增模型，验证它排序的仍是同一组候选编号。
+
+补测使用独立的 `output/reranker-qwen37-20261119`，复制并复用原实验的冻结池及三模型响应，不改原实验目录。这里只新增24次重排请求及3次独立计时请求。新命中的原文逐条复查；可补录它们对既有子事实的等价支持，但不更换要点、评分规则和不适用项，并验证旧三模型的全部汇总分数保持不变。新增支持映射与原注释文件均保留，便于复查。
+
+```powershell
+# 独立目录须先备好与原实验完全相同的pools.json、证据注释和复用响应。
+$extra = @(
+  '--source', 'D:/develop/srp2.0',
+  '--library', 'D:/develop/srp2.0/.rag-data/index-versions/paper-collection-definitions-20261106',
+  '--output', 'D:/develop/srp2.0/output/reranker-qwen37-20261119'
+)
+& ./.venv/Scripts/python.exe -X utf8 scripts/compare_rerankers.py run @extra --model qwen37 --workers 3
+& ./.venv/Scripts/python.exe -X utf8 scripts/compare_rerankers.py timing @extra --model qwen37 --workers 1
+& ./.venv/Scripts/python.exe -X utf8 scripts/compare_rerankers.py report @extra
+& ./.venv/Scripts/python.exe -X utf8 scripts/audit_reranker_evidence.py `
+  --output 'D:/develop/srp2.0/output/reranker-qwen37-20261119' `
+  --gold 'D:/develop/srp2.0/fiberscope-eval-8papers-v1/gold.jsonl'
+```
+
+2026-11-19这次补测的逐要点加权覆盖率：旧Qwen为67.03%，Qwen3.7为93.96%，BGE为80.77%，Jev为93.96%。Qwen3.7完整/部分/缺失为84/3/4（91项），19/24题证据齐全；Jev为83/5/3，20/24题证据齐全。因此总加权分相同，不代表每题或每种缺陷相同，也不是最终生成答案准确率。三题独立计时中Qwen3.7的整批耗时为0.698、0.720、2.026秒；需要更多样本才能评价线上延迟。

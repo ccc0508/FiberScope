@@ -41,7 +41,7 @@ def score_point(point, selected):
     return 1 if all(v==1 for v in values) else .5 if any(v>0 for v in values) else 0
 
 
-def validate_annotations(pools, gold, annotations, rankings):
+def validate_annotations(pools, gold, annotations, rankings, models=MODELS):
     if annotations.get('frozen_pool_sha256') != digest(pools):
         raise ValueError('Reviewed evidence belongs to a different frozen pool')
     expected={r['id'] for r in pools['rows']}
@@ -55,7 +55,7 @@ def validate_annotations(pools, gold, annotations, rankings):
         ids={c['chunk_id'] for c in row['candidates']}
         if len(ids)!=count:
             raise ValueError('Candidate identities are not unique')
-        for model in MODELS:
+        for model in models:
             ranked=rankings[cid]['models'][model]
             if ranked['status']!='completed' or len(ranked['ranking'])!=count or set(ranked['ranking'])!=ids:
                 raise ValueError('Not a complete ranking of the frozen pool: '+cid)
@@ -95,14 +95,18 @@ def make_report(output, gold_path):
     pools=read(output/'pools.json')
     rankings={r['id']:r for r in read(output/'details.json')}
     annotations=read(output/'semantic-audit-annotations.json')
+    # Keep the original three-model reports replayable; evaluate newly supplied
+    # model rankings using the very same source-to-fact annotations.
+    first=next(iter(rankings.values()))
+    models=[*MODELS,*[m for m in first['models'] if m not in (*MODELS,'vector')]]
     gold={r['id']:r for r in map(json.loads,gold_path.read_text(encoding='utf-8').splitlines())}
     if annotations.get('gold_sha256') != sha256(gold_path.read_bytes()).hexdigest():
         raise ValueError('Reviewed key points changed')
-    validate_annotations(pools,gold,annotations,rankings)
+    validate_annotations(pools,gold,annotations,rankings,models=models)
     cases=[]
     for row in pools['rows']:
         cid=row['id'];index_by_id={c['chunk_id']:i for i,c in enumerate(row['candidates'])}
-        selected={m:{index_by_id[i] for i in rankings[cid]['models'][m]['ranking'][:8]} for m in MODELS}
+        selected={m:{index_by_id[i] for i in rankings[cid]['models'][m]['ranking'][:8]} for m in models}
         case=dict(id=cid,group=row['group'],question=row['question'],reference_answer=gold[cid]['reference_answer'],points=[],models={})
         for n,point in enumerate(annotations['case_annotations'][cid],1):
             pool_score=score_point(point,set(range(len(row['candidates']))))
@@ -115,15 +119,15 @@ def make_report(output, gold_path):
                         source=row['candidates'][index]
                         evidence.append(dict(candidate_index=index,strength=strength,**source,
                             text_sha256=sha256(source['text'].encode()).hexdigest(),
-                            ranks={m:rankings[cid]['models'][m]['ranking'].index(source['chunk_id'])+1 for m in MODELS}))
+                            ranks={m:rankings[cid]['models'][m]['ranking'].index(source['chunk_id'])+1 for m in models}))
                 checked['atoms'].append(dict(label=atom['label'],evidence=evidence))
-            for model in MODELS:
+            for model in models:
                 score=score_point(point,selected[model])
                 checked['models'][model]=dict(score=score,stage=failure_stage(score,pool_score) if score is not None else 'not_applicable',
                     atom_scores=[score_atom(atom,selected[model]) for atom in point['atoms']],
                     missing_subfacts=[atom['label'] for atom in point['atoms'] if score_atom(atom,selected[model])<1])
             case['points'].append(checked)
-        for model in MODELS:
+        for model in models:
             values=[p['models'][model]['score'] for p in case['points'] if p['models'][model]['score'] is not None]
             case['models'][model]=dict(applicable_points=len(values),weighted_coverage=statistics.mean(values),fully_covered_points=values.count(1),
                 partial_points=values.count(.5),missing_points=values.count(0),all_points_covered=all(v==1 for v in values))
@@ -135,7 +139,7 @@ def make_report(output, gold_path):
         total_cases=len(cases),total_gold_points=sum(len(c['points']) for c in cases),applicable_points=len(applicable),
         not_applicable_points=[dict(case_id=c['id'],point=p['point_id'],reason=p['not_applicable']) for c in cases for p in c['points'] if p['pool_score'] is None],
         candidate_pool=dict(fully_supported_points=sum(p['pool_score']==1 for p in applicable),partial_points=sum(p['pool_score']==.5 for p in applicable),missing_points=sum(p['pool_score']==0 for p in applicable)),models={},policy=annotations['policy'])
-    for model in MODELS:
+    for model in models:
         values=[p['models'][model]['score'] for p in applicable]
         stages={p['models'][model]['stage'] for p in applicable}
         summary['models'][model]=dict(fully_covered_points=values.count(1),partial_points=values.count(.5),missing_points=values.count(0),
@@ -158,9 +162,9 @@ def make_report(output, gold_path):
     labels={1:'完整',.5:'部分',0:'缺失',None:'不适用'}
     for case in cases:
         body+=f"<h2 id='{case['id']}'>{esc(case['id']+' '+case['question'])}</h2><p>参考答案：{esc(case['reference_answer'])}</p>"
-        body+='<table><tr><th>要点</th><th>BGE</th><th>Qwen</th><th>Jev</th><th>50候选池</th></tr>'
+        body+='<table><tr><th>要点</th>'+''.join('<th>'+esc(m)+'</th>' for m in models)+'<th>50候选池</th></tr>'
         for point in case['points']:
-            body+='<tr><td>'+esc(point['point_id']+' '+point['text'])+'</td>'+''.join('<td>'+labels[point['models'][m]['score']]+'</td>' for m in MODELS)+'<td>'+labels[point['pool_score']]+'</td></tr>'
+            body+='<tr><td>'+esc(point['point_id']+' '+point['text'])+'</td>'+''.join('<td>'+labels[point['models'][m]['score']]+'</td>' for m in models)+'<td>'+labels[point['pool_score']]+'</td></tr>'
         body+='</table>'
         for point in case['points']:
             body+='<details><summary>'+esc(point['point_id']+' 原文依据与缺失项')+'</summary>'
@@ -168,7 +172,7 @@ def make_report(output, gold_path):
                 body+='<p>'+esc(point['not_applicable'])+'</p>'
             else:
                 if point['note']:body+='<p>判定说明：'+esc(point['note'])+'</p>'
-                for model in MODELS:
+                for model in models:
                     item=point['models'][model]
                     body+='<p>'+esc(model+'：'+labels[item['score']]+'；阶段 '+item['stage']+'；不足：'+'；'.join(item['missing_subfacts']))+'</p>'
                 for atom in point['atoms']:
@@ -176,7 +180,8 @@ def make_report(output, gold_path):
                     if not atom['evidence']:
                         body+='<p>当前50条候选中没有找到能支持该具体事实的原文。</p>'
                     for source in atom['evidence']:
-                        body+='<details><summary>'+esc(f"C{source['candidate_index']:02} {source['chunk_id']} | {source['document_id']} | PDF {source['page_start']}–{source['page_end']} | {source['strength']} | 排名 B/Q/J {source['ranks']['bge']}/{source['ranks']['qwen']}/{source['ranks']['jev']}")+'</summary><pre>'+esc(source['text'])+'</pre></details>'
+                        ranks=' / '.join(f'{m}:{source["ranks"][m]}' for m in models)
+                        body+='<details><summary>'+esc(f"C{source['candidate_index']:02} {source['chunk_id']} | {source['document_id']} | PDF {source['page_start']}–{source['page_end']} | {source['strength']} | 排名 {ranks}")+'</summary><pre>'+esc(source['text'])+'</pre></details>'
             body+='</details>'
     (output/'semantic-audit.html').write_text('<!doctype html><meta charset="utf-8"><title>逐要点证据覆盖核对</title><style>body{max-width:1200px;margin:32px auto;font:15px/1.7 sans-serif;color:#203044}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #cbd5e1;padding:9px;text-align:left}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f6f8;padding:14px}summary{cursor:pointer;padding:10px;background:#edf2f7;margin:8px 0}h2{margin-top:45px}h4{margin-bottom:6px}</style>'+body,encoding='utf-8')
     return summary

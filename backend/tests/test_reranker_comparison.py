@@ -90,3 +90,41 @@ def test_jev_does_not_receive_gold_or_other_candidates_and_transient_retry_is_ar
     # Successful cached results never cause a second paid call.
     assert comparison.request_one(args,'jev',row,0)==result
     assert len(requests)==1
+
+
+def test_qwen37_uses_identical_native_inputs_except_model_name(tmp_path, monkeypatch):
+    from argparse import Namespace
+    args=Namespace(output=tmp_path,source=tmp_path)
+    row=dict(id='FS8-001',input_sha256='fixed',question='Research question',
+        candidates=[dict(text='First full passage'),dict(text='Second full passage')],
+        reference_answer='DO NOT SEND GOLD')
+    requests=[]
+    class Response:
+        status_code=200
+        def json(self):
+            return dict(output=dict(results=[dict(index=1,relevance_score=.9),dict(index=0,relevance_score=.2)]),usage=dict(total_tokens=100))
+        def raise_for_status(self):
+            pass
+    class Client:
+        def __init__(self,**kwargs):
+            pass
+        def __enter__(self):
+            return self
+        def __exit__(self,*args):
+            pass
+        def post(self,url,**kwargs):
+            requests.append((url,kwargs['json']))
+            return Response()
+    monkeypatch.setattr(comparison,'dotenv_values',lambda *args,**kwargs:dict(
+        RAG_EMBEDDING_BASE_URL='https://example.invalid/api/v1',RAG_EMBEDDING_API_KEY='dummy-key'))
+    monkeypatch.setattr(comparison.httpx,'Client',Client)
+    old=comparison.request_one(args,'qwen',row)
+    new=comparison.request_one(args,'qwen37',row)
+    assert old['scores']==new['scores']==[.2,.9]
+    assert requests[0][0]==requests[1][0]=='https://example.invalid/api/v1/services/rerank/text-rerank/text-rerank'
+    old_payload,new_payload=requests[0][1],requests[1][1]
+    assert old_payload['model']=='qwen3-rerank'
+    assert new_payload['model']=='qwen3.7-text-rerank'
+    assert {k:v for k,v in old_payload.items() if k!='model'}=={k:v for k,v in new_payload.items() if k!='model'}
+    assert 'instruct' not in new_payload['parameters']
+    assert 'GOLD' not in str(new_payload)

@@ -21,7 +21,10 @@ import httpx
 from dotenv import dotenv_values
 
 ROOT = Path(__file__).resolve().parents[1]
-MODELS = {'bge': 'BAAI/bge-reranker-v2-m3', 'qwen': 'qwen3-rerank', 'jev': 'typesafe/jev-1.14'}
+MODELS = {'bge': 'BAAI/bge-reranker-v2-m3', 'qwen': 'qwen3-rerank',
+          'qwen37': 'qwen3.7-text-rerank', 'jev': 'typesafe/jev-1.14'}
+QWEN_MODELS = {'qwen', 'qwen37'}
+DEFAULT_MODELS = ('bge', 'qwen', 'jev')
 LEVELS = [
     'Irrelevant to the query or the wrong material, experiment or requested source.',
     'Related topic only; contains no usable answer evidence for the requested facts.',
@@ -120,7 +123,7 @@ def credentials(args, model):
     cfg = dotenv_values(args.source / 'backend/.env.literature', interpolate=False)
     if model == 'bge':
         return cfg['RAG_RERANK_BASE_URL'].rstrip('/') + '/rerank', cfg['RAG_RERANK_API_KEY']
-    if model == 'qwen':
+    if model in QWEN_MODELS:
         return cfg['RAG_EMBEDDING_BASE_URL'].rstrip('/') + '/services/rerank/text-rerank/text-rerank', cfg['RAG_EMBEDDING_API_KEY']
     jev = dotenv_values(args.source / 'backend/.env.jev', interpolate=False)
     return jev['QA_JEV_BASE_URL'].rstrip('/') + '/alpha/decisions', jev['QA_JEV_API_KEY']
@@ -144,7 +147,7 @@ def request_one(args, model, row, candidate_index=None):
     if model == 'bge':
         payload = dict(model=MODELS[model], query=row['question'], documents=texts, top_n=len(texts), return_documents=False,
             max_chunks_per_doc=1024, overlap_tokens=80)
-    elif model == 'qwen':
+    elif model in QWEN_MODELS:
         payload = dict(model=MODELS[model], input=dict(query=row['question'], documents=texts),
             parameters=dict(top_n=len(texts), return_documents=False))
     else:
@@ -173,7 +176,7 @@ def request_one(args, model, row, candidate_index=None):
                 raise ValueError('unexpected Jev model')
             record['score'] = value / 3
         else:
-            results = body['output']['results'] if model == 'qwen' else body['results']
+            results = body['output']['results'] if model in QWEN_MODELS else body['results']
             record['scores'] = score_vector(results, len(texts))
         record.update(status='completed', usage=body.get('usage'), reported_cost_usd=(body.get('usage') or {}).get('cost'))
     except Exception as exc:
@@ -187,7 +190,7 @@ def run(args):
     frozen = read(args.output / 'pools.json')
     jobs = []
     for row in frozen['rows'][:args.limit]:
-        for model in ('bge', 'qwen', 'jev'):
+        for model in ([args.model] if args.model else DEFAULT_MODELS):
             if args.model and model != args.model:
                 continue
             jobs.extend((model, row, i) for i in range(len(row['candidates']))) if model == 'jev' else jobs.append((model, row, None))
@@ -246,7 +249,9 @@ def timing(args):
     for row in frozen['rows']:
         if row['id'] not in {'FS8-001', 'FS8-011', 'FS8-019'}:
             continue
-        for model in MODELS:
+        for model in ([args.model] if args.model else DEFAULT_MODELS):
+            if args.model and model != args.model:
+                continue
             target = args.output / 'timing' / row['id'] / model
             summary_path = target / 'timing.json'
             if summary_path.exists():
@@ -270,10 +275,11 @@ def timing(args):
 
 def report(args):
     frozen = read(args.output / 'pools.json')
+    models=[m for m in MODELS if m in DEFAULT_MODELS or (args.output/'calls'/m).is_dir()]
     rows, summaries = [], {}
     for row in frozen['rows']:
         record = dict(id=row['id'], question=row['question'], group=row['group'], count=len(row['candidates']), models={})
-        for model in ['vector', 'bge', 'qwen', 'jev']:
+        for model in ['vector', *models]:
             if model == 'vector':
                 scores = [c['vector_score'] for c in row['candidates']]
                 calls = []
@@ -291,7 +297,7 @@ def report(args):
                 top8=[dict(row['candidates'][i], rerank_score=scores[i]) for i in order[:8]],
                 summed_request_ms=sum(c['latency_ms'] for c in calls), api_calls=len(calls))
         rows.append(record)
-    for model in ['vector', 'bge', 'qwen', 'jev']:
+    for model in ['vector', *models]:
         complete = [r['models'][model] for r in rows if r['models'][model]['status']=='completed']
         calls = [read(p) for p in [*(args.output/'calls'/model).glob('*.json'), *(args.output/'attempts'/model).glob('*.json')]]
         usage = []
@@ -316,7 +322,7 @@ def report(args):
         for group in ['single', 'cross']:
             selected = [r['models'][model] for r in rows if r['group']==group and r['models'][model]['status']=='completed']
             summaries[model]['by_group'][group] = dict(count=len(selected), **{metric:statistics.mean([r[metric] for r in selected if r[metric] is not None]) if any(r[metric] is not None for r in selected) else None for metric in ['target_document_coverage','reference_page_coverage','reference_page_ndcg']})
-    summary = dict(version='reranker-comparison-v1', pool_sha256=digest(frozen), models=MODELS, metrics=summaries,
+    summary = dict(version='reranker-comparison-v1', pool_sha256=digest(frozen), models={m:MODELS[m] for m in models}, metrics=summaries,
         caveats=['Reference-page labels are coarse, incomplete location proxies, not manually adjudicated semantic relevance.',
             'No answer generation, no agent tools after initial retrieval, no small-to-big context assembly, no final-answer quality claims.',
             'Jev scores passages independently; summed request latency is not parallel end-to-end latency.',
@@ -325,13 +331,18 @@ def report(args):
     timing_calls = [read(p) for p in (args.output/'timing').glob('*/*/calls/*/*.json')]
     summary['timing_extra_usage'] = dict(api_calls=len(timing_calls),
         known_jev_reported_cost_usd=sum(c.get('reported_cost_usd') or 0 for c in timing_calls if c['model']==MODELS['jev']),
-        qwen_total_tokens=sum((c.get('usage') or {}).get('total_tokens',0) for c in timing_calls if c['model']==MODELS['qwen']))
+        qwen_total_tokens=sum((c.get('usage') or {}).get('total_tokens',0) for c in timing_calls if c['model']==MODELS['qwen']),
+        qwen37_total_tokens=sum((c.get('usage') or {}).get('total_tokens',0) for c in timing_calls if c['model']==MODELS['qwen37']))
     summary['qwen_price_estimate'] = dict(benchmark_list_price_cny=summaries['qwen']['known_tokens']['total_tokens']*.5/1_000_000,
         cny_per_million_input_tokens=.5,source='https://help.aliyun.com/zh/model-studio/qwen3-rerank',
         note='Beijing public list-price estimate, excludes free quotas/discounts and is not an invoice. Embedding preparation and extra timing calls are separate.')
+    if 'qwen37' in summaries:
+        summary['qwen37_price_estimate'] = dict(benchmark_list_price_cny=summaries['qwen37']['known_tokens']['total_tokens']*.5/1_000_000,
+            cny_per_million_input_tokens=.5,source='https://help.aliyun.com/zh/model-studio/qwen3-7-text-rerank',
+            note='Beijing public list-price estimate, not an invoice; timing requests are separate.')
     write(args.output/'summary.json', summary)
     write(args.output/'details.json', rows)
-    body = '<h1>三种重排模型固定候选对照</h1><p>24 道论文题；每题同一候选池，最多 50 条，取前 8 条。页码指标仅作证据位置代理，不是答案正确率。未重新生成回答，未更改网站当前重排模型。</p>'
+    body = '<h1>重排模型固定候选对照</h1><p>24 道论文题；每题同一候选池，最多 50 条，取前 8 条。页码指标仅作证据位置代理，不是答案正确率。未重新生成回答，未更改网站当前重排模型。</p>'
     body += '<h2>初步排序结果</h2><table><tr><th>模型</th><th>完成</th><th>参考页覆盖率@8</th><th>候选中可用参考页保留率@8</th><th>参考页 nDCG@8</th><th>API 请求数</th></tr>'
     for name, s in summaries.items():
         values = [name, str(s['completed_pools'])+'/'+str(s['expected_pools']), *[f"{s[k]*100:.2f}%" if s[k] is not None else '未知' for k in ['reference_page_coverage','available_reference_page_retention','reference_page_ndcg']], str(s['api_calls'])]
@@ -340,16 +351,16 @@ def report(args):
     probes_path=args.output/'manual-probes.json'
     if probes_path.exists():
         probes=read(probes_path)
-        body += '<h2>具体证据排序核对</h2><p>以下为人工对照原文后的解释性样例；未作为模型输入，也不构成完整的人工相关性标注集。</p><table><tr><th>题号</th><th>核对内容</th><th>BGE 名次</th><th>Qwen 名次</th><th>Jev 名次</th></tr>'
+        body += '<h2>具体证据排序核对</h2><p>以下为对照原文后的解释性样例；未作为模型输入，也不构成完整的相关性标注集。</p><table><tr><th>题号</th><th>核对内容</th>'+''.join('<th>'+html.escape(m)+' 名次</th>' for m in models)+'</tr>'
         probe_results=[]
         for probe in probes:
             row=next(r for r in rows if r['id']==probe['id'])
             ranks={}
-            for model in MODELS:
+            for model in models:
                 ranking=row['models'][model].get('ranking',[])
                 ranks[model]=ranking.index(probe['chunk_id'])+1 if probe['chunk_id'] in ranking else None
             probe_results.append(dict(probe, ranks=ranks))
-            values=[probe['id'],probe['fact'],*[str(ranks[m]) if ranks[m] is not None else '未完成/不在候选池' for m in MODELS]]
+            values=[probe['id'],probe['fact'],*[str(ranks[m]) if ranks[m] is not None else '未完成/不在候选池' for m in models]]
             body += '<tr>'+''.join('<td>'+html.escape(v)+'</td>' for v in values)+'</tr>'
         body += '</table>'
         write(args.output/'manual-probe-results.json',probe_results)

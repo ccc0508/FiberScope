@@ -45,3 +45,15 @@ def test_annotation_pool_identity_is_required_before_applying_indices():
 def test_silent_empty_annotations_cannot_count_as_full_coverage():
     with pytest.raises(ValueError,match='at least one'):
         audit.score_point(dict(atoms=[]),set())
+
+
+def test_added_model_must_rank_the_identical_frozen_candidate_identities():
+    pools=dict(rows=[dict(id='C1',candidates=[dict(chunk_id='source1')])])
+    gold=dict(C1=dict(key_points=['A fact']))
+    annotations=dict(frozen_pool_sha256=audit.digest(pools),case_annotations=dict(C1=[dict(atoms=[dict(label='fact',candidates=[0])])]))
+    models=(*audit.MODELS,'qwen37')
+    rankings=dict(C1=dict(models={m:dict(status='completed',ranking=['source1'],top_ids=['source1']) for m in models}))
+    audit.validate_annotations(pools,gold,annotations,rankings,models=models)
+    rankings['C1']['models']['qwen37']['ranking']=['different_source']
+    with pytest.raises(ValueError,match='complete ranking'):
+        audit.validate_annotations(pools,gold,annotations,rankings,models=models)
