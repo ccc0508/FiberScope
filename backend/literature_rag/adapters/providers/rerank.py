@@ -1,4 +1,4 @@
-"""Bounded SiliconFlow rerank API; no automatic retry, fallback or source rewriting."""
+"""Text rerank APIs with bounded requests and provider usage tracking."""
 from collections.abc import Sequence
 from hashlib import sha256
 import json
@@ -26,7 +26,7 @@ def usage_snapshot(body):
     return values or None
 
 
-class SiliconFlowReranker:
+class _TextReranker:
     def __init__(self,model,api_key,base_url,timeout=60,client=None):
         self.model_name=model
         self._api_key=api_key
@@ -38,16 +38,15 @@ class SiliconFlowReranker:
     def rerank(self,question:str,texts:Sequence[str],*,timeout_seconds=None)->list[float]:
         if not isinstance(question,str) or not question.strip() or not 1<=len(texts)<=50 or any(not isinstance(t,str) or not t.strip() for t in texts):
             raise ValueError('invalid rerank inputs')
-        request=dict(model=self.model_name,query=question,documents=list(texts),top_n=len(texts),return_documents=False,
-            max_chunks_per_doc=1024,overlap_tokens=80)
-        call=dict(version=VERSION,model=self.model_name,status='started',api_calls=1,
+        request = self._request(question, texts)
+        call=dict(version=VERSION,provider=self.provider,model=self.model_name,status='started',api_calls=1,
             candidate_count=len(texts),request_sha256=digest_json(request),usage=None,monetary_cost=None,
-            max_chunks_per_doc=1024,overlap_tokens=80,application_truncation=False)
+            application_truncation=False,**self.request_options)
         self.last_call=call;started=perf_counter()
         try:
             try:
                 def post(client):
-                    return client.post(self.base_url+'/rerank',json=request,
+                    return client.post(self.base_url+self.endpoint,json=request,
                         headers={'Authorization':'Bearer '+self._api_key},timeout=self.timeout if timeout_seconds is None else min(self.timeout,timeout_seconds))
                 if self.client is None:
                     with httpx.Client(trust_env=False,follow_redirects=False) as client:response=post(client)
@@ -64,7 +63,7 @@ class SiliconFlowReranker:
                 body=response.json()
                 if not isinstance(body,dict):raise ValueError
                 call['usage']=usage_snapshot(body)
-                results=body['results']
+                results=self._results(body)
                 if not isinstance(results,list) or len(results)!=len(texts):raise ValueError
                 scores=[None]*len(texts)
                 for result in results:
@@ -79,3 +78,38 @@ class SiliconFlowReranker:
             call.update(status='completed',scores=scores)
             return scores
         finally:call['latency_ms']=round((perf_counter()-started)*1000)
+
+
+class SiliconFlowReranker(_TextReranker):
+    provider = 'siliconflow'
+    endpoint = '/rerank'
+    request_options = {'max_chunks_per_doc': 1024, 'overlap_tokens': 80}
+
+    def _request(self, question, texts):
+        return dict(model=self.model_name, query=question, documents=list(texts),
+                    top_n=len(texts), return_documents=False, **self.request_options)
+
+    @staticmethod
+    def _results(body):
+        return body['results']
+
+
+class DashScopeReranker(_TextReranker):
+    provider = 'dashscope'
+    endpoint = '/services/rerank/text-rerank/text-rerank'
+    request_options = {}
+
+    def _request(self, question, texts):
+        return dict(model=self.model_name, input={'query': question, 'documents': list(texts)},
+                    parameters={'top_n': len(texts), 'return_documents': False})
+
+    @staticmethod
+    def _results(body):
+        return body['output']['results']
+
+
+def build_reranker(settings):
+    providers = {'siliconflow': SiliconFlowReranker, 'dashscope': DashScopeReranker}
+    return providers[settings.rerank_provider](settings.rerank_model,
+        settings.rerank_api_key.get_secret_value(), settings.rerank_base_url,
+        settings.rerank_timeout_seconds)

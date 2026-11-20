@@ -13,7 +13,7 @@ os.environ['ANONYMIZED_TELEMETRY']='False'
 from build_mineru_body_tables import read_catalog
 from index_table_evidence import digest,save
 from literature_rag.adapters.chroma.vector_store import ChromaVectorStore
-from literature_rag.adapters.providers.rerank import SiliconFlowReranker
+from literature_rag.adapters.providers.rerank import build_reranker
 from literature_rag.application.context import ContextOptions
 from literature_rag.application.retrieve import RetrievalService
 from literature_rag.application.table_evidence import TableRelations,TableVectorSearch
@@ -51,8 +51,7 @@ def probe(library,query_cache,task_id,env_file,output):
             self.calls+=1
             return query['vector']
     cached=Cached()
-    reranker=SiliconFlowReranker(settings.rerank_model,settings.rerank_api_key.get_secret_value(),
-        settings.rerank_base_url,settings.rerank_timeout_seconds)
+    reranker = build_reranker(settings)
     service=RetrievalService(metadata,vectors,cached,ContextOptions(settings.context_expansion_enabled,
         settings.context_neighbor_radius,settings.context_max_evidence_chars,settings.context_max_total_chars),
         relations,reranker,body_context_catalog=catalog)

@@ -106,9 +106,13 @@ def configuration_snapshot(env_file: Path, *, settings: Settings | None = None):
             rerank=dict(enabled=True,version='candidate-rerank-v1',provider=settings.rerank_provider,
                 model=settings.rerank_model,timeout_seconds=settings.rerank_timeout_seconds,
                 endpoint_sha256=sha256(settings.rerank_base_url.encode()).hexdigest(),
-                max_candidates=50,max_chunks_per_doc=1024,overlap_tokens=80,
+                max_candidates=50,
                 input='full_parent_source_text',application_truncation=False,
                 retry_count=0,error_policy='fail_without_vector_fallback',score_threshold=None))
+        if settings.rerank_provider == 'siliconflow':
+            result['rerank'].update(max_chunks_per_doc=1024, overlap_tokens=80)
+        else:
+            result['rerank']['api'] = 'dashscope_native_text_rerank'
         if settings.context_expansion_strategy=='body_section':
             result['pipeline_version']='mineru-unified-rerank-v1'
             result['rerank'].update(context_pipeline_version=context_pipeline_version,
@@ -143,7 +147,8 @@ def configuration_snapshot(env_file: Path, *, settings: Settings | None = None):
         result.update(pipeline_version='mineru-qwen-visual-v1',pipeline_source_files=sources,
             visual_retrieval=dict(enabled=True,version=VERSION,embedding='image_only_original_pdf_crop',
                 parent='authoritative_caption_or_full_table',fusion='maximum_cosine_per_parent',
-                rerank='BGE_text_only_caption_and_body',image_delivery='verified_base64_original',
+                rerank=f'{settings.rerank_model}_text_only_caption_and_body' if settings.rerank_enabled else None,
+                image_delivery='verified_base64_original',
                 max_images=settings.visual_max_images,max_total_bytes=settings.visual_max_total_bytes,
                 instruction_sha256=sha256(VISION_INSTRUCTION.encode()).hexdigest(),
                 asset_snapshots='content_addressed_png_with_document_page_bbox_and_hash'))

@@ -107,9 +107,8 @@ def main(body):
     reranker=None
     rerank_calls=[]
     if settings.rerank_enabled:
-        from literature_rag.adapters.providers.rerank import SiliconFlowReranker
-        provider_reranker=SiliconFlowReranker(settings.rerank_model,settings.rerank_api_key.get_secret_value(),
-            settings.rerank_base_url,settings.rerank_timeout_seconds)
+        from literature_rag.adapters.providers.rerank import build_reranker
+        provider_reranker = build_reranker(settings)
 
         class CapturedReranker:
             @property

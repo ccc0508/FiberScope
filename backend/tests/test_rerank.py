@@ -7,7 +7,7 @@ import json
 import httpx
 import pytest
 
-from literature_rag.adapters.providers.rerank import SiliconFlowReranker
+from literature_rag.adapters.providers.rerank import SiliconFlowReranker, build_reranker
 from literature_rag.application.retrieve import RetrievalService
 from literature_rag.config import Settings
 from literature_rag.diagnostics import configuration_snapshot
@@ -112,3 +112,33 @@ def test_config_switch_requires_credentials_and_snapshot_contains_no_secret(tmp_
     snapshot=configuration_snapshot(p)
     assert 'private-test-token' not in json.dumps(snapshot)
     assert snapshot['rerank']['retry_count']==0 and snapshot['rerank']['score_threshold'] is None
+
+
+def test_dashscope_configuration_uses_native_rerank_contract(tmp_path):
+    settings = Settings(_env_file=None, rerank_enabled=True, rerank_provider='dashscope',
+                        rerank_model='qwen3.7-text-rerank', rerank_api_key='test-key',
+                        rerank_base_url='https://api.example/api/v1')
+    texts = ['First source', 'Second source']
+
+    def respond(request):
+        assert request.url.path == '/api/v1/services/rerank/text-rerank/text-rerank'
+        assert json.loads(request.content) == {
+            'model': 'qwen3.7-text-rerank',
+            'input': {'query': 'Question', 'documents': texts},
+            'parameters': {'top_n': 2, 'return_documents': False},
+        }
+        return httpx.Response(200, json={
+            'output': {'results': [{'index': 1, 'relevance_score': 0.8},
+                                   {'index': 0, 'relevance_score': 0.3}]},
+            'usage': {'prompt_tokens': 20, 'total_tokens': 20},
+        })
+
+    reranker = build_reranker(settings)
+    with httpx.Client(transport=httpx.MockTransport(respond)) as client:
+        reranker.client = client
+        assert reranker.rerank('Question', texts) == [0.3, 0.8]
+    assert reranker.last_call['usage'] == {'prompt_tokens': 20, 'total_tokens': 20}
+    assert reranker.last_call['api_calls'] == 1
+    snapshot = configuration_snapshot(tmp_path / 'unused', settings=settings)['rerank']
+    assert snapshot['provider'] == 'dashscope'
+    assert 'max_chunks_per_doc' not in snapshot
