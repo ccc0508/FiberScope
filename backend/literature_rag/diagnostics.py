@@ -20,6 +20,7 @@ def configuration_snapshot(env_file: Path, *, settings: Settings | None = None):
         sources += ['application/table_evidence.py']
     if settings.rerank_enabled:
         sources += ['application/rerank.py','adapters/providers/rerank.py']
+        if settings.rerank_provider!='siliconflow':sources+=['adapters/providers/alternate_rerank.py']
     if settings.query_rewrite_enabled:
         sources += ['application/query_rewrite.py', 'adapters/providers/query_rewrite.py']
     if settings.embedding_provider == 'dashscope':
@@ -114,6 +115,11 @@ def configuration_snapshot(env_file: Path, *, settings: Settings | None = None):
             result['rerank'].update(context_pipeline_version=context_pipeline_version,
                 position='before_primary_selection_and_unified_context',
                 candidate_inputs='full_source_chunks_before_expansion')
+    if settings.rerank_enabled and settings.rerank_provider!='siliconflow':
+        result['rerank'].pop('max_chunks_per_doc',None)
+        result['rerank'].pop('overlap_tokens',None)
+        result['rerank'].update(api='dashscope_native' if settings.rerank_provider=='dashscope' else 'openrouter_decisions',
+            parallelism=16 if settings.rerank_provider=='jev' else 1)
     if settings.answer_guidance_enabled:
         from .application.prompts import ANSWER_GUIDANCE_VERSION,ANSWER_GUIDANCE
         result.update(answer_guidance=dict(enabled=True,version=ANSWER_GUIDANCE_VERSION,
@@ -143,7 +149,7 @@ def configuration_snapshot(env_file: Path, *, settings: Settings | None = None):
         result.update(pipeline_version='mineru-qwen-visual-v1',pipeline_source_files=sources,
             visual_retrieval=dict(enabled=True,version=VERSION,embedding='image_only_original_pdf_crop',
                 parent='authoritative_caption_or_full_table',fusion='maximum_cosine_per_parent',
-                rerank='BGE_text_only_caption_and_body',image_delivery='verified_base64_original',
+                rerank='BGE_text_only_caption_and_body' if settings.rerank_provider=='siliconflow' else settings.rerank_model+'_text_only_caption_and_body',image_delivery='verified_base64_original',
                 max_images=settings.visual_max_images,max_total_bytes=settings.visual_max_total_bytes,
                 instruction_sha256=sha256(VISION_INSTRUCTION.encode()).hexdigest(),
                 asset_snapshots='content_addressed_png_with_document_page_bbox_and_hash'))

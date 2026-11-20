@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     query_rewrite_api_key: SecretStr | None = None
     query_rewrite_base_url: str | None = None
     rerank_enabled: bool = False
-    rerank_provider: Literal['siliconflow'] = 'siliconflow'
+    rerank_provider: Literal['siliconflow','dashscope','jev'] = 'siliconflow'
     rerank_model: str = 'BAAI/bge-reranker-v2-m3'
     rerank_base_url: str | None = None
     rerank_api_key: SecretStr | None = None
