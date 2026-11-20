@@ -1,0 +1,92 @@
+{
+  "literature": {
+    "metric_version": 1,
+    "run": "rag-full-v7-20261109",
+    "summary": {
+      "status_counts": {
+        "scored": 17,
+        "no_successful_search": 7
+      },
+      "vector": {
+        "precision": {
+          "numerator": 145,
+          "denominator": 1065,
+          "percent": 13.62
+        },
+        "recall": {
+          "numerator": 145,
+          "denominator": 217,
+          "percent": 66.82
+        }
+      },
+      "vector_at_seed_limit": {
+        "precision": {
+          "numerator": 67,
+          "denominator": 171,
+          "percent": 39.18
+        },
+        "recall": {
+          "numerator": 67,
+          "denominator": 217,
+          "percent": 30.88
+        }
+      },
+      "reranked": {
+        "precision": {
+          "numerator": 75,
+          "denominator": 169,
+          "percent": 44.38
+        },
+        "recall": {
+          "numerator": 75,
+          "denominator": 217,
+          "percent": 34.56
+        }
+      }
+    }
+  },
+  "sql": {
+    "metric_version": 1,
+    "run": "sql-full-v7-20261109",
+    "summary": {
+      "status_counts": {
+        "scored": 17,
+        "not_a_result_task": 3
+      },
+      "execution": {
+        "numerator": 31,
+        "denominator": 34,
+        "percent": 91.18
+      },
+      "result_correct_reviewed": {
+        "numerator": 17,
+        "denominator": 17,
+        "percent": 100.0
+      },
+      "result_correct_all": {
+        "numerator": 17,
+        "denominator": 17,
+        "percent": 100.0
+      }
+    }
+  },
+  "mixed": {
+    "metric_version": 1,
+    "run": "mixed-full-v7-20261109",
+    "summary": {
+      "status_counts": {
+        "scored": 20
+      },
+      "tools": {
+        "numerator": 142,
+        "denominator": 201,
+        "percent": 70.65
+      },
+      "evidence": {
+        "numerator": 45,
+        "denominator": 51,
+        "percent": 88.24
+      }
+    }
+  }
+}
