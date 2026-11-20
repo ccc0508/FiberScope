@@ -8,7 +8,7 @@ import sys
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'backend'))
-from literature_rag.adapters.providers.rerank import SiliconFlowReranker
+from literature_rag.adapters.providers.rerank import build_reranker
 from literature_rag.application.rerank import rank_candidates
 from literature_rag.config import Settings
 from literature_rag.domain.errors import ProviderError
@@ -35,7 +35,7 @@ def probe(run_dir,task_id,env_file,output):
         if c['score']<contract['configuration_probe']['min_score'] or c['chunk_id'] not in chunks:continue
         s=chunks[c['chunk_id']]
         sources.append(Evidence(f'[{len(sources)+1}]',s['id'],s['document_id'],s['filename'],s['page_start'],s['page_end'],s['text'],c['score']))
-    provider=SiliconFlowReranker(settings.rerank_model,settings.rerank_api_key.get_secret_value(),settings.rerank_base_url,settings.rerank_timeout_seconds)
+    provider = build_reranker(settings)
     output.parent.mkdir(parents=True,exist_ok=True)
     record=dict(status='pending',task_id=task_id,started_at=now(),source_result_sha256=digest(source),
         model=settings.rerank_model,input_question=row['question'],source_candidates=[asdict(e) for e in sources],

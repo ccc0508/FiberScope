@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     query_rewrite_api_key: SecretStr | None = None
     query_rewrite_base_url: str | None = None
     rerank_enabled: bool = False
-    rerank_provider: Literal['siliconflow'] = 'siliconflow'
+    rerank_provider: Literal['siliconflow', 'dashscope'] = 'siliconflow'
     rerank_model: str = 'BAAI/bge-reranker-v2-m3'
     rerank_base_url: str | None = None
     rerank_api_key: SecretStr | None = None
@@ -157,6 +157,8 @@ class Settings(BaseSettings):
         if self.rerank_enabled:
             if not self.rerank_model.strip() or not self.rerank_base_url or not self.rerank_api_key or not self.rerank_api_key.get_secret_value().strip():
                 raise ValueError('enabled reranking requires model, base URL and API key')
+            if self.rerank_provider == 'dashscope' and not self.rerank_base_url.rstrip('/').endswith('/api/v1'):
+                raise ValueError('DashScope reranking requires its native /api/v1 base URL')
         if self.query_rewrite_enabled:
             if not self.rerank_enabled:
                 raise ValueError('query rewrite requires configured reranking')

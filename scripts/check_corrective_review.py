@@ -39,7 +39,7 @@ def main():
     from literature_rag.adapters.sqlite.metadata_store import SqliteMetadataStore
     from literature_rag.adapters.chroma.vector_store import ChromaVectorStore
     from literature_rag.adapters.providers.dashscope import DashScopeEmbedder
-    from literature_rag.adapters.providers.rerank import SiliconFlowReranker
+    from literature_rag.adapters.providers.rerank import build_reranker
     from literature_rag.adapters.providers.evidence_review import DeepSeekEvidenceReviewer
     from literature_rag.application.evidence_review import EvidenceReviewService, checksum
     from literature_rag.application.review_diagnosis import diagnosis_contract
@@ -122,8 +122,7 @@ def main():
                     raise ValueError('Saved source text differs from current library')
         embedder = DashScopeEmbedder(settings.embedding_model, settings.embedding_dimensions,
             settings.embedding_api_key.get_secret_value(), settings.embedding_base_url)
-        reranker = SiliconFlowReranker(settings.rerank_model, settings.rerank_api_key.get_secret_value(),
-            settings.rerank_base_url, settings.rerank_timeout_seconds)
+        reranker = build_reranker(settings)
         retriever = RetrievalService(metadata, vectors, embedder,
             ContextOptions(True, settings.context_neighbor_radius, settings.context_max_evidence_chars,
                 settings.context_max_total_chars), reranker=reranker, body_context_catalog=catalog,
