@@ -87,7 +87,8 @@ def main():
             task_feedback_enabled=a.architecture=='specialists' and not a.no_task_feedback,
             model_options=dict(thinking_enabled=settings.llm_thinking_enabled,reasoning_effort=settings.llm_reasoning_effort),
             review_policy=('parent synthesis and evidence review' if a.architecture=='specialists'
-                           else 'same-context evidence review for research; direct answers and clarifications may finish immediately'))
+                           else 'same-context evidence review' if a.prompt_file
+                           else 'no full-answer review; evidence check and citation validation still apply'))
         save_state(state_path,payload)
         telemetry.update(payload)
         if telemetry.url:

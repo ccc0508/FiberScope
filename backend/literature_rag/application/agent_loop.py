@@ -241,7 +241,7 @@ class AgentLoop:
             image_chars=sum(len(block['image_url']['url']) for m in messages if isinstance(m.get('content'),list)
                 for block in m['content'] if block.get('type')=='image_url')
             if image_chars>24*1024*1024:raise OverflowError('Image budget')
-            output_tokens = (b.synthesis_max_output_tokens if research and stage in ('review', 'citation_repair')
+            output_tokens = (b.synthesis_max_output_tokens if research and stage == 'citation_repair'
                              else b.max_output_tokens)
             entry=dict(stage=stage,status='started',usage=None,timeout_seconds=remaining,max_output_tokens=output_tokens,
                 input_messages=trace_messages(messages),available_tools=list(schemas))
@@ -286,7 +286,8 @@ class AgentLoop:
         pending_evidence = []
         evidence_retry = False
         registration_retry = False
-        closing_calls = 2 if self.review_enabled or self.output_schema else 1
+        # Unified research uses the second closing slot only for citation repair.
+        closing_calls = 2 if research or self.review_enabled or self.output_schema else 1
         if research and self.evidence_judge and model_limit > closing_calls + 1:
             closing_calls += 1
 
@@ -304,7 +305,7 @@ class AgentLoop:
             if payload == last_check_input:
                 return
             remaining = deadline - self.clock() - b.reserve_seconds
-            if remaining <= 0 or len(state['model_calls']) >= model_limit - int(self.review_enabled):
+            if remaining <= 0 or len(state['model_calls']) >= model_limit - 1:
                 state['evidence_check_status'] = 'skipped_budget'
                 return
             if len(json.dumps(payload, ensure_ascii=False)) > b.max_context_chars:
@@ -497,21 +498,12 @@ class AgentLoop:
                     state['draft'],_=research.draft(d.text,state)
                     check_evidence()
             state['answer']=state['draft'];save()
-            if research and not state['tool_calls']:
-                state['review_status']='not_required'
+            if research:
+                state['review_status']='disabled' if state['tool_calls'] else 'not_required'
             elif not self.review_enabled:
                 state['review_status']='delegated_to_parent'
             elif len(state['model_calls'])<b.max_model_calls and deadline-self.clock()>2:
-                review_text=REVIEW_PROMPT
-                if research:
-                    review_text += (' Review the answer field from the draft. Check every requested paper and metric. '
-                                    'State each unresolved gap if evidence does not resolve it. Return only the '
-                                    'user-facing answer in the requested format.')
-                    if pending_evidence:
-                        review_text += (' Evidence adequacy remains uncertain for these items. Verify against the '
-                                        'actual evidence and state any limitations: '
-                                        + json.dumps(pending_evidence, ensure_ascii=False))
-                review=dict(role='user',content=review_text)
+                review=dict(role='user',content=REVIEW_PROMPT)
                 if size(messages+[review])>b.max_context_chars:
                     state.update(review_status='skipped_context_budget',stop_reason='context_budget')
                 else:
@@ -520,7 +512,7 @@ class AgentLoop:
                     if not d.text.strip() or d.calls:raise ValueError('Invalid final review')
                     state.update(answer=d.text,review_status='completed')
             else:state['review_status']='skipped_budget'
-            state['status']='completed' if state['review_status'] in ('completed','delegated_to_parent','not_required') else 'partial'
+            state['status']='completed' if state['review_status'] in ('completed','delegated_to_parent','not_required','disabled') else 'partial'
         except Exception as e:
             state.update(status='partial' if state['answer'] else 'failed',stop_reason=type(e).__name__)
             if state['review_status']=='not_started':state['review_status']='incomplete'

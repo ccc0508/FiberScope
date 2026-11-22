@@ -44,15 +44,19 @@ def adapt_run(state, evidence, trace, elapsed_ms):
         snapshots.append(row)
         if e['ref'] in used:citations.append(row)
     completed=state.get('status')=='completed' and bool(state.get('answer','').strip())
+    review_status=state.get('review_status')
+    review_summary={}
+    if review_status!='disabled':
+        review_summary['review_summary']=dict(
+            status=review_status if review_status in ('not_required','completed') else 'incomplete',
+            notice='本次为直接答复或澄清，未调用研究子任务。' if review_status=='not_required' else '已完成答案复核；复核不保证所有陈述正确。' if review_status=='completed' else '答案复核未完成，请核对引用原文。',
+            unresolved=[],supplement_rounds=0,review_rounds=int(review_status=='completed'))
     return dict(status='answered' if completed else 'failed',answer=state.get('answer',''),citations=citations,
         latency_ms=elapsed_ms,reason_code=None if completed else ('invalid_citations' if state.get('stop_reason')=='invalid_citations' else 'agent_incomplete'),
         **({} if completed else dict(error_status=503)),
         configuration=dict(pipeline_version=state.get('pipeline_version','agentic-rag-directory-v1'),model=state.get('model'),budget=state.get('budget'),directory_policy=state.get('directory_policy')),
         generation_calls=state.get('model_calls',[]),retrieved_evidence=snapshots,claims=[],
-        agent_run=state,agent_tool_trace=trace,agent_evidence=evidence,
-        review_summary=dict(status='not_required' if state.get('review_status')=='not_required' else 'completed' if state.get('review_status')=='completed' else 'incomplete',
-            notice='本次为直接答复或澄清，未调用研究子任务。' if state.get('review_status')=='not_required' else '已完成答案复核；复核不保证所有陈述正确。' if state.get('review_status')=='completed' else '答案复核未完成，请核对引用原文。',
-            unresolved=[],supplement_rounds=0,review_rounds=int(state.get('review_status')=='completed')))
+        agent_run=state,agent_tool_trace=trace,agent_evidence=evidence,**review_summary)
 
 
 def run_agent_answer(config, question):
