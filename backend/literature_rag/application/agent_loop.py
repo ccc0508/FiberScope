@@ -176,16 +176,21 @@ class AgentLoop:
         prompt = self.system_prompt or PROMPT
         coverage_priority = self.coverage_priority
         if self.unified_research:
+            from app.experiment_directory import view_directory
             from .unified_research import ResearchChecklist, SYSTEM_PROMPT
             research = coverage_priority = ResearchChecklist(question)
-            prompt = SYSTEM_PROMPT
+            prompt = (SYSTEM_PROMPT + '\nExperiment view directory: allowed names, purposes and row grain. '
+                      'Use only these exact view names. Request details for the relevant views before writing '
+                      'SQL to learn real columns, field units and live enum values. The directory provides '
+                      'schema metadata only.\n'
+                      + json.dumps(view_directory(), ensure_ascii=False, separators=(',', ':')))
             state['pipeline_version'] = 'unified-research-v1'
         messages=[dict(role='system',content=prompt+f'\nYou may execute search_literature at most {b.max_search_calls} times per question, including failed searches. After that use acquired evidence or other available reading/calculation tools; state unresolved gaps.'),dict(role='user',content=question)]
         messages[0]['content'] += (
             '\nGroup independent read-only tool requests in one decision, including different tools. '
-            'Set independent_in_turn=true on each additional call only if its need and all arguments '
-            'are already known before any sibling returns. If a lookup determines a section ID, SQL '
-            'column, value, or whether another call is needed, wait for its result first. '
+            'Group only requests whose need and all arguments are known before any sibling returns. '
+            'If a lookup determines a section ID, SQL column, value, or whether another call is needed, '
+            'wait for its result first. '
             'Requests execute in order and each uses its own tool quota. Prefer a supported multi-target '
             'lookup for independent sections or directories.'
         )
@@ -211,7 +216,7 @@ class AgentLoop:
         collection_limit=b.max_context_chars-context_reserve
         state['collection_reserved_chars']=context_reserve
         state['context_events']=[]
-        state['context_policy']='compact-exact-text-reuse-independent-tools-v3'
+        state['context_policy']='compact-exact-text-reuse-ordered-tools-v4'
         state['collection_context_limit']=collection_limit
         stop_threshold=collection_limit-min(8000,collection_limit//10)
         state['collection_stop_threshold']=stop_threshold
@@ -295,13 +300,6 @@ class AgentLoop:
                     if name in self.allowed_tools and (name!='search_literature' or search_count<b.max_search_calls)
                     and (name!='find_documents' or self.paper_directory is None)}
                 if coverage_priority:schemas=coverage_priority.schemas(schemas)
-                # Scheduling metadata belongs to the model interface, never to the tool executor.
-                schemas={name:dict(schema,properties={
-                    **schema['properties'],
-                    'independent_in_turn':dict(type='boolean',description=
-                        'For an additional call in this turn: true only if its need and arguments '
-                        'are known independently of all sibling results.')
-                }) for name,schema in schemas.items()}
                 d=model('decide',schemas);messages.append(d.message)
                 if not d.calls:
                     if not d.text.strip():raise ValueError('Empty draft')
@@ -317,28 +315,22 @@ class AgentLoop:
                     state['draft']=answer;break
                 image_messages=[]
                 stop_collection=False
-                for call_index,c in enumerate(d.calls):
+                for c in d.calls:
                     request=dict(c.arguments,tool=c.name)
-                    independent=request.pop('independent_in_turn',False) is True
-                    needs_previous_result=call_index>0 and not independent
+                    # Accept calls recorded before the scheduling declaration was removed.
+                    request.pop('independent_in_turn', None)
                     schedule=None
-                    if coverage_priority and not needs_previous_result and c.name in schemas:
+                    if coverage_priority and c.name in schemas:
                         request,schedule=coverage_priority.prepare(request,state)
                     # Reason text does not turn a repeated operation into a new operation.
                     semantic=signature(request)
                     retry_block=retries.block(request)
-                    event=dict(provider_call_id=c.id,request=request,status='started',independent_in_turn=independent);state['tool_calls'].append(event)
+                    event=dict(provider_call_id=c.id,request=request,status='started');state['tool_calls'].append(event)
                     if schedule:event['coverage_schedule']=schedule
                     if c.name not in self.allowed_tools:
                         result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
                     elif c.name=='find_documents' and self.paper_directory is not None:
                         result=dict(status='blocked',error_code='directory_already_provided',notice='Use the complete paper directory supplied at the start; no directory tool call is needed.')
-                    elif needs_previous_result:
-                        code = ('sql_dependency_requires_next_turn' if c.name == 'query_experiment_data'
-                                else 'dependency_requires_next_turn')
-                        result=dict(status='blocked',error_code=code,
-                            notice='Read the preceding results first. Only submit additional same-turn calls '
-                                   'with independent_in_turn=true when their need and all parameters are already known.')
                     elif schedule and schedule['blocked']:
                         result=dict(status='blocked',error_code='prioritize_uncovered_requirements',redirect_reason=schedule['redirect_reason'],
                             notice=('Two section reads have not resolved this need. Use search_literature with a targeted query and this document_id in document_ids before guessing another section, or give a concrete essential continuation/contradiction in revisit_reason.' if schedule['redirect_reason']=='targeted_search_before_more_sections' else 'Another requested paper has no delivered source evidence, or these targets are already covered. Target an uncovered paper/fact before deepening this one, or explain a specific essential contradiction in revisit_reason.'))

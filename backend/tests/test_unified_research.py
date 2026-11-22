@@ -15,6 +15,10 @@ def test_unified_agent_direct_answer_preserves_user_output_format():
     assert state["review_status"] == "not_required"
     assert state["budget_usage"] == {"model": 1, "tools": 0, "search": 0}
     assert len(adapter.requests[0][1]) == 9
+    assert all("independent_in_turn" not in schema["properties"] for schema in adapter.requests[0][1].values())
+    system = adapter.requests[0][0][0]["content"]
+    assert "fiber.v_sample_overview" in system and "fiber.v_recycled_cycle_detail" in system
+    assert '"columns":' not in system and '"enum":' not in system
 
 
 def test_unified_agent_tracks_two_sources_in_the_same_context():
@@ -30,7 +34,7 @@ def test_unified_agent_tracks_two_sources_in_the_same_context():
         }),
         ToolCall("paper", "search_literature", {
             "query": "paper result", "document_ids": ["doc_a"], "reason": "check the paper",
-            "independent_in_turn": True, "target_requirements": ["need_2"],
+            "target_requirements": ["need_2"],
         }),
     ]
     answer = "The local count is 61 [1]. The paper reports ten observations [2]."

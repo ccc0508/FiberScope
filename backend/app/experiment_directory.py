@@ -38,14 +38,19 @@ def column_info(view, name, kind):
     if out.get('unit_status')=='unconfirmed':out['unit_note']='该字段单位尚未确认，不可自行补充单位。'
     return out
 
+def view_directory(names=None):
+    return {
+        'fiber.' + name: dict(description=SEMANTICS['views'][name][0],
+                             row_grain=SEMANTICS['views'][name][1])
+        for name in names or SPECS
+    }
+
+
 def describe(db, views=None):
     names=selection(views)
-    result=dict(mode='details' if names else 'directory',views={},
+    result=dict(mode='details' if names else 'directory',views=view_directory(names),
         policy='Only allowlisted fiber views. SELECT, string concatenation (||), arbitrary joins and nested/correlated subqueries allowed; no CASE/CTEs/UNION/explicit casts/arbitrary functions. Supported functions: COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF. Joins can multiply rows; preserve intended grain. EXPLAIN without ANALYZE checks estimated work before execution; it does not prove statistical validity. Query results limited to 100 rows/24000 row characters.',
         next_step='Call describe_experiment_data with views=[qualified view names] for actual columns, units and live enums before writing SQL.')
-    for name in names or SPECS:
-        purpose,grain=SEMANTICS['views'][name]
-        result['views']['fiber.'+name]=dict(description=purpose,row_grain=grain)
     if not names: return result
     rows=db.execute("SELECT table_name,column_name,data_type FROM information_schema.columns WHERE table_schema='fiber' AND table_name=ANY(%s) ORDER BY table_name,ordinal_position",(names,)).fetchall()
     for name in names:
