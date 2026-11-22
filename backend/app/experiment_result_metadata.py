@@ -53,8 +53,17 @@ def output_metadata(query, columns, schema_rows):
 
         scopes = list(traverse_scope(tree))
         for scope in scopes:
-            outputs[id(scope)] = [(projection.alias_or_name, resolve(projection, scope))
-                for projection in scope.expression.selects]
+            if isinstance(scope.expression, exp.Union):
+                left, right = (outputs[id(branch)] for branch in scope.set_operation_scopes)
+                # Output labels come from the first branch, but units must agree
+                # at the same position in both branches.
+                outputs[id(scope)] = [
+                    (name, info if info == other else dict(unknown))
+                    for (name, info), (_, other) in zip(left, right, strict=True)
+                ]
+            else:
+                outputs[id(scope)] = [(projection.alias_or_name, resolve(projection, scope))
+                    for projection in scope.expression.selects]
         values = outputs[id(scopes[-1])]
         if len(values) != len(columns):
             return fallback

@@ -41,7 +41,7 @@ def column_info(view, name, kind):
 def describe(db, views=None):
     names=selection(views)
     result=dict(mode='details' if names else 'directory',views={},
-        policy='Only allowlisted fiber views. SELECT, string concatenation (||), arbitrary joins and nested/correlated subqueries allowed; no CASE/CTEs/UNION/explicit casts/arbitrary functions. Supported functions: COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF. Joins can multiply rows; preserve intended grain. EXPLAIN without ANALYZE checks estimated work before execution; it does not prove statistical validity. Query results limited to 100 rows/24000 row characters.',
+        policy='One read-only PostgreSQL query over allowlisted fiber views. Supports joins, subqueries, UNION ALL, CASE, CAST to allowlisted built-in scalar types, non-recursive WITH, and OVER windows (allowed aggregates, ranking, and offset/value functions). Common CAST targets include integer, numeric, double precision, text, boolean and date. Supports || and COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF. Arbitrary functions remain unavailable. Joins and UNION ALL can multiply rows; preserve intended grain. EXPLAIN estimates work. Query results limited to 100 rows/24000 row characters.',
         next_step='Call describe_experiment_data with views=[qualified view names] for actual columns, units and live enums before writing SQL.')
     for name in names or SPECS:
         purpose,grain=SEMANTICS['views'][name]
