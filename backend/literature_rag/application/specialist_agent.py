@@ -211,7 +211,8 @@ Do not invent rows. Check actual schema, population, grouping keys, filters and 
 several metrics via different columns. A selected historical result may satisfy only the metrics it contains.
 When fresh_query is true, run the query yourself. Report missing/partial for an unsupported metric;
 verified must have no unresolved gap. For unfiltered counts avoid synthetic LIMIT, WHERE or extra joins.
-You handle experimental SQL only. First describe_experiment_data for directory then selected view details.
+You handle experimental SQL only. Select relevant views from the supplied directory and pass their exact
+names in views to describe_experiment_data for details.
 Use real columns, units, enums and grain. If metric/threshold is ambiguous, inspect directory then stop with
 needs_clarification; do not compute substitute values. Ask only missing choices, not specified material.
 Only cumulative beating revolutions are recorded, not rpm. For canonical samples use sample/paired views;

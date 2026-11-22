@@ -4,11 +4,33 @@ import pytest
 from diagnostic_metrics import (
     digest,
     mixed_case,
+    mixed_packet,
     projected,
     retrieval,
     same_rows,
     sql_case,
 )
+
+
+def test_unified_packet_uses_only_tool_results_present_in_final_input():
+    def event(provider_id):
+        return {
+            "provider_call_id": provider_id,
+            "request": {"tool": "query_experiment_data"},
+            "status": "completed",
+            "result": {"status": "completed", "call_id": provider_id, "result": {"rows": [[61]]}},
+            "model_delivery": {"status": "delivered", "messages": []},
+        }
+
+    state = {
+        "pipeline_version": "unified-research-v1", "run_id": "r", "answer": "done",
+        "tool_calls": [event("in"), event("out")],
+        "model_calls": [{"status": "completed", "stage": "review", "text": "done",
+                         "input_messages": [{"role": "tool", "tool_call_id": "in"}]}],
+    }
+    packet = mixed_packet({"id": "MIX01"}, state, ["required count"])
+    assert [x["call_id"] for x in packet["calls"]] == ["in", "out"]
+    assert [x["call_id"] for x in packet["evidence"].values()] == ["in"]
 
 
 def search(call_id, candidates, seeds):

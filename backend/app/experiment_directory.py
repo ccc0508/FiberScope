@@ -10,8 +10,10 @@ SPECS={spec.view:spec for spec in VIEWS.values()}
 INDICATOR_MAP={i['key']:i for i in INDICATORS}
 
 def selection(views):
+    if not views:
+        raise ValueError('Select at least one view from the supplied experiment view directory.')
     names=[]
-    for value in views or []:
+    for value in views:
         name=value.removeprefix('fiber.')
         if name not in SPECS: raise ValueError('Unknown view. Allowed: '+', '.join('fiber.'+v for v in SPECS))
         if name not in names: names.append(name)
@@ -38,15 +40,19 @@ def column_info(view, name, kind):
     if out.get('unit_status')=='unconfirmed':out['unit_note']='该字段单位尚未确认，不可自行补充单位。'
     return out
 
-def describe(db, views=None):
+def view_directory(names=None):
+    return {
+        'fiber.' + name: dict(description=SEMANTICS['views'][name][0],
+                             row_grain=SEMANTICS['views'][name][1])
+        for name in names or SPECS
+    }
+
+
+def describe(db, views):
     names=selection(views)
-    result=dict(mode='details' if names else 'directory',views={},
+    result=dict(mode='details',views=view_directory(names),
         policy='One read-only PostgreSQL query over allowlisted fiber views. Supports joins, subqueries, UNION ALL, CASE, CAST to allowlisted built-in scalar types, non-recursive WITH, and OVER windows (allowed aggregates, ranking, and offset/value functions). Common CAST targets include integer, numeric, double precision, text, boolean and date. Supports || and COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF. Arbitrary functions remain unavailable. Joins and UNION ALL can multiply rows; preserve intended grain. EXPLAIN estimates work. Query results limited to 100 rows/24000 row characters.',
-        next_step='Call describe_experiment_data with views=[qualified view names] for actual columns, units and live enums before writing SQL.')
-    for name in names or SPECS:
-        purpose,grain=SEMANTICS['views'][name]
-        result['views']['fiber.'+name]=dict(description=purpose,row_grain=grain)
-    if not names: return result
+        next_step='Use the returned columns, units and live enums for the selected views before writing SQL.')
     rows=db.execute("SELECT table_name,column_name,data_type FROM information_schema.columns WHERE table_schema='fiber' AND table_name=ANY(%s) ORDER BY table_name,ordinal_position",(names,)).fetchall()
     for name in names:
         entry=result['views']['fiber.'+name]

@@ -32,7 +32,8 @@ class Request(BaseModel):
 class Search(Request):
     tool: Literal['search_literature']
     query: str = Field(min_length=1, max_length=4000)
-    document_ids: list[str] | None = Field(default=None, min_length=1, max_length=20, description='Omit for all papers; use IDs returned by find_documents to restrict retrieval before candidate selection.')
+    document_ids: list[str] | None = Field(default=None, min_length=1, max_length=20,
+        description='Omit for all papers, or use exact IDs from the supplied paper directory or evidence.')
 
 
 class FindDocuments(Request):
@@ -125,7 +126,10 @@ class FindFigure(Request):
 
 class DescribeExperiments(Request):
     tool: Literal['describe_experiment_data']
-    views: list[str] | None = Field(default=None, max_length=8, description='Omit for a compact view directory. Supply selected view names, e.g. ["fiber.v_beating_analysis"], for actual fields, descriptions, units and live discrete values. Reuse details within this question.')
+    views: list[str] = Field(min_length=1, max_length=8,
+        description='Select one or more exact names from the supplied view directory, e.g. '
+                    '["fiber.v_beating_analysis"]. Returns actual fields, units and live discrete values. '
+                    'Reuse details within this question.')
 
 
 class QueryExperiments(Request):
