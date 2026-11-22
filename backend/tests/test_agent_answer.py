@@ -28,6 +28,13 @@ def test_incomplete_run_not_reported_success():
     assert r['status']=='failed' and r['review_summary']['status']=='incomplete'
 
 
+def test_disabled_review_is_not_shown_as_incomplete():
+    state=dict(status='completed',answer='研究结果。',review_status='disabled')
+    result=adapt_run(state,[],[],1)
+    assert result['status']=='answered'
+    assert 'review_summary' not in result
+
+
 def test_specialist_route_direct_is_not_falsely_marked_reviewed():
     r=adapt_run(dict(status='completed',answer='你好',review_status='not_required',pipeline_version='specialists-v1'),[],[],1)
     assert r['status']=='answered' and r['review_summary']['status']=='not_required'

@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from literature_rag.adapters.providers.agent_chat import ToolCall
 from literature_rag.application.agent_loop import AgentLoop
 from tests.test_agent_loop import Fake, decision
@@ -21,7 +23,8 @@ def test_unified_agent_direct_answer_preserves_user_output_format():
     assert '"columns":' not in system and '"enum":' not in system
 
 
-def test_unified_agent_tracks_two_sources_in_the_same_context():
+@pytest.mark.parametrize("needs_citation_repair", [False, True])
+def test_unified_agent_tracks_two_sources_and_only_repairs_invalid_refs(needs_citation_repair):
     requirements = [
         {"role": "sql", "source_quote": "local count"},
         {"role": "literature", "source_quote": "paper result", "paper_quote": "paper A"},
@@ -43,8 +46,12 @@ def test_unified_agent_tracks_two_sources_in_the_same_context():
         {"requirement_id": "need_2", "status": "verified", "refs": ["[2]"],
          "document_id": "doc_a", "finding": "ten observations"},
     ]
-    draft = json.dumps({"answer": answer, "coverage": coverage})
-    adapter = Fake([decision(calls=calls), decision(draft), decision(answer)])
+    draft_answer = answer.replace("[2]", "[9]") if needs_citation_repair else answer
+    draft = json.dumps({"answer": draft_answer, "coverage": coverage})
+    decisions = [decision(calls=calls), decision(draft)]
+    if needs_citation_repair:
+        decisions.append(decision(answer))
+    adapter = Fake(decisions)
     sent = []
 
     def execute(request, *_):
@@ -60,7 +67,11 @@ def test_unified_agent_tracks_two_sources_in_the_same_context():
         "Give the local count and paper result for paper A.", "mixed"
     )
     assert sent == ["query_experiment_data", "search_literature"]
-    assert state["answer"] == answer and state["review_status"] == "completed"
+    assert state["answer"] == answer and state["review_status"] == "disabled"
+    assert state["status"] == "completed"
     assert state["coverage_report"]["complete"]
-    assert state["citation_validation"]["status"] == "passed"
-    assert len(adapter.requests) == 3
+    stages = ["decide", "decide"]
+    if needs_citation_repair:
+        stages.append("citation_repair")
+    assert [call["stage"] for call in state["model_calls"]] == stages
+    assert state["citation_validation"]["status"] == ("repaired" if needs_citation_repair else "passed")

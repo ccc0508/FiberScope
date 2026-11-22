@@ -48,7 +48,6 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
     script = [decision(calls=[sql]), draft]
     if supplements:
         script += [decision(calls=[lookup]), draft]
-    script.append(decision("61 [1]"))
     adapter = Fake(script)
     requests = []
 
@@ -75,6 +74,7 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
         evidence_judge=SimpleNamespace(model=MODEL, check=judge),
     ).run(question, "test")
     assert state["status"] == "completed"
+    assert state["review_status"] == "disabled"
     assert state["evidence_check_status"] == "supported"
     assert state["tool_attempts"] == (2 if supplements else 1)
     assert len(requests) == (2 if supplements else 1)
@@ -84,13 +84,13 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
         assert '"need_2"' in prompt and '"need_1"' not in prompt
 
 
-def test_jev_timeout_keeps_answer_review_available():
+def test_jev_timeout_still_returns_the_answer():
     lookup = ToolCall("lookup", "describe_experiment_data", {
         "views": ["fiber.v_sample_overview"], "reason": "schema",
         "requirements": [{"role": "sql", "source_quote": "sample fields"}],
     })
     draft = decision(json.dumps({"answer": "Here are the fields.", "coverage": []}))
-    adapter = Fake([decision(calls=[lookup]), draft, decision("Here are the fields.")])
+    adapter = Fake([decision(calls=[lookup]), draft])
 
     def timeout(*_):
         raise TimeoutError()
@@ -101,9 +101,10 @@ def test_jev_timeout_keeps_answer_review_available():
         evidence_judge=SimpleNamespace(model=MODEL, check=timeout),
     ).run("Report the sample fields.", "test")
     assert state["status"] == "completed"
+    assert state["answer"] == "Here are the fields."
     assert state["evidence_check_status"] == "unavailable"
     assert [call["stage"] for call in state["model_calls"]] == [
-        "decide", "decide", "evidence_check", "review",
+        "decide", "decide", "evidence_check",
     ]
 
 
@@ -127,7 +128,6 @@ def test_rejected_paper_quotes_can_be_registered_after_retrieval():
     adapter = Fake([
         decision(calls=[lookup]), decision(json.dumps(draft, ensure_ascii=False)),
         decision(json.dumps({**draft, "requirements": repaired}, ensure_ascii=False)),
-        decision(draft["answer"]),
     ])
     requests = []
 
