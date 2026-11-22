@@ -45,10 +45,10 @@ def test_preflight_rejection_never_executes_select(tmp_path,monkeypatch):
 
 def test_unsupported_feedback_names_node_without_connection(tmp_path,monkeypatch):
     monkeypatch.setattr('app.experiment_sql.connect',lambda:pytest.fail('no DB needed'))
-    r=execute(dict(tool='query_experiment_data',sql='SELECT CASE WHEN sample_id=1 THEN 1 ELSE 0 END FROM v_sample_overview',reason='test'),
+    r=execute(dict(tool='query_experiment_data',sql='SELECT ARRAY_AGG(sample_id) FROM v_sample_overview',reason='test'),
         'run',ToolTraceStore(tmp_path/'trace.db'))
     assert r['error_code']=='unsupported_sql'
-    assert 'case' in r['diagnostic']['unsupported_nodes']
+    assert 'arrayagg' in r['diagnostic']['unsupported_nodes']
     assert r['failure_stage']=='validation'
 
 

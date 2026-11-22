@@ -51,7 +51,7 @@ def view_directory(names=None):
 def describe(db, views):
     names=selection(views)
     result=dict(mode='details',views=view_directory(names),
-        policy='Only allowlisted fiber views. SELECT, string concatenation (||), arbitrary joins and nested/correlated subqueries allowed; no CASE/CTEs/UNION/explicit casts/arbitrary functions. Supported functions: COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF. Joins can multiply rows; preserve intended grain. EXPLAIN without ANALYZE checks estimated work before execution; it does not prove statistical validity. Query results limited to 100 rows/24000 row characters.',
+        policy='One read-only PostgreSQL query over allowlisted fiber views. Supports joins, subqueries, UNION ALL, CASE, CAST to allowlisted built-in scalar types, non-recursive WITH, and OVER windows (allowed aggregates, ranking, and offset/value functions). Common CAST targets include integer, numeric, double precision, text, boolean and date. Supports || and COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF. Arbitrary functions remain unavailable. Joins and UNION ALL can multiply rows; preserve intended grain. EXPLAIN estimates work. Query results limited to 100 rows/24000 row characters.',
         next_step='Use the returned columns, units and live enums for the selected views before writing SQL.')
     rows=db.execute("SELECT table_name,column_name,data_type FROM information_schema.columns WHERE table_schema='fiber' AND table_name=ANY(%s) ORDER BY table_name,ordinal_position",(names,)).fetchall()
     for name in names:

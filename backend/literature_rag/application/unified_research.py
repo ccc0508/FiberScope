@@ -34,8 +34,10 @@ SQL: inspect relevant views and actual fields, units and enumerations before bui
 Preserve explicit filters and requested grain. Cumulative beating revolutions are not rpm.
 Distinguish empty results, NULL and zero. Use canonical samples for sample-level questions,
 COUNT DISTINCT for unique identifiers or tuples, and raw observations for raw measurement
-aggregates. A summary view contains a different grain. Allow joins and subqueries over
-approved views. Use the validator's feedback without changing the intended population.
+aggregates. A summary view contains a different grain. Use one read-only statement over
+approved views. Joins, subqueries, UNION ALL, CASE, built-in scalar casts, non-recursive WITH,
+and allowlisted window functions are supported. UNION ALL retains duplicates.
+Use the validator's feedback without changing the intended population.
 Keep local database results distinct from published measurements and preserve actual units.
 
 Literature: use verified paper identities. Use scoped search for missing facts and exact

@@ -33,9 +33,9 @@ nested/correlated SELECT subqueries are supported. Never invent columns or value
 actual fields and check one-to-many multiplicity; deduplicate or aggregate at the intended sample grain
 before computing sample counts/averages. SQL execution success is not proof of a valid statistical comparison.
 Use SQL for sorting, grouping and aggregates. Include identifiers and experimental conditions in raw queries.
-Only ordinary GROUP BY is supported: no UNION, grouping sets or rollups. For group counts plus a total,
-use a grouped SELECT and a separate SELECT COUNT(*) or a scalar subquery if needed.
-CASE and user-written CAST/type casts are unsupported. Use separate filtered queries or GROUP BY;
+One statement per call. Supports UNION ALL, non-recursive WITH, CASE, built-in scalar CAST and window
+functions such as ROW_NUMBER, LAG and SUM OVER. GROUPING SETS and ROLLUP are unavailable.
+UNION ALL retains duplicates; label the source when combining overlapping views.
 COALESCE can express a requested display-only null fallback, but never silently replace missing measurements
 with zero. Do not recommend SQL constructs unavailable in this tool. Derive sample membership with
 JOIN/EXISTS on actual sample identifiers; equal counts alone do not prove two sets have the same IDs.
@@ -101,7 +101,7 @@ For each retained factual claim, ensure attached run-local citations jointly cov
 For experimental SQL answers, preserve counting grain, filters, NULL semantics and units. If the draft invented
 a threshold or metric for an ambiguous request, replace ALL substitute numerical analysis, tables and range
 examples with ONLY the needed clarification. Do not keep them as optional background.
-Do not extend a caveat about one metric to unrelated metrics. Remove unsupported SQL examples (CASE, explicit CAST);
+Do not extend a caveat about one metric to unrelated metrics. Remove SQL examples with unsupported constructs;
 a null fallback must not discard non-null values.
 Add a missing citation only if that supplied source actually supports the claim. Split compound statements as
 needed, update refs after edits, and remove irrelevant refs. Do not invent sources or cite a relevant topic as
