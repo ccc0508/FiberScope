@@ -4,6 +4,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
+from .citation_policy import citation_records
 from .coverage_priority import CoveragePriority
 from .task_coverage import CoverageItem, Requirement, ground_requirements
 from .tools import SECTION_BATCH_GUIDANCE
@@ -18,9 +19,9 @@ clearly labeled. It cannot satisfy a missing paper-specific fact.
 
 When starting research, attach requirements to your first business tool call. Split explicit
 requests into independently checkable facts, one per named paper and one per SQL metric where
-needed. Copy source_quote and paper_quote exactly from the question. Omit paper_quote for
-unspecified sources. Include a metric contract when the SQL grain or aggregation is clear
-and the available fields establish it. Leave it out if uncertain. Subsequent calls may add
+needed. Copy source_quote and paper_quote exactly from the question, using the user’s
+author/year wording for paper_quote when supplied there. Omit it for unspecified sources.
+Subsequent calls may add
 missing requirements. After tools return, use the program's need IDs. Use target_requirements
 for each lookup and send compact coverage_updates only when a previously obtained result
 changes a finding. Prioritize uncovered papers and facts across BOTH sources. A directory
@@ -48,10 +49,56 @@ directory entries are not citations. Keep database facts, published claims and y
 inferences visibly attributable. Avoid optional unsupported claims.
 On research questions, submit a single JSON object with answer (the entire user-facing
 answer) and coverage (one item per requirement_id). A coverage item has status, refs,
-finding and, if unresolved, gap. Paper-specific coverage needs document_id. For contract
-SQL metrics specify the actual result cells: ref, column, zero-based row and value
-(JSON null for NULL). For no-tool questions, return just the requested answer or clarification.
+finding and, if unresolved, gap. Paper-specific coverage needs document_id.
+For no-tool questions, return just the requested answer or clarification.
 """ + SECTION_BATCH_GUIDANCE
+
+LEGACY_METRIC_GUIDANCE = (
+    "\nInclude a metric contract when the SQL grain and real fields are known. For contract SQL metrics "
+    "specify the actual result cells: ref, column, zero-based row and value (JSON null for NULL)."
+)
+EVIDENCE_CHECK_THRESHOLD = 0.90
+
+
+def evidence_check_input(question, requirements, events):
+    evidence = {}
+    for event in events:
+        raw = event.get("result", {})
+        delivery = event.get("model_delivery", {})
+        if raw.get("status") != "completed" or delivery.get("status") != "delivered":
+            continue
+        tool = event["request"]["tool"]
+        result = raw.get("result", {})
+        refs = {item["ref"] for item in citation_records(tool, raw)}
+        if tool == "describe_experiment_data":
+            evidence[raw["call_id"]] = {"tool": tool, "views": result.get("views", {})}
+        elif tool == "query_experiment_data" and refs:
+            evidence[result["ref"]] = {
+                "tool": tool, **{key: result[key] for key in (
+                    "ref", "sql", "columns", "column_metadata", "rows", "row_count", "truncated",
+                    "result_state",
+                ) if key in result},
+            }
+        elif tool == "view_image" and refs:
+            evidence[result["ref"]] = {
+                "tool": tool, "ref": result["ref"], "asset": result.get("asset"),
+                "image_delivered_to_agent": any(
+                    isinstance(message.get("content"), list)
+                    and any(part.get("type") == "image_url" for part in message["content"])
+                    for message in delivery.get("messages", [])
+                ),
+            }
+        else:
+            for src in result.get("sources", []) + result.get("evidence", []) + [result.get("table", {})]:
+                if src.get("ref") in refs:
+                    evidence[src["ref"]] = {
+                        key: src[key] for key in (
+                            "ref", "document_id", "filename", "page_start", "page_end", "text",
+                        ) if key in src
+                    }
+    items = [{key: item[key] for key in ("requirement_id", "source_quote", "paper_quote", "role")}
+             for item in requirements]
+    return {"question": question, "requirements": items, "evidence": list(evidence.values())}
 
 
 class ResearchDraft(BaseModel):
@@ -61,14 +108,18 @@ class ResearchDraft(BaseModel):
 
 
 class ResearchChecklist(CoveragePriority):
-    def __init__(self, question):
+    def __init__(self, question, *, evidence_only=False):
         super().__init__([])
         self.question = question
+        self.evidence_only = evidence_only
 
     def schemas(self, schemas):
         result = super().schemas(schemas)
         requirement_schema = TypeAdapter(list[Requirement]).json_schema()
         definitions = requirement_schema.pop("$defs")
+        if self.evidence_only:
+            definitions["Requirement"]["properties"].pop("metric")
+            definitions.pop("Metric", None)
         requirement_schema["maxItems"] = 24
         for schema in result.values():
             schema.setdefault("$defs", {}).update(definitions)
@@ -84,6 +135,8 @@ class ResearchChecklist(CoveragePriority):
         candidates = []
         for entry in raw[:24] if isinstance(raw, list) else []:
             try:
+                if self.evidence_only and isinstance(entry, dict):
+                    entry = {key: value for key, value in entry.items() if key != "metric"}
                 candidates.append(Requirement.model_validate(entry))
             except ValueError:
                 rejected.append({"reason": "invalid_requirement"})
@@ -114,6 +167,8 @@ class ResearchChecklist(CoveragePriority):
             self.items[item.requirement_id] = item
         report = self.report(trace)
         trace["coverage_report"] = report
+        if self.evidence_only:
+            return draft.answer, None
         if not self.requirements:
             return draft.answer, "Research ran without a grounded checklist. Account for each requested fact in the answer."
         pending = [

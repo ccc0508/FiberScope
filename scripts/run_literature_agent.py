@@ -111,8 +111,11 @@ def main():
         from literature_rag.application.specialist_agent import ResultDrivenCoordinator
         loop=ResultDrivenCoordinator
     try:
+        from literature_rag.adapters.providers.jev_evidence import JevEvidenceJudge
+        unified = a.architecture == 'single' and not a.prompt_file
         options=(dict(feedback_enabled=not a.no_task_feedback) if a.architecture=='specialists'
-                 else dict(unified_research=not bool(a.prompt_file)))
+                 else dict(unified_research=bool(unified),
+                           evidence_judge=JevEvidenceJudge.configured(ROOT) if unified else None))
         result=loop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory,**options).run(a.question,run_id)
     finally:
         telemetry.close()

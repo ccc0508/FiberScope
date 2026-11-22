@@ -115,7 +115,8 @@ class LangfuseTrace:
             usage = call.get('usage') or {}
             counts = {k: usage[v] for k, v in [('input','prompt_tokens'), ('output','completion_tokens')]
                       if isinstance(usage.get(v), int)}
-            node.update(model=self.model, output=redact({k: call.get(k) for k in ('text','calls','raw_message')}),
+            node.update(model=call.get('model', self.model),
+                        output=redact({k: call.get(k) for k in ('text','calls','raw_message','probabilities')}),
                         usage_details=counts or None, metadata=redact({k: call.get(k) for k in
                         ('status','finish_reason','error_type','available_tools','usage')}),
                         level='ERROR' if call['status']=='failed' else 'DEFAULT')
