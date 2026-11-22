@@ -42,7 +42,7 @@ class CoveragePriority:
     def snapshot(self,trace):
         report=self.report(trace)
         return dict(items=[dict(id=r['requirement']['requirement_id'],paper=r['requirement'].get('paper_quote',''),
-                    need=r['requirement']['source_quote'],status=r['status'],
+                    need=r['requirement'].get('deliverable') or r['requirement']['source_quote'],status=r['status'],
                     gap=r['reported'].get('gap',''),errors=r['errors']) for r in report['items']],
                     papers_without_source=self.papers_without_source(trace),
                     notice='Prioritize papers_without_source BEFORE deepening a paper already read, then unmet requested facts. Directory alone is not source coverage. Status validates availability only, not scientific truth.')
