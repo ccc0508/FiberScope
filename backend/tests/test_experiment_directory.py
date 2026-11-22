@@ -1,18 +1,29 @@
 import pytest
-from app.experiment_directory import describe, column_info, selection
-from literature_rag.application.tools import INPUT
+from app.experiment_directory import column_info, describe, selection, view_directory
+from app.experiment_sql import execute
+from literature_rag.application.tools import INPUT, ToolTraceStore
 
 def test_directory_needs_no_column_or_enum_queries():
-    class NoQuery:
-        def execute(self,*a):pytest.fail('compact directory must not query rows')
-    r=describe(NoQuery())
-    assert len(r['views'])==8 and r['mode']=='directory'
-    assert all('columns' not in v for v in r['views'].values())
+    directory = view_directory()
+    assert len(directory) == 8
+    assert all(set(entry) == {'description', 'row_grain'} for entry in directory.values())
 
 def test_selection_and_schema():
     assert selection(['v_beating_analysis','fiber.v_beating_analysis'])==['v_beating_analysis']
     with pytest.raises(ValueError):selection(['pg_catalog.pg_tables'])
-    assert INPUT.validate_python(dict(tool='describe_experiment_data',reason='test')).views is None
+    request = {'tool': 'describe_experiment_data', 'reason': 'test', 'views': ['fiber.v_beating_analysis']}
+    assert INPUT.validate_python(request).views == request['views']
+
+
+@pytest.mark.parametrize('arguments', [{}, {'views': []}, {'views': None}])
+def test_describe_rejects_missing_selection_before_connection(arguments, tmp_path, monkeypatch):
+    monkeypatch.setattr('app.experiment_sql.connect', lambda: pytest.fail('must validate before connecting'))
+    store = ToolTraceStore(tmp_path / 'trace.db')
+    request = {'tool': 'describe_experiment_data', 'reason': 'test', **arguments}
+    result = execute(request, 'test', store)
+    assert result['status'] == 'failed'
+    assert result['failure_stage'] == 'validation'
+    assert 'views' in result['message']
 
 def test_semantics_are_view_specific():
     assert column_info('v_beating_analysis','fiber_length_weighted_mm','numeric')['unit']=='mm'

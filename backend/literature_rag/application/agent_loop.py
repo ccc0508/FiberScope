@@ -16,9 +16,9 @@ viewed via view_image before making visual claims; identify axes, material and c
 relative quantities, uncertainty, correlation and causation. If evidence is missing say so, do not guess.
 Return a concise Chinese answer with [n] citations when ready. Tool arguments require a reason.
 For derived values, show the arithmetic where useful, check unit compatibility and cite the inputs.
-For project experimental data questions, call describe_experiment_data to obtain actual schema, units and caveats,
-first omit views for a compact directory, then pass selected views to obtain their detailed columns and live
-enum values. Reuse those details; do not assume a column exists in another view. Do not invent thresholds
+For project experimental data questions, use the supplied view directory to select the relevant views.
+Pass those names to describe_experiment_data for actual columns, units, caveats and live enum values.
+Reuse those details; do not assume a column exists in another view. Do not invent thresholds
 for vague terms or confuse cumulative beating revolutions with rotational speed. Enum values describe
 observed data, not legal ranges; their combinations may still have no records.
 If the requested threshold, metric or counting grain is ambiguous and changes the answer, ask a concise
@@ -151,7 +151,7 @@ def unwrap_json(value):
 
 class AgentLoop:
     def __init__(self,adapter,executor,checkpoint,budget=None,clock=monotonic,paper_directory=None,
-                 allowed_tools=None,system_prompt=None,review_enabled=True,output_schema=None,completion_check=None,coverage_priority=None,result_validator=None,extend=None,unified_research=False):
+                 allowed_tools=None,system_prompt=None,review_enabled=True,output_schema=None,completion_check=None,coverage_priority=None,result_validator=None,extend=None,unified_research=False,evidence_judge=None):
         self.adapter,self.executor,self.checkpoint=adapter,executor,checkpoint
         self.budget=budget or AgentBudget();self.clock=clock
         self.paper_directory=deepcopy(paper_directory)
@@ -167,6 +167,7 @@ class AgentLoop:
         self.result_validator=result_validator
         self.extend=extend
         self.unified_research=unified_research
+        self.evidence_judge=evidence_judge
 
     def run(self,question,run_id,*,inherited_tool_calls=None):
         b=self.budget;deadline=self.clock()+b.total_seconds
@@ -176,15 +177,21 @@ class AgentLoop:
         prompt = self.system_prompt or PROMPT
         coverage_priority = self.coverage_priority
         if self.unified_research:
-            from app.experiment_directory import view_directory
-            from .unified_research import ResearchChecklist, SYSTEM_PROMPT
-            research = coverage_priority = ResearchChecklist(question)
-            prompt = (SYSTEM_PROMPT + '\nExperiment view directory: allowed names, purposes and row grain. '
-                      'Use only these exact view names. Request details for the relevant views before writing '
-                      'SQL to learn real columns, field units and live enum values. The directory provides '
-                      'schema metadata only.\n'
-                      + json.dumps(view_directory(), ensure_ascii=False, separators=(',', ':')))
+            from .unified_research import (
+                EVIDENCE_CHECK_THRESHOLD, LEGACY_METRIC_GUIDANCE, ResearchChecklist,
+                SYSTEM_PROMPT, evidence_check_input,
+            )
+            research = coverage_priority = ResearchChecklist(question, evidence_only=self.evidence_judge is not None)
+            prompt = SYSTEM_PROMPT if self.evidence_judge else SYSTEM_PROMPT + LEGACY_METRIC_GUIDANCE
             state['pipeline_version'] = 'unified-research-v1'
+        if 'describe_experiment_data' in self.allowed_tools:
+            from app.experiment_directory import view_directory
+            prompt += (
+                '\nExperiment view directory: allowed names, purposes and row grain. '
+                'Pass a non-empty views list with exact names to describe_experiment_data for real columns, '
+                'units and live enum values before writing SQL. The directory provides schema metadata only.\n'
+                + json.dumps(view_directory(), ensure_ascii=False, separators=(',', ':'))
+            )
         messages=[dict(role='system',content=prompt+f'\nYou may execute search_literature at most {b.max_search_calls} times per question, including failed searches. After that use acquired evidence or other available reading/calculation tools; state unresolved gaps.'),dict(role='user',content=question)]
         messages[0]['content'] += (
             '\nGroup independent read-only tool requests in one decision, including different tools. '
@@ -275,9 +282,59 @@ class AgentLoop:
         save()
         model_limit=b.max_model_calls
         tool_limit=b.max_tool_calls
+        last_check_input = None
+        pending_evidence = []
+        evidence_retry = False
+        registration_retry = False
+        closing_calls = 2 if self.review_enabled or self.output_schema else 1
+        if research and self.evidence_judge and model_limit > closing_calls + 1:
+            closing_calls += 1
+
+        def check_evidence():
+            nonlocal last_check_input, pending_evidence
+            if not research or not self.evidence_judge or not state['tool_calls']:
+                return
+            state['evidence_check_scope'] = dict(
+                unresolved_registrations=[r['correction_id'] for r in research.pending_registrations()]
+            )
+            if not research.requirements:
+                state['evidence_check_status'] = 'missing_checklist'
+                return
+            payload = evidence_check_input(question, research.requirements, state['tool_calls'])
+            if payload == last_check_input:
+                return
+            remaining = deadline - self.clock() - b.reserve_seconds
+            if remaining <= 0 or len(state['model_calls']) >= model_limit - int(self.review_enabled):
+                state['evidence_check_status'] = 'skipped_budget'
+                return
+            if len(json.dumps(payload, ensure_ascii=False)) > b.max_context_chars:
+                state['evidence_check_status'] = 'skipped_context_budget'
+                return
+            last_check_input = payload
+            entry = dict(stage='evidence_check', model=self.evidence_judge.model, status='started',
+                         input_messages=[], available_tools=[], usage=None)
+            state['model_calls'].append(entry)
+            save()
+            try:
+                scores, usage = self.evidence_judge.check(payload, remaining)
+                pending_evidence = [
+                    {**item, 'probabilities': scores[item['requirement_id']]}
+                    for item in payload['requirements']
+                    if scores[item['requirement_id']]['supported'] < EVIDENCE_CHECK_THRESHOLD
+                ]
+                entry.update(status='completed', usage=usage, probabilities=scores)
+                state['evidence_check'] = dict(threshold=EVIDENCE_CHECK_THRESHOLD,
+                                               probabilities=scores, pending=pending_evidence)
+                state['evidence_check_status'] = 'needs_evidence' if pending_evidence else 'supported'
+            except Exception as error:
+                entry.update(status='failed', error_type=type(error).__name__)
+                state['evidence_check_status'] = 'unavailable'
+            finally:
+                save()
+
         try:
             while True:
-                collection_limit_reached=len(state['model_calls'])>=model_limit-(2 if self.review_enabled or self.output_schema else 1) or tool_count>=tool_limit
+                collection_limit_reached=len(state['model_calls'])>=model_limit-closing_calls or tool_count>=tool_limit
                 if collection_limit_reached or deadline-self.clock()<=b.reserve_seconds:
                     if self.extend and collection_limit_reached and not state.get('extension_checked') and deadline-self.clock()>b.reserve_seconds:
                         messages.append(dict(role='user',content='Submit the structured result now. If an unfinished original requirement has a concrete untried lookup, mark insufficient_evidence, name it in unresolved_items and specify next_information for this role with the exact next tool and its purpose.'))
@@ -307,6 +364,38 @@ class AgentLoop:
                     answer=d.text
                     if research and state['tool_calls']:
                         answer,feedback=research.draft(d.text,state)
+                        rejected = research.pending_registrations()
+                        if rejected and not registration_retry:
+                            repair = dict(role='user', content=json.dumps(
+                                research.registration_feedback(rejected), ensure_ascii=False
+                            ))
+                            if (len(state['model_calls']) < model_limit - closing_calls
+                                    and size(messages + [repair]) < stop_threshold
+                                    and tool_count < tool_limit
+                                    and deadline - self.clock() > b.reserve_seconds):
+                                registration_retry = True
+                                state['requirement_registration_retry_requested'] = True
+                                messages.append(repair)
+                                save()
+                                continue
+                        check_evidence()
+                        supplement_prompt = (
+                            'Evidence check: support probability is below 0.90 for the listed items. '
+                            'Target only these gaps using distinct useful lookups within the remaining budget. '
+                            'Reuse sufficient sources and report any gaps that remain. '
+                            + json.dumps(pending_evidence, ensure_ascii=False)
+                        )
+                        supplement_message = dict(role='user', content=supplement_prompt)
+                        if (pending_evidence and not evidence_retry
+                                and state.get('evidence_check_status') == 'needs_evidence'
+                                and len(state['model_calls']) < model_limit - closing_calls
+                                and size(messages + [supplement_message]) < stop_threshold
+                                and tool_count < tool_limit and deadline-self.clock() > b.reserve_seconds):
+                            evidence_retry = True
+                            state['evidence_supplement_requested'] = True
+                            messages.append(supplement_message)
+                            save()
+                            continue
                     if feedback and not coverage_retry:
                         coverage_retry=True
                         state['coverage_retry_requested']=True
@@ -360,6 +449,8 @@ class AgentLoop:
                     trial=deepcopy(projection)
                     compact=trial.project(result)
                     if coverage_priority:compact['coverage_priority']=coverage_priority.snapshot(state)
+                    if schedule and schedule.get('requirement_registration'):
+                        compact['requirement_registration'] = schedule['requirement_registration']
                     records=citation_records(c.name,result)
                     compact['citation_policy']=dict(records=records,
                         notice='Only these explicit refs may be cited. No records means this call adds no citable evidence. Never infer refs from call order or numbers in source text.')
@@ -393,11 +484,18 @@ class AgentLoop:
                 closing='Evidence collection has ended. Answer using only acquired evidence; explicitly state unresolved gaps. Do not call tools.'
                 if research and state['tool_calls']:
                     closing += ' Return the answer and coverage JSON required for research.'
+                    if research.pending_registrations():
+                        repair_text = '\n' + json.dumps(
+                            research.registration_feedback(research.pending_registrations()), ensure_ascii=False
+                        )
+                        if size(messages + [dict(role='user', content=closing + repair_text)]) <= b.max_context_chars:
+                            closing += repair_text
                 messages.append(dict(role='user',content=closing))
                 d=model('finalize',{});state['draft']=d.text;messages.append(d.message)
                 if d.calls or not d.text.strip():raise ValueError('Invalid draft')
                 if research and state['tool_calls']:
                     state['draft'],_=research.draft(d.text,state)
+                    check_evidence()
             state['answer']=state['draft'];save()
             if research and not state['tool_calls']:
                 state['review_status']='not_required'
@@ -409,6 +507,10 @@ class AgentLoop:
                     review_text += (' Review the answer field from the draft. Check every requested paper and metric. '
                                     'State each unresolved gap if evidence does not resolve it. Return only the '
                                     'user-facing answer in the requested format.')
+                    if pending_evidence:
+                        review_text += (' Evidence adequacy remains uncertain for these items. Verify against the '
+                                        'actual evidence and state any limitations: '
+                                        + json.dumps(pending_evidence, ensure_ascii=False))
                 review=dict(role='user',content=review_text)
                 if size(messages+[review])>b.max_context_chars:
                     state.update(review_status='skipped_context_budget',stop_reason='context_budget')

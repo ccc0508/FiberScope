@@ -28,7 +28,7 @@ def test_direct_has_no_tools_or_children():
 
 
 def test_sql_isolated_same_root_and_parent_review_only():
-    a=Fake([route('sql',sql_task='count'),tool('describe_experiment_data',dict(reason='schema')),
+    a=Fake([route('sql',sql_task='count'),tool('describe_experiment_data',dict(reason='schema',views=['fiber.v_sample_overview'])),
         tool('query_experiment_data',dict(sql='SELECT COUNT(*)',reason='count')),result(),answer('61个 [1]')])
     calls=[]
     def execute(req,rid,timeout):
@@ -38,6 +38,8 @@ def test_sql_isolated_same_root_and_parent_review_only():
     assert all(rid=='root' for _,rid in calls)
     assert set(a.requests[1][1])==SQL_TOOLS
     assert 'secret-paper' not in str(a.requests[1][0])
+    assert 'fiber.v_sample_overview' in a.requests[1][0][0]['content']
+    assert 'views' in a.requests[1][1]['describe_experiment_data']['required']
     assert r['children'][0]['trace']['review_status']=='delegated_to_parent'
     assert [x['stage'] for x in r['model_calls']].count('synthesis_review')==1
 
@@ -193,7 +195,7 @@ def test_do_not_extract_json_from_surrounding_prose():
 
 def test_mixed_can_correct_sql_then_preserves_literature_budget():
     a=Fake([route('both',sql_task='count',literature_task='paper'),
-        tool('describe_experiment_data',dict(reason='directory')),
+        tool('describe_experiment_data',dict(reason='inspect samples',views=['fiber.v_sample_overview'])),
         tool('describe_experiment_data',dict(reason='fields',views=['fiber.v_recycled_cycle_summary'])),
         tool('query_experiment_data',dict(sql='bad',reason='query')),
         tool('query_experiment_data',dict(sql='fixed',reason='correct field')),

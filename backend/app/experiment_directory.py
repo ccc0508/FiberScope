@@ -10,8 +10,10 @@ SPECS={spec.view:spec for spec in VIEWS.values()}
 INDICATOR_MAP={i['key']:i for i in INDICATORS}
 
 def selection(views):
+    if not views:
+        raise ValueError('Select at least one view from the supplied experiment view directory.')
     names=[]
-    for value in views or []:
+    for value in views:
         name=value.removeprefix('fiber.')
         if name not in SPECS: raise ValueError('Unknown view. Allowed: '+', '.join('fiber.'+v for v in SPECS))
         if name not in names: names.append(name)
@@ -46,12 +48,11 @@ def view_directory(names=None):
     }
 
 
-def describe(db, views=None):
+def describe(db, views):
     names=selection(views)
-    result=dict(mode='details' if names else 'directory',views=view_directory(names),
+    result=dict(mode='details',views=view_directory(names),
         policy='Only allowlisted fiber views. SELECT, string concatenation (||), arbitrary joins and nested/correlated subqueries allowed; no CASE/CTEs/UNION/explicit casts/arbitrary functions. Supported functions: COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF. Joins can multiply rows; preserve intended grain. EXPLAIN without ANALYZE checks estimated work before execution; it does not prove statistical validity. Query results limited to 100 rows/24000 row characters.',
-        next_step='Call describe_experiment_data with views=[qualified view names] for actual columns, units and live enums before writing SQL.')
-    if not names: return result
+        next_step='Use the returned columns, units and live enums for the selected views before writing SQL.')
     rows=db.execute("SELECT table_name,column_name,data_type FROM information_schema.columns WHERE table_schema='fiber' AND table_name=ANY(%s) ORDER BY table_name,ordinal_position",(names,)).fetchall()
     for name in names:
         entry=result['views']['fiber.'+name]
