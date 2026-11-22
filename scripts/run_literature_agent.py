@@ -86,7 +86,8 @@ def main():
         payload=dict(state,budget=asdict(b),model=settings.llm_model,prompt_override=prompt_identity,mode=a.architecture,
             task_feedback_enabled=a.architecture=='specialists' and not a.no_task_feedback,
             model_options=dict(thinking_enabled=settings.llm_thinking_enabled,reasoning_effort=settings.llm_reasoning_effort),
-            review_policy='parent synthesis and evidence review; no repeated child review' if a.architecture=='specialists' else 'one full-answer review, no content gate; not legacy structured corrective review')
+            review_policy=('parent synthesis and evidence review' if a.architecture=='specialists'
+                           else 'same-context evidence review for research; direct answers and clarifications may finish immediately'))
         save_state(state_path,payload)
         telemetry.update(payload)
         if telemetry.url:
@@ -110,7 +111,8 @@ def main():
         from literature_rag.application.specialist_agent import ResultDrivenCoordinator
         loop=ResultDrivenCoordinator
     try:
-        options=dict(feedback_enabled=not a.no_task_feedback) if a.architecture=='specialists' else {}
+        options=(dict(feedback_enabled=not a.no_task_feedback) if a.architecture=='specialists'
+                 else dict(unified_research=not bool(a.prompt_file)))
         result=loop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory,**options).run(a.question,run_id)
     finally:
         telemetry.close()

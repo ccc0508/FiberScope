@@ -151,7 +151,7 @@ def unwrap_json(value):
 
 class AgentLoop:
     def __init__(self,adapter,executor,checkpoint,budget=None,clock=monotonic,paper_directory=None,
-                 allowed_tools=None,system_prompt=None,review_enabled=True,output_schema=None,completion_check=None,coverage_priority=None,result_validator=None,extend=None):
+                 allowed_tools=None,system_prompt=None,review_enabled=True,output_schema=None,completion_check=None,coverage_priority=None,result_validator=None,extend=None,unified_research=False):
         self.adapter,self.executor,self.checkpoint=adapter,executor,checkpoint
         self.budget=budget or AgentBudget();self.clock=clock
         self.paper_directory=deepcopy(paper_directory)
@@ -166,12 +166,21 @@ class AgentLoop:
         self.coverage_priority=coverage_priority
         self.result_validator=result_validator
         self.extend=extend
+        self.unified_research=unified_research
 
     def run(self,question,run_id,*,inherited_tool_calls=None):
         b=self.budget;deadline=self.clock()+b.total_seconds
         state=dict(run_id=run_id,question=question,status='running',model_calls=[],tool_calls=[],
             answer='',draft='',stop_reason=None,review_status='not_started',review_version=REVIEW_VERSION)
-        messages=[dict(role='system',content=(self.system_prompt or PROMPT)+f'\nYou may execute search_literature at most {b.max_search_calls} times per question, including failed searches. After that use acquired evidence or other available reading/calculation tools; state unresolved gaps.'),dict(role='user',content=question)]
+        research = None
+        prompt = self.system_prompt or PROMPT
+        coverage_priority = self.coverage_priority
+        if self.unified_research:
+            from .unified_research import ResearchChecklist, SYSTEM_PROMPT
+            research = coverage_priority = ResearchChecklist(question)
+            prompt = SYSTEM_PROMPT
+            state['pipeline_version'] = 'unified-research-v1'
+        messages=[dict(role='system',content=prompt+f'\nYou may execute search_literature at most {b.max_search_calls} times per question, including failed searches. After that use acquired evidence or other available reading/calculation tools; state unresolved gaps.'),dict(role='user',content=question)]
         messages[0]['content'] += (
             '\nGroup independent read-only tool requests in one decision, including different tools. '
             'Set independent_in_turn=true on each additional call only if its need and all arguments '
@@ -220,11 +229,13 @@ class AgentLoop:
             image_chars=sum(len(block['image_url']['url']) for m in messages if isinstance(m.get('content'),list)
                 for block in m['content'] if block.get('type')=='image_url')
             if image_chars>24*1024*1024:raise OverflowError('Image budget')
-            entry=dict(stage=stage,status='started',usage=None,timeout_seconds=remaining,
+            output_tokens = (b.synthesis_max_output_tokens if research and stage in ('review', 'citation_repair')
+                             else b.max_output_tokens)
+            entry=dict(stage=stage,status='started',usage=None,timeout_seconds=remaining,max_output_tokens=output_tokens,
                 input_messages=trace_messages(messages),available_tools=list(schemas))
             state['model_calls'].append(entry);save()
             try:
-                d=self.adapter.decide(messages,schemas,remaining,b.max_output_tokens)
+                d=self.adapter.decide(messages,schemas,remaining,output_tokens)
                 entry.update(status='completed',usage=d.usage,finish_reason=d.finish_reason,
                     text=d.text,calls=[dict(id=c.id,name=c.name,arguments=c.arguments) for c in d.calls])
                 if self.clock()>=deadline:raise TimeoutError()
@@ -283,7 +294,7 @@ class AgentLoop:
                 schemas={name:schema for name,schema in SCHEMAS.items()
                     if name in self.allowed_tools and (name!='search_literature' or search_count<b.max_search_calls)
                     and (name!='find_documents' or self.paper_directory is None)}
-                if self.coverage_priority:schemas=self.coverage_priority.schemas(schemas)
+                if coverage_priority:schemas=coverage_priority.schemas(schemas)
                 # Scheduling metadata belongs to the model interface, never to the tool executor.
                 schemas={name:dict(schema,properties={
                     **schema['properties'],
@@ -295,12 +306,15 @@ class AgentLoop:
                 if not d.calls:
                     if not d.text.strip():raise ValueError('Empty draft')
                     feedback=self.completion_check(d.text,state) if self.completion_check else None
+                    answer=d.text
+                    if research and state['tool_calls']:
+                        answer,feedback=research.draft(d.text,state)
                     if feedback and not coverage_retry:
                         coverage_retry=True
                         state['coverage_retry_requested']=True
                         messages.append(dict(role='user',content=feedback));save()
                         continue
-                    state['draft']=d.text;break
+                    state['draft']=answer;break
                 image_messages=[]
                 stop_collection=False
                 for call_index,c in enumerate(d.calls):
@@ -308,8 +322,8 @@ class AgentLoop:
                     independent=request.pop('independent_in_turn',False) is True
                     needs_previous_result=call_index>0 and not independent
                     schedule=None
-                    if self.coverage_priority and not needs_previous_result and c.name in schemas:
-                        request,schedule=self.coverage_priority.prepare(request,state)
+                    if coverage_priority and not needs_previous_result and c.name in schemas:
+                        request,schedule=coverage_priority.prepare(request,state)
                     # Reason text does not turn a repeated operation into a new operation.
                     semantic=signature(request)
                     retry_block=retries.block(request)
@@ -353,7 +367,7 @@ class AgentLoop:
                     event.update(status=result['status'],result={k:v for k,v in result.items() if k!='image'});save()
                     trial=deepcopy(projection)
                     compact=trial.project(result)
-                    if self.coverage_priority:compact['coverage_priority']=self.coverage_priority.snapshot(state)
+                    if coverage_priority:compact['coverage_priority']=coverage_priority.snapshot(state)
                     records=citation_records(c.name,result)
                     compact['citation_policy']=dict(records=records,
                         notice='Only these explicit refs may be cited. No records means this call adds no citable evidence. Never infer refs from call order or numbers in source text.')
@@ -384,14 +398,26 @@ class AgentLoop:
                 if stop_collection:break
             if not state['draft']:
                 state['stop_reason']=state['stop_reason'] or 'collection_budget'
-                messages.append(dict(role='user',content='Evidence collection has ended. Answer using only acquired evidence; explicitly state unresolved gaps. Do not call tools.'))
+                closing='Evidence collection has ended. Answer using only acquired evidence; explicitly state unresolved gaps. Do not call tools.'
+                if research and state['tool_calls']:
+                    closing += ' Return the answer and coverage JSON required for research.'
+                messages.append(dict(role='user',content=closing))
                 d=model('finalize',{});state['draft']=d.text;messages.append(d.message)
                 if d.calls or not d.text.strip():raise ValueError('Invalid draft')
+                if research and state['tool_calls']:
+                    state['draft'],_=research.draft(d.text,state)
             state['answer']=state['draft'];save()
-            if not self.review_enabled:
+            if research and not state['tool_calls']:
+                state['review_status']='not_required'
+            elif not self.review_enabled:
                 state['review_status']='delegated_to_parent'
             elif len(state['model_calls'])<b.max_model_calls and deadline-self.clock()>2:
-                review=dict(role='user',content=REVIEW_PROMPT)
+                review_text=REVIEW_PROMPT
+                if research:
+                    review_text += (' Review the answer field from the draft. Check every requested paper and metric. '
+                                    'State each unresolved gap if evidence does not resolve it. Return only the '
+                                    'user-facing answer in the requested format.')
+                review=dict(role='user',content=review_text)
                 if size(messages+[review])>b.max_context_chars:
                     state.update(review_status='skipped_context_budget',stop_reason='context_budget')
                 else:
@@ -400,7 +426,7 @@ class AgentLoop:
                     if not d.text.strip() or d.calls:raise ValueError('Invalid final review')
                     state.update(answer=d.text,review_status='completed')
             else:state['review_status']='skipped_budget'
-            state['status']='completed' if state['review_status'] in ('completed','delegated_to_parent') else 'partial'
+            state['status']='completed' if state['review_status'] in ('completed','delegated_to_parent','not_required') else 'partial'
         except Exception as e:
             state.update(status='partial' if state['answer'] else 'failed',stop_reason=type(e).__name__)
             if state['review_status']=='not_started':state['review_status']='incomplete'
@@ -459,5 +485,8 @@ class AgentLoop:
                 state.update(answer='',status='failed',stop_reason='invalid_citations')
             else:validation['status']='repaired'
         else:validation['status']='passed' if state['answer'] else 'not_applicable'
-        state['tool_attempts']=tool_count;save()
+        state['tool_attempts']=tool_count
+        if research:
+            state['budget_usage'] = dict(model=len(state['model_calls']),tools=tool_count,search=search_count)
+        save()
         return state

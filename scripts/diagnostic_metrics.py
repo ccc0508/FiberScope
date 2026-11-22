@@ -231,7 +231,47 @@ def sql_case(case, state, refs, rules, adjudication=None):
     )
 
 
+def unified_mixed_packet(case, state, needs):
+    """Reconstruct evidence from the last answer request's actual tool messages."""
+    calls = []
+    evidence = {}
+    answer_call = next(
+        (call for call in reversed(state["model_calls"])
+         if call.get("status") == "completed" and call.get("text") and not call.get("calls")
+         and call["stage"] in {"decide", "finalize", "review", "citation_repair"}),
+        None,
+    ) if state.get("answer") else None
+    messages = answer_call["input_messages"] if answer_call else []
+    delivered_ids = {
+        msg["tool_call_id"] for msg in messages
+        if msg.get("role") == "tool" and msg.get("tool_call_id")
+    }
+    for event in state["tool_calls"]:
+        tool = event["request"]["tool"]
+        result = event.get("result", {})
+        calls.append({
+            "role": "sql" if tool in {"describe_experiment_data", "query_experiment_data"} else "literature",
+            "request": event["request"], "status": event["status"],
+            "error": result.get("error_code"), "call_id": result.get("call_id"),
+        })
+        delivery = event.get("model_delivery", {})
+        if (event["status"] == "completed" and delivery.get("status") == "delivered"
+                and event["provider_call_id"] in delivered_ids):
+            evidence[f"e{len(evidence)+1}"] = {
+                "status": "completed", "tool": tool, "call_id": result.get("call_id"),
+                "result": result.get("result", {}),
+                "image_delivered": tool == "view_image" and any(
+                    msg.get("role") == "user" and msg in messages
+                    for msg in delivery.get("messages", [])
+                ),
+            }
+    return {"case": case, "run_id": state["run_id"], "calls": calls,
+            "needs": needs, "evidence": evidence, "specialist_findings": []}
+
+
 def mixed_packet(case, state, needs):
+    if state.get("pipeline_version") == "unified-research-v1":
+        return unified_mixed_packet(case, state, needs)
     calls = []
     for child in state["children"]:
         for event in child["trace"]["tool_calls"]:
@@ -362,6 +402,8 @@ def evaluate(suite, run, reviews, packets):
             "sql": ("tool_calls",),
             "mixed": ("children", "model_calls"),
         }[suite]
+        if suite == "mixed" and state.get("pipeline_version") == "unified-research-v1":
+            required_trace = ("tool_calls", "model_calls")
         if any(not isinstance(state.get(field), list) for field in required_trace):
             rows[k] = {"status": "missing_trace"}
             continue
