@@ -36,6 +36,15 @@ def test_chinese_labels_and_multi_paragraph_abstract_do_not_absorb_keywords():
     assert '第二段摘要' in result['chunks'][2]['body_text'] and '关键词' not in result['chunks'][2]['body_text']
 
 
+def test_spaced_chinese_headings_open_body_and_close_at_bibliography():
+    result,_=run([b('无相关信息。'),b('１ 实 验',level=2),b('使用了新鲜纸浆。'),
+        b('2 结果与讨论',level=2),b('不同样品的详细结果如表4所示。'),
+        b('参 考 文 献',level=2),b('1. 张三. 材料研究. 2021.',kind='ref_text')])
+    roles=result['native_roles']
+    assert [role['role'] for role in roles.values()]==['unknown','heading','body','heading','body','heading','reference']
+    assert result['source_coverage']['exact_once']
+
+
 def test_structured_abstract_uses_heading_depth_and_stops_at_introduction():
     result,_=run([b('Abstract',level=2),b('Background',level=3),b('The background.'),b('Methods',level=3),b('The abstract method.'),
         b('Introduction',level=2),b('The scientific body discusses an abstract concept and author identity.')])
