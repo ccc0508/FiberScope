@@ -29,12 +29,12 @@ def test_unified_agent_tracks_two_sources_in_the_same_context():
     calls = [
         ToolCall("sql", "query_experiment_data", {
             "sql": "SELECT COUNT(*) FROM fiber.v_sample_overview",
-            "reason": "count local records", "requirements": requirements,
+            "reason": "count local records", "requirements": requirements[:1],
             "target_requirements": ["need_1"],
         }),
         ToolCall("paper", "search_literature", {
             "query": "paper result", "document_ids": ["doc_a"], "reason": "check the paper",
-            "target_requirements": ["need_2"],
+            "target_requirements": ["need_2"], "requirements": requirements[1:],
         }),
     ]
     answer = "The local count is 61 [1]. The paper reports ten observations [2]."
@@ -63,4 +63,6 @@ def test_unified_agent_tracks_two_sources_in_the_same_context():
     assert state["answer"] == answer and state["review_status"] == "completed"
     assert state["coverage_report"]["complete"]
     assert state["citation_validation"]["status"] == "passed"
+    assert state["task_contract"]["locked"]
+    assert all("requirements" not in schema["properties"] for schema in adapter.requests[1][1].values())
     assert len(adapter.requests) == 3

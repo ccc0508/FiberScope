@@ -17,14 +17,15 @@ Use the literature tools for claims about papers or mechanisms that need library
 even if the user names no paper. A general explanation can fill a source gap only if it is
 clearly labeled. It cannot satisfy a missing paper-specific fact.
 
-When starting research, attach requirements to your first business tool call. Split explicit
-requests into independently checkable facts, one per named paper and one per SQL metric where
-needed. Copy source_quote as one continuous, verbatim span from the question. Multiple items
-may share that span. Put the specific task in deliverable in your own words, preserving the
-user's requested scope. Copy paper_quote from the question for a named paper and omit it for
-unspecified sources. Later calls may add missing requirements. If registration rejects a quote,
-resubmit the corrected item with its correction_id in the next tool call's requirements or in
-the draft JSON's requirements array. Reuse evidence already collected. After tools return,
+Register all explicit research deliverables in the first tool-calling turn, across its requests.
+Split separate requested results by paper or SQL metric where needed. Copy source_quote as one
+continuous verbatim span. Multiple items may share a span only for distinct requested results.
+Paraphrase the requested result in deliverable; do not add background or unasked-for details.
+Copy paper_quote from the question for a named paper and omit it for unspecified sources.
+After the first turn the checklist is fixed. Use existing IDs for follow-up questions about
+their evidence. If a quote was rejected, repair just that quote with the same correction_id,
+role and deliverable in the next tool call or in the draft JSON's requirements. The original
+question still governs the answer, even if the checklist omitted a part. After tools return,
 use the program's need IDs. Use target_requirements
 for each lookup and send compact coverage_updates only when a previously obtained result
 changes a finding. Prioritize uncovered papers and facts across BOTH sources. A directory
@@ -46,7 +47,10 @@ missing. Read the table or inspect the figure before making claims about values 
 Check row, column, units, conditions and intended metric. Check data origin and validation
 separately when comparing studies. A public dataset may be synthetic. Keep uncertainty and
 distinguish correlations, author explanations and causal findings. If a requested fact lacks
-evidence and a viable untried path remains within budget, do a targeted follow-up.
+evidence and a viable untried path remains within budget, do a targeted follow-up. When relevant
+methods establish the reported procedure and leave a requested detail unspecified, say which
+detail the consulted source does not specify. An empty or irrelevant search only establishes
+that sufficient evidence was not found.
 
 Answer every requested part and state any unresolved evidence gaps. Cite only the explicit
 run-local refs supplied in tool results. Text reuse IDs, paper bibliography numbers, and
@@ -129,9 +133,17 @@ class ResearchChecklist(CoveragePriority):
         self.question = question
         self.evidence_only = evidence_only
         self.rejections = []
+        self.locked = False
+
+    def lock(self, trace):
+        self.locked = True
+        trace.setdefault("task_contract", {
+            "requirements": self.requirements, "rejected": self.rejections, "ignored_additions": 0,
+        })["locked"] = True
 
     def schemas(self, schemas):
         result = super().schemas(schemas)
+        can_register = not self.locked or self.pending_registrations()
         requirement_schema = TypeAdapter(list[ResearchRequirement]).json_schema()
         definitions = requirement_schema.pop("$defs")
         if self.evidence_only:
@@ -139,14 +151,16 @@ class ResearchChecklist(CoveragePriority):
             definitions.pop("Metric", None)
         requirement_schema["maxItems"] = 24
         for schema in result.values():
-            schema.setdefault("$defs", {}).update(definitions)
-            schema["properties"]["requirements"] = requirement_schema
+            if can_register:
+                schema.setdefault("$defs", {}).update(definitions)
+                schema["properties"]["requirements"] = requirement_schema
             for key in ("target_requirements", "coverage_updates", "revisit_reason"):
                 schema["required"].remove(key)
         return result
 
     def register(self, entries, trace):
         rejected = []
+        ignored = trace.get("task_contract", {}).get("ignored_additions", 0)
         for entry in entries:
             try:
                 if isinstance(entry, ResearchRequirement):
@@ -162,6 +176,16 @@ class ResearchChecklist(CoveragePriority):
                     raise ValueError("Invalid requirement object")
             except ValueError:
                 rejected.append({"reason": "invalid_requirement"})
+                continue
+            if self.locked and not any(
+                record["correction_id"] == candidate.correction_id
+                and record["role"] == candidate.role
+                and record["deliverable"] == candidate.deliverable
+                and all(field in record["invalid_fields"] or record[field] == getattr(candidate, field)
+                        for field in ("source_quote", "paper_quote"))
+                for record in self.pending_registrations()
+            ):
+                ignored += 1
                 continue
             accepted, ungrounded = ground_requirements([candidate], self.question)
             if ungrounded:
@@ -192,7 +216,8 @@ class ResearchChecklist(CoveragePriority):
                     if (record["correction_id"] == candidate.correction_id or
                             all(record[k] == data[k] for k in ("role", "paper_quote", "deliverable"))):
                         record["resolved_by"] = current["requirement_id"]
-        trace["task_contract"] = {"requirements": self.requirements, "rejected": self.rejections}
+        trace["task_contract"] = {"requirements": self.requirements, "rejected": self.rejections,
+                                  "locked": self.locked, "ignored_additions": ignored}
         return rejected
 
     def pending_registrations(self):
@@ -204,8 +229,8 @@ class ResearchChecklist(CoveragePriority):
             "notice": (
                 "Correct rejected task items in requirements on your next tool call or in the draft JSON. "
                 "Copy one continuous span from the original question into source_quote. The same span can "
-                "anchor multiple deliverables. Put paraphrases in deliverable, copy a named paper's wording "
-                "into paper_quote verbatim, and reuse its correction_id. Reuse evidence already collected."
+                "anchor multiple deliverables. Preserve the role and deliverable, fix only the invalid "
+                "quote fields, and reuse the correction_id. Reuse evidence already collected."
             ),
             "rejected": rejected,
         }

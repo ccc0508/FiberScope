@@ -284,6 +284,7 @@ class AgentLoop:
         tool_limit=b.max_tool_calls
         last_check_input = None
         pending_evidence = []
+        unspecified_details = []
         evidence_retry = False
         registration_retry = False
         closing_calls = 2 if self.review_enabled or self.output_schema else 1
@@ -291,7 +292,7 @@ class AgentLoop:
             closing_calls += 1
 
         def check_evidence():
-            nonlocal last_check_input, pending_evidence
+            nonlocal last_check_input, pending_evidence, unspecified_details
             if not research or not self.evidence_judge or not state['tool_calls']:
                 return
             state['evidence_check_scope'] = dict(
@@ -317,15 +318,26 @@ class AgentLoop:
             save()
             try:
                 scores, usage = self.evidence_judge.check(payload, remaining)
-                pending_evidence = [
-                    {**item, 'probabilities': scores[item['requirement_id']]}
-                    for item in payload['requirements']
-                    if scores[item['requirement_id']]['supported'] < EVIDENCE_CHECK_THRESHOLD
-                ]
+                has_paper_text = any(source.get('document_id') and source.get('text') for source in payload['evidence'])
+                unspecified_details = []
+                pending_evidence = []
+                for item in payload['requirements']:
+                    probabilities = scores[item['requirement_id']]
+                    if probabilities['supported'] >= EVIDENCE_CHECK_THRESHOLD:
+                        continue
+                    detail = {**item, 'probabilities': probabilities}
+                    if (has_paper_text and item['role'] == 'literature' and item.get('paper_quote')
+                            and probabilities.get('source_unspecified', 0) >= EVIDENCE_CHECK_THRESHOLD):
+                        unspecified_details.append(detail)
+                    else:
+                        pending_evidence.append(detail)
                 entry.update(status='completed', usage=usage, probabilities=scores)
                 state['evidence_check'] = dict(threshold=EVIDENCE_CHECK_THRESHOLD,
-                                               probabilities=scores, pending=pending_evidence)
-                state['evidence_check_status'] = 'needs_evidence' if pending_evidence else 'supported'
+                    probabilities=scores, pending=pending_evidence, source_unspecified=unspecified_details)
+                if pending_evidence:
+                    state['evidence_check_status'] = 'needs_evidence'
+                else:
+                    state['evidence_check_status'] = 'supported_with_source_limits' if unspecified_details else 'supported'
             except Exception as error:
                 entry.update(status='failed', error_type=type(error).__name__)
                 state['evidence_check_status'] = 'unavailable'
@@ -382,7 +394,8 @@ class AgentLoop:
                         supplement_prompt = (
                             'Evidence check: support probability is below 0.90 for the listed items. '
                             'Target only these gaps using distinct useful lookups within the remaining budget. '
-                            'Reuse sufficient sources and report any gaps that remain. '
+                            'Use the existing requirement IDs. If no useful untried lookup remains, '
+                            'report what was checked and state the gap instead of searching again. '
                             + json.dumps(pending_evidence, ensure_ascii=False)
                         )
                         supplement_message = dict(role='user', content=supplement_prompt)
@@ -477,6 +490,8 @@ class AgentLoop:
                         if msg['role']=='tool':messages.append(msg)
                         else:image_messages.append(msg)
                 messages.extend(image_messages)
+                if research and not research.locked:
+                    research.lock(state)
                 save()
                 if stop_collection:break
             if not state['draft']:
@@ -511,6 +526,13 @@ class AgentLoop:
                         review_text += (' Evidence adequacy remains uncertain for these items. Verify against the '
                                         'actual evidence and state any limitations: '
                                         + json.dumps(pending_evidence, ensure_ascii=False))
+                    if unspecified_details:
+                        review_text += (
+                            ' For these items report what the cited source establishes, and qualify '
+                            'any unspecified detail within that source. Never infer a method or value '
+                            'from silence or generalize absence beyond the consulted evidence: '
+                            + json.dumps(unspecified_details, ensure_ascii=False)
+                        )
                 review=dict(role='user',content=review_text)
                 if size(messages+[review])>b.max_context_chars:
                     state.update(review_status='skipped_context_budget',stop_reason='context_budget')
