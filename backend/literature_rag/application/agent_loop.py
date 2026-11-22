@@ -285,6 +285,7 @@ class AgentLoop:
         last_check_input = None
         pending_evidence = []
         evidence_retry = False
+        registration_retry = False
         closing_calls = 2 if self.review_enabled or self.output_schema else 1
         if research and self.evidence_judge and model_limit > closing_calls + 1:
             closing_calls += 1
@@ -293,6 +294,9 @@ class AgentLoop:
             nonlocal last_check_input, pending_evidence
             if not research or not self.evidence_judge or not state['tool_calls']:
                 return
+            state['evidence_check_scope'] = dict(
+                unresolved_registrations=[r['correction_id'] for r in research.pending_registrations()]
+            )
             if not research.requirements:
                 state['evidence_check_status'] = 'missing_checklist'
                 return
@@ -360,6 +364,20 @@ class AgentLoop:
                     answer=d.text
                     if research and state['tool_calls']:
                         answer,feedback=research.draft(d.text,state)
+                        rejected = research.pending_registrations()
+                        if rejected and not registration_retry:
+                            repair = dict(role='user', content=json.dumps(
+                                research.registration_feedback(rejected), ensure_ascii=False
+                            ))
+                            if (len(state['model_calls']) < model_limit - closing_calls
+                                    and size(messages + [repair]) < stop_threshold
+                                    and tool_count < tool_limit
+                                    and deadline - self.clock() > b.reserve_seconds):
+                                registration_retry = True
+                                state['requirement_registration_retry_requested'] = True
+                                messages.append(repair)
+                                save()
+                                continue
                         check_evidence()
                         supplement_prompt = (
                             'Evidence check: support probability is below 0.90 for the listed items. '
@@ -431,6 +449,8 @@ class AgentLoop:
                     trial=deepcopy(projection)
                     compact=trial.project(result)
                     if coverage_priority:compact['coverage_priority']=coverage_priority.snapshot(state)
+                    if schedule and schedule.get('requirement_registration'):
+                        compact['requirement_registration'] = schedule['requirement_registration']
                     records=citation_records(c.name,result)
                     compact['citation_policy']=dict(records=records,
                         notice='Only these explicit refs may be cited. No records means this call adds no citable evidence. Never infer refs from call order or numbers in source text.')
@@ -464,6 +484,12 @@ class AgentLoop:
                 closing='Evidence collection has ended. Answer using only acquired evidence; explicitly state unresolved gaps. Do not call tools.'
                 if research and state['tool_calls']:
                     closing += ' Return the answer and coverage JSON required for research.'
+                    if research.pending_registrations():
+                        repair_text = '\n' + json.dumps(
+                            research.registration_feedback(research.pending_registrations()), ensure_ascii=False
+                        )
+                        if size(messages + [dict(role='user', content=closing + repair_text)]) <= b.max_context_chars:
+                            closing += repair_text
                 messages.append(dict(role='user',content=closing))
                 d=model('finalize',{});state['draft']=d.text;messages.append(d.message)
                 if d.calls or not d.text.strip():raise ValueError('Invalid draft')

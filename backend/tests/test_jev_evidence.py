@@ -105,3 +105,54 @@ def test_jev_timeout_keeps_answer_review_available():
     assert [call["stage"] for call in state["model_calls"]] == [
         "decide", "decide", "evidence_check", "review",
     ]
+
+
+def test_rejected_paper_quotes_can_be_registered_after_retrieval():
+    anchor = "参考Morais与Curto（2022）与Uddin等（2024）的划分方式"
+    items = [
+        {"role": "literature", "source_quote": f"{paper}的划分方式（样本量）",
+         "paper_quote": paper, "deliverable": f"说明{paper}所报告的训练和测试划分"}
+        for paper in ("Morais与Curto（2022）", "Uddin等（2024）")
+    ]
+    repaired = [
+        {**item, "source_quote": anchor, "correction_id": f"quote_{i}"}
+        for i, item in enumerate(items, 1)
+    ]
+    draft = {"answer": "Two splits [1][2].", "coverage": []}
+    lookup = ToolCall("paper", "read_section", {
+        "targets": [{"document_id": "a", "section_id": "sec-a"},
+                    {"document_id": "b", "section_id": "sec-b"}],
+        "reason": "read splits", "requirements": items,
+    })
+    adapter = Fake([
+        decision(calls=[lookup]), decision(json.dumps(draft, ensure_ascii=False)),
+        decision(json.dumps({**draft, "requirements": repaired}, ensure_ascii=False)),
+        decision(draft["answer"]),
+    ])
+    requests = []
+
+    def judge(payload, _timeout):
+        requests.append(payload)
+        return {f"need_{i}": {"supported": 1, "partially_supported": 0, "insufficient": 0}
+                for i in (1, 2)}, {}
+
+    state = AgentLoop(
+        adapter,
+        lambda *_: {"status": "completed", "result": {"sources": [
+            {"ref": "[1]", "document_id": "a", "text": "70/30"},
+            {"ref": "[2]", "document_id": "b", "text": "17/4"},
+        ]}},
+        lambda _: None, unified_research=True, evidence_judge=SimpleNamespace(model=MODEL, check=judge),
+    ).run(anchor, "test")
+
+    assert state["status"] == "completed" and state["tool_attempts"] == 1
+    assert state["requirement_registration_retry_requested"]
+    notice = json.loads(adapter.requests[1][0][-1]["content"])["requirement_registration"]
+    assert [item["invalid_fields"] for item in notice["rejected"]] == [["source_quote"]] * 2
+    assert [item["resolved_by"] for item in state["task_contract"]["rejected"]] == ["need_1", "need_2"]
+    assert len(requests) == 1
+    assert [item["deliverable"] for item in requests[0]["requirements"]] == [
+        item["deliverable"] for item in items
+    ]
+    assert [item["source_quote"] for item in requests[0]["requirements"]] == [anchor, anchor]
+    assert {entry["ref"] for entry in requests[0]["evidence"]} == {"[1]", "[2]"}
