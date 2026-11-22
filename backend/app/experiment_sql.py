@@ -1,11 +1,13 @@
 from literature_rag.stage_trace import stage as trace_stage, records as trace_records
-"""Read-only PostgreSQL SELECTs over allowlisted views, including joins/subqueries."""
+"""Read-only PostgreSQL queries over the allowlisted analysis views."""
 import json
 from datetime import datetime, timezone
 from uuid import uuid4
 import psycopg
 import sqlglot
 from sqlglot import exp
+from sqlglot.optimizer.normalize_identifiers import normalize_identifiers
+from sqlglot.optimizer.scope import traverse_scope
 from app.catalog import VIEWS
 from app.experiment_preflight import preflight, QueryPlanRejected
 
@@ -13,29 +15,57 @@ from app.experiment_preflight import preflight, QueryPlanRejected
 class UnsupportedSQL(ValueError):
     def __init__(self,nodes):
         self.nodes=nodes
-        super().__init__('Unsupported SQL nodes: '+', '.join(nodes)+'. CASE and explicit CAST are not supported. Use supported GROUP BY/WHERE queries or COALESCE for null fallback. Do not retry the same unsupported construct.')
+        super().__init__('Unsupported SQL nodes: '+', '.join(nodes)+'. Use the supported syntax in describe_experiment_data.')
 
 ALLOWED = {v.view for v in VIEWS.values()}
 # Every nested node and physical relation is checked, not just the outer SELECT.
 NODES = set('select from table identifier column star alias tablealias literal null boolean where and or not paren eq neq gt gte lt lte is in between like ilike order ordered group having distinct limit offset add sub mul div neg count sum avg min max round abs coalesce nullif'.split())
 NODES.update('join subquery exists any all tuple lateral dpipe'.split())
+NODES.update('union with cte case if cast datatype datatypeparam window windowspec'.split())
+NODES.update('rownumber rank denserank percentrank cumedist ntile lag lead firstvalue lastvalue nthvalue'.split())
+CAST_TYPES = set(
+    'SMALLINT INT BIGINT DECIMAL FLOAT DOUBLE TEXT CHAR VARCHAR BOOLEAN DATE TIME TIMETZ '
+    'TIMESTAMP TIMESTAMPTZ INTERVAL UUID'.split()
+)
+
+
+def physical_tables(tree):
+    """Resolve unqualified CTE references according to their lexical scope."""
+    cte_references = {
+        id(node)
+        for scope in traverse_scope(tree)
+        for name, (node, source) in scope.selected_sources.items()
+        if isinstance(node, exp.Table) and not (node.db or node.catalog)
+        and name in scope.cte_sources and source is scope.cte_sources[name]
+    }
+    return [table for table in tree.find_all(exp.Table) if id(table) not in cte_references]
 
 
 def validate_sql(text):
     if not isinstance(text, str) or not 1 <= len(text) <= 8000:
         raise ValueError('SQL must contain 1–8000 characters')
     trees = sqlglot.parse(text, read='postgres')
-    if len(trees) != 1 or not isinstance(trees[0], exp.Select):
-        raise ValueError('Only one SELECT is allowed')
-    tree = trees[0]
+    if len(trees) != 1:
+        raise ValueError('Each call must contain exactly one SQL statement')
+    if not isinstance(trees[0], (exp.Select, exp.Union)):
+        raise ValueError('Only read-only SELECT queries are allowed')
+    tree = normalize_identifiers(trees[0], dialect='postgres')
     unsupported=sorted({n.key for n in tree.walk() if n.key not in NODES})
     if unsupported:raise UnsupportedSQL(unsupported)
-    tables = list(tree.find_all(exp.Table))
+    if any(union.args.get('distinct') is not False or union.args.get('by_name')
+           for union in tree.find_all(exp.Union)):
+        raise ValueError('Only UNION ALL is supported for combining query results')
+    if any(node.args.get('recursive') for node in tree.find_all(exp.With)):
+        raise ValueError('WITH RECURSIVE is not supported')
+    if any(node.this.value not in CAST_TYPES or node.args.get('kind')
+           for node in tree.find_all(exp.DataType)):
+        raise ValueError('CAST targets must be allowlisted built-in PostgreSQL scalar types')
+    tables = physical_tables(tree) if tree.find(exp.With) else list(tree.find_all(exp.Table))
     if not tables or any(t.db not in ('', 'fiber') or t.catalog or t.name not in ALLOWED for t in tables):
         raise ValueError('Every relation, including inside subqueries, must be an allowed fiber analysis view; call describe_experiment_data')
     for table in tables:
         table.set('db', exp.to_identifier('fiber'))
-    for select in tree.find_all(exp.Select):
+    for select in tree.find_all(exp.Select, exp.Union):
         for key in ('limit', 'offset'):
             node = select.args.get(key)
             if not node: continue

@@ -40,3 +40,14 @@ def test_duplicate_names_are_positional():
         'fiber.v_fiber_paper_analysis a CROSS JOIN fiber.v_fiber_paper_analysis b')
     assert [r['position'] for r in result] == [0,1]
     assert [r['unit'] for r in result] == ['N·m/g','%']
+
+
+def test_union_units_check_both_branches_by_position():
+    left = 'SELECT tensile_index AS value FROM fiber.v_fiber_paper_analysis'
+    same = output_metadata(f'{left} UNION ALL {left}', ['value'], ROWS)
+    assert same[0]['unit'] == 'N·m/g'
+    mixed = output_metadata(
+        f'{left} UNION ALL SELECT fines_length_pct FROM fiber.v_fiber_paper_analysis',
+        ['value'], ROWS,
+    )
+    assert mixed[0]['unit_status'] == 'unconfirmed'

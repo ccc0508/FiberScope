@@ -66,6 +66,46 @@ def test_all_views_are_recorded():
     _,views=validate_sql('SELECT * FROM v_sample_overview s JOIN v_data_lineage l USING(sample_id) WHERE EXISTS (SELECT 1 FROM v_fiber_paper_analysis f WHERE f.sample_id=s.sample_id)')
     assert views==['v_data_lineage','v_fiber_paper_analysis','v_sample_overview']
 
+
+@pytest.mark.parametrize('query', [
+    "SELECT CASE WHEN tensile_index IS NULL THEN 'missing' ELSE 'measured' END FROM v_fiber_paper_analysis",
+    "SELECT CAST(tensile_index AS numeric(12, 3)), canonical_code::text FROM v_fiber_paper_analysis",
+    "SELECT ROW_NUMBER() OVER w, LAG(sample_id) OVER w FROM v_sample_overview WINDOW w AS (ORDER BY sample_id)",
+    "SELECT SUM(sample_id) OVER (ORDER BY sample_id ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) FROM v_sample_overview",
+    "SELECT sample_id FROM v_sample_overview UNION ALL SELECT sample_id FROM v_data_lineage ORDER BY sample_id LIMIT 5",
+])
+def test_expanded_read_only_syntax(query):
+    normalized, views = validate_sql(query)
+    assert views and 'fiber.' in normalized
+    assert validate_sql(normalized) == (normalized, views)
+
+
+def test_cte_references_are_not_qualified_and_physical_views_are_recorded():
+    normalized, views = validate_sql(
+        'WITH Samples AS (SELECT sample_id FROM v_sample_overview), '
+        'ids AS (SELECT sample_id FROM SAMPLES UNION ALL SELECT sample_id FROM v_data_lineage) '
+        'SELECT ROW_NUMBER() OVER (ORDER BY sample_id), sample_id FROM ids'
+    )
+    assert 'FROM samples' in normalized and 'FROM ids' in normalized
+    assert views == ['v_data_lineage', 'v_sample_overview']
+
+
+@pytest.mark.parametrize('query', [
+    'WITH x AS (SELECT * FROM pg_catalog.pg_authid) SELECT * FROM v_sample_overview',
+    'WITH x AS (SELECT * FROM v_sample_overview) SELECT * FROM public.x',
+    'WITH x AS (SELECT * FROM v_sample_overview) SELECT * FROM x UNION ALL SELECT * FROM fiber.sample',
+    'WITH x AS (SELECT * FROM v_sample_overview) SELECT * FROM x; SELECT * FROM v_data_lineage',
+    'WITH RECURSIVE x AS (SELECT * FROM v_sample_overview) SELECT * FROM x',
+    'SELECT sample_id FROM v_sample_overview UNION SELECT sample_id FROM v_sample_overview',
+    'SELECT sample_id FROM v_sample_overview UNION ALL SELECT sample_id FROM v_data_lineage LIMIT 10001',
+    "SELECT CASE WHEN sample_id > 0 THEN pg_sleep(1) END FROM v_sample_overview",
+    'SELECT CAST(sample_id AS custom_type) FROM v_sample_overview',
+    'SELECT array_agg(sample_id) OVER () FROM v_sample_overview',
+])
+def test_expanded_syntax_still_checks_types_relations_and_functions(query):
+    with pytest.raises(ValueError):
+        validate_sql(query)
+
 def test_snapshot_and_display(tmp_path):
     store=ToolTraceStore(tmp_path/'trace.db')
     record=dict(run_id='test',call_id='call',status='completed',input={'tool':'query_experiment_data'},

@@ -219,8 +219,10 @@ one experiment's empty result cannot establish absence everywhere. Use JOIN/EXIS
 COUNT DISTINCT where joins multiply rows. COUNT(*) differs from COUNT(metric); AVG ignores NULL.
 For recycled measurement metrics use v_recycled_cycle_detail. The summary view contains per-block/cycle
 means; its measurements and aggregates cannot certify raw-observation metrics. Its counts remain usable.
-Allowed SELECT joins/subqueries and COUNT/SUM/AVG/MIN/MAX/ROUND/ABS/COALESCE/NULLIF; no CASE, explicit CAST,
-CTE, UNION or arbitrary functions. EXPLAIN estimates work, not statistical correctness. On errors use the
+One read-only statement per call. Supports joins/subqueries, UNION ALL, CASE, built-in scalar CAST,
+non-recursive WITH, and window functions such as ROW_NUMBER, LAG and SUM OVER. UNION ALL retains duplicates;
+label the source when combining overlapping views. Use only allowlisted functions. EXPLAIN estimates
+work, not statistical correctness. On errors use the
 specific diagnostic without altering the intended population. Truncated data require SQL aggregates over
 the same filters. Preserve units, tentative/unknown status. Strength/index caveats apply only to those metrics.
 Return requested facts only; do not invent group sizes, causal claims, ranges or SQL examples. SQL refs are
