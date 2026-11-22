@@ -6,8 +6,8 @@ from literature_rag.application.agent_loop import AgentBudget, AgentLoop
 from tests.test_agent_loop import Fake, decision
 
 
-def select(call_id, sql, **options):
-    return ToolCall(call_id,'query_experiment_data',dict(sql=sql, reason='count', **options))
+def select(call_id, sql):
+    return ToolCall(call_id,'query_experiment_data',dict(sql=sql, reason='count'))
 
 
 def run_batch(calls, budget=4):
@@ -33,20 +33,17 @@ COMBINATIONS="SELECT COUNT(DISTINCT block_code || '-' || cycle_no) FROM fiber.v_
 
 
 def test_independent_queries_execute_in_order_even_if_one_fails_validation():
-    executed,state=run_batch([select('first',BLOCKS),select('invalid','SELECT',independent_in_turn=True),
-                              select('last',COMBINATIONS,independent_in_turn=True)])
+    executed,state=run_batch([select('first',BLOCKS),select('invalid','SELECT'),
+                              select('last',COMBINATIONS)])
     assert len(executed)==state['tool_attempts']==3
     assert [event['status'] for event in state['tool_calls']]==['completed','failed','completed']
 
 
 @pytest.mark.parametrize('calls,budget,reason',[
-    ([select('1',BLOCKS),select('2',COMBINATIONS)],3,'sql_dependency_requires_next_turn'),
-    ([select('1',BLOCKS),select('2',COMBINATIONS,independent_in_turn=True)],1,'tool_budget'),
-    ([select('1',BLOCKS),select('2',BLOCKS,independent_in_turn=True)],3,'duplicate_call'),
-    ([ToolCall('1','describe_experiment_data',dict(reason='get columns')),
-      select('2',COMBINATIONS)],3,'sql_dependency_requires_next_turn'),
+    ([select('1',BLOCKS),select('2',COMBINATIONS)],1,'tool_budget'),
+    ([select('1',BLOCKS),select('2',BLOCKS)],3,'duplicate_call'),
 ])
-def test_sql_batch_respects_dependency_budget_dedup_and_mixed_tools(calls,budget,reason):
+def test_sql_batch_respects_budget_and_dedup(calls,budget,reason):
     executed,state=run_batch(calls,budget)
     assert len(executed)==1
     assert state['tool_calls'][1]['result']['error_code']==reason

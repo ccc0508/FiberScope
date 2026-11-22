@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 import json
 from openai import OpenAI
+from literature_rag.application.tools import SCHEMAS
 from literature_rag.diagnostics import provider_usage
 
 
@@ -44,8 +45,9 @@ class ChatAgentAdapter:
             options['extra_body']={'thinking':{'type':'enabled' if self.settings.llm_thinking_enabled else 'disabled'}}
         if self.settings.llm_reasoning_effort:options['reasoning_effort']=self.settings.llm_reasoning_effort
         response=self.client.chat.completions.create(model=self.settings.llm_model,messages=messages,
-            **({'tools':tools,'tool_choice':'auto','parallel_tool_calls':
-                any('independent_in_turn' in schema.get('properties', {}) for schema in schemas.values())} if tools else {}),max_tokens=max_tokens,timeout=timeout,**options)
+            **({'tools':tools,'tool_choice':'auto',
+                'parallel_tool_calls':schemas.keys() <= SCHEMAS.keys()} if tools else {}),
+            max_tokens=max_tokens,timeout=timeout,**options)
         choice=response.choices[0];m=choice.message
         calls=[]
         for c in m.tool_calls or []:
