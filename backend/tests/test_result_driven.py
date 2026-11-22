@@ -200,7 +200,7 @@ def test_continuation_retains_context_and_is_bounded():
         unresolved_items=['density'],next_information=[dict(role='sql',requirement_ids=['need_1'],
         question='Count density records with query_experiment_data',reason='database count missing')])))
     result,adapter=run([route('sql',first_budget=dict(collection_rounds=1,tool_calls=1)),
-        tool('describe_experiment_data',dict(reason='schema')),report,answer('{"approve":true}'),
+        tool('describe_experiment_data',dict(reason='schema',views=['fiber.v_sample_overview'])),report,answer('{"approve":true}'),
         SQL_TOOL,findings('[3]','need_1'),tool('finish_tasks',dict(reason='done',stop_condition='sufficient')),
         answer('结果[3]')])
     assert result['status']=='completed'

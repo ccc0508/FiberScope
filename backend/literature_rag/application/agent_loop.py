@@ -16,9 +16,9 @@ viewed via view_image before making visual claims; identify axes, material and c
 relative quantities, uncertainty, correlation and causation. If evidence is missing say so, do not guess.
 Return a concise Chinese answer with [n] citations when ready. Tool arguments require a reason.
 For derived values, show the arithmetic where useful, check unit compatibility and cite the inputs.
-For project experimental data questions, call describe_experiment_data to obtain actual schema, units and caveats,
-first omit views for a compact directory, then pass selected views to obtain their detailed columns and live
-enum values. Reuse those details; do not assume a column exists in another view. Do not invent thresholds
+For project experimental data questions, use the supplied view directory to select the relevant views.
+Pass those names to describe_experiment_data for actual columns, units, caveats and live enum values.
+Reuse those details; do not assume a column exists in another view. Do not invent thresholds
 for vague terms or confuse cumulative beating revolutions with rotational speed. Enum values describe
 observed data, not legal ranges; their combinations may still have no records.
 If the requested threshold, metric or counting grain is ambiguous and changes the answer, ask a concise
@@ -176,15 +176,18 @@ class AgentLoop:
         prompt = self.system_prompt or PROMPT
         coverage_priority = self.coverage_priority
         if self.unified_research:
-            from app.experiment_directory import view_directory
             from .unified_research import ResearchChecklist, SYSTEM_PROMPT
             research = coverage_priority = ResearchChecklist(question)
-            prompt = (SYSTEM_PROMPT + '\nExperiment view directory: allowed names, purposes and row grain. '
-                      'Use only these exact view names. Request details for the relevant views before writing '
-                      'SQL to learn real columns, field units and live enum values. The directory provides '
-                      'schema metadata only.\n'
-                      + json.dumps(view_directory(), ensure_ascii=False, separators=(',', ':')))
+            prompt = SYSTEM_PROMPT
             state['pipeline_version'] = 'unified-research-v1'
+        if 'describe_experiment_data' in self.allowed_tools:
+            from app.experiment_directory import view_directory
+            prompt += (
+                '\nExperiment view directory: allowed names, purposes and row grain. '
+                'Pass a non-empty views list with exact names to describe_experiment_data for real columns, '
+                'units and live enum values before writing SQL. The directory provides schema metadata only.\n'
+                + json.dumps(view_directory(), ensure_ascii=False, separators=(',', ':'))
+            )
         messages=[dict(role='system',content=prompt+f'\nYou may execute search_literature at most {b.max_search_calls} times per question, including failed searches. After that use acquired evidence or other available reading/calculation tools; state unresolved gaps.'),dict(role='user',content=question)]
         messages[0]['content'] += (
             '\nGroup independent read-only tool requests in one decision, including different tools. '

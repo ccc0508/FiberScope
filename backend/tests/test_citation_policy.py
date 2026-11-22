@@ -27,7 +27,9 @@ def test_types_and_failures():
 
 
 def run_case(final,repair,tool='query_experiment_data',status='completed',budget=None):
-    adapter=Fake([decision(calls=[ToolCall('call',tool,dict(reason='test',sql='SELECT 1'))]),
+    arguments = (dict(reason='test',views=['fiber.v_sample_overview']) if tool=='describe_experiment_data'
+                 else dict(reason='test',sql='SELECT 1'))
+    adapter=Fake([decision(calls=[ToolCall('call',tool,arguments)]),
         decision('draft [1]'),decision(final),decision(repair)])
     result=AgentLoop(adapter,lambda *a:dict(status=status,result=dict(ref='[1]',rows=[[61]])),
         lambda s:None,budget).run('q','run')
