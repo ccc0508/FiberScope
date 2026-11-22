@@ -8,8 +8,9 @@ def write(p,x):p.write_text(json.dumps(x,ensure_ascii=False,indent=2),encoding='
 def main():
  parser=argparse.ArgumentParser(description=__doc__)
  parser.add_argument('--run',default=DEFAULT_RUN)
+ parser.add_argument('--compare-run',default=DEFAULT_RUN,help='Saved full-run report to use as the comparison baseline.')
  args=parser.parse_args()
- if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,79}',args.run):parser.error('Invalid run ID')
+ if not all(re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,79}',run) for run in (args.run,args.compare_run)):parser.error('Invalid run ID')
  BASE=ROOT/'.rag-data/evaluations/specialists-three-suites-20261107'/args.run
  OUT=ROOT/'data/mixed-agent-evaluation/reports'/args.run
  OUT.mkdir(parents=True,exist_ok=True)
@@ -27,12 +28,15 @@ def main():
  assert len(rows)==20
  summary=dict(rubric_version=rubric['version'],count=20,completed=sum(r['status']=='completed' for r in rows),raw_jev_mean=statistics.mean(r['raw_jev']['total'] for r in rows),calibrated_mean=statistics.mean(r['total'] for r in rows),score_sum=sum(r['total'] for r in rows),max_score=2000,dimension_means={d:statistics.mean(r['final']['scores'][d] for r in rows) for d in rubric['dimensions']},bands={'>=90':sum(r['total']>=90 for r in rows),'75-<90':sum(75<=r['total']<90 for r in rows),'60-<75':sum(60<=r['total']<75 for r in rows),'<60':sum(r['total']<60 for r in rows)},judge_cost_usd=cost,judge_cost_unknown_attempts=unknown,limitations=['Rubric created after seeing answers: developmental, not preregistered or holdout.','One frozen final-code twenty-case first-attempt run; failures count zero. Comparator is the previous full run plus MIX06/MIX15 state-retry overlay (90.5). Not holdout or repeated stability evaluation.','Jev uses frozen answers, evidence ledger and tool results, not image pixels or all full papers; Codex calibrates with source/figure checks, not independent human expert review.','Scores are coarse weighted ordinal ratings, not accuracy probabilities; not comparable directly to RAG key-point metric.'])
  summary['integrity']=read(BASE/'integrity.json')
- old={r['id']:r for r in read(ROOT/'data/mixed-agent-evaluation/reports/grounded-coverage-full-20261108/results.json')}
- old.update({r['id']:r for r in read(ROOT/'data/mixed-agent-evaluation/reports/state-retry-20261108/retry-results.json')})
  if args.run!=DEFAULT_RUN:
-  old={r['id']:r for r in read(OUT.parent/DEFAULT_RUN/'results.json')}
+  old={r['id']:r for r in read(OUT.parent/args.compare_run/'results.json')}
   summary['limitations'][1]='Fresh twenty-case first-attempt run compared with the previous full run. Failures count zero. This is a single run on the same development set.'
-  summary['comparison_run']=DEFAULT_RUN
+  summary['comparison_run']=args.compare_run
+ else:
+  old={r['id']:r for r in read(ROOT/'data/mixed-agent-evaluation/reports/grounded-coverage-full-20261108/results.json')}
+  old.update({r['id']:r for r in read(ROOT/'data/mixed-agent-evaluation/reports/state-retry-20261108/retry-results.json')})
+ manifest=read(BASE/'manifest.json')
+ if 'generation' in manifest:summary['generation']=manifest['generation']
  summary['previous_mean']=sum(old[r['id']]['total'] for r in rows)/len(rows)
  summary['delta']=summary['calibrated_mean']-summary['previous_mean']
  successful=[r for r in rows if r['status']=='completed']

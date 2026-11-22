@@ -2,7 +2,7 @@
 from concurrent.futures import ThreadPoolExecutor
 import argparse, json, re, subprocess, sys, time
 from hashlib import sha256
-from run_specialists_three_suites import ROOT,OUT as BASE,LIB,runtime,db_snapshot,write,ToolTraceStore
+from run_specialists_three_suites import ROOT,OUT as BASE,LIB,runtime,db_snapshot,write,ToolTraceStore,Settings
 DEFAULT_RUN='mixed-full-v7-20261109'
 
 def runtime_snapshot():
@@ -15,6 +15,7 @@ def runtime_snapshot():
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run', required=True)
+    parser.add_argument('--thinking-on', action='store_true', help='Allow only the DeepSeek thinking flag to change from the baseline.')
     args=parser.parse_args()
     if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,79}',args.run) or args.run==DEFAULT_RUN:
         parser.error('Provide a new run ID; the original baseline is frozen.')
@@ -25,10 +26,26 @@ def main():
     original_hashes={p.name:sha256(p.read_bytes()).hexdigest() for p in original.glob('MIX*.json')}
     assert db_snapshot()==manifest['database'],'Database changed'
     assert sha256((LIB/'metadata.sqlite3').read_bytes()).hexdigest()==manifest['metadata_hash']
-    assert sha256((ROOT/'backend/.env.literature').read_bytes()).hexdigest()==manifest['private_config_hash']
+    config_path=ROOT/'backend/.env.literature'
+    config=config_path.read_bytes()
+    if args.thinking_on:
+        enabled=b'RAG_LLM_THINKING_ENABLED="true"'
+        assert config.count(enabled)==1 and manifest['thinking'] is False
+        comparable_config=config.replace(enabled,b'RAG_LLM_THINKING_ENABLED="false"')
+    else:
+        comparable_config=config
+    assert sha256(comparable_config).hexdigest()==manifest['private_config_hash'],'Unexpected configuration change'
+    settings=Settings(_env_file=config_path)
+    expected_thinking=True if args.thinking_on else manifest['thinking']
+    assert settings.llm_model==manifest['model'] and settings.llm_thinking_enabled==expected_thinking
+    assert settings.llm_reasoning_effort==manifest['reasoning_effort']
     OUT.mkdir(exist_ok=True)
     cases=[c for c in json.loads((BASE/'cases.json').read_text('utf8')) if c['suite']=='mixed']
     new_manifest=dict(baseline=manifest,runtime=current_runtime,policy='All original twenty MIX cases, current v7 tool selection, coverage scheduling, unit conversion and tracing, fresh independent attempts; no answer selection. Preserve all previous answers. Independent contexts; no development overlays. Fixed 16384-character collection reserve; same external budgets. Same inputs and model; 20 model calls, 12 tools, 2 searches, 360 seconds; citation namespace and JSON repair fixes enabled. Original records unchanged.')
+    if args.thinking_on:
+        new_manifest['generation']=dict(model=settings.llm_model,thinking_enabled=True,reasoning_effort=settings.llm_reasoning_effort)
+        new_manifest['private_config_hash']=sha256(config).hexdigest()
+        new_manifest['policy']+=' DeepSeek thinking mode enabled for this run.'
     if (OUT/'manifest.json').exists():assert json.loads((OUT/'manifest.json').read_text('utf8'))==new_manifest
     else:write(OUT/'manifest.json',new_manifest)
     write(OUT/'cases.json',cases)
@@ -50,5 +67,6 @@ def main():
         write(target,x);return x
     with ThreadPoolExecutor(max_workers=2) as pool:
         for x in pool.map(one,cases):print(json.dumps(dict(id=x['case_id'],status=x['status'],reason=x.get('stop_reason'),formats=[dict(stage=f['stage'],status=f['status']) for f in x.get('format_checks',[])]),ensure_ascii=False),flush=True)
+    assert config_path.read_bytes()==config,'Model configuration changed during the run'
     write(OUT/'integrity.json',dict(runtime_unchanged=runtime_snapshot()==current_runtime,original_answers_unchanged=all(sha256((original/name).read_bytes()).hexdigest()==digest for name,digest in original_hashes.items()),database_unchanged=db_snapshot()==manifest['database'],metadata_unchanged=sha256((LIB/'metadata.sqlite3').read_bytes()).hexdigest()==manifest['metadata_hash']))
 if __name__=='__main__':main()
