@@ -49,14 +49,59 @@ def test_directory_redundant_call_not_executed():
     r=AgentLoop(a,lambda *args:(_ for _ in ()).throw(AssertionError()),lambda s:None,paper_directory=[]).run('q','r')
     assert r['tool_calls'][0]['result']['error_code']=='directory_already_provided'
 
-def test_duplicate_and_batch_limit():
+def test_unconfirmed_siblings_wait_for_next_turn():
     calls=[ToolCall(str(i),'search_literature',dict(query='q',reason=str(i))) for i in range(4)]
     a=Fake([decision(calls=calls),decision('draft'),decision('final')]);executed=[]
     def execute(*args):executed.append(args);return dict(status='completed')
     r=AgentLoop(a,execute,lambda s:None,AgentBudget(max_tool_calls=2)).run('q','r')
     assert len(executed)==1 and r['tool_attempts']==1
     assert len([m for m in a.requests[1][0] if m['role']=='tool'])==4
-    assert [e['result'].get('error_code') for e in r['tool_calls'][1:]]==['one_tool_per_turn']*3
+    assert [e['result'].get('error_code') for e in r['tool_calls'][1:]]==['dependency_requires_next_turn']*3
+
+
+def test_mix13_independent_paper_directories_share_one_model_turn():
+    from literature_rag.application.coverage_priority import CoveragePriority
+    papers = [('morais', 'need_1'), ('uddin', 'need_2')]
+    priority = CoveragePriority([
+        dict(requirement_id=need, paper_quote=doc, source_quote='locate data split')
+        for doc, need in papers
+    ])
+    calls = [
+        ToolCall(doc, 'list_sections', dict(document_id=doc, reason='locate split',
+                 independent_in_turn=True, target_requirements=[need],
+                 revisit_reason='', coverage_updates=[]))
+        for doc, need in papers
+    ]
+    adapter = Fake([decision(calls=calls), decision('done')])
+    executed = []
+    def execute(request, *_):
+        executed.append(request)
+        return dict(status='completed', result={})
+    state = AgentLoop(adapter, execute, lambda _: None, review_enabled=False,
+                      coverage_priority=priority).run('Compare the two papers', 'mix13')
+    assert [r['document_id'] for r in executed] == ['morais', 'uddin']
+    assert all(set(r) == {'tool', 'reason', 'document_id'} for r in executed)
+    assert [e['target_requirements'] for e in state['coverage_priority_events']] == [['need_1'], ['need_2']]
+    assert len(adapter.requests) == 2 and state['tool_attempts'] == 2
+    assert [m['tool_call_id'] for m in adapter.requests[1][0] if m['role']=='tool'] == ['morais', 'uddin']
+
+
+def test_mixed_independent_lookups_and_dependent_section_read():
+    lookup = ToolCall('a', 'list_sections', dict(document_id='a', reason='get IDs'))
+    other = ToolCall('b', 'search_literature', dict(query='paper B methods', document_ids=['b'],
+                                                     reason='find B evidence', independent_in_turn=True))
+    waiting = ToolCall('wait', 'read_section', dict(document_id='a', reason='depends on lookup',
+                                                    independent_in_turn=False))
+    read = ToolCall('read', 'read_section', dict(document_id='a', section_id='s', reason='read methods'))
+    adapter = Fake([decision(calls=[lookup, other, waiting]), decision(calls=[read]), decision('done')])
+    executed = []
+    def execute(request, *_):
+        executed.append(request['tool'])
+        return dict(status='completed', result={'sections':[{'section_id':'s'}]} if request['tool']=='list_sections' else {})
+    state = AgentLoop(adapter, execute, lambda _: None, review_enabled=False).run('compare', 'mixed')
+    assert executed == ['list_sections', 'search_literature', 'read_section']
+    assert state['tool_calls'][2]['result']['error_code'] == 'dependency_requires_next_turn'
+    assert state['tool_attempts'] == 3 and len(adapter.requests) == 3
 
 
 def test_duplicate_in_later_turn_is_still_blocked():
@@ -125,9 +170,9 @@ def test_adapter_conversion_and_no_retry_options():
     assert d.calls[0].arguments=={'chunk_id':'x'} and d.message['reasoning_content']=='continuation'
     assert captured['timeout']==10
     assert captured['parallel_tool_calls'] is False
-    query_schema=SCHEMAS['query_experiment_data']
+    query_schema=SCHEMAS['read_section']
     batch_schema=dict(query_schema,properties=dict(query_schema['properties'],independent_in_turn={'type':'boolean'}))
-    adapter.decide([],{'query_experiment_data':batch_schema},10,1000)
+    adapter.decide([],{'read_section':batch_schema},10,1000)
     assert captured['parallel_tool_calls'] is True
 
 
