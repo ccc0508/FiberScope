@@ -21,7 +21,7 @@ def run_batch(calls, budget=4):
             except ValueError:return dict(status='failed',error_code='invalid_query')
         return dict(status='completed')
     state=AgentLoop(adapter,execute,lambda _:None,AgentBudget(max_tool_calls=budget),
-                    sql_batches=True,review_enabled=False).run('count','test')
+                    review_enabled=False).run('count','test')
     assert state['status']=='completed'
     replies=[message for message in adapter.requests[-1][0] if message['role']=='tool']
     assert [message['tool_call_id'] for message in replies]==[call.id for call in calls]
@@ -44,7 +44,7 @@ def test_independent_queries_execute_in_order_even_if_one_fails_validation():
     ([select('1',BLOCKS),select('2',COMBINATIONS,independent_in_turn=True)],1,'tool_budget'),
     ([select('1',BLOCKS),select('2',BLOCKS,independent_in_turn=True)],3,'duplicate_call'),
     ([ToolCall('1','describe_experiment_data',dict(reason='get columns')),
-      select('2',COMBINATIONS,independent_in_turn=True)],3,'one_tool_per_turn'),
+      select('2',COMBINATIONS)],3,'sql_dependency_requires_next_turn'),
 ])
 def test_sql_batch_respects_dependency_budget_dedup_and_mixed_tools(calls,budget,reason):
     executed,state=run_batch(calls,budget)

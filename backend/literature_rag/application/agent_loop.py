@@ -58,7 +58,7 @@ is available, call find_figure with document_id and figure_number (e.g. "3"), th
 the returned asset_id. Finding a figure is not viewing it. unconfirmed_number candidates are not
 verified matches; inspect their pixels and do not assume the requested number. Do not say you are
 viewing a figure while only calling read_section.'''
-PROMPT += '''\nRequest at most ONE tool per turn. After each result, check whether the question's required facts,
+PROMPT += '''\nAfter collecting tool results, check whether the question's required facts,
 conditions and uncertainties are supported. If sufficient, answer now. Otherwise identify the specific
 remaining gap in the next tool's reason.
 For facts the question explicitly asks you to establish, if you have identified missing evidence,
@@ -151,7 +151,7 @@ def unwrap_json(value):
 
 class AgentLoop:
     def __init__(self,adapter,executor,checkpoint,budget=None,clock=monotonic,paper_directory=None,
-                 allowed_tools=None,system_prompt=None,review_enabled=True,output_schema=None,completion_check=None,coverage_priority=None,result_validator=None,extend=None,sql_batches=False):
+                 allowed_tools=None,system_prompt=None,review_enabled=True,output_schema=None,completion_check=None,coverage_priority=None,result_validator=None,extend=None):
         self.adapter,self.executor,self.checkpoint=adapter,executor,checkpoint
         self.budget=budget or AgentBudget();self.clock=clock
         self.paper_directory=deepcopy(paper_directory)
@@ -166,13 +166,20 @@ class AgentLoop:
         self.coverage_priority=coverage_priority
         self.result_validator=result_validator
         self.extend=extend
-        self.sql_batches=sql_batches
 
     def run(self,question,run_id,*,inherited_tool_calls=None):
         b=self.budget;deadline=self.clock()+b.total_seconds
         state=dict(run_id=run_id,question=question,status='running',model_calls=[],tool_calls=[],
             answer='',draft='',stop_reason=None,review_status='not_started',review_version=REVIEW_VERSION)
         messages=[dict(role='system',content=(self.system_prompt or PROMPT)+f'\nYou may execute search_literature at most {b.max_search_calls} times per question, including failed searches. After that use acquired evidence or other available reading/calculation tools; state unresolved gaps.'),dict(role='user',content=question)]
+        messages[0]['content'] += (
+            '\nGroup independent read-only tool requests in one decision, including different tools. '
+            'Set independent_in_turn=true on each additional call only if its need and all arguments '
+            'are already known before any sibling returns. If a lookup determines a section ID, SQL '
+            'column, value, or whether another call is needed, wait for its result first. '
+            'Requests execute in order and each uses its own tool quota. Prefer a supported multi-target '
+            'lookup for independent sections or directories.'
+        )
         if self.image_input_unavailable:
             messages[0]['content'] += '\nThe active model accepts text only. The view_image tool is unavailable. If the question requires direct figure inspection, disclose this limitation. Use relevant text, tables or captions with their citations and never claim to have inspected image pixels.'
         if self.paper_directory is not None:
@@ -195,7 +202,7 @@ class AgentLoop:
         collection_limit=b.max_context_chars-context_reserve
         state['collection_reserved_chars']=context_reserve
         state['context_events']=[]
-        state['context_policy']='compact-exact-text-reuse-single-tool-v2'
+        state['context_policy']='compact-exact-text-reuse-independent-tools-v3'
         state['collection_context_limit']=collection_limit
         stop_threshold=collection_limit-min(8000,collection_limit//10)
         state['collection_stop_threshold']=stop_threshold
@@ -277,11 +284,13 @@ class AgentLoop:
                     if name in self.allowed_tools and (name!='search_literature' or search_count<b.max_search_calls)
                     and (name!='find_documents' or self.paper_directory is None)}
                 if self.coverage_priority:schemas=self.coverage_priority.schemas(schemas)
-                if self.sql_batches and 'query_experiment_data' in schemas:
-                    schema=deepcopy(schemas['query_experiment_data'])
-                    schema['properties']['independent_in_turn']=dict(type='boolean',description=
-                        'True only for a fully specified SELECT independent of every other request in this turn. Required for additional queries in a batch.')
-                    schemas['query_experiment_data']=schema
+                # Scheduling metadata belongs to the model interface, never to the tool executor.
+                schemas={name:dict(schema,properties={
+                    **schema['properties'],
+                    'independent_in_turn':dict(type='boolean',description=
+                        'For an additional call in this turn: true only if its need and arguments '
+                        'are known independently of all sibling results.')
+                }) for name,schema in schemas.items()}
                 d=model('decide',schemas);messages.append(d.message)
                 if not d.calls:
                     if not d.text.strip():raise ValueError('Empty draft')
@@ -294,28 +303,28 @@ class AgentLoop:
                     state['draft']=d.text;break
                 image_messages=[]
                 stop_collection=False
-                sql_batch=self.sql_batches and all(c.name=='query_experiment_data' for c in d.calls)
                 for call_index,c in enumerate(d.calls):
                     request=dict(c.arguments,tool=c.name)
-                    independent=False
-                    if self.sql_batches and c.name=='query_experiment_data':
-                        independent=request.pop('independent_in_turn',False) is True
+                    independent=request.pop('independent_in_turn',False) is True
+                    needs_previous_result=call_index>0 and not independent
                     schedule=None
-                    if self.coverage_priority and call_index==0:
+                    if self.coverage_priority and not needs_previous_result and c.name in schemas:
                         request,schedule=self.coverage_priority.prepare(request,state)
                     # Reason text does not turn a repeated operation into a new operation.
                     semantic=signature(request)
                     retry_block=retries.block(request)
-                    event=dict(provider_call_id=c.id,request=request,status='started');state['tool_calls'].append(event)
+                    event=dict(provider_call_id=c.id,request=request,status='started',independent_in_turn=independent);state['tool_calls'].append(event)
                     if schedule:event['coverage_schedule']=schedule
                     if c.name not in self.allowed_tools:
                         result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
                     elif c.name=='find_documents' and self.paper_directory is not None:
                         result=dict(status='blocked',error_code='directory_already_provided',notice='Use the complete paper directory supplied at the start; no directory tool call is needed.')
-                    elif call_index>0 and sql_batch and not independent:
-                        result=dict(status='blocked',error_code='sql_dependency_requires_next_turn',notice='Read the preceding results before submitting this query in a new turn.')
-                    elif call_index>0 and not sql_batch:
-                        result=dict(status='blocked',error_code='one_tool_per_turn',notice='Only the first tool request may execute. Reassess its result before requesting another.')
+                    elif needs_previous_result:
+                        code = ('sql_dependency_requires_next_turn' if c.name == 'query_experiment_data'
+                                else 'dependency_requires_next_turn')
+                        result=dict(status='blocked',error_code=code,
+                            notice='Read the preceding results first. Only submit additional same-turn calls '
+                                   'with independent_in_turn=true when their need and all parameters are already known.')
                     elif schedule and schedule['blocked']:
                         result=dict(status='blocked',error_code='prioritize_uncovered_requirements',redirect_reason=schedule['redirect_reason'],
                             notice=('Two section reads have not resolved this need. Use search_literature with a targeted query and this document_id in document_ids before guessing another section, or give a concrete essential continuation/contradiction in revisit_reason.' if schedule['redirect_reason']=='targeted_search_before_more_sections' else 'Another requested paper has no delivered source evidence, or these targets are already covered. Target an uncovered paper/fact before deepening this one, or explain a specific essential contradiction in revisit_reason.'))
