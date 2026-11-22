@@ -9,6 +9,7 @@ import re
 import shutil
 import sqlite3
 import sys
+from tempfile import NamedTemporaryFile
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'backend'))
@@ -107,10 +108,60 @@ def table_rows(chunk):
 def table_references(text):
     """Explicit numbered table mentions; supplementary S1 never becomes Table 1."""
     found=set()
-    pattern=r'\bTables?\s+((?:\d+[a-z]?(?:\s*[,–-]\s*[a-z])?)(?:\s*(?:,|and|&)\s*\d+[a-z]?)*)'
-    for match in re.finditer(pattern,plain(text),re.I):
+    text=plain(text)
+    number_pattern=r'\d+[a-z]?(?!\w|[.-]\d)'
+    pattern=rf'\bTables?\s+({number_pattern}(?:\s*[,–-]\s*[a-z](?!\w))?(?:\s*(?:,|and|&)\s*{number_pattern})*)'
+    for match in re.finditer(pattern,text,re.I):
         for number in re.findall(r'\d+',match.group(1)):found.add(int(number))
+    found.update(int(m.group(1)) for m in re.finditer(r'(?<![列图])表\s*(\d+)(?![\da-z]|[.-]\d)',text,re.I))
     return found
+
+
+def identified_role(c,mapping,role):
+    return mapping is None or (mapping[c.id].get('content_role')==role
+        and mapping[c.id].get('role_status')=='identified')
+
+
+def unique_table_targets(chunks,mapping=None):
+    tables={};ambiguous=set()
+    for c in chunks:
+        if c.kind!='table':continue
+        source=mapping[c.id].get('body_text') if mapping is not None else None
+        if source is None:source=c.text.partition('\n[原文]\n')[2] or c.text
+        caption=re.split(r'<table\b',source,maxsplit=1,flags=re.I)[0]
+        label=re.match(r'(?:Table\s+|表\s*)(\d+)(?![\da-z]|[.-]\d)',plain(caption),re.I)
+        if not label:continue
+        key=(c.document_id,int(label.group(1)))
+        if key in tables:ambiguous.add(key)
+        tables[key]=c
+    return {key:c for key,c in tables.items()
+        if key not in ambiguous and identified_role(c,mapping,'table')}
+
+
+def build_table_links(chunks,mapping=None,recovered=None):
+    """Link uniquely labelled tables to explicit body mentions in the same document."""
+    by_id={c.id:c for c in chunks};tables=unique_table_targets(by_id.values(),mapping);mentions={}
+    recovered=recovered or {}
+    links=[]
+    for c in by_id.values():
+        if c.kind!='paragraph' or not identified_role(c,mapping,'body'):continue
+        body=mapping[c.id].get('body_text',c.text) if mapping is not None else c.text
+        for number in sorted(table_references(body).union(recovered.get(c.id,()))):
+            target=tables.get((c.document_id,number))
+            if target is None:continue
+            links.append(dict(source_chunk_id=c.id,target_chunk_id=target.id,
+                kind='explicit_body_table_reference',table_number=number))
+            mentions.setdefault(target.id,[]).append((c,number))
+    for target,refs in mentions.items():
+        refs.sort(key=lambda pair:(abs(pair[0].chunk_index-by_id[target].chunk_index),pair[0].id))
+        for c,number in refs[:2]:
+            links.append(dict(source_chunk_id=target,target_chunk_id=c.id,
+                kind='table_explicitly_discussed_by_body',table_number=number))
+    links.sort(key=lambda link:(by_id[link['source_chunk_id']].document_id,
+        by_id[link['source_chunk_id']].chunk_index,
+        abs(by_id[link['source_chunk_id']].chunk_index-by_id[link['target_chunk_id']].chunk_index),
+        link['target_chunk_id']))
+    return links
 
 
 def plan(source):
@@ -138,30 +189,46 @@ def plan(source):
             if key in tables:raise ValueError('Ambiguous duplicate table number')
             tables[key]=chunk.id
             rows.extend(parsed)
-    links=[]
-    for chunk in chunks:
-        if chunk.kind!='paragraph':continue
-        body_text=chunk.text
-        if role_catalog is not None:
-            m=role_catalog.mapping[chunk.id]
-            if m['role_status']!='identified' or m['content_role']!='body':continue
-            body_text=m.get('body_text',chunk.text)
-        for number in sorted(table_references(body_text)):
-            target=tables.get((chunk.document_id,number))
-            if target:
-                links.append(dict(source_chunk_id=chunk.id,target_chunk_id=target,
-                    kind='explicit_body_table_reference',table_number=number))
-    for target in tables.values():
-        references=[link for link in links if link['target_chunk_id']==target]
-        references.sort(key=lambda link:(abs(by_id[link['source_chunk_id']].chunk_index-by_id[target].chunk_index),link['source_chunk_id']))
-        for link in references[:2]:
-            links.append(dict(source_chunk_id=target,target_chunk_id=link['source_chunk_id'],
-                kind='table_explicitly_discussed_by_body',table_number=link['table_number']))
-    links.sort(key=lambda link:(by_id[link['source_chunk_id']].chunk_index,abs(by_id[link['source_chunk_id']].chunk_index-by_id[link['target_chunk_id']].chunk_index),link['target_chunk_id']))
+    links=build_table_links(chunks,role_catalog.mapping if role_catalog is not None else None)
     return dict(version=VERSION,source_structure_sha256=digest(source/'structure.json'),rows=rows,links=links,
         **(dict(content_role_policy='identified_body_table_only') if role_catalog is not None else {}),
         parent_text_sha256={cid:sha256(by_id[cid].text.encode()).hexdigest() for cid in tables.values()},
         policy='Row text is retrieval-only; evidence is the complete existing source table. Explicit body table references only, same document. No QA question input or manual scientific values.')
+
+
+def backfill_links(source,*,apply=False):
+    from literature_rag.application.body_context import BodySectionCatalog
+    from literature_rag.application.table_evidence import TableRelations
+
+    source=Path(source).resolve()
+    target=source/'table-retrieval.json';original=target.read_bytes();manifest=json.loads(original)
+    if manifest['source_structure_sha256']!=digest(source/'structure.json'):
+        raise ValueError('Table manifest and source structure differ')
+    store=SqliteMetadataStore(source/'metadata.sqlite3')
+    catalog=BodySectionCatalog.load(source,store)
+    old=TableRelations.load(source,store,**manifest['embedding'])
+    links=build_table_links(catalog.chunks.values(),catalog.mapping)
+    generated=links+[link for link in manifest['links'] if link not in links]
+    updated={**manifest,'links':generated}
+    TableRelations(updated,store,old.vectors).validate_body_catalog(catalog)
+    added=[link for link in links if link not in manifest['links']]
+    counts=Counter(catalog.chunks[link['source_chunk_id']].filename for link in added)
+    result=dict(before=len(manifest['links']),after=len(generated),added=len(added),
+        documents_scanned=len(catalog.documents),added_by_document=dict(sorted(counts.items())),applied=False)
+    if apply and added:
+        backup=source/f'table-retrieval.before-links-{sha256(original).hexdigest()[:12]}.json'
+        if not backup.exists():backup.write_bytes(original)
+        if backup.read_bytes()!=original:raise ValueError('Existing table-link backup does not match the original manifest')
+        with NamedTemporaryFile(dir=source,suffix='.tmp',delete=False) as temp:
+            staged=Path(temp.name)
+        try:
+            save(staged,updated)
+            if target.read_bytes()!=original:raise ValueError('Table manifest changed during backfill; retry')
+            staged.replace(target)
+        finally:
+            staged.unlink(missing_ok=True)
+        result.update(applied=True,backup=str(backup))
+    return result
 
 
 def build(source,output,env_file):
@@ -219,10 +286,15 @@ def preview(source,output):
 
 if __name__=='__main__':
     parser=ArgumentParser(description=__doc__)
-    parser.add_argument('action',choices=['preview','build'])
+    parser.add_argument('action',choices=['preview','build','backfill-links'])
     parser.add_argument('--source-dir',type=Path,required=True)
-    parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--output',type=Path)
+    parser.add_argument('--apply',action='store_true',help='Write the link backfill; default is a dry run')
     parser.add_argument('--env-file',type=Path,default=ROOT/'backend/.env.literature')
     args=parser.parse_args()
-    result=preview(args.source_dir,args.output) if args.action=='preview' else build(args.source_dir,args.output,args.env_file)
+    if args.action=='backfill-links':
+        result=backfill_links(args.source_dir,apply=args.apply)
+    else:
+        if args.output is None:parser.error('--output is required for preview/build')
+        result=preview(args.source_dir,args.output) if args.action=='preview' else build(args.source_dir,args.output,args.env_file)
     print(json.dumps(result,ensure_ascii=False))

@@ -111,3 +111,15 @@ npm run build
 接口422错误继续保留服务端说明与请求编号。大数值采用科学记数法，不设置未经验证的物理封顶。
 本地33项前端测试、隔离生产前端23项测试及构建通过；公网复测150阻断、8项必填同时标记、5mm外推显示7.431e+14、CSV保留原数值、390px布局及健康接口通过。
 本次为前端更新，未重启后端；模型版本与八个实验视图指纹保持一致。
+## 批量预测与系数导出
+
+在仓库根目录执行下列命令。批量预测使用 `deploy` 中的系数文件，依赖 NumPy 和 pandas。结果写入最后一个参数指定的 CSV。
+
+```powershell
+python deploy/predict.py deploy/demo_input.csv output/prediction.csv
+python deploy/predict_chain.py deploy/demo_chain_input.csv output/chain.csv
+```
+
+请先创建输出目录。两个示例的参考结果分别在 `deploy/demo_output.csv`、`deploy/demo_chain_output.csv`。
+
+需要重新拟合系数时，另装 scikit-learn。两个导出入口均接受训练项目根目录和输出目录，例如 `python deploy/export_degree_to_fiber.py TRAINING_ROOT OUTPUT_DIR`。训练根目录需含 `dataset/tabular/beating_clean.csv` 和 `meta.json`（同目录）。`export_coefficients.py` 还读取 `models/exp13/per_species_minimal.csv` 和 `models/exp14/nested_per_species.csv`。在独立输出目录核验结果后，再决定是否发布新系数。

@@ -9,7 +9,7 @@ import pytest
 
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'scripts'))
-from index_table_evidence import table_rows,table_references
+from index_table_evidence import build_table_links,table_rows,table_references
 from literature_rag.application.table_evidence import VERSION,TableRelations,TableVectorSearch,append_related_tables
 from literature_rag.application.context import ContextOptions,assemble
 from literature_rag.application.retrieve import RetrievalService
@@ -75,6 +75,28 @@ def test_missing_headers_malformed_spans_and_ambiguous_tables_fail_without_inven
 def test_supplementary_and_figure_references_do_not_create_false_table_one_links():
     assert table_references('Table S1 and Figure 1 describe other data.')==set()
     assert table_references('See Tables 1a,b and 2, and Table 3.')=={1,2,3}
+    assert table_references('如表４所示。参见图表3、列表5、表2.1及 Table 6.4。')=={4}
+
+
+def test_link_generation_matches_per_document_even_without_indexable_rows():
+    english=chunk('en_table','Table 1. Measured properties\n<table><tr><td>Text only</td></tr></table>','table',index=3,document='en')
+    chinese=chunk('zh_table','表1 测量指标','table',index=4,document='zh')
+    en_refs=[chunk(f'en_{i}','See Table 1.',index=i,document='en') for i in (0,2,4)]
+    zh_ref=chunk('zh_body','检测结果如表1所示。',index=3,document='zh')
+    uncertain=chunk('uncertain','如表1所示。',index=5,document='zh')
+    chunks=[english,chinese,*en_refs,zh_ref,uncertain]
+    mapping={c.id:dict(content_role='table' if c.kind=='table' else 'body',role_status='identified') for c in chunks}
+    mapping[uncertain.id].update(content_role='unknown',role_status='uncertain')
+    with pytest.raises(ValueError):table_rows(english)
+    links=build_table_links(chunks,mapping)
+    assert {(link['source_chunk_id'],link['target_chunk_id']) for link in links}=={
+        ('en_0','en_table'),('en_2','en_table'),('en_4','en_table'),
+        ('en_table','en_2'),('en_table','en_4'),('zh_body','zh_table'),('zh_table','zh_body')}
+
+    duplicate=replace(chinese,id='zh_duplicate',chunk_index=6)
+    mapping[duplicate.id]=mapping[chinese.id]
+    links=build_table_links([*chunks,duplicate],mapping)
+    assert len(links)==5 and all(link['target_chunk_id'].startswith('en_') for link in links)
 
 
 def test_parent_fusion_counts_full_table_once_and_retains_best_row_score():

@@ -5,6 +5,7 @@ probability of correctness. Unknown/mixed native blocks remain independent.
 """
 from collections import Counter
 import re
+import unicodedata
 
 from mineru_sections import organize, plain, prefix_for
 
@@ -28,12 +29,34 @@ NAME = r'[A-ZÀ-ÖØ-Þ][a-zà-öø-ÿ]+(?:[ -][A-ZÀ-ÖØ-Þ][a-zà-öø-ÿ]+){
 NAMES = re.compile(r'^'+NAME+r'(?:\s*(?:,|;|&|\band\b)\s*'+NAME+r')+\s*$',re.UNICODE)
 MAIN_HEADING = re.compile(r'^\s*(?:\d+(?:\.\d+)*\.?\s*)?(?:introduction|materials(?: and methods)?|methods|experimental(?: setup)?|results(?: and discussion[s]?)?|discussion|conclusions?|references|bibliography|引言|绪论|材料与方法|实验方法|结果|讨论|结论|参考文献)\s*$',re.I)
 REF_HEADING = re.compile(r'^\s*(?:\d+\.?\s*)?(?:references|bibliography|参考文献)\s*$',re.I)
+ZH_MAIN_HEADINGS = re.compile(r'^(?:\d+(?:\.\d+)*[.、]?)?(?:引言|绪论|实验|试验|实验部分|试验部分|材料和方法|材料与方法|材料与实验方法|实验材料与方法|实验方法|试验方法|研究方法|结果|讨论|结果与讨论|结果及讨论|分析与讨论|结果与分析|结论|结论与展望|参考文献)$')
+
+
+def heading_roles(text,kind):
+    """Normalize layout spacing for role matching only; keep evidence verbatim."""
+    normalized=unicodedata.normalize('NFKC',text)
+    chinese=re.sub(r'\s+','',normalized)
+    if (kind=='heading' or len(text)<80) and MAIN_HEADING.fullmatch(normalized):
+        return True,bool(REF_HEADING.fullmatch(normalized))
+    if (kind=='heading' or re.match(r'^\d',chinese)) and ZH_MAIN_HEADINGS.fullmatch(chinese):
+        return True,chinese.endswith('参考文献')
+    return False,False
+
+
+def collection_blocks(native):
+    """Preserve native IDs while exposing collection footnotes to the text organizer."""
+    blocks=[dict(b) for b in native];auxiliary=[]
+    for i,b in enumerate(blocks):
+        if b['type'] in {'page_footnote','aside_text'}:
+            auxiliary.append(i);b['type']='text';b.pop('text_level',None)
+    return blocks,auxiliary
 
 
 def classify(units):
     roles={};front=True;abstract_group=None;abstract_level=0;references=False;metadata_section=None
     for u in units:
         text=plain(u['text']);kind=u['kind'];sid=u['source_id']
+        main_heading,reference_heading=heading_roles(text,kind)
         result=dict(role='unknown',status='uncertain',signals=['insufficient_role_evidence'],group=None)
         explicit=[k for k,p in LABELS.items() if p.match(text)]
         # Embedded role labels require a boundary, not an arbitrary word match.
@@ -64,8 +87,8 @@ def classify(units):
         elif abstract_group and kind=='heading' and (u.get('native_text_level') or 0)>abstract_level and re.match(
                 r'^(?:background|aims?|objectives?|methods?|results?|conclusions?|背景|目的|方法|结果|结论)\s*[:：]?$',text,re.I):
             result=dict(role='abstract',status='identified',signals=['structured_abstract_subheading'],group=abstract_group)
-        elif MAIN_HEADING.fullmatch(text) and (kind=='heading' or len(text)<80):
-            front=False;abstract_group=None;metadata_section=None;references=bool(REF_HEADING.fullmatch(text))
+        elif main_heading:
+            front=False;abstract_group=None;metadata_section=None;references=reference_heading
             result=dict(role='heading',status='identified',signals=['main_section_heading'],group=None)
         elif abstract_group:
             if kind=='paragraph':

@@ -15,8 +15,9 @@ from literature_rag.application.body_context import BodySectionCatalog
 from literature_rag.application.table_evidence import TableRelations
 from literature_rag.application.visual_evidence import VisualCatalog
 from index_mineru_experiment import native_units
-from mineru_roles import organize_roles
-from index_table_evidence import table_rows,table_references
+from mineru_roles import collection_blocks,organize_roles
+from mineru_table_reference_recovery import recover_table_references
+from index_table_evidence import build_table_links,table_rows
 from freeze_qa_baseline import backup_database
 SOURCE=ROOT/'.rag-data/index-versions/mineru-qwen3-vl-images-20261102'
 OUT=ROOT/'.rag-data/index-versions/paper-collection-20261105'
@@ -40,10 +41,7 @@ def prepare():
         checksum=digest(pdf)
         if checksum in known:continue
         parsed=CACHE/checksum[:16];files=list((parsed/'mineru').rglob('*_content_list.json'));assert len(files)==1
-        original=read(files[0]);blocks=json.loads(json.dumps(original));extra=[]
-        for i,b in enumerate(blocks):
-            if b['type'] in {'page_footnote','aside_text'}:
-                extra.append(i);b['type']='text';b.pop('text_level',None)
+        original=read(files[0]);blocks,extra=collection_blocks(original)
         with fitz.open(pdf) as document:count=len(document)
         assert max(b['page_idx'] for b in blocks)<count
         units,excluded=native_units(blocks,count,max_chars=1000000)
@@ -61,6 +59,11 @@ def prepare():
             structure['mapping'][cid]=mapping;chunks.append(c)
         store.complete_document(did,count,chunks);newchunks.extend(chunks)
         structure['sections'].extend(result['sections'])
+        with fitz.open(pdf) as document:
+            recovered,reviews=recover_table_references(document,chunks,structure['mapping'])
+        links=build_table_links(chunks,structure['mapping'],recovered)
+        tables['links'].extend(links)
+        tables.setdefault('table_reference_repairs',[]).extend(reviews)
         rowcount=0
         for c in chunks:
             if c.kind!='table':continue
@@ -91,7 +94,7 @@ def prepare():
                 visual['source_regions'][aid]=[f'mineru_block_{i:04}']
         for page in range(1,count+1):pages.append(dict(document_id=did,page_start=page,page_end=page,text='\n\n'.join(u['text'] for u in units if u['page']==page),native_blocks=[dict(source_id=f'mineru_block_{i:04}',**b) for i,b in enumerate(original) if b['page_idx']==page-1]))
         save(OUT/'imports'/(did+'.json'),dict(filename=pdf.name,pdf_sha256=checksum,native_sha256=digest(files[0]),native_blocks=original,excluded=excluded,organization=result,quality='unreviewed_native'))
-        docs.append(dict(id=did,filename=pdf.name,sha256=checksum,pages=count,chunks=len(chunks),table_rows=rowcount,source_coverage=result['source_coverage']))
+        docs.append(dict(id=did,filename=pdf.name,sha256=checksum,pages=count,chunks=len(chunks),table_rows=rowcount,table_links=len(links),source_coverage=result['source_coverage']))
     structure.update(status='building',chunks=len(structure['mapping']),source_documents=[dict(id=d.id,filename=d.filename,file_hash=d.file_hash) for d in store.list_documents()],collection_import=dict(source=str(SOURCE),documents=docs),metadata_sha256=digest(OUT/'metadata.sqlite3'))
     structure['chunk_kinds']=dict(Counter(m['kind'] for m in structure['mapping'].values()))
     tables['rows'].extend(newrows);visual['assets'].extend(assets)
