@@ -43,11 +43,20 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
         "sql": "SELECT COUNT(*) FROM fiber.v_sample_overview", "reason": "count",
         "requirements": requirements,
     })
-    lookup = ToolCall("paper", "search_literature", {"query": "paper result", "reason": "missing evidence"})
+    extra = {**requirements[1], "deliverable": "An extra paper detail"}
+    lookup = {"query": "paper result", "reason": "missing evidence"}
     draft = decision(json.dumps({"answer": "61 [1]", "coverage": []}))
     script = [decision(calls=[sql]), draft]
     if supplements:
-        script += [decision(calls=[lookup]), draft]
+        script += [
+            decision(calls=[
+                ToolCall("missing", "search_literature", {**lookup, "requirements": [extra]}),
+                ToolCall("wrong", "search_literature", {**lookup, "target_requirements": ["need_1"]}),
+                ToolCall("new", "search_literature", {**lookup, "target_requirements": ["need_3"]}),
+                ToolCall("paper", "search_literature", {**lookup, "target_requirements": ["need_2"]}),
+            ]),
+            decision(json.dumps({"answer": "61 [1]", "coverage": [], "requirements": [extra]})),
+        ]
     adapter = Fake(script)
     requests = []
 
@@ -82,6 +91,13 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
     if supplements:
         prompt = adapter.requests[2][0][-1]["content"]
         assert '"need_2"' in prompt and '"need_1"' not in prompt
+        rejected = [t["result"] for t in state["tool_calls"] if t["status"] == "blocked"]
+        assert len(rejected) == 3
+        assert all(t["error_code"] == "invalid_followup_search_targets"
+                   and t["allowed_requirement_ids"] == ["need_2"] for t in rejected)
+        assert state["task_contract"]["ignored_additions"] == 2
+        assert state["budget_usage"]["search"] == 1
+        assert len(requests[-1]["requirements"]) == 2
 
 
 def test_jev_timeout_still_returns_the_answer():
@@ -127,7 +143,9 @@ def test_rejected_paper_quotes_can_be_registered_after_retrieval():
     })
     adapter = Fake([
         decision(calls=[lookup]), decision(json.dumps(draft, ensure_ascii=False)),
-        decision(json.dumps({**draft, "requirements": repaired}, ensure_ascii=False)),
+        decision(json.dumps({**draft, "requirements": [
+            {**repaired[0], "deliverable": "An unrelated result"}, *repaired,
+        ]}, ensure_ascii=False)),
     ])
     requests = []
 
@@ -150,6 +168,7 @@ def test_rejected_paper_quotes_can_be_registered_after_retrieval():
     notice = json.loads(adapter.requests[1][0][-1]["content"])["requirement_registration"]
     assert [item["invalid_fields"] for item in notice["rejected"]] == [["source_quote"]] * 2
     assert [item["resolved_by"] for item in state["task_contract"]["rejected"]] == ["need_1", "need_2"]
+    assert state["task_contract"]["ignored_additions"] == 1
     assert len(requests) == 1
     assert [item["deliverable"] for item in requests[0]["requirements"]] == [
         item["deliverable"] for item in items
