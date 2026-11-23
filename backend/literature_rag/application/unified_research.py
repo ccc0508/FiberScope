@@ -7,6 +7,7 @@ from pydantic import Field, StringConstraints, TypeAdapter, ValidationError
 
 from .citation_policy import citation_records
 from .coverage_priority import CoveragePriority
+from .evidence_acceptance import EVIDENCE_LOOKUP_TOOLS, check_id
 from .task_coverage import CoverageItem, Requirement, ground_requirements
 from .tools import SECTION_BATCH_GUIDANCE
 
@@ -75,13 +76,6 @@ LEGACY_METRIC_GUIDANCE = (
     "specify the actual result cells: ref, column, zero-based row and value (JSON null for NULL)."
 )
 EVIDENCE_CHECK_THRESHOLD = 0.80
-EVIDENCE_LOOKUP_TOOLS = {
-    "literature": frozenset({
-        "search_literature", "find_documents", "list_sections", "read_section",
-        "find_table", "read_table", "find_figure", "view_image",
-    }),
-    "sql": frozenset({"describe_experiment_data", "query_experiment_data"}),
-}
 JEV_CHECKLIST_GUIDANCE = (
     "\nIn acceptance_criteria, list only the facts or findings indispensable to the user's requested result. "
     "For each proposed item, identify which part of the request would be incomplete or misleading "
@@ -133,6 +127,10 @@ def evidence_check_input(question, requirements, events):
                             "ref", "document_id", "filename", "page_start", "page_end", "text",
                         ) if key in src
                     }
+    return {"question": question, "requirements": evidence_items(requirements), "evidence": list(evidence.values())}
+
+
+def evidence_items(requirements):
     items = []
     for task in requirements:
         scope = {key: task[key] for key in ("requirement_id", "source_quote", "paper_quote", "role")
@@ -146,7 +144,7 @@ def evidence_check_input(question, requirements, events):
         else:
             # A registered task stays required when no finer criteria are supplied.
             items.append(dict(scope, deliverable=task.get("deliverable") or task["source_quote"], required=True))
-    return {"question": question, "requirements": items, "evidence": list(evidence.values())}
+    return items
 
 
 CriterionText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=240)]
@@ -180,7 +178,7 @@ def extract_research_submission(raw):
             payload = json.loads(fenced[:-4])
         except ValueError:
             return None, None
-        if (not isinstance(payload, dict) or payload.keys() - {"answer", "coverage", "requirements"}
+        if (not isinstance(payload, dict) or payload.keys() - {"answer", "coverage", "requirements", "evidence_checks"}
                 or not isinstance(payload.get("answer"), str) or not isinstance(payload.get("coverage"), list)):
             return None, None
         return {**payload, "answer": visible.strip()}, "trailing_coverage_block"
@@ -196,12 +194,26 @@ class ResearchChecklist(CoveragePriority):
         self.evidence_only = evidence_only
         self.rejections = []
         self.locked = False
+        self.evidence_submissions = []
 
     @property
     def submission_format(self):
         fields = ", ".join(
             key for key in CoverageItem.model_fields
             if not self.evidence_only or key not in LEGACY_COVERAGE_FIELDS
+        )
+        evidence_format = (
+            " Include evidence_checks in that JSON, one row per registered check_id. Each row uses "
+            "check_id, sources (up to three {ref, quote} objects), gap, and optional next_lookup. "
+            "Use the assigned check IDs from the registration feedback. For each supporting text ref, "
+            "copy a short verbatim sentence or table line. For a SQL result or image use its ref alone. "
+            "Use an empty sources list when nothing directly supports the item. Use gap only for a "
+            "specific unanswered fact. Give next_lookup only when a concrete unused operation can "
+            "resolve that gap; use the exact tool arguments including tool and reason. "
+            "If evidence already answers the item or there is no useful new lookup, omit next_lookup. "
+            "Paraphrasing an earlier query alone does not make it useful. Handle locators are allowed "
+            "when a specific table, figure or section could resolve the gap."
+            if self.evidence_only else ""
         )
         return (
             "Submit one JSON object only, with answer as a string containing all user-facing content and "
@@ -211,6 +223,7 @@ class ResearchChecklist(CoveragePriority):
             "Use verified when the item is complete, partial when a gap remains, and missing when unsupported. "
             "Supply document_id for a named paper, refs for cited evidence, and gap for a partial item. "
             "Only include requirements when correcting a rejected registration."
+            + evidence_format
         )
 
     def _normalize_coverage(self, rows):
@@ -394,6 +407,10 @@ class ResearchChecklist(CoveragePriority):
                 {k: item[k] for k in ("requirement_id", "role", "paper_quote", "deliverable")}
                 for item in self.requirements
             ],
+            **({"evidence_checklist": [
+                {"check_id": check_id(item), "criterion": item.get("criterion") or item["deliverable"]}
+                for item in evidence_items(self.requirements)
+            ]} if self.evidence_only else {}),
             "rejected": rejected,
             **({"normalized": normalized} if normalized else {}),
         }
@@ -464,6 +481,7 @@ class ResearchChecklist(CoveragePriority):
 
     def draft(self, raw, trace, *, stage):
         payload, recovery = extract_research_submission(raw)
+        self.evidence_submissions = []
         issues = []
         attempt = dict(stage=stage, issues=issues)
         trace.setdefault("research_output_attempts", []).append(attempt)
@@ -476,7 +494,15 @@ class ResearchChecklist(CoveragePriority):
             trace["coverage_report"] = self.report(trace)
             return "", None
 
-        unknown_fields = sorted(payload.keys() - {"answer", "coverage", "requirements"})
+        fields = {"answer", "coverage", "requirements"}
+        if self.evidence_only:
+            fields.add("evidence_checks")
+            evidence_rows = payload.get("evidence_checks", [])
+            if isinstance(evidence_rows, list) and len(evidence_rows) <= 192:
+                self.evidence_submissions = evidence_rows
+            else:
+                issues.append({"code": "invalid_evidence_checks"})
+        unknown_fields = sorted(payload.keys() - fields)
         if unknown_fields:
             issues.append({"code": "unexpected_submission_fields", "fields": unknown_fields})
         requirements = payload.get("requirements", [])

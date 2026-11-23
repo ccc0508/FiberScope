@@ -198,8 +198,9 @@ class AgentLoop:
         prompt = self.system_prompt or PROMPT
         coverage_priority = self.coverage_priority
         if self.unified_research:
+            from .evidence_acceptance import LOCATOR_READS, attach_submissions, check_id, supplement_lookup_allowed
             from .unified_research import (
-                EVIDENCE_CHECK_THRESHOLD, EVIDENCE_LOOKUP_TOOLS, JEV_CHECKLIST_GUIDANCE,
+                EVIDENCE_CHECK_THRESHOLD, JEV_CHECKLIST_GUIDANCE,
                 LEGACY_METRIC_GUIDANCE, RESEARCH_FORMAT_REPAIR, ResearchChecklist, SYSTEM_PROMPT,
                 evidence_check_input, extract_research_submission,
             )
@@ -343,7 +344,11 @@ class AgentLoop:
             if not research.requirements:
                 state['evidence_check_status'] = 'missing_checklist'
                 return
-            payload = evidence_check_input(question, research.requirements, state['tool_calls'])
+            tool_history = [*state['inherited_tool_calls'], *state['tool_calls']]
+            payload = evidence_check_input(question, research.requirements, tool_history)
+            submission_errors = attach_submissions(
+                payload, research.evidence_submissions, tool_history, available_tool_names(),
+            )
             if payload == last_check_input:
                 return
             remaining = deadline - self.clock() - b.reserve_seconds
@@ -355,20 +360,40 @@ class AgentLoop:
                 return
             last_check_input = payload
             entry = dict(stage='evidence_check', model=self.evidence_judge.model, status='started',
-                         input_messages=[], available_tools=[], usage=None, checked_items=payload['requirements'])
+                         input_messages=[], available_tools=[], usage=None, checked_items=payload['requirements'],
+                         submission_errors=submission_errors,
+                         lookup_history=payload.get('lookup_history', []))
             state['model_calls'].append(entry)
             save()
             try:
                 scores, usage = self.evidence_judge.check(payload, remaining)
                 pending_evidence = []
+                unresolved, scope_excluded = [], []
+                sufficiency, necessity, lookup_scores = {}, {}, {}
                 for item in payload['requirements']:
-                    probabilities = scores[item.get('check_id', item['requirement_id'])]
-                    if probabilities['supported'] < EVIDENCE_CHECK_THRESHOLD:
+                    key = check_id(item)
+                    probabilities = sufficiency[key] = scores[key]
+                    scope = necessity[key] = scores[f'scope_{key}']
+                    if scope['required'] <= scope['nonessential']:
+                        scope_excluded.append(item)
+                        continue
+                    if probabilities['supported'] >= EVIDENCE_CHECK_THRESHOLD:
+                        continue
+                    lookup = scores.get(f'lookup_{key}')
+                    if lookup is not None:
+                        lookup_scores[key] = lookup
+                    if 'next_lookup' in item and lookup and lookup['actionable'] > lookup['not_actionable']:
                         pending_evidence.append({**item, 'probabilities': probabilities})
-                entry.update(status='completed', usage=usage, probabilities=scores)
+                    else:
+                        unresolved.append({**item, 'probabilities': probabilities,
+                                           'reason': 'lookup_rejected' if lookup else 'no_new_lookup'})
+                entry.update(status='completed', usage=usage, probabilities=sufficiency,
+                             necessity=necessity, lookup_probabilities=lookup_scores)
                 state['evidence_check'] = dict(threshold=EVIDENCE_CHECK_THRESHOLD,
-                                               probabilities=scores, pending=pending_evidence)
-                state['evidence_check_status'] = 'needs_evidence' if pending_evidence else 'supported'
+                                               probabilities=sufficiency, necessity=necessity,
+                                               lookup_probabilities=lookup_scores, pending=pending_evidence,
+                                               scope_excluded=scope_excluded, unresolved=unresolved)
+                state['evidence_check_status'] = 'needs_evidence' if pending_evidence or unresolved else 'supported'
             except Exception as error:
                 entry.update(status='failed', error_type=type(error).__name__)
                 state['evidence_check_status'] = 'unavailable'
@@ -398,8 +423,9 @@ class AgentLoop:
                     state['stop_reason']='context_budget';break
                 names = available_tool_names()
                 if evidence_retry:
-                    roles = {item['role'] for item in pending_evidence}
-                    names.intersection_update(set().union(*(EVIDENCE_LOOKUP_TOOLS[role] for role in roles)))
+                    approved_tools = {item['next_lookup']['tool'] for item in pending_evidence}
+                    continuations = {tool for tool, locator in LOCATOR_READS.items() if locator[0] in approved_tools}
+                    names.intersection_update(approved_tools | continuations)
                 schemas = {name: schema for name, schema in SCHEMAS.items() if name in names}
                 if research:
                     schemas = research.schemas(schemas, supplement=evidence_retry)
@@ -428,28 +454,29 @@ class AgentLoop:
                                 messages.append(repair)
                                 save()
                                 continue
-                        check_evidence()
+                        if answer:
+                            check_evidence()
                         if pending_evidence and not evidence_retry and state.get('evidence_check_status') == 'needs_evidence':
                             available = available_tool_names()
                             actionable = [
-                                item for item in pending_evidence if available & EVIDENCE_LOOKUP_TOOLS[item['role']]
+                                item for item in pending_evidence if item['next_lookup']['tool'] in available
                             ]
                             gaps = [
                                 {
-                                    'target_id': item.get('check_id', item['requirement_id']),
+                                    'target_id': check_id(item),
                                     'paper': item.get('paper_quote', ''),
-                                    'missing_fact': item.get('criterion') or item['deliverable'],
-                                    'available_tools': sorted(available & EVIDENCE_LOOKUP_TOOLS[item['role']]),
+                                    'missing_fact': item['gap'],
+                                    'next_lookup': item['next_lookup'],
                                 }
                                 for item in actionable
                             ]
                             supplement_message = dict(role='user', content=(
                                 f'Evidence check: support probability is below {EVIDENCE_CHECK_THRESHOLD:.2f} for the listed facts. '
-                                'Put the supplied target_id values in target_requirements. Search only for a listed '
-                                'missing fact. Reuse confirmed evidence. Combine gaps from the same paper that can '
-                                'be resolved by the same lookup in one call. Use only a listed tool and grounded '
-                                'handles. If no useful untried lookup is feasible, submit the answer with the gap '
-                                'explicitly stated. Do not register new tasks. '
+                                'Only the listed lookups are approved. Call the specified tool with the same '
+                                'parameters and put the supplied target_id values in target_requirements. '
+                                'Group targets that have the same approved operation. For a locator, read only '
+                                'the exact returned handle relevant to that gap. Reuse confirmed evidence. '
+                                'If the gap remains, state it explicitly in your answer. Do not register new tasks. '
                                 + json.dumps(gaps, ensure_ascii=False)
                             ))
                             if (gaps and len(state['model_calls']) < model_limit - closing_calls
@@ -481,6 +508,12 @@ class AgentLoop:
                     # Reason text does not turn a repeated operation into a new operation.
                     semantic=signature(request)
                     retry_block=retries.block(request)
+                    approved_lookup = True
+                    if evidence_retry and schedule and schedule.get('target_checks'):
+                        approved_lookup = supplement_lookup_allowed(
+                            request, schedule['target_checks'], {check_id(item): item for item in pending_evidence},
+                            [*state['inherited_tool_calls'], *state['tool_calls']],
+                        )
                     event=dict(provider_call_id=c.id,request=request,status='started');state['tool_calls'].append(event)
                     if schedule:event['coverage_schedule']=schedule
                     if c.name not in self.allowed_tools:
@@ -506,6 +539,9 @@ class AgentLoop:
                                 'unresolved literature task ID before evidence checking. '
                                 'If the list is empty, finish from the evidence already collected.'
                             ))
+                    elif not approved_lookup:
+                        result = dict(status='blocked', error_code='unapproved_evidence_lookup',
+                                      notice='Use the approved untried operation or a handle returned by its locator.')
                     elif schedule and schedule['blocked']:
                         result=dict(status='blocked',error_code='prioritize_uncovered_requirements',redirect_reason=schedule['redirect_reason'],
                             notice=('Two section reads have not resolved this need. Use search_literature with a targeted query and this document_id before guessing another section, or give a concrete essential continuation/contradiction in revisit_reason.' if schedule['redirect_reason']=='targeted_search_before_more_sections' else 'Another requested paper has no delivered source evidence, or these targets are already covered. Target an uncovered paper/fact before deepening this one, or explain a specific essential contradiction in revisit_reason.'))
@@ -612,7 +648,8 @@ class AgentLoop:
                     raise ValueError('Invalid draft')
                 if research and state['tool_calls']:
                     state['draft'],_=research.draft(d.text,state,stage='finalize')
-                    check_evidence()
+                    if state['draft']:
+                        check_evidence()
                 elif d.text.strip():
                     state['draft']=d.text
                 else:
@@ -629,6 +666,8 @@ class AgentLoop:
                             raise ValueError('Unexpected tool call during format repair')
                         messages.append(d.message)
                         state['draft'], _ = research.draft(d.text, state, stage='research_format_repair')
+                        if state['draft']:
+                            check_evidence()
                     except Exception as error:
                         state['research_format_repair_error'] = type(error).__name__
                 if not state['draft']:

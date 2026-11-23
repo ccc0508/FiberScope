@@ -116,9 +116,12 @@ def run_submission(outputs, *, close_on_tool_limit=False):
     adapter = Fake([decision(calls=[lookup]), *(decision(output) for output in outputs)])
 
     def judge(payload, _timeout):
-        return {
-            item["requirement_id"]: {"supported": 1.0} for item in payload["requirements"]
-        }, {}
+        scores = {}
+        for item in payload["requirements"]:
+            key = item["requirement_id"]
+            scores[key] = {"supported": 1.0}
+            scores[f"scope_{key}"] = {"required": 1.0, "nonessential": 0.0}
+        return scores, {}
 
     state = AgentLoop(
         adapter, lambda *_: {"status": "completed", "result": {"evidence": [
@@ -183,7 +186,9 @@ def test_research_format_failure_gets_one_tool_free_repair(close_on_tool_limit, 
         "finalize" if close_on_tool_limit else "decide", "research_format_repair",
     ]
     assert state["research_output_attempts"][0]["status"] == "invalid"
-    assert state["model_calls"][-1]["stage"] == "research_format_repair"
+    stages = [call["stage"] for call in state["model_calls"]]
+    expected_suffix = ["research_format_repair", "evidence_check"] if repair_succeeds else ["research_format_repair"]
+    assert stages[-len(expected_suffix):] == expected_suffix
     assert not adapter.requests[-1][1]
     assert "verified, partial, missing, not_attempted, needs_clarification" in adapter.requests[-1][0][-1]["content"]
     assert state["tool_attempts"] == 1
