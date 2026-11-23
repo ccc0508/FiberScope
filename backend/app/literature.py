@@ -22,6 +22,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from filelock import FileLock, Timeout as LockTimeout
 from .qa_history import HistoryStore
+from .citation_reader import citation_regions
 from literature_rag.diagnostics import configuration_snapshot
 
 BACKEND = Path(__file__).resolve().parents[1]
@@ -321,6 +322,28 @@ def router(config: LiteratureSettings | None = None, allowed_origins: list[str] 
         owner = runner.session(request, response)
         with step('qa.read_history', record_id=record_id):
             return detail(owner, record_id)
+
+    @routes.get('/history/{record_id}/citations/{reference}/location')
+    def citation_location(record_id: str, reference: int, request: Request, response: Response):
+        owner = runner.session(request, response)
+        item = detail(owner, record_id)
+        citations = (item['result'] or {}).get('citations', [])
+        citation = next((c for c in citations if c['ref'] == f'[{reference}]'), None)
+        if not citation or not citation.get('document_id'):
+            raise HTTPException(404, '没有找到该引用对应的文献。')
+        document_id = citation['document_id']
+        with connect(config) as conn:
+            document = conn.execute(
+                "SELECT * FROM documents WHERE id=? AND status='completed'", (document_id,),
+            ).fetchone()
+            if not document or document['page_count'] < 1:
+                raise HTTPException(404, '这篇文献暂不可用。')
+            total = document['page_count']
+            first = min(total, max(1, citation.get('page_start') or 1))
+            last = min(total, max(first, citation.get('page_end') or first))
+            regions = citation_regions(conn, config.library_root, document, citation, first, last)
+        return dict(document_id=document_id, filename=document['filename'], page_start=first,
+                    page_end=last, regions=regions)
 
     from .extraction import router as extraction_router
     routes.include_router(extraction_router(config, check_origin))

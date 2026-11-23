@@ -16,7 +16,7 @@ import { pageLabelFor, platformName } from "./nav";
 const route = useRoute();
 const bare = computed(() => route.meta.bare === true);
 
-const pageTitle = computed(() => pageLabelFor(route.path));
+const pageTitle = computed(() => typeof route.meta.title === "string" ? route.meta.title : pageLabelFor(route.path));
 watch(pageTitle, (title) => {
   document.title = `${title} · ${platformName}`;
 });

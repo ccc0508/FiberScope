@@ -3,6 +3,7 @@ import sqlite3
 import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
+from hashlib import sha256
 from threading import Event
 from types import SimpleNamespace
 
@@ -82,6 +83,86 @@ def test_pdf_rejects_traversal_after_separator_normalization(configured, stored_
     with sqlite3.connect(configured.root / 'metadata.sqlite3') as conn:
         conn.execute('UPDATE documents SET file_path=?', (stored_path,))
     assert client_for(configured).get('/api/v1/literature/documents/doc1/pdf').status_code == 404
+
+
+def test_saved_citation_location_uses_only_matching_mineru_regions(configured):
+    chunk_text = 'The quoted original begins here.'
+    with sqlite3.connect(configured.root / 'metadata.sqlite3') as conn:
+        conn.execute('CREATE TABLE chunks (id TEXT, document_id TEXT, text TEXT)')
+        conn.executemany('INSERT INTO chunks VALUES (?,?,?)', [
+            ('supported', 'doc1', chunk_text), ('foreign', 'doc2', chunk_text),
+        ])
+    spans = [
+        {'source_id': 'a', 'page': 3, 'bbox': [100, 200, 300, 400]},
+        {'source_id': 'b', 'page': 4, 'bbox': [200, 300, 400, 500]},
+        {'source_id': 'c', 'page': 4, 'bbox': [200, 300, 400, 500]},
+        {'source_id': 'invalid', 'page': 4, 'bbox': [-1, 300, 400, 500]},
+        {'source_id': 'out-of-range', 'page': 5, 'bbox': [100, 200, 300, 400]},
+    ]
+    entry = {'text_sha256': sha256(chunk_text.encode()).hexdigest(), 'source_spans': spans}
+    (configured.root / 'structure.json').write_text(json.dumps({
+        'mapping': {'supported': entry, 'foreign': entry | {'source_spans': [
+            {'source_id': 'foreign', 'page': 3, 'bbox': [0, 0, 1000, 1000]},
+        ]}},
+    }), encoding='utf-8')
+    base = dict(document_id='doc1', page_start=3, page_end=4)
+    citations = [
+        dict(base, ref='[1]', source_chunks=[
+            dict(chunk_id='supported', text=chunk_text),
+            dict(chunk_id='foreign', text=chunk_text),
+        ]),
+        dict(base, ref='[2]', chunk_id='supported', excerpt='changed original'),
+        dict(base, ref='[3]', kind='source_image', visual_assets=[
+            dict(document_id='doc1', page=4, bbox=[120, 100, 280, 200]),
+        ]),
+        dict(ref='[4]', kind='experiment_query', document_id=''),
+    ]
+    store = literature.HistoryStore(configured.root / 'qa_history.sqlite3')
+    store.initialize()
+    owner, _ = store.session(None)
+    history_id = store.create(owner, 'reader-test', '测试引用定位', {})['id']
+    store.complete(history_id, dict(status='answered', answer='答案 [1] [2] [3] [4]',
+                                    citations=citations), latency_ms=1)
+    client = client_for(configured)
+    path = f'/api/v1/literature/history/{history_id}/citations'
+    assert client.get(f'{path}/1/location').json() == dict(
+        document_id='doc1', filename='paper.pdf', page_start=3, page_end=4,
+        regions=[dict(page=3, bbox=[100, 200, 300, 400]), dict(page=4, bbox=[200, 300, 400, 500])],
+    )
+    assert client.get(f'{path}/2/location').json()['regions'] == []
+    assert client.get(f'{path}/3/location').json()['regions'] == [dict(page=4, bbox=[120, 100, 280, 200])]
+    assert client.get(f'{path}/4/location').status_code == 404
+    assert client.get(f'{path}/5/location').status_code == 404
+
+
+@pytest.mark.parametrize(('excerpt', 'offset', 'pages'), [
+    ('second', None, [4]),
+    ('end\n\nshared', None, [3, 4]),
+    ('shared', None, []),
+    ('shared', 20, [4]),
+    ('shared', 1, []),
+    ('Title', None, []),
+])
+def test_partial_citation_matches_only_overlapping_regions(configured, excerpt, offset, pages):
+    from app.citation_reader import citation_regions
+
+    spans = [
+        dict(source_id='a', page=3, bbox=[10, 20, 30, 40], text='shared end'),
+        dict(source_id='b', page=4, bbox=[50, 60, 70, 80], text='shared second'),
+    ]
+    text = '[Title]\n' + '\n\n'.join(span['text'] for span in spans)
+    entry = dict(text_sha256=sha256(text.encode()).hexdigest(), source_spans=spans)
+    (configured.root / 'structure.json').write_text(json.dumps({'mapping': {'c': entry}}))
+    part = dict(chunk_id='c', text=excerpt)
+    if offset is not None:
+        part.update(start_char=offset, end_char=offset + len(excerpt))
+    citation = dict(document_id='doc1', source_chunks=[part])
+    with sqlite3.connect(configured.root / 'metadata.sqlite3') as conn:
+        conn.row_factory = sqlite3.Row
+        conn.execute('CREATE TABLE chunks (id TEXT, document_id TEXT, text TEXT)')
+        conn.execute('INSERT INTO chunks VALUES (?,?,?)', ('c', 'doc1', text))
+        regions = citation_regions(conn, configured.root, {}, citation, 3, 4)
+    assert [region['page'] for region in regions] == pages
 
 
 @pytest.mark.parametrize('payload', [{}, {'question':' '}, {'question':'x'}, {'question':'x'*2001}, {'question':'有效问题','path':'../../secret'}])
