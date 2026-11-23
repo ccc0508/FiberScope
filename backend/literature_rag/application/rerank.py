@@ -8,8 +8,12 @@ from literature_rag.domain.errors import ProviderResponseError
 VERSION='candidate-rerank-v1'
 
 
-def rank_candidates(question,evidences,reranker):
-    if not evidences:return [],dict(enabled=True,version=VERSION,status='empty',candidates=[])
+def rank_candidates(question,evidences,reranker,top_k=None):
+    if not evidences:
+        diagnostics = dict(enabled=True, version=VERSION, status='empty', candidates=[])
+        if top_k is not None:
+            diagnostics['selected_chunk_ids'] = []
+        return [], diagnostics
     scores=reranker.rerank(question,[e.text for e in evidences])
     if len(scores)!=len(evidences) or any(type(s) not in (int,float) or not isfinite(s) or not 0<=s<=1 for s in scores):
         raise ProviderResponseError('rerank scores do not match candidate sources')
@@ -22,4 +26,8 @@ def rank_candidates(question,evidences,reranker):
             vector_score=evidences[i].score,rerank_score=scores[i],
             source_text_sha256=sha256(evidences[i].text.encode()).hexdigest(),source_chars=len(evidences[i].text))
             for rank,i in enumerate(order)])
+    if top_k is not None:
+        diagnostics['selected_chunk_ids'] = [e.chunk_id for e in ranked[:top_k]]
+        for candidate in diagnostics['candidates']:
+            candidate['selected'] = candidate['rerank_rank'] <= top_k
     return ranked,diagnostics
