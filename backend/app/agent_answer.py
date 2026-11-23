@@ -27,6 +27,10 @@ def adapt_run(state, evidence, trace, elapsed_ms):
         c=e['content'];kind=e['kind']
         if kind=='source_text':
             parts=c.get('sources',[])
+            # Section-read offsets are chunk-relative for a single source.
+            if (len(parts) == 1 and parts[0]['text'] == c['text']
+                    and 'start_char' in c and 'end_char' in c):
+                parts = [dict(parts[0], start_char=c['start_char'], end_char=c['end_char'])]
             row=dict(ref=e['ref'],kind=kind,document_id=c['document_id'],filename=c['filename'],
                 page_start=c['page_start'],page_end=c['page_end'],chunk_id=parts[0]['chunk_id'] if parts else '',
                 excerpt=c['text'],text=c['text'],source_chunks=parts,visual_assets=c.get('images',[]),document_hash=c.get('document_hash'))

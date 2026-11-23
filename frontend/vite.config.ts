@@ -1,5 +1,9 @@
 import { defineConfig, type ProxyOptions } from "vite";
 import vue from "@vitejs/plugin-vue";
+import { viteStaticCopy } from "vite-plugin-static-copy";
+import pdfPackage from "pdfjs-dist/package.json" with { type: "json" };
+
+const pdfAssets = `pdfjs/${pdfPackage.version}`;
 
 const apiProxy: ProxyOptions = {
   target: "http://127.0.0.1:8000",
@@ -12,7 +16,13 @@ const apiProxy: ProxyOptions = {
 };
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    viteStaticCopy({ targets: [
+      { src: "node_modules/pdfjs-dist/build/pdf.worker.min.mjs", dest: pdfAssets, rename: "pdf.worker.js" },
+      { src: "node_modules/pdfjs-dist/cmaps/*", dest: `${pdfAssets}/cmaps` },
+    ] }),
+  ],
   build: {
     rollupOptions: {
       output: {

@@ -108,8 +108,8 @@ def test_saved_citation_location_uses_only_matching_mineru_regions(configured):
     base = dict(document_id='doc1', page_start=3, page_end=4)
     citations = [
         dict(base, ref='[1]', source_chunks=[
-            dict(chunk_id='supported', text='quoted original'),
-            dict(chunk_id='foreign', text='quoted original'),
+            dict(chunk_id='supported', text=chunk_text),
+            dict(chunk_id='foreign', text=chunk_text),
         ]),
         dict(base, ref='[2]', chunk_id='supported', excerpt='changed original'),
         dict(base, ref='[3]', kind='source_image', visual_assets=[
@@ -133,6 +133,36 @@ def test_saved_citation_location_uses_only_matching_mineru_regions(configured):
     assert client.get(f'{path}/3/location').json()['regions'] == [dict(page=4, bbox=[120, 100, 280, 200])]
     assert client.get(f'{path}/4/location').status_code == 404
     assert client.get(f'{path}/5/location').status_code == 404
+
+
+@pytest.mark.parametrize(('excerpt', 'offset', 'pages'), [
+    ('second', None, [4]),
+    ('end\n\nshared', None, [3, 4]),
+    ('shared', None, []),
+    ('shared', 20, [4]),
+    ('shared', 1, []),
+    ('Title', None, []),
+])
+def test_partial_citation_matches_only_overlapping_regions(configured, excerpt, offset, pages):
+    from app.citation_reader import citation_regions
+
+    spans = [
+        dict(source_id='a', page=3, bbox=[10, 20, 30, 40], text='shared end'),
+        dict(source_id='b', page=4, bbox=[50, 60, 70, 80], text='shared second'),
+    ]
+    text = '[Title]\n' + '\n\n'.join(span['text'] for span in spans)
+    entry = dict(text_sha256=sha256(text.encode()).hexdigest(), source_spans=spans)
+    (configured.root / 'structure.json').write_text(json.dumps({'mapping': {'c': entry}}))
+    part = dict(chunk_id='c', text=excerpt)
+    if offset is not None:
+        part.update(start_char=offset, end_char=offset + len(excerpt))
+    citation = dict(document_id='doc1', source_chunks=[part])
+    with sqlite3.connect(configured.root / 'metadata.sqlite3') as conn:
+        conn.row_factory = sqlite3.Row
+        conn.execute('CREATE TABLE chunks (id TEXT, document_id TEXT, text TEXT)')
+        conn.execute('INSERT INTO chunks VALUES (?,?,?)', ('c', 'doc1', text))
+        regions = citation_regions(conn, configured.root, {}, citation, 3, 4)
+    assert [region['page'] for region in regions] == pages
 
 
 @pytest.mark.parametrize('payload', [{}, {'question':' '}, {'question':'x'}, {'question':'x'*2001}, {'question':'有效问题','path':'../../secret'}])

@@ -2,11 +2,10 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import { ArrowLeft, ChevronLeft, ChevronRight, ExternalLink, Minus, Plus } from "lucide-vue-next";
-import { getDocument, GlobalWorkerOptions, TextLayer, type PDFDocumentProxy, type RenderTask } from "pdfjs-dist";
-import workerUrl from "pdfjs-dist/build/pdf.worker.mjs?url";
+import { getDocument, GlobalWorkerOptions, TextLayer, version as pdfVersion, type PDFDocumentProxy, type RenderTask } from "pdfjs-dist";
 import "pdfjs-dist/web/pdf_viewer.css";
 import { literatureRequest } from "../literature";
-import { apiPath } from "../urls";
+import { apiPath, appPath } from "../urls";
 
 interface CitationRegion {
   page: number;
@@ -20,7 +19,8 @@ interface CitationLocation {
   regions: CitationRegion[];
 }
 
-GlobalWorkerOptions.workerSrc = workerUrl;
+const pdfAssets = appPath(`pdfjs/${pdfVersion}/`);
+GlobalWorkerOptions.workerSrc = `${pdfAssets}pdf.worker.js`;
 const route = useRoute();
 const location = shallowRef<CitationLocation>();
 const pdfDocument = shallowRef<PDFDocumentProxy>();
@@ -62,10 +62,20 @@ function regionStyle([x0, y0, x1, y1]: CitationRegion["bbox"]) {
 
 function scrollToCitation() {
   const first = marks.value[0];
-  const top = first && sheet.value
-    ? sheet.value.offsetTop + sheet.value.offsetHeight * first.bbox[1] / 1000 - 25
-    : 0;
-  surface.value?.scrollTo({ top: Math.max(0, top), left: 0 });
+  const viewport = surface.value;
+  const paper = sheet.value;
+  if (!viewport || !paper) return;
+  if (!first) {
+    viewport.scrollTo(0, 0);
+    return;
+  }
+  const [x0, y0, x1] = first.bbox;
+  const markWidth = paper.offsetWidth * (x1 - x0) / 1000;
+  const leftMargin = Math.max(16, (viewport.clientWidth - markWidth) / 2);
+  viewport.scrollTo({
+    left: paper.offsetLeft + paper.offsetWidth * x0 / 1000 - leftMargin,
+    top: paper.offsetTop + paper.offsetHeight * y0 / 1000 - 25,
+  });
 }
 
 function openCitedPage(number: number) {
@@ -93,10 +103,13 @@ watch(() => [String(route.params.recordId), reference.value] as const, async ([r
     );
     if (request.signal.aborted) return;
     location.value = cite;
-    pdfLoad = getDocument({ url: pdfUrl.value, isEvalSupported: false });
+    page.value = cite.regions[0]?.page ?? cite.page_start;
+    pdfLoad = getDocument({
+      url: pdfUrl.value, cMapUrl: `${pdfAssets}cmaps/`, cMapPacked: true, isEvalSupported: false,
+    });
     const pdf = await pdfLoad.promise;
     if (request.signal.aborted) return;
-    page.value = Math.min(cite.page_start, pdf.numPages);
+    page.value = Math.min(page.value, pdf.numPages);
     pdfDocument.value = pdf;
   } catch (failure) {
     if (!request.signal.aborted) {
