@@ -36,7 +36,7 @@ If a literature search spans several known papers, decompose it into one focused
 Send one search_literature call per paper with its exact document_id, as adjacent calls in the same turn
 when the queries are independent. Target each query at its own paper and requested facts.
 For unknown or unspecified papers, omit document_id to search the full library. A scoped call
-defaults to three main hits; set top_k only to request fewer hits for that paper.
+keeps up to three main hits after reranking.
 """
 
 
@@ -45,14 +45,6 @@ class Search(Request):
     query: str = Field(min_length=1, max_length=4000)
     document_id: str | None = Field(default=None, min_length=1, max_length=200,
         description='One exact paper ID. Omit for a full-library search.')
-    top_k: int | None = Field(default=None, ge=1, le=SEARCH_HITS_PER_DOCUMENT,
-        description='Scoped searches only. Defaults to three main hits.')
-
-    @model_validator(mode='after')
-    def check_scope(self):
-        if self.top_k is not None and self.document_id is None:
-            raise ValueError('top_k requires document_id; full-library searches use up to eight hits')
-        return self
 
 
 class FindDocuments(Request):
@@ -358,7 +350,7 @@ class LiteratureTools:
             if p.document_id is not None:
                 if self.catalog is None or not any(c.document_id == p.document_id for c in self.catalog.chunks.values()):
                     raise LookupError('Unknown document; use the paper directory')
-                top_k = p.top_k if p.top_k is not None else SEARCH_HITS_PER_DOCUMENT
+                top_k = SEARCH_HITS_PER_DOCUMENT
             else:
                 top_k = SEARCH_MAIN_HITS
             es = self.retriever.retrieve(

@@ -32,7 +32,7 @@ def execute_parallel_searches(executions, run_id, timeout, *, execute, trace_sto
             return dict(status='failed', error_code='tool_timeout')
         return execute(request, run_id, remaining, context=context, defer_search_registration=True)
 
-    with ThreadPoolExecutor(max_workers=min(3, len(executions))) as pool:
+    with ThreadPoolExecutor(max_workers=min(5, len(executions))) as pool:
         futures = [pool.submit(search, request, context)
                    for (request, _), context in zip(executions, contexts, strict=True)]
         results = [future.result() for future in futures]

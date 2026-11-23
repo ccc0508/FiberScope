@@ -222,31 +222,32 @@ def test_scoped_search_validates_ids_and_passes_filter(kit):
     base = dict(tool='search_literature', query='unit', reason='target')
     assert kit.call(base, run_id='r')['status'] == 'completed'
     assert kit.call(dict(base, document_id='doc'), run_id='r')['status'] == 'completed'
-    assert kit.call(dict(base, document_id='doc', top_k=2), run_id='r')['status'] == 'completed'
     assert calls == [
         (('unit', 8, .35), {'document_ids': None, 'max_seeds_per_document': 3}),
         (('unit', 3, .35), {'document_ids': ['doc'], 'max_seeds_per_document': 3}),
-        (('unit', 2, .35), {'document_ids': ['doc'], 'max_seeds_per_document': 3}),
     ]
     assert kit.call(dict(base, document_id='missing'), run_id='r')['status'] == 'failed'
     assert kit.call(dict(base, document_ids=['doc']), run_id='r')['status'] == 'invalid_arguments'
     assert kit.call(dict(base, top_k=1), run_id='r')['status'] == 'invalid_arguments'
-    assert kit.call(dict(base, document_id='doc', top_k=4), run_id='r')['status'] == 'invalid_arguments'
-    assert len(calls) == 3
+    assert kit.call(dict(base, document_id='doc', top_k=2), run_id='r')['status'] == 'invalid_arguments'
+    assert len(calls) == 2
 
 
-def test_parallel_scoped_searches_register_in_request_order(tmp_path):
+def test_five_parallel_scoped_searches_register_in_request_order(tmp_path):
     from scripts.run_literature_agent import execute_parallel_searches
-    from threading import Event
+    from threading import Barrier, Event
 
     store = ToolTraceStore(tmp_path / 'traces.db')
-    b_finished = Event()
+    executions_started = Barrier(5, timeout=5)
+    last_finished = Event()
+    indices = dict(zip('abcde', (2, 5, 6, 7, 8), strict=True))
     contexts = []
 
     def execute(request, run_id, timeout, *, context, defer_search_registration):
         assert defer_search_registration
         document_id = request['document_id']
-        assert context == {'index': {'a': 2, 'b': 5}[document_id]}
+        assert context == {'index': indices[document_id]}
+        executions_started.wait()
         chunk = Chunk(document_id, document_id, document_id + '.pdf', 1, 1, 0, 'text', 1, 'test')
         evidence = Evidence('[1]', chunk.id, chunk.document_id, chunk.filename, 1, 1, chunk.text, .9)
         retriever = SimpleNamespace(
@@ -254,13 +255,13 @@ def test_parallel_scoped_searches_register_in_request_order(tmp_path):
             retrieve=lambda *args, **kwargs: [evidence],
         )
         if document_id == 'a':
-            assert b_finished.wait(5), 'scoped searches ran serially'
+            assert last_finished.wait(5)
         result = LiteratureTools(retriever, tmp_path, store).call(
             request, run_id=run_id, defer_search_registration=defer_search_registration,
         )
         assert store.evidence(run_id) == []
-        if document_id == 'b':
-            b_finished.set()
+        if document_id == 'e':
+            last_finished.set()
         return result
 
     def tool_context(*, index):
@@ -268,11 +269,11 @@ def test_parallel_scoped_searches_register_in_request_order(tmp_path):
         return {'index': index}
 
     base = dict(tool='search_literature', query='unit', reason='target')
-    executions = [(dict(base, document_id='a'), 2), (dict(base, document_id='b'), 5)]
+    executions = [(dict(base, document_id=doc), index) for doc, index in indices.items()]
     results = list(execute_parallel_searches(
         executions, 'run', 10, execute=execute, trace_store=store, tool_context=tool_context,
     ))
-    assert contexts == [2, 5]
+    assert contexts == list(indices.values())
     assert [(e['document_id'], e['ref']) for r in results for e in r['result']['evidence']] == [
-        ('a', '[1]'), ('b', '[2]'),
+        (doc, f'[{i}]') for i, doc in enumerate(indices, 1)
     ]

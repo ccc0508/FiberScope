@@ -1,6 +1,6 @@
 """Bounded retries for read-only tools; only explicit transient failures retry unchanged."""
 import json
-from .tools import INPUT, SEARCH_HITS_PER_DOCUMENT
+from .tools import INPUT
 
 TRANSIENT = {'tool_timeout', 'TimeoutError', 'TimeoutException', 'ReadTimeout', 'ConnectTimeout',
              'ConnectionError', 'ConnectError', 'APIConnectionError', 'APITimeoutError',
@@ -12,13 +12,8 @@ PARAMETER_ERRORS = {'invalid_arguments', 'invalid_query', 'unsupported_sql', 'un
 
 def signature(request):
     operation = {k:v for k,v in request.items() if k != 'reason'}
-    if operation.get('tool') == 'search_literature':
-        if operation.get('document_id') is None:
-            operation.pop('document_id', None)
-        if operation.get('top_k') is None or (
-            operation.get('document_id') and operation['top_k'] == SEARCH_HITS_PER_DOCUMENT
-        ):
-            operation.pop('top_k', None)
+    if operation.get('tool') == 'search_literature' and operation.get('document_id') is None:
+        operation.pop('document_id', None)
     # Reordering independent lookups does not make a second call necessary.
     batch_field = {'list_sections': 'document_ids', 'read_section': 'targets'}.get(request.get('tool'))
     if batch_field and isinstance(operation.get(batch_field), list):
