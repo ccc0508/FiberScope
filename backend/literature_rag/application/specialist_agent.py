@@ -242,7 +242,7 @@ one missed search. Do not treat project experimental values as published paper r
 PAPER_PROMPT+='''
 Choose search_literature to LOCATE a specific missing fact; use read_section to COMPLETE context at an
 identified location. After up to two sections fail to resolve the same required gap, use a targeted query
-expressing that gap (with document_ids when known), rather than guessing more headings, if search budget
+expressing that gap (with one document_id when known), rather than guessing more headings, if search budget
 remains. Valid continuation pages or a concrete contradiction may justify more section reading; say why.
 When search budget is exhausted, use available exact locators or finish with a bounded gap. Failure to find
 a statement never establishes that the author did not discuss it. Stop optional background expansion.

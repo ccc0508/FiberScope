@@ -1,5 +1,6 @@
 """Opt-in bounded native-tool agent. Keeps the website's existing pipeline unchanged."""
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 import json
 from pathlib import Path
@@ -7,6 +8,7 @@ import subprocess
 import os
 import signal
 import sys
+from time import monotonic
 from uuid import uuid4
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'backend'))
@@ -16,6 +18,30 @@ from literature_rag.config import Settings
 from literature_rag.application.tools import ToolTraceStore
 from literature_rag.application.paper_directory import load_paper_directory
 from literature_rag.state_io import save_state
+
+
+def execute_parallel_searches(executions, run_id, timeout, *, execute, trace_store, tool_context):
+    # Each subprocess has its own retriever and diagnostics. Only this caller
+    # allocates run-local refs, in the original model request order.
+    deadline = monotonic() + timeout
+    contexts = [tool_context(index=index) for _, index in executions]
+
+    def search(request, context):
+        remaining = deadline - monotonic()
+        if remaining <= 0:
+            return dict(status='failed', error_code='tool_timeout')
+        return execute(request, run_id, remaining, context=context, defer_search_registration=True)
+
+    with ThreadPoolExecutor(max_workers=min(3, len(executions))) as pool:
+        futures = [pool.submit(search, request, context)
+                   for (request, _), context in zip(executions, contexts, strict=True)]
+        results = [future.result() for future in futures]
+    for result in results:
+        record = result.get('deferred_search_record')
+        if record is not None:
+            trace_store.complete(record)
+            result = dict(call_id=record['call_id'], status=record['status'], result=record['result'])
+        yield result
 
 
 def main():
@@ -96,9 +122,14 @@ def main():
                 (out/'langfuse.json').write_text(json.dumps({'url':telemetry.url},ensure_ascii=False),encoding='utf8')
             except OSError:
                 pass  # Optional remote link must never fail the local answer.
-    def execute(request,rid,timeout):
+    store=ToolTraceStore(ROOT/'.rag-data/tool-traces.sqlite3')
+
+    def execute(request,rid,timeout,*,context=None,defer_search_registration=False):
         body=dict(tool_call=request,run_id=rid,data_dir=str(a.library.resolve()))
-        context=telemetry.active_tool_context()
+        if defer_search_registration:
+            body['defer_search_registration'] = True
+        else:
+            context = telemetry.active_tool_context()
         if context:body['trace_context']=context
         try:
             r=subprocess.run([sys.executable,'-I','-X','utf8',str(ROOT/'backend/literature_worker.py')],
@@ -106,6 +137,12 @@ def main():
                 creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
             return json.loads(r.stdout) if r.returncode==0 else dict(status='failed',error_code='worker_failed')
         except subprocess.TimeoutExpired:return dict(status='failed',error_code='tool_timeout')
+        except (json.JSONDecodeError, OSError):return dict(status='failed',error_code='worker_failed')
+
+    def parallel_search(executions, rid, timeout):
+        return execute_parallel_searches(executions, rid, timeout, execute=execute,
+                                         trace_store=store, tool_context=telemetry.active_tool_context)
+
     directory=load_paper_directory(a.library)
     loop=AgentLoop
     if a.architecture=='specialists':
@@ -116,12 +153,12 @@ def main():
         unified = a.architecture == 'single' and not a.prompt_file
         options=(dict(feedback_enabled=not a.no_task_feedback) if a.architecture=='specialists'
                  else dict(unified_research=bool(unified),
-                           evidence_judge=JevEvidenceJudge.configured(ROOT) if unified else None))
+                           evidence_judge=JevEvidenceJudge.configured(ROOT) if unified else None,
+                           parallel_search_executor=parallel_search if unified else None))
         result=loop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory,**options).run(a.question,run_id)
     finally:
         telemetry.close()
         telemetry.flush()
-    store=ToolTraceStore(ROOT/'.rag-data/tool-traces.sqlite3')
     (out/'evidence.json').write_text(json.dumps(store.evidence(run_id),ensure_ascii=False,indent=2),encoding='utf-8')
     print(json.dumps(dict(status=result['status'],run_id=run_id)))
 

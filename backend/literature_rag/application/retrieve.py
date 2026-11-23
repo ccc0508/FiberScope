@@ -108,7 +108,7 @@ class RetrievalService:
         question: str,
         top_k: int,
         min_score: float,
-        *, document_ids: list[str] | None = None,
+        *, document_ids: list[str] | None = None, max_seeds_per_document: int | None = None,
     ) -> list[Evidence]:
         started = perf_counter()
         self.last_seed_evidences=[]
@@ -206,7 +206,7 @@ class RetrievalService:
             from literature_rag.application.rerank import rank_candidates
             self.last_rerank_diagnostics={'enabled':True,'status':'started','candidate_count':len(evidences)}
             with stage('retrieval.rerank', query=rerank_question, candidate_ids=[e.chunk_id for e in evidences]) as trace:
-                evidences,self.last_rerank_diagnostics=rank_candidates(rerank_question,evidences,self.reranker,top_k)
+                evidences,self.last_rerank_diagnostics=rank_candidates(rerank_question,evidences,self.reranker)
                 trace.update(self.last_rerank_diagnostics)
             if self.query_rewriter is not None:
                 if rewrite_only:
@@ -219,10 +219,26 @@ class RetrievalService:
                         input_policy='Unmodified user question and full source chunks; candidate pool includes a bounded query rewrite.',
                         vector_rank_note='vector_rank denotes input position in the fused candidate pool, not original-query vector rank')
         self.last_candidate_evidences = list(evidences)
-        with stage('retrieval.select_seeds', top_k=top_k) as trace:
-            evidences = evidences[:top_k]
+        with stage('retrieval.select_seeds', top_k=top_k, max_seeds_per_document=max_seeds_per_document) as trace:
+            selected = []
+            counts_by_document = {}
+            for evidence in evidences:
+                count = counts_by_document.get(evidence.document_id, 0)
+                if max_seeds_per_document is not None and count >= max_seeds_per_document:
+                    continue
+                counts_by_document[evidence.document_id] = count + 1
+                selected.append(evidence)
+                if len(selected) == top_k:
+                    break
+            evidences = selected
             self.last_seed_evidences = list(evidences)
-            trace['selected_ids'] = [e.chunk_id for e in evidences]
+            selected_ids = [e.chunk_id for e in evidences]
+            trace['selected_ids'] = selected_ids
+            if self.last_rerank_diagnostics:
+                self.last_rerank_diagnostics['selected_chunk_ids'] = selected_ids
+                selected_set = set(selected_ids)
+                for candidate in self.last_rerank_diagnostics['candidates']:
+                    candidate['selected'] = candidate['chunk_id'] in selected_set
         with stage('retrieval.context_assembly', seed_ids=[e.chunk_id for e in evidences]) as trace:
             if self.body_context_catalog is None:
                 evidences,self.last_context_diagnostics=assemble(evidences,self.metadata,self.context_options)

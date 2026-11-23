@@ -126,7 +126,7 @@ def main(body):
     configuration = configuration_snapshot(Path(__file__).resolve().parent / '.env.literature', settings=settings)
     if 'tool_call' in body:
         configuration['query_rewrite'] = dict(enabled=False, reason='agent_supplies_query')
-        configuration['tool_query_policy'] = 'agent_query_single_search_and_rerank_v1'
+        configuration['tool_query_policy'] = 'agent_query_paper_scoped_search_and_rerank_v2'
     configuration['documents'] = [
         {'document_id': doc.id, 'filename': doc.filename, 'file_hash': doc.file_hash}
         for doc in metadata.list_documents() if doc.status.value == 'completed'
@@ -183,10 +183,11 @@ def main(body):
         if 'tool_call' in body:
             from literature_rag.application.tools import LiteratureTools, ToolTraceStore
             store = ToolTraceStore(Path(__file__).resolve().parents[1]/'.rag-data/tool-traces.sqlite3')
-            toolset = LiteratureTools(retriever, root, store, top_k=settings.top_k, min_score=settings.min_score,
+            toolset = LiteratureTools(retriever, root, store, min_score=settings.min_score,
                 provenance=configuration)
             result = toolset.call(body['tool_call'], run_id=body['run_id'],
-                parent_call_id=body.get('parent_call_id'))
+                parent_call_id=body.get('parent_call_id'),
+                defer_search_registration=body.get('defer_search_registration', False))
             print(json.dumps(result, ensure_ascii=False))
             return
         if settings.corrective_review_enabled:

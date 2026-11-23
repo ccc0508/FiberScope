@@ -62,7 +62,7 @@ class CoveragePriority:
 
     def needs_targeted_search(self,request,targets,unresolved,trace):
         if request.get('tool')!='read_section' or not set(targets).intersection(unresolved):return False
-        if trace.get('search_calls',0)>=trace.get('max_search_calls',2):return False
+        if trace.get('search_rounds', trace.get('search_calls',0))>=trace.get('max_search_calls',2):return False
         requested=request.get('targets')
         if requested is None:requested=[request]
         if not isinstance(requested,list):return False
@@ -72,7 +72,10 @@ class CoveragePriority:
             doc=target['document_id'];successful=[]
             for event in reversed(history):
                 previous=event.get('request',{})
-                if previous.get('tool')=='search_literature' and (not previous.get('document_ids') or doc in previous['document_ids']):break
+                if previous.get('tool') == 'search_literature':
+                    scope = [previous['document_id']] if previous.get('document_id') else previous.get('document_ids')
+                    if not scope or doc in scope:
+                        break
                 if previous.get('tool')!='read_section':continue
                 output=event.get('result',{})
                 if event.get('model_delivery',{}).get('status')!='delivered' or output.get('status')!='completed':continue

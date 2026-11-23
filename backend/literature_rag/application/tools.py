@@ -29,11 +29,30 @@ class Request(BaseModel):
     reason: str = Field(min_length=1, max_length=2000)
 
 
+SEARCH_MAIN_HITS = 8
+SEARCH_HITS_PER_DOCUMENT = 3
+SEARCH_DECOMPOSITION_GUIDANCE = """
+If a literature search spans several known papers, decompose it into one focused query per paper.
+Send one search_literature call per paper with its exact document_id, as adjacent calls in the same turn
+when the queries are independent. Target each query at its own paper and requested facts.
+For unknown or unspecified papers, omit document_id to search the full library. A scoped call
+defaults to three main hits; set top_k only to request fewer hits for that paper.
+"""
+
+
 class Search(Request):
     tool: Literal['search_literature']
     query: str = Field(min_length=1, max_length=4000)
-    document_ids: list[str] | None = Field(default=None, min_length=1, max_length=20,
-        description='Omit for all papers, or use exact IDs from the supplied paper directory or evidence.')
+    document_id: str | None = Field(default=None, min_length=1, max_length=200,
+        description='One exact paper ID. Omit for a full-library search.')
+    top_k: int | None = Field(default=None, ge=1, le=SEARCH_HITS_PER_DOCUMENT,
+        description='Scoped searches only. Defaults to three main hits.')
+
+    @model_validator(mode='after')
+    def check_scope(self):
+        if self.top_k is not None and self.document_id is None:
+            raise ValueError('top_k requires document_id; full-library searches use up to eight hits')
+        return self
 
 
 class FindDocuments(Request):
@@ -186,11 +205,11 @@ class ToolTraceStore:
 
 
 class LiteratureTools:
-    def __init__(self, retriever, root, trace_store, *, top_k=8, min_score=.35, provenance=None):
+    def __init__(self, retriever, root, trace_store, *, min_score=.35, provenance=None):
         self.retriever = retriever
         self.root = Path(root)
         self.store = trace_store
-        self.top_k, self.min_score = top_k, min_score
+        self.min_score = min_score
         self.catalog = retriever.body_context_catalog
         self.provenance = provenance or {}
 
@@ -203,7 +222,7 @@ class LiteratureTools:
             page_start=c.page_start, page_end=c.page_end, text=c.text, kind=c.kind,
             text_sha256=sha256(c.text.encode()).hexdigest(), **self.locator(c.id))
 
-    def call(self, request, *, run_id, parent_call_id=None):
+    def call(self, request, *, run_id, parent_call_id=None, defer_search_registration=False):
         # Correlation IDs are caller-owned opaque values, never filesystem paths.
         if not isinstance(run_id, str) or not 1 <= len(run_id) <= 200:
             raise ValueError('Invalid run_id')
@@ -246,8 +265,14 @@ class LiteratureTools:
             from literature_rag.stage_trace import records
             record['internal_steps'] = records()
             record.update(finished_at=datetime.now(UTC).isoformat(), duration_ms=round((perf_counter()-start)*1000))
-            if record['status']=='completed':self.store.complete(record)
-            else:self.store.save(record)
+            deferred = defer_search_registration and isinstance(parsed, Search) and record['status'] == 'completed'
+            if not deferred:
+                if record['status'] == 'completed':
+                    self.store.complete(record)
+                else:
+                    self.store.save(record)
+        if deferred:
+            return dict(deferred_search_record=record)
         output = dict(call_id=record['call_id'], status=record['status'])
         if record['status'] == 'completed':
             output['result'] = record['result']
@@ -330,11 +355,17 @@ class LiteratureTools:
                 next_offset=end if end < len(rows) else None,
                 notice='Handles only, not viewed pixels. Unconfirmed candidates may be unrelated; inspect with view_image. Never infer a missing figure number from ordering.'), None
         if isinstance(p, Search):
-            if p.document_ids:
-                if self.catalog is None or not set(p.document_ids) <= {c.document_id for c in self.catalog.chunks.values()}:
-                    raise LookupError('Unknown document; use find_documents')
-            es = self.retriever.retrieve(p.query, self.top_k, self.min_score,
-                **({'document_ids': p.document_ids} if p.document_ids else {}))
+            if p.document_id is not None:
+                if self.catalog is None or not any(c.document_id == p.document_id for c in self.catalog.chunks.values()):
+                    raise LookupError('Unknown document; use the paper directory')
+                top_k = p.top_k if p.top_k is not None else SEARCH_HITS_PER_DOCUMENT
+            else:
+                top_k = SEARCH_MAIN_HITS
+            es = self.retriever.retrieve(
+                p.query, top_k, self.min_score,
+                document_ids=[p.document_id] if p.document_id is not None else None,
+                max_seeds_per_document=SEARCH_HITS_PER_DOCUMENT,
+            )
             return dict(evidence=[dict(**asdict(e), locator=self.locator(e.chunk_id),
                 source_locators={s.chunk_id:self.locator(s.chunk_id) for s in e.source_chunks}) for e in es],
                 automatic_context_expansion=True, reference_scope='this_call_only',
