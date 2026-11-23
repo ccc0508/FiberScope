@@ -27,7 +27,7 @@ def test_unified_agent_direct_answer_preserves_user_output_format():
 def test_unified_agent_tracks_two_sources_and_only_repairs_invalid_refs(needs_citation_repair):
     requirements = [
         {"role": "sql", "source_quote": "local count"},
-        {"role": "literature", "source_quote": "paper result", "paper_quote": "paper A"},
+        {"role": "literature", "source_quote": "paper result", "paper_quote": "Published results from paper A"},
     ]
     calls = [
         ToolCall("sql", "query_experiment_data", {
@@ -70,6 +70,8 @@ def test_unified_agent_tracks_two_sources_and_only_repairs_invalid_refs(needs_ci
     assert state["answer"] == answer and state["review_status"] == "disabled"
     assert state["status"] == "completed"
     assert state["coverage_report"]["complete"]
+    assert state["task_contract"]["requirements"][1]["paper_quote"] == requirements[1]["paper_quote"]
+    assert state["task_contract"]["rejected"] == []
     assert state["task_contract"]["locked"]
     search_schema = adapter.requests[1][1]["search_literature"]
     assert "requirements" not in search_schema["properties"]
