@@ -23,7 +23,7 @@ def test_section_streak_redirect_and_exceptions():
     assert not p.prepare(dict(req,section_id='b',offset=200),t)[1]['blocked']
     p,t=setup()
     assert not p.prepare(dict(req,revisit_reason='Check a concrete contradictory value'),t)[1]['blocked']
-    p,t=setup();t['tool_calls'].append(dict(request=dict(tool='search_literature',document_ids=['A'])))
+    p,t=setup();t['tool_calls'].append(dict(request=dict(tool='search_literature',document_id='A')))
     assert not p.prepare(req,t)[1]['blocked']
 
 

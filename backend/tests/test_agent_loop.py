@@ -90,7 +90,7 @@ def test_mixed_batch_keeps_required_parameter_validation():
     from literature_rag.application.tools import INPUT
 
     lookup = ToolCall('a', 'list_sections', dict(document_id='a', reason='get IDs'))
-    other = ToolCall('b', 'search_literature', dict(query='paper B methods', document_ids=['b'],
+    other = ToolCall('b', 'search_literature', dict(query='paper B methods', document_id='b',
                                                      reason='find B evidence'))
     waiting = ToolCall('wait', 'read_section', dict(document_id='a', reason='missing section ID'))
     read = ToolCall('read', 'read_section', dict(document_id='a', section_id='s', reason='read methods'))
@@ -204,8 +204,8 @@ def test_failed_search_consumes_search_budget():
 
 def test_invalid_arguments_can_be_corrected_and_retried():
     # MIX17: first search omitted reason; adding it must not be deduplicated.
-    first = ToolCall('a', 'search_literature', dict(query='PFI', document_ids=['d']))
-    second = ToolCall('b', 'search_literature', dict(query='PFI', document_ids=['d'], reason='Find methods'))
+    first = ToolCall('a', 'search_literature', dict(query='PFI', document_id='d'))
+    second = ToolCall('b', 'search_literature', dict(query='PFI', document_id='d', reason='Find methods'))
     a = Fake([decision(calls=[first]), decision(calls=[second]), decision('draft'), decision('final')])
     executed = []
     def execute(request, *args):
@@ -237,3 +237,30 @@ def test_failed_retries_still_exhaust_tool_budget():
                   AgentBudget(max_tool_calls=2)).run('q', 'r')
     assert len(executed) == 2 and r['tool_attempts'] == 2
     assert r['stop_reason'] == 'collection_budget'
+
+def test_distinct_paper_searches_share_one_round_but_use_individual_tool_slots():
+    scoped = [ToolCall(doc, 'search_literature', dict(query=f'facts {doc}', document_id=doc, reason='compare'))
+              for doc in ('a', 'b', 'c')]
+    unscoped = ToolCall('broad', 'search_literature', dict(query='topic', reason='gap'))
+    extra = ToolCall('extra', 'search_literature', dict(query='another topic', reason='gap'))
+    adapter = Fake([decision(calls=scoped), decision(calls=[unscoped, extra]), decision('draft')])
+    batches, single = [], []
+
+    def parallel(executions, *_):
+        batches.append([(request['document_id'], index) for request, index in executions])
+        return [dict(status='failed', error_code='tool_timeout') if index == 1 else dict(status='completed')
+                for _, index in executions]
+
+    def execute(request, *_):
+        single.append(request)
+        return dict(status='completed')
+
+    state = AgentLoop(adapter, execute, lambda _: None, review_enabled=False,
+                      parallel_search_executor=parallel).run('compare', 'r')
+    assert batches == [[('a', 0), ('b', 1), ('c', 2)]]
+    assert single == [dict(unscoped.arguments, tool='search_literature')]
+    assert state['search_rounds'] == 2 and state['search_calls'] == 4
+    assert state['tool_attempts'] == 5
+    assert [(e['provider_call_id'], e['status']) for e in state['tool_calls']] == [
+        ('a', 'completed'), ('b', 'failed'), ('c', 'completed'), ('broad', 'completed'), ('extra', 'blocked'),
+    ]

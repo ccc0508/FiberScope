@@ -11,7 +11,7 @@ from literature_rag.domain.models import Chunk,VisualAsset,Evidence
 def kit(tmp_path):
     chunks=[Chunk(str(i),'doc','paper.pdf',i+1,i+1,i,'x'*300,100,'test',kind='table' if i==1 else 'text') for i in range(3)]
     catalog=SimpleNamespace(chunks={c.id:c for c in chunks},mapping={c.id:dict(section_id='s',section_path=['Section'],content_role='table' if c.id=='1' else 'body') for c in chunks})
-    r=SimpleNamespace(body_context_catalog=catalog,visual_catalog=SimpleNamespace(assets=[]),retrieve=lambda *a:[Evidence('[1]','0','doc','paper.pdf',1,1,'x'*300,.9)])
+    r=SimpleNamespace(body_context_catalog=catalog,visual_catalog=SimpleNamespace(assets=[]),retrieve=lambda *a,**kw:[Evidence('[1]','0','doc','paper.pdf',1,1,'x'*300,.9)])
     return LiteratureTools(r,tmp_path,ToolTraceStore(tmp_path/'traces.db'))
 
 def test_search_keeps_pipeline_and_trace(kit):
@@ -169,7 +169,7 @@ def test_ledger_dedup_content_change_and_run_isolation(kit):
     first=kit.call(p,run_id='r');second=kit.call(p,run_id='r')
     assert first['result']['evidence'][0]['ref']==second['result']['evidence'][0]['ref']=='[1]'
     assert len(kit.store.evidence('r')[0]['call_ids'])==2
-    kit.retriever.retrieve=lambda *a:[Evidence('[1]','0','doc','paper.pdf',1,1,'changed',.8)]
+    kit.retriever.retrieve=lambda *a,**kw:[Evidence('[1]','0','doc','paper.pdf',1,1,'changed',.8)]
     third=kit.call(p,run_id='r')
     assert third['result']['evidence'][0]['ref']=='[2]'
     assert kit.store.evidence('r',['[1]'])[0]['content']['text']=='x'*300
@@ -217,10 +217,63 @@ def test_directory_and_exact_table_number(kit):
 
 
 def test_scoped_search_validates_ids_and_passes_filter(kit):
-    calls=[]
-    kit.retriever.retrieve=lambda *a,**kw: calls.append(kw) or []
-    p=dict(tool='search_literature',query='unit',document_ids=['doc'],reason='target')
-    assert kit.call(p,run_id='r')['status']=='completed'
-    assert calls==[{'document_ids':['doc']}]
-    assert kit.call(dict(p,document_ids=['missing']),run_id='r')['status']=='failed'
-    assert len(calls)==1
+    calls = []
+    kit.retriever.retrieve = lambda *a, **kw: calls.append((a, kw)) or []
+    base = dict(tool='search_literature', query='unit', reason='target')
+    assert kit.call(base, run_id='r')['status'] == 'completed'
+    assert kit.call(dict(base, document_id='doc'), run_id='r')['status'] == 'completed'
+    assert calls == [
+        (('unit', 8, .35), {'document_ids': None, 'max_seeds_per_document': 3}),
+        (('unit', 3, .35), {'document_ids': ['doc'], 'max_seeds_per_document': 3}),
+    ]
+    assert kit.call(dict(base, document_id='missing'), run_id='r')['status'] == 'failed'
+    assert kit.call(dict(base, document_ids=['doc']), run_id='r')['status'] == 'invalid_arguments'
+    assert kit.call(dict(base, top_k=1), run_id='r')['status'] == 'invalid_arguments'
+    assert kit.call(dict(base, document_id='doc', top_k=2), run_id='r')['status'] == 'invalid_arguments'
+    assert len(calls) == 2
+
+
+def test_five_parallel_scoped_searches_register_in_request_order(tmp_path):
+    from scripts.run_literature_agent import execute_parallel_searches
+    from threading import Barrier, Event
+
+    store = ToolTraceStore(tmp_path / 'traces.db')
+    executions_started = Barrier(5, timeout=5)
+    last_finished = Event()
+    indices = dict(zip('abcde', (2, 5, 6, 7, 8), strict=True))
+    contexts = []
+
+    def execute(request, run_id, timeout, *, context, defer_search_registration):
+        assert defer_search_registration
+        document_id = request['document_id']
+        assert context == {'index': indices[document_id]}
+        executions_started.wait()
+        chunk = Chunk(document_id, document_id, document_id + '.pdf', 1, 1, 0, 'text', 1, 'test')
+        evidence = Evidence('[1]', chunk.id, chunk.document_id, chunk.filename, 1, 1, chunk.text, .9)
+        retriever = SimpleNamespace(
+            body_context_catalog=SimpleNamespace(chunks={chunk.id: chunk}, mapping={}),
+            retrieve=lambda *args, **kwargs: [evidence],
+        )
+        if document_id == 'a':
+            assert last_finished.wait(5)
+        result = LiteratureTools(retriever, tmp_path, store).call(
+            request, run_id=run_id, defer_search_registration=defer_search_registration,
+        )
+        assert store.evidence(run_id) == []
+        if document_id == 'e':
+            last_finished.set()
+        return result
+
+    def tool_context(*, index):
+        contexts.append(index)
+        return {'index': index}
+
+    base = dict(tool='search_literature', query='unit', reason='target')
+    executions = [(dict(base, document_id=doc), index) for doc, index in indices.items()]
+    results = list(execute_parallel_searches(
+        executions, 'run', 10, execute=execute, trace_store=store, tool_context=tool_context,
+    ))
+    assert contexts == list(indices.values())
+    assert [(e['document_id'], e['ref']) for r in results for e in r['result']['evidence']] == [
+        (doc, f'[{i}]') for i, doc in enumerate(indices, 1)
+    ]

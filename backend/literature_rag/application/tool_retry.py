@@ -12,6 +12,8 @@ PARAMETER_ERRORS = {'invalid_arguments', 'invalid_query', 'unsupported_sql', 'un
 
 def signature(request):
     operation = {k:v for k,v in request.items() if k != 'reason'}
+    if operation.get('tool') == 'search_literature' and operation.get('document_id') is None:
+        operation.pop('document_id', None)
     # Reordering independent lookups does not make a second call necessary.
     batch_field = {'list_sections': 'document_ids', 'read_section': 'targets'}.get(request.get('tool'))
     if batch_field and isinstance(operation.get(batch_field), list):

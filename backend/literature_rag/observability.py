@@ -58,10 +58,11 @@ class LangfuseTrace:
             node.end(**({'end_time':end_time} if end_time else {}))
             self.ended.add(key)
 
-    def active_tool_context(self):
+    def active_tool_context(self, *, index=None):
         if self.disabled:
             return None
-        index=current_tool_index.get()
+        if index is None:
+            index = current_tool_index.get()
         if index is not None:
             key=f'tool:{index}'
             node=self.nodes.get(key)

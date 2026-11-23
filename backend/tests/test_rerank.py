@@ -142,3 +142,28 @@ def test_dashscope_configuration_uses_native_rerank_contract(tmp_path):
     snapshot = configuration_snapshot(tmp_path / 'unused', settings=settings)['rerank']
     assert snapshot['provider'] == 'dashscope'
     assert 'max_chunks_per_doc' not in snapshot
+
+def test_reranked_document_quota_skips_surplus_hits_and_fills_from_lower_ranks():
+    from literature_rag.stage_trace import StageTrace
+
+    chunks = [
+        Chunk(f'{doc}{i}', doc, f'{doc}.pdf', i + 1, i + 1, i, f'Text {doc}{i}', 1, 'fake')
+        for doc, count in [('a', 6), ('b', 4), ('c', 3)] for i in range(count)
+    ]
+    metadata = InMemoryMetadataStore()
+    metadata.chunks = {c.id: c for c in chunks}
+    vectors = NS(search=lambda _, limit: [VectorMatch(c.id, .8) for c in reversed(chunks)][:limit])
+    reranker = NS(rerank=lambda _, texts: [(i + 1) / len(texts) for i in range(len(texts))])
+    service = RetrievalService(metadata, vectors, SpyEmbedder(), reranker=reranker)
+
+    with StageTrace() as trace:
+        service.retrieve('question', 8, .35, max_seeds_per_document=3)
+
+    expected = ['a0', 'a1', 'a2', 'b0', 'b1', 'b2', 'c0', 'c1']
+    assert len(service.last_candidate_evidences) == 13
+    assert [e.chunk_id for e in service.last_seed_evidences] == expected
+    diagnostics = service.last_rerank_diagnostics
+    assert diagnostics['selected_chunk_ids'] == expected
+    assert [e['chunk_id'] for e in diagnostics['candidates'] if e['selected']] == expected
+    selection = next(record for record in trace.records if record['name'] == 'retrieval.select_seeds')
+    assert selection['output']['selected_ids'] == expected
