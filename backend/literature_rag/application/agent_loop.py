@@ -245,7 +245,7 @@ class AgentLoop:
         state['search_rounds']=0
         state['max_search_calls']=b.max_search_calls
         projection=EvidenceProjection()
-        from .citation_policy import citation_records, invalid_references
+        from .citation_policy import answer_citation_issues, citation_records, invalid_references
         delivered_refs={}
         state['citation_validation']=dict(status='pending',available_records=[],attempts=[])
         # Reserve 16,384 characters for closing output/instructions, independent
@@ -617,29 +617,47 @@ class AgentLoop:
             state['tool_attempts']=tool_count
             save()
             return state
-        invalid=invalid_references(state['answer'],delivered_refs)
-        if invalid:
-            validation['attempts'].append(dict(stage='initial',invalid_refs=invalid,answer=state['answer']))
-            if len(state['model_calls'])<b.max_model_calls and deadline-self.clock()>2:
-                messages.append(dict(role='user',content=json.dumps(dict(
+        coverage_report = state.get('coverage_report') if research else None
+        issues = answer_citation_issues(state['answer'], delivered_refs, coverage_report)
+        if issues:
+            validation['attempts'].append(dict(stage='initial', answer=state['answer'], **issues))
+            if len(state['model_calls']) < b.max_model_calls and deadline-self.clock() > 2:
+                messages.append(dict(role='user', content=json.dumps(dict(
                     output_schema=self.output_schema,
-                    output_format='Return ONLY the complete JSON object matching output_schema; preserve status, summary, missing_choices and limitations.' if self.output_schema else 'Return the complete Chinese answer.',
+                    output_format='Return ONLY the complete JSON object matching output_schema; preserve status, summary, missing_choices and limitations.' if self.output_schema else 'Return only the complete user-facing answer.',
                     bibliography_policy='If an invalid ref is actually a bibliography number in supplied source text, express it as 原论文参考文献第45—47号 without square brackets, and cite the supporting run-local ref. Never blindly relabel an unknown ref.',
-                    task='Correct citation identities in this complete answer. Use only the allowed refs and their supplied evidence. Do not mechanically substitute refs or merely strip citations to retain unsupported claims. Remove unsupported optional claims; explicitly state unavailable evidence for requested facts. Use [n] separately, not grouped/range refs. Do not call tools.',
-                    answer=state['answer'],invalid_refs=invalid,allowed_records=list(delivered_refs.values())),ensure_ascii=False)))
+                    task='Correct missing or invalid inline citations in this answer. Preserve supported findings and valid refs. Add supporting delivered [n] refs next to literature claims when missing. Do not paste an unrelated list of refs or mechanically renumber them. Remove unsupported optional claims and state unresolved requested facts. Use separate [n] citations. Do not call tools.',
+                    answer=state['answer'], errors=issues, allowed_records=list(delivered_refs.values())), ensure_ascii=False)))
                 try:
-                    d=model('citation_repair',{})
-                    if d.calls or not d.text.strip():raise ValueError('Invalid citation repair')
-                    invalid=invalid_references(d.text,delivered_refs)
-                    validation['attempts'].append(dict(stage='repair',invalid_refs=invalid,answer=d.text))
-                    if not invalid:state['answer']=d.text
+                    d = model('citation_repair', {})
+                    if d.calls or not d.text.strip():
+                        raise ValueError('Invalid citation repair')
+                    repaired_answer = d.text
+                    if research:
+                        # Some models still return the research wrapper during citation repair.
+                        # Its internal coverage refs must never satisfy the public answer check.
+                        try:
+                            wrapped = json.loads(unwrap_json(repaired_answer))
+                        except ValueError:
+                            wrapped = None
+                        if isinstance(wrapped, dict) and isinstance(wrapped.get('answer'), str):
+                            repaired_answer = wrapped['answer']
+                    if not repaired_answer.strip():
+                        raise ValueError('Empty citation repair')
+                    issues = answer_citation_issues(repaired_answer, delivered_refs, coverage_report)
+                    validation['attempts'].append(dict(stage='repair', answer=repaired_answer, **issues))
+                    if not issues:
+                        state['answer'] = repaired_answer
                 except Exception as error:
-                    validation['repair_error']=type(error).__name__
-            if invalid:
-                validation['status']='failed'
-                state.update(answer='',status='failed',stop_reason='invalid_citations')
-            else:validation['status']='repaired'
-        else:validation['status']='passed' if state['answer'] else 'not_applicable'
+                    validation['repair_error'] = type(error).__name__
+            if issues:
+                validation.update(status='failed', errors=issues)
+                reason = 'missing_literature_citations' if issues.get('missing_literature_citations') else 'invalid_citations'
+                state.update(answer='', status='failed', stop_reason=reason)
+            else:
+                validation['status'] = 'repaired'
+        else:
+            validation['status'] = 'passed' if state['answer'] else 'not_applicable'
         state['tool_attempts']=tool_count
         if research:
             state['budget_usage'] = dict(model=len(state['model_calls']),tools=tool_count,search=search_count)

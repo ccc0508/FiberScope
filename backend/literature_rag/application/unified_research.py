@@ -50,8 +50,9 @@ separately when comparing studies. A public dataset may be synthetic. Keep uncer
 distinguish correlations, author explanations and causal findings. If a requested fact lacks
 evidence and a viable untried path remains within budget, do a targeted follow-up.
 
-Answer every requested part and state any unresolved evidence gaps. Cite only the explicit
-run-local refs supplied in tool results. Text reuse IDs, paper bibliography numbers, and
+Answer every requested part and state any unresolved evidence gaps. In the user-facing answer,
+cite each paper finding inline with supporting delivered [n] refs. coverage.refs is internal and
+does not replace inline citations. Text reuse IDs, paper bibliography numbers, and
 directory entries are not citations. Keep database facts, published claims and your own
 inferences visibly attributable. Avoid optional unsupported claims.
 Before making a shared claim such as "both studies" or "all sources", verify that each source
@@ -277,7 +278,12 @@ class ResearchChecklist(CoveragePriority):
             draft = ResearchDraft.model_validate_json(unwrap_json(raw))
         except ValueError:
             trace["coverage_report"] = self.report(trace)
-            return raw, "Return the research answer as the requested JSON object with answer and coverage."
+            return raw, (
+                "Return one valid JSON object with answer and coverage. Preserve the existing user-facing "
+                "answer and its inline [n] citations while fixing the format. Keep supporting delivered "
+                "[n] refs next to paper findings in answer. coverage.refs is internal and does not replace "
+                "inline citations."
+            )
         if draft.requirements:
             self.register(draft.requirements, trace)
         for item in draft.coverage:
