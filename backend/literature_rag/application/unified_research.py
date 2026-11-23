@@ -17,15 +17,16 @@ Use the literature tools for claims about papers or mechanisms that need library
 even if the user names no paper. A general explanation can fill a source gap only if it is
 clearly labeled. It cannot satisfy a missing paper-specific fact.
 
-When starting research, attach requirements to your first business tool call. Split explicit
+When starting research, register requirements across the requests in your first tool turn. Split explicit
 requests into independently checkable facts, one per named paper and one per SQL metric where
 needed. Copy source_quote as one continuous, verbatim span from the question. Multiple items
 may share that span. Put the specific task in deliverable in your own words, preserving the
 user's requested scope. Copy paper_quote from the question for a named paper and omit it for
-unspecified sources. Later calls may add missing requirements. If registration rejects a quote,
-resubmit the corrected item with its correction_id in the next tool call's requirements or in
-the draft JSON's requirements array. Reuse evidence already collected. After tools return,
-use the program's need IDs. Use target_requirements
+unspecified sources. The checklist is fixed after the first tool turn. Only correct rejected
+quotes using their correction_id and the original deliverable. The user's question still governs
+the answer. Reuse evidence already collected. For every follow-up search, set target_requirements
+to existing literature need IDs that still lack evidence, and search only for those gaps. If Jev
+requested a supplement, use only the literature need IDs it flagged. Use target_requirements
 for each lookup and send compact coverage_updates only when a previously obtained result
 changes a finding. Prioritize uncovered papers and facts across BOTH sources. A directory
 or locator alone does not verify a scientific or numeric fact.
@@ -132,9 +133,11 @@ class ResearchChecklist(CoveragePriority):
         self.question = question
         self.evidence_only = evidence_only
         self.rejections = []
+        self.locked = False
 
     def schemas(self, schemas):
         result = super().schemas(schemas)
+        can_register = not self.locked or self.pending_registrations()
         requirement_schema = TypeAdapter(list[ResearchRequirement]).json_schema()
         definitions = requirement_schema.pop("$defs")
         if self.evidence_only:
@@ -142,14 +145,33 @@ class ResearchChecklist(CoveragePriority):
             definitions.pop("Metric", None)
         requirement_schema["maxItems"] = 24
         for schema in result.values():
-            schema.setdefault("$defs", {}).update(definitions)
-            schema["properties"]["requirements"] = requirement_schema
+            if can_register:
+                schema.setdefault("$defs", {}).update(definitions)
+                schema["properties"]["requirements"] = requirement_schema
             for key in ("target_requirements", "coverage_updates", "revisit_reason"):
                 schema["required"].remove(key)
+        if self.locked and "search_literature" in result:
+            result["search_literature"]["required"].append("target_requirements")
         return result
+
+    def lock(self, trace):
+        self.locked = True
+        trace.setdefault("task_contract", {
+            "requirements": self.requirements, "rejected": self.rejections, "ignored_additions": 0,
+        })["locked"] = True
+
+    def _matches_correction(self, candidate, record):
+        if not candidate.correction_id or candidate.correction_id != record["correction_id"]:
+            return False
+        item = candidate.model_dump(exclude_none=True)
+        return all(item.get(key) == record.get(key)
+                   for key in ("role", "deliverable", "source_quote", "paper_quote", "metric")
+                   if key not in record["invalid_fields"]) and bool(
+                       not record["paper_quote"] or candidate.paper_quote)
 
     def register(self, entries, trace):
         rejected = []
+        ignored = trace.get("task_contract", {}).get("ignored_additions", 0)
         for entry in entries:
             try:
                 if isinstance(entry, ResearchRequirement):
@@ -165,6 +187,10 @@ class ResearchChecklist(CoveragePriority):
                     raise ValueError("Invalid requirement object")
             except ValueError:
                 rejected.append({"reason": "invalid_requirement"})
+                continue
+            if self.locked and not any(self._matches_correction(candidate, item)
+                                       for item in self.pending_registrations()):
+                ignored += 1
                 continue
             accepted, ungrounded = ground_requirements([candidate], self.question)
             if ungrounded:
@@ -195,7 +221,8 @@ class ResearchChecklist(CoveragePriority):
                     if (record["correction_id"] == candidate.correction_id or
                             all(record[k] == data[k] for k in ("role", "paper_quote", "deliverable"))):
                         record["resolved_by"] = current["requirement_id"]
-        trace["task_contract"] = {"requirements": self.requirements, "rejected": self.rejections}
+        trace["task_contract"] = {"requirements": self.requirements, "rejected": self.rejections,
+                                  "locked": self.locked, "ignored_additions": ignored}
         return rejected
 
     def pending_registrations(self):
@@ -207,8 +234,8 @@ class ResearchChecklist(CoveragePriority):
             "notice": (
                 "Correct rejected task items in requirements on your next tool call or in the draft JSON. "
                 "Copy one continuous span from the original question into source_quote. The same span can "
-                "anchor multiple deliverables. Put paraphrases in deliverable, copy a named paper's wording "
-                "into paper_quote verbatim, and reuse its correction_id. Reuse evidence already collected."
+                "anchor multiple deliverables. Preserve the original task, fix only the invalid quote fields, "
+                "and reuse the correction_id. Reuse evidence already collected."
             ),
             "rejected": rejected,
         }
@@ -219,12 +246,31 @@ class ResearchChecklist(CoveragePriority):
         rejected = self.register(raw[:24] if isinstance(raw, list) else [], trace)
         # A first request can state its intended purpose through the grounded checklist.
         request.setdefault("coverage_updates", [])
-        request.setdefault("target_requirements", [r["requirement_id"] for r in self.requirements]
-                           if len(self.requirements) == 1 else [])
+        followup_search = self.locked and request["tool"] == "search_literature"
+        if not followup_search and len(self.requirements) == 1:
+            request.setdefault("target_requirements", [self.requirements[0]["requirement_id"]])
         request, schedule = super().prepare(request, trace)
+        if followup_search:
+            self._check_search_targets(schedule, trace)
         if rejected:
             schedule["requirement_registration"] = self.registration_feedback(rejected)
         return request, schedule
+
+    def _check_search_targets(self, schedule, trace):
+        jev_pending = trace.get("evidence_supplement_requested")
+        pending_ids = {r["requirement_id"] for r in trace.get("evidence_check", {}).get("pending", [])}
+        allowed = {
+            row["requirement"]["requirement_id"] for row in schedule["report"]["items"]
+            if row["requirement"]["role"] == "literature"
+            and (row["requirement"]["requirement_id"] in pending_ids if jev_pending
+                 else row["status"] not in {"verified", "needs_clarification"})
+        }
+        targets = set(schedule["target_requirements"])
+        if not targets or not targets <= allowed:
+            schedule["search_scope_error"] = sorted(allowed)
+        elif jev_pending and schedule["redirect_reason"] == "covered_targets":
+            # Jev can still flag a task the model marked as verified.
+            schedule.update(redirect_reason=None, blocked=False)
 
     def draft(self, raw, trace):
         from .agent_loop import unwrap_json

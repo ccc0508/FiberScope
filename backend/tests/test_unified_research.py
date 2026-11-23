@@ -32,12 +32,12 @@ def test_unified_agent_tracks_two_sources_and_only_repairs_invalid_refs(needs_ci
     calls = [
         ToolCall("sql", "query_experiment_data", {
             "sql": "SELECT COUNT(*) FROM fiber.v_sample_overview",
-            "reason": "count local records", "requirements": requirements,
+            "reason": "count local records", "requirements": requirements[:1],
             "target_requirements": ["need_1"],
         }),
         ToolCall("paper", "search_literature", {
             "query": "paper result", "document_ids": ["doc_a"], "reason": "check the paper",
-            "target_requirements": ["need_2"],
+            "target_requirements": ["need_2"], "requirements": requirements[1:],
         }),
     ]
     answer = "The local count is 61 [1]. The paper reports ten observations [2]."
@@ -70,6 +70,10 @@ def test_unified_agent_tracks_two_sources_and_only_repairs_invalid_refs(needs_ci
     assert state["answer"] == answer and state["review_status"] == "disabled"
     assert state["status"] == "completed"
     assert state["coverage_report"]["complete"]
+    assert state["task_contract"]["locked"]
+    search_schema = adapter.requests[1][1]["search_literature"]
+    assert "requirements" not in search_schema["properties"]
+    assert "target_requirements" in search_schema["required"]
     stages = ["decide", "decide"]
     if needs_citation_repair:
         stages.append("citation_repair")
