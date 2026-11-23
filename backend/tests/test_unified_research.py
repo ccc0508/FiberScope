@@ -5,6 +5,8 @@ import pytest
 
 from literature_rag.adapters.providers.agent_chat import ToolCall
 from literature_rag.application.agent_loop import AgentBudget, AgentLoop
+from literature_rag.application.tools import SCHEMAS
+from literature_rag.application.unified_research import ResearchChecklist
 from tests.test_agent_loop import Fake, decision
 
 
@@ -191,3 +193,88 @@ def test_research_format_failure_gets_one_tool_free_repair(close_on_tool_limit, 
         assert state["status"] == "failed" and state["answer"] == ""
         assert state["stop_reason"] == "invalid_research_output"
         assert state["citation_validation"]["status"] == "not_applicable"
+
+
+def test_first_research_turn_returns_server_ids_without_requiring_targets():
+    lookup = ToolCall("initial", "search_literature", {
+        "query": "first paper result", "reason": "check first paper", "document_id": "a",
+        "target_requirements": ["R1"],
+        "requirements": [
+            {"requirement_id": "R1", "role": "literature", "source_quote": "first paper",
+             "deliverable": "Read the result in the first paper"},
+            {"requirement_id": "R2", "role": "literature", "source_quote": "second paper",
+             "deliverable": "Read the result in the second paper"},
+        ],
+    })
+    followup = ToolCall("followup", "search_literature", {
+        "query": "second paper result", "reason": "check second paper", "document_id": "b",
+        "target_requirements": ["need_2"],
+    })
+    answer = "The papers report ten [1] and twenty [2]."
+    body = json.dumps({"answer": answer, "coverage": [
+        {"requirement_id": "need_1", "status": "verified", "document_id": "a", "refs": ["[1]"], "finding": "ten"},
+        {"requirement_id": "need_2", "status": "verified", "document_id": "b", "refs": ["[2]"], "finding": "twenty"},
+    ]})
+    adapter = Fake([decision(calls=[lookup]), decision(calls=[followup]), decision(body)])
+
+    def execute(request, *_):
+        doc = request["document_id"]
+        ref, text = ("[1]", "ten") if doc == "a" else ("[2]", "twenty")
+        return {"status": "completed", "result": {"evidence": [
+            {"ref": ref, "document_id": doc, "text": text}
+        ]}}
+
+    state = AgentLoop(adapter, execute, lambda _: None, unified_research=True).run(
+        "Compare the first paper and second paper.", "task-ids"
+    )
+    assert state["status"] == "completed" and state["answer"] == answer
+    initial_schema = adapter.requests[0][1]["search_literature"]
+    assert "target_requirements" not in initial_schema["properties"]
+    assert "correction_id" not in initial_schema["$defs"]["ResearchRequirement"]["properties"]
+    target_schema = adapter.requests[1][1]["search_literature"]
+    assert "target_requirements" in target_schema["required"]
+    first, second = state["tool_calls"]
+    handoff = json.loads(first["model_delivery"]["messages"][0]["content"])["requirement_registration"]
+    assert [row["requirement_id"] for row in handoff["registered"]] == ["need_1", "need_2"]
+    assert [row["deliverable"] for row in handoff["registered"]] == [
+        "Read the result in the first paper", "Read the result in the second paper"
+    ]
+    assert handoff["rejected"] == []
+    assert [(row["index"], row["field"]) for row in handoff["normalized"]] == [(0, "requirement_id"), (1, "requirement_id")]
+    assert first["coverage_schedule"]["errors"] == []
+    assert first["coverage_schedule"]["target_requirements"] == []
+    assert second["status"] == "completed"
+
+
+def test_invalid_task_shape_can_be_corrected_after_first_turn_without_adding_tasks():
+    checklist = ResearchChecklist("Compare first and second.")
+    state = {}
+    lookup = {"tool": "search_literature", "query": "results"}
+    task = {"role": "literature", "source_quote": "first", "deliverable": "Read the first result"}
+    _, schedule = checklist.prepare({**lookup, "requirements": [{**task, "paper_qoute": "A"}]}, state)
+    registration = schedule["requirement_registration"]
+    rejected, = registration["rejected"]
+    assert rejected["index"] == 0
+    assert rejected["invalid_fields"] == ["paper_qoute"]
+    assert rejected["errors"][0]["type"] == "extra_forbidden"
+    assert registration["registered"] == []
+
+    checklist.lock(state)
+    schema = checklist.schemas(SCHEMAS)["search_literature"]
+    assert "correction_id" in schema["$defs"]["ResearchRequirement"]["properties"]
+
+    bad_fix = {**task, "deliverable": "Read a different result", "correction_id": rejected["correction_id"]}
+    _, schedule = checklist.prepare({**lookup, "requirements": [bad_fix]}, state)
+    assert schedule["search_scope_error"] == []
+    assert schedule["requirement_registration"]["rejected"][0]["reason"] == "correction_does_not_match"
+    assert checklist.requirements == []
+
+    fix = {**task, "correction_id": rejected["correction_id"]}
+    extra = {**task, "source_quote": "second", "deliverable": "Read the second result"}
+    _, schedule = checklist.prepare({**lookup, "requirements": [fix, extra]}, state)
+    assert [r["deliverable"] for r in schedule["requirement_registration"]["registered"]] == ["Read the first result"]
+    assert state["task_contract"]["ignored_additions"] == 2
+    assert state["task_contract"]["rejected"][0]["resolved_by"] == "need_1"
+    assert "requirements" not in checklist.schemas(SCHEMAS)["search_literature"]["properties"]
+    _, schedule = checklist.prepare({**lookup, "target_requirements": ["need_1"]}, state)
+    assert "search_scope_error" not in schedule and not schedule["blocked"]
