@@ -34,11 +34,13 @@ class CoverageItem(BaseModel):
     cells: list[MetricCell] = Field(default_factory=list, max_length=100)
 
 
-def ground_requirements(requirements, question):
+def ground_requirements(requirements, question, *, require_verbatim_paper=True):
     accepted, rejected = [], []
     for r in requirements:
         item = r.model_dump(exclude_none=True)
-        if r.source_quote not in question or (r.paper_quote and r.paper_quote not in question):
+        if r.source_quote not in question or (
+            require_verbatim_paper and r.paper_quote and r.paper_quote not in question
+        ):
             rejected.append(dict(item, reason='not_verbatim_user_text'))
             continue
         if any({k:v for k,v in a.items() if k!='requirement_id'} == item for a in accepted):

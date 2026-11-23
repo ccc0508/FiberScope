@@ -21,9 +21,10 @@ When starting research, register requirements across the requests in your first 
 requests into independently checkable facts, one per named paper and one per SQL metric where
 needed. Copy source_quote as one continuous, verbatim span from the question. Multiple items
 may share that span. Put the specific task in deliverable in your own words, preserving the
-user's requested scope. Copy paper_quote from the question for a named paper and omit it for
-unspecified sources. The checklist is fixed after the first tool turn. Only correct rejected
-quotes using their correction_id and the original deliverable. The user's question still governs
+user's requested scope. For paper_quote, use the requested paper's name from the question or its
+title from the supplied directory. Omit it for unspecified sources. The checklist is fixed after
+the first tool turn. Correct a rejected source_quote with its correction_id and preserve the
+other fields. The user's question still governs
 the answer. Reuse evidence already collected. For every follow-up search, set target_requirements
 to existing literature need IDs that still lack evidence, and search only for those gaps. If Jev
 requested a supplement, use only the literature need IDs it flagged. Use target_requirements
@@ -114,6 +115,8 @@ def evidence_check_input(question, requirements, events):
 
 
 class ResearchRequirement(Requirement):
+    paper_quote: str = Field(default="", max_length=200,
+                            description="Name of the requested paper or its title from the supplied directory.")
     deliverable: str = Field(min_length=1, max_length=1500,
                              description="A specific requested result in your own words. Keep the user's scope.")
     correction_id: str = Field(default="", max_length=32, exclude=True,
@@ -165,9 +168,7 @@ class ResearchChecklist(CoveragePriority):
             return False
         item = candidate.model_dump(exclude_none=True)
         return all(item.get(key) == record.get(key)
-                   for key in ("role", "deliverable", "source_quote", "paper_quote", "metric")
-                   if key not in record["invalid_fields"]) and bool(
-                       not record["paper_quote"] or candidate.paper_quote)
+                   for key in ("role", "deliverable", "paper_quote", "metric"))
 
     def register(self, entries, trace):
         rejected = []
@@ -192,12 +193,9 @@ class ResearchChecklist(CoveragePriority):
                                        for item in self.pending_registrations()):
                 ignored += 1
                 continue
-            accepted, ungrounded = ground_requirements([candidate], self.question)
+            accepted, ungrounded = ground_requirements([candidate], self.question, require_verbatim_paper=False)
             if ungrounded:
-                data = {**ungrounded[0], "invalid_fields": [
-                    name for name in ("source_quote", "paper_quote")
-                    if (quote := getattr(candidate, name)) and quote not in self.question
-                ]}
+                data = {**ungrounded[0], "invalid_fields": ["source_quote"]}
                 previous = next((item for item in self.rejections if
                                  not item.get("resolved_by") and
                                  (item["correction_id"] == candidate.correction_id or
@@ -234,7 +232,7 @@ class ResearchChecklist(CoveragePriority):
             "notice": (
                 "Correct rejected task items in requirements on your next tool call or in the draft JSON. "
                 "Copy one continuous span from the original question into source_quote. The same span can "
-                "anchor multiple deliverables. Preserve the original task, fix only the invalid quote fields, "
+                "anchor multiple deliverables. Preserve the other fields, fix only source_quote, "
                 "and reuse the correction_id. Reuse evidence already collected."
             ),
             "rejected": rejected,

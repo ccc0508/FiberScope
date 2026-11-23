@@ -124,11 +124,11 @@ def test_jev_timeout_still_returns_the_answer():
     ]
 
 
-def test_rejected_paper_quotes_can_be_registered_after_retrieval():
+def test_source_quote_repairs_keep_catalog_titles_after_retrieval():
     anchor = "参考Morais与Curto（2022）与Uddin等（2024）的划分方式"
     items = [
         {"role": "literature", "source_quote": f"{paper}的划分方式（样本量）",
-         "paper_quote": paper, "deliverable": f"说明{paper}所报告的训练和测试划分"}
+         "paper_quote": f"Published methods by {paper}", "deliverable": f"说明{paper}所报告的训练和测试划分"}
         for paper in ("Morais与Curto（2022）", "Uddin等（2024）")
     ]
     repaired = [
@@ -174,4 +174,7 @@ def test_rejected_paper_quotes_can_be_registered_after_retrieval():
         item["deliverable"] for item in items
     ]
     assert [item["source_quote"] for item in requests[0]["requirements"]] == [anchor, anchor]
+    assert [item["paper_quote"] for item in requests[0]["requirements"]] == [
+        item["paper_quote"] for item in items
+    ]
     assert {entry["ref"] for entry in requests[0]["evidence"]} == {"[1]", "[2]"}
