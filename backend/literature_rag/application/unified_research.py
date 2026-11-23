@@ -11,9 +11,9 @@ from .tools import SECTION_BATCH_GUIDANCE
 
 CROSS_SOURCE_EXAMPLE = """
 
-The following synthetic example illustrates evidence use. Its studies, values and citation
-numbers belong only to the example. Answer the actual question using the live evidence and
-required output format.
+The following synthetic example illustrates how to check and revise a draft. Its studies,
+values and citations belong only to the example. Use the live evidence and required output
+format for the actual question. Do not include the example's checking notes in the answer.
 
 【示例：比较两项研究的划分方式，并据此分析本地数据】
 
@@ -29,18 +29,26 @@ required output format.
     所引段落没有交代是否按实验条件分组。
 [3] 研究 B：40 个样本中，30 个用于训练、10 个用于测试。
     所引段落没有交代是否随机，也没有交代是否按条件分组。
-[4] 研究 B：在不同处理强度下进行了测量。
-    所引段落没有交代各处理强度下的重复测量次数。
+[4] 研究 B：在不同处理强度下进行了测量，表格按原料报告均值±标准差。
+    所引段落没有交代各处理强度下的测量次数。
 
-错误示范
-“两项研究都按观测行随机划分。研究 B 在每个处理强度下只测了一次，
-所以本项目也可以参考两项研究的比例按行划分。”
+错误草稿
+比较段：“两篇都采用随机划分。研究 B 的标准差说明每档都有重复测量。”
+结尾：“两篇均未说明是否随机、是否按实验条件分组。”
 
-正确示范
+逐项核对并修正
+- “两篇都采用随机划分”：原文 [2] 支持 A 随机，[3] 只支持 B 分出训练集和
+  测试集。共同点只能写“两篇都报告了训练／测试划分”，随机性分别交代。
+- “两篇均未说明是否随机”：与 [2] 矛盾。B 未说明是否随机，两篇共同未说明
+  的是是否按实验条件分组。结尾也要保留这个区别。
+- “每档都有重复测量”：[4] 的标准差按原料汇总，无法确认每档测量次数。
+  用户问的是本地重复观测的风险，删去对研究 B 测量次数的推断。
+
+修正后的终稿
 本地有 36 个规范样本，其中甲类 20 个、乙类 16 个。循环实验有
 8 个数据块、24 个“块×循环”组合和 61 条原始观测 [1]。
 
-研究 A 明确报告随机划分，约 80% 训练、20% 测试 [2]。
+两篇都报告了训练／测试划分。研究 A 明确报告随机划分，约 80% 训练、20% 测试 [2]。
 研究 B 报告 30 个训练、10 个测试，所引段落未说明是否随机 [3]。
 两篇所引段落均未交代是否按实验条件分组。
 
@@ -49,11 +57,6 @@ required output format.
 “块×循环”内的重复观测放在同一侧；若要评估对新数据块的泛化，
 就把同一数据块下的所有循环一起划分。两篇论文的比例仅供参考。
 
-归纳规则
-写“都”“均”“共同”前，逐篇确认同一陈述有证据支持。
-总结应保留各来源的限定，补查后沿用初稿结论时也要重新核对。
-“未说明是否随机”应保留为未知。“在各条件下测量”不能推出测量次数。
-方法建议要说明依据。与问题无关的实验细节即使有证据，也可以省略。
 【示例结束】
 """
 
