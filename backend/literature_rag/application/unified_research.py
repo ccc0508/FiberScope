@@ -1,9 +1,9 @@
 """The single research agent's instructions and evidence checklist."""
 
 import json
-from typing import get_args
+from typing import Annotated, get_args
 
-from pydantic import Field, TypeAdapter, ValidationError
+from pydantic import Field, StringConstraints, TypeAdapter, ValidationError
 
 from .citation_policy import citation_records
 from .coverage_priority import CoveragePriority
@@ -36,8 +36,8 @@ For later calls use only those IDs. The checklist is fixed after the first tool 
 corrections to rejected items. Use the returned correction_id and fix the reported fields.
 Reuse evidence already collected. For every follow-up search, set target_requirements to assigned
 literature need IDs that still lack evidence, and search only for those gaps. If Jev
-requested a supplement, use only the literature need IDs it flagged. Use target_requirements
-for each lookup and send compact coverage_updates only when a previously obtained result
+requested a supplement, use only the IDs it provided for the flagged facts. Use target_requirements
+after the first turn and send compact coverage_updates only when a previously obtained result
 changes a finding. Prioritize uncovered papers and facts across BOTH sources. A directory
 or locator alone does not verify a scientific or numeric fact.
 
@@ -75,6 +75,21 @@ LEGACY_METRIC_GUIDANCE = (
     "specify the actual result cells: ref, column, zero-based row and value (JSON null for NULL)."
 )
 EVIDENCE_CHECK_THRESHOLD = 0.90
+EVIDENCE_LOOKUP_TOOLS = {
+    "literature": frozenset({
+        "search_literature", "find_documents", "list_sections", "read_section",
+        "find_table", "read_table", "find_figure", "view_image",
+    }),
+    "sql": frozenset({"describe_experiment_data", "query_experiment_data"}),
+}
+JEV_CHECKLIST_GUIDANCE = (
+    "\nFor each registered task, include acceptance_criteria as a short array of independently "
+    "checkable required facts or results. Keep one retrieval task per named paper when possible. "
+    "Each criterion must be a material part of answering the user's actual question, stated as "
+    "something to establish, without a guessed answer. Omit optional background and extra conditions. "
+    "A task can have several criteria, while a single lookup can cover multiple criteria. "
+    "Start with one focused lookup per paper and combine gaps likely answered by the same source."
+)
 
 
 def evidence_check_input(question, requirements, events):
@@ -113,11 +128,19 @@ def evidence_check_input(question, requirements, events):
                             "ref", "document_id", "filename", "page_start", "page_end", "text",
                         ) if key in src
                     }
-    items = [
-        {key: item[key] for key in ("requirement_id", "source_quote", "deliverable", "paper_quote", "role")
-         if key in item}
-        for item in requirements
-    ]
+    items = []
+    for task in requirements:
+        scope = {key: task[key] for key in ("requirement_id", "source_quote", "paper_quote", "role")
+                 if key in task}
+        criteria = task.get("acceptance_criteria")
+        if criteria:
+            items.extend(
+                dict(scope, check_id=f"{task['requirement_id']}_check_{index}", criterion=criterion)
+                for index, criterion in enumerate(criteria, start=1)
+            )
+        else:
+            # Older registrations still have a single task-level check.
+            items.append(dict(scope, deliverable=task.get("deliverable") or task["source_quote"]))
     return {"question": question, "requirements": items, "evidence": list(evidence.values())}
 
 
@@ -126,6 +149,10 @@ class ResearchRequirement(Requirement):
                             description="Name of the requested paper or its title from the supplied directory.")
     deliverable: str = Field(min_length=1, max_length=1500,
                              description="A specific requested result in your own words. Keep the user's scope.")
+    acceptance_criteria: list[Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=240)]] = Field(
+        default_factory=list, max_length=8,
+        description="Required facts for Jev to check independently. Supply one fact per entry. Do not include IDs or optional detail.",
+    )
     correction_id: str = Field(default="", max_length=32, exclude=True,
                                description="Copy the registration error's correction_id when correcting that item.")
 
@@ -190,7 +217,7 @@ class ResearchChecklist(CoveragePriority):
             normalized.append(row)
         return normalized, ignored
 
-    def schemas(self, schemas):
+    def schemas(self, schemas, *, supplement=False):
         result = super().schemas(schemas)
         corrections_pending = bool(self.pending_registrations())
         can_register = not self.locked or corrections_pending
@@ -202,6 +229,8 @@ class ResearchChecklist(CoveragePriority):
         if self.evidence_only:
             properties.pop("metric")
             definitions.pop("Metric", None)
+        else:
+            properties.pop("acceptance_criteria")
         requirement_schema["maxItems"] = 24
         for schema in result.values():
             if can_register:
@@ -211,7 +240,15 @@ class ResearchChecklist(CoveragePriority):
                 schema["required"].remove(key)
                 if not self.locked:
                     schema["properties"].pop(key)
-        if self.locked and "search_literature" in result:
+        if supplement:
+            for tool, schema in result.items():
+                if any(tool in tools for tools in EVIDENCE_LOOKUP_TOOLS.values()):
+                    schema["properties"]["target_requirements"]["description"] = (
+                        "Use only the pending check IDs in the latest evidence feedback. "
+                        "One lookup may cover several closely related checks."
+                    )
+                    schema["required"].append("target_requirements")
+        elif self.locked and "search_literature" in result:
             result["search_literature"]["required"].append("target_requirements")
         return result
 
@@ -228,8 +265,9 @@ class ResearchChecklist(CoveragePriority):
             item = candidate.model_dump(exclude_unset=True)
             return all(item.get(key) == value for key, value in record["preserve_fields"].items())
         item = candidate.model_dump(exclude_none=True)
-        return all(item.get(key) == record.get(key)
-                   for key in ("role", "deliverable", "paper_quote", "metric"))
+        return (all(item.get(key) == record.get(key)
+                    for key in ("role", "deliverable", "paper_quote", "metric"))
+                and item.get("acceptance_criteria", []) == record.get("acceptance_criteria", []))
 
     def _registration_error(self, entry, index, error):
         errors = error.errors(include_input=False, include_context=False, include_url=False)
@@ -270,7 +308,10 @@ class ResearchChecklist(CoveragePriority):
                     entry.setdefault("deliverable", entry.get("source_quote"))
                     if self.evidence_only:
                         entry.pop("metric", None)
+                    else:
+                        entry.pop("acceptance_criteria", None)
                     candidate = ResearchRequirement.model_validate(entry)
+                    candidate.acceptance_criteria = list(dict.fromkeys(candidate.acceptance_criteria))
                 else:
                     rejected.append({"reason": "invalid_requirement", "index": index, "invalid_fields": [],
                                      "errors": [{"type": "model_type", "msg": "Expected a task object"}]})
@@ -295,7 +336,9 @@ class ResearchChecklist(CoveragePriority):
                 previous = next((item for item in self.pending_registrations()
                                  if item.get("reason") == "not_verbatim_user_text" and
                                  (item["correction_id"] == candidate.correction_id or
-                                  all(item[k] == data[k] for k in ("role", "source_quote", "paper_quote", "deliverable")))), None)
+                                  all(item.get(k) == data.get(k) for k in (
+                                      "role", "source_quote", "paper_quote", "deliverable", "acceptance_criteria"
+                                  )))), None)
                 if previous is None:
                     previous = {**data, "correction_id": f"quote_{len(self.rejections) + 1}"}
                     self.rejections.append(previous)
@@ -305,6 +348,8 @@ class ResearchChecklist(CoveragePriority):
             data.pop("requirement_id")
             if self.evidence_only:
                 data.pop("metric", None)
+            if not data.get("acceptance_criteria"):
+                data.pop("acceptance_criteria", None)
             current = next((item for item in self.requirements
                             if {k: v for k, v in item.items() if k != "requirement_id"} == data), None)
             if current is None and len(self.requirements) < 24:
@@ -314,7 +359,8 @@ class ResearchChecklist(CoveragePriority):
                 for record in self.pending_registrations():
                     if record is correction or (
                         record.get("reason") == "not_verbatim_user_text" and
-                        all(record[k] == data[k] for k in ("role", "paper_quote", "deliverable"))
+                        all(record[k] == data[k] for k in ("role", "paper_quote", "deliverable")) and
+                        record.get("acceptance_criteria", []) == data.get("acceptance_criteria", [])
                     ):
                         record["resolved_by"] = current["requirement_id"]
         trace["task_contract"] = {"requirements": self.requirements, "rejected": self.rejections,
@@ -355,27 +401,48 @@ class ResearchChecklist(CoveragePriority):
             request.pop("revisit_reason", None)
         request["coverage_updates"], ignored_fields = self._normalize_coverage(request.get("coverage_updates", []))
         followup_search = self.locked and request["tool"] == "search_literature"
-        if self.locked and not followup_search and len(self.requirements) == 1:
+        supplement = trace.get("evidence_supplement_requested")
+        lookup_role = next((role for role, tools in EVIDENCE_LOOKUP_TOOLS.items() if request["tool"] in tools), None)
+        pending_checks = None
+        if supplement and lookup_role:
+            pending_checks = {
+                item.get("check_id", item["requirement_id"]): item["requirement_id"]
+                for item in trace["evidence_check"]["pending"] if item["role"] == lookup_role
+            }
+            selected = request.get("target_requirements")
+            if isinstance(selected, list) and selected and all(
+                isinstance(check_id, str) and check_id in pending_checks for check_id in selected
+            ):
+                request["target_requirements"] = list(dict.fromkeys(pending_checks[check_id] for check_id in selected))
+            else:
+                selected = []
+                request.pop("target_requirements", None)
+        elif self.locked and not followup_search and len(self.requirements) == 1:
             request.setdefault("target_requirements", [self.requirements[0]["requirement_id"]])
         request, schedule = super().prepare(request, trace)
         if ignored_fields:
             schedule["ignored_coverage_fields"] = ignored_fields
         if not self.locked and "missing_or_unknown_target_requirements" in schedule["errors"]:
             schedule["errors"].remove("missing_or_unknown_target_requirements")
-        if followup_search:
+        if pending_checks is not None:
+            if selected:
+                schedule["target_checks"] = list(dict.fromkeys(selected))
+                if schedule["redirect_reason"] in {"covered_targets", "paper_without_source"}:
+                    # Jev has already prioritized the pending facts over the parent's reported status.
+                    schedule.update(redirect_reason=None, blocked=False)
+            else:
+                schedule["search_scope_error" if followup_search else "evidence_scope_error"] = sorted(pending_checks)
+        elif followup_search:
             self._check_search_targets(schedule, trace)
         if raw or rejected or normalized:
             schedule["requirement_registration"] = self.registration_feedback(rejected, normalized)
         return request, schedule
 
     def _check_search_targets(self, schedule, trace):
-        jev_pending = trace.get("evidence_supplement_requested")
-        pending_ids = {r["requirement_id"] for r in trace.get("evidence_check", {}).get("pending", [])}
         allowed = {
             row["requirement"]["requirement_id"] for row in schedule["report"]["items"]
             if row["requirement"]["role"] == "literature"
-            and (row["requirement"]["requirement_id"] in pending_ids if jev_pending
-                 else row["status"] not in {"verified", "needs_clarification"})
+            and row["status"] not in {"verified", "needs_clarification"}
         }
         targets = set(schedule["target_requirements"])
         if not targets or not targets <= allowed:
@@ -383,9 +450,6 @@ class ResearchChecklist(CoveragePriority):
             pending = self.pending_registrations()
             if pending:
                 schedule["requirement_registration"] = self.registration_feedback(pending)
-        elif jev_pending and schedule["redirect_reason"] == "covered_targets":
-            # Jev can still flag a task the model marked as verified.
-            schedule.update(redirect_reason=None, blocked=False)
 
     def draft(self, raw, trace, *, stage):
         payload, recovery = extract_research_submission(raw)

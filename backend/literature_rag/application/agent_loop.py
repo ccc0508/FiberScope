@@ -199,14 +199,13 @@ class AgentLoop:
         coverage_priority = self.coverage_priority
         if self.unified_research:
             from .unified_research import (
-                EVIDENCE_CHECK_THRESHOLD, LEGACY_METRIC_GUIDANCE, RESEARCH_FORMAT_REPAIR,
-                ResearchChecklist, SYSTEM_PROMPT,
+                EVIDENCE_CHECK_THRESHOLD, EVIDENCE_LOOKUP_TOOLS, JEV_CHECKLIST_GUIDANCE,
+                LEGACY_METRIC_GUIDANCE, RESEARCH_FORMAT_REPAIR, ResearchChecklist, SYSTEM_PROMPT,
                 evidence_check_input, extract_research_submission,
             )
             research = coverage_priority = ResearchChecklist(question, evidence_only=self.evidence_judge is not None)
             prompt = SYSTEM_PROMPT + "\nFor research with tool calls: " + research.submission_format
-            if not research.evidence_only:
-                prompt += LEGACY_METRIC_GUIDANCE
+            prompt += JEV_CHECKLIST_GUIDANCE if research.evidence_only else LEGACY_METRIC_GUIDANCE
             state['pipeline_version'] = 'unified-research-v1'
         if 'describe_experiment_data' in self.allowed_tools:
             from app.experiment_directory import view_directory
@@ -327,6 +326,13 @@ class AgentLoop:
         if research and self.evidence_judge and model_limit > closing_calls + 1:
             closing_calls += 1
 
+        def available_tool_names():
+            return {
+                name for name in self.allowed_tools
+                if (name != 'search_literature' or state['search_rounds'] < b.max_search_calls)
+                and (name != 'find_documents' or self.paper_directory is None)
+            }
+
         def check_evidence():
             nonlocal last_check_input, pending_evidence
             if not research or not self.evidence_judge or not state['tool_calls']:
@@ -349,16 +355,16 @@ class AgentLoop:
                 return
             last_check_input = payload
             entry = dict(stage='evidence_check', model=self.evidence_judge.model, status='started',
-                         input_messages=[], available_tools=[], usage=None)
+                         input_messages=[], available_tools=[], usage=None, checked_items=payload['requirements'])
             state['model_calls'].append(entry)
             save()
             try:
                 scores, usage = self.evidence_judge.check(payload, remaining)
-                pending_evidence = [
-                    {**item, 'probabilities': scores[item['requirement_id']]}
-                    for item in payload['requirements']
-                    if scores[item['requirement_id']]['supported'] < EVIDENCE_CHECK_THRESHOLD
-                ]
+                pending_evidence = []
+                for item in payload['requirements']:
+                    probabilities = scores[item.get('check_id', item['requirement_id'])]
+                    if probabilities['supported'] < EVIDENCE_CHECK_THRESHOLD:
+                        pending_evidence.append({**item, 'probabilities': probabilities})
                 entry.update(status='completed', usage=usage, probabilities=scores)
                 state['evidence_check'] = dict(threshold=EVIDENCE_CHECK_THRESHOLD,
                                                probabilities=scores, pending=pending_evidence)
@@ -390,10 +396,15 @@ class AgentLoop:
                     break
                 if size(messages)>=stop_threshold:
                     state['stop_reason']='context_budget';break
-                schemas={name:schema for name,schema in SCHEMAS.items()
-                    if name in self.allowed_tools and (name!='search_literature' or state['search_rounds']<b.max_search_calls)
-                    and (name!='find_documents' or self.paper_directory is None)}
-                if coverage_priority:schemas=coverage_priority.schemas(schemas)
+                names = available_tool_names()
+                if evidence_retry:
+                    roles = {item['role'] for item in pending_evidence}
+                    names.intersection_update(set().union(*(EVIDENCE_LOOKUP_TOOLS[role] for role in roles)))
+                schemas = {name: schema for name, schema in SCHEMAS.items() if name in names}
+                if research:
+                    schemas = research.schemas(schemas, supplement=evidence_retry)
+                elif coverage_priority:
+                    schemas = coverage_priority.schemas(schemas)
                 d=model('decide',schemas);messages.append(d.message)
                 if not d.calls:
                     research_draft = research is not None and bool(state['tool_calls'])
@@ -418,24 +429,38 @@ class AgentLoop:
                                 save()
                                 continue
                         check_evidence()
-                        supplement_prompt = (
-                            'Evidence check: support probability is below 0.90 for the listed items. '
-                            'Use these existing IDs in target_requirements; do not register new requirements. '
-                            'Target only these gaps using distinct useful lookups within the remaining budget. '
-                            'Reuse sufficient sources and report any gaps that remain. '
-                            + json.dumps(pending_evidence, ensure_ascii=False)
-                        )
-                        supplement_message = dict(role='user', content=supplement_prompt)
-                        if (pending_evidence and not evidence_retry
-                                and state.get('evidence_check_status') == 'needs_evidence'
-                                and len(state['model_calls']) < model_limit - closing_calls
-                                and size(messages + [supplement_message]) < stop_threshold
-                                and tool_count < tool_limit and deadline-self.clock() > b.reserve_seconds):
-                            evidence_retry = True
-                            state['evidence_supplement_requested'] = True
-                            messages.append(supplement_message)
-                            save()
-                            continue
+                        if pending_evidence and not evidence_retry and state.get('evidence_check_status') == 'needs_evidence':
+                            available = available_tool_names()
+                            actionable = [
+                                item for item in pending_evidence if available & EVIDENCE_LOOKUP_TOOLS[item['role']]
+                            ]
+                            gaps = [
+                                {
+                                    'target_id': item.get('check_id', item['requirement_id']),
+                                    'paper': item.get('paper_quote', ''),
+                                    'missing_fact': item.get('criterion') or item['deliverable'],
+                                    'available_tools': sorted(available & EVIDENCE_LOOKUP_TOOLS[item['role']]),
+                                }
+                                for item in actionable
+                            ]
+                            supplement_message = dict(role='user', content=(
+                                f'Evidence check: support probability is below {EVIDENCE_CHECK_THRESHOLD:.2f} for the listed facts. '
+                                'Put the supplied target_id values in target_requirements. Search only for a listed '
+                                'missing fact. Reuse confirmed evidence. Combine gaps from the same paper that can '
+                                'be resolved by the same lookup in one call. Use only a listed tool and grounded '
+                                'handles. If no useful untried lookup is feasible, submit the answer with the gap '
+                                'explicitly stated. Do not register new tasks. '
+                                + json.dumps(gaps, ensure_ascii=False)
+                            ))
+                            if (gaps and len(state['model_calls']) < model_limit - closing_calls
+                                    and size(messages + [supplement_message]) < stop_threshold
+                                    and tool_count < tool_limit and deadline-self.clock() > b.reserve_seconds):
+                                evidence_retry = True
+                                state['evidence_supplement_requested'] = True
+                                state['evidence_supplement_targets'] = gaps
+                                messages.append(supplement_message)
+                                save()
+                                continue
                     if feedback and not coverage_retry:
                         coverage_retry=True
                         state['coverage_retry_requested']=True
@@ -462,6 +487,14 @@ class AgentLoop:
                         result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
                     elif c.name=='find_documents' and self.paper_directory is not None:
                         result=dict(status='blocked',error_code='directory_already_provided',notice='Use the complete paper directory supplied at the start; no directory tool call is needed.')
+                    elif (evidence_retry and c.name not in names
+                          and not (c.name == 'search_literature' and state['search_rounds'] >= b.max_search_calls)):
+                        result = dict(status='blocked', error_code='tool_outside_evidence_supplement',
+                                      notice='Use only the tools listed for the remaining evidence gaps.')
+                    elif schedule and 'evidence_scope_error' in schedule:
+                        result = dict(status='blocked', error_code='invalid_evidence_supplement_targets',
+                                      allowed_requirement_ids=schedule['evidence_scope_error'],
+                                      notice='Use only the listed pending check IDs for this source.')
                     elif schedule and 'search_scope_error' in schedule:
                         result=dict(status='blocked',error_code='invalid_followup_search_targets',
                             allowed_requirement_ids=schedule['search_scope_error'],
@@ -469,7 +502,8 @@ class AgentLoop:
                                 'Use only the listed existing unresolved literature IDs. If your task was '
                                 'rejected at registration, correct it using requirement_registration before retrying.'
                                 if schedule.get('requirement_registration', {}).get('rejected') else
-                                'Use only the listed existing unresolved literature IDs. '
+                                'Use only the listed pending check IDs for a supplement, or an assigned '
+                                'unresolved literature task ID before evidence checking. '
                                 'If the list is empty, finish from the evidence already collected.'
                             ))
                     elif schedule and schedule['blocked']:
