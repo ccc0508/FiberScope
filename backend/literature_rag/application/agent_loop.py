@@ -200,11 +200,13 @@ class AgentLoop:
         if self.unified_research:
             from .unified_research import (
                 EVIDENCE_CHECK_THRESHOLD, LEGACY_METRIC_GUIDANCE, RESEARCH_FORMAT_REPAIR,
-                RESEARCH_SUBMISSION_FORMAT, ResearchChecklist, SYSTEM_PROMPT,
+                ResearchChecklist, SYSTEM_PROMPT,
                 evidence_check_input, extract_research_submission,
             )
             research = coverage_priority = ResearchChecklist(question, evidence_only=self.evidence_judge is not None)
-            prompt = SYSTEM_PROMPT if self.evidence_judge else SYSTEM_PROMPT + LEGACY_METRIC_GUIDANCE
+            prompt = SYSTEM_PROMPT + "\nFor research with tool calls: " + research.submission_format
+            if not research.evidence_only:
+                prompt += LEGACY_METRIC_GUIDANCE
             state['pipeline_version'] = 'unified-research-v1'
         if 'describe_experiment_data' in self.allowed_tools:
             from app.experiment_directory import view_directory
@@ -563,7 +565,7 @@ class AgentLoop:
                 state['stop_reason']=state['stop_reason'] or 'collection_budget'
                 closing='Evidence collection has ended. Answer using only acquired evidence; explicitly state unresolved gaps. Do not call tools.'
                 if research and state['tool_calls']:
-                    closing += ' ' + RESEARCH_SUBMISSION_FORMAT
+                    closing += ' ' + research.submission_format
                     if research.pending_registrations():
                         repair_text = '\n' + json.dumps(
                             research.registration_feedback(research.pending_registrations()), ensure_ascii=False
@@ -583,7 +585,7 @@ class AgentLoop:
                     raise ValueError('Invalid draft')
 
             if research and state['tool_calls'] and not state['draft']:
-                repair = dict(role='user', content=RESEARCH_FORMAT_REPAIR)
+                repair = dict(role='user', content=RESEARCH_FORMAT_REPAIR + research.submission_format)
                 if (len(state['model_calls']) < model_limit and deadline-self.clock() > 2
                         and size(messages + [repair]) <= b.max_context_chars):
                     messages.append(repair)

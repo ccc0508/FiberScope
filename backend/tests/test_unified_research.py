@@ -278,3 +278,67 @@ def test_invalid_task_shape_can_be_corrected_after_first_turn_without_adding_tas
     assert "requirements" not in checklist.schemas(SCHEMAS)["search_literature"]["properties"]
     _, schedule = checklist.prepare({**lookup, "target_requirements": ["need_1"]}, state)
     assert "search_scope_error" not in schedule and not schedule["blocked"]
+
+
+def test_jev_submission_ignores_only_legacy_coverage_fields():
+    lookup = {
+        "tool": "search_literature", "query": "paper result", "reason": "check",
+        "requirements": [{"role": "literature", "source_quote": "paper result", "paper_quote": "paper A"}],
+    }
+    row = {
+        "requirement_id": "need_1", "status": "verified", "document_id": "a",
+        "refs": ["[1]"], "finding": "Ten observations.",
+    }
+    answer = "The paper reports ten observations [1]."
+    with_legacy_fields = {**row, "checks": ["This is not an object."], "cells": "unused"}
+    for evidence_only in (True, False):
+        checklist = ResearchChecklist("Give the paper result from paper A.", evidence_only=evidence_only)
+        state = {}
+        checklist.prepare(lookup, state)
+        checklist.lock(state)
+        state["tool_calls"] = [{
+            "request": {"tool": "search_literature"},
+            "model_delivery": {"status": "delivered"},
+            "result": {"status": "completed", "result": {"evidence": [
+                {"ref": "[1]", "document_id": "a", "text": row["finding"]},
+            ]}},
+        }]
+        prompt = checklist.submission_format
+        assert ("checks, cells" not in prompt) == evidence_only
+        assert "requirement_id, status, document_id, refs, finding, gap" in prompt
+
+        raw = json.dumps({"answer": answer, "coverage": [with_legacy_fields]})
+        assert checklist.draft(raw, state, stage="decide")[0] == answer
+        attempt = state["research_output_attempts"][-1]
+        if evidence_only:
+            assert attempt["ignored_coverage_fields"] == [{"index": 0, "fields": ["cells", "checks"]}]
+            assert not attempt["issues"]
+            assert state["coverage_report"]["complete"]
+        else:
+            assert "ignored_coverage_fields" not in attempt
+            assert attempt["issues"][0]["code"] == "invalid_coverage_item"
+            assert not state["coverage_report"]["complete"]
+
+        bad_row = {**with_legacy_fields, "paper_quote": "paper A"}
+        checklist.draft(json.dumps({"answer": answer, "coverage": [bad_row]}), state, stage="decide")
+        assert state["research_output_attempts"][-1]["issues"][0]["code"] == "invalid_coverage_item"
+
+
+def test_jev_coverage_update_preserves_status_when_legacy_fields_are_present():
+    checklist = ResearchChecklist("Give the paper results.", evidence_only=True)
+    state = {}
+    lookup = {"tool": "search_literature", "query": "results", "reason": "check"}
+    checklist.prepare({
+        **lookup,
+        "requirements": [{"role": "literature", "source_quote": "paper results"}],
+    }, state)
+    checklist.lock(state)
+    _, schedule = checklist.prepare({
+        **lookup,
+        "target_requirements": ["need_1"],
+        "coverage_updates": [{"requirement_id": "need_1", "status": "missing", "gap": "No result yet.",
+                              "checks": ["old note"], "cells": 0}],
+    }, state)
+    assert schedule["errors"] == []
+    assert schedule["ignored_coverage_fields"] == [{"index": 0, "fields": ["cells", "checks"]}]
+    assert checklist.items["need_1"].gap == "No result yet."
