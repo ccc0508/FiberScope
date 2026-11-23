@@ -9,8 +9,23 @@ from literature_rag.application.agent_loop import AgentBudget, AgentLoop
 from tests.test_agent_loop import Fake, decision
 
 
+def decisions(payload, supports, *, optional=(), actionable=True):
+    output = {}
+    for item in payload["requirements"]:
+        key = item.get("check_id", item["requirement_id"])
+        supported = supports[key]
+        probability = 0. if key in optional else 1.
+        output[key] = {"supported": supported, "partially_supported": 1 - supported, "insufficient": 0.}
+        output[f"scope_{key}"] = {"required": probability, "nonessential": 1 - probability}
+        if item.get("next_lookup"):
+            output[f"lookup_{key}"] = {"actionable": float(actionable), "not_actionable": float(not actionable)}
+    return output, {}
+
+
 def test_jev_uses_typed_choices_without_a_draft():
-    payload = {"question": "Count groups.", "requirements": [{"requirement_id": "need_1", "check_id": "need_1_check_1", "criterion": "The number of groups."}],
+    payload = {"question": "Count groups.", "requirements": [{"requirement_id": "need_1", "check_id": "need_1_check_1",
+               "criterion": "The number of groups.", "direct_sources": [{"ref": "[1]"}],
+               "gap": "Count unique groups.", "next_lookup": {"tool": "query_experiment_data"}}],
                "evidence": [{"ref": "[1]", "rows": [[47]]}]}
 
     def post(url, *, json, **kwargs):
@@ -18,18 +33,27 @@ def test_jev_uses_typed_choices_without_a_draft():
         assert json["state"] == payload
         assert json["questions"]["need_1_check_1"]["type"] == "choice"
         assert "only its criterion" in json["questions"]["need_1_check_1"]["instructions"]
+        assert "direct_sources" in json["questions"]["need_1_check_1"]["instructions"]
+        assert "Ignore evidence" in json["questions"]["scope_need_1_check_1"]["instructions"]
+        assert "lookup_history" in json["questions"]["lookup_need_1_check_1"]["instructions"]
         assert json["provider"] == {"allow_fallbacks": False}
         answer = {"choice": "supported", "confidence": .92, "probabilities": {
             "supported": .89, "partially_supported": .09, "insufficient": .02,
         }}
+        scope = {"choice": "required", "confidence": .98, "probabilities": {"required": .98, "nonessential": .02}}
+        lookup = {"choice": "not_actionable", "confidence": .92,
+                  "probabilities": {"actionable": .08, "not_actionable": .92}}
         return SimpleNamespace(
             raise_for_status=lambda: None,
-            json=lambda: {"model": MODEL, "provider": "TypeSafe", "answers": {"need_1_check_1": answer},
+            json=lambda: {"model": MODEL, "provider": "TypeSafe", "answers": {
+                "need_1_check_1": answer, "scope_need_1_check_1": scope, "lookup_need_1_check_1": lookup},
                           "usage": {"input_tokens": 100, "total_tokens": 100}},
         )
 
     scores, usage = JevEvidenceJudge("test", post=post).check(payload, 10)
     assert scores["need_1_check_1"]["supported"] == .89
+    assert scores["scope_need_1_check_1"]["required"] == .98
+    assert scores["lookup_need_1_check_1"]["not_actionable"] == .92
     assert usage == {"prompt_tokens": 100, "total_tokens": 100}
 
 
@@ -47,7 +71,11 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
     })
     extra = {**requirements[1], "deliverable": "An extra paper detail"}
     lookup = {"query": "paper result", "reason": "missing evidence"}
-    draft = decision(json.dumps({"answer": "61 [1]", "coverage": []}))
+    draft = decision(json.dumps({"answer": "61 [1]", "coverage": [], "evidence_checks": [
+        {"check_id": "need_1", "sources": [{"ref": "[1]"}]},
+        {"check_id": "need_2", "gap": "Paper A's reported result is missing.",
+         "next_lookup": {"tool": "search_literature", **lookup}},
+    ]}))
     script = [decision(calls=[sql]), draft]
     if supplements:
         script += [
@@ -59,6 +87,9 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
                 ToolCall("mixed", "search_literature", {
                     **lookup, "target_requirements": ["need_2", "need_2_optional_1"],
                 }),
+                ToolCall("changed", "search_literature", {
+                    **lookup, "query": "some other paper", "target_requirements": ["need_2"],
+                }),
                 ToolCall("paper", "search_literature", {**lookup, "target_requirements": ["need_2"]}),
             ]),
             decision(json.dumps({"answer": "61 [1]", "coverage": [], "requirements": [extra]})),
@@ -68,14 +99,13 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
 
     def judge(payload, _timeout):
         requests.append(payload)
-        assert set(payload) == {"question", "requirements", "evidence"}
         assert [item["requirement_id"] for item in payload["requirements"]] == ["need_1", "need_2"]
         assert all(item["required"] for item in payload["requirements"])
         score = initial_support if len(requests) == 1 else .99
-        return {
-            "need_1": {"supported": .98, "partially_supported": .01, "insufficient": .01},
-            "need_2": {"supported": score, "partially_supported": 1 - score, "insufficient": 0},
-        }, {}
+        if len(requests) == 1:
+            assert payload["requirements"][0]["direct_sources"] == [{"ref": "[1]"}]
+            assert payload["lookup_history"][0]["operation"]["tool"] == "query_experiment_data"
+        return decisions(payload, {"need_1": .98, "need_2": score})
 
     def execute(request, *_):
         if request["tool"] == sql.name:
@@ -105,9 +135,10 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
         assert "below 0.80" in prompt
         assert "need_2_optional_1" not in prompt and "instrument model" not in prompt
         rejected = [t["result"] for t in state["tool_calls"] if t["status"] == "blocked"]
-        assert len(rejected) == 5
+        assert len(rejected) == 6
         assert all(t["error_code"] == "invalid_followup_search_targets"
-                   and t["allowed_requirement_ids"] == ["need_2"] for t in rejected)
+                   and t["allowed_requirement_ids"] == ["need_2"] for t in rejected[:-1])
+        assert rejected[-1]["error_code"] == "unapproved_evidence_lookup"
         assert state["task_contract"]["ignored_additions"] == 2
         assert state["budget_usage"]["search"] == 1
         assert len(requests[-1]["requirements"]) == 2
@@ -137,6 +168,102 @@ def test_jev_timeout_still_returns_the_answer():
     ]
 
 
+@pytest.mark.parametrize("case, reason", [
+    ("nonessential", None),
+    ("covered", "lookup_rejected"),
+    ("paraphrase", "lookup_rejected"),
+    ("tried", "no_new_lookup"),
+    ("no_gap", "no_new_lookup"),
+])
+def test_low_evidence_score_does_not_authorize_unnecessary_lookup(case, reason):
+    initial = {
+        "document_id": "doc_a", "query": "Paper A results", "reason": "get evidence",
+    }
+    lookup = {**initial, "query": "paper A; RESULTS " if case == "tried" else "A paper measurements"}
+    submission = {
+        "check_id": "need_1_check_1", "gap": "" if case == "no_gap" else "Exact value of the result",
+        "sources": [{"ref": "[1]", "quote": "The result is  42."},
+                    {"ref": "[1]", "quote": "Invented text."},
+                    {"ref": "[3]", "quote": "Unavailable source."}],
+        "next_lookup": {"tool": "search_literature", **lookup},
+    }
+    draft = {"answer": "The result is 42 [1].", "coverage": [], "evidence_checks": [submission]}
+    adapter = Fake([decision(calls=[ToolCall("start", "search_literature", {
+        **initial, "requirements": [{
+            "role": "literature", "paper_quote": "Paper A", "source_quote": "Report Paper A's result.",
+            "deliverable": "Identify the result", "acceptance_criteria": ["Identify the result."],
+        }],
+    })]), decision(json.dumps(draft))])
+
+    def judge(payload, _timeout):
+        item, = payload["requirements"]
+        assert item["direct_sources"] == [{"ref": "[1]", "quote": "The result is  42."}]
+        assert ("next_lookup" in item) == (case not in {"tried", "no_gap"})
+        return decisions(payload, {"need_1_check_1": .63},
+                         optional=("need_1_check_1",) if case == "nonessential" else (),
+                         actionable=case not in {"covered", "paraphrase"})
+
+    state = AgentLoop(
+        adapter, lambda *_: {"status": "completed", "result": {"evidence": [
+            {"ref": "[1]", "document_id": "doc_a", "text": "The result is 42."},
+        ]}}, lambda _: None, unified_research=True,
+        evidence_judge=SimpleNamespace(model=MODEL, check=judge),
+    ).run("Report Paper A's result.", "unnecessary")
+    assert state["answer"] == draft["answer"]
+    assert not state.get("evidence_supplement_requested")
+    checks = state["evidence_check"]
+    assert not checks["pending"]
+    assert [item["reason"] for item in checks["unresolved"]] == ([reason] if reason else [])
+    assert bool(checks["scope_excluded"]) == (case == "nonessential")
+    errors = [e["code"] for e in state["model_calls"][-1]["submission_errors"]]
+    assert "source_quote_not_found" in errors and "unavailable_evidence_ref" in errors
+
+
+def test_table_locator_only_authorizes_the_returned_handle():
+    planned = {"document_id": "doc_a", "table_number": "2", "reason": "Table 2 gives the unit."}
+    task = {"role": "literature", "paper_quote": "Paper A", "source_quote": "exact unit",
+            "deliverable": "Give the exact unit", "acceptance_criteria": ["Give the unit."]}
+    target = {"target_requirements": ["need_1_check_1"]}
+    adapter = Fake([
+        decision(calls=[ToolCall("initial", "search_literature", {
+            "query": "Paper A overview", "reason": "first evidence", "requirements": [task],
+        })]),
+        decision(json.dumps({"answer": "The exact unit is unclear [1].", "coverage": [], "evidence_checks": [
+            {"check_id": "need_1_check_1", "gap": "The actual tensile unit is missing.",
+             "next_lookup": {"tool": "find_table", **planned}},
+        ]})),
+        decision(calls=[ToolCall("locator", "find_table", {**planned, **target})]),
+        decision(calls=[
+            ToolCall("bad", "read_table", {**target, "document_id": "doc_a", "chunk_id": "wrong", "reason": "unit"}),
+            ToolCall("table", "read_table", {**target, "document_id": "doc_a", "chunk_id": "table-2", "reason": "unit"}),
+        ]),
+        decision(json.dumps({"answer": "The unit is N·m/g [2].", "coverage": []})),
+    ])
+    executed = []
+
+    def execute(request, *_):
+        tool = request["tool"]
+        executed.append(tool)
+        outputs = {
+            "search_literature": {"evidence": [{"ref": "[1]", "document_id": "doc_a", "text": "Tensile index"}]},
+            "find_table": {"tables": [{"document_id": "doc_a", "chunk_id": "table-2"}]},
+            "read_table": {"table": {"ref": "[2]", "document_id": "doc_a", "text": "Tensile index (N·m/g)"}},
+        }
+        return {"status": "completed", "result": outputs[tool]}
+
+    def judge(payload, _timeout):
+        return decisions(payload, {"need_1_check_1": 0.3 if len(payload["evidence"]) == 1 else 1.})
+
+    state = AgentLoop(
+        adapter, execute, lambda _: None, unified_research=True,
+        allowed_tools={"search_literature", "find_table", "read_table"},
+        evidence_judge=SimpleNamespace(model=MODEL, check=judge),
+    ).run("What is the exact unit in Paper A?", "table-supplement")
+    assert executed == ["search_literature", "find_table", "read_table"]
+    assert state["tool_calls"][2]["result"]["error_code"] == "unapproved_evidence_lookup"
+    assert state["answer"] == "The unit is N·m/g [2]."
+
+
 def test_source_quote_repairs_keep_catalog_titles_after_retrieval():
     anchor = "参考Morais与Curto（2022）与Uddin等（2024）的划分方式"
     items = [
@@ -164,8 +291,7 @@ def test_source_quote_repairs_keep_catalog_titles_after_retrieval():
 
     def judge(payload, _timeout):
         requests.append(payload)
-        return {f"need_{i}": {"supported": 1, "partially_supported": 0, "insufficient": 0}
-                for i in (1, 2)}, {}
+        return decisions(payload, {"need_1": 1., "need_2": 1.})
 
     state = AgentLoop(
         adapter,
@@ -206,11 +332,15 @@ def test_jev_checks_facts_separately_and_groups_unmet_ones_in_one_query(search_b
         "requirements": [task],
     })
     queries = [initial.arguments["query"]]
-    draft = decision(json.dumps({"answer": "The material is pulp [1].", "coverage": []}))
+    supplement = {"document_id": "doc_a", "query": "data origin and validation",
+                  "reason": "complete data provenance"}
+    draft = decision(json.dumps({"answer": "The material is pulp [1].", "coverage": [], "evidence_checks": [
+        {"check_id": "need_1_check_1", "sources": [{"ref": "[1]", "quote": "Paper evidence [1]"}]},
+        *({"check_id": f"need_1_check_{n}", "gap": criteria[n - 1],
+           "next_lookup": {"tool": "search_literature", **supplement}} for n in (2, 3)),
+    ]}))
     outputs = [decision(calls=[initial]), draft]
     if search_budget > 1:
-        supplement = {"document_id": "doc_a", "query": "data origin and validation",
-                      "reason": "complete data provenance"}
         outputs += [
             decision(calls=[
                 ToolCall("covered", "search_literature", {**supplement, "target_requirements": ["need_1_check_1"]}),
@@ -233,10 +363,7 @@ def test_jev_checks_facts_separately_and_groups_unmet_ones_in_one_query(search_b
                    for r in payload["requirements"])
         assert len(payload["evidence"]) == len(judge_calls)
         scores = (1., .15, .20) if len(judge_calls) == 1 else (1., .95, .99)
-        return {
-            item["check_id"]: {"supported": score, "partially_supported": 1-score, "insufficient": 0.}
-            for item, score in zip(payload["requirements"], scores, strict=True)
-        }, {}
+        return decisions(payload, dict(zip((item["check_id"] for item in payload["requirements"]), scores, strict=True)))
 
     def execute(request, *_):
         assert "target_requirements" not in request
