@@ -463,8 +463,13 @@ class AgentLoop:
                     elif schedule and 'search_scope_error' in schedule:
                         result=dict(status='blocked',error_code='invalid_followup_search_targets',
                             allowed_requirement_ids=schedule['search_scope_error'],
-                            notice='Bind the search only to the listed existing unresolved literature IDs. '
-                                   'If the list is empty, finish from the evidence already collected.')
+                            notice=(
+                                'Use only the listed existing unresolved literature IDs. If your task was '
+                                'rejected at registration, correct it using requirement_registration before retrying.'
+                                if schedule.get('requirement_registration', {}).get('rejected') else
+                                'Use only the listed existing unresolved literature IDs. '
+                                'If the list is empty, finish from the evidence already collected.'
+                            ))
                     elif schedule and schedule['blocked']:
                         result=dict(status='blocked',error_code='prioritize_uncovered_requirements',redirect_reason=schedule['redirect_reason'],
                             notice=('Two section reads have not resolved this need. Use search_literature with a targeted query and this document_id before guessing another section, or give a concrete essential continuation/contradiction in revisit_reason.' if schedule['redirect_reason']=='targeted_search_before_more_sections' else 'Another requested paper has no delivered source evidence, or these targets are already covered. Target an uncovered paper/fact before deepening this one, or explain a specific essential contradiction in revisit_reason.'))

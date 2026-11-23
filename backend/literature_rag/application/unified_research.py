@@ -39,11 +39,12 @@ requests into independently checkable facts, one per named paper and one per SQL
 needed. Copy source_quote as one continuous, verbatim span from the question. Multiple items
 may share that span. Put the specific task in deliverable in your own words, preserving the
 user's requested scope. For paper_quote, use the requested paper's name from the question or its
-title from the supplied directory. Omit it for unspecified sources. The checklist is fixed after
-the first tool turn. Correct a rejected source_quote with its correction_id and preserve the
-other fields. The user's question still governs
-the answer. Reuse evidence already collected. For every follow-up search, set target_requirements
-to existing literature need IDs that still lack evidence, and search only for those gaps. If Jev
+title from the supplied directory. Omit it for unspecified sources. In the first tool turn, omit
+requirement_id and target_requirements. The tool results return the assigned need IDs and tasks.
+For later calls use only those IDs. The checklist is fixed after the first tool turn except for
+corrections to rejected items. Use the returned correction_id and fix the reported fields.
+Reuse evidence already collected. For every follow-up search, set target_requirements to assigned
+literature need IDs that still lack evidence, and search only for those gaps. If Jev
 requested a supplement, use only the literature need IDs it flagged. Use target_requirements
 for each lookup and send compact coverage_updates only when a previously obtained result
 changes a finding. Prioritize uncovered papers and facts across BOTH sources. A directory
@@ -173,11 +174,15 @@ class ResearchChecklist(CoveragePriority):
 
     def schemas(self, schemas):
         result = super().schemas(schemas)
-        can_register = not self.locked or self.pending_registrations()
+        corrections_pending = bool(self.pending_registrations())
+        can_register = not self.locked or corrections_pending
         requirement_schema = TypeAdapter(list[ResearchRequirement]).json_schema()
         definitions = requirement_schema.pop("$defs")
+        properties = definitions["ResearchRequirement"]["properties"]
+        if not corrections_pending:
+            properties.pop("correction_id")
         if self.evidence_only:
-            definitions["ResearchRequirement"]["properties"].pop("metric")
+            properties.pop("metric")
             definitions.pop("Metric", None)
         requirement_schema["maxItems"] = 24
         for schema in result.values():
@@ -186,6 +191,8 @@ class ResearchChecklist(CoveragePriority):
                 schema["properties"]["requirements"] = requirement_schema
             for key in ("target_requirements", "coverage_updates", "revisit_reason"):
                 schema["required"].remove(key)
+                if not self.locked:
+                    schema["properties"].pop(key)
         if self.locked and "search_literature" in result:
             result["search_literature"]["required"].append("target_requirements")
         return result
@@ -199,38 +206,76 @@ class ResearchChecklist(CoveragePriority):
     def _matches_correction(self, candidate, record):
         if not candidate.correction_id or candidate.correction_id != record["correction_id"]:
             return False
+        if record.get("reason") == "invalid_requirement":
+            item = candidate.model_dump(exclude_unset=True)
+            return all(item.get(key) == value for key, value in record["preserve_fields"].items())
         item = candidate.model_dump(exclude_none=True)
         return all(item.get(key) == record.get(key)
                    for key in ("role", "deliverable", "paper_quote", "metric"))
 
+    def _registration_error(self, entry, index, error):
+        errors = error.errors(include_input=False, include_context=False, include_url=False)
+        invalid_fields = sorted({e["loc"][0] for e in errors if e["loc"]})
+        detail = dict(reason="invalid_requirement", index=index, invalid_fields=invalid_fields, errors=errors)
+        pending = next((row for row in self.pending_registrations()
+                        if row["correction_id"] == entry.get("correction_id")), None)
+        if pending:
+            return {**detail, "correction_id": pending["correction_id"]}
+        if not self.locked and len(self.rejections) < 24:
+            preserve_fields = {
+                k: v for k, v in entry.items() if k in ResearchRequirement.model_fields
+                and k not in invalid_fields and k != "correction_id"
+            }
+            quote = preserve_fields.get("source_quote")
+            if quote and quote not in self.question:
+                preserve_fields.pop("source_quote")
+                detail["invalid_fields"].append("source_quote")
+            if "source_quote" in preserve_fields or "deliverable" in preserve_fields:
+                detail.update(correction_id=f"shape_{len(self.rejections) + 1}", preserve_fields=preserve_fields)
+                self.rejections.append(detail)
+        return detail
+
     def register(self, entries, trace):
         rejected = []
+        normalized = []
         ignored = trace.get("task_contract", {}).get("ignored_additions", 0)
-        for entry in entries:
+        for index, entry in enumerate(entries):
             try:
                 if isinstance(entry, ResearchRequirement):
                     candidate = entry
                 elif isinstance(entry, dict):
                     entry = dict(entry)
+                    if "requirement_id" in entry:
+                        entry.pop("requirement_id")
+                        normalized.append({"index": index, "field": "requirement_id", "reason": "server_assigned"})
                     # Older traces may omit a separate deliverable.
                     entry.setdefault("deliverable", entry.get("source_quote"))
                     if self.evidence_only:
                         entry.pop("metric", None)
                     candidate = ResearchRequirement.model_validate(entry)
                 else:
-                    raise ValueError("Invalid requirement object")
-            except ValueError:
-                rejected.append({"reason": "invalid_requirement"})
+                    rejected.append({"reason": "invalid_requirement", "index": index, "invalid_fields": [],
+                                     "errors": [{"type": "model_type", "msg": "Expected a task object"}]})
+                    continue
+            except ValidationError as error:
+                rejected.append(self._registration_error(entry, index, error))
                 continue
-            if self.locked and not any(self._matches_correction(candidate, item)
-                                       for item in self.pending_registrations()):
+            correction = next((item for item in self.pending_registrations()
+                               if self._matches_correction(candidate, item)), None)
+            if self.locked and correction is None:
                 ignored += 1
+                if candidate.correction_id:
+                    rejected.append({"reason": "correction_does_not_match", "index": index,
+                                     "correction_id": candidate.correction_id})
                 continue
             accepted, ungrounded = ground_requirements([candidate], self.question, require_verbatim_paper=False)
             if ungrounded:
-                data = {**ungrounded[0], "invalid_fields": ["source_quote"]}
-                previous = next((item for item in self.rejections if
-                                 not item.get("resolved_by") and
+                data = {**ungrounded[0], "index": index, "invalid_fields": ["source_quote"]}
+                if correction and correction.get("reason") == "invalid_requirement":
+                    rejected.append({**data, "correction_id": correction["correction_id"]})
+                    continue
+                previous = next((item for item in self.pending_registrations()
+                                 if item.get("reason") == "not_verbatim_user_text" and
                                  (item["correction_id"] == candidate.correction_id or
                                   all(item[k] == data[k] for k in ("role", "source_quote", "paper_quote", "deliverable")))), None)
                 if previous is None:
@@ -249,42 +294,58 @@ class ResearchChecklist(CoveragePriority):
                 self.requirements.append(current)
             if current is not None:
                 for record in self.pending_registrations():
-                    if (record["correction_id"] == candidate.correction_id or
-                            all(record[k] == data[k] for k in ("role", "paper_quote", "deliverable"))):
+                    if record is correction or (
+                        record.get("reason") == "not_verbatim_user_text" and
+                        all(record[k] == data[k] for k in ("role", "paper_quote", "deliverable"))
+                    ):
                         record["resolved_by"] = current["requirement_id"]
         trace["task_contract"] = {"requirements": self.requirements, "rejected": self.rejections,
                                   "locked": self.locked, "ignored_additions": ignored}
-        return rejected
+        return rejected, normalized
 
     def pending_registrations(self):
         return [item for item in self.rejections if not item.get("resolved_by")]
 
-    @staticmethod
-    def registration_feedback(rejected):
+    def registration_feedback(self, rejected, normalized=()):
         return {
             "notice": (
-                "Correct rejected task items in requirements on your next tool call or in the draft JSON. "
-                "Copy one continuous span from the original question into source_quote. The same span can "
-                "anchor multiple deliverables. Preserve the other fields, fix only source_quote, "
-                "and reuse the correction_id. Reuse evidence already collected."
+                "Use only the server-assigned need IDs listed in registered for later target_requirements. "
+                "For a rejected task with a correction_id, resubmit only that task, correcting only its "
+                "reported invalid_fields and keeping the other fields. source_quote must be one continuous "
+                "span from the question. Never include requirement_id inside a registration. "
+                "Reuse evidence already collected."
             ),
+            "registered": [
+                {k: item[k] for k in ("requirement_id", "role", "paper_quote", "deliverable")}
+                for item in self.requirements
+            ],
             "rejected": rejected,
+            **({"normalized": normalized} if normalized else {}),
         }
 
     def prepare(self, request, trace):
         request = dict(request)
         raw = request.pop("requirements", [])
-        rejected = self.register(raw[:24] if isinstance(raw, list) else [], trace)
-        # A first request can state its intended purpose through the grounded checklist.
+        rejected, normalized = self.register(raw[:24] if isinstance(raw, list) else [], trace)
+        if not isinstance(raw, list):
+            rejected.append({"reason": "invalid_requirements", "invalid_fields": ["requirements"],
+                             "errors": [{"type": "list_type", "msg": "Expected a list of task objects"}]})
+        if not self.locked:
+            # A tool decision cannot reference IDs assigned after that decision.
+            request.pop("target_requirements", None)
+            request.pop("coverage_updates", None)
+            request.pop("revisit_reason", None)
         request.setdefault("coverage_updates", [])
         followup_search = self.locked and request["tool"] == "search_literature"
-        if not followup_search and len(self.requirements) == 1:
+        if self.locked and not followup_search and len(self.requirements) == 1:
             request.setdefault("target_requirements", [self.requirements[0]["requirement_id"]])
         request, schedule = super().prepare(request, trace)
+        if not self.locked and "missing_or_unknown_target_requirements" in schedule["errors"]:
+            schedule["errors"].remove("missing_or_unknown_target_requirements")
         if followup_search:
             self._check_search_targets(schedule, trace)
-        if rejected:
-            schedule["requirement_registration"] = self.registration_feedback(rejected)
+        if raw or rejected or normalized:
+            schedule["requirement_registration"] = self.registration_feedback(rejected, normalized)
         return request, schedule
 
     def _check_search_targets(self, schedule, trace):
@@ -299,6 +360,9 @@ class ResearchChecklist(CoveragePriority):
         targets = set(schedule["target_requirements"])
         if not targets or not targets <= allowed:
             schedule["search_scope_error"] = sorted(allowed)
+            pending = self.pending_registrations()
+            if pending:
+                schedule["requirement_registration"] = self.registration_feedback(pending)
         elif jev_pending and schedule["redirect_reason"] == "covered_targets":
             # Jev can still flag a task the model marked as verified.
             schedule.update(redirect_reason=None, blocked=False)
@@ -324,7 +388,9 @@ class ResearchChecklist(CoveragePriority):
         if not isinstance(requirements, list) or len(requirements) > 24:
             issues.append({"code": "invalid_requirements"})
         elif requirements:
-            self.register(requirements, trace)
+            rejected, normalized = self.register(requirements, trace)
+            if rejected or normalized:
+                attempt["requirement_registration"] = self.registration_feedback(rejected, normalized)
 
         # Validate rows independently. A rejected or omitted row may not inherit
         # a previously reported finding from an earlier submission.
