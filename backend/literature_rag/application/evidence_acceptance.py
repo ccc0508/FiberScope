@@ -10,16 +10,16 @@ from .tools import INPUT
 EVIDENCE_LOOKUP_TOOLS = {
     "literature": frozenset({
         "search_literature", "find_documents", "list_sections", "read_section",
-        "find_table", "read_table", "find_figure", "view_image",
+        "find_table", "list_tables", "read_table", "find_figure", "view_image",
     }),
     "sql": frozenset({"describe_experiment_data", "query_experiment_data"}),
 }
 
 # Successful locators may authorize a read of a handle they returned in this supplement.
 LOCATOR_READS = {
-    "read_table": ("find_table", "tables", "chunk_id"),
-    "view_image": ("find_figure", "assets", "asset_id"),
-    "read_section": ("list_sections", "sections", "section_id"),
+    "read_table": ({"find_table", "list_tables"}, "tables", "chunk_id"),
+    "view_image": ({"find_figure"}, "assets", "asset_id"),
+    "read_section": ({"list_sections"}, "sections", "section_id"),
 }
 
 
@@ -142,12 +142,13 @@ def supplement_lookup_allowed(request, target_ids, approved, events):
         planned = approved[key]["next_lookup"]
         if operation == lookup_signature(planned):
             continue
-        if not locator or planned["tool"] != locator[0]:
+        if not locator or planned["tool"] not in locator[0]:
             return False
-        locator_tool, result_key, handle_key = locator
+        _, result_key, handle_key = locator
         matching_outputs = (
             event["result"]["result"] for event in events
-            if event["request"]["tool"] == locator_tool
+            if event["request"]["tool"] == planned["tool"]
+            and lookup_signature(event["request"]) == lookup_signature(planned)
             and key in (event.get("coverage_schedule") or {}).get("target_checks", [])
             and event.get("status") == "completed"
             and event.get("model_delivery", {}).get("status") == "delivered"

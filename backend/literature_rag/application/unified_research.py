@@ -53,8 +53,12 @@ Use the validator's feedback without changing the intended population.
 Keep local database results distinct from published measurements and preserve actual units.
 
 Literature: use verified paper identities. Use scoped search for missing facts and exact
-section IDs for context. For a named table or figure prefer its locator when the handle is
-missing. Read the table or inspect the figure before making claims about values in it.
+section IDs for context. If a required value or unit likely appears in a paper's tables and
+its table number is unknown, use list_tables with the paper's document_id. Select a relevant
+caption and pass its exact chunk_id to read_table. Use find_table for a known table number.
+List or read only as needed. A table directory is not evidence for table values or units.
+For a named figure prefer its locator when the handle is missing. Read the table or inspect
+the figure before making claims about values in it.
 Check row, column, units, conditions and intended metric. Check data origin and validation
 separately when comparing studies. A public dataset may be synthetic. Keep uncertainty and
 distinguish correlations, author explanations and causal findings. If a requested fact lacks
@@ -212,7 +216,8 @@ class ResearchChecklist(CoveragePriority):
             "resolve that gap; use the exact tool arguments including tool and reason. "
             "If evidence already answers the item or there is no useful new lookup, omit next_lookup. "
             "Paraphrasing an earlier query alone does not make it useful. Handle locators are allowed "
-            "when a specific table, figure or section could resolve the gap."
+            "when a relevant table, figure or section could resolve the gap. Use list_tables for one known paper "
+            "when its relevant table number is unknown."
             if self.evidence_only else ""
         )
         return (

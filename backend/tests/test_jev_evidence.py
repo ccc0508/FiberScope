@@ -219,8 +219,11 @@ def test_low_evidence_score_does_not_authorize_unnecessary_lookup(case, reason):
     assert "source_quote_not_found" in errors and "unavailable_evidence_ref" in errors
 
 
-def test_table_locator_only_authorizes_the_returned_handle():
-    planned = {"document_id": "doc_a", "table_number": "2", "reason": "Table 2 gives the unit."}
+@pytest.mark.parametrize("locator", ["find_table", "list_tables"])
+def test_table_locator_only_authorizes_the_returned_handle(locator):
+    planned = {"document_id": "doc_a", "reason": "Find the table containing the unit."}
+    if locator == "find_table":
+        planned["table_number"] = "2"
     task = {"role": "literature", "paper_quote": "Paper A", "source_quote": "exact unit",
             "deliverable": "Give the exact unit", "acceptance_criteria": ["Give the unit."]}
     target = {"target_requirements": ["need_1_check_1"]}
@@ -230,9 +233,9 @@ def test_table_locator_only_authorizes_the_returned_handle():
         })]),
         decision(json.dumps({"answer": "The exact unit is unclear [1].", "coverage": [], "evidence_checks": [
             {"check_id": "need_1_check_1", "gap": "The actual tensile unit is missing.",
-             "next_lookup": {"tool": "find_table", **planned}},
+             "next_lookup": {"tool": locator, **planned}},
         ]})),
-        decision(calls=[ToolCall("locator", "find_table", {**planned, **target})]),
+        decision(calls=[ToolCall("locator", locator, {**planned, **target})]),
         decision(calls=[
             ToolCall("bad", "read_table", {**target, "document_id": "doc_a", "chunk_id": "wrong", "reason": "unit"}),
             ToolCall("table", "read_table", {**target, "document_id": "doc_a", "chunk_id": "table-2", "reason": "unit"}),
@@ -246,7 +249,7 @@ def test_table_locator_only_authorizes_the_returned_handle():
         executed.append(tool)
         outputs = {
             "search_literature": {"evidence": [{"ref": "[1]", "document_id": "doc_a", "text": "Tensile index"}]},
-            "find_table": {"tables": [{"document_id": "doc_a", "chunk_id": "table-2"}]},
+            locator: {"tables": [{"document_id": "doc_a", "chunk_id": "table-2"}]},
             "read_table": {"table": {"ref": "[2]", "document_id": "doc_a", "text": "Tensile index (N·m/g)"}},
         }
         return {"status": "completed", "result": outputs[tool]}
@@ -256,10 +259,10 @@ def test_table_locator_only_authorizes_the_returned_handle():
 
     state = AgentLoop(
         adapter, execute, lambda _: None, unified_research=True,
-        allowed_tools={"search_literature", "find_table", "read_table"},
+        allowed_tools={"search_literature", locator, "read_table"},
         evidence_judge=SimpleNamespace(model=MODEL, check=judge),
     ).run("What is the exact unit in Paper A?", "table-supplement")
-    assert executed == ["search_literature", "find_table", "read_table"]
+    assert executed == ["search_literature", locator, "read_table"]
     assert state["tool_calls"][2]["result"]["error_code"] == "unapproved_evidence_lookup"
     assert state["answer"] == "The unit is N·m/g [2]."
 

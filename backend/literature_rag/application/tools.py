@@ -3,6 +3,7 @@ import base64
 from dataclasses import asdict
 from datetime import datetime, UTC
 from hashlib import sha256
+from html import unescape
 import json
 import re
 from pathlib import Path
@@ -53,11 +54,17 @@ class FindDocuments(Request):
     offset: int = Field(default=0, ge=0)
 
 
-class FindTable(Request):
-    tool: Literal['find_table']
+class ListTables(Request):
+    """List indexed table captions and handles for one paper when the table number is unknown."""
+    tool: Literal['list_tables']
     document_id: str = Field(min_length=1, max_length=200)
+    offset: int = Field(default=0, ge=0, description='Start at zero. Use the returned next_offset for more tables.')
+
+
+class FindTable(ListTables):
+    """Locate an indexed table by its exact paper ID and table number."""
+    tool: Literal['find_table']
     table_number: str = Field(pattern=r'^[Ss]?[1-9]\d*(?:[.-]\d+)*[a-z]?$')
-    offset: int = Field(default=0, ge=0)
 
 
 class ListSections(Request):
@@ -148,9 +155,16 @@ class QueryExperiments(Request):
     sql: str = Field(min_length=1, max_length=8000, description='One PostgreSQL SELECT over allowed fiber views; joins and nested/correlated subqueries allowed. Read describe_experiment_data first for real columns, units and row grain.')
 
 
-INPUT = TypeAdapter(Annotated[Search | ListSections | ReadSection | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | DescribeExperiments | QueryExperiments, Field(discriminator='tool')])
+INPUT = TypeAdapter(Annotated[Search | ListSections | ReadSection | ListTables | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | DescribeExperiments | QueryExperiments, Field(discriminator='tool')])
 SCHEMAS = {c.model_fields['tool'].annotation.__args__[0]: c.model_json_schema()
-           for c in (Search, ListSections, ReadSection, ReadTable, ViewImage, FindFigure, FindDocuments, FindTable, DescribeExperiments, QueryExperiments)}
+           for c in (Search, ListSections, ReadSection, ListTables, ReadTable, ViewImage, FindFigure, FindDocuments, FindTable, DescribeExperiments, QueryExperiments)}
+
+TABLE_LABEL = r'(?:\bTables?\s*|表\s*)([Ss]?\d+(?:[.-]\d+)*[a-z]?)(?![\w.-]\d)'
+
+
+def table_caption(text):
+    source = text.split('\n[原文]\n', 1)[-1]
+    return ' '.join(unescape(re.sub(r'<[^>]+>', ' ', source.split('<table', 1)[0])).split())
 
 
 def encode(x):
@@ -293,6 +307,38 @@ class LiteratureTools:
         values = list(rows.values()); end = min(offset+20, len(values))
         return dict(document_id=document_id, sections=values[offset:end], total=len(values), next_offset=end if end<len(values) else None, notice='Directory handles only, not scientific evidence. Read an exact section_id with read_section; paginate list_sections with next_offset when present.')
 
+    def table_directory(self, document_id, offset, table_number=None):
+        if self.catalog is None:
+            raise LookupError('Table catalog unavailable')
+        chunks = {c.chunk_index: c for c in self.catalog.chunks.values() if c.document_id == document_id}
+        if not chunks and table_number is None:
+            raise SectionLookupError('unknown_document', dict(
+                message='Use an exact document_id from the paper directory.', document_id=document_id, tables=[],
+            ))
+        rows = []
+        for c in chunks.values():
+            if c.kind != 'table':
+                continue
+            locator = self.locator(c.id)
+            caption = table_caption(c.text)
+            # MinerU may store a short caption just before its table on the same page.
+            previous = chunks.get(c.chunk_index - 1)
+            if (not caption and previous and previous.kind != 'table' and previous.page_end == c.page_start
+                    and self.locator(previous.id)['section_id'] == locator['section_id']):
+                nearby = table_caption(previous.text)
+                if len(nearby) <= 500 and re.match(TABLE_LABEL + r'\s*[.．:：、]', nearby, re.I):
+                    caption = nearby
+            labels = list(dict.fromkeys(re.findall(TABLE_LABEL, caption, re.I)))
+            if table_number is not None and table_number.casefold() not in {label.casefold() for label in labels}:
+                continue
+            rows.append(dict(chunk_id=c.id, document_id=c.document_id, page_start=c.page_start,
+                page_end=c.page_end, caption=caption[:1500], table_numbers=labels, **locator))
+        rows.sort(key=lambda r: (r['page_start'], r['chunk_id']))
+        end = min(offset + 20, len(rows))
+        return dict(document_id=document_id, tables=rows[offset:end], total=len(rows),
+            next_offset=end if end < len(rows) else None,
+            notice='Directory handles only. Call read_table with the returned chunk_id for citable cells and units.')
+
     def execute(self, p):
         if isinstance(p, ListSections):
             if p.document_ids is None:
@@ -319,21 +365,8 @@ class LiteratureTools:
             end = min(p.offset+20, len(matches))
             return dict(documents=matches[p.offset:end], total=len(matches), next_offset=end if end<len(matches) else None,
                 notice='Directory handles only, not scientific evidence. Confirm identity before restricting a search.'), None
-        if isinstance(p, FindTable):
-            if self.catalog is None: raise LookupError('Catalog unavailable')
-            from html import unescape
-            rows = []
-            for c in self.catalog.chunks.values():
-                if c.document_id != p.document_id or c.kind != 'table': continue
-                caption = unescape(re.sub(r'<[^>]+>', ' ', c.text.split('<table',1)[0]))
-                labels = re.findall(r'(?:\bTables?\s*|表\s*)([Ss]?\d+(?:[.-]\d+)*[a-z]?)(?![\w.-]\d)', caption, re.I)
-                if p.table_number.casefold() not in [x.casefold().rstrip('.') for x in labels]: continue
-                rows.append(dict(chunk_id=c.id, document_id=c.document_id, page_start=c.page_start,
-                    page_end=c.page_end, caption=caption[:1500], **self.locator(c.id)))
-            rows.sort(key=lambda r:(r['page_start'],r['chunk_id']))
-            end=min(p.offset+20,len(rows))
-            return dict(tables=rows[p.offset:end], total=len(rows), next_offset=end if end<len(rows) else None,
-                notice='Handles only. Read matching tables with read_table; multiple matches may be continued tables or ambiguous labels.'), None
+        if isinstance(p, ListTables):
+            return self.table_directory(p.document_id, p.offset, p.table_number if isinstance(p, FindTable) else None), None
         if isinstance(p, FindFigure):
             from .visual_evidence import locate_figures
             catalog = self.retriever.visual_catalog

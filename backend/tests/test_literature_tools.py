@@ -216,6 +216,27 @@ def test_directory_and_exact_table_number(kit):
     assert not kit.store.evidence('r')
 
 
+def test_table_directory_matches_detached_caption_and_returns_readable_handle(kit):
+    from dataclasses import replace
+    caption, table = (kit.catalog.chunks[k] for k in ('0', '1'))
+    kit.catalog.chunks['0'] = replace(caption, page_start=2, page_end=2,
+        text='[章节标签（程序整理，非原文）] Section\n[原文]\nTable 2. Properties during recycling')
+    kit.catalog.chunks['1'] = replace(table,
+        text='[章节标签（程序整理，非原文）] Section\n[原文]\n<table><tr><td>Tensile index (N·m/g)</td></tr></table>')
+    kit.catalog.chunks['other'] = replace(table, id='other', document_id='other')
+    directory = kit.call(dict(tool='list_tables', document_id='doc', reason='discover'), run_id='r')['result']
+    row, = directory['tables']
+    assert (row['table_numbers'], row['caption'], row['chunk_id'], row['page_start']) == (
+        ['2'], 'Table 2. Properties during recycling', '1', 2,
+    )
+    assert 'ref' not in row and not kit.store.evidence('r')
+    found = kit.call(dict(tool='find_table', document_id='doc', table_number='2', reason='exact'), run_id='r')
+    assert found['result']['tables'] == [row]
+    result = kit.call(dict(tool='read_table', document_id='doc', chunk_id=row['chunk_id'], reason='unit'), run_id='r')
+    assert 'Tensile index (N·m/g)' in result['result']['table']['text']
+    assert result['result']['table']['ref'] == '[1]'
+
+
 def test_scoped_search_validates_ids_and_passes_filter(kit):
     calls = []
     kit.retriever.retrieve = lambda *a, **kw: calls.append((a, kw)) or []

@@ -424,7 +424,7 @@ class AgentLoop:
                 names = available_tool_names()
                 if evidence_retry:
                     approved_tools = {item['next_lookup']['tool'] for item in pending_evidence}
-                    continuations = {tool for tool, locator in LOCATOR_READS.items() if locator[0] in approved_tools}
+                    continuations = {tool for tool, locator in LOCATOR_READS.items() if locator[0] & approved_tools}
                     names.intersection_update(approved_tools | continuations)
                 schemas = {name: schema for name, schema in SCHEMAS.items() if name in names}
                 if research:
