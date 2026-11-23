@@ -29,11 +29,12 @@ def adapt_run(state, evidence, trace, elapsed_ms):
             parts=c.get('sources',[])
             row=dict(ref=e['ref'],kind=kind,document_id=c['document_id'],filename=c['filename'],
                 page_start=c['page_start'],page_end=c['page_end'],chunk_id=parts[0]['chunk_id'] if parts else '',
-                excerpt=c['text'],text=c['text'],source_chunks=parts,visual_assets=c.get('images',[]))
+                excerpt=c['text'],text=c['text'],source_chunks=parts,visual_assets=c.get('images',[]),document_hash=c.get('document_hash'))
         elif kind=='source_image':
             a=c['asset']
             row=dict(ref=e['ref'],kind=kind,document_id=a['document_id'],filename=a['label'],
-                page_start=a['page'],page_end=a['page'],chunk_id=a['parent_chunk_id'],excerpt='模型查看的原PDF图片：'+a['label'],visual_assets=[a])
+                page_start=a['page'],page_end=a['page'],chunk_id=a['parent_chunk_id'],excerpt='模型查看的原PDF图片：'+a['label'],visual_assets=[a],
+                document_hash=c.get('document_hash'))
         elif kind=='experiment_query':
             row=dict(ref=e['ref'],kind=kind,document_id='',filename='实验数据库查询 · '+c['view'],
                 page_start=0,page_end=0,chunk_id='',excerpt=json.dumps(c,ensure_ascii=False,indent=2))

@@ -8,7 +8,7 @@ import {
   Send,
 } from "lucide-vue-next";
 import { get } from "../api";
-import { apiPath } from "../urls";
+import { apiPath, appPath } from "../urls";
 import { isGarden, reducedMotion } from "../mode";
 import { vTilt } from "../motion";
 import PageHeader from "../components/PageHeader.vue";
@@ -64,6 +64,9 @@ const examples = [
 ];
 const pdf = (id: string, page = 1) =>
   apiPath(`literature/documents/${encodeURIComponent(id)}/pdf#page=${page}`);
+const citationReader = (record: HistoryRecord | null, c: Citation) => record && /^\[\d+\]$/.test(c.ref)
+  ? appPath(`literature/read/${encodeURIComponent(record.id)}/${c.ref.slice(1, -1)}`)
+  : pdf(c.document_id, c.page_start);
 const imageUrl = (checksum: string) => apiPath(`literature/images/${encodeURIComponent(checksum)}`);
 const citation = (token: string) =>
   answer.value?.citations.find((c) => c.ref === token);
@@ -462,11 +465,11 @@ load();
                 <a
                   v-if="c.document_id"
                   class="lit-link"
-                  :href="pdf(c.document_id, c.page_start)"
+                  :href="citationReader(selected, c)"
                   target="_blank"
                   rel="noopener"
-                  :aria-label="`查看原文 ${c.filename} 第 ${c.page_start} 页`"
-                  >查看原文<ExternalLink :size="13" aria-hidden="true"
+                  :aria-label="`阅读引用 ${c.ref} 原文，${c.filename} 第 ${c.page_start} 页`"
+                  >阅读原文<ExternalLink :size="13" aria-hidden="true"
                 /></a>
               </div>
               <div
