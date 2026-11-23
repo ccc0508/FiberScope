@@ -33,7 +33,7 @@ def test_jev_uses_typed_choices_without_a_draft():
     assert usage == {"prompt_tokens": 100, "total_tokens": 100}
 
 
-@pytest.mark.parametrize("initial_support, supplements", [(.89, True), (.90, False)])
+@pytest.mark.parametrize("initial_support, supplements", [(.79, True), (.80, False)])
 def test_supplement_targets_only_items_below_threshold(initial_support, supplements):
     question = "Report the local count and the paper result."
     requirements = [
@@ -69,12 +69,12 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
     def judge(payload, _timeout):
         requests.append(payload)
         assert set(payload) == {"question", "requirements", "evidence"}
-        assert [item["required"] for item in payload["requirements"]] == [True, True, False]
+        assert [item["requirement_id"] for item in payload["requirements"]] == ["need_1", "need_2"]
+        assert all(item["required"] for item in payload["requirements"])
         score = initial_support if len(requests) == 1 else .99
         return {
             "need_1": {"supported": .98, "partially_supported": .01, "insufficient": .01},
             "need_2": {"supported": score, "partially_supported": 1 - score, "insufficient": 0},
-            "need_2_optional_1": {"supported": 0, "partially_supported": 0, "insufficient": 1},
         }, {}
 
     def execute(request, *_):
@@ -97,10 +97,12 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
     assert len(requests) == (2 if supplements else 1)
     assert state.get("evidence_supplement_requested", False) == supplements
     assert not state["evidence_check"]["pending"]
-    assert [item["check_id"] for item in state["evidence_check"]["optional_gaps"]] == ["need_2_optional_1"]
+    assert state["evidence_check"]["threshold"] == .80
+    assert all("optional_details" not in item for item in state["task_contract"]["requirements"])
     if supplements:
         prompt = adapter.requests[2][0][-1]["content"]
         assert '"need_2"' in prompt and '"need_1"' not in prompt
+        assert "below 0.80" in prompt
         assert "need_2_optional_1" not in prompt and "instrument model" not in prompt
         rejected = [t["result"] for t in state["tool_calls"] if t["status"] == "blocked"]
         assert len(rejected) == 5
@@ -108,7 +110,7 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
                    and t["allowed_requirement_ids"] == ["need_2"] for t in rejected)
         assert state["task_contract"]["ignored_additions"] == 2
         assert state["budget_usage"]["search"] == 1
-        assert len(requests[-1]["requirements"]) == 3
+        assert len(requests[-1]["requirements"]) == 2
 
 
 def test_jev_timeout_still_returns_the_answer():
@@ -198,7 +200,6 @@ def test_jev_checks_facts_separately_and_groups_unmet_ones_in_one_query(search_b
         "role": "literature", "source_quote": "material, dataset origin and validation source",
         "paper_quote": "Paper A", "deliverable": "Summarize the paper's data.",
         "acceptance_criteria": criteria,
-        "optional_details": [criteria[0]],
     }
     initial = ToolCall("initial", "search_literature", {
         "document_id": "doc_a", "query": "Paper A material and methods", "reason": "get evidence",
@@ -256,7 +257,8 @@ def test_jev_checks_facts_separately_and_groups_unmet_ones_in_one_query(search_b
     assert state["search_rounds"] == search_budget
     assert len(judge_calls) == search_budget
     fields = adapter.requests[0][1]["search_literature"]["$defs"]["ResearchRequirement"]["properties"]
-    assert {"acceptance_criteria", "optional_details"} <= fields.keys()
+    assert "acceptance_criteria" in fields
+    assert "optional_details" not in fields
     if search_budget == 2:
         feedback = adapter.requests[2][0][-1]["content"]
         assert "need_1_check_2" in feedback and "need_1_check_3" in feedback

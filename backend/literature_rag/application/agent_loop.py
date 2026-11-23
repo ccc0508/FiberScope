@@ -360,16 +360,14 @@ class AgentLoop:
             save()
             try:
                 scores, usage = self.evidence_judge.check(payload, remaining)
-                pending_evidence, optional_gaps = [], []
+                pending_evidence = []
                 for item in payload['requirements']:
                     probabilities = scores[item.get('check_id', item['requirement_id'])]
                     if probabilities['supported'] < EVIDENCE_CHECK_THRESHOLD:
-                        gaps = pending_evidence if item['required'] else optional_gaps
-                        gaps.append({**item, 'probabilities': probabilities})
+                        pending_evidence.append({**item, 'probabilities': probabilities})
                 entry.update(status='completed', usage=usage, probabilities=scores)
                 state['evidence_check'] = dict(threshold=EVIDENCE_CHECK_THRESHOLD,
-                                               probabilities=scores, pending=pending_evidence,
-                                               optional_gaps=optional_gaps)
+                                               probabilities=scores, pending=pending_evidence)
                 state['evidence_check_status'] = 'needs_evidence' if pending_evidence else 'supported'
             except Exception as error:
                 entry.update(status='failed', error_type=type(error).__name__)
