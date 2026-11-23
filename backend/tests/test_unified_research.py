@@ -23,8 +23,10 @@ def test_unified_agent_direct_answer_preserves_user_output_format():
     assert '"columns":' not in system and '"enum":' not in system
 
 
-@pytest.mark.parametrize("needs_citation_repair", [False, True])
-def test_unified_agent_tracks_two_sources_and_only_repairs_invalid_refs(needs_citation_repair):
+@pytest.mark.parametrize("issue,repair_succeeds", [
+    (None, None), ("invalid", True), ("missing", True), ("both", True), ("missing", False),
+])
+def test_unified_agent_repairs_inline_citations_once(issue, repair_succeeds):
     requirements = [
         {"role": "sql", "source_quote": "local count"},
         {"role": "literature", "source_quote": "paper result", "paper_quote": "Published results from paper A"},
@@ -36,7 +38,7 @@ def test_unified_agent_tracks_two_sources_and_only_repairs_invalid_refs(needs_ci
             "target_requirements": ["need_1"],
         }),
         ToolCall("paper", "search_literature", {
-            "query": "paper result", "document_ids": ["doc_a"], "reason": "check the paper",
+            "query": "paper result", "document_id": "doc_a", "reason": "check the paper",
             "target_requirements": ["need_2"], "requirements": requirements[1:],
         }),
     ]
@@ -46,11 +48,15 @@ def test_unified_agent_tracks_two_sources_and_only_repairs_invalid_refs(needs_ci
         {"requirement_id": "need_2", "status": "verified", "refs": ["[2]"],
          "document_id": "doc_a", "finding": "ten observations"},
     ]
-    draft_answer = answer.replace("[2]", "[9]") if needs_citation_repair else answer
+    draft_answer = answer
+    if issue in ("invalid", "both"):
+        draft_answer = draft_answer.replace("[1]", "[9]")
+    if issue in ("missing", "both"):
+        draft_answer = draft_answer.replace(" [2]", "")
     draft = json.dumps({"answer": draft_answer, "coverage": coverage})
     decisions = [decision(calls=calls), decision(draft)]
-    if needs_citation_repair:
-        decisions.append(decision(answer))
+    if issue:
+        decisions.append(decision(answer if repair_succeeds else draft))
     adapter = Fake(decisions)
     sent = []
 
@@ -67,8 +73,12 @@ def test_unified_agent_tracks_two_sources_and_only_repairs_invalid_refs(needs_ci
         "Give the local count and paper result for paper A.", "mixed"
     )
     assert sent == ["query_experiment_data", "search_literature"]
-    assert state["answer"] == answer and state["review_status"] == "disabled"
-    assert state["status"] == "completed"
+    assert state["review_status"] == "disabled"
+    if repair_succeeds is False:
+        assert state["answer"] == "" and state["status"] == "failed"
+        assert state["stop_reason"] == "missing_literature_citations"
+    else:
+        assert state["answer"] == answer and state["status"] == "completed"
     assert state["coverage_report"]["complete"]
     assert state["task_contract"]["requirements"][1]["paper_quote"] == requirements[1]["paper_quote"]
     assert state["task_contract"]["rejected"] == []
@@ -77,7 +87,17 @@ def test_unified_agent_tracks_two_sources_and_only_repairs_invalid_refs(needs_ci
     assert "requirements" not in search_schema["properties"]
     assert "target_requirements" in search_schema["required"]
     stages = ["decide", "decide"]
-    if needs_citation_repair:
+    validation = state["citation_validation"]
+    if issue:
         stages.append("citation_repair")
+        assert not adapter.requests[-1][1]
+        errors = json.loads(adapter.requests[-1][0][-1]["content"])["errors"]
+        assert (errors.get("invalid_refs") == ["[9]"]) == (issue in ("invalid", "both"))
+        assert errors.get("missing_literature_citations", False) == (issue in ("missing", "both"))
+        assert validation["status"] == ("repaired" if repair_succeeds else "failed")
+        if not repair_succeeds:
+            assert validation["attempts"][-1]["answer"] == draft_answer
+            assert validation["errors"] == {"missing_literature_citations": True}
+    else:
+        assert validation["status"] == "passed"
     assert [call["stage"] for call in state["model_calls"]] == stages
-    assert state["citation_validation"]["status"] == ("repaired" if needs_citation_repair else "passed")

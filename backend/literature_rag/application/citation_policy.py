@@ -1,7 +1,10 @@
 """Citation identities come from typed successful tool outputs, never prose."""
 import re
 
-CITABLE_KINDS = {'source_text', 'source_image', 'experiment_query', 'calculation'}
+LITERATURE_CITATION_KINDS = {'source_text', 'source_image'}
+CITABLE_KINDS = LITERATURE_CITATION_KINDS | {'experiment_query', 'calculation'}
+# Includes malformed public formats and accidental internal IDs for validation.
+REFERENCE_TOKEN = re.compile(r'\[(?:\d[\d\s,，、;；\-–—]*|T\d+|txt_[a-fA-F0-9]+)\]')
 
 
 def citation_records(tool, response):
@@ -29,5 +32,27 @@ def citation_records(tool, response):
 def invalid_references(answer, allowed):
     # Also catch grouped/range citations and accidental internal IDs. The public
     # format is one numeric reference per bracket: [1][2], never [1,2] or [T15].
-    tokens = re.findall(r'\[(?:\d[\d\s,，、;；\-–—]*|T\d+|txt_[a-fA-F0-9]+)\]', answer)
-    return sorted({token for token in tokens if token not in allowed})
+    return sorted(set(REFERENCE_TOKEN.findall(answer)) - set(allowed))
+
+
+def answer_citation_issues(answer, delivered_refs, coverage_report):
+    """Check reference identities and the complete absence of inline literature refs."""
+    issues = {}
+    invalid = invalid_references(answer, delivered_refs)
+    if invalid:
+        issues['invalid_refs'] = invalid
+    if not answer.strip() or not coverage_report:
+        return issues
+
+    literature_refs = {ref for ref, record in delivered_refs.items()
+                       if record['kind'] in LITERATURE_CITATION_KINDS}
+    # The checklist must claim a literature finding backed by a paper source
+    # actually delivered to the model. A lookup alone does not require citing.
+    if literature_refs and not literature_refs.intersection(REFERENCE_TOKEN.findall(answer)):
+        for item in coverage_report['items']:
+            if (item['requirement']['role'] == 'literature'
+                    and item['status'] in ('verified', 'partial')
+                    and literature_refs.intersection(item['reported']['refs'])):
+                issues['missing_literature_citations'] = True
+                break
+    return issues
