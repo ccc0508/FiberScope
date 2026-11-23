@@ -199,8 +199,9 @@ class AgentLoop:
         coverage_priority = self.coverage_priority
         if self.unified_research:
             from .unified_research import (
-                EVIDENCE_CHECK_THRESHOLD, LEGACY_METRIC_GUIDANCE, ResearchChecklist,
-                SYSTEM_PROMPT, evidence_check_input,
+                EVIDENCE_CHECK_THRESHOLD, LEGACY_METRIC_GUIDANCE, RESEARCH_FORMAT_REPAIR,
+                RESEARCH_SUBMISSION_FORMAT, ResearchChecklist, SYSTEM_PROMPT,
+                evidence_check_input, extract_research_submission,
             )
             research = coverage_priority = ResearchChecklist(question, evidence_only=self.evidence_judge is not None)
             prompt = SYSTEM_PROMPT if self.evidence_judge else SYSTEM_PROMPT + LEGACY_METRIC_GUIDANCE
@@ -318,7 +319,8 @@ class AgentLoop:
         pending_evidence = []
         evidence_retry = False
         registration_retry = False
-        # Unified research uses the second closing slot only for citation repair.
+        research_submitted = False
+        # Unified research reserves a closing slot for output repair.
         closing_calls = 2 if research or self.review_enabled or self.output_schema else 1
         if research and self.evidence_judge and model_limit > closing_calls + 1:
             closing_calls += 1
@@ -392,11 +394,13 @@ class AgentLoop:
                 if coverage_priority:schemas=coverage_priority.schemas(schemas)
                 d=model('decide',schemas);messages.append(d.message)
                 if not d.calls:
-                    if not d.text.strip():raise ValueError('Empty draft')
+                    research_draft = research is not None and bool(state['tool_calls'])
+                    if not d.text.strip() and not research_draft:
+                        raise ValueError('Empty draft')
                     feedback=self.completion_check(d.text,state) if self.completion_check else None
                     answer=d.text
-                    if research and state['tool_calls']:
-                        answer,feedback=research.draft(d.text,state)
+                    if research_draft:
+                        answer,feedback=research.draft(d.text,state,stage='decide')
                         rejected = research.pending_registrations()
                         if rejected and not registration_retry:
                             repair = dict(role='user', content=json.dumps(
@@ -435,6 +439,7 @@ class AgentLoop:
                         state['coverage_retry_requested']=True
                         messages.append(dict(role='user',content=feedback));save()
                         continue
+                    research_submitted = research_draft
                     state['draft']=answer;break
                 image_messages=[]
                 stop_collection=False
@@ -549,11 +554,11 @@ class AgentLoop:
                     research.lock(state)
                 save()
                 if stop_collection:break
-            if not state['draft']:
+            if not state['draft'] and not research_submitted:
                 state['stop_reason']=state['stop_reason'] or 'collection_budget'
                 closing='Evidence collection has ended. Answer using only acquired evidence; explicitly state unresolved gaps. Do not call tools.'
                 if research and state['tool_calls']:
-                    closing += ' Return the answer and coverage JSON required for research.'
+                    closing += ' ' + RESEARCH_SUBMISSION_FORMAT
                     if research.pending_registrations():
                         repair_text = '\n' + json.dumps(
                             research.registration_feedback(research.pending_registrations()), ensure_ascii=False
@@ -561,14 +566,37 @@ class AgentLoop:
                         if size(messages + [dict(role='user', content=closing + repair_text)]) <= b.max_context_chars:
                             closing += repair_text
                 messages.append(dict(role='user',content=closing))
-                d=model('finalize',{});state['draft']=d.text;messages.append(d.message)
-                if d.calls or not d.text.strip():raise ValueError('Invalid draft')
+                d=model('finalize',{});messages.append(d.message)
+                if d.calls:
+                    raise ValueError('Invalid draft')
                 if research and state['tool_calls']:
-                    state['draft'],_=research.draft(d.text,state)
+                    state['draft'],_=research.draft(d.text,state,stage='finalize')
                     check_evidence()
+                elif d.text.strip():
+                    state['draft']=d.text
+                else:
+                    raise ValueError('Invalid draft')
+
+            if research and state['tool_calls'] and not state['draft']:
+                repair = dict(role='user', content=RESEARCH_FORMAT_REPAIR)
+                if (len(state['model_calls']) < model_limit and deadline-self.clock() > 2
+                        and size(messages + [repair]) <= b.max_context_chars):
+                    messages.append(repair)
+                    try:
+                        d = model('research_format_repair', {})
+                        if d.calls:
+                            raise ValueError('Unexpected tool call during format repair')
+                        messages.append(d.message)
+                        state['draft'], _ = research.draft(d.text, state, stage='research_format_repair')
+                    except Exception as error:
+                        state['research_format_repair_error'] = type(error).__name__
+                if not state['draft']:
+                    state['stop_reason'] = 'invalid_research_output'
+
             state['answer']=state['draft'];save()
             if research:
-                state['review_status']='disabled' if state['tool_calls'] else 'not_required'
+                state['review_status'] = ('incomplete' if not state['answer']
+                                          else 'disabled' if state['tool_calls'] else 'not_required')
             elif not self.review_enabled:
                 state['review_status']='delegated_to_parent'
             elif len(state['model_calls'])<b.max_model_calls and deadline-self.clock()>2:
@@ -581,7 +609,10 @@ class AgentLoop:
                     if not d.text.strip() or d.calls:raise ValueError('Invalid final review')
                     state.update(answer=d.text,review_status='completed')
             else:state['review_status']='skipped_budget'
-            state['status']='completed' if state['review_status'] in ('completed','delegated_to_parent','not_required','disabled') else 'partial'
+            if state['stop_reason'] == 'invalid_research_output':
+                state['status'] = 'failed'
+            else:
+                state['status']='completed' if state['review_status'] in ('completed','delegated_to_parent','not_required','disabled') else 'partial'
         except Exception as e:
             state.update(status='partial' if state['answer'] else 'failed',stop_reason=type(e).__name__)
             if state['review_status']=='not_started':state['review_status']='incomplete'
@@ -617,14 +648,20 @@ class AgentLoop:
             state['tool_attempts']=tool_count
             save()
             return state
-        coverage_report = state.get('coverage_report') if research else None
+        research_output = research is not None and bool(state['tool_calls'])
+        coverage_report = state.get('coverage_report') if research_output else None
         issues = answer_citation_issues(state['answer'], delivered_refs, coverage_report)
         if issues:
             validation['attempts'].append(dict(stage='initial', answer=state['answer'], **issues))
             if len(state['model_calls']) < b.max_model_calls and deadline-self.clock() > 2:
                 messages.append(dict(role='user', content=json.dumps(dict(
                     output_schema=self.output_schema,
-                    output_format='Return ONLY the complete JSON object matching output_schema; preserve status, summary, missing_choices and limitations.' if self.output_schema else 'Return only the complete user-facing answer.',
+                    output_format=(
+                        'Return only one JSON object with answer as a string of the full user-facing answer. '
+                        'Omit coverage and requirements.' if research_output else
+                        'Return ONLY the complete JSON object matching output_schema; preserve status, summary, missing_choices and limitations.' if self.output_schema else
+                        'Return only the complete user-facing answer.'
+                    ),
                     bibliography_policy='If an invalid ref is actually a bibliography number in supplied source text, express it as 原论文参考文献第45—47号 without square brackets, and cite the supporting run-local ref. Never blindly relabel an unknown ref.',
                     task='Correct missing or invalid inline citations in this answer. Preserve supported findings and valid refs. Add supporting delivered [n] refs next to literature claims when missing. Do not paste an unrelated list of refs or mechanically renumber them. Remove unsupported optional claims and state unresolved requested facts. Use separate [n] citations. Do not call tools.',
                     answer=state['answer'], errors=issues, allowed_records=list(delivered_refs.values())), ensure_ascii=False)))
@@ -633,16 +670,12 @@ class AgentLoop:
                     if d.calls or not d.text.strip():
                         raise ValueError('Invalid citation repair')
                     repaired_answer = d.text
-                    if research:
-                        # Some models still return the research wrapper during citation repair.
-                        # Its internal coverage refs must never satisfy the public answer check.
-                        try:
-                            wrapped = json.loads(unwrap_json(repaired_answer))
-                        except ValueError:
-                            wrapped = None
-                        if isinstance(wrapped, dict) and isinstance(wrapped.get('answer'), str):
-                            repaired_answer = wrapped['answer']
-                    if not repaired_answer.strip():
+                    if research_output:
+                        # Use the same extraction as submissions. Do not apply
+                        # repair output to the already recorded coverage.
+                        wrapped, _ = extract_research_submission(repaired_answer)
+                        repaired_answer = wrapped.get('answer') if wrapped else None
+                    if not isinstance(repaired_answer, str) or not repaired_answer.strip():
                         raise ValueError('Empty citation repair')
                     issues = answer_citation_issues(repaired_answer, delivered_refs, coverage_report)
                     validation['attempts'].append(dict(stage='repair', answer=repaired_answer, **issues))
