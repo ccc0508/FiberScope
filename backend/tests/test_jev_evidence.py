@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import pytest
 
 from literature_rag.adapters.providers.agent_chat import ToolCall
-from literature_rag.adapters.providers.jev_evidence import JevEvidenceJudge, MODEL
+from literature_rag.adapters.providers.jev_evidence import ANSWER_CHECKS, JevEvidenceJudge, MODEL
 from literature_rag.application.agent_loop import AgentLoop
 from tests.test_agent_loop import Fake, decision
 
@@ -30,6 +30,81 @@ def test_jev_uses_typed_choices_without_a_draft():
     scores, usage = JevEvidenceJudge("test", post=post).check(payload, 10)
     assert scores["need_1"]["supported"] == .89
     assert usage == {"prompt_tokens": 100, "total_tokens": 100}
+
+
+def test_final_answer_check_uses_separate_typed_decisions():
+    payload = {"question": "Compare two papers.", "answer": "Both randomized.",
+               "evidence": [{"ref": "[1]", "text": "A randomized; B reports only the split."}]}
+
+    def post(url, *, json, **kwargs):
+        assert json["state"] == payload
+        assert set(json["questions"]) == set(ANSWER_CHECKS)
+        answers = {}
+        for key, question in json["questions"].items():
+            assert question["type"] == "choice"
+            assert set(question["criteria"]) == {"supported", "incorrect", "inconclusive"}
+            answers[key] = {"probabilities": {"supported": 0, "incorrect": .95, "inconclusive": .05}}
+        return SimpleNamespace(
+            raise_for_status=lambda: None,
+            json=lambda: {"model": MODEL, "provider": "TypeSafe", "answers": answers},
+        )
+
+    scores, _ = JevEvidenceJudge("test", post=post).check_answer(payload, 10)
+    assert scores["source_attribution"]["incorrect"] == .95
+
+
+@pytest.mark.parametrize("outcome", ["passed", "inconclusive", "revised", "repair_failed"])
+def test_jev_checks_final_synthesis_after_evidence_and_never_reopens_tools(outcome):
+    question = "Report the split in each paper."
+    original = "Both splits were random [1][2]."
+    fixed = "A randomized [1]. B reports a split, without specifying randomization [2]."
+    initial_lookup = ToolCall("initial", "search_literature", {
+        "query": "training and test split", "reason": "locate the split",
+        "requirements": [{"role": "literature", "source_quote": "split in each paper"}],
+    })
+    decisions = [decision(calls=[initial_lookup]), decision(json.dumps({"answer": original, "coverage": []}))]
+    if outcome == "revised":
+        decisions.append(decision(fixed))
+    elif outcome == "repair_failed":
+        decisions.append(decision(calls=[ToolCall("late", "search_literature", {"query": "details"})]))
+    adapter = Fake(decisions)
+    order = []
+
+    def execute(request, *_):
+        order.append(request["tool"])
+        return {"status": "completed", "result": {"evidence": [
+            {"ref": "[1]", "document_id": "a", "text": "Randomly divided 70/30."},
+            {"ref": "[2]", "document_id": "b", "text": "Selected 17 for training and 4 for testing."},
+        ]}}
+
+    def check(payload, _timeout):
+        order.append("evidence_check")
+        assert "answer" not in payload
+        return {"need_1": {"supported": .99, "partially_supported": .01, "insufficient": 0}}, {}
+
+    def check_answer(payload, _timeout):
+        order.append("answer_check")
+        assert payload["answer"] == original
+        assert {item["ref"] for item in payload["evidence"]} == {"[1]", "[2]"}
+        key = {"passed": "supported", "inconclusive": "inconclusive"}.get(outcome, "incorrect")
+        return {"source_attribution": {label: float(label == key)
+                for label in ("supported", "incorrect", "inconclusive")}}, {}
+
+    state = AgentLoop(
+        adapter, execute, lambda _: None, unified_research=True,
+        evidence_judge=SimpleNamespace(model=MODEL, check=check, check_answer=check_answer),
+    ).run(question, "final-check")
+    assert order == ["search_literature", "evidence_check", "answer_check"]
+    assert state["answer_check"]["status"] == outcome
+    assert state["answer"] == (fixed if outcome == "revised" else original)
+    assert state["draft"] == original and state["tool_attempts"] == 1
+    assert state["status"] == "completed" and state["citation_validation"]["status"] == "passed"
+    stages = ["decide", "decide", "evidence_check", "answer_check"]
+    if outcome in ("revised", "repair_failed"):
+        stages.append("answer_repair")
+        assert adapter.requests[-1][1] == {}
+        assert "source_attribution" in adapter.requests[-1][0][-1]["content"]
+    assert [call["stage"] for call in state["model_calls"]] == stages
 
 
 @pytest.mark.parametrize("initial_support, supplements", [(.89, True), (.90, False)])

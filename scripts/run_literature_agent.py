@@ -88,7 +88,7 @@ def main():
             model_options=dict(thinking_enabled=settings.llm_thinking_enabled,reasoning_effort=settings.llm_reasoning_effort),
             review_policy=('parent synthesis and evidence review' if a.architecture=='specialists'
                            else 'same-context evidence review' if a.prompt_file
-                           else 'no full-answer review; evidence check and citation validation still apply'))
+                           else 'optional Jev evidence check, then Jev answer check and tool-free correction'))
         save_state(state_path,payload)
         telemetry.update(payload)
         if telemetry.url:

@@ -51,6 +51,12 @@ def adapt_run(state, evidence, trace, elapsed_ms):
             status=review_status if review_status in ('not_required','completed') else 'incomplete',
             notice='本次为直接答复或澄清，未调用研究子任务。' if review_status=='not_required' else '已完成答案复核；复核不保证所有陈述正确。' if review_status=='completed' else '答案复核未完成，请核对引用原文。',
             unresolved=[],supplement_rounds=0,review_rounds=int(review_status=='completed'))
+    elif completed and state.get('answer_check', {}).get('status') in (
+        'repair_failed', 'repair_skipped', 'repair_unchanged',
+    ):
+        review_summary['review_summary']=dict(
+            status='incomplete', notice='证据核查发现答案可能存在归纳错误，请核对引用原文。',
+            unresolved=[], supplement_rounds=int(bool(state.get('evidence_supplement_requested'))), review_rounds=1)
     return dict(status='answered' if completed else 'failed',answer=state.get('answer',''),citations=citations,
         latency_ms=elapsed_ms,reason_code=None if completed else ('invalid_citations' if state.get('stop_reason')=='invalid_citations' else 'agent_incomplete'),
         **({} if completed else dict(error_status=503)),

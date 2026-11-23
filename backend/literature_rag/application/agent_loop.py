@@ -241,7 +241,7 @@ class AgentLoop:
             image_chars=sum(len(block['image_url']['url']) for m in messages if isinstance(m.get('content'),list)
                 for block in m['content'] if block.get('type')=='image_url')
             if image_chars>24*1024*1024:raise OverflowError('Image budget')
-            output_tokens = (b.synthesis_max_output_tokens if research and stage == 'citation_repair'
+            output_tokens = (b.synthesis_max_output_tokens if research and stage in ('answer_repair', 'citation_repair')
                              else b.max_output_tokens)
             entry=dict(stage=stage,status='started',usage=None,timeout_seconds=remaining,max_output_tokens=output_tokens,
                 input_messages=trace_messages(messages),available_tools=list(schemas))
@@ -286,9 +286,12 @@ class AgentLoop:
         pending_evidence = []
         evidence_retry = False
         registration_retry = False
-        # Unified research uses the second closing slot only for citation repair.
+        answer_judge = getattr(self.evidence_judge, 'check_answer', None) if research else None
+        # Reserve a final answer and a conditional repair, then the enabled Jev checks.
         closing_calls = 2 if research or self.review_enabled or self.output_schema else 1
         if research and self.evidence_judge and model_limit > closing_calls + 1:
+            closing_calls += 1
+        if answer_judge and model_limit > closing_calls + 1:
             closing_calls += 1
 
         def check_evidence():
@@ -331,6 +334,70 @@ class AgentLoop:
                 entry.update(status='failed', error_type=type(error).__name__)
                 state['evidence_check_status'] = 'unavailable'
             finally:
+                save()
+
+        def check_final_answer():
+            if not answer_judge or not state['answer'] or not state['tool_calls']:
+                return
+            payload = evidence_check_input(question, research.requirements, state['tool_calls'])
+            if not payload['evidence']:
+                state['answer_check'] = dict(status='skipped_no_evidence')
+                return
+            remaining = deadline - self.clock()
+            if remaining <= 2 or len(state['model_calls']) >= model_limit - 1:
+                state['answer_check'] = dict(status='skipped_budget')
+                return
+            payload['answer'] = state['answer']
+            if len(json.dumps(payload, ensure_ascii=False)) > b.max_context_chars:
+                state['answer_check'] = dict(status='skipped_context_budget')
+                return
+            entry = dict(stage='answer_check', model=self.evidence_judge.model, status='started',
+                         input_messages=[], available_tools=[], usage=None)
+            state['model_calls'].append(entry)
+            save()
+            try:
+                probabilities, usage = answer_judge(payload, remaining / 2)
+                flagged = [key for key, scores in probabilities.items()
+                           if scores['incorrect'] >= EVIDENCE_CHECK_THRESHOLD]
+                passed = all(scores['supported'] >= EVIDENCE_CHECK_THRESHOLD for scores in probabilities.values())
+                outcome = state['answer_check'] = dict(
+                    status='correction_needed' if flagged else 'passed' if passed else 'inconclusive',
+                    threshold=EVIDENCE_CHECK_THRESHOLD, probabilities=probabilities, flagged_checks=flagged,
+                )
+                entry.update(status='completed', probabilities=probabilities, usage=usage)
+            except Exception as error:
+                entry.update(status='failed', error_type=type(error).__name__)
+                state['answer_check'] = dict(status='unavailable')
+                return
+            finally:
+                save()
+            if not flagged:
+                return
+            repair = dict(role='user', content=json.dumps({
+                'task': ('Jev flagged the checks below in the proposed answer. Verify those issues against the '
+                         'evidence already in this conversation and edit only the affected claims. Keep correct '
+                         'facts and citations, and qualify any evidence gap. Return only the user-facing answer '
+                         'in the requested format. No tools or new evidence.'),
+                'flagged_checks': flagged,
+                'invalid_refs': invalid_references(state['answer'], delivered_refs),
+            }, ensure_ascii=False))
+            if deadline - self.clock() <= 2 or size(messages + [repair]) > b.max_context_chars:
+                outcome['status'] = 'repair_skipped'
+                return
+            messages.append(repair)
+            try:
+                candidate = model('answer_repair', {})
+                if candidate.calls or not candidate.text.strip():
+                    raise ValueError('Invalid answer repair')
+                if invalid_references(candidate.text, delivered_refs):
+                    raise ValueError('Answer repair introduced invalid citations')
+                state['answer'] = candidate.text
+                outcome['status'] = 'revised' if candidate.text != state['draft'] else 'repair_unchanged'
+            except Exception as error:
+                outcome.update(status='repair_failed', error_type=type(error).__name__)
+            finally:
+                # Keep the citation-repair context identical to its input if this attempt is rejected.
+                messages.pop()
                 save()
 
         try:
@@ -500,6 +567,7 @@ class AgentLoop:
             state['answer']=state['draft'];save()
             if research:
                 state['review_status']='disabled' if state['tool_calls'] else 'not_required'
+                check_final_answer()
             elif not self.review_enabled:
                 state['review_status']='delegated_to_parent'
             elif len(state['model_calls'])<b.max_model_calls and deadline-self.clock()>2:
