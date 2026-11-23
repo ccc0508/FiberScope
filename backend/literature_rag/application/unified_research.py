@@ -52,6 +52,9 @@ Answer every requested part and state any unresolved evidence gaps. Cite only th
 run-local refs supplied in tool results. Text reuse IDs, paper bibliography numbers, and
 directory entries are not citations. Keep database facts, published claims and your own
 inferences visibly attributable. Avoid optional unsupported claims.
+Before making a shared claim such as "both studies" or "all sources", verify that each source
+supports that exact claim under the stated conditions, including when reusing a draft after
+follow-up. State source-specific differences separately and leave unreported details unspecified.
 On research questions, submit a single JSON object with answer (the entire user-facing
 answer) and coverage (one item per requirement_id). A coverage item has status, refs,
 finding and, if unresolved, gap. Paper-specific coverage needs document_id.
