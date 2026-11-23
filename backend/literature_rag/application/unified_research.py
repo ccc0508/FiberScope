@@ -10,20 +10,11 @@ from .coverage_priority import CoveragePriority
 from .task_coverage import CoverageItem, Requirement, ground_requirements
 from .tools import SECTION_BATCH_GUIDANCE
 
-COVERAGE_FIELDS = ", ".join(CoverageItem.model_fields)
+LEGACY_COVERAGE_FIELDS = {"checks", "cells"}
 COVERAGE_STATES = ", ".join(get_args(CoverageItem.model_fields["status"].annotation))
-RESEARCH_SUBMISSION_FORMAT = (
-    "Submit one JSON object only, with answer as a string containing all user-facing content and "
-    "coverage as an array with one item per requirement_id. Put any prose and inline [n] citations "
-    "inside answer. Do not add prose outside the JSON. "
-    f"Coverage item fields: {COVERAGE_FIELDS}. Allowed status values: {COVERAGE_STATES}. "
-    "Use verified when the item is complete, partial when a gap remains, and missing when unsupported. "
-    "Supply document_id for a named paper, refs for cited evidence, and gap for a partial item. "
-    "Only include requirements when correcting a rejected registration."
-)
 RESEARCH_FORMAT_REPAIR = (
     "Fix the output format using existing evidence. Preserve the answer and its inline [n] citations. "
-    "Do not call tools. " + RESEARCH_SUBMISSION_FORMAT
+    "Do not call tools. "
 )
 
 SYSTEM_PROMPT = """You are FiberScope's plant-fiber research agent. Answer in Chinese unless
@@ -77,8 +68,7 @@ Before making a shared claim such as "both studies" or "all sources", verify tha
 supports that exact claim under the stated conditions, including when reusing a draft after
 follow-up. State source-specific differences separately and leave unreported details unspecified.
 For no-tool questions, return just the requested answer or clarification.
-For research with tool calls, follow this submission format:
-""" + RESEARCH_SUBMISSION_FORMAT + SECTION_BATCH_GUIDANCE
+""" + SECTION_BATCH_GUIDANCE
 
 LEGACY_METRIC_GUIDANCE = (
     "\nInclude a metric contract when the SQL grain and real fields are known. For contract SQL metrics "
@@ -171,6 +161,34 @@ class ResearchChecklist(CoveragePriority):
         self.evidence_only = evidence_only
         self.rejections = []
         self.locked = False
+
+    @property
+    def submission_format(self):
+        fields = ", ".join(
+            key for key in CoverageItem.model_fields
+            if not self.evidence_only or key not in LEGACY_COVERAGE_FIELDS
+        )
+        return (
+            "Submit one JSON object only, with answer as a string containing all user-facing content and "
+            "coverage as an array with one item per requirement_id. Put any prose and inline [n] citations "
+            "inside answer. Do not add prose outside the JSON. "
+            f"Use only these coverage item fields: {fields}. Allowed status values: {COVERAGE_STATES}. "
+            "Use verified when the item is complete, partial when a gap remains, and missing when unsupported. "
+            "Supply document_id for a named paper, refs for cited evidence, and gap for a partial item. "
+            "Only include requirements when correcting a rejected registration."
+        )
+
+    def _normalize_coverage(self, rows):
+        if not self.evidence_only or not isinstance(rows, list):
+            return rows, []
+        normalized, ignored = [], []
+        for index, row in enumerate(rows):
+            extra = LEGACY_COVERAGE_FIELDS.intersection(row) if isinstance(row, dict) else set()
+            if extra:
+                ignored.append(dict(index=index, fields=sorted(extra)))
+                row = {key: value for key, value in row.items() if key not in extra}
+            normalized.append(row)
+        return normalized, ignored
 
     def schemas(self, schemas):
         result = super().schemas(schemas)
@@ -335,11 +353,13 @@ class ResearchChecklist(CoveragePriority):
             request.pop("target_requirements", None)
             request.pop("coverage_updates", None)
             request.pop("revisit_reason", None)
-        request.setdefault("coverage_updates", [])
+        request["coverage_updates"], ignored_fields = self._normalize_coverage(request.get("coverage_updates", []))
         followup_search = self.locked and request["tool"] == "search_literature"
         if self.locked and not followup_search and len(self.requirements) == 1:
             request.setdefault("target_requirements", [self.requirements[0]["requirement_id"]])
         request, schedule = super().prepare(request, trace)
+        if ignored_fields:
+            schedule["ignored_coverage_fields"] = ignored_fields
         if not self.locked and "missing_or_unknown_target_requirements" in schedule["errors"]:
             schedule["errors"].remove("missing_or_unknown_target_requirements")
         if followup_search:
@@ -399,6 +419,9 @@ class ResearchChecklist(CoveragePriority):
         if not isinstance(coverage, list) or len(coverage) > 24:
             issues.append({"code": "invalid_coverage"})
         else:
+            coverage, ignored_fields = self._normalize_coverage(coverage)
+            if ignored_fields:
+                attempt["ignored_coverage_fields"] = ignored_fields
             for index, raw_item in enumerate(coverage):
                 try:
                     item = CoverageItem.model_validate(raw_item)
@@ -420,7 +443,7 @@ class ResearchChecklist(CoveragePriority):
                 row["errors"].remove("missing_or_duplicate_coverage_item")
                 row["errors"].append("invalid_coverage_item")
         trace["coverage_report"] = report
-        attempt["status"] = "recovered" if recovery or issues else "valid"
+        attempt["status"] = "recovered" if recovery or issues or attempt.get("ignored_coverage_fields") else "valid"
         if self.evidence_only:
             return answer, None
         if not self.requirements:
