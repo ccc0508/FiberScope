@@ -38,7 +38,8 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
     question = "Report the local count and the paper result."
     requirements = [
         {"role": "sql", "source_quote": "local count"},
-        {"role": "literature", "source_quote": "paper result"},
+        {"role": "literature", "source_quote": "paper result",
+         "optional_details": ["Report the instrument model."]},
     ]
     sql = ToolCall("sql", "query_experiment_data", {
         "sql": "SELECT COUNT(*) FROM fiber.v_sample_overview", "reason": "count",
@@ -54,6 +55,10 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
                 ToolCall("missing", "search_literature", {**lookup, "requirements": [extra]}),
                 ToolCall("wrong", "search_literature", {**lookup, "target_requirements": ["need_1"]}),
                 ToolCall("new", "search_literature", {**lookup, "target_requirements": ["need_3"]}),
+                ToolCall("optional", "search_literature", {**lookup, "target_requirements": ["need_2_optional_1"]}),
+                ToolCall("mixed", "search_literature", {
+                    **lookup, "target_requirements": ["need_2", "need_2_optional_1"],
+                }),
                 ToolCall("paper", "search_literature", {**lookup, "target_requirements": ["need_2"]}),
             ]),
             decision(json.dumps({"answer": "61 [1]", "coverage": [], "requirements": [extra]})),
@@ -64,10 +69,12 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
     def judge(payload, _timeout):
         requests.append(payload)
         assert set(payload) == {"question", "requirements", "evidence"}
+        assert [item["required"] for item in payload["requirements"]] == [True, True, False]
         score = initial_support if len(requests) == 1 else .99
         return {
             "need_1": {"supported": .98, "partially_supported": .01, "insufficient": .01},
             "need_2": {"supported": score, "partially_supported": 1 - score, "insufficient": 0},
+            "need_2_optional_1": {"supported": 0, "partially_supported": 0, "insufficient": 1},
         }, {}
 
     def execute(request, *_):
@@ -89,16 +96,19 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
     assert state["tool_attempts"] == (2 if supplements else 1)
     assert len(requests) == (2 if supplements else 1)
     assert state.get("evidence_supplement_requested", False) == supplements
+    assert not state["evidence_check"]["pending"]
+    assert [item["check_id"] for item in state["evidence_check"]["optional_gaps"]] == ["need_2_optional_1"]
     if supplements:
         prompt = adapter.requests[2][0][-1]["content"]
         assert '"need_2"' in prompt and '"need_1"' not in prompt
+        assert "need_2_optional_1" not in prompt and "instrument model" not in prompt
         rejected = [t["result"] for t in state["tool_calls"] if t["status"] == "blocked"]
-        assert len(rejected) == 3
+        assert len(rejected) == 5
         assert all(t["error_code"] == "invalid_followup_search_targets"
                    and t["allowed_requirement_ids"] == ["need_2"] for t in rejected)
         assert state["task_contract"]["ignored_additions"] == 2
         assert state["budget_usage"]["search"] == 1
-        assert len(requests[-1]["requirements"]) == 2
+        assert len(requests[-1]["requirements"]) == 3
 
 
 def test_jev_timeout_still_returns_the_answer():
@@ -188,6 +198,7 @@ def test_jev_checks_facts_separately_and_groups_unmet_ones_in_one_query(search_b
         "role": "literature", "source_quote": "material, dataset origin and validation source",
         "paper_quote": "Paper A", "deliverable": "Summarize the paper's data.",
         "acceptance_criteria": criteria,
+        "optional_details": [criteria[0]],
     }
     initial = ToolCall("initial", "search_literature", {
         "document_id": "doc_a", "query": "Paper A material and methods", "reason": "get evidence",
@@ -217,7 +228,8 @@ def test_jev_checks_facts_separately_and_groups_unmet_ones_in_one_query(search_b
     def judge(payload, _timeout):
         judge_calls.append(payload)
         assert [r["criterion"] for r in payload["requirements"]] == criteria
-        assert all(r["requirement_id"] == "need_1" and "deliverable" not in r for r in payload["requirements"])
+        assert all(r["requirement_id"] == "need_1" and r["required"] and "deliverable" not in r
+                   for r in payload["requirements"])
         assert len(payload["evidence"]) == len(judge_calls)
         scores = (1., .15, .20) if len(judge_calls) == 1 else (1., .95, .99)
         return {
@@ -243,7 +255,8 @@ def test_jev_checks_facts_separately_and_groups_unmet_ones_in_one_query(search_b
     assert tool_queries == queries
     assert state["search_rounds"] == search_budget
     assert len(judge_calls) == search_budget
-    assert "acceptance_criteria" in adapter.requests[0][1]["search_literature"]["$defs"]["ResearchRequirement"]["properties"]
+    fields = adapter.requests[0][1]["search_literature"]["$defs"]["ResearchRequirement"]["properties"]
+    assert {"acceptance_criteria", "optional_details"} <= fields.keys()
     if search_budget == 2:
         feedback = adapter.requests[2][0][-1]["content"]
         assert "need_1_check_2" in feedback and "need_1_check_3" in feedback
