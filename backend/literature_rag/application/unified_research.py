@@ -28,6 +28,8 @@ clearly labeled. It cannot satisfy a missing paper-specific fact.
 
 Register requirements for the results the user asked for in your first tool turn. Split tasks by
 requested result, usually one per named paper and one per requested SQL metric where needed.
+Combine overlapping results for the same paper in one task. Register each distinct requested
+result once, even when several tool calls will be used to obtain it.
 Copy source_quote as one continuous, verbatim span from the question. Multiple items may share
 that span. Put the specific result to deliver in deliverable in your own words, preserving the
 user's requested scope. For paper_quote, use the requested paper's name from the question or its
@@ -78,16 +80,16 @@ LEGACY_METRIC_GUIDANCE = (
 )
 EVIDENCE_CHECK_THRESHOLD = 0.80
 JEV_CHECKLIST_GUIDANCE = (
-    "\nIn acceptance_criteria, list only the facts or findings indispensable to the user's requested result. "
-    "For each proposed item, identify which part of the request would be incomplete or misleading "
-    "if the item were omitted. If you cannot identify one, leave it out of the checklist and do not "
-    "search for it. Each item should name one independently checkable fact or finding to establish, "
-    "without guessing the result. For comparisons, use the dimensions the user asked about; "
-    "different papers can require different checks. Include an exact unit only if the user asks for it "
-    "or a requested comparison or conversion depends on it. Include a test standard, sample count or "
-    "operating condition only if requested or necessary to establish the requested result. "
-    "Register a SQL task only when the question calls for local data. General advice about organizing "
-    "published datasets does not require querying the local database. "
+    "\nIn acceptance_criteria, list only facts indispensable to the user's requested result. "
+    "Each check must say which paper-specific fact or SQL result the evidence must establish. "
+    "Name the subject and any condition that changes the conclusion, without assuming the answer. "
+    "A required check must cover a distinct fact; assign it to one task only. "
+    "For a comparison, verify the requested dimensions for each relevant paper. Reuse those facts "
+    "for the final comparison instead of registering them again as a separate evidence requirement. "
+    "Include instrument principles, model assumptions, exact units or other method details only "
+    "when explicitly requested or when omitting them would change the answer. "
+    "A citation location is part of attribution, not a separate check unless the question asks for it. "
+    "Register a SQL task only for requested local data, not advice about published datasets. "
     "Start with one focused lookup per paper and combine gaps likely answered by the same source."
 )
 
@@ -158,7 +160,7 @@ class ResearchRequirement(Requirement):
                              description="A specific requested result in your own words. Keep the user's scope.")
     acceptance_criteria: list[CriterionText] = Field(
         default_factory=list, max_length=8,
-        description="Only indispensable facts or findings needed for the requested result, one per entry.",
+        description="Distinct indispensable facts, one per entry. Name the subject and necessary conditions.",
     )
     correction_id: str = Field(default="", max_length=32, exclude=True,
                                description="Copy the registration error's correction_id when correcting that item.")
@@ -342,7 +344,10 @@ class ResearchChecklist(CoveragePriority):
             except ValidationError as error:
                 rejected.append(self._registration_error(entry, index, error))
                 continue
-            candidate.acceptance_criteria = list(dict.fromkeys(candidate.acceptance_criteria))
+            criteria = {}
+            for criterion in candidate.acceptance_criteria:
+                criteria.setdefault(" ".join(criterion.split()), criterion)
+            candidate.acceptance_criteria = list(criteria.values())
             correction = next((item for item in self.pending_registrations()
                                if self._matches_correction(candidate, item)), None)
             if self.locked and correction is None:
@@ -377,6 +382,16 @@ class ResearchChecklist(CoveragePriority):
                 data.pop("acceptance_criteria", None)
             current = next((item for item in self.requirements
                             if {k: v for k, v in item.items() if k != "requirement_id"} == data), None)
+            if current is None and data["role"] == "literature" and data["paper_quote"] and criteria:
+                # Within the same quoted request and paper, a rephrased task with the identical
+                # explicit evidence obligations can use the already assigned IDs.
+                current = next((item for item in self.requirements
+                                if all(item[key] == data[key] for key in ("role", "source_quote", "paper_quote"))
+                                and {" ".join(text.split()) for text in item.get("acceptance_criteria", [])}
+                                == criteria.keys()), None)
+                if current is not None:
+                    normalized.append({"index": index, "field": "requirements", "reason": "duplicate_evidence_contract",
+                                       "requirement_id": current["requirement_id"]})
             if current is None and len(self.requirements) < 24:
                 current = {**data, "requirement_id": f"need_{len(self.requirements) + 1}"}
                 self.requirements.append(current)
