@@ -9,7 +9,7 @@ from .citation_policy import citation_records
 from .coverage_priority import CoveragePriority
 from .evidence_acceptance import EVIDENCE_LOOKUP_TOOLS
 from .task_coverage import CoverageItem, Requirement, ground_requirements
-from .tools import SECTION_BATCH_GUIDANCE, Search
+from .tools import Search
 
 LEGACY_COVERAGE_FIELDS = {"checks", "cells"}
 COVERAGE_STATES = ", ".join(get_args(CoverageItem.model_fields["status"].annotation))
@@ -42,8 +42,7 @@ requirement_id and target_requirements. The tool results return the assigned nee
 For later calls use only those IDs. The checklist is fixed after the first tool turn except for
 corrections to rejected items. Use the returned correction_id and fix the reported fields.
 Reuse evidence already collected. For every follow-up search, set target_requirements to assigned
-literature need IDs that still lack evidence, and search only for those gaps. If Jev
-requested a supplement, use only the IDs it provided for the flagged facts. Use target_requirements
+literature need IDs that still lack evidence, and search only for those gaps. Use target_requirements
 after the first turn and send compact coverage_updates only when a previously obtained result
 changes a finding. Prioritize uncovered papers and facts across BOTH sources. A directory
 or locator alone does not verify a scientific or numeric fact.
@@ -58,8 +57,8 @@ and allowlisted window functions are supported. UNION ALL retains duplicates.
 Use the validator's feedback without changing the intended population.
 Keep local database results distinct from published measurements and preserve actual units.
 
-Literature: use verified paper identities. Use scoped search for missing facts and exact
-section IDs for context. Read a named table by paper ID and table number, or by a verified
+Literature: use verified paper identities. Use scoped search for missing facts.
+Read a named table by paper ID and table number, or by a verified
 table chunk ID. Use the figure locator if its asset ID is missing. Read the table or inspect
 the figure before making claims about values in it.
 Check row, column, units, conditions and intended metric. Check data origin and validation
@@ -73,10 +72,10 @@ does not replace inline citations. Text reuse IDs, paper bibliography numbers, a
 directory entries are not citations. Keep database facts, published claims and your own
 inferences visibly attributable. Avoid optional unsupported claims.
 Before making a shared claim such as "both studies" or "all sources", verify that each source
-supports that exact claim under the stated conditions, including when reusing a draft after
-follow-up. State source-specific differences separately and leave unreported details unspecified.
+supports that exact claim under the stated conditions. State source-specific differences separately
+and leave unreported details unspecified.
 For no-tool questions, return just the requested answer or clarification.
-""" + SECTION_BATCH_GUIDANCE
+"""
 
 LEGACY_METRIC_GUIDANCE = (
     "\nInclude a metric contract when the SQL grain and real fields are known. For contract SQL metrics "
@@ -181,10 +180,11 @@ def extract_research_submission(raw):
 
 
 class ResearchChecklist(CoveragePriority):
-    def __init__(self, question, *, evidence_only=False):
+    def __init__(self, question, *, evidence_only=False, evidence_review=True):
         super().__init__([])
         self.question = question
         self.evidence_only = evidence_only
+        self.evidence_review = evidence_review and evidence_only
         self.rejections = []
         self.locked = False
         self.evidence_submissions = []
@@ -204,7 +204,7 @@ class ResearchChecklist(CoveragePriority):
             "If evidence already answers the item or there is no useful new lookup, omit next_lookup. "
             "Paraphrasing an earlier query alone does not make it useful. Handle locators are allowed "
             "when a specific table, figure or section could resolve the gap."
-            if self.evidence_only else ""
+            if self.evidence_review else ""
         )
         return (
             "Submit one JSON object only, with answer as a string containing all user-facing content and "
@@ -584,7 +584,7 @@ class ResearchChecklist(CoveragePriority):
             return "", None
 
         fields = {"answer", "coverage", "requirements"}
-        if self.evidence_only:
+        if self.evidence_review:
             fields.add("evidence_checks")
             evidence_rows = payload.get("evidence_checks", [])
             if isinstance(evidence_rows, list) and len(evidence_rows) <= 24:

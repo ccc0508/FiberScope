@@ -29,6 +29,52 @@ def test_unified_agent_direct_answer_preserves_user_output_format():
     assert '"columns":' not in system and '"enum":' not in system
 
 
+@pytest.mark.parametrize("malformed", [False, True])
+def test_disabled_evidence_supplement_closes_collection_after_draft(malformed):
+    question = "Give the result and sample size in Paper A."
+    lookup = ToolCall("paper", "search_literature", {
+        "reason": "Look up the reported result",
+        "requirements": [
+            {"role": "literature", "source_quote": "the result", "paper_quote": "Paper A"},
+            {"role": "literature", "source_quote": "translated wording", "paper_quote": "Paper A"},
+        ],
+        "queries": [{"target": 1, "query": "reported result", "document_id": "a"}],
+    })
+    answer = "Paper A reports a result of ten [1]. The sample size could not be verified."
+    submission = json.dumps({"answer": answer, "coverage": [
+        {"requirement_id": "need_1", "status": "verified", "document_id": "a",
+         "refs": ["[1]"], "finding": "ten"},
+    ]})
+    outputs = [decision(calls=[lookup])]
+    if malformed:
+        outputs.append(decision('{"answer": "Incomplete", "coverage": ['))
+    outputs.append(decision(submission))
+    adapter = Fake(outputs)
+    state = AgentLoop(
+        adapter, lambda *_: {"status": "completed", "result": {"evidence": [
+            {"ref": "[1]", "document_id": "a", "text": "The result was ten."},
+        ]}}, lambda _: None, paper_directory=[{"document_id": "a", "title": "Paper A"}],
+        unified_research=True, evidence_supplement_enabled=False,
+        evidence_judge=SimpleNamespace(model="jev", check=lambda *_: pytest.fail("Jev must stay disabled")),
+        parallel_search_executor=lambda *_: pytest.fail("Only one search was requested"),
+    ).run(question, "without-supplement")
+
+    assert state["status"] == "completed" and state["answer"] == answer
+    assert state["evidence_check_status"] == "disabled"
+    assert state["search_calls"] == state["tool_attempts"] == 1
+    assert [call["stage"] for call in state["model_calls"]] == (
+        ["decide", "decide", "research_format_repair"] if malformed else ["decide", "decide"]
+    )
+    assert "evidence_supplement_requested" not in state
+    assert "requirement_registration_retry_requested" not in state
+    assert "coverage_retry_requested" not in state
+    assert state["citation_validation"]["status"] == "passed"
+    assert all(not {"list_sections", "read_section"} & schemas.keys() for _, schemas, _ in adapter.requests)
+    assert "evidence_checks" not in adapter.requests[0][0][0]["content"]
+    if malformed:
+        assert not adapter.requests[-1][1]
+
+
 def test_one_model_search_call_dispatches_independent_goals_in_parallel():
     question = "Compare Paper A's data origin and validation against Paper B's validation."
     requirements = [
