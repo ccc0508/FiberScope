@@ -205,9 +205,10 @@ def test_failed_registration_rolls_back_snapshot_and_completion(kit):
     assert kit.store.evidence('r')==[]
     assert kit.store.read('r')[0]['status']=='started'
 
-def test_directory_and_exact_table_number(kit):
+@pytest.mark.parametrize('caption', ['Table 1. Definitions', '表1实验结果'])
+def test_directory_and_exact_table_number(kit, caption):
     from dataclasses import replace
-    c=kit.catalog.chunks['1'];kit.catalog.chunks['1']=replace(c,text='Table 1. Definitions\n<table></table>')
+    c=kit.catalog.chunks['1'];kit.catalog.chunks['1']=replace(c,text=caption+'\n<table></table>')
     out=kit.call(dict(tool='find_documents',query='paper',reason='identify'),run_id='r')
     assert out['result']['documents'][0]['document_id']=='doc'
     from literature_rag.application.tools import SCHEMAS
@@ -315,7 +316,8 @@ def test_five_parallel_scoped_searches_register_in_request_order(tmp_path):
         (doc, f'[{i}]') for i, doc in enumerate(indices, 1)
     ]
 
-def test_same_paper_queries_share_three_distinct_anchors_and_expand_once(tmp_path):
+@pytest.mark.parametrize('expand', [False, True])
+def test_same_paper_queries_share_three_distinct_anchors_and_expand_once(tmp_path, expand):
     from threading import Barrier
     from scripts.run_literature_agent import execute_parallel_searches
 
@@ -346,15 +348,22 @@ def test_same_paper_queries_share_three_distinct_anchors_and_expand_once(tmp_pat
         assembled.append([seed['chunk_id'] for seed in seeds])
         assert query == 'methods validation' and timeout > 0
         assert store.evidence(run_id) == []
-        return {'result': {'evidence': seeds}, 'internal_steps': []}
+        if not expand:
+            return {'result': {'evidence': seeds}, 'internal_steps': []}
+        common, validation, methods = seeds
+        merged = dict(common, seed_chunk_ids=['common', 'validation'], text='common and validation')
+        linked = dict(validation, ref='[4]', chunk_id='table', seed_chunk_ids=['validation'], text='related table')
+        return {'result': {'evidence': [merged, methods, linked]}, 'internal_steps': []}
 
     executions = [(dict(tool='search_literature', document_id=doc, query=query, reason='target'), i)
                   for i, query in enumerate(rankings)]
     results = list(execute_parallel_searches(executions, 'run', 10, execute=execute, trace_store=store,
                                              tool_context=lambda **kw: kw, assemble=assemble))
     assert assembled == [['common', 'validation', 'methods']]
-    assert [[(e['chunk_id'], e['ref']) for e in r['result']['evidence']] for r in results] == [
-        [('common', '[1]'), ('methods', '[2]')], [('validation', '[3]')],
-    ]
+    first = [('common', '[1]'), ('methods', '[2]')]
+    second = [('common', '[1]'), ('table', '[3]')] if expand else [('validation', '[3]')]
+    assert [[(e['chunk_id'], e['ref']) for e in r['result']['evidence']] for r in results] == [first, second]
     assert len(store.evidence('run')) == 3
+    if expand:
+        assert len(store.evidence('run')[0]['call_ids']) == 2
     assert all(len(r['result']['shared_search']['selected_chunk_ids']) == 3 for r in results)

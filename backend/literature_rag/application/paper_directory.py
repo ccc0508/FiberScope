@@ -2,6 +2,7 @@
 import json
 import re
 import sqlite3
+import unicodedata
 from pathlib import Path
 
 
@@ -25,6 +26,30 @@ def routing_catalog_prompt(catalog):
                 item['topics']] for item in catalog]
     return '\nCatalog [paper, scope]; routing hints only, not evidence:\n' + json.dumps(
         anchors, ensure_ascii=False, separators=(',', ':'))
+
+
+def matching_paper_ids(directory, mention):
+    """Recognize catalog names and first-author/year labels without guessing topic aliases."""
+    def identity_words(value):
+        normalized = unicodedata.normalize('NFKD', value.casefold())
+        return re.findall(r'[a-z0-9]+|[^\W\d_a-z]+', ''.join(c for c in normalized if not unicodedata.combining(c)))
+
+    words = identity_words(mention)
+    if not words:
+        return set()
+    exact, author_year = set(), set()
+    for item in directory or ():
+        document_id = item['document_id']
+        names = [document_id, item.get('title', ''), item.get('label', ''), Path(item.get('filename', '')).stem]
+        if any(words == identity_words(name) for name in names):
+            exact.add(document_id)
+            continue
+        authors = item.get('authors') or []
+        if authors and str(item.get('year')) in words:
+            first_author = identity_words(authors[0])
+            if first_author and first_author[-1] in words:
+                author_year.add(document_id)
+    return exact or author_year
 
 
 def load_paper_directory(root):

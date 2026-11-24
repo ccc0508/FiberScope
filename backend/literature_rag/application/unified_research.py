@@ -404,8 +404,10 @@ class ResearchChecklist(CoveragePriority):
                                   "locked": self.locked, "ignored_additions": ignored}
         return rejected, normalized
 
-    def plan_search(self, arguments, trace, *, document_ids):
+    def plan_search(self, arguments, trace, *, document_ids, paper_directory=None):
         """Resolve each planned search to exactly one registered evidence goal."""
+        from .paper_directory import matching_paper_ids
+
         raw = arguments.get("requirements", [])
         queries = arguments.get("queries")
         if (not isinstance(raw, list) or not isinstance(queries, list) or not 1 <= len(queries) <= 20
@@ -435,6 +437,11 @@ class ResearchChecklist(CoveragePriority):
                               and (document_ids is None or document in document_ids))
             if not known_document and (goal["paper_quote"] or document is not None):
                 errors.append(dict(index=index, code="invalid_goal_document", target=need, paper=goal["paper_quote"]))
+                continue
+            expected = matching_paper_ids(paper_directory, goal["paper_quote"])
+            if expected and document not in expected:
+                errors.append(dict(index=index, code="goal_document_mismatch", target=need,
+                                   paper=goal["paper_quote"], expected_document_ids=sorted(expected)))
                 continue
             try:
                 search = Search.model_validate(dict(

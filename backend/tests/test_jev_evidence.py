@@ -20,7 +20,7 @@ def decisions(payload, supports, *, optional=(), actionable=True):
         output[f"scope_{key}"] = {"required": probability, "nonessential": 1 - probability}
         if item.get("next_lookup"):
             output[f"lookup_{key}"] = {"actionable": float(actionable), "not_actionable": float(not actionable)}
-    return output, {}
+    return output, {}, {}
 
 
 @pytest.mark.parametrize("lookup_only", [False, True])
@@ -65,7 +65,8 @@ def test_jev_uses_typed_choices_without_a_draft(lookup_only):
                           "usage": {"input_tokens": 100, "total_tokens": 100}},
         )
 
-    scores, usage = JevEvidenceJudge("test", post=post).check(payload, 10)
+    scores, usage, errors = JevEvidenceJudge("test", post=post).check(payload, 10)
+    assert not errors
     if not lookup_only:
         assert scores["need_1"]["supported"] == .89
         assert scores["scope_need_1"]["required"] == .98
@@ -115,6 +116,97 @@ def test_parallel_tool_evidence_is_sent_to_jev_in_isolated_requests():
     assert received == {"need_1": "data source", "need_2": "validation method"}
     assert state["evidence_check_status"] == "supported"
     assert state["model_calls"][-1]["usage"] == {"prompt_tokens": 20}
+
+
+@pytest.mark.parametrize("timeout", [False, True])
+def test_independent_jev_requests_fit_and_report_one_task_failure(timeout):
+    question = "Read all metrics in Paper A."
+    requirements = [dict(role="literature", paper_quote="Paper A", source_quote="all metrics",
+                         deliverable=f"metric {i}") for i in range(1, 13)]
+    read = ToolCall("table", "read_table", dict(document_id="doc_a", table_number="1", reason="read metrics",
+                                               requirements=requirements, initial_targets=list(range(1, 13))))
+    answer = "The metrics are in Table 1 [1]."
+    adapter = Fake([decision(calls=[read]), decision(json.dumps(dict(answer=answer, coverage=[])))])
+    text = "a" * 16_000
+
+    def post(_, *, json, **kwargs):
+        task, = json["state"]["requirements"]
+        key = task["requirement_id"]
+        assert json["state"]["evidence"][0]["text"] == text
+        if timeout and key == "need_2":
+            raise TimeoutError("simulated timeout")
+        return SimpleNamespace(raise_for_status=lambda: None, json=lambda: dict(
+            model=MODEL, provider="TypeSafe", usage={"input_tokens": 10}, answers={
+                key: {"probabilities": {"supported": 1, "partially_supported": 0, "insufficient": 0}},
+                f"scope_{key}": {"probabilities": {"required": 1, "nonessential": 0}},
+            },
+        ))
+
+    state = AgentLoop(
+        adapter, lambda *_: dict(status="completed", result=dict(table=dict(
+            ref="[1]", document_id="doc_a", text=text))), lambda _: None,
+        unified_research=True, allowed_tools={"read_table"}, evidence_judge=JevEvidenceJudge("test", post=post),
+    ).run(question, "jev-request-budget")
+    assert state["answer"] == answer
+    assert state["evidence_check_status"] == ("partial" if timeout else "supported")
+    assert state["evidence_check"]["task_errors"] == ({"need_2": "TimeoutError"} if timeout else {})
+    assert len(state["evidence_check"]["probabilities"]) == (11 if timeout else 12)
+    assert state["model_calls"][-1]["usage"] == {"prompt_tokens": 110 if timeout else 120}
+
+
+def test_runtime_dispatched_image_uses_only_the_multimodal_budget():
+    task = dict(role="literature", paper_quote="Paper A", source_quote="Figure 1", deliverable="Read Figure 1")
+    initial = ToolCall("search", "search_literature", dict(query="Figure 1", reason="Find figure",
+                                                         requirements=[task]))
+    plan = [dict(check_id="need_1", gap="Need original figure", next_lookup=dict(
+        tool="view_image", reason="Inspect figure", document_id="doc_a", asset_id="figure_1"))]
+    adapter = Fake([
+        decision(calls=[initial]),
+        decision(json.dumps(dict(answer="The caption [1] is available.", coverage=[]))),
+        decision(json.dumps(plan)),
+        decision(json.dumps(dict(answer="The figure shows the trend [2].", coverage=[]))),
+    ])
+    pixels = "A" * 200_000
+
+    def execute(request, *_):
+        if request["tool"] == "view_image":
+            return dict(status="completed", result=dict(ref="[2]", asset=dict(asset_id="figure_1")),
+                        image=dict(base64=pixels))
+        return dict(status="completed", result=dict(evidence=[dict(ref="[1]", text="Caption.")]))
+
+    def judge(payload, _):
+        if payload.get("lookup_review_only"):
+            return {"lookup_need_1": {"actionable": 1., "not_actionable": 0.}}, {}, {}
+        evidence = payload["requirements"][0]["evidence"]
+        return decisions(payload, {"need_1": float(any(row.get("image_delivered_to_agent") for row in evidence))})
+
+    state = AgentLoop(adapter, execute, lambda _: None, unified_research=True,
+                      allowed_tools={"search_literature", "view_image"},
+                      evidence_judge=SimpleNamespace(model=MODEL, check=judge)).run("Read Figure 1.", "image")
+    assert state["answer"] == "The figure shows the trend [2]."
+    event = state["tool_calls"][-1]
+    assert event["dispatch"] == "approved_evidence_plan"
+    assert event["model_delivery"]["status"] == "delivered"
+    assert pixels not in json.dumps(event)
+    assert any(isinstance(message["content"], list) for message in event["model_delivery"]["messages"])
+    assert state["evidence_check_status"] == "supported"
+
+
+def test_unified_agent_without_jev_can_read_chapters():
+    task = dict(role="literature", paper_quote="Paper A", source_quote="Methods", deliverable="Read Methods")
+    read = ToolCall("read", "read_section", dict(document_id="doc_a", section_id="methods",
+                                               reason="read methods", requirements=[task]))
+    answer = json.dumps(dict(answer="The Methods section used a holdout [1].", coverage=[
+        dict(requirement_id="need_1", status="verified", finding="A holdout was used",
+             document_id="doc_a", refs=["[1]"]),
+    ]))
+    adapter = Fake([decision(calls=[read]), decision(answer)])
+    state = AgentLoop(adapter, lambda *_: dict(status="completed", result=dict(sources=[
+        dict(ref="[1]", document_id="doc_a", text="A holdout was used."),
+    ])), lambda _: None, unified_research=True).run("Read Methods in Paper A.", "no-jev")
+    assert {"list_sections", "read_section"} <= adapter.requests[0][1].keys()
+    assert state["section_read_calls"] == 1
+    assert state["tool_calls"][0]["model_delivery"]["status"] == "delivered"
 
 
 @pytest.mark.parametrize("initial_support, supplements", [(.79, True), (.80, False)])
@@ -280,8 +372,8 @@ def test_low_evidence_score_does_not_authorize_unnecessary_lookup(case, reason):
     assert "source_quote_not_found" not in errors and "unavailable_evidence_ref" not in errors
 
 
-@pytest.mark.parametrize("ambiguous", [False, True])
-def test_numbered_table_supplement_reads_or_authorizes_only_returned_handles(ambiguous):
+@pytest.mark.parametrize("mode", ["exact", "ambiguous", "paginated"])
+def test_numbered_table_supplement_reads_or_authorizes_only_returned_handles(mode):
     planned = {"document_id": "doc_a", "table_number": "2", "reason": "Table 2 gives the unit."}
     task = {"role": "literature", "paper_quote": "Paper A", "source_quote": "exact unit",
             "deliverable": "Give the exact unit"}
@@ -296,7 +388,13 @@ def test_numbered_table_supplement_reads_or_authorizes_only_returned_handles(amb
         ]})),
         decision(calls=[ToolCall("locator", "read_table", {**planned, **target})]),
     ]
-    if ambiguous:
+    if mode == "paginated":
+        steps.append(decision(calls=[
+            ToolCall("wrong-offset", "read_table", {**planned, **target, "offset": 40}),
+            ToolCall("wrong-number", "read_table", {**planned, **target, "offset": 20, "table_number": "3"}),
+            ToolCall("next", "read_table", {**planned, **target, "offset": 20}),
+        ]))
+    if mode != "exact":
         steps.append(decision(calls=[
             ToolCall("bad", "read_table", {**target, "document_id": "doc_a", "chunk_id": "wrong", "reason": "unit"}),
             ToolCall("table", "read_table", {**target, "document_id": "doc_a", "chunk_id": "table-2", "reason": "unit"}),
@@ -310,7 +408,9 @@ def test_numbered_table_supplement_reads_or_authorizes_only_returned_handles(amb
         executed.append(tool)
         if tool == "search_literature":
             output = {"evidence": [{"ref": "[1]", "document_id": "doc_a", "text": "Tensile index"}]}
-        elif ambiguous and request.get("table_number"):
+        elif mode == "paginated" and request.get("table_number") and not request.get("offset"):
+            output = {"tables": [{"document_id": "doc_a", "chunk_id": "earlier"}], "next_offset": 20}
+        elif mode != "exact" and request.get("table_number"):
             output = {"tables": [
                 {"document_id": "doc_a", "chunk_id": "table-2"},
                 {"document_id": "doc_a", "chunk_id": "continued-2"},
@@ -327,9 +427,11 @@ def test_numbered_table_supplement_reads_or_authorizes_only_returned_handles(amb
         allowed_tools={"search_literature", "read_table"},
         evidence_judge=SimpleNamespace(model=MODEL, check=judge),
     ).run("What is the exact unit in Paper A?", "table-supplement")
-    assert executed == ["search_literature", "read_table"] + (["read_table"] if ambiguous else [])
-    if ambiguous:
-        assert state["tool_calls"][2]["result"]["error_code"] == "unapproved_evidence_lookup"
+    extra_reads = {"exact": 0, "ambiguous": 1, "paginated": 2}[mode]
+    assert executed == ["search_literature"] + ["read_table"] * (1 + extra_reads)
+    assert [event["result"]["error_code"] for event in state["tool_calls"] if event["status"] == "blocked"] == (
+        ["unapproved_evidence_lookup"] * {"exact": 0, "ambiguous": 1, "paginated": 3}[mode]
+    )
     assert state["answer"] == "The unit is N·m/g [2]."
 
 
@@ -387,7 +489,7 @@ def test_chapters_open_for_a_jev_gap_and_follow_the_delivered_directory(continua
 
     def judge(payload, _timeout):
         if payload.get("lookup_review_only"):
-            return {"lookup_need_1": {"actionable": 1., "not_actionable": 0.}}, {}
+            return {"lookup_need_1": {"actionable": 1., "not_actionable": 0.}}, {}, {}
         return decisions(payload, {"need_1": .99 if len(executed) == 4 else .1})
 
     state = AgentLoop(
@@ -452,7 +554,7 @@ def test_jev_can_prompt_one_plan_after_finding_an_unplanned_gap(scenario):
             assert payload["requirements"][0]["next_lookup"] == new
             assert len(payload["requirements"][0]["lookup_history"]) == 1
             yes = float(scenario != "rejected")
-            return {f"lookup_{check_id}": {"actionable": yes, "not_actionable": 1 - yes}}, {}
+            return {f"lookup_{check_id}": {"actionable": yes, "not_actionable": 1 - yes}}, {}, {}
         return decisions(payload, {check_id: .99 if len(executed) == 2 else .1})
 
     state = AgentLoop(

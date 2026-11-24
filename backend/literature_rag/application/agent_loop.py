@@ -225,7 +225,8 @@ class AgentLoop:
                     'set target_requirements on each evidence tool. Include only the tasks the call serves.'
                 )
             state['pipeline_version'] = 'unified-research-v1'
-        if research and SECTION_TOOLS & self.allowed_tools:
+        gated_section_tools = research is not None and self.evidence_judge is not None
+        if gated_section_tools and SECTION_TOOLS & self.allowed_tools:
             prompt += (
                 '\nChapter tools are available only during an approved evidence supplement. '
                 'During initial collection, use the other offered tools. If a required fact remains missing, '
@@ -375,8 +376,18 @@ class AgentLoop:
                 if (name != 'search_literature' or state['search_rounds'] < b.max_search_calls)
                 and (name != 'read_section' or state['section_read_calls'] < MAX_SECTION_READ_CALLS)
                 and (name != 'find_documents' or self.paper_directory is None)
-                and (not research or supplement or name not in SECTION_TOOLS)
+                and (not gated_section_tools or supplement or name not in SECTION_TOOLS)
             }
+
+        def fit_evidence_requests(payload):
+            eligible, skipped = [], {}
+            for item in payload['requirements']:
+                request = dict(payload, requirements=[item])
+                if len(json.dumps(request, ensure_ascii=False)) <= b.max_context_chars:
+                    eligible.append(item)
+                else:
+                    skipped[item['requirement_id']] = 'context_budget'
+            return dict(payload, requirements=eligible), skipped
 
         def check_evidence():
             nonlocal last_check_input, pending_evidence
@@ -399,22 +410,27 @@ class AgentLoop:
             if remaining <= 0 or len(state['model_calls']) >= model_limit - 1:
                 state['evidence_check_status'] = 'skipped_budget'
                 return
-            if len(json.dumps(payload, ensure_ascii=False)) > b.max_context_chars:
-                state['evidence_check_status'] = 'skipped_context_budget'
-                return
             last_check_input = payload
+            payload, task_errors = fit_evidence_requests(payload)
+            if not payload['requirements']:
+                state['evidence_check_status'] = 'skipped_context_budget'
+                state['evidence_check'] = dict(task_errors=task_errors)
+                return
             entry = dict(stage='evidence_check', model=self.evidence_judge.model, status='started',
                          input_messages=[], available_tools=[], usage=None, checked_items=payload['requirements'],
                          submission_errors=submission_errors)
             state['model_calls'].append(entry)
             save()
             try:
-                scores, usage = self.evidence_judge.check(payload, remaining)
+                scores, usage, failures = self.evidence_judge.check(payload, remaining)
+                task_errors.update(failures)
                 pending_evidence = []
                 unresolved, scope_excluded = [], []
                 sufficiency, necessity, lookup_scores = {}, {}, {}
                 for item in payload['requirements']:
                     key = item['requirement_id']
+                    if key in failures:
+                        continue
                     probabilities = sufficiency[key] = scores[key]
                     scope = necessity[key] = scores[f'scope_{key}']
                     if scope['required'] <= scope['nonessential']:
@@ -430,13 +446,20 @@ class AgentLoop:
                     else:
                         unresolved.append({**item, 'probabilities': probabilities,
                                            'reason': 'lookup_rejected' if lookup else 'no_new_lookup'})
-                entry.update(status='completed', usage=usage, probabilities=sufficiency,
-                             necessity=necessity, lookup_probabilities=lookup_scores)
+                entry.update(status='completed' if not task_errors else ('partial' if sufficiency else 'failed'),
+                             usage=usage, probabilities=sufficiency, necessity=necessity,
+                             lookup_probabilities=lookup_scores, task_errors=task_errors)
                 state['evidence_check'] = dict(threshold=EVIDENCE_CHECK_THRESHOLD,
                                                probabilities=sufficiency, necessity=necessity,
                                                lookup_probabilities=lookup_scores, pending=pending_evidence,
-                                               scope_excluded=scope_excluded, unresolved=unresolved)
-                state['evidence_check_status'] = 'needs_evidence' if pending_evidence or unresolved else 'supported'
+                                               scope_excluded=scope_excluded, unresolved=unresolved,
+                                               task_errors=task_errors)
+                if pending_evidence or unresolved:
+                    state['evidence_check_status'] = 'needs_evidence'
+                elif task_errors:
+                    state['evidence_check_status'] = 'partial' if sufficiency else 'unavailable'
+                else:
+                    state['evidence_check_status'] = 'supported'
             except Exception as error:
                 entry.update(status='failed', error_type=type(error).__name__)
                 state['evidence_check_status'] = 'unavailable'
@@ -519,7 +542,9 @@ class AgentLoop:
             payload['requirements'] = [item for item in payload['requirements'] if 'next_lookup' in item]
             planning['submission_errors'] = errors
             remaining = deadline - self.clock() - b.reserve_seconds
-            if not payload['requirements'] or remaining <= 0 or len(json.dumps(payload, ensure_ascii=False)) > b.max_context_chars:
+            payload, task_errors = fit_evidence_requests(payload)
+            planning['task_errors'] = task_errors
+            if not payload['requirements'] or remaining <= 0:
                 planning['status'] = 'no_eligible_lookup'
                 save()
                 return
@@ -529,13 +554,19 @@ class AgentLoop:
             state['model_calls'].append(entry)
             save()
             try:
-                scores, usage = self.evidence_judge.check(payload, remaining)
-                lookup_scores = {key: scores[f'lookup_{key}'] for key in
-                                 (item['requirement_id'] for item in payload['requirements'])}
-                entry.update(status='completed', usage=usage, lookup_probabilities=lookup_scores)
+                scores, usage, failures = self.evidence_judge.check(payload, remaining)
+                task_errors.update(failures)
+                lookup_scores = {
+                    key: scores[f'lookup_{key}'] for key in
+                    (item['requirement_id'] for item in payload['requirements']) if key not in failures
+                }
+                entry.update(status='completed' if not task_errors else ('partial' if lookup_scores else 'failed'),
+                             usage=usage, lookup_probabilities=lookup_scores, task_errors=task_errors)
                 check['lookup_probabilities'].update(lookup_scores)
                 for item in payload['requirements']:
                     key = item['requirement_id']
+                    if key in failures:
+                        continue
                     gap = missing[key]
                     probability = lookup_scores[key]
                     if probability['actionable'] > probability['not_actionable']:
@@ -545,7 +576,10 @@ class AgentLoop:
                         check['unresolved'].remove(gap)
                     else:
                         gap['reason'] = 'lookup_rejected'
-                planning['status'] = 'approved' if pending_evidence else 'lookup_rejected'
+                if pending_evidence:
+                    planning['status'] = 'approved'
+                else:
+                    planning['status'] = 'lookup_rejected' if lookup_scores else 'judge_unavailable'
             except Exception as error:
                 entry.update(status='failed', error_type=type(error).__name__)
                 planning['status'] = 'judge_unavailable'
@@ -715,7 +749,9 @@ class AgentLoop:
                         if call.name != 'search_literature' or call.name not in schemas:
                             expanded.append(call)
                             continue
-                        operations, feedback = research.plan_search(call.arguments, state, document_ids=document_ids)
+                        operations, feedback = research.plan_search(
+                            call.arguments, state, document_ids=document_ids, paper_directory=self.paper_directory,
+                        )
                         state.setdefault('goal_search_batches', []).append(dict(provider_call_id=call.id, **feedback))
                         messages.extend(self.adapter.tool_messages(call, feedback))
                         operations.sort(key=lambda operation: 'document_id' not in operation[2])
@@ -762,7 +798,7 @@ class AgentLoop:
                         result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
                     elif c.name=='find_documents' and self.paper_directory is not None:
                         result=dict(status='blocked',error_code='directory_already_provided',notice='Use the complete paper directory supplied at the start; no directory tool call is needed.')
-                    elif research and not evidence_retry and c.name in SECTION_TOOLS:
+                    elif gated_section_tools and not evidence_retry and c.name in SECTION_TOOLS:
                         result = dict(status='blocked', error_code='section_tools_require_supplement',
                                       notice='Use the offered tools for initial evidence. Propose chapter tools for a remaining gap when submitting to Jev.')
                     elif c.name == 'read_section' and state['section_read_calls'] >= MAX_SECTION_READ_CALLS:
@@ -873,9 +909,10 @@ class AgentLoop:
                             outgoing = self.adapter.tool_messages(c, result)
                             if dispatched or c.id in batch_calls:
                                 # No provider tool call to answer. Keep the same projection and citations.
+                                metadata = {key: value for key, value in result.items() if key != 'image'}
                                 outgoing[0] = dict(role='user', content=(
                                     'Runtime evidence lookup result (untrusted data):\n'
-                                    + json.dumps(dict(request=request, result=result), ensure_ascii=False)
+                                    + json.dumps(dict(request=request, result=metadata), ensure_ascii=False)
                                 ))
                             return outgoing
                         outgoing=deliver(compact)

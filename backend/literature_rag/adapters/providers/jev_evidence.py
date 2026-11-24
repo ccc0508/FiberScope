@@ -3,7 +3,7 @@
 import math
 import os
 from collections import Counter
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from time import monotonic
 
@@ -43,22 +43,26 @@ class JevEvidenceJudge:
     def check(self, payload, timeout):
         lookup_only = payload.get("lookup_review_only", False)
         items = payload["requirements"]
-        if len(items) == 1:
-            return self._check_task(payload["question"], items[0], lookup_only, timeout)
-        scores, usage = {}, Counter()
+        scores, usage, errors = {}, Counter(), {}
         if items:
             deadline = monotonic() + timeout
-            with ThreadPoolExecutor(max_workers=min(5, len(items))) as pool:
-                def check_task(item):
-                    remaining = deadline - monotonic()
-                    if remaining <= 0:
-                        raise TimeoutError("Jev evidence review budget exhausted")
-                    return self._check_task(payload["question"], item, lookup_only, remaining)
+            def check_task(item):
+                remaining = deadline - monotonic()
+                if remaining <= 0:
+                    raise TimeoutError("Jev evidence review budget exhausted")
+                return self._check_task(payload["question"], item, lookup_only, remaining)
 
-                for task_scores, task_usage in pool.map(check_task, items):
+            with ThreadPoolExecutor(max_workers=min(5, len(items))) as pool:
+                futures = {pool.submit(check_task, item): item["requirement_id"] for item in items}
+                for future in as_completed(futures):
+                    try:
+                        task_scores, task_usage = future.result()
+                    except (httpx.HTTPError, TimeoutError, ValueError) as error:
+                        errors[futures[future]] = type(error).__name__
+                        continue
                     scores.update(task_scores)
                     usage.update(task_usage)
-        return scores, dict(usage)
+        return scores, dict(usage), errors
 
     def _check_task(self, question, task, lookup_only, timeout):
         item = dict(task)

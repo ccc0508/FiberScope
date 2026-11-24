@@ -196,14 +196,29 @@ def supplement_lookup_allowed(request, target_ids, approved, events):
         if not locator or planned["tool"] != locator[0]:
             return False
         table_resolution = request["tool"] == "read_table"
-        if table_resolution and (not planned.get("table_number") or not request.get("chunk_id")):
+        if table_resolution and not planned.get("table_number"):
             return False
         locator_tool, result_key, handle_key = locator
-        matching_outputs = (
-            event["result"]["result"] for event in related_events
-            if event["request"]["tool"] == locator_tool
-            and (not table_resolution or lookup_signature(event["request"]) == lookup_signature(planned))
-        )
+        matching_outputs = []
+        for event in related_events:
+            previous = event["request"]
+            if previous["tool"] != locator_tool:
+                continue
+            if table_resolution and (
+                previous.get("document_id") != planned["document_id"]
+                or (previous.get("table_number") or "").casefold() != planned["table_number"].casefold()
+            ):
+                continue
+            matching_outputs.append(event["result"]["result"])
+        if table_resolution and request.get("table_number"):
+            offset = request.get("offset", 0)
+            if (request["document_id"] != planned["document_id"]
+                or request["table_number"].casefold() != planned["table_number"].casefold()
+                or not offset
+                or not any(output.get("next_offset") == offset for output in matching_outputs)
+            ):
+                return False
+            continue
         handles = {
             handle for output in matching_outputs for handle in locator_handles(output, result_key, handle_key)
         }
