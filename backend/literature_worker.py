@@ -181,12 +181,12 @@ def main(body):
             visual_catalog=visual_catalog,visual_max_images=settings.visual_max_images,
             visual_max_total_bytes=settings.visual_max_total_bytes)
         if 'assemble_scoped_search' in body:
-            from literature_rag.application.tools import LiteratureTools, SEARCH_HITS_PER_DOCUMENT
+            from literature_rag.application.tools import LiteratureTools, SHARED_SEARCH_HITS_PER_DOCUMENT
             from literature_rag.domain.models import Evidence
             from literature_rag.stage_trace import records
             payload = body['assemble_scoped_search']
             seeds = [Evidence(**row) for row in payload['seeds']]
-            if not 1 <= len(seeds) <= SEARCH_HITS_PER_DOCUMENT or len({s.document_id for s in seeds}) != 1:
+            if not 1 <= len(seeds) <= SHARED_SEARCH_HITS_PER_DOCUMENT or len({s.document_id for s in seeds}) != 1:
                 raise ValueError('Invalid shared search evidence')
             expanded = retriever.assemble_context(seeds, payload['query'])
             output = LiteratureTools(retriever, root, None).search_result(expanded)

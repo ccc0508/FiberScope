@@ -31,6 +31,7 @@ class Request(BaseModel):
 
 SEARCH_MAIN_HITS = 8
 SEARCH_HITS_PER_DOCUMENT = 3
+SHARED_SEARCH_HITS_PER_DOCUMENT = 8
 MAX_SCOPED_QUERIES_PER_PAPER = 5
 MAX_PARALLEL_SEARCHES = 5
 SEARCH_DECOMPOSITION_GUIDANCE = """
@@ -42,7 +43,7 @@ paper, such as methods and validation results, use separate focused queries for 
 Use at most {MAX_SCOPED_QUERIES_PER_PAPER} distinct scoped queries per paper for the question.
 Do not split by synonyms or optional details. Submit independent scoped queries together.
 At most {MAX_PARALLEL_SEARCHES} scoped searches execute concurrently in a round.
-Same-paper queries in a round share three main hits after reranking.
+Same-paper queries in a round share up to {SHARED_SEARCH_HITS_PER_DOCUMENT} main hits after reranking.
 """
 
 class Search(Request):
