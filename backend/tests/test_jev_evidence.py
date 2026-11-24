@@ -282,45 +282,82 @@ def test_numbered_table_supplement_reads_or_authorizes_only_returned_handles(amb
 
 
 
-def test_jev_section_supplement_shares_the_initial_read_limit():
+@pytest.mark.parametrize("continuation", ["another_section", "next_page"])
+def test_chapters_open_for_a_jev_gap_and_follow_the_delivered_directory(continuation):
     task = {"role": "literature", "source_quote": "validation error", "paper_quote": "Paper A"}
-    initial = {"document_id": "doc_a", "section_id": "methods", "reason": "methods"}
-    supplement = {**initial, "section_id": "validation", "reason": "validation error"}
+    locator = {"document_id": "doc_a", "reason": "locate the validation chapter"}
+    chapter = {"document_id": "doc_a", "section_id": "validation", "reason": "read validation"}
     target = {"target_requirements": ["need_1"]}
+    final_read = ({**chapter, "section_id": "results"} if continuation == "another_section"
+                  else {**chapter, "offset": 1200})
+    plan = [{"check_id": "need_1", "gap": "The validation error is missing.",
+             "next_lookup": {"tool": "list_sections", **locator}}]
     adapter = Fake([
-        decision(calls=[ToolCall("initial", "read_section", {**initial, "requirements": [task]})]),
-        decision(json.dumps({"answer": "The methods were described [1].", "coverage": [], "evidence_checks": [
-            {"check_id": "need_1", "gap": "The validation error is missing.",
-             "next_lookup": {"tool": "read_section", **supplement}},
-        ]})),
+        decision(calls=[ToolCall("premature", "list_sections", {**locator, "requirements": [task]})]),
+        decision(calls=[ToolCall("initial", "search_literature", {
+            "query": "description of validation", "reason": "collect initial evidence", "requirements": [task],
+        })]),
+        decision(json.dumps({"answer": "The methods were described [1].", "coverage": []})),
+        decision(json.dumps(plan)),
         decision(calls=[
-            ToolCall("approved", "read_section", {**supplement, **target}),
-            ToolCall("over_limit", "read_section", {**supplement, **target, "section_id": "discussion"}),
+            ToolCall("wrong_paper", "read_section", {**chapter, **target, "document_id": "doc_b"}),
+            ToolCall("first_read", "read_section", {**chapter, **target}),
         ]),
-        decision(json.dumps({"answer": "The validation error was 0.2 [2].", "coverage": []})),
+        decision(calls=[
+            ToolCall("unverified_cursor", "read_section", {**chapter, **target, "offset": 900}),
+            ToolCall("continue_read", "read_section", {**final_read, **target}),
+            ToolCall("over_limit", "read_section", {**chapter, **target, "section_id": "discussion"}),
+        ]),
+        decision(json.dumps({"answer": "The validation error was 0.2 [3].", "coverage": []})),
     ])
-    reads = []
+    executed = []
 
     def execute(request, *_):
-        reads.append(request["section_id"])
-        text = "The validation error was 0.2." if request["section_id"] == "validation" else "Methods."
-        return {"status": "completed", "result": {"sources": [
-            {"ref": f"[{len(reads)}]", "document_id": "doc_a", "text": text},
-        ]}}
+        executed.append(request)
+        if request["tool"] == "search_literature":
+            output = {"evidence": [{"ref": "[1]", "document_id": "doc_a", "text": "Methods."}]}
+        elif request["tool"] == "list_sections":
+            output = {"document_id": "doc_a", "sections": [
+                {"section_id": "validation"}, {"section_id": "results"},
+            ]}
+        else:
+            final = len(executed) == 4
+            output = {
+                "document_id": "doc_a", "section_id": request["section_id"],
+                "next_offset": 1200 if not final else None,
+                "sources": [{
+                    "ref": "[3]" if final else "[2]", "document_id": "doc_a",
+                    "section_id": request["section_id"],
+                    "text": "The validation error was 0.2." if final else "A new validation series was used.",
+                }],
+            }
+        return {"status": "completed", "result": output}
 
     def judge(payload, _timeout):
-        return decisions(payload, {"need_1": .99 if len(reads) == 2 else .1})
+        if payload.get("lookup_review_only"):
+            return {"lookup_need_1": {"actionable": 1., "not_actionable": 0.}}, {}
+        return decisions(payload, {"need_1": .99 if len(executed) == 4 else .1})
 
     state = AgentLoop(
         adapter, execute, lambda _: None, unified_research=True,
-        allowed_tools={"list_sections", "read_section"},
+        allowed_tools={"search_literature", "list_sections", "read_section"},
+        budget=AgentBudget(max_model_calls=16),
         evidence_judge=SimpleNamespace(model=MODEL, check=judge),
     ).run("Report the validation error in Paper A.", "section-supplement")
-    assert reads == ["methods", "validation"]
+    assert not {"list_sections", "read_section"} & adapter.requests[0][1].keys()
+    assert "requirements" in adapter.requests[1][1]["search_literature"]["properties"]
+    assert {"list_sections", "read_section"} <= adapter.requests[4][1].keys()
+    assert "read_section" not in adapter.requests[-1][1]
+    assert [x["tool"] for x in executed] == ["search_literature", "list_sections", "read_section", "read_section"]
+    assert executed[-1]["section_id"] == final_read["section_id"]
+    assert executed[-1].get("offset") == final_read.get("offset")
     assert state["section_read_calls"] == 2
+    errors = [t["result"]["error_code"] for t in state["tool_calls"] if t["status"] == "blocked"]
+    assert errors == ["section_tools_require_supplement", "unapproved_evidence_lookup",
+                      "unapproved_evidence_lookup", "section_read_budget"]
     assert state["evidence_supplement_requested"]
-    assert state["tool_calls"][-1]["result"]["error_code"] == "section_read_budget"
-    assert state["answer"] == "The validation error was 0.2 [2]."
+    assert state["evidence_check_status"] == "supported"
+    assert state["answer"] == "The validation error was 0.2 [3]."
 
 
 @pytest.mark.parametrize("scenario", ["approved", "repair", "repeat", "rejected", "no_plan", "budget"])
@@ -407,10 +444,9 @@ def test_source_quote_repairs_keep_catalog_titles_after_retrieval():
         for i, item in enumerate(items, 1)
     ]
     draft = {"answer": "Two splits [1][2].", "coverage": []}
-    lookup = ToolCall("paper", "read_section", {
-        "targets": [{"document_id": "a", "section_id": "sec-a"},
-                    {"document_id": "b", "section_id": "sec-b"}],
-        "reason": "read splits", "requirements": items,
+    lookup = ToolCall("paper", "search_literature", {
+        "query": "published data splits",
+        "reason": "find splits", "requirements": items,
     })
     adapter = Fake([
         decision(calls=[lookup]), decision(json.dumps(draft, ensure_ascii=False)),
@@ -426,7 +462,7 @@ def test_source_quote_repairs_keep_catalog_titles_after_retrieval():
 
     state = AgentLoop(
         adapter,
-        lambda *_: {"status": "completed", "result": {"sources": [
+        lambda *_: {"status": "completed", "result": {"evidence": [
             {"ref": "[1]", "document_id": "a", "text": "70/30"},
             {"ref": "[2]", "document_id": "b", "text": "17/4"},
         ]}},
