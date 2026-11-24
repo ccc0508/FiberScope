@@ -22,19 +22,25 @@ def decisions(payload, supports, *, optional=(), actionable=True):
     return output, {}
 
 
-def test_jev_uses_typed_choices_without_a_draft():
+@pytest.mark.parametrize("lookup_only", [False, True])
+def test_jev_uses_typed_choices_without_a_draft(lookup_only):
     payload = {"question": "Count groups.", "requirements": [{"requirement_id": "need_1", "check_id": "need_1_check_1",
                "criterion": "The number of groups.", "direct_sources": [{"ref": "[1]"}],
                "gap": "Count unique groups.", "next_lookup": {"tool": "query_experiment_data"}}],
                "evidence": [{"ref": "[1]", "rows": [[47]]}]}
+    if lookup_only:
+        payload["lookup_review_only"] = True
 
     def post(url, *, json, **kwargs):
         assert url.endswith("/alpha/decisions")
         assert json["state"] == payload
-        assert json["questions"]["need_1_check_1"]["type"] == "choice"
-        assert "only its criterion" in json["questions"]["need_1_check_1"]["instructions"]
-        assert "direct_sources" in json["questions"]["need_1_check_1"]["instructions"]
-        assert "Ignore evidence" in json["questions"]["scope_need_1_check_1"]["instructions"]
+        if lookup_only:
+            assert set(json["questions"]) == {"lookup_need_1_check_1"}
+        else:
+            assert json["questions"]["need_1_check_1"]["type"] == "choice"
+            assert "only its criterion" in json["questions"]["need_1_check_1"]["instructions"]
+            assert "direct_sources" in json["questions"]["need_1_check_1"]["instructions"]
+            assert "Ignore evidence" in json["questions"]["scope_need_1_check_1"]["instructions"]
         assert "lookup_history" in json["questions"]["lookup_need_1_check_1"]["instructions"]
         assert json["provider"] == {"allow_fallbacks": False}
         answer = {"choice": "supported", "confidence": .92, "probabilities": {
@@ -43,16 +49,19 @@ def test_jev_uses_typed_choices_without_a_draft():
         scope = {"choice": "required", "confidence": .98, "probabilities": {"required": .98, "nonessential": .02}}
         lookup = {"choice": "not_actionable", "confidence": .92,
                   "probabilities": {"actionable": .08, "not_actionable": .92}}
+        answers = {"lookup_need_1_check_1": lookup}
+        if not lookup_only:
+            answers.update(need_1_check_1=answer, scope_need_1_check_1=scope)
         return SimpleNamespace(
             raise_for_status=lambda: None,
-            json=lambda: {"model": MODEL, "provider": "TypeSafe", "answers": {
-                "need_1_check_1": answer, "scope_need_1_check_1": scope, "lookup_need_1_check_1": lookup},
+            json=lambda: {"model": MODEL, "provider": "TypeSafe", "answers": answers,
                           "usage": {"input_tokens": 100, "total_tokens": 100}},
         )
 
     scores, usage = JevEvidenceJudge("test", post=post).check(payload, 10)
-    assert scores["need_1_check_1"]["supported"] == .89
-    assert scores["scope_need_1_check_1"]["required"] == .98
+    if not lookup_only:
+        assert scores["need_1_check_1"]["supported"] == .89
+        assert scores["scope_need_1_check_1"]["required"] == .98
     assert scores["lookup_need_1_check_1"]["not_actionable"] == .92
     assert usage == {"prompt_tokens": 100, "total_tokens": 100}
 
@@ -262,6 +271,78 @@ def test_table_locator_only_authorizes_the_returned_handle():
     assert executed == ["search_literature", "find_table", "read_table"]
     assert state["tool_calls"][2]["result"]["error_code"] == "unapproved_evidence_lookup"
     assert state["answer"] == "The unit is N·m/g [2]."
+
+
+@pytest.mark.parametrize("scenario", ["approved", "repair", "repeat", "rejected", "no_plan", "budget"])
+def test_jev_can_prompt_one_plan_after_finding_an_unplanned_gap(scenario):
+    check_id = "need_1_check_1"
+    first = {"tool": "search_literature", "reason": "methods", "query": "Paper A methods", "document_id": "doc_a"}
+    new = {**first, "reason": "compare validation errors", "query": "independent validation NRMSE"}
+    initial_answer = "Paper A describes its methods [1], but the validation error is unclear."
+    initial = ToolCall("initial", first["tool"], {k: v for k, v in first.items() if k != "tool"} | {
+        "requirements": [{
+            "role": "literature", "paper_quote": "Paper A", "source_quote": "validation error",
+            "deliverable": "Report the validation error", "acceptance_criteria": ["Give the validation error."],
+        }],
+    })
+    draft = json.dumps({"answer": initial_answer, "coverage": []})
+    turns = [decision(calls=[initial]), decision(initial_answer if scenario == "repair" else draft)]
+    if scenario == "repair":
+        turns.append(decision(draft))
+    if scenario != "budget":
+        plan = [{"check_id": check_id, "gap": "The actual validation error is missing.",
+                 "next_lookup": first if scenario == "repeat" else new}]
+        turns.append(decision(json.dumps([] if scenario == "no_plan" else plan)))
+    if scenario in {"approved", "repair"}:
+        turns.append(decision(json.dumps({"answer": "The validation error was 0.2 [2].", "coverage": []})))
+    adapter = Fake(turns)
+    executed = []
+
+    def execute(request, *_):
+        executed.append(request)
+        ref, text = ("[1]", "The experiment used a validation set.") if len(executed) == 1 else (
+            "[2]", "The validation NRMSE was 0.2.",
+        )
+        return {"status": "completed", "result": {"evidence": [
+            {"ref": ref, "document_id": "doc_a", "text": text},
+        ]}}
+
+    def judge(payload, _timeout):
+        if payload.get("lookup_review_only"):
+            assert len(payload["requirements"]) == 1
+            assert payload["requirements"][0]["next_lookup"] == new
+            assert len(payload["lookup_history"]) == 1
+            yes = float(scenario != "rejected")
+            return {f"lookup_{check_id}": {"actionable": yes, "not_actionable": 1 - yes}}, {}
+        return decisions(payload, {check_id: .99 if len(executed) == 2 else .1})
+
+    state = AgentLoop(
+        adapter, execute, lambda _: None, unified_research=True,
+        allowed_tools={"search_literature"},
+        budget=AgentBudget(max_model_calls=6 if scenario == "budget" else 10),
+        evidence_judge=SimpleNamespace(model=MODEL, check=judge),
+    ).run("What was the validation error in Paper A?", "unplanned-gap")
+    assert state["status"] == "completed"
+    if scenario == "budget":
+        assert "evidence_supplement_planning" not in state
+        assert len(executed) == 1
+        return
+    assert sum(c["stage"] == "evidence_supplement_plan" for c in state["model_calls"]) == 1
+    planning = state["evidence_supplement_planning"]
+    if scenario in {"approved", "repair"}:
+        assert planning["status"] == "approved"
+        assert state["evidence_supplement_requested"]
+        assert len(executed) == 2
+        assert state["tool_calls"][-1]["dispatch"] == "approved_evidence_plan"
+        assert state["tool_calls"][-1]["coverage_schedule"]["target_checks"] == [check_id]
+        assert state["answer"] == "The validation error was 0.2 [2]."
+    else:
+        assert planning["status"] == {
+            "repeat": "no_eligible_lookup", "rejected": "lookup_rejected", "no_plan": "no_useful_lookup",
+        }[scenario]
+        assert not state.get("evidence_supplement_requested")
+        assert len(executed) == 1
+        assert state["answer"] == initial_answer
 
 
 def test_source_quote_repairs_keep_catalog_titles_after_retrieval():

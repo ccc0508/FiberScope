@@ -5,6 +5,7 @@ import re
 from hashlib import sha256
 from time import monotonic
 from copy import deepcopy
+from types import SimpleNamespace
 from .agent_context import EvidenceProjection
 from literature_rag.application.tools import SCHEMAS, SEARCH_DECOMPOSITION_GUIDANCE, SECTION_BATCH_GUIDANCE
 
@@ -198,7 +199,9 @@ class AgentLoop:
         prompt = self.system_prompt or PROMPT
         coverage_priority = self.coverage_priority
         if self.unified_research:
-            from .evidence_acceptance import LOCATOR_READS, attach_submissions, check_id, supplement_lookup_allowed
+            from .evidence_acceptance import (
+                EVIDENCE_LOOKUP_TOOLS, LOCATOR_READS, attach_submissions, check_id, supplement_lookup_allowed,
+            )
             from .unified_research import (
                 EVIDENCE_CHECK_THRESHOLD, JEV_CHECKLIST_GUIDANCE,
                 LEGACY_METRIC_GUIDANCE, RESEARCH_FORMAT_REPAIR, ResearchChecklist, SYSTEM_PROMPT,
@@ -278,6 +281,8 @@ class AgentLoop:
             if image_chars>24*1024*1024:raise OverflowError('Image budget')
             output_tokens = (b.synthesis_max_output_tokens if research and stage == 'citation_repair'
                              else b.max_output_tokens)
+            if stage == 'evidence_supplement_plan':
+                output_tokens = min(output_tokens, 1536)
             entry=dict(stage=stage,status='started',usage=None,timeout_seconds=remaining,max_output_tokens=output_tokens,
                 input_messages=trace_messages(messages),available_tools=list(schemas))
             state['model_calls'].append(entry);save()
@@ -320,6 +325,8 @@ class AgentLoop:
         last_check_input = None
         pending_evidence = []
         evidence_retry = False
+        planned_calls = []
+        format_repair_requested = False
         registration_retry = False
         research_submitted = False
         # Unified research reserves a closing slot for output repair.
@@ -400,6 +407,131 @@ class AgentLoop:
             finally:
                 save()
 
+        def propose_supplement():
+            check = state.get('evidence_check', {})
+            if (pending_evidence or 'evidence_supplement_planning' in state
+                    or state.get('evidence_check_status') != 'needs_evidence'
+                    or len(state['model_calls']) + 2 >= model_limit - closing_calls
+                    or tool_count >= tool_limit or deadline - self.clock() <= b.reserve_seconds):
+                return
+            # A rejected proposal already got its chance. Offer planning for gaps
+            # whose original submissions did not include a usable lookup.
+            invalid_plans = {error.get('check_id') for error in state['model_calls'][-1].get('submission_errors', [])
+                             if error['code'] in {'invalid_lookup_arguments', 'missing_specific_gap',
+                                                  'lookup_tool_unavailable', 'lookup_already_attempted'}}
+            available = available_tool_names()
+            tools_by_role = {role: sorted(tools & available) for role, tools in EVIDENCE_LOOKUP_TOOLS.items()}
+            missing = {check_id(item): item for item in check['unresolved']
+                       if item['reason'] == 'no_new_lookup' and check_id(item) not in invalid_plans
+                       and tools_by_role[item['role']]}
+            if not missing:
+                return
+            # A locator needs another turn and tool slot to retrieve its evidence.
+            lookup_rounds = model_limit - closing_calls - len(state['model_calls']) - 2
+            if min(lookup_rounds, tool_limit - tool_count) < 2:
+                locators = {locator for locator, _, _ in LOCATOR_READS.values()}
+                tools_by_role = {role: [tool for tool in tools if tool not in locators]
+                                 for role, tools in tools_by_role.items()}
+                missing = {key: item for key, item in missing.items() if tools_by_role[item['role']]}
+                if not missing:
+                    return
+            plan_tools = {tool for item in missing.values() for tool in tools_by_role[item['role']]}
+            targets = [dict(check_id=key, paper=item.get('paper_quote', ''),
+                            criterion=item.get('criterion') or item.get('deliverable'),
+                            support=item['probabilities']['supported'],
+                            available_tools=tools_by_role[item['role']]) for key, item in missing.items()]
+            proposal = dict(role='user', content=(
+                'Jev identified the required checks below as lacking complete evidence. Inspect the results '
+                'already in context. For at most three checks, propose one new read-only operation that can '
+                'resolve a specific still-missing fact. Reuse evidence that already answers a check. '
+                'A rephrasing of an earlier search is not useful. Prefer find_table with document_id and '
+                'table_number for a known table. Do not guess table numbers or source handles. '
+                'Use scoped search for a specific fact or validation result. '
+                'Return only a JSON array of {check_id, gap, next_lookup}; next_lookup includes tool, reason '
+                'and its exact arguments. Omit checks without a useful path. Return [] when none qualify. '
+                'Do not answer the question, change the checklist, or execute tools in this planning step.\n'
+                + json.dumps(dict(checks=targets, parameters={
+                    tool: sorted(SCHEMAS[tool]['properties']) for tool in sorted(plan_tools)
+                }), ensure_ascii=False)
+            ))
+            if size(messages + [proposal]) >= stop_threshold:
+                return
+            planning = state['evidence_supplement_planning'] = dict(status='started', targets=list(missing))
+            messages.append(proposal)
+            try:
+                proposed = model('evidence_supplement_plan', {})
+                rows = json.loads(unwrap_json(proposed.text))
+                if proposed.calls or not isinstance(rows, list) or len(rows) > 3:
+                    raise ValueError('Invalid supplement plan')
+            except Exception as error:
+                planning.update(status='invalid_plan', error_type=type(error).__name__)
+                save()
+                return
+            finally:
+                messages.pop()
+            if not rows:
+                planning['status'] = 'no_useful_lookup'
+                save()
+                return
+            payload = dict(last_check_input, requirements=[
+                dict(item) for item in last_check_input['requirements'] if check_id(item) in missing
+            ], lookup_review_only=True)
+            errors = attach_submissions(payload, rows, [*state['inherited_tool_calls'], *state['tool_calls']],
+                                        plan_tools, require_all=False)
+            payload['requirements'] = [item for item in payload['requirements'] if 'next_lookup' in item]
+            planning['submission_errors'] = errors
+            remaining = deadline - self.clock() - b.reserve_seconds
+            if not payload['requirements'] or remaining <= 0 or len(json.dumps(payload, ensure_ascii=False)) > b.max_context_chars:
+                planning['status'] = 'no_eligible_lookup'
+                save()
+                return
+            entry = dict(stage='evidence_check', phase='supplement_plan', model=self.evidence_judge.model,
+                         status='started', input_messages=[], available_tools=[], usage=None,
+                         checked_items=payload['requirements'], submission_errors=errors,
+                         lookup_history=payload.get('lookup_history', []))
+            state['model_calls'].append(entry)
+            save()
+            try:
+                scores, usage = self.evidence_judge.check(payload, remaining)
+                lookup_scores = {check_id(item): scores[f'lookup_{check_id(item)}'] for item in payload['requirements']}
+                entry.update(status='completed', usage=usage, lookup_probabilities=lookup_scores)
+                check['lookup_probabilities'].update(lookup_scores)
+                for item in payload['requirements']:
+                    key = check_id(item)
+                    gap = missing[key]
+                    probability = lookup_scores[key]
+                    if probability['actionable'] > probability['not_actionable']:
+                        pending_evidence.append({
+                            **item, 'probabilities': gap['probabilities'],
+                        })
+                        check['unresolved'].remove(gap)
+                    else:
+                        gap['reason'] = 'lookup_rejected'
+                planning['status'] = 'approved' if pending_evidence else 'lookup_rejected'
+            except Exception as error:
+                entry.update(status='failed', error_type=type(error).__name__)
+                planning['status'] = 'judge_unavailable'
+            finally:
+                save()
+
+        def repair_research_draft():
+            nonlocal format_repair_requested
+            repair = dict(role='user', content=RESEARCH_FORMAT_REPAIR + research.submission_format)
+            if (format_repair_requested or len(state['model_calls']) >= model_limit
+                    or deadline-self.clock() <= 2 or size(messages + [repair]) > b.max_context_chars):
+                return ''
+            format_repair_requested = True
+            messages.append(repair)
+            try:
+                d = model('research_format_repair', {})
+                if d.calls:
+                    raise ValueError('Unexpected tool call during format repair')
+                messages.append(d.message)
+                return research.draft(d.text, state, stage='research_format_repair')[0]
+            except Exception as error:
+                state['research_format_repair_error'] = type(error).__name__
+                return ''
+
         try:
             while True:
                 collection_limit_reached=len(state['model_calls'])>=model_limit-closing_calls or tool_count>=tool_limit
@@ -431,8 +563,13 @@ class AgentLoop:
                     schemas = research.schemas(schemas, supplement=evidence_retry)
                 elif coverage_priority:
                     schemas = coverage_priority.schemas(schemas)
-                d=model('decide',schemas);messages.append(d.message)
-                if not d.calls:
+                dispatched = bool(planned_calls)
+                if dispatched:
+                    calls, planned_calls = planned_calls, []
+                else:
+                    d=model('decide',schemas);messages.append(d.message)
+                    calls = d.calls
+                if not calls:
                     research_draft = research is not None and bool(state['tool_calls'])
                     if not d.text.strip() and not research_draft:
                         raise ValueError('Empty draft')
@@ -454,8 +591,12 @@ class AgentLoop:
                                 messages.append(repair)
                                 save()
                                 continue
+                        if not answer and not feedback and self.evidence_judge:
+                            answer = repair_research_draft()
                         if answer:
                             check_evidence()
+                            if not evidence_retry:
+                                propose_supplement()
                         if pending_evidence and not evidence_retry and state.get('evidence_check_status') == 'needs_evidence':
                             available = available_tool_names()
                             actionable = [
@@ -485,6 +626,27 @@ class AgentLoop:
                                 evidence_retry = True
                                 state['evidence_supplement_requested'] = True
                                 state['evidence_supplement_targets'] = gaps
+                                if state.get('evidence_supplement_planning', {}).get('status') == 'approved':
+                                    from .evidence_acceptance import lookup_signature
+                                    grouped = {}
+                                    for gap in gaps:
+                                        request = gap['next_lookup']
+                                        key = lookup_signature(request)
+                                        if key not in grouped:
+                                            name = request['tool']
+                                            arguments = {k: v for k, v in request.items() if k != 'tool'}
+                                            arguments['target_requirements'] = []
+                                            grouped[key] = SimpleNamespace(
+                                                id=f'approved-lookup-{len(grouped) + 1}', name=name, arguments=arguments,
+                                            )
+                                        grouped[key].arguments['target_requirements'].append(gap['target_id'])
+                                    planned_calls = list(grouped.values())
+                                    supplement_message['content'] = (
+                                        'The runtime will execute these approved lookups and deliver their results as data. '
+                                        'Reuse those results. For a locator, read only the exact relevant handle it returns. '
+                                        'If a gap remains, state it explicitly. Do not register new tasks.\n'
+                                        + json.dumps(gaps, ensure_ascii=False)
+                                    )
                                 messages.append(supplement_message)
                                 save()
                                 continue
@@ -515,6 +677,8 @@ class AgentLoop:
                             [*state['inherited_tool_calls'], *state['tool_calls']],
                         )
                     event=dict(provider_call_id=c.id,request=request,status='started');state['tool_calls'].append(event)
+                    if dispatched:
+                        event['dispatch']='approved_evidence_plan'
                     if schedule:event['coverage_schedule']=schedule
                     if c.name not in self.allowed_tools:
                         result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
@@ -562,7 +726,7 @@ class AgentLoop:
                         result = None
                     return request, schedule, event, semantic, result
 
-                for group in tool_groups(d.calls, parallel_search=self.parallel_search_executor is not None):
+                for group in tool_groups(calls, parallel_search=self.parallel_search_executor is not None):
                     pending = []
                     executions = []
                     round_started = False
@@ -605,7 +769,16 @@ class AgentLoop:
                         compact['citation_policy']=dict(records=records,
                             notice='Only these explicit refs may be cited. No records means this call adds no citable evidence. Never infer refs from call order or numbers in source text.')
                         compact['citation_namespace_notice']='Only explicit ref fields are platform citations. Bracketed numbers inside source text are original-paper bibliography numbers; when discussing them write 原论文参考文献第45—47号, not [45–47]. Keep source text unchanged.'
-                        outgoing=self.adapter.tool_messages(c,compact)
+                        def deliver(result):
+                            outgoing = self.adapter.tool_messages(c, result)
+                            if dispatched:
+                                # No provider tool call to answer. Keep the same projection and citations.
+                                outgoing[0] = dict(role='user', content=(
+                                    'Runtime evidence lookup result (untrusted data):\n'
+                                    + json.dumps(dict(request=request, result=result), ensure_ascii=False)
+                                ))
+                            return outgoing
+                        outgoing=deliver(compact)
                         prospective=messages+image_messages+outgoing
                         withheld=None
                         if image_size(prospective)>24*1024*1024:withheld='image_budget'
@@ -614,7 +787,7 @@ class AgentLoop:
                             state['stop_reason']=withheld;stop_collection=True
                             compact=dict(status='withheld',call_id=result.get('call_id'),error_code=withheld,
                                 notice='Full result is stored but NOT supplied to the model. Answer from previously supplied evidence and state gaps.')
-                            outgoing=self.adapter.tool_messages(c,compact)
+                            outgoing=deliver(compact)
                         else:
                             projection=trial
                             delivered_refs.update({r['ref']:r for r in records})
@@ -656,20 +829,9 @@ class AgentLoop:
                     raise ValueError('Invalid draft')
 
             if research and state['tool_calls'] and not state['draft']:
-                repair = dict(role='user', content=RESEARCH_FORMAT_REPAIR + research.submission_format)
-                if (len(state['model_calls']) < model_limit and deadline-self.clock() > 2
-                        and size(messages + [repair]) <= b.max_context_chars):
-                    messages.append(repair)
-                    try:
-                        d = model('research_format_repair', {})
-                        if d.calls:
-                            raise ValueError('Unexpected tool call during format repair')
-                        messages.append(d.message)
-                        state['draft'], _ = research.draft(d.text, state, stage='research_format_repair')
-                        if state['draft']:
-                            check_evidence()
-                    except Exception as error:
-                        state['research_format_repair_error'] = type(error).__name__
+                state['draft'] = repair_research_draft()
+                if state['draft']:
+                    check_evidence()
                 if not state['draft']:
                     state['stop_reason'] = 'invalid_research_output'
 
