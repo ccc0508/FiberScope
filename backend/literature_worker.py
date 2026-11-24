@@ -126,7 +126,7 @@ def main(body):
     configuration = configuration_snapshot(Path(__file__).resolve().parent / '.env.literature', settings=settings)
     if 'tool_call' in body:
         configuration['query_rewrite'] = dict(enabled=False, reason='agent_supplies_query')
-        configuration['tool_query_policy'] = 'agent_query_paper_scoped_search_and_rerank_v2'
+        configuration['tool_query_policy'] = 'agent_query_paper_scoped_hybrid_search_and_rerank_v3'
     configuration['documents'] = [
         {'document_id': doc.id, 'filename': doc.filename, 'file_hash': doc.file_hash}
         for doc in metadata.list_documents() if doc.status.value == 'completed'
@@ -179,7 +179,9 @@ def main(body):
             body_context_catalog=body_context_catalog,query_rewriter=query_rewriter,
             query_rewrite_mode=settings.query_rewrite_mode if settings.query_rewrite_enabled else 'dual',
             visual_catalog=visual_catalog,visual_max_images=settings.visual_max_images,
-            visual_max_total_bytes=settings.visual_max_total_bytes)
+            visual_max_total_bytes=settings.visual_max_total_bytes,
+            keyword_corpus=metadata.iter_searchable_text
+                if body.get('tool_call', {}).get('tool') == 'search_literature' else None)
         if 'tool_call' in body:
             from literature_rag.application.tools import LiteratureTools, ToolTraceStore
             store = ToolTraceStore(Path(__file__).resolve().parents[1]/'.rag-data/tool-traces.sqlite3')

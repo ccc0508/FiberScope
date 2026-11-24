@@ -245,6 +245,21 @@ class SqliteMetadataStore:
         by_id = {row["id"]: self._to_chunk(row) for row in rows}
         return [by_id[chunk_id] for chunk_id in chunk_ids if chunk_id in by_id]
 
+    def iter_searchable_text(self, document_ids: Sequence[str] | None = None) -> Iterator[tuple[str, str]]:
+        """Stream original chunks from completed documents without changing the index."""
+        query = (
+            "SELECT c.id, c.text FROM chunks c JOIN documents d ON d.id = c.document_id "
+            "WHERE d.status = ?"
+        )
+        params = (DocumentStatus.COMPLETED.value,)
+        if document_ids:
+            placeholders = ", ".join("?" for _ in document_ids)
+            query += f" AND c.document_id IN ({placeholders})"
+            params += tuple(document_ids)
+        with self._database("cannot read chunks for keyword retrieval") as connection:
+            for row in connection.execute(query, params):
+                yield row["id"], row["text"]
+
     def list_documents(self) -> list[Document]:
         with self._database("cannot list SQLite document metadata") as connection:
             rows = connection.execute(
