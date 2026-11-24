@@ -16,7 +16,7 @@ sys.path.insert(0,str(ROOT/'backend'))
 from literature_rag.application.agent_loop import AgentLoop,AgentBudget
 from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter
 from literature_rag.config import Settings
-from literature_rag.application.tools import MAX_PARALLEL_SEARCHES, SEARCH_HITS_PER_DOCUMENT, ToolTraceStore
+from literature_rag.application.tools import MAX_PARALLEL_SEARCHES, SHARED_SEARCH_HITS_PER_DOCUMENT, ToolTraceStore
 from literature_rag.stage_trace import StageTrace, stage
 from literature_rag.application.paper_directory import load_paper_directory
 from literature_rag.state_io import save_state
@@ -26,14 +26,14 @@ def finalize_shared_search(records, run_id, timeout, *, assemble):
     """Select one distinct hit per query in rank order before filling the remaining quota."""
     ranked = [iter(record['candidate_evidence']) for record in records]
     seeds, owners = [], {}
-    while len(seeds) < SEARCH_HITS_PER_DOCUMENT:
+    while len(seeds) < SHARED_SEARCH_HITS_PER_DOCUMENT:
         previous_size = len(seeds)
         for owner, candidates in enumerate(ranked):
             candidate = next((row for row in candidates if row['chunk_id'] not in owners), None)
             if candidate is not None:
                 owners[candidate['chunk_id']] = owner
                 seeds.append({**candidate, 'ref': f'[{len(seeds) + 1}]'})
-            if len(seeds) == SEARCH_HITS_PER_DOCUMENT:
+            if len(seeds) == SHARED_SEARCH_HITS_PER_DOCUMENT:
                 break
         if len(seeds) == previous_size:
             break
@@ -60,8 +60,8 @@ def finalize_shared_search(records, run_id, timeout, *, assemble):
     for owner, record in enumerate(records):
         chosen = [s for s in seeds if owners[s['chunk_id']] == owner]
         with StageTrace() as trace:
-            with stage('retrieval.select_seeds', top_k=SEARCH_HITS_PER_DOCUMENT,
-                       max_seeds_per_document=SEARCH_HITS_PER_DOCUMENT, shared_call_ids=call_ids) as event:
+            with stage('retrieval.select_seeds', top_k=SHARED_SEARCH_HITS_PER_DOCUMENT,
+                       max_seeds_per_document=SHARED_SEARCH_HITS_PER_DOCUMENT, shared_call_ids=call_ids) as event:
                 event['selected_ids'] = [s['chunk_id'] for s in chosen]
                 event['shared_selected_ids'] = shared_ids
         record['seed_evidence'] = chosen
