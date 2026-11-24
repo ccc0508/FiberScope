@@ -117,6 +117,98 @@ def test_one_model_search_call_dispatches_independent_goals_in_parallel():
     assert tools["search_literature"]["properties"]["queries"]["items"]["properties"]["target"]["type"] == "string"
 
 
+@pytest.mark.parametrize("bad_lookup", [None, "missing_registration", "wrong_paper"])
+def test_directory_does_not_lock_registration_before_valid_parallel_search(bad_lookup):
+    question = "Compare tensile metrics in Paper A, Paper B, and Paper C."
+    papers = [dict(document_id=doc, title=f"Paper {doc.upper()}") for doc in ("a", "b", "c")]
+    requirements = [dict(role="literature", source_quote=paper["title"], paper_quote=paper["title"],
+                         deliverable=f"Check the tensile metric in {paper['title']}") for paper in papers]
+    queries = [dict(target=i, document_id=paper["document_id"], query=f"tensile metric and unit {i}")
+               for i, paper in enumerate(papers, 1)]
+    catalog = ToolCall("catalog", "describe_experiment_data", {
+        "views": ["fiber.v_fiber_paper_analysis"], "reason": "Inspect field units",
+    })
+    script = [decision(calls=[catalog])]
+    if bad_lookup == "missing_registration":
+        script.append(decision(calls=[ToolCall("missing", "search_literature", {
+            "reason": "Search papers", "queries": [{**queries[0], "target": "1"}],
+        })]))
+    if bad_lookup == "wrong_paper":
+        script.append(decision(calls=[ToolCall("wrong", "search_literature", {
+            "reason": "Search papers", "requirements": requirements, "queries": [{**queries[0], "document_id": "b"}],
+        })]))
+    script.extend([
+        decision(calls=[ToolCall("papers", "search_literature", {
+            "reason": "Search each paper", "requirements": requirements, "queries": queries,
+        })]),
+        decision(json.dumps(dict(answer="Three different metrics [1][2][3].", coverage=[]))),
+    ])
+    adapter = Fake(script)
+    lookup_batches = []
+
+    def single(request, *_):
+        assert request["tool"] == catalog.name
+        return {"status": "completed", "result": {"views": {}}}
+
+    def lookup(executions, *_):
+        lookup_batches.append([request["document_id"] for request, _ in executions])
+        return [dict(status="completed", result=dict(evidence=[dict(
+            ref=f"[{i}]", document_id=request["document_id"], text=f"Metric {i}.",
+        )])) for i, (request, _) in enumerate(executions, 1)]
+
+    state = AgentLoop(
+        adapter, single, lambda _: None, paper_directory=papers, unified_research=True,
+        evidence_supplement_enabled=False, parallel_search_executor=lookup,
+    ).run(question, "catalog-before-evidence")
+
+    assert state["status"] == "completed"
+    assert lookup_batches == [["a", "b", "c"]]
+    assert state["search_calls"] == 3 and state["search_rounds"] == 1
+    assert state["task_contract"]["locked"]
+    assert len(state["task_contract"]["requirements"]) == 3
+    assert [event["coverage_schedule"]["target_requirements"] for event in state["tool_calls"][1:]] == [
+        ["need_1"], ["need_2"], ["need_3"],
+    ]
+    assert "requirements" not in adapter.requests[0][1][catalog.name]["required"]
+    for _, schemas, _ in adapter.requests[1:-1]:
+        assert "requirements" in schemas["search_literature"]["required"]
+    search_schema = adapter.requests[-1][1]["search_literature"]
+    assert "requirements" not in search_schema["properties"]
+    assert "queries" in search_schema["required"]
+    assert set(search_schema["required"]) <= search_schema["properties"].keys()
+    if bad_lookup == "missing_registration":
+        assert state["goal_search_batches"][0]["error_code"] == "missing_task_registration"
+        assert "integer 1-based" in state["goal_search_batches"][0]["notice"]
+
+
+def test_first_sql_lookup_requires_a_valid_task_binding():
+    question = "Give the local sample count."
+    sql = dict(sql="SELECT COUNT(*) FROM fiber.v_sample_overview", reason="Count local samples")
+    adapter = Fake([
+        decision(calls=[ToolCall("missing", "query_experiment_data", sql)]),
+        decision(calls=[ToolCall("bound", "query_experiment_data", {**sql, "requirements": [
+            dict(role="sql", source_quote="local sample count", deliverable="Count local samples"),
+        ], "initial_targets": [1]})]),
+        decision(json.dumps(dict(answer="The sample count is 61 [1].", coverage=[]))),
+    ])
+    executed = []
+
+    def execute(request, *_):
+        executed.append(request["sql"])
+        return {"status": "completed", "result": {"ref": "[1]", "rows": [[61]], "columns": ["count"]}}
+
+    state = AgentLoop(
+        adapter, execute, lambda _: None, unified_research=True, evidence_supplement_enabled=False,
+        parallel_search_executor=lambda *_: pytest.fail("No parallel searches in this SQL case"),
+    ).run(question, "retry-initial-sql-registration")
+
+    assert state["status"] == "completed" and state["task_contract"]["locked"]
+    assert executed == [sql["sql"]]
+    assert state["tool_calls"][0]["result"]["error_code"] == "missing_initial_task_binding"
+    assert state["tool_calls"][1]["coverage_schedule"]["target_requirements"] == ["need_1"]
+    assert "requirements" in adapter.requests[1][1]["query_experiment_data"]["required"]
+
+
 def test_search_plan_rejects_a_broad_query_for_a_named_paper_and_duplicate_goals():
     question = "What evidence does Paper A report?"
     checklist = ResearchChecklist(question)
