@@ -29,6 +29,22 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
+def deepseek_usage(answer):
+    total = 0
+    incomplete = False
+    for call in answer.get("model_calls", []):
+        model = call.get("model") or answer.get("model") or ""
+        if "deepseek" not in model.lower():
+            continue
+        usage = call.get("usage") or {}
+        tokens = usage.get("total_tokens")
+        if type(tokens) is not int or tokens < 0:
+            incomplete = True
+        else:
+            total += tokens
+    return total, incomplete
+
+
 class Selection(BaseModel):
     model_config = ConfigDict(extra="forbid")
     ids: list[str] = Field(min_length=1, max_length=70)
@@ -73,7 +89,9 @@ class EvaluationQueue:
                 CREATE TABLE IF NOT EXISTS evaluations (
                     batch TEXT NOT NULL REFERENCES batches(id), id TEXT NOT NULL, position INTEGER NOT NULL,
                     spec TEXT NOT NULL, status TEXT NOT NULL, run_id TEXT, error TEXT,
-                    duration_ms INTEGER, answer TEXT, grade TEXT, PRIMARY KEY(batch,id)
+                    duration_ms INTEGER, answer TEXT, grade TEXT,
+                    deepseek_tokens INTEGER NOT NULL DEFAULT 0, deepseek_usage_incomplete INTEGER NOT NULL DEFAULT 0,
+                    PRIMARY KEY(batch,id)
                 );
                 CREATE TABLE IF NOT EXISTS calibrations (
                     batch TEXT NOT NULL, id TEXT NOT NULL, timestamp TEXT NOT NULL,
@@ -81,6 +99,19 @@ class EvaluationQueue:
                     FOREIGN KEY(batch,id) REFERENCES evaluations(batch,id)
                 );
             """)
+            db.execute("BEGIN IMMEDIATE")
+            columns = {row["name"] for row in db.execute("PRAGMA table_info(evaluations)")}
+            if "deepseek_tokens" not in columns:
+                db.execute("ALTER TABLE evaluations ADD COLUMN deepseek_tokens INTEGER NOT NULL DEFAULT 0")
+                db.execute("ALTER TABLE evaluations ADD COLUMN deepseek_usage_incomplete INTEGER NOT NULL DEFAULT 0")
+                # Rescoring copies the parent's answer and run ID without calling DeepSeek again.
+                original_answers = db.execute("""SELECT e.batch, e.id, e.answer FROM evaluations e
+                    JOIN batches b ON b.id=e.batch WHERE e.answer IS NOT NULL AND NOT EXISTS (
+                        SELECT 1 FROM evaluations p WHERE p.batch=b.parent AND p.id=e.id AND p.run_id=e.run_id
+                    )""")
+                db.executemany("""UPDATE evaluations SET deepseek_tokens=?, deepseek_usage_incomplete=?
+                    WHERE batch=? AND id=?""",
+                    ((*deepseek_usage(json.loads(row["answer"])), row["batch"], row["id"]) for row in original_answers))
 
     def start(self):
         if self.config.engine != "agent" or not self.config.enabled:
@@ -151,9 +182,14 @@ class EvaluationQueue:
         with self.db() as db:
             run = self.batch(db, batch)
             rows = self.case_rows(db, batch)
+            usage = db.execute("""SELECT COALESCE(SUM(deepseek_tokens), 0) AS total_tokens,
+                MAX(deepseek_usage_incomplete OR
+                    (status IN ('answer_failed','interrupted') AND run_id IS NOT NULL AND answer IS NULL)
+                ) AS incomplete FROM evaluations WHERE batch=?""", (batch,)).fetchone()
         snapshot = json.loads(run["snapshot"]) if run["snapshot"] else {}
         return dict(id=run["id"], created_at=run["created_at"], parent=run["parent"],
                     manifest=json.loads(run["manifest"]), database_fingerprint=snapshot.get("fingerprint"),
+                    deepseek_usage=dict(total_tokens=usage["total_tokens"], incomplete=bool(usage["incomplete"])),
                     cases=[self.summary(row) for row in rows])
 
     def detail_case(self, batch, key):
@@ -250,7 +286,9 @@ class EvaluationQueue:
                 if spec["group"] in {"sql", "mixed"} and self.snapshot([])["fingerprint"] != snapshot["fingerprint"]:
                     result["status"], result["stop_reason"] = "failed", "database_changed_during_run"
                 complete = result["status"] == "completed" and bool(result["answer"].strip())
+                tokens, incomplete = deepseek_usage(result)
                 self.update(row, answer=encode(result), duration_ms=result["end_to_end_ms"],
+                            deepseek_tokens=tokens, deepseek_usage_incomplete=incomplete,
                             status="scoring" if complete else "answer_failed",
                             error=None if complete else (result.get("stop_reason") or "Agent 未完成"))
                 if not complete:
