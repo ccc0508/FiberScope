@@ -210,8 +210,8 @@ class AgentLoop:
                 EVIDENCE_LOOKUP_TOOLS, LOCATOR_READS, SECTION_TOOLS, attach_submissions, supplement_lookup_allowed,
             )
             from .unified_research import (
-                EVIDENCE_CHECK_THRESHOLD, GOAL_SEARCH_GUIDANCE,
-                LEGACY_METRIC_GUIDANCE, RESEARCH_FORMAT_REPAIR, ResearchChecklist, SYSTEM_PROMPT,
+                EVIDENCE_CHECK_THRESHOLD, GOAL_SEARCH_GUIDANCE, INITIAL_TASK_NOTICE,
+                LEGACY_METRIC_GUIDANCE, RESEARCH_EVIDENCE_TOOLS, RESEARCH_FORMAT_REPAIR, ResearchChecklist, SYSTEM_PROMPT,
                 evidence_check_input, extract_research_submission,
             )
             research = coverage_priority = ResearchChecklist(
@@ -226,7 +226,7 @@ class AgentLoop:
                 prompt += (
                     '\nThe runtime binds tool results to their task IDs. When offered initial_targets, '
                     'use the 1-based positions from that call\'s requirements. Once need IDs are assigned, '
-                    'set target_requirements on each evidence tool. Include only the tasks the call serves.'
+                    'set target_requirements on evidence tools that offer it. Include only the tasks the call serves.'
                 )
             state['pipeline_version'] = 'unified-research-v1'
         gated_section_tools = research is not None and research.evidence_only
@@ -778,6 +778,7 @@ class AgentLoop:
                     calls = expanded
                 image_messages=[]
                 stop_collection=False
+                evidence_lookup_admitted = False
                 def prepare_tool(c, round_started, queued):
                     nonlocal tool_count, stop_collection
                     request=dict(c.arguments,tool=c.name)
@@ -785,8 +786,10 @@ class AgentLoop:
                     request.pop('independent_in_turn', None)
                     schedule=None
                     if coverage_priority and c.name in schemas:
-                        if c.id in batch_calls:
-                            request, schedule = research.prepare(request, state, initial_target=batch_calls[c.id][1])
+                        if research:
+                            _, initial_target = batch_calls.get(c.id, (None, None))
+                            request, schedule = research.prepare(request, state, initial_target=initial_target,
+                                                                 require_task_binding=goal_search)
                         else:
                             request,schedule=coverage_priority.prepare(request,state)
                     # Reason text does not turn a repeated operation into a new operation.
@@ -834,6 +837,9 @@ class AgentLoop:
                                 'unresolved literature task ID before evidence checking. '
                                 'If the list is empty, finish from the evidence already collected.'
                             ))
+                    elif schedule and schedule.get('initial_task_binding_error'):
+                        result = dict(status='blocked', error_code='missing_initial_task_binding',
+                                      notice=INITIAL_TASK_NOTICE + ' Put the positions in initial_targets.')
                     elif schedule and schedule.get('task_binding_error'):
                         result = dict(status='blocked', error_code='invalid_evidence_task_binding',
                                       notice='Bind this lookup to the tasks it serves. Use initial_targets '
@@ -877,6 +883,9 @@ class AgentLoop:
                         if result is not None:
                             event.update(status=result['status'], result=result)
                             continue
+                        if (research and not research.locked and c.name in RESEARCH_EVIDENCE_TOOLS
+                                and research.requirements and (not goal_search or (schedule and schedule['target_requirements']))):
+                            evidence_lookup_admitted = True
                         queued.add(semantic)
                         if c.name == 'search_literature':
                             document = request.get('document_id')
@@ -948,7 +957,7 @@ class AgentLoop:
                             if msg['role']=='tool':messages.append(msg)
                             else:image_messages.append(msg)
                 messages.extend(image_messages)
-                if research and not research.locked and any(c.name not in SECTION_TOOLS for c in calls):
+                if evidence_lookup_admitted and not research.locked:
                     research.lock(state)
                 save()
                 if stop_collection:break

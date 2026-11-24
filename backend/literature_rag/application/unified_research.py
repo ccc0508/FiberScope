@@ -13,6 +13,13 @@ from .tools import Search
 
 LEGACY_COVERAGE_FIELDS = {"checks", "cells"}
 COVERAGE_STATES = ", ".join(get_args(CoverageItem.model_fields["status"].annotation))
+RESEARCH_EVIDENCE_TOOLS = frozenset({
+    "search_literature", "read_section", "read_table", "view_image", "query_experiment_data",
+})
+INITIAL_TASK_NOTICE = (
+    "Register the required tasks in requirements on this evidence call. "
+    "Use integer 1-based positions from that same list to bind the lookup."
+)
 RESEARCH_FORMAT_REPAIR = (
     "Fix the output format using existing evidence. Preserve the answer and its inline [n] citations. "
     "Do not call tools. "
@@ -26,7 +33,8 @@ Use the literature tools for claims about papers or mechanisms that need library
 even if the user names no paper. A general explanation can fill a source gap only if it is
 clearly labeled. It cannot satisfy a missing paper-specific fact.
 
-Register requirements in your first tool turn. For literature, split each requested comparison
+You may inspect a directory or locator before registration. Register all required tasks with
+your first evidence lookup, in the same tool call. For literature, split each requested comparison
 dimension into an evidence goal for each relevant paper whenever it needs its own source passage.
 When asked to compare data origins and validation, create separate data-origin and validation goals
 for each paper. Keep related values in one named table or conditions in one method passage together.
@@ -37,15 +45,16 @@ For SQL, register the requested local result or metric as before.
 Copy source_quote as one continuous, verbatim span from the question. Multiple items may share
 that span. Put the specific result to deliver in deliverable in your own words, preserving the
 user's requested scope. For paper_quote, use the requested paper's name from the question or its
-title from the supplied directory. Omit it for unspecified sources. In the first tool turn, omit
+title from the supplied directory. Omit it for unspecified sources. When registering, omit
 requirement_id and target_requirements. The tool results return the assigned need IDs and tasks.
-For later calls use only those IDs. The checklist is fixed after the first tool turn except for
-corrections to rejected items. Use the returned correction_id and fix the reported fields.
-Reuse evidence already collected. For every follow-up search, set target_requirements to assigned
-literature need IDs that still lack evidence, and search only for those gaps. Use target_requirements
-after the first turn and send compact coverage_updates only when a previously obtained result
-changes a finding. Prioritize uncovered papers and facts across BOTH sources. A directory
-or locator alone does not verify a scientific or numeric fact.
+The checklist is fixed once the first lookup bound to a task is admitted. Use assigned IDs from
+then on. If no lookup is admitted, retry with the requirements and their positions. To correct
+a rejected item, use the returned correction_id and fix the reported fields.
+Reuse evidence already collected. After registration, bind follow-up searches to assigned literature
+need IDs that still lack evidence. Use each entry's target in batch searches, and target_requirements
+when the tool offers it. Send compact coverage_updates only when a previously obtained result changes
+a finding. Prioritize uncovered papers and facts across BOTH sources. A directory or locator alone
+does not verify a scientific or numeric fact.
 
 SQL: inspect relevant views and actual fields, units and enumerations before building SELECTs.
 Preserve explicit filters and requested grain. Cumulative beating revolutions are not rpm.
@@ -84,8 +93,8 @@ LEGACY_METRIC_GUIDANCE = (
 EVIDENCE_CHECK_THRESHOLD = 0.80
 GOAL_SEARCH_GUIDANCE = (
     "\nWhen search_literature offers queries, submit one array covering the independent evidence goals you "
-    "can search now. Each entry has a focused query and one target. In the first turn target is "
-    "the 1-based position in this call's requirements array. In later turns target is the assigned "
+    "can search now. Each entry has a focused query and one target. While registering, target is "
+    "the 1-based integer position in this call's requirements array. Once fixed, target is the assigned "
     "need ID of one unresolved literature goal. Use one query per goal in the batch and set "
     "document_id for each named paper. Keep named papers in separate entries. Omit document_id "
     "only for open discovery without a named source. Send independent entries together. "
@@ -246,11 +255,14 @@ class ResearchChecklist(CoveragePriority):
             if can_register:
                 schema.setdefault("$defs", {}).update(definitions)
                 schema["properties"]["requirements"] = requirement_schema
+                if (goal_search and tool in RESEARCH_EVIDENCE_TOOLS
+                        and not self.locked and not self.requirements):
+                    schema["required"].append("requirements")
             for key in ("target_requirements", "coverage_updates", "revisit_reason"):
                 schema["required"].remove(key)
                 if not self.locked:
                     schema["properties"].pop(key)
-            if (self.evidence_only and not self.locked
+            if ((self.evidence_only or goal_search) and not self.locked
                     and any(tool in tools for tools in EVIDENCE_LOOKUP_TOOLS.values())
                     and not (goal_search and tool == "search_literature")):
                 schema["properties"]["initial_targets"] = dict(
@@ -286,7 +298,7 @@ class ResearchChecklist(CoveragePriority):
                 )
                 schema["required"].remove("query")
                 schema["required"].append("queries")
-                if not self.locked:
+                if not self.locked and "requirements" not in schema["required"]:
                     schema["required"].append("requirements")
             elif self.locked:
                 schema["required"].append("target_requirements")
@@ -329,7 +341,7 @@ class ResearchChecklist(CoveragePriority):
                 self.rejections.append(detail)
         return detail
 
-    def register(self, entries, trace, *, assigned=None):
+    def register(self, entries, trace, *, assigned=None, corrections_only=False):
         rejected = []
         normalized = []
         ignored = trace.get("task_contract", {}).get("ignored_additions", 0)
@@ -359,7 +371,7 @@ class ResearchChecklist(CoveragePriority):
                 continue
             correction = next((item for item in self.pending_registrations()
                                if self._matches_correction(candidate, item)), None)
-            if self.locked and correction is None:
+            if (self.locked or corrections_only) and correction is None:
                 ignored += 1
                 if candidate.correction_id:
                     rejected.append({"reason": "correction_does_not_match", "index": index,
@@ -414,6 +426,9 @@ class ResearchChecklist(CoveragePriority):
                 or arguments.keys() - {"requirements", "queries", "reason", "coverage_updates", "revisit_reason"}):
             return [], dict(status="blocked", error_code="invalid_goal_search",
                             notice="Submit search_literature with a queries array and one target per query.")
+        if not self.locked and not raw:
+            return [], dict(status="blocked", error_code="missing_task_registration", scheduled=[],
+                            notice=INITIAL_TASK_NOTICE + " Each query's target is its task's position.")
         assigned = {}
         rejected, normalized = self.register(raw[:24], trace, assigned=assigned)
         by_id = {item["requirement_id"]: item for item in self.requirements if item["role"] == "literature"}
@@ -457,6 +472,8 @@ class ResearchChecklist(CoveragePriority):
                         scheduled=[dict(index=i, target=need) for i, need, _ in operations])
         if errors:
             feedback["errors"] = errors
+            if not self.locked and any(error["code"] == "invalid_goal" for error in errors):
+                feedback["notice"] = INITIAL_TASK_NOTICE + " Each query's target is its task's position."
         if raw or rejected or normalized:
             feedback["requirement_registration"] = self.registration_feedback(rejected, normalized)
         return operations, feedback
@@ -481,7 +498,7 @@ class ResearchChecklist(CoveragePriority):
             **({"normalized": normalized} if normalized else {}),
         }
 
-    def prepare(self, request, trace, *, initial_target=None):
+    def prepare(self, request, trace, *, initial_target=None, require_task_binding=False):
         request = dict(request)
         raw = request.pop("requirements", [])
         assigned = {}
@@ -500,7 +517,7 @@ class ResearchChecklist(CoveragePriority):
             request.pop("revisit_reason", None)
             if initial_target:
                 request["target_requirements"] = [initial_target]
-            elif self.evidence_only and lookup_role:
+            elif (self.evidence_only or require_task_binding) and lookup_role:
                 if positions is not None:
                     if (isinstance(positions, list) and positions and all(
                             type(position) is int and assigned.get(position) in eligible for position in positions)):
@@ -536,6 +553,9 @@ class ResearchChecklist(CoveragePriority):
             schedule["ignored_coverage_fields"] = ignored_fields
         if not self.locked and "missing_or_unknown_target_requirements" in schedule["errors"]:
             schedule["errors"].remove("missing_or_unknown_target_requirements")
+        if (require_task_binding and not self.locked and request["tool"] in RESEARCH_EVIDENCE_TOOLS
+                and not schedule["target_requirements"]):
+            schedule["initial_task_binding_error"] = True
         if self.evidence_only and lookup_role and not supplement:
             if binding_error or (eligible and not set(schedule["target_requirements"]) <= eligible):
                 schedule["task_binding_error"] = True
@@ -598,7 +618,7 @@ class ResearchChecklist(CoveragePriority):
         if not isinstance(requirements, list) or len(requirements) > 24:
             issues.append({"code": "invalid_requirements"})
         elif requirements:
-            rejected, normalized = self.register(requirements, trace)
+            rejected, normalized = self.register(requirements, trace, corrections_only=True)
             if rejected or normalized:
                 attempt["requirement_registration"] = self.registration_feedback(rejected, normalized)
 
