@@ -317,7 +317,7 @@ def test_five_parallel_scoped_searches_register_in_request_order(tmp_path):
     ]
 
 @pytest.mark.parametrize('expand', [False, True])
-def test_same_paper_queries_share_three_distinct_anchors_and_expand_once(tmp_path, expand):
+def test_same_paper_queries_share_eight_distinct_anchors_and_expand_once(tmp_path, expand):
     from threading import Barrier
     from scripts.run_literature_agent import execute_parallel_searches
 
@@ -325,7 +325,10 @@ def test_same_paper_queries_share_three_distinct_anchors_and_expand_once(tmp_pat
     overlap = Barrier(2, timeout=5)
     assembled = []
     doc = 'paper'
-    rankings = {'methods': ['common', 'methods', 'unused'], 'validation': ['common', 'validation']}
+    rankings = {
+        'methods': ['common', 'methods', 'methods-2', 'methods-3', 'unused'],
+        'validation': ['common', 'validation', 'validation-2', 'validation-3', 'validation-4'],
+    }
 
     def execute(request, run_id, timeout, *, context, defer_search_registration, rank_search_only):
         assert rank_search_only and defer_search_registration
@@ -350,20 +353,23 @@ def test_same_paper_queries_share_three_distinct_anchors_and_expand_once(tmp_pat
         assert store.evidence(run_id) == []
         if not expand:
             return {'result': {'evidence': seeds}, 'internal_steps': []}
-        common, validation, methods = seeds
+        common, validation, methods, *remaining = seeds
         merged = dict(common, seed_chunk_ids=['common', 'validation'], text='common and validation')
         linked = dict(validation, ref='[4]', chunk_id='table', seed_chunk_ids=['validation'], text='related table')
-        return {'result': {'evidence': [merged, methods, linked]}, 'internal_steps': []}
+        return {'result': {'evidence': [merged, methods, linked, *remaining]}, 'internal_steps': []}
 
     executions = [(dict(tool='search_literature', document_id=doc, query=query, reason='target'), i)
                   for i, query in enumerate(rankings)]
     results = list(execute_parallel_searches(executions, 'run', 10, execute=execute, trace_store=store,
                                              tool_context=lambda **kw: kw, assemble=assemble))
-    assert assembled == [['common', 'validation', 'methods']]
-    first = [('common', '[1]'), ('methods', '[2]')]
-    second = [('common', '[1]'), ('table', '[3]')] if expand else [('validation', '[3]')]
+    assert assembled == [[
+        'common', 'validation', 'methods', 'validation-2', 'methods-2', 'validation-3', 'methods-3', 'validation-4',
+    ]]
+    first = [('common', '[1]'), ('methods', '[2]'), ('methods-2', '[3]'), ('methods-3', '[4]')]
+    second = [('common', '[1]'), ('table', '[5]')] if expand else [('validation', '[5]')]
+    second += [('validation-2', '[6]'), ('validation-3', '[7]'), ('validation-4', '[8]')]
     assert [[(e['chunk_id'], e['ref']) for e in r['result']['evidence']] for r in results] == [first, second]
-    assert len(store.evidence('run')) == 3
+    assert len(store.evidence('run')) == 8
     if expand:
         assert len(store.evidence('run')[0]['call_ids']) == 2
-    assert all(len(r['result']['shared_search']['selected_chunk_ids']) == 3 for r in results)
+    assert all(r['result']['shared_search']['selected_chunk_ids'] == assembled[0] for r in results)
