@@ -281,6 +281,48 @@ def test_numbered_table_supplement_reads_or_authorizes_only_returned_handles(amb
     assert state["answer"] == "The unit is N·m/g [2]."
 
 
+
+def test_jev_section_supplement_shares_the_initial_read_limit():
+    task = {"role": "literature", "source_quote": "validation error", "paper_quote": "Paper A"}
+    initial = {"document_id": "doc_a", "section_id": "methods", "reason": "methods"}
+    supplement = {**initial, "section_id": "validation", "reason": "validation error"}
+    target = {"target_requirements": ["need_1"]}
+    adapter = Fake([
+        decision(calls=[ToolCall("initial", "read_section", {**initial, "requirements": [task]})]),
+        decision(json.dumps({"answer": "The methods were described [1].", "coverage": [], "evidence_checks": [
+            {"check_id": "need_1", "gap": "The validation error is missing.",
+             "next_lookup": {"tool": "read_section", **supplement}},
+        ]})),
+        decision(calls=[
+            ToolCall("approved", "read_section", {**supplement, **target}),
+            ToolCall("over_limit", "read_section", {**supplement, **target, "section_id": "discussion"}),
+        ]),
+        decision(json.dumps({"answer": "The validation error was 0.2 [2].", "coverage": []})),
+    ])
+    reads = []
+
+    def execute(request, *_):
+        reads.append(request["section_id"])
+        text = "The validation error was 0.2." if request["section_id"] == "validation" else "Methods."
+        return {"status": "completed", "result": {"sources": [
+            {"ref": f"[{len(reads)}]", "document_id": "doc_a", "text": text},
+        ]}}
+
+    def judge(payload, _timeout):
+        return decisions(payload, {"need_1": .99 if len(reads) == 2 else .1})
+
+    state = AgentLoop(
+        adapter, execute, lambda _: None, unified_research=True,
+        allowed_tools={"list_sections", "read_section"},
+        evidence_judge=SimpleNamespace(model=MODEL, check=judge),
+    ).run("Report the validation error in Paper A.", "section-supplement")
+    assert reads == ["methods", "validation"]
+    assert state["section_read_calls"] == 2
+    assert state["evidence_supplement_requested"]
+    assert state["tool_calls"][-1]["result"]["error_code"] == "section_read_budget"
+    assert state["answer"] == "The validation error was 0.2 [2]."
+
+
 @pytest.mark.parametrize("scenario", ["approved", "repair", "repeat", "rejected", "no_plan", "budget"])
 def test_jev_can_prompt_one_plan_after_finding_an_unplanned_gap(scenario):
     check_id = "need_1_check_1"

@@ -57,7 +57,7 @@ def test_reordering_same_targets_does_not_redispatch_a_batch():
 
 
 def test_loop_records_and_blocks_third_transient_attempt():
-    calls=[ToolCall(str(i),'read_section',dict(document_id='d',section_id='s',reason='read')) for i in range(3)]
+    calls=[ToolCall(str(i),'list_sections',dict(document_id='d',reason='list')) for i in range(3)]
     a=Fake([*(decision(calls=[c]) for c in calls),decision('draft'),decision('final')]);executed=[]
     r=AgentLoop(a,lambda *args:executed.append(args) or dict(status='failed',error_code='tool_timeout'),lambda s:None).run('q','r')
     assert len(executed)==2 and r['tool_attempts']==3

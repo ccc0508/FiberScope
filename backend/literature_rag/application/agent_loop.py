@@ -123,6 +123,9 @@ def trace_messages(messages):
     return snapshot
 
 
+MAX_SECTION_READ_CALLS = 2
+
+
 @dataclass(frozen=True)
 class AgentBudget:
     max_model_calls: int=10
@@ -230,6 +233,12 @@ class AgentLoop:
                               'search round. An unscoped search uses its own round.')
         if 'search_literature' in self.allowed_tools:
             prompt += SEARCH_DECOMPOSITION_GUIDANCE + search_budget
+        if 'read_section' in self.allowed_tools:
+            prompt += (
+                f'\nUse read_section at most {MAX_SECTION_READ_CALLS} times for this question, '
+                'including failed reads and evidence follow-ups. A multi-target read counts as one call. '
+                'list_sections uses the general tool budget only. Prioritize sections needed for unresolved facts.'
+            )
         messages=[dict(role='system', content=prompt),dict(role='user',content=question)]
         messages[0]['content'] += (
             '\nGroup independent read-only tool requests in one decision, including different tools. '
@@ -251,6 +260,8 @@ class AgentLoop:
         state['search_calls']=0
         state['search_rounds']=0
         state['max_search_calls']=b.max_search_calls
+        state['section_read_calls'] = 0
+        state['max_section_read_calls'] = MAX_SECTION_READ_CALLS
         projection=EvidenceProjection()
         from .citation_policy import answer_citation_issues, citation_records, invalid_references
         delivered_refs={}
@@ -339,6 +350,7 @@ class AgentLoop:
             return {
                 name for name in self.allowed_tools
                 if (name != 'search_literature' or state['search_rounds'] < b.max_search_calls)
+                and (name != 'read_section' or state['section_read_calls'] < MAX_SECTION_READ_CALLS)
                 and (name != 'find_documents' or self.paper_directory is None)
             }
 
@@ -685,6 +697,9 @@ class AgentLoop:
                         result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
                     elif c.name=='find_documents' and self.paper_directory is not None:
                         result=dict(status='blocked',error_code='directory_already_provided',notice='Use the complete paper directory supplied at the start; no directory tool call is needed.')
+                    elif c.name == 'read_section' and state['section_read_calls'] >= MAX_SECTION_READ_CALLS:
+                        result = dict(status='blocked', error_code='section_read_budget',
+                                      notice='Section read limit reached. Use existing evidence or another available tool.')
                     elif (evidence_retry and c.name not in names
                           and not (c.name == 'search_literature' and state['search_rounds'] >= b.max_search_calls)):
                         result = dict(status='blocked', error_code='tool_outside_evidence_supplement',
@@ -743,6 +758,8 @@ class AgentLoop:
                             if not round_started:
                                 state['search_rounds'] += 1
                                 round_started = True
+                        if c.name == 'read_section':
+                            state['section_read_calls'] += 1
                         executions.append((request, len(state['tool_calls']) - 1))
                     if executions:
                         save()
