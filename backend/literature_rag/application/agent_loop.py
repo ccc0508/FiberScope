@@ -200,7 +200,8 @@ class AgentLoop:
         coverage_priority = self.coverage_priority
         if self.unified_research:
             from .evidence_acceptance import (
-                EVIDENCE_LOOKUP_TOOLS, LOCATOR_READS, attach_submissions, check_id, supplement_lookup_allowed,
+                EVIDENCE_LOOKUP_TOOLS, LOCATOR_READS, attach_submissions, check_id, locator_handles,
+                supplement_lookup_allowed,
             )
             from .unified_research import (
                 EVIDENCE_CHECK_THRESHOLD, JEV_CHECKLIST_GUIDANCE,
@@ -426,10 +427,12 @@ class AgentLoop:
                        and tools_by_role[item['role']]}
             if not missing:
                 return
-            # A locator needs another turn and tool slot to retrieve its evidence.
+            # Locators need two tools. An unambiguous table can also be read without a model call.
             lookup_rounds = model_limit - closing_calls - len(state['model_calls']) - 2
+            locators = {locator for locator, _, _ in LOCATOR_READS.values()}
+            if tool_limit - tool_count >= 2 and 'read_table' in available:
+                locators.discard('find_table')
             if min(lookup_rounds, tool_limit - tool_count) < 2:
-                locators = {locator for locator, _, _ in LOCATOR_READS.values()}
                 tools_by_role = {role: [tool for tool in tools if tool not in locators]
                                  for role, tools in tools_by_role.items()}
                 missing = {key: item for key, item in missing.items() if tools_by_role[item['role']]}
@@ -643,7 +646,8 @@ class AgentLoop:
                                     planned_calls = list(grouped.values())
                                     supplement_message['content'] = (
                                         'The runtime will execute these approved lookups and deliver their results as data. '
-                                        'Reuse those results. For a locator, read only the exact relevant handle it returns. '
+                                        'The runtime also reads a unique table handle automatically. Reuse those results. '
+                                        'For other locator results, read only the exact relevant handle returned. '
                                         'If a gap remains, state it explicitly. Do not register new tasks.\n'
                                         + json.dumps(gaps, ensure_ascii=False)
                                     )
@@ -678,7 +682,7 @@ class AgentLoop:
                         )
                     event=dict(provider_call_id=c.id,request=request,status='started');state['tool_calls'].append(event)
                     if dispatched:
-                        event['dispatch']='approved_evidence_plan'
+                        event['dispatch'] = getattr(c, 'dispatch', 'approved_evidence_plan')
                     if schedule:event['coverage_schedule']=schedule
                     if c.name not in self.allowed_tools:
                         result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
@@ -793,6 +797,21 @@ class AgentLoop:
                             delivered_refs.update({r['ref']:r for r in records})
                         event['model_delivery']=dict(status='withheld' if withheld else 'delivered',reason=withheld,
                             messages=trace_messages(outgoing))
+                        if (dispatched and c.name == 'find_table' and schedule and schedule.get('target_checks')
+                                and result['status'] == 'completed' and not withheld
+                                and 'read_table' in self.allowed_tools and tool_count < tool_limit
+                                and deadline - self.clock() > b.reserve_seconds):
+                            directory = result.get('result', {})
+                            if directory.get('total') == 1 and directory.get('next_offset') is None:
+                                handles = list(locator_handles(directory, 'tables', 'chunk_id'))
+                                if len(handles) == 1 and handles[0][0] == request['document_id']:
+                                    document_id, chunk_id = handles[0]
+                                    planned_calls.append(SimpleNamespace(
+                                        id=f'{c.id}-read', name='read_table', dispatch='approved_table_read',
+                                        arguments=dict(document_id=document_id, chunk_id=chunk_id,
+                                                       reason='Read the unique table located by the approved lookup.',
+                                                       target_requirements=schedule['target_checks']),
+                                    ))
                         state['context_events'].append(dict(provider_call_id=c.id,
                             raw_chars=len(json.dumps({k:v for k,v in result.items() if k!='image'},ensure_ascii=False)),
                             delivered_chars=size(outgoing),withheld=withheld))

@@ -345,6 +345,64 @@ def test_jev_can_prompt_one_plan_after_finding_an_unplanned_gap(scenario):
         assert state["answer"] == initial_answer
 
 
+@pytest.mark.parametrize("matches,total,auto_read", [(1, 1, True), (0, 0, False), (2, 2, False), (1, 21, False)])
+def test_dispatched_table_lookup_reads_only_an_unambiguous_match(matches, total, auto_read):
+    key = "need_1_check_1"
+    initial = ToolCall("initial", "search_literature", {
+        "query": "Paper A validation", "document_id": "doc_a", "reason": "methods",
+        "requirements": [{
+            "role": "literature", "paper_quote": "Paper A", "source_quote": "validation value",
+            "deliverable": "Report the validation value", "acceptance_criteria": ["Give the validation value."],
+        }],
+    })
+    draft = json.dumps({"answer": "The paper mentions validation [1].", "coverage": []})
+    final = json.dumps({"answer": "The validation value was 0.2 [2]." if auto_read
+                        else "The exact validation value remains unclear [1].", "coverage": []})
+    plan = json.dumps([{"check_id": key, "gap": "Missing value in Table 7.", "next_lookup": {
+        "tool": "find_table", "document_id": "doc_a", "table_number": "7", "reason": "Locate Table 7.",
+    }}])
+    adapter = Fake([decision(calls=[initial]), decision(draft), decision(plan), decision(final)])
+    requests = []
+
+    def execute(request, *_):
+        requests.append(request)
+        results = {
+            "search_literature": {"evidence": [{"ref": "[1]", "document_id": "doc_a",
+                                               "text": "See Table 7 for validation."}]},
+            "find_table": {"tables": [{"chunk_id": f"table-{i}", "document_id": "doc_a"}
+                                      for i in range(matches)],
+                           "total": total, "next_offset": 20 if total > 20 else None},
+            "read_table": {"table": {"ref": "[2]", "document_id": "doc_a", "text": "Validation: 0.2."}},
+        }
+        return {"status": "completed", "result": results[request["tool"]]}
+
+    def judge(payload, _timeout):
+        if payload.get("lookup_review_only"):
+            return {f"lookup_{key}": {"actionable": 1, "not_actionable": 0}}, {}
+        return decisions(payload, {key: .95 if len(requests) == 3 else .2})
+
+    state = AgentLoop(
+        adapter, execute, lambda _: None, unified_research=True,
+        allowed_tools={"search_literature", "find_table", "read_table"},
+        evidence_judge=SimpleNamespace(model=MODEL, check=judge),
+        # Leave exactly one model turn for drafting after the approved lookup.
+        budget=AgentBudget(max_model_calls=9, max_search_calls=1),
+    ).run("What was the validation value in Paper A?", "table-auto-read")
+    expected_tools = ["search_literature", "find_table"]
+    if auto_read:
+        expected_tools.append("read_table")
+        assert requests[-1]["chunk_id"] == "table-0"
+        read = state["tool_calls"][-1]
+        assert read["dispatch"] == "approved_table_read"
+        assert read["coverage_schedule"]["target_checks"] == [key]
+        assert read["model_delivery"]["status"] == "delivered"
+    assert [request["tool"] for request in requests] == expected_tools
+    assert state["tool_attempts"] == len(expected_tools)
+    assert state["search_rounds"] == 1
+    assert len(adapter.requests) == 4
+    assert state["answer"] == json.loads(final)["answer"]
+
+
 def test_source_quote_repairs_keep_catalog_titles_after_retrieval():
     anchor = "参考Morais与Curto（2022）与Uddin等（2024）的划分方式"
     items = [
