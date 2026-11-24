@@ -80,6 +80,7 @@ const router = createRouter({
     { path: "/recycled", component: () => import("./pages/Recycled.vue") },
     { path: "/sources", component: () => import("./pages/Sources.vue") },
     { path: "/literature", component: () => import("./pages/Literature.vue") },
+    { path: "/evaluation", component: () => import("./pages/Evaluation.vue"), meta: { bare: true, title: "评测工作台" } },
     { path: "/literature/read/:recordId/:reference", component: () => import("./pages/LiteratureReader.vue"), meta: { bare: true, title: "阅读论文原文" } },
     { path: "/literature-data", component: () => import("./pages/LiteratureData.vue") },
     { path: "/prediction", component: () => import("./pages/Prediction.vue") },

@@ -20,6 +20,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from .catalog import INDICATORS, NOTES, VIEWS
 from .literature import router as literature_router
 from .prediction import router as prediction_router
+from .evaluation import router as evaluation_router
 
 
 class Settings(BaseSettings):
@@ -100,11 +101,12 @@ def create_app(settings: Settings | None = None):
 
     app = FastAPI(title='植物纤维数据分析 API', version='1.0.0', lifespan=lifespan)
     app.state.pool = pool
-    app.add_middleware(CORSMiddleware, allow_origins=config.cors_origins, allow_credentials=True, allow_methods=['GET','POST'], allow_headers=['Accept','Content-Type'])
+    app.add_middleware(CORSMiddleware, allow_origins=config.cors_origins, allow_credentials=True, allow_methods=['GET','POST'], allow_headers=['Accept','Content-Type','Authorization'])
     from .qa_tracing import QATraceMiddleware
     app.add_middleware(QATraceMiddleware)
     app.include_router(literature_router(allowed_origins=config.cors_origins))
     app.include_router(prediction_router)
+    app.include_router(evaluation_router())
 
     @app.middleware('http')
     async def request_id(request, call_next):

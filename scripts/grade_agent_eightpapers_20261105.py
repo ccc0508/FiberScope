@@ -12,11 +12,15 @@ from evaluate_agent_eightpapers_20261105 import ROOT, RUN, LIBRARY
 OUT=RUN/'jev'
 PACK=ROOT/'fiberscope-eval-8papers-v1'
 
-def prepare(case, config):
-    tid=case['id'];x=j.read_json(RUN/(tid+'.json'))
-    sources=j.read_json(PACK/'sources.json');by_id={s['document_id']:s for s in sources}
+def prepare(case, config, *, result=None, pack=None, library=None):
+    tid=case['id'];x=j.read_json(RUN/(tid+'.json')) if result is None else result
+    pack=PACK if pack is None else pack
+    library=LIBRARY if library is None else library
+    sources=j.read_json(pack/'sources.json');by_id={s['document_id']:s for s in sources}
     by_short={s['id']:s for s in sources}
-    visible=delivered_refs(x);claims=segments(x.get('answer',''));cites=[];texts=[]
+    recorded=x.get('citation_validation',{}).get('available_records')
+    visible={item['ref'] for item in recorded} if recorded is not None else delivered_refs(x)
+    claims=segments(x.get('answer',''));cites=[];texts=[]
     used={r for c in claims for r in c['citation_refs']}
     pages={}
     for r in case['evidence']:pages.setdefault(by_short[r['document']]['document_id'],set()).update(r['pages'])
@@ -37,7 +41,7 @@ def prepare(case, config):
     papers=[]
     for doc,nums in pages.items():
         s=by_id[doc]
-        with fitz.open(LIBRARY/s['library_relative_path']) as pdf:
+        with fitz.open(library/s['library_relative_path']) as pdf:
             text='\n'.join(f'\n[PDF physical page {p}]\n'+pdf[p-1].get_text() for p in sorted(nums) if 1<=p<=len(pdf))
         papers.append(dict(document_id=doc,title=s['title'],text=text,pages=sorted(nums)))
     ref=dict(question=case['question'],category=case['group'],expected_behavior=case['tool_expectation'],reference_answer=case['reference_answer'],
@@ -46,14 +50,15 @@ def prepare(case, config):
     state,questions,targets=g.packet(dict(candidate=candidate,reference_case=ref,task=dict(capabilities=['text'])),dict(source_documents=sources),dict(reference_evidence=[],paper_texts=papers),{})
     state['policy']['evidence']='Verified original PDF pages below establish truth, alongside the supplied reference. They are not automatically seen or cited by the answer model. Do not assume unprovided pages are absent from the full paper. Image metadata is not pixels; uncertain visual claims require manual review.'
     state['reference_case']['grading_notes']=case['grading_notes']
-    state['suite_rubric']=j.read_json(PACK/'rubric.json')
+    state['suite_rubric']=j.read_json(pack/'rubric.json')
     if case['group']=='no_paper':
         state['policy']['evidence']='No paper is required. Ground claims in the user input, arithmetic, unit conversion and requested transformation. Greetings/formatting are not scientific facts. Do not demand literature citations. Missing prior conversation requires clarification.'
         for k in list(questions):
             if targets[k]['kind'] in {'group','citation'}:del questions[k];del targets[k]
             elif targets[k]['kind']=='claim_type':questions[k]['criteria']={'fact':'Verifiable arithmetic, conversion, or claim about the provided input.','scope':'Greeting, clarification request, purely stylistic transformation or nonfactual instruction.'}
     request=g.request_for('jev',config,state,questions)
-    return dict(request=request,questions=questions,targets=targets,state=state,result_sha256=j.digest(RUN/(tid+'.json')))
+    return dict(request=request,questions=questions,targets=targets,state=state,
+                result_sha256=j.digest(RUN/(tid+'.json')) if result is None else j.sha(result))
 
 def decode(saved, body):
     answers=jev.validate_response(body,saved['request'],allow_auxiliary_inconsistency=True)

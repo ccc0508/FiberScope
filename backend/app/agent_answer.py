@@ -67,8 +67,8 @@ def adapt_run(state, evidence, trace, elapsed_ms):
         agent_run=state,agent_tool_trace=trace,agent_evidence=evidence,**review_summary)
 
 
-def run_agent_answer(config, question):
-    rid='web-'+uuid4().hex
+def run_agent_answer(config, question, *, run_id=None):
+    rid=run_id or 'web-'+uuid4().hex
     specialists=getattr(config,'agent_architecture','single')=='specialists'
     seconds=min(360 if specialists else 240,config.timeout_seconds-10)
     if seconds<30:raise HTTPException(503,'Agent问答超时配置至少需要40秒。')
