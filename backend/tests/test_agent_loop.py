@@ -305,7 +305,8 @@ def test_independent_queries_for_one_paper_share_round_and_keep_tool_charges():
         ToolCall(str(i), 'search_literature', dict(document_id='doc', query=query, reason='find'))
         for i, query in enumerate(['methods', 'methods', 'validation', 'third target'])
     ]
-    adapter = Fake([decision(calls=calls), decision('done')])
+    fourth = ToolCall('fourth', 'search_literature', dict(document_id='doc', query='fourth target', reason='find'))
+    adapter = Fake([decision(calls=calls), decision(calls=[fourth]), decision('done')])
     batches = []
 
     def execute_parallel(executions, *_):
@@ -314,9 +315,9 @@ def test_independent_queries_for_one_paper_share_round_and_keep_tool_charges():
 
     state = AgentLoop(adapter, lambda *_: None, lambda _: None, review_enabled=False,
                       parallel_search_executor=execute_parallel).run('Compare methods and validation', 'batch')
-    assert batches == [['methods', 'validation']]
-    assert state['search_calls'] == 2 and state['search_rounds'] == 1
-    assert state['tool_attempts'] == 3  # Two executed searches and one duplicate request.
+    assert batches == [['methods', 'validation', 'third target']]
+    assert state['search_calls'] == 3 and state['search_rounds'] == 1
+    assert state['tool_attempts'] == 4  # Three executed searches and one duplicate request.
     assert [e['result'].get('error_code') for e in state['tool_calls']] == [
-        None, 'duplicate_call', None, 'paper_query_budget',
+        None, 'duplicate_call', None, None, 'paper_query_budget',
     ]
