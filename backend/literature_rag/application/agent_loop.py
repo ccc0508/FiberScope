@@ -459,7 +459,6 @@ class AgentLoop:
                 'resolve a specific still-missing fact. Reuse evidence that already answers a check. '
                 'A rephrasing of an earlier search is not useful. Prefer read_table with document_id and '
                 'table_number for a known table. Do not guess table numbers or source handles. '
-                'Use scoped search for a specific fact or validation result. '
                 'Return only a JSON array of {check_id, gap, next_lookup}; next_lookup includes tool, reason '
                 'and its exact arguments. Omit checks without a useful path. Return [] when none qualify. '
                 'Do not answer the question, change the checklist, or execute tools in this planning step.\n'
