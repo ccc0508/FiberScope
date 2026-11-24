@@ -1,4 +1,5 @@
 from collections import Counter
+from json import dumps
 from time import monotonic, sleep
 
 from fastapi import FastAPI
@@ -26,7 +27,10 @@ def test_private_evaluation_flow_can_rescore_without_regenerating(monkeypatch, t
     def answer(config, question, *, run_id):
         prompts.append(question)
         return {
-            "agent_run": {"status": "completed", "answer": "saved candidate", "model_calls": [], "tool_calls": []},
+            "agent_run": {"status": "completed", "answer": "saved candidate", "model": "deepseek-flash",
+                          "model_calls": [{"usage": {"total_tokens": 120}}, {"usage": {"total_tokens": 80}},
+                                          {"model": "typesafe/jev-1.14", "usage": {"total_tokens": 50}}],
+                          "tool_calls": []},
             "agent_evidence": [], "agent_tool_trace": [],
         }
 
@@ -52,6 +56,7 @@ def test_private_evaluation_flow_can_rescore_without_regenerating(monkeypatch, t
         assert result.status_code == 202
         run = result.json()["id"]
         saved = wait_for(client, run)
+        assert saved["deepseek_usage"] == {"total_tokens": 200, "incomplete": False}
         case_url = f"/api/v1/evaluation/runs/{run}/cases/FS8-025"
         detail = client.get(case_url).json()
         assert detail["answer"]["answer"] == "saved candidate"
@@ -63,6 +68,36 @@ def test_private_evaluation_flow_can_rescore_without_regenerating(monkeypatch, t
         new_result = wait_for(client, rescore.json()["id"])
         assert new_result["parent"] == run
         assert new_result["cases"][0]["run_id"] == saved["cases"][0]["run_id"]
+        assert new_result["deepseek_usage"] == {"total_tokens": 0, "incomplete": False}
+        history = client.get("/api/v1/evaluation/runs").json()["runs"]
+        assert {entry["id"]: entry["deepseek_usage"]["total_tokens"] for entry in history} == {
+            run: 200, new_result["id"]: 0,
+        }
     expected = next(case for case in cases() if case["id"] == "FS8-025")
     assert prompts == [expected["prompt"]]
     assert not snapshots
+
+
+def test_migration_counts_failed_deepseek_calls_and_skips_reused_history(tmp_path):
+    queue = EvaluationQueue(LiteratureSettings(data_dir=tmp_path))
+    queue.initialize()
+    spec = dumps({"group": "literature", "category": "single"})
+    completed = dumps({"model": "deepseek-flash", "model_calls": [{"usage": {"total_tokens": 60}}]})
+    failed = dumps({"model": "deepseek-flash", "model_calls": [{"usage": {"total_tokens": 40}}, {"usage": None}]})
+    with queue.db() as db:
+        db.execute("ALTER TABLE evaluations DROP COLUMN deepseek_tokens")
+        db.execute("ALTER TABLE evaluations DROP COLUMN deepseek_usage_incomplete")
+        db.executemany("INSERT INTO batches(id,created_at,parent,manifest) VALUES(?, 'date', ?, '{}')",
+                       [("original", None), ("rescore", "original")])
+        db.executemany("""INSERT INTO evaluations(batch,id,position,spec,status,run_id,answer)
+            VALUES(?,?,0,?,?,?,?)""", [
+            ("original", "done", spec, "scored", "kept-run", completed),
+            ("original", "failed", spec, "answer_failed", "failed-run", failed),
+            ("rescore", "done", spec, "scored", "kept-run", completed),
+        ])
+
+    queue.initialize()
+    queue.initialize()
+
+    assert queue.detail("original")["deepseek_usage"] == {"total_tokens": 100, "incomplete": True}
+    assert queue.detail("rescore")["deepseek_usage"] == {"total_tokens": 0, "incomplete": False}
