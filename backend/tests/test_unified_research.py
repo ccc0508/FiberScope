@@ -177,6 +177,7 @@ def test_unified_agent_repairs_inline_citations_once(issue, repair_succeeds):
 def run_submission(outputs, *, close_on_tool_limit=False):
     lookup = ToolCall("paper", "search_literature", {
         "query": "paper A results", "document_id": "doc_a", "reason": "find results",
+        "initial_targets": [1, 2],
         "requirements": [
             {"role": "literature", "source_quote": "first result", "paper_quote": "paper A"},
             {"role": "literature", "source_quote": "second result", "paper_quote": "paper A"},

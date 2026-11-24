@@ -218,6 +218,12 @@ class AgentLoop:
             prompt = SYSTEM_PROMPT + "\nFor research with tool calls: " + research.submission_format
             if not research.evidence_only:
                 prompt += LEGACY_METRIC_GUIDANCE
+            else:
+                prompt += (
+                    '\nThe runtime binds tool results to their task IDs for Jev. When offered initial_targets, '
+                    'use the 1-based positions from that call\'s requirements. Once need IDs are assigned, '
+                    'set target_requirements on each evidence tool. Include only the tasks the call serves.'
+                )
             state['pipeline_version'] = 'unified-research-v1'
         if research and SECTION_TOOLS & self.allowed_tools:
             prompt += (
@@ -399,8 +405,7 @@ class AgentLoop:
             last_check_input = payload
             entry = dict(stage='evidence_check', model=self.evidence_judge.model, status='started',
                          input_messages=[], available_tools=[], usage=None, checked_items=payload['requirements'],
-                         submission_errors=submission_errors,
-                         lookup_history=payload.get('lookup_history', []))
+                         submission_errors=submission_errors)
             state['model_calls'].append(entry)
             save()
             try:
@@ -510,7 +515,7 @@ class AgentLoop:
                 dict(item) for item in last_check_input['requirements'] if item['requirement_id'] in missing
             ], lookup_review_only=True)
             errors = attach_submissions(payload, rows, [*state['inherited_tool_calls'], *state['tool_calls']],
-                                        plan_tools, require_all=False)
+                                        plan_tools)
             payload['requirements'] = [item for item in payload['requirements'] if 'next_lookup' in item]
             planning['submission_errors'] = errors
             remaining = deadline - self.clock() - b.reserve_seconds
@@ -520,8 +525,7 @@ class AgentLoop:
                 return
             entry = dict(stage='evidence_check', phase='supplement_plan', model=self.evidence_judge.model,
                          status='started', input_messages=[], available_tools=[], usage=None,
-                         checked_items=payload['requirements'], submission_errors=errors,
-                         lookup_history=payload.get('lookup_history', []))
+                         checked_items=payload['requirements'], submission_errors=errors)
             state['model_calls'].append(entry)
             save()
             try:
@@ -783,6 +787,10 @@ class AgentLoop:
                                 'unresolved literature task ID before evidence checking. '
                                 'If the list is empty, finish from the evidence already collected.'
                             ))
+                    elif schedule and schedule.get('task_binding_error'):
+                        result = dict(status='blocked', error_code='invalid_evidence_task_binding',
+                                      notice='Bind this lookup to the tasks it serves. Use initial_targets '
+                                             'with the registration, or target_requirements with assigned IDs.')
                     elif not approved_lookup:
                         result = dict(status='blocked', error_code='unapproved_evidence_lookup',
                                       notice='Use the approved untried operation or a handle returned by its locator.')
