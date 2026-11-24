@@ -109,6 +109,7 @@ class RetrievalService:
         top_k: int,
         min_score: float,
         *, document_ids: list[str] | None = None, max_seeds_per_document: int | None = None,
+        rank_only: bool = False,
     ) -> list[Evidence]:
         started = perf_counter()
         self.last_seed_evidences=[]
@@ -219,6 +220,8 @@ class RetrievalService:
                         input_policy='Unmodified user question and full source chunks; candidate pool includes a bounded query rewrite.',
                         vector_rank_note='vector_rank denotes input position in the fused candidate pool, not original-query vector rank')
         self.last_candidate_evidences = list(evidences)
+        if rank_only:
+            return evidences
         with stage('retrieval.select_seeds', top_k=top_k, max_seeds_per_document=max_seeds_per_document) as trace:
             selected = []
             counts_by_document = {}
@@ -239,19 +242,7 @@ class RetrievalService:
                 selected_set = set(selected_ids)
                 for candidate in self.last_rerank_diagnostics['candidates']:
                     candidate['selected'] = candidate['chunk_id'] in selected_set
-        with stage('retrieval.context_assembly', seed_ids=[e.chunk_id for e in evidences]) as trace:
-            if self.body_context_catalog is None:
-                evidences,self.last_context_diagnostics=assemble(evidences,self.metadata,self.context_options)
-                if self.table_relations is not None:
-                    from literature_rag.application.table_evidence import append_related_tables
-                    evidences,self.last_context_diagnostics=append_related_tables(evidences,self.table_relations,
-                        self.context_options,self.last_context_diagnostics)
-            else:
-                from literature_rag.application.body_context import assemble_body_context
-                evidences,self.last_context_diagnostics=assemble_body_context(evidences,self.body_context_catalog,
-                    self.context_options,table_relations=self.table_relations)
-            trace.update(diagnostics=self.last_context_diagnostics, result_ids=[e.chunk_id for e in evidences],
-                source_ids=[s.chunk_id for e in evidences for s in e.source_chunks], total_chars=sum(len(e.text) for e in evidences))
+        evidences = self.assemble_context(evidences, question)
         if self.table_relations is not None:
             self.last_context_diagnostics['table_retrieval']=self.vectors.last_diagnostics
         if self.reranker is not None:
@@ -266,13 +257,6 @@ class RetrievalService:
                 self.last_query_diagnostics.update(rewritten_selected_ids=[e.chunk_id for e in self.last_seed_evidences],
                     rewritten_final_source_ids=sorted(final_ids))
             self.last_context_diagnostics['query_rewrite'] = self.last_query_diagnostics
-        if self.visual_catalog is not None:
-            with stage('retrieval.visual_association') as trace:
-                evidences,visual_info=self.visual_catalog.attach(evidences,self.last_seed_evidences,question,
-                    self.visual_max_images,self.visual_max_total_bytes)
-                trace.update(visual_info)
-            self.last_context_diagnostics['visual_evidence']=visual_info
-            self.last_context_diagnostics['visual_retrieval']=getattr(self.vectors,'last_visual_diagnostics',{})
         logger.info(
             "retrieval_complete",
             extra={
@@ -283,4 +267,27 @@ class RetrievalService:
                 "min_score": min_score,
             },
         )
+        return evidences
+
+    def assemble_context(self, seeds: list[Evidence], question: str) -> list[Evidence]:
+        with stage('retrieval.context_assembly', seed_ids=[e.chunk_id for e in seeds]) as trace:
+            if self.body_context_catalog is None:
+                evidences,self.last_context_diagnostics=assemble(seeds,self.metadata,self.context_options)
+                if self.table_relations is not None:
+                    from literature_rag.application.table_evidence import append_related_tables
+                    evidences,self.last_context_diagnostics=append_related_tables(evidences,self.table_relations,
+                        self.context_options,self.last_context_diagnostics)
+            else:
+                from literature_rag.application.body_context import assemble_body_context
+                evidences,self.last_context_diagnostics=assemble_body_context(seeds,self.body_context_catalog,
+                    self.context_options,table_relations=self.table_relations)
+            trace.update(diagnostics=self.last_context_diagnostics, result_ids=[e.chunk_id for e in evidences],
+                source_ids=[s.chunk_id for e in evidences for s in e.source_chunks], total_chars=sum(len(e.text) for e in evidences))
+        if self.visual_catalog is not None:
+            with stage('retrieval.visual_association') as trace:
+                evidences,visual_info=self.visual_catalog.attach(evidences,seeds,question,
+                    self.visual_max_images,self.visual_max_total_bytes)
+                trace.update(visual_info)
+            self.last_context_diagnostics['visual_evidence']=visual_info
+            self.last_context_diagnostics['visual_retrieval']=getattr(self.vectors,'last_visual_diagnostics',{})
         return evidences

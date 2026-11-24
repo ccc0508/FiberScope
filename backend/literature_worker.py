@@ -36,7 +36,7 @@ def main(body):
     if not (root / 'chroma/chroma.sqlite3').is_file():
         raise FileNotFoundError('missing vector index')
     settings = Settings(_env_file=Path(__file__).resolve().parent / '.env.literature')
-    if 'tool_call' in body:
+    if 'tool_call' in body or 'assemble_scoped_search' in body:
         # The Agent already constructs its search query. Do not rewrite it again.
         settings = settings.model_copy(update={'query_rewrite_enabled': False, 'query_rewrite_mode': 'dual'})
     if settings.embedding_provider not in ('openai', 'dashscope') or settings.llm_provider not in ('openai', 'deepseek'):
@@ -180,6 +180,19 @@ def main(body):
             query_rewrite_mode=settings.query_rewrite_mode if settings.query_rewrite_enabled else 'dual',
             visual_catalog=visual_catalog,visual_max_images=settings.visual_max_images,
             visual_max_total_bytes=settings.visual_max_total_bytes)
+        if 'assemble_scoped_search' in body:
+            from literature_rag.application.tools import LiteratureTools, SEARCH_HITS_PER_DOCUMENT
+            from literature_rag.domain.models import Evidence
+            from literature_rag.stage_trace import records
+            payload = body['assemble_scoped_search']
+            seeds = [Evidence(**row) for row in payload['seeds']]
+            if not 1 <= len(seeds) <= SEARCH_HITS_PER_DOCUMENT or len({s.document_id for s in seeds}) != 1:
+                raise ValueError('Invalid shared search evidence')
+            expanded = retriever.assemble_context(seeds, payload['query'])
+            output = LiteratureTools(retriever, root, None).search_result(expanded)
+            print(json.dumps(dict(result=output, context_diagnostics=retriever.last_context_diagnostics,
+                                  internal_steps=records()), ensure_ascii=False))
+            return
         if 'tool_call' in body:
             from literature_rag.application.tools import LiteratureTools, ToolTraceStore
             store = ToolTraceStore(Path(__file__).resolve().parents[1]/'.rag-data/tool-traces.sqlite3')
@@ -187,7 +200,8 @@ def main(body):
                 provenance=configuration)
             result = toolset.call(body['tool_call'], run_id=body['run_id'],
                 parent_call_id=body.get('parent_call_id'),
-                defer_search_registration=body.get('defer_search_registration', False))
+                defer_search_registration=body.get('defer_search_registration', False),
+                rank_search_only=body.get('rank_search_only', False))
             print(json.dumps(result, ensure_ascii=False))
             return
         if settings.corrective_review_enabled:
