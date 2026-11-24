@@ -1,13 +1,13 @@
-"""The single research agent's instructions and evidence checklist."""
+"""The single research agent's instructions and task list."""
 
 import json
-from typing import Annotated, get_args
+from typing import get_args
 
-from pydantic import Field, StringConstraints, TypeAdapter, ValidationError
+from pydantic import Field, TypeAdapter, ValidationError
 
 from .citation_policy import citation_records
 from .coverage_priority import CoveragePriority
-from .evidence_acceptance import EVIDENCE_LOOKUP_TOOLS, check_id
+from .evidence_acceptance import EVIDENCE_LOOKUP_TOOLS
 from .task_coverage import CoverageItem, Requirement, ground_requirements
 from .tools import SECTION_BATCH_GUIDANCE, Search
 
@@ -30,8 +30,9 @@ Register requirements in your first tool turn. For literature, split each reques
 dimension into an evidence goal for each relevant paper whenever it needs its own source passage.
 When asked to compare data origins and validation, create separate data-origin and validation goals
 for each paper. Keep related values in one named table or conditions in one method passage together.
-Use one goal for linked facts that one lookup can resolve. A single goal may have several acceptance
-criteria. Omit optional details and reuse source findings for the final comparison.
+Use one goal for linked facts that one lookup can resolve. In deliverable, name the fact or result
+needed to answer the user, including any condition that changes the answer. Omit optional details
+and reuse source findings for the final comparison.
 For SQL, register the requested local result or metric as before.
 Copy source_quote as one continuous, verbatim span from the question. Multiple items may share
 that span. Put the specific result to deliver in deliverable in your own words, preserving the
@@ -82,19 +83,6 @@ LEGACY_METRIC_GUIDANCE = (
     "specify the actual result cells: ref, column, zero-based row and value (JSON null for NULL)."
 )
 EVIDENCE_CHECK_THRESHOLD = 0.80
-JEV_CHECKLIST_GUIDANCE = (
-    "\nIn acceptance_criteria, list only facts indispensable to the user's requested result. "
-    "Each check must say which paper-specific fact or SQL result the evidence must establish. "
-    "Name the subject and any condition that changes the conclusion, without assuming the answer. "
-    "A required check must cover a distinct fact; assign it to one task only. "
-    "For a comparison, verify the requested dimensions for each relevant paper. Reuse those facts "
-    "for the final comparison instead of registering them again as a separate evidence requirement. "
-    "Include instrument principles, model assumptions, exact units or other method details only "
-    "when explicitly requested or when omitting them would change the answer. "
-    "A citation location is part of attribution, not a separate check unless the question asks for it. "
-    "Register a SQL task only for requested local data, not advice about published datasets. "
-    "Combine gaps likely answered by the same source passage."
-)
 GOAL_SEARCH_GUIDANCE = (
     "\nWhen search_literature offers queries, submit one array covering the independent evidence goals you "
     "can search now. Each entry has a focused query and one target. In the first turn target is "
@@ -142,27 +130,11 @@ def evidence_check_input(question, requirements, events):
                             "ref", "document_id", "filename", "page_start", "page_end", "text",
                         ) if key in src
                     }
-    return {"question": question, "requirements": evidence_items(requirements), "evidence": list(evidence.values())}
-
-
-def evidence_items(requirements):
-    items = []
-    for task in requirements:
-        scope = {key: task[key] for key in ("requirement_id", "source_quote", "paper_quote", "role")
-                 if key in task}
-        criteria = task.get("acceptance_criteria")
-        if criteria:
-            items.extend(
-                dict(scope, check_id=f"{task['requirement_id']}_check_{index}", criterion=criterion, required=True)
-                for index, criterion in enumerate(criteria, start=1)
-            )
-        else:
-            # A registered task stays required when no finer criteria are supplied.
-            items.append(dict(scope, deliverable=task.get("deliverable") or task["source_quote"], required=True))
-    return items
-
-
-CriterionText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=240)]
+    tasks = [
+        {key: task[key] for key in ("requirement_id", "source_quote", "paper_quote", "role", "deliverable")}
+        for task in requirements
+    ]
+    return {"question": question, "requirements": tasks, "evidence": list(evidence.values())}
 
 
 class ResearchRequirement(Requirement):
@@ -170,10 +142,6 @@ class ResearchRequirement(Requirement):
                             description="Name of the requested paper or its title from the supplied directory.")
     deliverable: str = Field(min_length=1, max_length=1500,
                              description="A specific requested result in your own words. Keep the user's scope.")
-    acceptance_criteria: list[CriterionText] = Field(
-        default_factory=list, max_length=8,
-        description="Distinct indispensable facts, one per entry. Name the subject and necessary conditions.",
-    )
     correction_id: str = Field(default="", max_length=32, exclude=True,
                                description="Copy the registration error's correction_id when correcting that item.")
 
@@ -218,9 +186,9 @@ class ResearchChecklist(CoveragePriority):
             if not self.evidence_only or key not in LEGACY_COVERAGE_FIELDS
         )
         evidence_format = (
-            " Include evidence_checks in that JSON, one row per registered check_id. Each row uses "
+            " Include evidence_checks in that JSON, one row per registered task. Each row uses "
             "check_id, sources (up to three {ref, quote} objects), gap, and optional next_lookup. "
-            "Use the assigned check IDs from the registration feedback. For each supporting text ref, "
+            "Set check_id to the task's assigned need ID from the registration feedback. For each supporting text ref, "
             "copy a short verbatim sentence or table line. For a SQL result or image use its ref alone. "
             "Use an empty sources list when nothing directly supports the item. Use gap only for a "
             "specific unanswered fact. Give next_lookup only when a concrete unused operation can "
@@ -265,8 +233,6 @@ class ResearchChecklist(CoveragePriority):
         if self.evidence_only:
             properties.pop("metric")
             definitions.pop("Metric", None)
-        else:
-            properties.pop("acceptance_criteria")
         requirement_schema["maxItems"] = 24
         for schema in result.values():
             if can_register:
@@ -280,8 +246,8 @@ class ResearchChecklist(CoveragePriority):
             for tool, schema in result.items():
                 if any(tool in tools for tools in EVIDENCE_LOOKUP_TOOLS.values()):
                     schema["properties"]["target_requirements"]["description"] = (
-                        "Use only the pending check IDs in the latest evidence feedback. "
-                        "One lookup may cover several closely related checks."
+                        "Use only the pending task IDs in the latest evidence feedback. "
+                        "One lookup may cover several closely related tasks."
                     )
                     schema["required"].append("target_requirements")
         elif "search_literature" in result:
@@ -324,9 +290,7 @@ class ResearchChecklist(CoveragePriority):
             item = candidate.model_dump(exclude_unset=True)
             return all(item.get(key) == value for key, value in record["preserve_fields"].items())
         item = candidate.model_dump(exclude_none=True)
-        return (all(item.get(key) == record.get(key)
-                    for key in ("role", "deliverable", "paper_quote", "metric"))
-                and item.get("acceptance_criteria", []) == record.get("acceptance_criteria", []))
+        return all(item.get(key) == record.get(key) for key in ("role", "deliverable", "paper_quote", "metric"))
 
     def _registration_error(self, entry, index, error):
         errors = error.errors(include_input=False, include_context=False, include_url=False)
@@ -365,12 +329,11 @@ class ResearchChecklist(CoveragePriority):
                         normalized.append({"index": index, "field": "requirement_id", "reason": "server_assigned"})
                     # Older traces may omit a separate deliverable.
                     entry.setdefault("deliverable", entry.get("source_quote"))
-                    # Discard optional details from older registrations during replay.
+                    # Ignore the retired fields when replaying an older registration.
                     entry.pop("optional_details", None)
+                    entry.pop("acceptance_criteria", None)
                     if self.evidence_only:
                         entry.pop("metric", None)
-                    else:
-                        entry.pop("acceptance_criteria", None)
                     candidate = ResearchRequirement.model_validate(entry)
                 else:
                     rejected.append({"reason": "invalid_requirement", "index": index, "invalid_fields": [],
@@ -379,10 +342,6 @@ class ResearchChecklist(CoveragePriority):
             except ValidationError as error:
                 rejected.append(self._registration_error(entry, index, error))
                 continue
-            criteria = {}
-            for criterion in candidate.acceptance_criteria:
-                criteria.setdefault(" ".join(criterion.split()), criterion)
-            candidate.acceptance_criteria = list(criteria.values())
             correction = next((item for item in self.pending_registrations()
                                if self._matches_correction(candidate, item)), None)
             if self.locked and correction is None:
@@ -402,7 +361,6 @@ class ResearchChecklist(CoveragePriority):
                                  (item["correction_id"] == candidate.correction_id or
                                   all(item.get(k) == data.get(k) for k in (
                                       "role", "source_quote", "paper_quote", "deliverable",
-                                      "acceptance_criteria",
                                   )))), None)
                 if previous is None:
                     previous = {**data, "correction_id": f"quote_{len(self.rejections) + 1}"}
@@ -413,20 +371,8 @@ class ResearchChecklist(CoveragePriority):
             data.pop("requirement_id")
             if self.evidence_only:
                 data.pop("metric", None)
-            if not data.get("acceptance_criteria"):
-                data.pop("acceptance_criteria", None)
             current = next((item for item in self.requirements
                             if {k: v for k, v in item.items() if k != "requirement_id"} == data), None)
-            if current is None and data["role"] == "literature" and data["paper_quote"] and criteria:
-                # Within the same quoted request and paper, a rephrased task with the identical
-                # explicit evidence obligations can use the already assigned IDs.
-                current = next((item for item in self.requirements
-                                if all(item[key] == data[key] for key in ("role", "source_quote", "paper_quote"))
-                                and {" ".join(text.split()) for text in item.get("acceptance_criteria", [])}
-                                == criteria.keys()), None)
-                if current is not None:
-                    normalized.append({"index": index, "field": "requirements", "reason": "duplicate_evidence_contract",
-                                       "requirement_id": current["requirement_id"]})
             if current is None and len(self.requirements) < 24:
                 current = {**data, "requirement_id": f"need_{len(self.requirements) + 1}"}
                 self.requirements.append(current)
@@ -436,8 +382,7 @@ class ResearchChecklist(CoveragePriority):
                 for record in self.pending_registrations():
                     if record is correction or (
                         record.get("reason") == "not_verbatim_user_text" and
-                        all(record[k] == data[k] for k in ("role", "paper_quote", "deliverable")) and
-                        record.get("acceptance_criteria", []) == data.get("acceptance_criteria", [])
+                        all(record[k] == data[k] for k in ("role", "paper_quote", "deliverable"))
                     ):
                         record["resolved_by"] = current["requirement_id"]
         trace["task_contract"] = {"requirements": self.requirements, "rejected": self.rejections,
@@ -510,10 +455,6 @@ class ResearchChecklist(CoveragePriority):
                 {k: item[k] for k in ("requirement_id", "role", "paper_quote", "deliverable")}
                 for item in self.requirements
             ],
-            **({"evidence_checklist": [
-                {"check_id": check_id(item), "criterion": item.get("criterion") or item["deliverable"]}
-                for item in evidence_items(self.requirements)
-            ]} if self.evidence_only else {}),
             "rejected": rejected,
             **({"normalized": normalized} if normalized else {}),
         }
@@ -536,17 +477,17 @@ class ResearchChecklist(CoveragePriority):
         followup_search = self.locked and request["tool"] == "search_literature"
         supplement = trace.get("evidence_supplement_requested")
         lookup_role = next((role for role, tools in EVIDENCE_LOOKUP_TOOLS.items() if request["tool"] in tools), None)
-        pending_checks = None
+        pending_task_ids = None
         if supplement and lookup_role:
-            pending_checks = {
-                item.get("check_id", item["requirement_id"]): item["requirement_id"]
+            pending_task_ids = {
+                item["requirement_id"]
                 for item in trace["evidence_check"]["pending"] if item["role"] == lookup_role
             }
             selected = request.get("target_requirements")
             if isinstance(selected, list) and selected and all(
-                isinstance(check_id, str) and check_id in pending_checks for check_id in selected
+                isinstance(task_id, str) and task_id in pending_task_ids for task_id in selected
             ):
-                request["target_requirements"] = list(dict.fromkeys(pending_checks[check_id] for check_id in selected))
+                request["target_requirements"] = list(dict.fromkeys(selected))
             else:
                 selected = []
                 request.pop("target_requirements", None)
@@ -557,14 +498,14 @@ class ResearchChecklist(CoveragePriority):
             schedule["ignored_coverage_fields"] = ignored_fields
         if not self.locked and "missing_or_unknown_target_requirements" in schedule["errors"]:
             schedule["errors"].remove("missing_or_unknown_target_requirements")
-        if pending_checks is not None:
+        if pending_task_ids is not None:
             if selected:
                 schedule["target_checks"] = list(dict.fromkeys(selected))
                 if schedule["redirect_reason"] in {"covered_targets", "paper_without_source"}:
                     # Jev has already prioritized the pending facts over the parent's reported status.
                     schedule.update(redirect_reason=None, blocked=False)
             else:
-                schedule["search_scope_error" if followup_search else "evidence_scope_error"] = sorted(pending_checks)
+                schedule["search_scope_error" if followup_search else "evidence_scope_error"] = sorted(pending_task_ids)
         elif followup_search:
             self._check_search_targets(schedule, trace)
         if raw or rejected or normalized:

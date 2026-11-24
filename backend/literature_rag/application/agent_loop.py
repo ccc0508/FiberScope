@@ -206,17 +206,18 @@ class AgentLoop:
         coverage_priority = self.coverage_priority
         if self.unified_research:
             from .evidence_acceptance import (
-                EVIDENCE_LOOKUP_TOOLS, LOCATOR_READS, SECTION_TOOLS, attach_submissions, check_id, supplement_lookup_allowed,
+                EVIDENCE_LOOKUP_TOOLS, LOCATOR_READS, SECTION_TOOLS, attach_submissions, supplement_lookup_allowed,
             )
             from .unified_research import (
-                EVIDENCE_CHECK_THRESHOLD, GOAL_SEARCH_GUIDANCE, JEV_CHECKLIST_GUIDANCE,
+                EVIDENCE_CHECK_THRESHOLD, GOAL_SEARCH_GUIDANCE,
                 LEGACY_METRIC_GUIDANCE, RESEARCH_FORMAT_REPAIR, ResearchChecklist, SYSTEM_PROMPT,
                 evidence_check_input, extract_research_submission,
             )
             research = coverage_priority = ResearchChecklist(question, evidence_only=self.evidence_judge is not None)
             goal_search = self.parallel_search_executor is not None
             prompt = SYSTEM_PROMPT + "\nFor research with tool calls: " + research.submission_format
-            prompt += JEV_CHECKLIST_GUIDANCE if research.evidence_only else LEGACY_METRIC_GUIDANCE
+            if not research.evidence_only:
+                prompt += LEGACY_METRIC_GUIDANCE
             state['pipeline_version'] = 'unified-research-v1'
         if research and SECTION_TOOLS & self.allowed_tools:
             prompt += (
@@ -408,7 +409,7 @@ class AgentLoop:
                 unresolved, scope_excluded = [], []
                 sufficiency, necessity, lookup_scores = {}, {}, {}
                 for item in payload['requirements']:
-                    key = check_id(item)
+                    key = item['requirement_id']
                     probabilities = sufficiency[key] = scores[key]
                     scope = necessity[key] = scores[f'scope_{key}']
                     if scope['required'] <= scope['nonessential']:
@@ -451,8 +452,8 @@ class AgentLoop:
                                                   'lookup_tool_unavailable', 'lookup_already_attempted'}}
             available = available_tool_names(supplement=True)
             tools_by_role = {role: sorted(tools & available) for role, tools in EVIDENCE_LOOKUP_TOOLS.items()}
-            missing = {check_id(item): item for item in check['unresolved']
-                       if item['reason'] == 'no_new_lookup' and check_id(item) not in invalid_plans
+            missing = {item['requirement_id']: item for item in check['unresolved']
+                       if item['reason'] == 'no_new_lookup' and item['requirement_id'] not in invalid_plans
                        and tools_by_role[item['role']]}
             if not missing:
                 return
@@ -467,20 +468,21 @@ class AgentLoop:
                     return
             plan_tools = {tool for item in missing.values() for tool in tools_by_role[item['role']]}
             targets = [dict(check_id=key, paper=item.get('paper_quote', ''),
-                            criterion=item.get('criterion') or item.get('deliverable'),
+                            deliverable=item['deliverable'],
                             support=item['probabilities']['supported'],
                             available_tools=tools_by_role[item['role']]) for key, item in missing.items()]
             proposal = dict(role='user', content=(
-                'Jev identified the required checks below as lacking complete evidence. Inspect the results '
-                'already in context. For at most three checks, propose one new read-only operation that can '
-                'resolve a specific still-missing fact. Reuse evidence that already answers a check. '
+                'Jev identified the required tasks below as lacking complete evidence. Inspect the results '
+                'already in context. For at most three tasks, propose one new read-only operation that can '
+                'resolve a specific still-missing fact. Reuse evidence that already answers a task. '
                 'A rephrasing of an earlier search is not useful. Prefer read_table with document_id and '
                 'table_number for a known table. Do not guess table numbers or source handles. '
                 'If a missing paper fact needs chapter content and no section ID is known, propose list_sections '
                 'when available. Follow-up reads can use the section IDs it returns. '
-                'Return only a JSON array of {check_id, gap, next_lookup}; next_lookup includes tool, reason '
-                'and its exact arguments. Omit checks without a useful path. Return [] when none qualify. '
-                'Do not answer the question, change the checklist, or execute tools in this planning step.\n'
+                'Return only a JSON array of {check_id, gap, next_lookup}. Set check_id to the task ID. '
+                'Include tool, reason and its exact arguments in next_lookup. '
+                'Omit tasks without a useful path. Return [] when none qualify. '
+                'Do not answer the question, change the task list, or execute tools in this planning step.\n'
                 + json.dumps(dict(checks=targets, parameters={
                     tool: sorted(SCHEMAS[tool]['properties']) for tool in sorted(plan_tools)
                 }), ensure_ascii=False)
@@ -505,7 +507,7 @@ class AgentLoop:
                 save()
                 return
             payload = dict(last_check_input, requirements=[
-                dict(item) for item in last_check_input['requirements'] if check_id(item) in missing
+                dict(item) for item in last_check_input['requirements'] if item['requirement_id'] in missing
             ], lookup_review_only=True)
             errors = attach_submissions(payload, rows, [*state['inherited_tool_calls'], *state['tool_calls']],
                                         plan_tools, require_all=False)
@@ -524,11 +526,12 @@ class AgentLoop:
             save()
             try:
                 scores, usage = self.evidence_judge.check(payload, remaining)
-                lookup_scores = {check_id(item): scores[f'lookup_{check_id(item)}'] for item in payload['requirements']}
+                lookup_scores = {key: scores[f'lookup_{key}'] for key in
+                                 (item['requirement_id'] for item in payload['requirements'])}
                 entry.update(status='completed', usage=usage, lookup_probabilities=lookup_scores)
                 check['lookup_probabilities'].update(lookup_scores)
                 for item in payload['requirements']:
-                    key = check_id(item)
+                    key = item['requirement_id']
                     gap = missing[key]
                     probability = lookup_scores[key]
                     if probability['actionable'] > probability['not_actionable']:
@@ -637,7 +640,7 @@ class AgentLoop:
                             ]
                             gaps = [
                                 {
-                                    'target_id': check_id(item),
+                                    'target_id': item['requirement_id'],
                                     'paper': item.get('paper_quote', ''),
                                     'missing_fact': item['gap'],
                                     'next_lookup': item['next_lookup'],
@@ -742,7 +745,7 @@ class AgentLoop:
                     approved_lookup = True
                     if evidence_retry and schedule and schedule.get('target_checks'):
                         approved_lookup = supplement_lookup_allowed(
-                            request, schedule['target_checks'], {check_id(item): item for item in pending_evidence},
+                            request, schedule['target_checks'], {item['requirement_id']: item for item in pending_evidence},
                             [*state['inherited_tool_calls'], *state['tool_calls']],
                         )
                     event=dict(provider_call_id=c.id,request=request,status='started');state['tool_calls'].append(event)
@@ -776,7 +779,7 @@ class AgentLoop:
                                 'Use only the listed existing unresolved literature IDs. If your task was '
                                 'rejected at registration, correct it using requirement_registration before retrying.'
                                 if schedule.get('requirement_registration', {}).get('rejected') else
-                                'Use only the listed pending check IDs for a supplement, or an assigned '
+                                'Use only the listed pending task IDs for a supplement, or an assigned '
                                 'unresolved literature task ID before evidence checking. '
                                 'If the list is empty, finish from the evidence already collected.'
                             ))

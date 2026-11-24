@@ -321,7 +321,7 @@ def test_first_research_turn_returns_server_ids_without_requiring_targets():
 
 
 
-def test_jev_registration_reuses_duplicate_paper_task_and_preserves_distinct_results():
+def test_task_registration_reuses_duplicates_without_an_acceptance_checklist():
     question = "比较 Pennells 与 Motamedian 的 fines 定义和检测限制，判断数值能否合并。"
     checklist = ResearchChecklist(question, evidence_only=True)
     state = {}
@@ -329,30 +329,20 @@ def test_jev_registration_reuses_duplicate_paper_task_and_preserves_distinct_res
     task = {
         "role": "literature", "source_quote": question, "paper_quote": "Motamedian 2019",
         "deliverable": "比较 Motamedian 的 fines 尺寸定义与检测限制",
-        "acceptance_criteria": ["Motamedian 的 fines 尺寸定义", "哪些 fines 无法检测", "哪些  fines 无法检测"],
     }
-    duplicate = {
-        **task, "deliverable": "说明该论文如何划分 fines，以及仪器的漏测范围",
-        "acceptance_criteria": ["哪些 fines 无法检测", "Motamedian 的 fines 尺寸定义"],
-    }
-    other_paper = {**task, "paper_quote": "Pennells 2022",
-                   "acceptance_criteria": ["Pennells 的 fines 尺寸定义", "哪些 fines 无法检测"]}
-    distinct = {**task, "deliverable": "核对 Motamedian 的统计基准",
-                "acceptance_criteria": ["该文如何计算 fines 含量"]}
+    duplicate = {**task, "acceptance_criteria": ["旧版验收项不再登记"]}
+    other_paper = {**task, "paper_quote": "Pennells 2022", "deliverable": "比较 Pennells 的 fines 定义与检测限制"}
+    distinct = {**task, "deliverable": "核对 Motamedian 的统计基准"}
     _, schedule = checklist.prepare({
         **lookup, "requirements": [task, duplicate, other_paper, distinct],
     }, state)
     feedback = schedule["requirement_registration"]
     assert feedback["rejected"] == []
-    assert feedback["normalized"] == [
-        {"index": 1, "field": "requirements", "reason": "duplicate_evidence_contract", "requirement_id": "need_1"},
-    ]
     assert [item["deliverable"] for item in feedback["registered"]] == [
         task["deliverable"], other_paper["deliverable"], distinct["deliverable"],
     ]
-    assert [item["check_id"] for item in feedback["evidence_checklist"]] == [
-        "need_1_check_1", "need_1_check_2", "need_2_check_1", "need_2_check_2", "need_3_check_1",
-    ]
+    assert "evidence_checklist" not in feedback
+    assert all("acceptance_criteria" not in item for item in state["task_contract"]["requirements"])
 
 
 def test_invalid_task_shape_can_be_corrected_after_first_turn_without_adding_tasks():

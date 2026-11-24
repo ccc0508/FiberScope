@@ -40,10 +40,6 @@ class EvidenceSubmission(BaseModel):
     next_lookup: dict | None = None
 
 
-def check_id(item):
-    return item.get("check_id", item["requirement_id"])
-
-
 def lookup_signature(request):
     """Compare real tool parameters, including implicit defaults, without the rationale."""
     operation = INPUT.validate_python(request).model_dump(exclude_none=True)
@@ -75,7 +71,7 @@ def attempted_lookups(events):
 
 def attach_submissions(payload, raw_rows, events, available_tools, *, require_all=True):
     """Keep valid links and concrete plans, independently of malformed sibling rows."""
-    items = {check_id(item): item for item in payload["requirements"]}
+    items = {item["requirement_id"]: item for item in payload["requirements"]}
     evidence = {entry["ref"]: entry for entry in payload["evidence"] if "ref" in entry}
     history, tried = attempted_lookups(events)
     errors, submitted = [], set()
