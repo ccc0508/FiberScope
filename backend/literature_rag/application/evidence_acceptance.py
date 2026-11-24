@@ -70,7 +70,7 @@ def attempted_lookups(events):
     return history, keys
 
 
-def attach_submissions(payload, raw_rows, events, available_tools):
+def attach_submissions(payload, raw_rows, events, available_tools, *, require_all=True):
     """Keep valid links and concrete plans, independently of malformed sibling rows."""
     items = {check_id(item): item for item in payload["requirements"]}
     evidence = {entry["ref"]: entry for entry in payload["evidence"] if "ref" in entry}
@@ -120,7 +120,7 @@ def attach_submissions(payload, raw_rows, events, available_tools):
             errors.append({"check_id": key, "code": "lookup_already_attempted"})
         else:
             item["next_lookup"] = request
-    missing = sorted(items.keys() - submitted)
+    missing = sorted(items.keys() - submitted) if require_all else []
     if missing:
         errors.append({"code": "missing_evidence_submissions", "check_ids": missing})
     if any("next_lookup" in item for item in items.values()):
