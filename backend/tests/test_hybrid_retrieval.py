@@ -8,7 +8,7 @@ from literature_rag.stage_trace import StageTrace
 from tests.literature_fakes import SpyEmbedder
 
 
-def test_hybrid_retrieval_keeps_two_top_50_lists_and_sends_rrf_top_30_to_reranker(tmp_path):
+def test_hybrid_retrieval_keeps_two_top_50_lists_and_sends_rrf_top_50_to_reranker(tmp_path):
     metadata = SqliteMetadataStore(tmp_path / "metadata.sqlite3")
     metadata.initialize()
     for doc in ("requested", "other"):
@@ -30,7 +30,7 @@ def test_hybrid_retrieval_keeps_two_top_50_lists_and_sends_rrf_top_30_to_reranke
 
     def rerank(query, texts):
         assert query == "孔隙率 NRMSE"
-        assert len(texts) == 30
+        assert len(texts) == 50
         ranked.extend(texts)
         return [.9] * len(texts)
 
@@ -45,7 +45,7 @@ def test_hybrid_retrieval_keeps_two_top_50_lists_and_sends_rrf_top_30_to_reranke
     assert len(keyword_hits) == 50 and all(hit["chunk_id"].startswith("requested-") for hit in keyword_hits)
     fusion = stages["retrieval.rrf"]["output"]
     pool = fusion["selected_ids"]
-    assert len(pool) == len(set(pool)) == 30
+    assert len(pool) == len(set(pool)) == 50
     assert pool == stages["retrieval.rerank"]["input"]["candidate_ids"]
     ranks = {row["chunk_id"]: row["branch_ranks"] for row in fusion["candidates"]}
     assert any(ranks[cid].keys() == {"bm25"} for cid in pool)

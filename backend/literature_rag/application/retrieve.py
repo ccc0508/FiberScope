@@ -11,7 +11,7 @@ from literature_rag.ports.protocols import Embedder, MetadataStore, VectorStore,
 logger = logging.getLogger(__name__)
 VECTOR_CANDIDATE_LIMIT = 50
 BM25_CANDIDATE_LIMIT = 50
-HYBRID_RERANK_LIMIT = 30
+HYBRID_RERANK_LIMIT = 50
 
 
 def _is_unit_interval_number(value: object) -> bool:
