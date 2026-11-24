@@ -1,4 +1,5 @@
 import json
+from threading import Barrier
 from types import SimpleNamespace
 
 import pytest
@@ -25,21 +26,27 @@ def decisions(payload, supports, *, optional=(), actionable=True):
 @pytest.mark.parametrize("lookup_only", [False, True])
 def test_jev_uses_typed_choices_without_a_draft(lookup_only):
     payload = {"question": "Count groups.", "requirements": [{"requirement_id": "need_1",
-               "deliverable": "The number of groups.", "direct_sources": [{"ref": "[1]"}],
-               "gap": "Count unique groups.", "next_lookup": {"tool": "query_experiment_data"}}],
-               "evidence": [{"ref": "[1]", "rows": [[47]]}]}
+               "deliverable": "The number of groups.", "gap": "Count unique groups.",
+               "next_lookup": {"tool": "query_experiment_data"},
+               "evidence": [{"ref": "[1]", "rows": [[47]]}]}]}
     if lookup_only:
         payload["lookup_review_only"] = True
 
     def post(url, *, json, **kwargs):
         assert url.endswith("/alpha/decisions")
-        assert json["state"] == payload
+        state = json["state"]
+        assert state["question"] == payload["question"]
+        assert state.get("lookup_review_only", False) == lookup_only
+        item, = state["requirements"]
+        assert item["requirement_id"] == "need_1"
+        assert "evidence" not in item
+        assert state["evidence"] == [{"ref": "[1]", "rows": [[47]]}]
         if lookup_only:
             assert set(json["questions"]) == {"lookup_need_1"}
         else:
             assert json["questions"]["need_1"]["type"] == "choice"
             assert "only its deliverable" in json["questions"]["need_1"]["instructions"]
-            assert "direct_sources" in json["questions"]["need_1"]["instructions"]
+            assert "evidence bound to this task" in json["questions"]["need_1"]["instructions"]
             assert "Ignore evidence" in json["questions"]["scope_need_1"]["instructions"]
         assert "lookup_history" in json["questions"]["lookup_need_1"]["instructions"]
         assert json["provider"] == {"allow_fallbacks": False}
@@ -64,6 +71,50 @@ def test_jev_uses_typed_choices_without_a_draft(lookup_only):
         assert scores["scope_need_1"]["required"] == .98
     assert scores["lookup_need_1"]["not_actionable"] == .92
     assert usage == {"prompt_tokens": 100, "total_tokens": 100}
+
+
+def test_parallel_tool_evidence_is_sent_to_jev_in_isolated_requests():
+    question = "Find the data source and the validation method in Paper A."
+    tasks = [
+        dict(role="literature", source_quote=goal, paper_quote="Paper A", deliverable=goal)
+        for goal in ("data source", "validation method")
+    ]
+    search = ToolCall("initial", "search_literature", dict(reason="Separate source facts", requirements=tasks,
+        queries=[dict(target=i, query=task["deliverable"], document_id="doc_a")
+                 for i, task in enumerate(tasks, 1)]))
+    answer = json.dumps(dict(answer="The data were synthetic [1]. The study used a holdout [2].", coverage=[]))
+    adapter = Fake([decision(calls=[search]), decision(answer)])
+    concurrent = Barrier(2, timeout=3)
+    received = {}
+
+    def post(_, *, json, **kwargs):
+        state = json["state"]
+        task, = state["requirements"]
+        ref, = state["evidence"]
+        key = task["requirement_id"]
+        received[key] = ref["text"]
+        assert set(json["questions"]) == {key, f"scope_{key}"}
+        concurrent.wait()
+        return SimpleNamespace(
+            raise_for_status=lambda: None,
+            json=lambda: dict(model=MODEL, provider="TypeSafe", usage={"input_tokens": 10}, answers={
+                key: {"probabilities": {"supported": 1, "partially_supported": 0, "insufficient": 0}},
+                f"scope_{key}": {"probabilities": {"required": 1, "nonessential": 0}},
+            }),
+        )
+
+    def execute_batch(executions, *_):
+        return [dict(status="completed", result=dict(evidence=[dict(
+            ref=f"[{i}]", document_id="doc_a", text=tool["query"],
+        )])) for i, (tool, _) in enumerate(executions, 1)]
+
+    state = AgentLoop(adapter, lambda *_: pytest.fail("Expected grouped queries"), lambda _: None,
+        unified_research=True, paper_directory=[dict(document_id="doc_a", title="Paper A")],
+        evidence_judge=JevEvidenceJudge("test", post=post), parallel_search_executor=execute_batch,
+    ).run(question, "isolated-jev")
+    assert received == {"need_1": "data source", "need_2": "validation method"}
+    assert state["evidence_check_status"] == "supported"
+    assert state["model_calls"][-1]["usage"] == {"prompt_tokens": 20}
 
 
 @pytest.mark.parametrize("initial_support, supplements", [(.79, True), (.80, False)])
@@ -112,8 +163,8 @@ def test_supplement_targets_only_items_below_threshold(initial_support, suppleme
         assert [item["deliverable"] for item in payload["requirements"]] == ["local count", "paper result"]
         score = initial_support if len(requests) == 1 else .99
         if len(requests) == 1:
-            assert payload["requirements"][0]["direct_sources"] == [{"ref": "[1]"}]
-            assert payload["lookup_history"][0]["operation"]["tool"] == "query_experiment_data"
+            assert payload["requirements"][0]["evidence"][0]["ref"] == "[1]"
+            assert payload["requirements"][1]["evidence"] == []
         return decisions(payload, {"need_1": .98, "need_2": score})
 
     def execute(request, *_):
@@ -206,7 +257,8 @@ def test_low_evidence_score_does_not_authorize_unnecessary_lookup(case, reason):
 
     def judge(payload, _timeout):
         item, = payload["requirements"]
-        assert item["direct_sources"] == [{"ref": "[1]", "quote": "The result is  42."}]
+        assert [evidence["text"] for evidence in item["evidence"]] == ["The result is 42."]
+        assert "direct_sources" not in item
         assert ("next_lookup" in item) == (case not in {"tried", "no_gap"})
         return decisions(payload, {"need_1": .63},
                          optional=("need_1",) if case == "nonessential" else (),
@@ -225,7 +277,7 @@ def test_low_evidence_score_does_not_authorize_unnecessary_lookup(case, reason):
     assert [item["reason"] for item in checks["unresolved"]] == ([reason] if reason else [])
     assert bool(checks["scope_excluded"]) == (case == "nonessential")
     errors = [e["code"] for e in state["model_calls"][-1]["submission_errors"]]
-    assert "source_quote_not_found" in errors and "unavailable_evidence_ref" in errors
+    assert "source_quote_not_found" not in errors and "unavailable_evidence_ref" not in errors
 
 
 @pytest.mark.parametrize("ambiguous", [False, True])
@@ -268,7 +320,7 @@ def test_numbered_table_supplement_reads_or_authorizes_only_returned_handles(amb
         return {"status": "completed", "result": output}
 
     def judge(payload, _timeout):
-        return decisions(payload, {"need_1": 0.3 if len(payload["evidence"]) == 1 else 1.})
+        return decisions(payload, {"need_1": 0.3 if len(payload["requirements"][0]["evidence"]) == 1 else 1.})
 
     state = AgentLoop(
         adapter, execute, lambda _: None, unified_research=True,
@@ -398,7 +450,7 @@ def test_jev_can_prompt_one_plan_after_finding_an_unplanned_gap(scenario):
         if payload.get("lookup_review_only"):
             assert len(payload["requirements"]) == 1
             assert payload["requirements"][0]["next_lookup"] == new
-            assert len(payload["lookup_history"]) == 1
+            assert len(payload["requirements"][0]["lookup_history"]) == 1
             yes = float(scenario != "rejected")
             return {f"lookup_{check_id}": {"actionable": yes, "not_actionable": 1 - yes}}, {}
         return decisions(payload, {check_id: .99 if len(executed) == 2 else .1})
@@ -483,7 +535,7 @@ def test_source_quote_repairs_keep_catalog_titles_after_retrieval():
     assert [item["paper_quote"] for item in requests[0]["requirements"]] == [
         item["paper_quote"] for item in items
     ]
-    assert {entry["ref"] for entry in requests[0]["evidence"]} == {"[1]", "[2]"}
+    assert all(not item["evidence"] for item in requests[0]["requirements"])
 
 @pytest.mark.parametrize("search_budget", [1, 2])
 def test_jev_checks_each_current_task_and_groups_unmet_ones_in_one_query(search_budget):
@@ -495,7 +547,7 @@ def test_jev_checks_each_current_task_and_groups_unmet_ones_in_one_query(search_
     ]
     initial = ToolCall("initial", "search_literature", {
         "document_id": "doc_a", "query": "Paper A material and methods", "reason": "get evidence",
-        "requirements": tasks,
+        "requirements": tasks, "initial_targets": [1],
     })
     queries = [initial.arguments["query"]]
     supplement = {"document_id": "doc_a", "query": "data origin and validation",
@@ -527,7 +579,8 @@ def test_jev_checks_each_current_task_and_groups_unmet_ones_in_one_query(search_
         assert [r["deliverable"] for r in payload["requirements"]] == deliverables
         assert [r["requirement_id"] for r in payload["requirements"]] == ["need_1", "need_2", "need_3"]
         assert all("check_id" not in r and "criterion" not in r for r in payload["requirements"])
-        assert len(payload["evidence"]) == len(judge_calls)
+        expected = [["[1]"], [], []] if len(judge_calls) == 1 else [["[1]"], ["[2]"], ["[2]"]]
+        assert [[e["ref"] for e in task["evidence"]] for task in payload["requirements"]] == expected
         scores = (1., .15, .20) if len(judge_calls) == 1 else (1., .95, .99)
         return decisions(payload, dict(zip((item["requirement_id"] for item in payload["requirements"]), scores, strict=True)))
 

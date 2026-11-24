@@ -26,16 +26,9 @@ LOCATOR_READS = {
 }
 
 
-class EvidenceSource(BaseModel):
-    model_config = ConfigDict(extra="forbid", strict=True, str_strip_whitespace=True)
-    ref: str = Field(pattern=r"^\[[1-9]\d*\]$")
-    quote: str = Field(default="", max_length=600)
-
-
 class EvidenceSubmission(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True, str_strip_whitespace=True)
     check_id: str = Field(min_length=1, max_length=48)
-    sources: list[EvidenceSource] = Field(default_factory=list, max_length=3)
     gap: str = Field(default="", max_length=400)
     next_lookup: dict | None = None
 
@@ -69,13 +62,15 @@ def attempted_lookups(events):
     return history, keys
 
 
-def attach_submissions(payload, raw_rows, events, available_tools, *, require_all=True):
-    """Keep valid links and concrete plans, independently of malformed sibling rows."""
+def attach_submissions(payload, raw_rows, events, available_tools):
+    """Validate optional gap proposals independently of how tool evidence was bound."""
     items = {item["requirement_id"]: item for item in payload["requirements"]}
-    evidence = {entry["ref"]: entry for entry in payload["evidence"] if "ref" in entry}
-    history, tried = attempted_lookups(events)
+    _, tried = attempted_lookups(events)
     errors, submitted = [], set()
     for row in raw_rows:
+        if isinstance(row, dict) and "sources" in row:
+            # Older drafts can be replayed without trusting their hand-picked excerpts.
+            row = {key: value for key, value in row.items() if key != "sources"}
         try:
             submission = EvidenceSubmission.model_validate(row)
         except ValidationError as error:
@@ -88,19 +83,6 @@ def attach_submissions(payload, raw_rows, events, available_tools, *, require_al
             errors.append({"check_id": key, "code": "unknown_or_duplicate_check_id"})
             continue
         submitted.add(key)
-        sources = []
-        for source in submission.sources:
-            ref, quote = source.ref, source.quote
-            record = evidence.get(ref)
-            if record is None:
-                errors.append({"check_id": key, "ref": ref, "code": "unavailable_evidence_ref"})
-            elif "text" in record and (not quote or " ".join(quote.split()) not in " ".join(record["text"].split())):
-                errors.append({"check_id": key, "ref": ref, "code": "source_quote_not_found"})
-            else:
-                # SQL rows and image metadata are supplied as structured evidence.
-                sources.append({"ref": ref, **({"quote": quote} if "text" in record else {})})
-        if sources:
-            item["direct_sources"] = sources
         if submission.gap:
             item["gap"] = submission.gap
         if submission.next_lookup is None:
@@ -119,11 +101,10 @@ def attach_submissions(payload, raw_rows, events, available_tools, *, require_al
             errors.append({"check_id": key, "code": "lookup_already_attempted"})
         else:
             item["next_lookup"] = request
-    missing = sorted(items.keys() - submitted) if require_all else []
-    if missing:
-        errors.append({"code": "missing_evidence_submissions", "check_ids": missing})
-    if any("next_lookup" in item for item in items.values()):
-        payload["lookup_history"] = history
+            item["lookup_history"], _ = attempted_lookups([
+                event for event in events
+                if key in (event.get("coverage_schedule") or {}).get("target_requirements", [])
+            ])
     return errors
 
 

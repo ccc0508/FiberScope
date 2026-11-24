@@ -95,12 +95,16 @@ GOAL_SEARCH_GUIDANCE = (
 
 
 def evidence_check_input(question, requirements, events):
-    evidence = {}
+    evidence_by_task = {task["requirement_id"]: {} for task in requirements}
     for event in events:
         raw = event.get("result", {})
         delivery = event.get("model_delivery", {})
         if raw.get("status") != "completed" or delivery.get("status") != "delivered":
             continue
+        targets = (event.get("coverage_schedule") or {}).get("target_requirements", [])
+        if not any(target in evidence_by_task for target in targets):
+            continue
+        evidence = {}
         tool = event["request"]["tool"]
         result = raw.get("result", {})
         refs = {item["ref"] for item in citation_records(tool, raw)}
@@ -130,11 +134,17 @@ def evidence_check_input(question, requirements, events):
                             "ref", "document_id", "filename", "page_start", "page_end", "text",
                         ) if key in src
                     }
+        for target in targets:
+            if target in evidence_by_task:
+                evidence_by_task[target].update(evidence)
     tasks = [
-        {key: task[key] for key in ("requirement_id", "source_quote", "paper_quote", "role", "deliverable")}
+        dict(
+            {key: task[key] for key in ("requirement_id", "source_quote", "paper_quote", "role", "deliverable")},
+            evidence=list(evidence_by_task[task["requirement_id"]].values()),
+        )
         for task in requirements
     ]
-    return {"question": question, "requirements": tasks, "evidence": list(evidence.values())}
+    return {"question": question, "requirements": tasks}
 
 
 class ResearchRequirement(Requirement):
@@ -186,12 +196,10 @@ class ResearchChecklist(CoveragePriority):
             if not self.evidence_only or key not in LEGACY_COVERAGE_FIELDS
         )
         evidence_format = (
-            " Include evidence_checks in that JSON, one row per registered task. Each row uses "
-            "check_id, sources (up to three {ref, quote} objects), gap, and optional next_lookup. "
-            "Set check_id to the task's assigned need ID from the registration feedback. For each supporting text ref, "
-            "copy a short verbatim sentence or table line. For a SQL result or image use its ref alone. "
-            "Use an empty sources list when nothing directly supports the item. Use gap only for a "
-            "specific unanswered fact. Give next_lookup only when a concrete unused operation can "
+            " The runtime sends each task and its own tool results to Jev. "
+            "If a task has a specific unanswered fact, include it in evidence_checks with its assigned "
+            "need ID as check_id, gap, and optional next_lookup. Omit rows for tasks without gaps. "
+            "Give next_lookup only when a concrete unused operation can "
             "resolve that gap; use the exact tool arguments including tool and reason. "
             "If evidence already answers the item or there is no useful new lookup, omit next_lookup. "
             "Paraphrasing an earlier query alone does not make it useful. Handle locators are allowed "
@@ -234,7 +242,7 @@ class ResearchChecklist(CoveragePriority):
             properties.pop("metric")
             definitions.pop("Metric", None)
         requirement_schema["maxItems"] = 24
-        for schema in result.values():
+        for tool, schema in result.items():
             if can_register:
                 schema.setdefault("$defs", {}).update(definitions)
                 schema["properties"]["requirements"] = requirement_schema
@@ -242,6 +250,13 @@ class ResearchChecklist(CoveragePriority):
                 schema["required"].remove(key)
                 if not self.locked:
                     schema["properties"].pop(key)
+            if (self.evidence_only and not self.locked
+                    and any(tool in tools for tools in EVIDENCE_LOOKUP_TOOLS.values())
+                    and not (goal_search and tool == "search_literature")):
+                schema["properties"]["initial_targets"] = dict(
+                    type="array", items=dict(type="integer", minimum=1), minItems=1, maxItems=20,
+                    description="Positions (1-based) in this call's requirements that this operation serves.",
+                )
         if supplement:
             for tool, schema in result.items():
                 if any(tool in tools for tools in EVIDENCE_LOOKUP_TOOLS.values()):
@@ -462,7 +477,12 @@ class ResearchChecklist(CoveragePriority):
     def prepare(self, request, trace, *, initial_target=None):
         request = dict(request)
         raw = request.pop("requirements", [])
-        rejected, normalized = self.register(raw[:24] if isinstance(raw, list) else [], trace)
+        assigned = {}
+        rejected, normalized = self.register(raw[:24] if isinstance(raw, list) else [], trace, assigned=assigned)
+        positions = request.pop("initial_targets", None)
+        lookup_role = next((role for role, tools in EVIDENCE_LOOKUP_TOOLS.items() if request["tool"] in tools), None)
+        eligible = {item["requirement_id"] for item in self.requirements if item["role"] == lookup_role}
+        binding_error = False
         if not isinstance(raw, list):
             rejected.append({"reason": "invalid_requirements", "invalid_fields": ["requirements"],
                              "errors": [{"type": "list_type", "msg": "Expected a list of task objects"}]})
@@ -473,10 +493,18 @@ class ResearchChecklist(CoveragePriority):
             request.pop("revisit_reason", None)
             if initial_target:
                 request["target_requirements"] = [initial_target]
+            elif self.evidence_only and lookup_role:
+                if positions is not None:
+                    if (isinstance(positions, list) and positions and all(
+                            type(position) is int and assigned.get(position) in eligible for position in positions)):
+                        request["target_requirements"] = list(dict.fromkeys(assigned[pos] for pos in positions))
+                    else:
+                        binding_error = True
+                elif len(eligible) == 1:
+                    request["target_requirements"] = list(eligible)
         request["coverage_updates"], ignored_fields = self._normalize_coverage(request.get("coverage_updates", []))
         followup_search = self.locked and request["tool"] == "search_literature"
         supplement = trace.get("evidence_supplement_requested")
-        lookup_role = next((role for role, tools in EVIDENCE_LOOKUP_TOOLS.items() if request["tool"] in tools), None)
         pending_task_ids = None
         if supplement and lookup_role:
             pending_task_ids = {
@@ -491,13 +519,21 @@ class ResearchChecklist(CoveragePriority):
             else:
                 selected = []
                 request.pop("target_requirements", None)
-        elif self.locked and not followup_search and len(self.requirements) == 1:
-            request.setdefault("target_requirements", [self.requirements[0]["requirement_id"]])
+        elif self.locked and not followup_search:
+            if self.evidence_only and len(eligible) == 1:
+                request.setdefault("target_requirements", list(eligible))
+            elif not self.evidence_only and len(self.requirements) == 1:
+                request.setdefault("target_requirements", [self.requirements[0]["requirement_id"]])
         request, schedule = super().prepare(request, trace)
         if ignored_fields:
             schedule["ignored_coverage_fields"] = ignored_fields
         if not self.locked and "missing_or_unknown_target_requirements" in schedule["errors"]:
             schedule["errors"].remove("missing_or_unknown_target_requirements")
+        if self.evidence_only and lookup_role and not supplement:
+            if binding_error or (eligible and not set(schedule["target_requirements"]) <= eligible):
+                schedule["task_binding_error"] = True
+            elif len(eligible) > 1 and not schedule["target_requirements"] and not followup_search:
+                schedule["task_binding_error"] = True
         if pending_task_ids is not None:
             if selected:
                 schedule["target_checks"] = list(dict.fromkeys(selected))
@@ -544,7 +580,7 @@ class ResearchChecklist(CoveragePriority):
         if self.evidence_only:
             fields.add("evidence_checks")
             evidence_rows = payload.get("evidence_checks", [])
-            if isinstance(evidence_rows, list) and len(evidence_rows) <= 192:
+            if isinstance(evidence_rows, list) and len(evidence_rows) <= 24:
                 self.evidence_submissions = evidence_rows
             else:
                 issues.append({"code": "invalid_evidence_checks"})
