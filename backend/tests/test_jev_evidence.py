@@ -228,48 +228,56 @@ def test_low_evidence_score_does_not_authorize_unnecessary_lookup(case, reason):
     assert "source_quote_not_found" in errors and "unavailable_evidence_ref" in errors
 
 
-def test_table_locator_only_authorizes_the_returned_handle():
+@pytest.mark.parametrize("ambiguous", [False, True])
+def test_numbered_table_supplement_reads_or_authorizes_only_returned_handles(ambiguous):
     planned = {"document_id": "doc_a", "table_number": "2", "reason": "Table 2 gives the unit."}
     task = {"role": "literature", "paper_quote": "Paper A", "source_quote": "exact unit",
             "deliverable": "Give the exact unit", "acceptance_criteria": ["Give the unit."]}
     target = {"target_requirements": ["need_1_check_1"]}
-    adapter = Fake([
+    steps = [
         decision(calls=[ToolCall("initial", "search_literature", {
             "query": "Paper A overview", "reason": "first evidence", "requirements": [task],
         })]),
         decision(json.dumps({"answer": "The exact unit is unclear [1].", "coverage": [], "evidence_checks": [
             {"check_id": "need_1_check_1", "gap": "The actual tensile unit is missing.",
-             "next_lookup": {"tool": "find_table", **planned}},
+             "next_lookup": {"tool": "read_table", **planned}},
         ]})),
-        decision(calls=[ToolCall("locator", "find_table", {**planned, **target})]),
-        decision(calls=[
+        decision(calls=[ToolCall("locator", "read_table", {**planned, **target})]),
+    ]
+    if ambiguous:
+        steps.append(decision(calls=[
             ToolCall("bad", "read_table", {**target, "document_id": "doc_a", "chunk_id": "wrong", "reason": "unit"}),
             ToolCall("table", "read_table", {**target, "document_id": "doc_a", "chunk_id": "table-2", "reason": "unit"}),
-        ]),
-        decision(json.dumps({"answer": "The unit is N·m/g [2].", "coverage": []})),
-    ])
+        ]))
+    steps.append(decision(json.dumps({"answer": "The unit is N·m/g [2].", "coverage": []})))
+    adapter = Fake(steps)
     executed = []
 
     def execute(request, *_):
         tool = request["tool"]
         executed.append(tool)
-        outputs = {
-            "search_literature": {"evidence": [{"ref": "[1]", "document_id": "doc_a", "text": "Tensile index"}]},
-            "find_table": {"tables": [{"document_id": "doc_a", "chunk_id": "table-2"}]},
-            "read_table": {"table": {"ref": "[2]", "document_id": "doc_a", "text": "Tensile index (N·m/g)"}},
-        }
-        return {"status": "completed", "result": outputs[tool]}
+        if tool == "search_literature":
+            output = {"evidence": [{"ref": "[1]", "document_id": "doc_a", "text": "Tensile index"}]}
+        elif ambiguous and request.get("table_number"):
+            output = {"tables": [
+                {"document_id": "doc_a", "chunk_id": "table-2"},
+                {"document_id": "doc_a", "chunk_id": "continued-2"},
+            ]}
+        else:
+            output = {"table": {"ref": "[2]", "document_id": "doc_a", "text": "Tensile index (N·m/g)"}}
+        return {"status": "completed", "result": output}
 
     def judge(payload, _timeout):
         return decisions(payload, {"need_1_check_1": 0.3 if len(payload["evidence"]) == 1 else 1.})
 
     state = AgentLoop(
         adapter, execute, lambda _: None, unified_research=True,
-        allowed_tools={"search_literature", "find_table", "read_table"},
+        allowed_tools={"search_literature", "read_table"},
         evidence_judge=SimpleNamespace(model=MODEL, check=judge),
     ).run("What is the exact unit in Paper A?", "table-supplement")
-    assert executed == ["search_literature", "find_table", "read_table"]
-    assert state["tool_calls"][2]["result"]["error_code"] == "unapproved_evidence_lookup"
+    assert executed == ["search_literature", "read_table"] + (["read_table"] if ambiguous else [])
+    if ambiguous:
+        assert state["tool_calls"][2]["result"]["error_code"] == "unapproved_evidence_lookup"
     assert state["answer"] == "The unit is N·m/g [2]."
 
 

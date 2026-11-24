@@ -80,9 +80,10 @@ support a statement. If a requested fact is unavailable, say so; do not fill the
 REVIEW_VERSION='focused-evidence-review-v1'
 PROMPT += """\nUse find_documents to discover paper IDs by filename/title/author keywords (empty query lists the library).
 Use search_literature with document_id for targeted retrieval within one known paper.
-Filtering occurs before candidate selection. For a known table number, use find_table
-with document_id and table_number, then read_table with the returned chunk_id. Directory/table handles
-are not evidence until read. Do not guess IDs or resolve ambiguous papers/tables silently.
+Filtering occurs before candidate selection. Use read_table with document_id and either the printed
+table_number or a verified chunk_id. A unique number returns the table directly. For multiple matches,
+check the candidate captions and pages, then read the relevant chunk_id. Candidate handles alone are
+not evidence. Do not guess IDs or resolve ambiguous papers/tables silently.
 Use list_sections with document_id to obtain real section IDs before read_section when no section handle
 is available. A chapter number is not a section ID. On unknown_section use the returned directory to
 correct the ID and retry when budget permits; paginate list_sections if needed.
@@ -429,7 +430,7 @@ class AgentLoop:
             # A locator needs another turn and tool slot to retrieve its evidence.
             lookup_rounds = model_limit - closing_calls - len(state['model_calls']) - 2
             if min(lookup_rounds, tool_limit - tool_count) < 2:
-                locators = {locator for locator, _, _ in LOCATOR_READS.values()}
+                locators = {locator for tool, (locator, _, _) in LOCATOR_READS.items() if tool != locator}
                 tools_by_role = {role: [tool for tool in tools if tool not in locators]
                                  for role, tools in tools_by_role.items()}
                 missing = {key: item for key, item in missing.items() if tools_by_role[item['role']]}
@@ -444,7 +445,7 @@ class AgentLoop:
                 'Jev identified the required checks below as lacking complete evidence. Inspect the results '
                 'already in context. For at most three checks, propose one new read-only operation that can '
                 'resolve a specific still-missing fact. Reuse evidence that already answers a check. '
-                'A rephrasing of an earlier search is not useful. Prefer find_table with document_id and '
+                'A rephrasing of an earlier search is not useful. Prefer read_table with document_id and '
                 'table_number for a known table. Do not guess table numbers or source handles. '
                 'Use scoped search for a specific fact or validation result. '
                 'Return only a JSON array of {check_id, gap, next_lookup}; next_lookup includes tool, reason '

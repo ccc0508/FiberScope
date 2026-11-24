@@ -55,7 +55,7 @@ def register_result(db, record):
         result['reference_scope']='run'
     elif tool=='read_section':
         for e in result['sources']:e['ref']=text_ref(e)
-    elif tool=='read_table':result['table']['ref']=text_ref(result['table'])
+    elif tool=='read_table' and 'table' in result:result['table']['ref']=text_ref(result['table'])
     elif tool=='view_image':
         a=result['asset']
         result['ref']=add('source_image',dict(asset=a,document_hash=hashes.get(a['document_id']),
