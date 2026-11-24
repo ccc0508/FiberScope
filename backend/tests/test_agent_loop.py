@@ -303,10 +303,10 @@ def test_distinct_paper_searches_share_one_round_but_use_individual_tool_slots()
 def test_independent_queries_for_one_paper_share_round_and_keep_tool_charges():
     calls = [
         ToolCall(str(i), 'search_literature', dict(document_id='doc', query=query, reason='find'))
-        for i, query in enumerate(['methods', 'methods', 'validation', 'third target'])
+        for i, query in enumerate(['methods', 'methods', 'validation', 'third target', 'fourth target', 'fifth target'])
     ]
-    fourth = ToolCall('fourth', 'search_literature', dict(document_id='doc', query='fourth target', reason='find'))
-    adapter = Fake([decision(calls=calls), decision(calls=[fourth]), decision('done')])
+    sixth = ToolCall('sixth', 'search_literature', dict(document_id='doc', query='sixth target', reason='find'))
+    adapter = Fake([decision(calls=calls), decision(calls=[sixth]), decision('done')])
     batches = []
 
     def execute_parallel(executions, *_):
@@ -315,9 +315,9 @@ def test_independent_queries_for_one_paper_share_round_and_keep_tool_charges():
 
     state = AgentLoop(adapter, lambda *_: None, lambda _: None, review_enabled=False,
                       parallel_search_executor=execute_parallel).run('Compare methods and validation', 'batch')
-    assert batches == [['methods', 'validation', 'third target']]
-    assert state['search_calls'] == 3 and state['search_rounds'] == 1
-    assert state['tool_attempts'] == 4  # Three executed searches and one duplicate request.
+    assert batches == [['methods', 'validation', 'third target', 'fourth target', 'fifth target']]
+    assert state['search_calls'] == 5 and state['search_rounds'] == 1
+    assert state['tool_attempts'] == 6  # Five executed searches and one duplicate request.
     assert [e['result'].get('error_code') for e in state['tool_calls']] == [
-        None, 'duplicate_call', None, None, 'paper_query_budget',
+        None, 'duplicate_call', None, None, None, None, 'paper_query_budget',
     ]

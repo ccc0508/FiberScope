@@ -16,7 +16,7 @@ sys.path.insert(0,str(ROOT/'backend'))
 from literature_rag.application.agent_loop import AgentLoop,AgentBudget
 from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter
 from literature_rag.config import Settings
-from literature_rag.application.tools import SEARCH_HITS_PER_DOCUMENT, ToolTraceStore
+from literature_rag.application.tools import MAX_PARALLEL_SEARCHES, SEARCH_HITS_PER_DOCUMENT, ToolTraceStore
 from literature_rag.stage_trace import StageTrace, stage
 from literature_rag.application.paper_directory import load_paper_directory
 from literature_rag.state_io import save_state
@@ -97,7 +97,7 @@ def execute_parallel_searches(executions, run_id, timeout, *, execute, trace_sto
         return execute(request, run_id, remaining, context=context, defer_search_registration=True,
                        **({'rank_search_only': True} if shared else {}))
 
-    with ThreadPoolExecutor(max_workers=min(5, len(executions))) as pool:
+    with ThreadPoolExecutor(max_workers=min(MAX_PARALLEL_SEARCHES, len(executions))) as pool:
         futures = [pool.submit(search, request, context)
                    for (request, _), context in zip(executions, contexts, strict=True)]
         results = [future.result() for future in futures]
