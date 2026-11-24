@@ -1,5 +1,7 @@
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from json import dumps
+from threading import Event, Lock
 from time import monotonic, sleep
 
 from fastapi import FastAPI
@@ -49,6 +51,7 @@ def test_private_evaluation_flow_can_rescore_without_regenerating(monkeypatch, t
         assert client.get("/api/v1/evaluation/cases").status_code == 401
         client.headers["Authorization"] = "Bearer test-eval-token"
         listing = client.get("/api/v1/evaluation/cases").json()
+        assert listing["max_concurrent_cases"] == 5
         assert Counter(c["group"] for c in listing["cases"]) == {"literature": 24, "sql": 20, "mixed": 20, "non_paper": 6}
         assert all("reference" not in case and "prompt" not in case for case in listing["cases"])
         assert client.post("/api/v1/evaluation/runs", json={"ids": ["missing"]}).status_code == 422
@@ -76,6 +79,76 @@ def test_private_evaluation_flow_can_rescore_without_regenerating(monkeypatch, t
     expected = next(case for case in cases() if case["id"] == "FS8-025")
     assert prompts == [expected["prompt"]]
     assert not snapshots
+
+
+def test_queue_runs_at_most_five_cases_across_batches(monkeypatch, tmp_path):
+    queue = EvaluationQueue(LiteratureSettings(enabled=True, data_dir=tmp_path))
+    queue.initialize()
+    active = set()
+    counts = Counter()
+    guard = Lock()
+    five_started = Event()
+    sixth_started = Event()
+    release_one = Event()
+    release_all = Event()
+
+    def run_case(row):
+        key = (row["batch"], row["id"])
+        with guard:
+            counts[key] += 1
+            active.add(key)
+            if len(active) == 5:
+                five_started.set()
+            if len(counts) == 6:
+                sixth_started.set()
+        # Keep rows queued during setup to exercise the scheduler's in-flight deduplication.
+        try:
+            if key == (first, "case-0"):
+                assert release_one.wait(10)
+            else:
+                assert release_all.wait(10)
+            queue.update(row, status="scored")
+        finally:
+            with guard:
+                active.remove(key)
+
+    monkeypatch.setattr(queue, "run_case", run_case)
+    specs = [dict(id=f"case-{i}", group="literature", category="single") for i in range(5)]
+    first = queue.create(specs)
+    second = queue.create([specs[0]])
+    queue.start()
+    try:
+        assert five_started.wait(5)
+        assert not sixth_started.wait(.1)
+        assert queue.detail(second)["cases"][0]["status"] == "queued"
+        with guard:
+            assert len(active) == 5
+        release_one.set()
+        assert sixth_started.wait(5)
+        with guard:
+            assert len(active) == 5
+            assert counts == Counter({(first, spec["id"]): 1 for spec in specs} | {(second, "case-0"): 1})
+    finally:
+        release_one.set()
+        release_all.set()
+        queue.close()
+
+
+def test_concurrent_sql_cases_share_one_batch_snapshot(tmp_path):
+    snapshots = []
+
+    def snapshot(selected):
+        snapshots.append([row["id"] for row in selected])
+        return {"fingerprint": "fixture", "references": {}}
+
+    queue = EvaluationQueue(LiteratureSettings(data_dir=tmp_path), snapshot=snapshot)
+    queue.initialize()
+    specs = [dict(id=f"case-{i}", group="sql") for i in range(5)]
+    batch = queue.create(specs)
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        results = list(pool.map(queue.prepare_snapshot, [batch] * 5))
+    assert snapshots == [[row["id"] for row in specs]]
+    assert all(result["fingerprint"] == "fixture" for result in results)
 
 
 def test_migration_counts_failed_deepseek_calls_and_skips_reused_history(tmp_path):

@@ -49,6 +49,7 @@ const savedToken = "fiberscope:evaluation:access";
 const token = ref(sessionStorage.getItem(savedToken) ?? "");
 const unlocked = ref(false);
 const manifest = ref<Manifest>();
+const maxConcurrentCases = ref<number>();
 const catalog = ref<Case[]>([]);
 const chosen = ref(new Set<string>());
 const filter = ref<Group | "all">("all");
@@ -160,9 +161,10 @@ async function refresh() {
 
 async function unlock() {
   await useRequest(async () => {
-    const data = await request<{ cases: Case[]; manifest: Manifest }>("/cases");
+    const data = await request<{ cases: Case[]; manifest: Manifest; max_concurrent_cases?: number }>("/cases");
     catalog.value = data.cases;
     manifest.value = data.manifest;
+    maxConcurrentCases.value = data.max_concurrent_cases;
     sessionStorage.setItem(savedToken, token.value.trim());
     unlocked.value = true;
     await refresh();
@@ -306,7 +308,7 @@ onUnmounted(() => window.clearInterval(timer));
               <div><dt>答题方式</dt><dd>每题独立上下文</dd></div>
               <div><dt>评分模型</dt><dd>Jev</dd></div>
               <div v-if="manifest"><dt>单题预算</dt><dd>{{ manifest.budget.models }} 次模型 · {{ manifest.budget.tools }} 次工具</dd></div>
-              <div><dt>执行方式</dt><dd>后台逐题运行</dd></div>
+              <div><dt>执行方式</dt><dd>{{ maxConcurrentCases ? `最多 ${maxConcurrentCases} 题并行，其余排队` : "后台运行" }}</dd></div>
             </dl>
             <button class="primary start" :disabled="busy || !chosen.size" @click="start('/runs', { ids: [...chosen] })">
               <Play :size="16" /> 开始评测

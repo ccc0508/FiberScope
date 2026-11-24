@@ -1,15 +1,17 @@
 """Private benchmark API and one durable evaluation queue per installation."""
 
 import json
+import logging
 import os
 import sqlite3
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager, contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from secrets import compare_digest
-from threading import Event, Thread
+from threading import Event, Lock, Thread
 from time import perf_counter
 from uuid import uuid4
 
@@ -23,6 +25,8 @@ from .literature import LiteratureSettings
 from literature_rag.application.tools import encode
 
 ACTIVE = {"queued", "answering", "scoring"}
+MAX_CONCURRENT_CASES = 5
+logger = logging.getLogger(__name__)
 
 
 def now():
@@ -63,6 +67,7 @@ class EvaluationQueue:
         self.lock = FileLock(str(self.path.with_suffix(".lock")), thread_local=False)
         self.answer = answer
         self.snapshot = snapshot
+        self.snapshot_lock = Lock()
         self.wake = Event()
         self.stop = Event()
 
@@ -233,17 +238,50 @@ class EvaluationQueue:
 
     def work(self):
         try:
-            while not self.stop.is_set():
-                with self.db() as db:
-                    row = db.execute("""SELECT e.*, b.manifest, b.snapshot FROM evaluations e JOIN batches b ON b.id=e.batch
-                        WHERE e.status='queued' ORDER BY b.created_at,e.position LIMIT 1""").fetchone()
-                if row is None:
-                    self.wake.wait(2)
+            with ThreadPoolExecutor(max_workers=MAX_CONCURRENT_CASES, thread_name_prefix="evaluation-case") as pool:
+                running = {}
+                while not self.stop.is_set():
                     self.wake.clear()
-                    continue
-                self.run_case(row)
+                    for key, future in list(running.items()):
+                        if not future.done():
+                            continue
+                        del running[key]
+                        try:
+                            future.result()
+                        except Exception as error:
+                            logger.error("Evaluation case %s/%s failed: %s", *key, type(error).__name__)
+                            with self.db() as db:
+                                db.execute("UPDATE evaluations SET status='interrupted', error=? WHERE batch=? AND id=?",
+                                           (type(error).__name__, *key))
+                    if len(running) < MAX_CONCURRENT_CASES:
+                        with self.db() as db:
+                            rows = db.execute("""SELECT e.*, b.manifest, b.snapshot FROM evaluations e
+                                JOIN batches b ON b.id=e.batch WHERE e.status='queued'
+                                ORDER BY b.created_at,e.position LIMIT ?""", (MAX_CONCURRENT_CASES,)).fetchall()
+                        for row in rows:
+                            if self.stop.is_set() or len(running) == MAX_CONCURRENT_CASES:
+                                break
+                            key = (row["batch"], row["id"])
+                            if key not in running:
+                                future = pool.submit(self.run_case, row)
+                                running[key] = future
+                                future.add_done_callback(lambda _: self.wake.set())
+                    self.wake.wait(2)
         finally:
             self.lock.release()
+
+    def prepare_snapshot(self, batch):
+        with self.snapshot_lock:
+            with self.db() as db:
+                saved = self.batch(db, batch)["snapshot"]
+                if saved:
+                    return json.loads(saved)
+                selected = [json.loads(item["spec"]) for item in
+                            db.execute("SELECT spec FROM evaluations WHERE batch=? ORDER BY position", (batch,))]
+            snapshot = self.snapshot(selected)
+            with self.db() as db:
+                db.execute("UPDATE batches SET snapshot=? WHERE id=?", (encode(snapshot), batch))
+            return snapshot
 
     def run_case(self, row):
         try:
@@ -256,13 +294,8 @@ class EvaluationQueue:
             snapshot = json.loads(row["snapshot"]) if row["snapshot"] else None
             if spec["group"] in {"sql", "mixed"} and not row["answer"]:
                 if snapshot is None:
-                    with self.db() as db:
-                        selected = [json.loads(item["spec"]) for item in
-                                    db.execute("SELECT spec FROM evaluations WHERE batch=?", (row["batch"],))]
-                    snapshot = self.snapshot(selected)
-                    with self.db() as db:
-                        db.execute("UPDATE batches SET snapshot=? WHERE id=?", (encode(snapshot), row["batch"]))
-                elif self.snapshot([])["fingerprint"] != snapshot["fingerprint"]:
+                    snapshot = self.prepare_snapshot(row["batch"])
+                if self.snapshot([])["fingerprint"] != snapshot["fingerprint"]:
                     raise ValueError("实验数据已变化。请新建评测。")
         except Exception as error:
             self.update(row, status="setup_failed", error=str(error) if isinstance(error, ValueError) else type(error).__name__)
@@ -355,7 +388,7 @@ def router(config=None, admin_token=None):
     @routes.get("/cases")
     def catalog():
         return dict(groups=GROUPS, cases=[{k: case[k] for k in ("id", "group", "category", "question")} for case in cases()],
-                    manifest=runtime_manifest(config))
+                    manifest=runtime_manifest(config), max_concurrent_cases=MAX_CONCURRENT_CASES)
 
     @routes.post("/runs", status_code=202)
     def create(selection: Selection):
