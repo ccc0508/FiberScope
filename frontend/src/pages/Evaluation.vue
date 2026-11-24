@@ -16,6 +16,7 @@ type Manifest = {
 };
 type Run = {
   id: string; created_at: string; parent: string | null; manifest: Manifest; cases: Row[];
+  scoring_manifest?: Manifest;
   database_fingerprint: string | null; deepseek_usage: { total_tokens: number; incomplete: boolean };
 };
 type Grade = { score: number; model: string; metrics: Record<string, unknown>; review: Record<string, unknown>; decisions: Record<string, unknown>; usage: Record<string, number>; duration_ms?: number };
@@ -105,7 +106,9 @@ const configDifferences = computed(() => {
     ["模型或配置", JSON.stringify(a.configuration), JSON.stringify(b.configuration)],
     ["文献索引", JSON.stringify(a.library), JSON.stringify(b.library)],
     ["数据库", baseline.value.database_fingerprint, current.value.database_fingerprint],
-    ["评分规则", JSON.stringify(a.rubrics), JSON.stringify(b.rubrics)],
+    ["评分规则", JSON.stringify(baseline.value.scoring_manifest?.rubrics ?? a.rubrics),
+      JSON.stringify(current.value.scoring_manifest?.rubrics ?? b.rubrics)],
+    ["评分版本", (baseline.value.scoring_manifest ?? a).commit, (current.value.scoring_manifest ?? b).commit],
     ["运行预算", JSON.stringify(a.budget), JSON.stringify(b.budget)],
   ].filter(([, left, right]) => left !== right).map(([name]) => name);
 });
@@ -337,7 +340,7 @@ onUnmounted(() => window.clearInterval(timer));
           </aside>
 
           <section v-if="current && progress" class="panel report">
-            <div class="panel-title"><div><h2>本轮结果</h2><p class="hint">{{ date(current.created_at) }} · {{ current.manifest.commit?.slice(0, 7) ?? "部署版" }}</p></div>
+            <div class="panel-title"><div><h2>本轮结果</h2><p class="hint">{{ date(current.created_at) }} · 答题 {{ current.manifest.commit?.slice(0, 7) ?? "部署版" }}<template v-if="current.scoring_manifest?.commit !== current.manifest.commit && current.scoring_manifest"> · 评分 {{ current.scoring_manifest.commit?.slice(0, 7) ?? "部署版" }}</template></p></div>
               <button v-if="current.cases.some(row => ['answer_failed', 'setup_failed', 'interrupted'].includes(row.status))"
                 class="secondary" :disabled="busy || progress.settled !== current.cases.length" @click="start('/runs/' + current.id + '/retry', {})">补跑失败题</button>
             </div>

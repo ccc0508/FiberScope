@@ -16,23 +16,36 @@ sys.path.insert(0,str(ROOT/'backend'))
 from literature_rag.application.agent_loop import AgentLoop,AgentBudget
 from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter
 from literature_rag.config import Settings
+from literature_rag.application.context import DISCONTINUOUS_SEPARATOR
 from literature_rag.application.tools import MAX_PARALLEL_SEARCHES, SHARED_SEARCH_HITS_PER_DOCUMENT, ToolTraceStore
 from literature_rag.stage_trace import StageTrace, stage
 from literature_rag.application.paper_directory import load_paper_directory
 from literature_rag.state_io import save_state
 
 
-def finalize_shared_search(records, run_id, timeout, *, assemble):
+def finalize_shared_search(records, run_id, timeout, *, assemble, context_limits=None):
     """Select one distinct hit per query in rank order before filling the remaining quota."""
     ranked = [iter(record['candidate_evidence']) for record in records]
     seeds, owners = [], {}
+    used_chars = 0
+    budget_omissions = set()
     while len(seeds) < SHARED_SEARCH_HITS_PER_DOCUMENT:
         previous_size = len(seeds)
         for owner, candidates in enumerate(ranked):
-            candidate = next((row for row in candidates if row['chunk_id'] not in owners), None)
-            if candidate is not None:
-                owners[candidate['chunk_id']] = owner
+            for candidate in candidates:
+                key = candidate['chunk_id']
+                if key in owners:
+                    continue
+                text = candidate['text']
+                chars = len(text) + (len(DISCONTINUOUS_SEPARATOR) if seeds else 0)
+                if context_limits and (not text.strip() or len(text) > context_limits[0]
+                                       or used_chars + chars > context_limits[1]):
+                    budget_omissions.add(key)
+                    continue
+                owners[key] = {owner}
                 seeds.append({**candidate, 'ref': f'[{len(seeds) + 1}]'})
+                used_chars += chars
+                break
             if len(seeds) == SHARED_SEARCH_HITS_PER_DOCUMENT:
                 break
         if len(seeds) == previous_size:
@@ -50,20 +63,29 @@ def finalize_shared_search(records, run_id, timeout, *, assemble):
             record.pop('result', None)
             record.pop('result_sha256', None)
         return
+    # A query that had no distinct hit can reuse its own best-ranked shared hit.
+    covered = {owner for group in owners.values() for owner in group}
+    for owner, record in enumerate(records):
+        if owner not in covered:
+            for candidate in record['candidate_evidence']:
+                if candidate['chunk_id'] in owners:
+                    owners[candidate['chunk_id']].add(owner)
+                    break
     evidence_by_owner = defaultdict(list)
     for evidence in result.get('evidence', []):
         # A section can merge several hits, and a linked table can have its own
         # chunk ID. Both retain their original hit IDs.
         source_ids = [evidence['chunk_id'], *evidence.get('seed_chunk_ids', [])]
-        for owner in sorted({owners[chunk_id] for chunk_id in source_ids if chunk_id in owners}):
+        for owner in sorted({owner for chunk_id in source_ids for owner in owners.get(chunk_id, ())}):
             evidence_by_owner[owner].append(evidence)
     for owner, record in enumerate(records):
-        chosen = [s for s in seeds if owners[s['chunk_id']] == owner]
+        chosen = [s for s in seeds if owner in owners[s['chunk_id']]]
         with StageTrace() as trace:
             with stage('retrieval.select_seeds', top_k=SHARED_SEARCH_HITS_PER_DOCUMENT,
                        max_seeds_per_document=SHARED_SEARCH_HITS_PER_DOCUMENT, shared_call_ids=call_ids) as event:
                 event['selected_ids'] = [s['chunk_id'] for s in chosen]
                 event['shared_selected_ids'] = shared_ids
+                event['budget_omitted_ids'] = sorted(budget_omissions)
         record['seed_evidence'] = chosen
         record['internal_steps'].extend(trace.records)
         record['diagnostics']['last_context_diagnostics'] = output.get('context_diagnostics', {})
@@ -82,7 +104,7 @@ def finalize_shared_search(records, run_id, timeout, *, assemble):
 
 
 def execute_parallel_searches(executions, run_id, timeout, *, execute, trace_store, tool_context,
-                              assemble=None):
+                              assemble=None, context_limits=None):
     # Each subprocess has its own retriever. Register final evidence in request order.
     deadline = monotonic() + timeout
     contexts = [tool_context(index=index) for _, index in executions]
@@ -107,7 +129,8 @@ def execute_parallel_searches(executions, run_id, timeout, *, execute, trace_sto
             document = request.get('document_id')
             if record is not None and assemble is not None and document and document_counts[document] > 1:
                 batches[document].append(record)
-        assemblies = [pool.submit(finalize_shared_search, records, run_id, deadline - monotonic(), assemble=assemble)
+        assemblies = [pool.submit(finalize_shared_search, records, run_id, deadline - monotonic(),
+                                  assemble=assemble, context_limits=context_limits)
                       for records in batches.values()]
         for future in assemblies:
             future.result()
@@ -226,8 +249,10 @@ def main():
         return worker(dict(assemble_scoped_search=dict(seeds=seeds, query=query), run_id=rid), timeout)
 
     def parallel_search(executions, rid, timeout):
+        context_limits = (settings.context_max_evidence_chars, settings.context_max_total_chars)
         return execute_parallel_searches(executions, rid, timeout, execute=execute,
-                                         trace_store=store, tool_context=telemetry.active_tool_context, assemble=assemble)
+                                         trace_store=store, tool_context=telemetry.active_tool_context, assemble=assemble,
+                                         context_limits=context_limits if settings.context_expansion_enabled else None)
 
     directory=load_paper_directory(a.library)
     loop=AgentLoop

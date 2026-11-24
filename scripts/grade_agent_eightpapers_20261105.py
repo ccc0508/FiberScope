@@ -1,8 +1,8 @@
 """Independent Jev review of the eight-paper suite; no answer generation or selection."""
 import json, time, copy, re
+from hashlib import sha256
 from pathlib import Path
 import httpx
-import fitz
 import judge_qa_eval as j
 import judge_qa_jev as jev
 import qa_system_judge as g
@@ -40,8 +40,13 @@ def prepare(case, config, *, result=None, pack=None, library=None):
         cites.append(dict(ref=ref,text='UNAVAILABLE: this reference was not delivered to the answer model.',page_start=1,page_end=1,verification=dict(status='unavailable')))
     papers=[]
     for doc,nums in pages.items():
+        import fitz
+
         s=by_id[doc]
-        with fitz.open(library/s['library_relative_path']) as pdf:
+        original = (library/s['library_relative_path']).read_bytes()
+        if sha256(original).hexdigest() != s['sha256']:
+            raise ValueError('Reference PDF differs from the benchmark source')
+        with fitz.open(stream=original, filetype='pdf') as pdf:
             text='\n'.join(f'\n[PDF physical page {p}]\n'+pdf[p-1].get_text() for p in sorted(nums) if 1<=p<=len(pdf))
         papers.append(dict(document_id=doc,title=s['title'],text=text,pages=sorted(nums)))
     ref=dict(question=case['question'],category=case['group'],expected_behavior=case['tool_expectation'],reference_answer=case['reference_answer'],

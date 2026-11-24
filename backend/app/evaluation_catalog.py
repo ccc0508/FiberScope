@@ -45,8 +45,12 @@ def cases():
 
 def runtime_manifest(config):
     env = dotenv_values(ROOT / "backend/.env.literature", interpolate=False)
-    keys = ("RAG_LLM_MODEL", "RAG_LLM_THINKING_ENABLED", "RAG_EMBEDDING_MODEL", "RAG_RERANK_MODEL",
-            "RAG_RERANK_ENABLED", "RAG_QUERY_REWRITE_ENABLED")
+    keys = ("RAG_LLM_PROVIDER", "RAG_LLM_MODEL", "RAG_LLM_THINKING_ENABLED", "RAG_LLM_REASONING_EFFORT",
+            "RAG_EMBEDDING_PROVIDER", "RAG_EMBEDDING_MODEL", "RAG_EMBEDDING_DIMENSIONS", "RAG_RERANK_PROVIDER",
+            "RAG_RERANK_MODEL", "RAG_RERANK_ENABLED", "RAG_QUERY_REWRITE_ENABLED", "RAG_TOP_K", "RAG_MIN_SCORE",
+            "RAG_CONTEXT_EXPANSION_ENABLED", "RAG_CONTEXT_EXPANSION_STRATEGY", "RAG_CONTEXT_NEIGHBOR_RADIUS",
+            "RAG_CONTEXT_MAX_EVIDENCE_CHARS", "RAG_CONTEXT_MAX_TOTAL_CHARS", "RAG_TABLE_RETRIEVAL_ENABLED",
+            "RAG_VISUAL_RETRIEVAL_ENABLED", "RAG_VISUAL_MAX_IMAGES", "RAG_VISUAL_MAX_TOTAL_BYTES")
     config_values = {key: os.environ.get(key, env.get(key)) for key in keys}
     digest = hashlib.sha256()
     runtime_paths = [ROOT / "scripts/run_literature_agent.py", *sorted((ROOT / "backend/literature_rag").rglob("*.py")),
@@ -57,10 +61,13 @@ def runtime_manifest(config):
         digest.update(path.relative_to(ROOT).as_posix().encode())
         digest.update(path.read_bytes())
     library = {}
-    for path in (config.library_root / "metadata.sqlite3", config.library_root / "structure.json"):
+    root = config.library_root
+    index = root / "chroma"
+    vector_files = sorted(path for path in index.rglob("*") if path.suffix in {".bin", ".pickle", ".sqlite3"})
+    for path in (root / "metadata.sqlite3", root / "structure.json", *vector_files):
         if path.is_file():
             with path.open("rb") as handle:
-                library[path.name] = hashlib.file_digest(handle, "sha256").hexdigest()
+                library[path.relative_to(root).as_posix()] = hashlib.file_digest(handle, "sha256").hexdigest()
     try:
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT,
                                          text=True, stderr=subprocess.DEVNULL, timeout=5).strip()

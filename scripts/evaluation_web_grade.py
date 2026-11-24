@@ -158,5 +158,9 @@ if __name__ == "__main__":
         print(json.dumps(grade(data, config), ensure_ascii=False))
     except httpx.HTTPStatusError as error:
         print(json.dumps({"error": f"Jev HTTP {error.response.status_code}"}))
+    except ModuleNotFoundError as error:
+        if error.name != "fitz":
+            raise
+        print(json.dumps({"error": "文献评分缺少 PyMuPDF，请安装 backend/requirements-parsing-review.txt。"}, ensure_ascii=False))
     except (OSError, ValueError, KeyError, httpx.HTTPError) as error:
         print(json.dumps({"error": type(error).__name__}))

@@ -209,6 +209,42 @@ def test_first_sql_lookup_requires_a_valid_task_binding():
     assert "requirements" in adapter.requests[1][1]["query_experiment_data"]["required"]
 
 
+def test_locator_task_cannot_authorize_first_sql_and_failed_sql_does_not_lock_registration():
+    question = "Give the local count and the average."
+    count = dict(role="sql", source_quote="local count", deliverable="Count samples")
+    average = dict(role="sql", source_quote="average", deliverable="Find the mean")
+    query = dict(reason="Get result", sql="SELECT 1")
+    adapter = Fake([
+        decision(calls=[ToolCall("catalog", "describe_experiment_data", {
+            "views": ["fiber.v_sample_overview"], "reason": "Read view", "requirements": [count],
+        })]),
+        decision(calls=[ToolCall("unbound", "query_experiment_data", query)]),
+        decision(calls=[ToolCall("invalid", "query_experiment_data", {
+            "reason": "Get count", "requirements": [count], "initial_targets": [1],
+        })]),
+        decision(calls=[ToolCall("valid", "query_experiment_data", {
+            **query, "requirements": [count, average], "initial_targets": [1, 2],
+        })]),
+        decision(json.dumps(dict(answer="Results [1].", coverage=[]))),
+    ])
+
+    def execute(request, *_):
+        if request["tool"] == "describe_experiment_data":
+            return dict(status="completed", result=dict(views={}))
+        if "sql" not in request:
+            return dict(status="invalid_arguments", error_code="invalid_arguments")
+        return dict(status="completed", result=dict(ref="[1]", rows=[[1]], columns=["count"]))
+
+    state = AgentLoop(adapter, execute, lambda _: None, unified_research=True, evidence_supplement_enabled=False,
+                      parallel_search_executor=lambda *_: pytest.fail("No parallel searches")).run(question, "sql")
+    assert [event["status"] for event in state["tool_calls"]] == [
+        "completed", "blocked", "invalid_arguments", "completed",
+    ]
+    assert state["task_contract"]["locked"]
+    assert [task["deliverable"] for task in state["task_contract"]["requirements"]] == ["Count samples", "Find the mean"]
+    assert state["tool_calls"][-1]["coverage_schedule"]["target_requirements"] == ["need_1", "need_2"]
+
+
 def test_search_plan_rejects_a_broad_query_for_a_named_paper_and_duplicate_goals():
     question = "What evidence does Paper A report?"
     checklist = ResearchChecklist(question)
