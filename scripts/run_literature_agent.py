@@ -52,8 +52,11 @@ def finalize_shared_search(records, run_id, timeout, *, assemble):
         return
     evidence_by_owner = defaultdict(list)
     for evidence in result.get('evidence', []):
-        owner = owners[evidence['chunk_id']]
-        evidence_by_owner[owner].append(evidence)
+        # A section can merge several hits, and a linked table can have its own
+        # chunk ID. Both retain their original hit IDs.
+        source_ids = [evidence['chunk_id'], *evidence.get('seed_chunk_ids', [])]
+        for owner in sorted({owners[chunk_id] for chunk_id in source_ids if chunk_id in owners}):
+            evidence_by_owner[owner].append(evidence)
     for owner, record in enumerate(records):
         chosen = [s for s in seeds if owners[s['chunk_id']] == owner]
         with StageTrace() as trace:

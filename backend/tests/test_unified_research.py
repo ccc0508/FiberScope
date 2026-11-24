@@ -14,7 +14,8 @@ def test_unified_agent_direct_answer_preserves_user_output_format():
     answer = '[{"sample":"A","value":null}]'
     adapter = Fake([decision(answer)])
     state = AgentLoop(
-        adapter, lambda *_: None, lambda _: None, paper_directory=[], unified_research=True
+        adapter, lambda *_: None, lambda _: None, paper_directory=[], unified_research=True,
+        evidence_judge=SimpleNamespace(model="jev", check=lambda *_: pytest.fail("Direct answers need no Jev call")),
     ).run("Convert to JSON.", "direct")
     assert state["answer"] == answer
     assert state["review_status"] == "not_required"
@@ -93,6 +94,28 @@ def test_search_plan_rejects_a_broad_query_for_a_named_paper_and_duplicate_goals
     )
     assert [need for _, need, _ in operations] == ["need_1"]
     assert feedback["status"] == "accepted"
+
+
+@pytest.mark.parametrize("mention", ["Paper A", "Morais等（2022）"])
+def test_search_plan_rejects_an_id_from_the_wrong_known_paper(mention):
+    question = f"What is the validation in {mention}?"
+    checklist = ResearchChecklist(question)
+    directory = [
+        dict(document_id="a", title="Paper A", year=2022, authors=["Flávia P. Morais"]),
+        dict(document_id="b", title="Paper B", year=2022, authors=["John Doe"]),
+    ]
+    operations, feedback = checklist.plan_search(dict(
+        reason="Look up validation", requirements=[
+            dict(role="literature", paper_quote=mention, source_quote=question, deliverable="validation"),
+        ], queries=[
+            dict(target=1, query="validation B", document_id="b"),
+            dict(target=1, query="validation A", document_id="a"),
+        ],
+    ), {}, document_ids={"a", "b"}, paper_directory=directory)
+    assert [operation["document_id"] for _, _, operation in operations] == ["a"]
+    assert feedback["errors"] == [
+        dict(index=1, code="goal_document_mismatch", target="need_1", paper=mention, expected_document_ids=["a"]),
+    ]
 
 
 @pytest.mark.parametrize("issue,repair_succeeds", [
@@ -191,7 +214,7 @@ def run_submission(outputs, *, close_on_tool_limit=False):
             key = item["requirement_id"]
             scores[key] = {"supported": 1.0}
             scores[f"scope_{key}"] = {"required": 1.0, "nonessential": 0.0}
-        return scores, {}
+        return scores, {}, {}
 
     state = AgentLoop(
         adapter, lambda *_: {"status": "completed", "result": {"evidence": [

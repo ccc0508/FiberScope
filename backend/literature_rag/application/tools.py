@@ -413,7 +413,7 @@ class LiteratureTools:
             if chunk.document_id != document_id or chunk.kind != 'table':
                 continue
             caption = unescape(re.sub(r'<[^>]+>', ' ', chunk.text.split('<table', 1)[0]))
-            labels = re.findall(r'(?:\bTables?\s*|表\s*)([Ss]?\d+(?:[.-]\d+)*[a-z]?)(?!\w|[.-]\d)', caption, re.I)
+            labels = re.findall(r'(?:\bTables?\s*|表\s*)([Ss]?\d+(?:[.-]\d+)*[a-z]?)(?![a-z0-9_]|[.-]\d)', caption, re.I)
             if table_number.casefold() not in {label.casefold() for label in labels}:
                 continue
             rows.append(dict(chunk_id=chunk.id, document_id=chunk.document_id, page_start=chunk.page_start,
@@ -422,7 +422,8 @@ class LiteratureTools:
         end = min(offset + 20, len(rows))
         return dict(document_id=document_id, table_number=table_number, tables=rows[offset:end],
             total=len(rows), next_offset=end if end < len(rows) else None,
-            notice=('Candidate handles only. Check the captions and pages; use read_table with a matching chunk_id.'
+            notice=('Candidate handles only. Check captions and pages; use read_table with a matching chunk_id, '
+                    'or keep the same table_number and use next_offset for the next page.'
                     if rows else 'No matching table label in this paper. Verify the paper and table number or use scoped search.'))
 
     def list_section_batch(self, document_ids):
