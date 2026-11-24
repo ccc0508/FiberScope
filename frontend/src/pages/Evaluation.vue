@@ -38,7 +38,8 @@ const metricLabels: Record<string, string> = {
   point_score: "要点分", fact_support: "事实充分支持率（%）", citation_precision: "单条引用有效率（%）",
   citation_coverage: "引用组完整覆盖率（%）", boundary: "证据边界（满分 2）", strict_pass: "严格通过",
   sql_attempts: "SQL 调用", sql_completed: "SQL 成功", exact_reference_matches: "参考行集精确匹配",
-  reference_checks: "可对照查询数", tool_accuracy: "工具调用评分", passed: "日常题通过",
+  covered_reference_results: "参考行已覆盖", reference_checks: "可对照查询数",
+  tool_accuracy: "工具调用评分", passed: "日常题通过",
 };
 
 const savedToken = "fiberscope:evaluation:access";
@@ -51,6 +52,8 @@ const filter = ref<Group | "all">("all");
 const search = ref("");
 const tab = ref<"new" | "history">("new");
 const history = ref<Run[]>([]);
+const historySearch = ref("");
+const historyGroup = ref<Group | "all">("all");
 const current = ref<Run>();
 const baselineId = ref("");
 const detail = ref<Detail>();
@@ -74,6 +77,11 @@ const stats = (run: Run) => {
 };
 const progress = computed(() => current.value ? stats(current.value) : undefined);
 const baseline = computed(() => history.value.find(run => run.id === baselineId.value));
+const filteredHistory = computed(() => {
+  const query = historySearch.value.trim().toLowerCase();
+  return history.value.filter(run => (historyGroup.value === "all" || run.cases.some(row => row.group === historyGroup.value)) &&
+    (!query || (date(run.created_at) + " " + (run.manifest.commit ?? "")).toLowerCase().includes(query)));
+});
 const pairs = computed(() => {
   const old = new Map(baseline.value?.cases.map(row => [row.id, row]));
   return (current.value?.cases ?? []).flatMap(row => {
@@ -132,7 +140,17 @@ async function refresh() {
   history.value = runs;
   if (current.value) {
     const refreshed = runs.find(run => run.id === current.value?.id);
-    if (refreshed) current.value = refreshed;
+    if (refreshed) {
+      current.value = refreshed;
+      const opened = detail.value;
+      if (opened && refreshed.cases.find(row => row.id === opened.id)?.status !== opened.status) {
+        const updated = await request<Detail>("/runs/" + refreshed.id + "/cases/" + opened.id);
+        if (current.value?.id === refreshed.id && detail.value === opened) {
+          detail.value = updated;
+          calibrated.value = score(updated) ?? undefined;
+        }
+      }
+    }
   }
 }
 
@@ -163,6 +181,10 @@ function openRun(run: Run) {
   baselineId.value = run.parent ?? "";
   detail.value = undefined;
   tab.value = "history";
+}
+async function openHistory() {
+  tab.value = "history";
+  await useRequest(refresh);
 }
 async function start(path: string, body: unknown) {
   await useRequest(async () => {
@@ -243,7 +265,7 @@ onUnmounted(() => window.clearInterval(timer));
       <template v-else>
         <div class="tabs" aria-label="评测视图">
           <button :aria-pressed="tab === 'new'" @click="tab = 'new'"><Play :size="15" /> 新建评测</button>
-          <button :aria-pressed="tab === 'history'" @click="tab = 'history'"><History :size="16" /> 评测历史 <span>{{ history.length }}</span></button>
+          <button :aria-pressed="tab === 'history'" @click="openHistory"><History :size="16" /> 评测历史 <span>{{ history.length }}</span></button>
         </div>
 
         <div v-if="tab === 'new'" class="setup">
@@ -292,8 +314,15 @@ onUnmounted(() => window.clearInterval(timer));
         <div v-else class="history-layout">
           <aside class="panel archive">
             <h2>历史批次</h2>
-            <p v-if="!history.length" class="empty">还没有评测记录。</p>
-            <button v-for="run in history" :key="run.id" :aria-pressed="current?.id === run.id" @click="openRun(run)">
+            <div v-if="history.length" class="archive-filter">
+              <input v-model="historySearch" placeholder="日期或提交号" aria-label="搜索评测历史" />
+              <select v-model="historyGroup" aria-label="筛选评测历史题组">
+                <option value="all">全部题组</option>
+                <option v-for="suite in suites" :key="suite.key" :value="suite.key">{{ suite.name }}</option>
+              </select>
+            </div>
+            <p v-if="!filteredHistory.length" class="empty">{{ history.length ? "没有匹配的评测。" : "还没有评测记录。" }}</p>
+            <button v-for="run in filteredHistory" :key="run.id" :aria-pressed="current?.id === run.id" @click="openRun(run)">
               <strong>{{ date(run.created_at) }}</strong>
               <small>{{ run.cases.length }} 题 · {{ stats(run).settled }}/{{ run.cases.length }} 完成 · {{ run.manifest.commit?.slice(0, 7) ?? "部署版" }}</small>
               <span>{{ display(stats(run).mean) }}</span>
@@ -442,6 +471,8 @@ dt { color:var(--muted); } dd { margin:0; text-align:right; }
 .archive button[aria-pressed=true] { background:#e9f5f1; color:var(--accent); }
 .archive button span { position:absolute; right:4px; top:12px; color:var(--accent); font-variant-numeric:tabular-nums; }
 .archive button small { color:var(--muted); }
+.archive-filter { display:grid; gap:6px; margin-top:10px; }
+.archive-filter input { background:#fff; border:1px solid var(--line); border-radius:6px; padding:6px 9px; min-width:0; }
 .summary { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:14px 0 12px; }
 .summary div { display:grid; }
 .summary strong { font-size:24px; }

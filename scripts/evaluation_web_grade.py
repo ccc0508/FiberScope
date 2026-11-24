@@ -58,17 +58,29 @@ def sql_checks(expected, tools):
     completed = [call["result"]["result"] for call in calls if call["status"] == "completed"
                  and call.get("model_delivery", {}).get("status") == "delivered"]
     matched = 0
+    covered = 0
     for reference in expected:
         rows = [normalized_row(row) for row in reference["rows"]]
+        has_rows = False
         for output in completed:
             if output.get("truncated") or len(output.get("columns", [])) != len(reference["columns"]):
                 continue
             values = [normalized_row(row) for row in output["rows"]]
-            if (rows == values if reference["ordered"] else Counter(rows) == Counter(values)):
+            exact = rows == values if reference["ordered"] else Counter(rows) == Counter(values)
+            if exact:
                 matched += 1
+                has_rows = True
                 break
+            if not rows:
+                continue
+            if reference["ordered"]:
+                remaining = iter(values)
+                has_rows |= all(any(candidate == row for candidate in remaining) for row in rows)
+            else:
+                has_rows |= not (Counter(rows) - Counter(values))
+        covered += int(has_rows)
     return dict(sql_attempts=len(calls), sql_completed=sum(call["status"] == "completed" for call in calls),
-                exact_reference_matches=matched, reference_checks=len(expected))
+                exact_reference_matches=matched, covered_reference_results=covered, reference_checks=len(expected))
 
 
 def grade(payload, config, post=httpx.post):
