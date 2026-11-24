@@ -36,8 +36,8 @@ def validate_rewrite(question, query):
     return query
 
 
-def fuse_candidates(branches, allowed_ids, limit, *, branch_names=('original', 'rewritten')):
-    """Fuse two ranked lists without comparing their raw scores."""
+def fuse_candidates(branches, allowed_ids, limit):
+    """RRF on ranks, never compare cosine values across different queries."""
     by_id = {}
     for branch_index, matches in enumerate(branches):
         for rank, match in enumerate(matches, 1):
@@ -50,5 +50,5 @@ def fuse_candidates(branches, allowed_ids, limit, *, branch_names=('original', '
                      by_id[cid]['ranks'].get(0, 10**9), by_id[cid]['ranks'].get(1, 10**9), cid))
     selected = ordered[:limit]
     return [by_id[cid]['match'] for cid in selected], [dict(
-        chunk_id=cid, branch_ranks={branch_names[k]: v for k, v in by_id[cid]['ranks'].items()},
+        chunk_id=cid, branch_ranks={('original' if k == 0 else 'rewritten'): v for k, v in by_id[cid]['ranks'].items()},
         rrf_score=by_id[cid]['rrf_score'], selected=cid in selected) for cid in ordered]

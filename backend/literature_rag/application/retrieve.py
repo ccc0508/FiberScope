@@ -4,14 +4,12 @@ from math import isfinite
 from time import perf_counter
 
 from literature_rag.domain.errors import InfrastructureError, InputError, ProviderError
-from literature_rag.domain.models import Evidence, VectorMatch
+from literature_rag.domain.models import Evidence
 from literature_rag.application.context import ContextOptions, assemble
 from literature_rag.ports.protocols import Embedder, MetadataStore, VectorStore, Reranker, QueryRewriter
 
 logger = logging.getLogger(__name__)
 VECTOR_CANDIDATE_LIMIT = 50
-BM25_CANDIDATE_LIMIT = 50
-HYBRID_RERANK_LIMIT = 50
 
 
 def _is_unit_interval_number(value: object) -> bool:
@@ -38,7 +36,6 @@ class RetrievalService:
         visual_catalog=None,
         visual_max_images: int = 4,
         visual_max_total_bytes: int = 12*1024*1024,
-        *, keyword_corpus=None,
     ) -> None:
         self.metadata = metadata
         self.vectors = vectors
@@ -52,7 +49,6 @@ class RetrievalService:
         self.visual_catalog=visual_catalog
         self.visual_max_images=visual_max_images
         self.visual_max_total_bytes=visual_max_total_bytes
-        self.keyword_corpus = keyword_corpus
         if query_rewrite_mode not in {'dual', 'rewrite_only'}:
             raise ValueError('unsupported query rewrite mode')
         if query_rewrite_mode == 'rewrite_only' and query_rewriter is None:
@@ -162,21 +158,8 @@ class RetrievalService:
             branches = [self._search(question, min_score, 'original', document_ids)]
             if rewritten is not None:
                 branches.append(self._search(rewritten, min_score, 'rewritten', document_ids))
-        keyword_matches = []
-        if self.keyword_corpus is not None:
-            from literature_rag.application.bm25 import rank_bm25
-            with stage('retrieval.bm25_search', query=rerank_question, limit=BM25_CANDIDATE_LIMIT,
-                       document_ids=document_ids) as trace:
-                corpus = self.keyword_corpus(document_ids)
-                if self.body_context_catalog is not None:
-                    catalog_chunks = self.body_context_catalog.chunks
-                    corpus = (row for row in corpus if row[0] in catalog_chunks)
-                keyword_matches = rank_bm25(rerank_question, corpus, BM25_CANDIDATE_LIMIT)
-                trace['candidates'] = [dict(chunk_id=cid, score=score) for cid, score in keyword_matches]
         matches = branches[0]
-        all_ids = list(dict.fromkeys(
-            [m.chunk_id for branch in branches for m in branch] + [cid for cid, _ in keyword_matches]
-        ))
+        all_ids = list(dict.fromkeys(m.chunk_id for branch in branches for m in branch))
         with stage('retrieval.metadata', chunk_ids=all_ids) as trace:
             chunks = self.metadata.get_chunks(all_ids)
             trace['returned_chunk_ids'] = [c.id for c in chunks]
@@ -195,25 +178,6 @@ class RetrievalService:
                 rewrite_only_candidate_ids=[] if rewrite_only else sorted(rewritten_ids-original_ids),
                 unique_candidates=len(original_ids | rewritten_ids), fused_candidates=fused,
                 candidate_count_after_budget=sum(m.chunk_id in chunks_by_id for m in matches))
-        hybrid = None
-        if self.keyword_corpus is not None:
-            from literature_rag.application.query_rewrite import RRF_K, fuse_candidates
-            vector_matches = {m.chunk_id: m for m in matches}
-            # Evidence.score stays compatible with existing consumers. Lexical-only hits have
-            # no cosine score; the actual BM25 score and the missing cosine are kept in the trace.
-            keyword_rank = [vector_matches.get(cid, VectorMatch(cid, 0.0)) for cid, _ in keyword_matches]
-            with stage('retrieval.rrf', rank_constant=RRF_K, limit=HYBRID_RERANK_LIMIT) as trace:
-                matches, fused = fuse_candidates(
-                    [matches, keyword_rank], chunks_by_id, HYBRID_RERANK_LIMIT,
-                    branch_names=('vector', 'bm25'),
-                )
-                hybrid = dict(version='vector-bm25-rrf-v1', vector_limit=VECTOR_CANDIDATE_LIMIT,
-                              bm25_limit=BM25_CANDIDATE_LIMIT, rerank_limit=HYBRID_RERANK_LIMIT,
-                              vector_count=sum('vector' in row['branch_ranks'] for row in fused),
-                              bm25_count=sum('bm25' in row['branch_ranks'] for row in fused),
-                              selected_ids=[m.chunk_id for m in matches],
-                              candidates=fused)
-                trace.update(hybrid)
         evidences: list[Evidence] = []
         seen_chunk_ids: set[str] = set()
 
@@ -243,18 +207,8 @@ class RetrievalService:
             self.last_rerank_diagnostics={'enabled':True,'status':'started','candidate_count':len(evidences)}
             with stage('retrieval.rerank', query=rerank_question, candidate_ids=[e.chunk_id for e in evidences]) as trace:
                 evidences,self.last_rerank_diagnostics=rank_candidates(rerank_question,evidences,self.reranker)
-                if hybrid is not None:
-                    for row in self.last_rerank_diagnostics['candidates']:
-                        row['rrf_rank'] = row.pop('vector_rank')
-                        vector = vector_matches.get(row['chunk_id'])
-                        row['vector_score'] = vector.score if vector is not None else None
-                    self.last_rerank_diagnostics.update(
-                        candidate_order='Equal-weight RRF over vector and BM25 ranks',
-                        input_policy='Search query and the full source chunks retained by RRF.',
-                        score_policy='Cosine filters the vector branch only; final ordering uses reranker scores.',
-                    )
                 trace.update(self.last_rerank_diagnostics)
-            if self.query_rewriter is not None and hybrid is None:
+            if self.query_rewriter is not None:
                 if rewrite_only:
                     self.last_rerank_diagnostics.update(candidate_order='rewritten-query cosine ranks',
                         query_source='rewritten', query_text=rerank_question,
@@ -298,8 +252,6 @@ class RetrievalService:
                     self.context_options,table_relations=self.table_relations)
             trace.update(diagnostics=self.last_context_diagnostics, result_ids=[e.chunk_id for e in evidences],
                 source_ids=[s.chunk_id for e in evidences for s in e.source_chunks], total_chars=sum(len(e.text) for e in evidences))
-        if hybrid is not None:
-            self.last_context_diagnostics['hybrid_retrieval'] = hybrid
         if self.table_relations is not None:
             self.last_context_diagnostics['table_retrieval']=self.vectors.last_diagnostics
         if self.reranker is not None:
