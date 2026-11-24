@@ -21,6 +21,9 @@ class ContextOptions:
             raise ValueError('invalid context character budget')
 
 
+DISCONTINUOUS_SEPARATOR = '\n\n[原文片段不连续]\n\n'
+
+
 def join_chunks(chunks: Sequence[Chunk]) -> str:
     """Remove only exact legacy overlap. Structural paragraph/table units stay intact."""
     out='';previous=None
@@ -33,7 +36,7 @@ def join_chunks(chunks: Sequence[Chunk]) -> str:
                         overlap=size;break
             separator='' if overlap else '\n\n'
         else:
-            separator='\n\n[原文片段不连续]\n\n' if previous else ''
+            separator=DISCONTINUOUS_SEPARATOR if previous else ''
         out+=separator+chunk.text[overlap:];previous=chunk
     return out
 

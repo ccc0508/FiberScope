@@ -6,7 +6,6 @@ import os
 import sqlite3
 import subprocess
 import sys
-from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager, contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -122,19 +121,8 @@ class EvaluationQueue:
         if self.config.engine != "agent" or not self.config.enabled:
             return
         self.initialize()
-        try:
-            self.lock.acquire(timeout=0)
-        except Timeout:
-            return
-        try:
-            with self.db() as db:
-                db.execute("UPDATE evaluations SET status='interrupted', error='工作进程重启，请按需补跑。' "
-                           "WHERE status IN ('answering','scoring')")
-            self.thread = Thread(target=self.work, daemon=True, name="evaluation-worker")
-            self.thread.start()
-        except Exception:
-            self.lock.release()
-            raise
+        self.thread = Thread(target=self.work, daemon=True, name="evaluation-worker")
+        self.thread.start()
 
     def close(self):
         self.stop.set()
@@ -191,9 +179,21 @@ class EvaluationQueue:
                 MAX(deepseek_usage_incomplete OR
                     (status IN ('answer_failed','interrupted') AND run_id IS NOT NULL AND answer IS NULL)
                 ) AS incomplete FROM evaluations WHERE batch=?""", (batch,)).fetchone()
+            origin = run
+            while origin["parent"]:
+                reused = db.execute("""SELECT 1 FROM evaluations child JOIN evaluations parent
+                    ON parent.batch=? AND parent.id=child.id AND parent.run_id=child.run_id
+                    WHERE child.batch=? LIMIT 1""", (origin["parent"], origin["id"])).fetchone()
+                if not reused:
+                    break
+                origin = self.batch(db, origin["parent"])
         snapshot = json.loads(run["snapshot"]) if run["snapshot"] else {}
+        manifest = json.loads(origin["manifest"])
+        scoring_manifest = json.loads(run["manifest"])
+        manifest["cases_hash"] = scoring_manifest.get("cases_hash")
         return dict(id=run["id"], created_at=run["created_at"], parent=run["parent"],
-                    manifest=json.loads(run["manifest"]), database_fingerprint=snapshot.get("fingerprint"),
+                    manifest=manifest, scoring_manifest=scoring_manifest,
+                    database_fingerprint=snapshot.get("fingerprint"),
                     deepseek_usage=dict(total_tokens=usage["total_tokens"], incomplete=bool(usage["incomplete"])),
                     cases=[self.summary(row) for row in rows])
 
@@ -237,38 +237,52 @@ class EvaluationQueue:
                        (*values.values(), row["batch"], row["id"]))
 
     def work(self):
+        while not self.stop.is_set():
+            try:
+                self.lock.acquire(timeout=0)
+                break
+            except Timeout:
+                self.stop.wait(.5)
+        else:
+            return
+        running = {}
         try:
-            with ThreadPoolExecutor(max_workers=MAX_CONCURRENT_CASES, thread_name_prefix="evaluation-case") as pool:
-                running = {}
-                while not self.stop.is_set():
-                    self.wake.clear()
-                    for key, future in list(running.items()):
-                        if not future.done():
-                            continue
-                        del running[key]
-                        try:
-                            future.result()
-                        except Exception as error:
-                            logger.error("Evaluation case %s/%s failed: %s", *key, type(error).__name__)
-                            with self.db() as db:
-                                db.execute("UPDATE evaluations SET status='interrupted', error=? WHERE batch=? AND id=?",
-                                           (type(error).__name__, *key))
-                    if len(running) < MAX_CONCURRENT_CASES:
-                        with self.db() as db:
-                            rows = db.execute("""SELECT e.*, b.manifest, b.snapshot FROM evaluations e
-                                JOIN batches b ON b.id=e.batch WHERE e.status='queued'
-                                ORDER BY b.created_at,e.position LIMIT ?""", (MAX_CONCURRENT_CASES,)).fetchall()
-                        for row in rows:
-                            if self.stop.is_set() or len(running) == MAX_CONCURRENT_CASES:
-                                break
-                            key = (row["batch"], row["id"])
-                            if key not in running:
-                                future = pool.submit(self.run_case, row)
-                                running[key] = future
-                                future.add_done_callback(lambda _: self.wake.set())
-                    self.wake.wait(2)
+            with self.db() as db:
+                db.execute("UPDATE evaluations SET status='interrupted', error='工作进程重启，请按需补跑。' "
+                           "WHERE status IN ('answering','scoring')")
+            while not self.stop.is_set():
+                self.wake.clear()
+                running = {key: work for key, work in running.items() if not work[1].is_set()}
+                if len(running) < MAX_CONCURRENT_CASES:
+                    with self.db() as db:
+                        rows = db.execute("""SELECT e.*, b.manifest, b.snapshot FROM evaluations e
+                            JOIN batches b ON b.id=e.batch WHERE e.status='queued'
+                            ORDER BY b.created_at,e.position LIMIT ?""", (MAX_CONCURRENT_CASES,)).fetchall()
+                    for row in rows:
+                        if self.stop.is_set() or len(running) == MAX_CONCURRENT_CASES:
+                            break
+                        key = (row["batch"], row["id"])
+                        if key not in running:
+                            done = Event()
+                            thread = Thread(target=self.run_work_item, args=(row, done),
+                                            daemon=True, name="evaluation-case")
+                            thread.start()
+                            running[key] = (thread, done)
+                self.wake.wait(2)
         finally:
+            for thread, _ in running.values():
+                thread.join()
             self.lock.release()
+
+    def run_work_item(self, row, done):
+        try:
+            self.run_case(row)
+        except Exception as error:
+            logger.error("Evaluation case %s/%s failed: %s", row["batch"], row["id"], type(error).__name__)
+            self.update(row, status="interrupted", error=type(error).__name__)
+        finally:
+            done.set()
+            self.wake.set()
 
     def prepare_snapshot(self, batch):
         with self.snapshot_lock:
@@ -313,11 +327,14 @@ class EvaluationQueue:
                 result = dict(record["agent_run"], evidence=record["agent_evidence"],
                               tool_trace=record["agent_tool_trace"])
                 link = ROOT / ".rag-data/agent-runs" / run_id / "langfuse.json"
-                if link.is_file():
-                    result["langfuse"] = read_json(link)
+                try:
+                    if link.is_file():
+                        result["langfuse"] = read_json(link)
+                except (OSError, ValueError):
+                    pass
                 result.update(case_id=spec["id"], end_to_end_ms=round((perf_counter() - start) * 1000))
-                if spec["group"] in {"sql", "mixed"} and self.snapshot([])["fingerprint"] != snapshot["fingerprint"]:
-                    result["status"], result["stop_reason"] = "failed", "database_changed_during_run"
+                if spec["group"] in {"sql", "mixed"}:
+                    result["database_verified"] = False
                 complete = result["status"] == "completed" and bool(result["answer"].strip())
                 tokens, incomplete = deepseek_usage(result)
                 self.update(row, answer=encode(result), duration_ms=result["end_to_end_ms"],
@@ -333,6 +350,13 @@ class EvaluationQueue:
         self.update(row, status="scoring")
         grading_started = perf_counter()
         try:
+            if result.get("database_verified") is False:
+                if self.snapshot([])["fingerprint"] != snapshot["fingerprint"]:
+                    result.update(status="failed", stop_reason="database_changed_during_run")
+                    self.update(row, status="answer_failed", error=result["stop_reason"], answer=encode(result))
+                    return
+                result["database_verified"] = True
+                self.update(row, answer=encode(result))
             references = (snapshot or {}).get("references", {}).get(spec["id"], [])
             scored = self.grade(spec, result, references)
             if "error" in scored:

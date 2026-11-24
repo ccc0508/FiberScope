@@ -3,7 +3,9 @@ from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from threading import Event, Lock
 from time import monotonic, sleep
+from types import SimpleNamespace
 
+import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -149,6 +151,94 @@ def test_concurrent_sql_cases_share_one_batch_snapshot(tmp_path):
         results = list(pool.map(queue.prepare_snapshot, [batch] * 5))
     assert snapshots == [[row["id"] for row in specs]]
     assert all(result["fingerprint"] == "fixture" for result in results)
+
+
+def test_new_evaluation_worker_takes_over_after_old_owner_exits(monkeypatch, tmp_path):
+    monkeypatch.setattr("app.evaluation.runtime_manifest", lambda _: {})
+    config = LiteratureSettings(enabled=True, data_dir=tmp_path)
+    old, new = EvaluationQueue(config), EvaluationQueue(config)
+    started = Event()
+    monkeypatch.setattr(new, "run_case", lambda row: (new.update(row, status="scored"), started.set()))
+    old.lock.acquire(timeout=0)
+    try:
+        new.start()
+        new.create([dict(id="case", group="non_paper", category="daily")])
+        assert not started.wait(.1)
+    finally:
+        old.lock.release()
+    try:
+        assert started.wait(4)
+    finally:
+        new.close()
+
+
+@pytest.mark.parametrize("mismatch", [False, True])
+def test_sql_verification_keeps_saved_answer_and_usage(monkeypatch, tmp_path, mismatch):
+    version = {"commit": "answer-version"}
+    monkeypatch.setattr("app.evaluation.runtime_manifest", lambda _: dict(version))
+    checks = Counter()
+
+    def snapshot(selected):
+        if not selected:
+            checks["verify"] += 1
+            if checks["verify"] == 2:
+                if mismatch:
+                    return {"fingerprint": "changed"}
+                raise OSError("temporary database failure")
+        return {"fingerprint": "fixture", "references": {}}
+
+    def answer(*args, **kwargs):
+        checks["answer"] += 1
+        return dict(agent_run=dict(status="completed", answer="saved", model="deepseek-flash",
+                                  model_calls=[dict(usage={"total_tokens": 100})]), agent_evidence=[], agent_tool_trace=[])
+
+    queue = EvaluationQueue(LiteratureSettings(data_dir=tmp_path), snapshot=snapshot, answer=answer)
+    monkeypatch.setattr(queue, "grade", lambda *_: {"score": 90})
+    queue.initialize()
+    spec = dict(id="SQL", group="sql", category="count", prompt="question", question="question", reference={})
+
+    def run(batch):
+        with queue.db() as db:
+            row = db.execute("""SELECT e.*, b.manifest, b.snapshot FROM evaluations e
+                JOIN batches b ON b.id=e.batch WHERE e.batch=?""", (batch,)).fetchone()
+        queue.run_case(row)
+
+    batch = queue.create([spec])
+    run(batch)
+    first = queue.detail_case(batch, "SQL")
+    assert first["answer"]["answer"] == "saved"
+    assert queue.detail(batch)["deepseek_usage"] == {"total_tokens": 100, "incomplete": False}
+    if mismatch:
+        assert first["status"] == "answer_failed"
+        assert first["answer"]["stop_reason"] == "database_changed_during_run"
+        return
+    assert first["status"] == "score_failed"
+    version["commit"] = "grading-version"
+    rescore = queue.rerun(batch, "rescore")
+    run(rescore)
+    result = queue.detail(rescore)
+    assert result["manifest"]["commit"] == "answer-version"
+    assert result["scoring_manifest"]["commit"] == "grading-version"
+    assert result["cases"][0]["status"] == "scored"
+    assert result["deepseek_usage"] == {"total_tokens": 0, "incomplete": False}
+    assert checks["answer"] == 1
+
+
+def test_manifest_captures_context_budget_and_vector_index(monkeypatch, tmp_path):
+    from app.evaluation_catalog import runtime_manifest
+
+    index = tmp_path / "chroma"
+    index.mkdir()
+    (index / "chroma.sqlite3").write_bytes(b"version A")
+    config = SimpleNamespace(library_root=tmp_path, agent_architecture="single", timeout_seconds=370)
+    monkeypatch.setenv("RAG_CONTEXT_MAX_TOTAL_CHARS", "24000")
+    first = runtime_manifest(config)
+    monkeypatch.setenv("RAG_CONTEXT_MAX_TOTAL_CHARS", "40000")
+    (index / "chroma.sqlite3").write_bytes(b"version B")
+    second = runtime_manifest(config)
+    assert second["configuration"]["RAG_CONTEXT_MAX_TOTAL_CHARS"] == "40000"
+    assert first["configuration"] != second["configuration"]
+    assert first["library"]["chroma/chroma.sqlite3"] != second["library"]["chroma/chroma.sqlite3"]
 
 
 def test_migration_counts_failed_deepseek_calls_and_skips_reused_history(tmp_path):

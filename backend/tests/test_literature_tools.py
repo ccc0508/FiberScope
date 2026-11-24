@@ -373,3 +373,22 @@ def test_same_paper_queries_share_eight_distinct_anchors_and_expand_once(tmp_pat
     if expand:
         assert len(store.evidence('run')[0]['call_ids']) == 2
     assert all(r['result']['shared_search']['selected_chunk_ids'] == assembled[0] for r in results)
+
+
+def test_shared_search_keeps_fitting_seeds_and_reuses_a_shared_hit_for_uncovered_query():
+    from scripts.run_literature_agent import finalize_shared_search
+
+    source = dict(chunk_id="common", text="x" * 3300)
+    rankings = [[source, *[dict(chunk_id=f"a{i}", text="a" * 3300) for i in range(7)]], [source]]
+    records = [dict(candidate_evidence=hits, call_id=str(i), input=dict(query=str(i)),
+                    status="completed", result=dict(evidence=[]), internal_steps=[], diagnostics={})
+               for i, hits in enumerate(rankings)]
+
+    def assemble(seeds, *_):
+        assert len(seeds) == 7
+        assert sum(len(seed["text"]) for seed in seeds) < 24000
+        return dict(result=dict(evidence=seeds))
+
+    finalize_shared_search(records, "run", 5, assemble=assemble, context_limits=(8000, 24000))
+    assert all(record["status"] == "completed" for record in records)
+    assert [hit["chunk_id"] for hit in records[1]["result"]["evidence"]] == ["common"]

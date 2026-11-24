@@ -47,8 +47,8 @@ that span. Put the specific result to deliver in deliverable in your own words, 
 user's requested scope. For paper_quote, use the requested paper's name from the question or its
 title from the supplied directory. Omit it for unspecified sources. When registering, omit
 requirement_id and target_requirements. The tool results return the assigned need IDs and tasks.
-The checklist is fixed once the first lookup bound to a task is admitted. Use assigned IDs from
-then on. If no lookup is admitted, retry with the requirements and their positions. To correct
+The checklist is fixed once the first successful lookup bound to a task is delivered. Use assigned IDs
+from then on. If no lookup has succeeded, retry with the requirements and their positions. To correct
 a rejected item, use the returned correction_id and fix the reported fields.
 Reuse evidence already collected. After registration, bind follow-up searches to assigned literature
 need IDs that still lack evidence. Use each entry's target in batch searches, and target_requirements
@@ -195,11 +195,14 @@ def extract_research_submission(raw):
 
 
 class ResearchChecklist(CoveragePriority):
-    def __init__(self, question, *, evidence_only=False, evidence_review=True):
+    def __init__(self, question, *, evidence_only=False, evidence_review=True, retain_metric_audit=False):
         super().__init__([])
         self.question = question
         self.evidence_only = evidence_only
         self.evidence_review = evidence_review and evidence_only
+        self.metric_audit = not evidence_only or retain_metric_audit
+        self.ignored_coverage_fields = (set() if not evidence_only else
+                                        {"checks"} if self.metric_audit else LEGACY_COVERAGE_FIELDS)
         self.rejections = []
         self.locked = False
         self.evidence_submissions = []
@@ -208,7 +211,7 @@ class ResearchChecklist(CoveragePriority):
     def submission_format(self):
         fields = ", ".join(
             key for key in CoverageItem.model_fields
-            if not self.evidence_only or key not in LEGACY_COVERAGE_FIELDS
+            if key not in self.ignored_coverage_fields
         )
         evidence_format = (
             " The runtime sends each task and its own tool results to Jev. "
@@ -233,11 +236,11 @@ class ResearchChecklist(CoveragePriority):
         )
 
     def _normalize_coverage(self, rows):
-        if not self.evidence_only or not isinstance(rows, list):
+        if not self.ignored_coverage_fields or not isinstance(rows, list):
             return rows, []
         normalized, ignored = [], []
         for index, row in enumerate(rows):
-            extra = LEGACY_COVERAGE_FIELDS.intersection(row) if isinstance(row, dict) else set()
+            extra = self.ignored_coverage_fields.intersection(row) if isinstance(row, dict) else set()
             if extra:
                 ignored.append(dict(index=index, fields=sorted(extra)))
                 row = {key: value for key, value in row.items() if key not in extra}
@@ -253,7 +256,7 @@ class ResearchChecklist(CoveragePriority):
         properties = definitions["ResearchRequirement"]["properties"]
         if not corrections_pending:
             properties.pop("correction_id")
-        if self.evidence_only:
+        if not self.metric_audit:
             properties.pop("metric")
             definitions.pop("Metric", None)
         requirement_schema["maxItems"] = 24
@@ -261,8 +264,7 @@ class ResearchChecklist(CoveragePriority):
             if can_register:
                 schema.setdefault("$defs", {}).update(definitions)
                 schema["properties"]["requirements"] = requirement_schema
-                if (goal_search and tool in RESEARCH_EVIDENCE_TOOLS
-                        and not self.locked and not self.requirements):
+                if goal_search and tool in RESEARCH_EVIDENCE_TOOLS and not self.locked:
                     schema["required"].append("requirements")
             for key in ("target_requirements", "coverage_updates", "revisit_reason"):
                 schema["required"].remove(key)
@@ -365,7 +367,7 @@ class ResearchChecklist(CoveragePriority):
                     # Ignore the retired fields when replaying an older registration.
                     entry.pop("optional_details", None)
                     entry.pop("acceptance_criteria", None)
-                    if self.evidence_only:
+                    if not self.metric_audit:
                         entry.pop("metric", None)
                     candidate = ResearchRequirement.model_validate(entry)
                 else:
@@ -402,7 +404,7 @@ class ResearchChecklist(CoveragePriority):
                 continue
             data = accepted[0]
             data.pop("requirement_id")
-            if self.evidence_only:
+            if not self.metric_audit:
                 data.pop("metric", None)
             current = next((item for item in self.requirements
                             if {k: v for k, v in item.items() if k != "requirement_id"} == data), None)
@@ -530,7 +532,7 @@ class ResearchChecklist(CoveragePriority):
                         request["target_requirements"] = list(dict.fromkeys(assigned[pos] for pos in positions))
                     else:
                         binding_error = True
-                elif len(eligible) == 1:
+                elif len(eligible) == 1 and (not require_task_binding or eligible <= set(assigned.values())):
                     request["target_requirements"] = list(eligible)
         request["coverage_updates"], ignored_fields = self._normalize_coverage(request.get("coverage_updates", []))
         followup_search = self.locked and request["tool"] == "search_literature"
@@ -550,7 +552,7 @@ class ResearchChecklist(CoveragePriority):
                 selected = []
                 request.pop("target_requirements", None)
         elif self.locked and not followup_search:
-            if self.evidence_only and len(eligible) == 1:
+            if self.evidence_only and len(eligible) == 1 and (not require_task_binding or not raw):
                 request.setdefault("target_requirements", list(eligible))
             elif not self.evidence_only and len(self.requirements) == 1:
                 request.setdefault("target_requirements", [self.requirements[0]["requirement_id"]])
@@ -562,6 +564,9 @@ class ResearchChecklist(CoveragePriority):
         if (require_task_binding and not self.locked and request["tool"] in RESEARCH_EVIDENCE_TOOLS
                 and not schedule["target_requirements"]):
             schedule["initial_task_binding_error"] = True
+        if (require_task_binding and self.locked and raw and request["tool"] in RESEARCH_EVIDENCE_TOOLS
+                and not schedule["target_requirements"] and not followup_search):
+            schedule["task_binding_error"] = True
         if self.evidence_only and lookup_role and not supplement:
             if binding_error or (eligible and not set(schedule["target_requirements"]) <= eligible):
                 schedule["task_binding_error"] = True

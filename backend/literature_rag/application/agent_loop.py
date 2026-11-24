@@ -216,13 +216,13 @@ class AgentLoop:
             )
             research = coverage_priority = ResearchChecklist(
                 question, evidence_only=self.evidence_judge is not None or not self.evidence_supplement_enabled,
-                evidence_review=self.evidence_judge is not None,
+                evidence_review=self.evidence_judge is not None, retain_metric_audit=not self.evidence_supplement_enabled,
             )
             goal_search = self.parallel_search_executor is not None
             prompt = SYSTEM_PROMPT + "\nFor research with tool calls: " + research.submission_format
-            if not research.evidence_only:
+            if research.metric_audit:
                 prompt += LEGACY_METRIC_GUIDANCE
-            else:
+            if research.evidence_only:
                 prompt += (
                     '\nThe runtime binds tool results to their task IDs. When offered initial_targets, '
                     'use the 1-based positions from that call\'s requirements. Once need IDs are assigned, '
@@ -778,7 +778,7 @@ class AgentLoop:
                     calls = expanded
                 image_messages=[]
                 stop_collection=False
-                evidence_lookup_admitted = False
+                evidence_lookup_delivered = False
                 def prepare_tool(c, round_started, queued):
                     nonlocal tool_count, stop_collection
                     request=dict(c.arguments,tool=c.name)
@@ -883,9 +883,6 @@ class AgentLoop:
                         if result is not None:
                             event.update(status=result['status'], result=result)
                             continue
-                        if (research and not research.locked and c.name in RESEARCH_EVIDENCE_TOOLS
-                                and research.requirements and (not goal_search or (schedule and schedule['target_requirements']))):
-                            evidence_lookup_admitted = True
                         queued.add(semantic)
                         if c.name == 'search_literature':
                             document = request.get('document_id')
@@ -948,6 +945,10 @@ class AgentLoop:
                         else:
                             projection=trial
                             delivered_refs.update({r['ref']:r for r in records})
+                            if (research and not research.locked and c.name in RESEARCH_EVIDENCE_TOOLS
+                                    and result['status'] == 'completed' and research.requirements
+                                    and (not goal_search or (schedule and schedule['target_requirements']))):
+                                evidence_lookup_delivered = True
                         event['model_delivery']=dict(status='withheld' if withheld else 'delivered',reason=withheld,
                             messages=trace_messages(outgoing))
                         state['context_events'].append(dict(provider_call_id=c.id,
@@ -957,7 +958,7 @@ class AgentLoop:
                             if msg['role']=='tool':messages.append(msg)
                             else:image_messages.append(msg)
                 messages.extend(image_messages)
-                if evidence_lookup_admitted and not research.locked:
+                if evidence_lookup_delivered and not research.locked:
                     research.lock(state)
                 save()
                 if stop_collection:break
