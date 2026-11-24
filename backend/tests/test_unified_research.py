@@ -19,7 +19,8 @@ def test_unified_agent_direct_answer_preserves_user_output_format():
     assert state["answer"] == answer
     assert state["review_status"] == "not_required"
     assert state["budget_usage"] == {"model": 1, "tools": 0, "search": 0}
-    assert len(adapter.requests[0][1]) == 8
+    assert len(adapter.requests[0][1]) == 6
+    assert not {"list_sections", "read_section"} & adapter.requests[0][1].keys()
     assert "read_table" in adapter.requests[0][1] and "find_table" not in adapter.requests[0][1]
     assert all("independent_in_turn" not in schema["properties"] for schema in adapter.requests[0][1].values())
     system = adapter.requests[0][0][0]["content"]

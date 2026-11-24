@@ -7,6 +7,9 @@ from .tool_retry import signature
 from .tools import INPUT
 
 
+SECTION_TOOLS = frozenset({"list_sections", "read_section"})
+
+
 EVIDENCE_LOOKUP_TOOLS = {
     "literature": frozenset({
         "search_literature", "find_documents", "list_sections", "read_section",
@@ -128,6 +131,67 @@ def attach_submissions(payload, raw_rows, events, available_tools, *, require_al
     return errors
 
 
+
+def section_continuation_allowed(request, related_events):
+    """Follow directory handles or exact cursors that were delivered for this check."""
+    documents, listed, handles, directory_cursors = set(), set(), set(), set()
+    read_starts, read_cursors = set(), set()
+    for event in related_events:
+        previous = event["request"]
+        output = event["result"]["result"]
+        if previous["tool"] == "search_literature" and previous.get("document_id"):
+            documents.add(previous["document_id"])
+        if previous["tool"] == "list_sections":
+            for page in output.get("documents") or [output]:
+                if page.get("status", "completed") != "completed":
+                    continue
+                document = page.get("document_id")
+                if not document:
+                    continue
+                listed.add(document)
+                handles.update((document, row["section_id"]) for row in page.get("sections", []))
+                if page.get("next_offset") is not None:
+                    directory_cursors.add((document, page["next_offset"]))
+        elif previous["tool"] == "read_section":
+            targets = previous.get("targets") or [previous]
+            sections = output.get("sections") or [output]
+            for target, page in zip(targets, sections):
+                if page.get("status", "completed") != "completed":
+                    continue
+                handle = (target["document_id"], target["section_id"])
+                exclusions = tuple(target.get("exclude_chunk_ids", []))
+                read_starts.add((*handle, target.get("offset", 0)))
+                if page.get("next_offset") is not None:
+                    read_cursors.add((*handle, page["next_offset"], exclusions))
+
+        for source in output.get("evidence", []) + output.get("sources", []) + [output.get("table", {})]:
+            document = source.get("document_id")
+            if document:
+                documents.add(document)
+                section = source.get("section_id") or (source.get("locator") or {}).get("section_id")
+                if section:
+                    handles.add((document, section))
+
+    if request["tool"] == "list_sections":
+        offset = request.get("offset", 0)
+        if offset:
+            return (request["document_id"], offset) in directory_cursors
+        requested = set(request.get("document_ids") or [request["document_id"]])
+        return requested <= documents - listed
+
+    for target in request.get("targets") or [request]:
+        handle = (target["document_id"], target["section_id"])
+        offset = target.get("offset", 0)
+        if (*handle, offset) in read_starts:
+            return False
+        if offset:
+            if (*handle, offset, tuple(target.get("exclude_chunk_ids", []))) not in read_cursors:
+                return False
+        elif handle not in handles:
+            return False
+    return True
+
+
 def supplement_lookup_allowed(request, target_ids, approved, events):
     """Authorize exactly the proposed operation or a read grounded in its locator."""
     try:
@@ -142,6 +206,16 @@ def supplement_lookup_allowed(request, target_ids, approved, events):
         planned = approved[key]["next_lookup"]
         if operation == lookup_signature(planned):
             continue
+        related_events = [
+            event for event in events
+            if key in (event.get("coverage_schedule") or {}).get("target_checks", [])
+            and event.get("status") == "completed"
+            and event.get("model_delivery", {}).get("status") == "delivered"
+        ]
+        if request["tool"] in SECTION_TOOLS:
+            if not section_continuation_allowed(request, related_events):
+                return False
+            continue
         if not locator or planned["tool"] != locator[0]:
             return False
         table_resolution = request["tool"] == "read_table"
@@ -149,12 +223,9 @@ def supplement_lookup_allowed(request, target_ids, approved, events):
             return False
         locator_tool, result_key, handle_key = locator
         matching_outputs = (
-            event["result"]["result"] for event in events
+            event["result"]["result"] for event in related_events
             if event["request"]["tool"] == locator_tool
             and (not table_resolution or lookup_signature(event["request"]) == lookup_signature(planned))
-            and key in (event.get("coverage_schedule") or {}).get("target_checks", [])
-            and event.get("status") == "completed"
-            and event.get("model_delivery", {}).get("status") == "delivered"
         )
         handles = {
             handle for output in matching_outputs for handle in locator_handles(output, result_key, handle_key)

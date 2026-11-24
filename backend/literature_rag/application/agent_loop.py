@@ -204,7 +204,7 @@ class AgentLoop:
         coverage_priority = self.coverage_priority
         if self.unified_research:
             from .evidence_acceptance import (
-                EVIDENCE_LOOKUP_TOOLS, LOCATOR_READS, attach_submissions, check_id, supplement_lookup_allowed,
+                EVIDENCE_LOOKUP_TOOLS, LOCATOR_READS, SECTION_TOOLS, attach_submissions, check_id, supplement_lookup_allowed,
             )
             from .unified_research import (
                 EVIDENCE_CHECK_THRESHOLD, JEV_CHECKLIST_GUIDANCE,
@@ -215,6 +215,12 @@ class AgentLoop:
             prompt = SYSTEM_PROMPT + "\nFor research with tool calls: " + research.submission_format
             prompt += JEV_CHECKLIST_GUIDANCE if research.evidence_only else LEGACY_METRIC_GUIDANCE
             state['pipeline_version'] = 'unified-research-v1'
+        if research and SECTION_TOOLS & self.allowed_tools:
+            prompt += (
+                '\nChapter tools are available only during an approved evidence supplement. '
+                'During initial collection, use the other offered tools. If a required fact remains missing, '
+                'you may propose list_sections for its paper, or read_section when you have a verified section ID.'
+            )
         if 'describe_experiment_data' in self.allowed_tools:
             from app.experiment_directory import view_directory
             prompt += (
@@ -346,12 +352,13 @@ class AgentLoop:
         if research and self.evidence_judge and model_limit > closing_calls + 1:
             closing_calls += 1
 
-        def available_tool_names():
+        def available_tool_names(*, supplement=False):
             return {
                 name for name in self.allowed_tools
                 if (name != 'search_literature' or state['search_rounds'] < b.max_search_calls)
                 and (name != 'read_section' or state['section_read_calls'] < MAX_SECTION_READ_CALLS)
                 and (name != 'find_documents' or self.paper_directory is None)
+                and (not research or supplement or name not in SECTION_TOOLS)
             }
 
         def check_evidence():
@@ -367,7 +374,7 @@ class AgentLoop:
             tool_history = [*state['inherited_tool_calls'], *state['tool_calls']]
             payload = evidence_check_input(question, research.requirements, tool_history)
             submission_errors = attach_submissions(
-                payload, research.evidence_submissions, tool_history, available_tool_names(),
+                payload, research.evidence_submissions, tool_history, available_tool_names(supplement=True),
             )
             if payload == last_check_input:
                 return
@@ -432,7 +439,7 @@ class AgentLoop:
             invalid_plans = {error.get('check_id') for error in state['model_calls'][-1].get('submission_errors', [])
                              if error['code'] in {'invalid_lookup_arguments', 'missing_specific_gap',
                                                   'lookup_tool_unavailable', 'lookup_already_attempted'}}
-            available = available_tool_names()
+            available = available_tool_names(supplement=True)
             tools_by_role = {role: sorted(tools & available) for role, tools in EVIDENCE_LOOKUP_TOOLS.items()}
             missing = {check_id(item): item for item in check['unresolved']
                        if item['reason'] == 'no_new_lookup' and check_id(item) not in invalid_plans
@@ -459,6 +466,8 @@ class AgentLoop:
                 'resolve a specific still-missing fact. Reuse evidence that already answers a check. '
                 'A rephrasing of an earlier search is not useful. Prefer read_table with document_id and '
                 'table_number for a known table. Do not guess table numbers or source handles. '
+                'If a missing paper fact needs chapter content and no section ID is known, propose list_sections '
+                'when available. Follow-up reads can use the section IDs it returns. '
                 'Return only a JSON array of {check_id, gap, next_lookup}; next_lookup includes tool, reason '
                 'and its exact arguments. Omit checks without a useful path. Return [] when none qualify. '
                 'Do not answer the question, change the checklist, or execute tools in this planning step.\n'
@@ -565,10 +574,12 @@ class AgentLoop:
                     break
                 if size(messages)>=stop_threshold:
                     state['stop_reason']='context_budget';break
-                names = available_tool_names()
+                names = available_tool_names(supplement=evidence_retry)
                 if evidence_retry:
                     approved_tools = {item['next_lookup']['tool'] for item in pending_evidence}
                     continuations = {tool for tool, locator in LOCATOR_READS.items() if locator[0] in approved_tools}
+                    if any(item['role'] == 'literature' for item in pending_evidence):
+                        continuations.update(SECTION_TOOLS)
                     names.intersection_update(approved_tools | continuations)
                 schemas = {name: schema for name, schema in SCHEMAS.items() if name in names}
                 if research:
@@ -610,7 +621,7 @@ class AgentLoop:
                             if not evidence_retry:
                                 propose_supplement()
                         if pending_evidence and not evidence_retry and state.get('evidence_check_status') == 'needs_evidence':
-                            available = available_tool_names()
+                            available = available_tool_names(supplement=True)
                             actionable = [
                                 item for item in pending_evidence if item['next_lookup']['tool'] in available
                             ]
@@ -623,14 +634,26 @@ class AgentLoop:
                                 }
                                 for item in actionable
                             ]
+                            continuation_guidance = (
+                                'After each lookup, use its result to decide the next step. Use the same check IDs '
+                                'in target_requirements and use verified handles for any follow-up reads. '
+                            )
+                            if SECTION_TOOLS & available and any(item['role'] == 'literature' for item in actionable):
+                                continuation_guidance += (
+                                    'A chapter directory is a locator. Read the relevant returned section, and if the '
+                                    'fact is still missing, use another relevant returned section or the verified next '
+                                    'page while budget remains. '
+                                )
+                            continuation_guidance += (
+                                'If evidence is sufficient or no useful path remains, submit the answer and state '
+                                'any remaining gaps. Do not register new tasks.\n'
+                            )
                             supplement_message = dict(role='user', content=(
                                 f'Evidence check: support probability is below {EVIDENCE_CHECK_THRESHOLD:.2f} for the listed facts. '
-                                'Only the listed lookups are approved. Call the specified tool with the same '
-                                'parameters and put the supplied target_id values in target_requirements. '
-                                'Group targets that have the same approved operation. For a locator, read only '
-                                'the exact returned handle relevant to that gap. Reuse confirmed evidence. '
-                                'If the gap remains, state it explicitly in your answer. Do not register new tasks. '
-                                + json.dumps(gaps, ensure_ascii=False)
+                                'Start with the approved lookups below. Use their exact parameters and put the supplied '
+                                'target_id values in target_requirements for the initial and continuation calls. '
+                                'Group targets that have the same approved operation. Reuse confirmed evidence. '
+                                + continuation_guidance + json.dumps(gaps, ensure_ascii=False)
                             ))
                             if (gaps and len(state['model_calls']) < model_limit - closing_calls
                                     and size(messages + [supplement_message]) < stop_threshold
@@ -655,9 +678,7 @@ class AgentLoop:
                                     planned_calls = list(grouped.values())
                                     supplement_message['content'] = (
                                         'The runtime will execute these approved lookups and deliver their results as data. '
-                                        'Reuse those results. For a locator, read only the exact relevant handle it returns. '
-                                        'If a gap remains, state it explicitly. Do not register new tasks.\n'
-                                        + json.dumps(gaps, ensure_ascii=False)
+                                        + continuation_guidance + json.dumps(gaps, ensure_ascii=False)
                                     )
                                 messages.append(supplement_message)
                                 save()
@@ -696,6 +717,9 @@ class AgentLoop:
                         result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
                     elif c.name=='find_documents' and self.paper_directory is not None:
                         result=dict(status='blocked',error_code='directory_already_provided',notice='Use the complete paper directory supplied at the start; no directory tool call is needed.')
+                    elif research and not evidence_retry and c.name in SECTION_TOOLS:
+                        result = dict(status='blocked', error_code='section_tools_require_supplement',
+                                      notice='Use the offered tools for initial evidence. Propose chapter tools for a remaining gap when submitting to Jev.')
                     elif c.name == 'read_section' and state['section_read_calls'] >= MAX_SECTION_READ_CALLS:
                         result = dict(status='blocked', error_code='section_read_budget',
                                       notice='Section read limit reached. Use existing evidence or another available tool.')
@@ -817,7 +841,7 @@ class AgentLoop:
                             if msg['role']=='tool':messages.append(msg)
                             else:image_messages.append(msg)
                 messages.extend(image_messages)
-                if research and not research.locked:
+                if research and not research.locked and any(c.name not in SECTION_TOOLS for c in calls):
                     research.lock(state)
                 save()
                 if stop_collection:break
