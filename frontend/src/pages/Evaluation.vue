@@ -14,7 +14,10 @@ type Manifest = {
   configuration: Record<string, string | null>; rubrics: Record<Group, string>;
   budget: { models: number; tools: number; seconds: number }; library: Record<string, string>; judge: string;
 };
-type Run = { id: string; created_at: string; parent: string | null; manifest: Manifest; cases: Row[]; database_fingerprint: string | null };
+type Run = {
+  id: string; created_at: string; parent: string | null; manifest: Manifest; cases: Row[];
+  database_fingerprint: string | null; deepseek_usage: { total_tokens: number; incomplete: boolean };
+};
 type Grade = { score: number; model: string; metrics: Record<string, unknown>; review: Record<string, unknown>; decisions: Record<string, unknown>; usage: Record<string, number>; duration_ms?: number };
 type Answer = {
   answer: string; langfuse?: { url?: string }; tool_calls: unknown[];
@@ -106,6 +109,7 @@ const configDifferences = computed(() => {
   ].filter(([, left, right]) => left !== right).map(([name]) => name);
 });
 const display = (value: number | null | undefined) => value == null ? "—" : Number(value.toFixed(2)).toString();
+const tokenCount = (usage: Run["deepseek_usage"]) => usage.incomplete && !usage.total_tokens ? "未知" : usage.total_tokens.toLocaleString("zh-CN");
 const date = (value: string) => new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Shanghai" }).format(new Date(value));
 const json = (value: unknown) => JSON.stringify(value, null, 2);
 const safeTrace = computed(() => {
@@ -325,6 +329,7 @@ onUnmounted(() => window.clearInterval(timer));
             <button v-for="run in filteredHistory" :key="run.id" :aria-pressed="current?.id === run.id" @click="openRun(run)">
               <strong>{{ date(run.created_at) }}</strong>
               <small>{{ run.cases.length }} 题 · {{ stats(run).settled }}/{{ run.cases.length }} 完成 · {{ run.manifest.commit?.slice(0, 7) ?? "部署版" }}</small>
+              <small>DeepSeek {{ tokenCount(run.deepseek_usage) }} Token{{ run.deepseek_usage.incomplete ? " · 记录不全" : "" }}</small>
               <span>{{ display(stats(run).mean) }}</span>
             </button>
           </aside>
@@ -338,6 +343,8 @@ onUnmounted(() => window.clearInterval(timer));
               <div><small>已结束／计划</small><strong>{{ progress.settled }}/{{ current.cases.length }}</strong></div>
               <div><small>已评分</small><strong>{{ progress.values }}</strong></div>
               <div><small>已评分均分</small><strong>{{ display(progress.mean) }}</strong></div>
+              <div><small>DeepSeek Token 总量</small><strong>{{ tokenCount(current.deepseek_usage) }}</strong>
+                <small v-if="current.deepseek_usage.incomplete">记录不全</small></div>
             </div>
             <progress :value="progress.settled" :max="current.cases.length" aria-label="评测进度"></progress>
             <div class="group-summary">
@@ -473,7 +480,7 @@ dt { color:var(--muted); } dd { margin:0; text-align:right; }
 .archive button small { color:var(--muted); }
 .archive-filter { display:grid; gap:6px; margin-top:10px; }
 .archive-filter input { background:#fff; border:1px solid var(--line); border-radius:6px; padding:6px 9px; min-width:0; }
-.summary { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:14px 0 12px; }
+.summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; padding:14px 0 12px; }
 .summary div { display:grid; }
 .summary strong { font-size:24px; }
 .summary small, .group-summary span { color:var(--muted); }
