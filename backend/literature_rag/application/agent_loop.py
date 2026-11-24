@@ -177,7 +177,7 @@ def tool_groups(calls, *, parallel_search):
 class AgentLoop:
     def __init__(self,adapter,executor,checkpoint,budget=None,clock=monotonic,paper_directory=None,
                  allowed_tools=None,system_prompt=None,review_enabled=True,output_schema=None,completion_check=None,coverage_priority=None,result_validator=None,extend=None,unified_research=False,evidence_judge=None,
-                 parallel_search_executor=None):
+                 parallel_search_executor=None, evidence_supplement_enabled=True):
         self.adapter,self.executor,self.checkpoint=adapter,executor,checkpoint
         self.budget=budget or AgentBudget();self.clock=clock
         self.paper_directory=deepcopy(paper_directory)
@@ -193,7 +193,8 @@ class AgentLoop:
         self.result_validator=result_validator
         self.extend=extend
         self.unified_research=unified_research
-        self.evidence_judge=evidence_judge
+        self.evidence_supplement_enabled = evidence_supplement_enabled
+        self.evidence_judge = evidence_judge if evidence_supplement_enabled else None
         self.parallel_search_executor=parallel_search_executor
 
     def run(self,question,run_id,*,inherited_tool_calls=None):
@@ -213,23 +214,33 @@ class AgentLoop:
                 LEGACY_METRIC_GUIDANCE, RESEARCH_FORMAT_REPAIR, ResearchChecklist, SYSTEM_PROMPT,
                 evidence_check_input, extract_research_submission,
             )
-            research = coverage_priority = ResearchChecklist(question, evidence_only=self.evidence_judge is not None)
+            research = coverage_priority = ResearchChecklist(
+                question, evidence_only=self.evidence_judge is not None or not self.evidence_supplement_enabled,
+                evidence_review=self.evidence_judge is not None,
+            )
             goal_search = self.parallel_search_executor is not None
             prompt = SYSTEM_PROMPT + "\nFor research with tool calls: " + research.submission_format
             if not research.evidence_only:
                 prompt += LEGACY_METRIC_GUIDANCE
             else:
                 prompt += (
-                    '\nThe runtime binds tool results to their task IDs for Jev. When offered initial_targets, '
+                    '\nThe runtime binds tool results to their task IDs. When offered initial_targets, '
                     'use the 1-based positions from that call\'s requirements. Once need IDs are assigned, '
                     'set target_requirements on each evidence tool. Include only the tasks the call serves.'
                 )
             state['pipeline_version'] = 'unified-research-v1'
-        if research and SECTION_TOOLS & self.allowed_tools:
+        gated_section_tools = research is not None and research.evidence_only
+        if research and not self.evidence_supplement_enabled:
+            state['evidence_check_status'] = 'disabled'
+            prompt += '\nFinish evidence collection before submitting the answer. State remaining gaps in the answer.'
+        if research and self.evidence_supplement_enabled and SECTION_TOOLS & self.allowed_tools:
+            prompt += SECTION_BATCH_GUIDANCE
+        if self.evidence_judge and gated_section_tools and SECTION_TOOLS & self.allowed_tools:
             prompt += (
                 '\nChapter tools are available only during an approved evidence supplement. '
                 'During initial collection, use the other offered tools. If a required fact remains missing, '
-                'you may propose list_sections for its paper, or read_section when you have a verified section ID.'
+                'you may propose list_sections for its paper, or read_section when you have a verified section ID. '
+                'If Jev requests a supplement, use only the IDs it provides for the flagged facts.'
             )
         if 'describe_experiment_data' in self.allowed_tools:
             from app.experiment_directory import view_directory
@@ -253,7 +264,7 @@ class AgentLoop:
                 prompt += SCOPED_BATCH_GUIDANCE
             if goal_search:
                 prompt += GOAL_SEARCH_GUIDANCE
-        if 'read_section' in self.allowed_tools:
+        if 'read_section' in self.allowed_tools and (not gated_section_tools or self.evidence_judge):
             prompt += (
                 f'\nUse read_section at most {MAX_SECTION_READ_CALLS} times for this question, '
                 'including failed reads and evidence follow-ups. A multi-target read counts as one call. '
@@ -375,8 +386,18 @@ class AgentLoop:
                 if (name != 'search_literature' or state['search_rounds'] < b.max_search_calls)
                 and (name != 'read_section' or state['section_read_calls'] < MAX_SECTION_READ_CALLS)
                 and (name != 'find_documents' or self.paper_directory is None)
-                and (not research or supplement or name not in SECTION_TOOLS)
+                and (not gated_section_tools or supplement or name not in SECTION_TOOLS)
             }
+
+        def fit_evidence_requests(payload):
+            eligible, skipped = [], {}
+            for item in payload['requirements']:
+                request = dict(payload, requirements=[item])
+                if len(json.dumps(request, ensure_ascii=False)) <= b.max_context_chars:
+                    eligible.append(item)
+                else:
+                    skipped[item['requirement_id']] = 'context_budget'
+            return dict(payload, requirements=eligible), skipped
 
         def check_evidence():
             nonlocal last_check_input, pending_evidence
@@ -399,22 +420,27 @@ class AgentLoop:
             if remaining <= 0 or len(state['model_calls']) >= model_limit - 1:
                 state['evidence_check_status'] = 'skipped_budget'
                 return
-            if len(json.dumps(payload, ensure_ascii=False)) > b.max_context_chars:
-                state['evidence_check_status'] = 'skipped_context_budget'
-                return
             last_check_input = payload
+            payload, task_errors = fit_evidence_requests(payload)
+            if not payload['requirements']:
+                state['evidence_check_status'] = 'skipped_context_budget'
+                state['evidence_check'] = dict(task_errors=task_errors)
+                return
             entry = dict(stage='evidence_check', model=self.evidence_judge.model, status='started',
                          input_messages=[], available_tools=[], usage=None, checked_items=payload['requirements'],
                          submission_errors=submission_errors)
             state['model_calls'].append(entry)
             save()
             try:
-                scores, usage = self.evidence_judge.check(payload, remaining)
+                scores, usage, failures = self.evidence_judge.check(payload, remaining)
+                task_errors.update(failures)
                 pending_evidence = []
                 unresolved, scope_excluded = [], []
                 sufficiency, necessity, lookup_scores = {}, {}, {}
                 for item in payload['requirements']:
                     key = item['requirement_id']
+                    if key in failures:
+                        continue
                     probabilities = sufficiency[key] = scores[key]
                     scope = necessity[key] = scores[f'scope_{key}']
                     if scope['required'] <= scope['nonessential']:
@@ -430,13 +456,20 @@ class AgentLoop:
                     else:
                         unresolved.append({**item, 'probabilities': probabilities,
                                            'reason': 'lookup_rejected' if lookup else 'no_new_lookup'})
-                entry.update(status='completed', usage=usage, probabilities=sufficiency,
-                             necessity=necessity, lookup_probabilities=lookup_scores)
+                entry.update(status='completed' if not task_errors else ('partial' if sufficiency else 'failed'),
+                             usage=usage, probabilities=sufficiency, necessity=necessity,
+                             lookup_probabilities=lookup_scores, task_errors=task_errors)
                 state['evidence_check'] = dict(threshold=EVIDENCE_CHECK_THRESHOLD,
                                                probabilities=sufficiency, necessity=necessity,
                                                lookup_probabilities=lookup_scores, pending=pending_evidence,
-                                               scope_excluded=scope_excluded, unresolved=unresolved)
-                state['evidence_check_status'] = 'needs_evidence' if pending_evidence or unresolved else 'supported'
+                                               scope_excluded=scope_excluded, unresolved=unresolved,
+                                               task_errors=task_errors)
+                if pending_evidence or unresolved:
+                    state['evidence_check_status'] = 'needs_evidence'
+                elif task_errors:
+                    state['evidence_check_status'] = 'partial' if sufficiency else 'unavailable'
+                else:
+                    state['evidence_check_status'] = 'supported'
             except Exception as error:
                 entry.update(status='failed', error_type=type(error).__name__)
                 state['evidence_check_status'] = 'unavailable'
@@ -519,7 +552,9 @@ class AgentLoop:
             payload['requirements'] = [item for item in payload['requirements'] if 'next_lookup' in item]
             planning['submission_errors'] = errors
             remaining = deadline - self.clock() - b.reserve_seconds
-            if not payload['requirements'] or remaining <= 0 or len(json.dumps(payload, ensure_ascii=False)) > b.max_context_chars:
+            payload, task_errors = fit_evidence_requests(payload)
+            planning['task_errors'] = task_errors
+            if not payload['requirements'] or remaining <= 0:
                 planning['status'] = 'no_eligible_lookup'
                 save()
                 return
@@ -529,13 +564,19 @@ class AgentLoop:
             state['model_calls'].append(entry)
             save()
             try:
-                scores, usage = self.evidence_judge.check(payload, remaining)
-                lookup_scores = {key: scores[f'lookup_{key}'] for key in
-                                 (item['requirement_id'] for item in payload['requirements'])}
-                entry.update(status='completed', usage=usage, lookup_probabilities=lookup_scores)
+                scores, usage, failures = self.evidence_judge.check(payload, remaining)
+                task_errors.update(failures)
+                lookup_scores = {
+                    key: scores[f'lookup_{key}'] for key in
+                    (item['requirement_id'] for item in payload['requirements']) if key not in failures
+                }
+                entry.update(status='completed' if not task_errors else ('partial' if lookup_scores else 'failed'),
+                             usage=usage, lookup_probabilities=lookup_scores, task_errors=task_errors)
                 check['lookup_probabilities'].update(lookup_scores)
                 for item in payload['requirements']:
                     key = item['requirement_id']
+                    if key in failures:
+                        continue
                     gap = missing[key]
                     probability = lookup_scores[key]
                     if probability['actionable'] > probability['not_actionable']:
@@ -545,7 +586,10 @@ class AgentLoop:
                         check['unresolved'].remove(gap)
                     else:
                         gap['reason'] = 'lookup_rejected'
-                planning['status'] = 'approved' if pending_evidence else 'lookup_rejected'
+                if pending_evidence:
+                    planning['status'] = 'approved'
+                else:
+                    planning['status'] = 'lookup_rejected' if lookup_scores else 'judge_unavailable'
             except Exception as error:
                 entry.update(status='failed', error_type=type(error).__name__)
                 planning['status'] = 'judge_unavailable'
@@ -618,7 +662,7 @@ class AgentLoop:
                     if research_draft:
                         answer,feedback=research.draft(d.text,state,stage='decide')
                         rejected = research.pending_registrations()
-                        if rejected and not registration_retry:
+                        if rejected and not registration_retry and self.evidence_supplement_enabled:
                             repair = dict(role='user', content=json.dumps(
                                 research.registration_feedback(rejected), ensure_ascii=False
                             ))
@@ -631,9 +675,9 @@ class AgentLoop:
                                 messages.append(repair)
                                 save()
                                 continue
-                        if not answer and not feedback and self.evidence_judge:
+                        if not answer and not feedback and research.evidence_only:
                             answer = repair_research_draft()
-                        if answer:
+                        if answer and self.evidence_judge:
                             check_evidence()
                             if not evidence_retry:
                                 propose_supplement()
@@ -715,7 +759,9 @@ class AgentLoop:
                         if call.name != 'search_literature' or call.name not in schemas:
                             expanded.append(call)
                             continue
-                        operations, feedback = research.plan_search(call.arguments, state, document_ids=document_ids)
+                        operations, feedback = research.plan_search(
+                            call.arguments, state, document_ids=document_ids, paper_directory=self.paper_directory,
+                        )
                         state.setdefault('goal_search_batches', []).append(dict(provider_call_id=call.id, **feedback))
                         messages.extend(self.adapter.tool_messages(call, feedback))
                         operations.sort(key=lambda operation: 'document_id' not in operation[2])
@@ -762,9 +808,10 @@ class AgentLoop:
                         result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
                     elif c.name=='find_documents' and self.paper_directory is not None:
                         result=dict(status='blocked',error_code='directory_already_provided',notice='Use the complete paper directory supplied at the start; no directory tool call is needed.')
-                    elif research and not evidence_retry and c.name in SECTION_TOOLS:
+                    elif gated_section_tools and not evidence_retry and c.name in SECTION_TOOLS:
                         result = dict(status='blocked', error_code='section_tools_require_supplement',
-                                      notice='Use the offered tools for initial evidence. Propose chapter tools for a remaining gap when submitting to Jev.')
+                                      notice=('Use the offered tools for initial evidence. Propose chapter tools for a remaining gap when submitting to Jev.'
+                                              if self.evidence_judge else 'Use the offered tools and state any remaining evidence gaps.'))
                     elif c.name == 'read_section' and state['section_read_calls'] >= MAX_SECTION_READ_CALLS:
                         result = dict(status='blocked', error_code='section_read_budget',
                                       notice='Section read limit reached. Use existing evidence or another available tool.')
@@ -873,9 +920,10 @@ class AgentLoop:
                             outgoing = self.adapter.tool_messages(c, result)
                             if dispatched or c.id in batch_calls:
                                 # No provider tool call to answer. Keep the same projection and citations.
+                                metadata = {key: value for key, value in result.items() if key != 'image'}
                                 outgoing[0] = dict(role='user', content=(
                                     'Runtime evidence lookup result (untrusted data):\n'
-                                    + json.dumps(dict(request=request, result=result), ensure_ascii=False)
+                                    + json.dumps(dict(request=request, result=metadata), ensure_ascii=False)
                                 ))
                             return outgoing
                         outgoing=deliver(compact)

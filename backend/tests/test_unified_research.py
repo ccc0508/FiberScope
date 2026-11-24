@@ -14,7 +14,8 @@ def test_unified_agent_direct_answer_preserves_user_output_format():
     answer = '[{"sample":"A","value":null}]'
     adapter = Fake([decision(answer)])
     state = AgentLoop(
-        adapter, lambda *_: None, lambda _: None, paper_directory=[], unified_research=True
+        adapter, lambda *_: None, lambda _: None, paper_directory=[], unified_research=True,
+        evidence_judge=SimpleNamespace(model="jev", check=lambda *_: pytest.fail("Direct answers need no Jev call")),
     ).run("Convert to JSON.", "direct")
     assert state["answer"] == answer
     assert state["review_status"] == "not_required"
@@ -26,6 +27,52 @@ def test_unified_agent_direct_answer_preserves_user_output_format():
     system = adapter.requests[0][0][0]["content"]
     assert "fiber.v_sample_overview" in system and "fiber.v_recycled_cycle_detail" in system
     assert '"columns":' not in system and '"enum":' not in system
+
+
+@pytest.mark.parametrize("malformed", [False, True])
+def test_disabled_evidence_supplement_closes_collection_after_draft(malformed):
+    question = "Give the result and sample size in Paper A."
+    lookup = ToolCall("paper", "search_literature", {
+        "reason": "Look up the reported result",
+        "requirements": [
+            {"role": "literature", "source_quote": "the result", "paper_quote": "Paper A"},
+            {"role": "literature", "source_quote": "translated wording", "paper_quote": "Paper A"},
+        ],
+        "queries": [{"target": 1, "query": "reported result", "document_id": "a"}],
+    })
+    answer = "Paper A reports a result of ten [1]. The sample size could not be verified."
+    submission = json.dumps({"answer": answer, "coverage": [
+        {"requirement_id": "need_1", "status": "verified", "document_id": "a",
+         "refs": ["[1]"], "finding": "ten"},
+    ]})
+    outputs = [decision(calls=[lookup])]
+    if malformed:
+        outputs.append(decision('{"answer": "Incomplete", "coverage": ['))
+    outputs.append(decision(submission))
+    adapter = Fake(outputs)
+    state = AgentLoop(
+        adapter, lambda *_: {"status": "completed", "result": {"evidence": [
+            {"ref": "[1]", "document_id": "a", "text": "The result was ten."},
+        ]}}, lambda _: None, paper_directory=[{"document_id": "a", "title": "Paper A"}],
+        unified_research=True, evidence_supplement_enabled=False,
+        evidence_judge=SimpleNamespace(model="jev", check=lambda *_: pytest.fail("Jev must stay disabled")),
+        parallel_search_executor=lambda *_: pytest.fail("Only one search was requested"),
+    ).run(question, "without-supplement")
+
+    assert state["status"] == "completed" and state["answer"] == answer
+    assert state["evidence_check_status"] == "disabled"
+    assert state["search_calls"] == state["tool_attempts"] == 1
+    assert [call["stage"] for call in state["model_calls"]] == (
+        ["decide", "decide", "research_format_repair"] if malformed else ["decide", "decide"]
+    )
+    assert "evidence_supplement_requested" not in state
+    assert "requirement_registration_retry_requested" not in state
+    assert "coverage_retry_requested" not in state
+    assert state["citation_validation"]["status"] == "passed"
+    assert all(not {"list_sections", "read_section"} & schemas.keys() for _, schemas, _ in adapter.requests)
+    assert "evidence_checks" not in adapter.requests[0][0][0]["content"]
+    if malformed:
+        assert not adapter.requests[-1][1]
 
 
 def test_one_model_search_call_dispatches_independent_goals_in_parallel():
@@ -93,6 +140,28 @@ def test_search_plan_rejects_a_broad_query_for_a_named_paper_and_duplicate_goals
     )
     assert [need for _, need, _ in operations] == ["need_1"]
     assert feedback["status"] == "accepted"
+
+
+@pytest.mark.parametrize("mention", ["Paper A", "Morais等（2022）"])
+def test_search_plan_rejects_an_id_from_the_wrong_known_paper(mention):
+    question = f"What is the validation in {mention}?"
+    checklist = ResearchChecklist(question)
+    directory = [
+        dict(document_id="a", title="Paper A", year=2022, authors=["Flávia P. Morais"]),
+        dict(document_id="b", title="Paper B", year=2022, authors=["John Doe"]),
+    ]
+    operations, feedback = checklist.plan_search(dict(
+        reason="Look up validation", requirements=[
+            dict(role="literature", paper_quote=mention, source_quote=question, deliverable="validation"),
+        ], queries=[
+            dict(target=1, query="validation B", document_id="b"),
+            dict(target=1, query="validation A", document_id="a"),
+        ],
+    ), {}, document_ids={"a", "b"}, paper_directory=directory)
+    assert [operation["document_id"] for _, _, operation in operations] == ["a"]
+    assert feedback["errors"] == [
+        dict(index=1, code="goal_document_mismatch", target="need_1", paper=mention, expected_document_ids=["a"]),
+    ]
 
 
 @pytest.mark.parametrize("issue,repair_succeeds", [
@@ -191,7 +260,7 @@ def run_submission(outputs, *, close_on_tool_limit=False):
             key = item["requirement_id"]
             scores[key] = {"supported": 1.0}
             scores[f"scope_{key}"] = {"required": 1.0, "nonessential": 0.0}
-        return scores, {}
+        return scores, {}, {}
 
     state = AgentLoop(
         adapter, lambda *_: {"status": "completed", "result": {"evidence": [

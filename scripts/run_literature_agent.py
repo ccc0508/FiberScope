@@ -52,8 +52,11 @@ def finalize_shared_search(records, run_id, timeout, *, assemble):
         return
     evidence_by_owner = defaultdict(list)
     for evidence in result.get('evidence', []):
-        owner = owners[evidence['chunk_id']]
-        evidence_by_owner[owner].append(evidence)
+        # A section can merge several hits, and a linked table can have its own
+        # chunk ID. Both retain their original hit IDs.
+        source_ids = [evidence['chunk_id'], *evidence.get('seed_chunk_ids', [])]
+        for owner in sorted({owners[chunk_id] for chunk_id in source_ids if chunk_id in owners}):
+            evidence_by_owner[owner].append(evidence)
     for owner, record in enumerate(records):
         chosen = [s for s in seeds if owners[s['chunk_id']] == owner]
         with StageTrace() as trace:
@@ -232,11 +235,10 @@ def main():
         from literature_rag.application.specialist_agent import ResultDrivenCoordinator
         loop=ResultDrivenCoordinator
     try:
-        from literature_rag.adapters.providers.jev_evidence import JevEvidenceJudge
         unified = a.architecture == 'single' and not a.prompt_file
         options=(dict(feedback_enabled=not a.no_task_feedback) if a.architecture=='specialists'
                  else dict(unified_research=bool(unified),
-                           evidence_judge=JevEvidenceJudge.configured(ROOT) if unified else None,
+                           evidence_supplement_enabled=False,
                            parallel_search_executor=parallel_search if unified else None))
         result=loop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory,**options).run(a.question,run_id)
     finally:
