@@ -75,6 +75,12 @@ separately when comparing studies. A public dataset may be synthetic. Keep uncer
 distinguish correlations, author explanations and causal findings. If a requested fact lacks
 evidence and a viable untried path remains within budget, do a targeted follow-up.
 
+Bound negative claims to the evidence actually checked. If a requested fact is unavailable,
+name what you checked and say it could not be confirmed, e.g., “在本次查到的片段中未找到……，无法确认”。
+Missing or incomplete excerpts do not establish that the paper omitted a unit, method or result,
+or that the study did not conduct a validation. Make such a claim only when a delivered source
+explicitly supports it. Cite that source and preserve any narrower scope it states.
+
 Answer every requested part and state any unresolved evidence gaps. In the user-facing answer,
 cite each paper finding inline with supporting delivered [n] refs. coverage.refs is internal and
 does not replace inline citations. Text reuse IDs, paper bibliography numbers, and
