@@ -13,6 +13,7 @@ from uuid import uuid4
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'backend'))
 from literature_rag.application.agent_loop import AgentLoop,AgentBudget
+from literature_rag.application.calendar_answer import calendar_run
 from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter
 from literature_rag.config import Settings
 from literature_rag.application.tools import ToolTraceStore
@@ -65,6 +66,13 @@ def main():
     if not a.child:
         if out.exists():raise ValueError('Run already exists; inspect it, do not replay paid requests')
         out.mkdir(parents=True)
+        calendar = calendar_run(a.question) if not a.prompt_file else None
+        if calendar is not None:
+            save_state(state_path, dict(calendar, run_id=run_id, budget=asdict(b), mode=a.architecture,
+                                       budget_usage=dict(model=0, tools=0, search=0)))
+            (out/'evidence.json').write_text('[]', encoding='utf-8')
+            print(json.dumps(dict(run_id=run_id, state_file=str(state_path)), ensure_ascii=False))
+            return
         args=[sys.executable,'-X','utf8',__file__,'--child','--run-id',run_id,'--question',a.question,
             '--library',str(a.library.resolve()),'--seconds',str(a.seconds),'--max-tools',str(a.max_tools),
             '--max-model-calls',str(a.max_model_calls)]

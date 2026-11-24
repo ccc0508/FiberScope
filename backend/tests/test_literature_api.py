@@ -3,6 +3,7 @@ import sqlite3
 import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timezone
 from hashlib import sha256
 from threading import Event
 from types import SimpleNamespace
@@ -183,6 +184,40 @@ def test_disabled_and_empty_library_do_not_call_model(configured, monkeypatch):
     record = finished(client, response.json()['id'])
     assert record['status'] == 'refused'
     assert record['reason_code'] == 'empty_library'
+
+
+def test_calendar_question_uses_beijing_date_without_library_or_model(tmp_path, monkeypatch):
+    from literature_rag.application import calendar_answer
+
+    class FixedClock:
+        @staticmethod
+        def now(tz):
+            # Tuesday in UTC has already become Wednesday in Beijing.
+            return datetime(2026, 11, 24, 16, 1, tzinfo=timezone.utc).astimezone(tz)
+
+    monkeypatch.setattr(calendar_answer, 'datetime', FixedClock)
+    monkeypatch.setattr(literature, 'run_answer', lambda *args: pytest.fail('Unexpected Agent call'))
+    library_lookups = []
+
+    def empty_library(config):
+        library_lookups.append(config)
+        return []
+
+    monkeypatch.setattr(literature, 'documents', empty_library)
+    config = literature.LiteratureSettings(_env_file=None, enabled=True, data_dir=tmp_path, engine='agent')
+    client = client_for(config)
+    response = client.post('/api/v1/literature/ask', json={'question': '请问，今天星期几？'})
+    assert response.status_code == 202
+    record = finished(client, response.json()['id'])
+    assert record['status'] == 'answered'
+    assert record['result']['answer'] == '北京时间今天是2026年11月25日，星期三。'
+    assert record['result']['citations'] == []
+    assert record['result']['generation_calls'] == []
+    assert not library_lookups
+
+    compound = client.post('/api/v1/literature/ask', json={'question': '今天星期几？顺便查一下打浆论文。'})
+    assert finished(client, compound.json()['id'])['reason_code'] == 'empty_library'
+    assert library_lookups == [config]
 
 
 def test_worker_deadline_and_error_redaction(configured, monkeypatch):

@@ -24,6 +24,7 @@ from filelock import FileLock, Timeout as LockTimeout
 from .qa_history import HistoryStore
 from .citation_reader import citation_regions
 from literature_rag.diagnostics import configuration_snapshot
+from literature_rag.application.calendar_answer import calendar_run
 
 BACKEND = Path(__file__).resolve().parents[1]
 
@@ -164,13 +165,19 @@ class QuestionRunner:
     def _perform(self, record_id, question, configuration, started):
         try:
             try:
-                with step('qa.library_check'):
-                    available_documents = documents(self.config)
-                if not available_documents:
-                    result = {'status': 'refused', 'answer': '文献库中暂无已完成导入的文献，请先补充文献。', 'citations': [],
-                              'latency_ms': 0, 'reason_code': 'empty_library', 'retrieved_evidence': [], 'claims': [], 'generation_calls': []}
+                calendar = calendar_run(question) if self.config.engine == 'agent' else None
+                if calendar is not None:
+                    from .agent_answer import adapt_run
+                    with step('qa.answer_from_calendar'):
+                        result = adapt_run(calendar, [], [], 0)
                 else:
-                    result = run_answer(self.config, question)
+                    with step('qa.library_check'):
+                        available_documents = documents(self.config)
+                    if not available_documents:
+                        result = {'status': 'refused', 'answer': '文献库中暂无已完成导入的文献，请先补充文献。', 'citations': [],
+                                  'latency_ms': 0, 'reason_code': 'empty_library', 'retrieved_evidence': [], 'claims': [], 'generation_calls': []}
+                    else:
+                        result = run_answer(self.config, question)
                 from .qa_images import cache_answer_images
                 with step("qa.cache_images"):
                     cache_answer_images(result,self.config.library_root,self.config.root)
