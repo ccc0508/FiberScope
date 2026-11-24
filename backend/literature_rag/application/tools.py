@@ -31,7 +31,8 @@ class Request(BaseModel):
 
 SEARCH_MAIN_HITS = 8
 SEARCH_HITS_PER_DOCUMENT = 3
-MAX_SCOPED_QUERIES_PER_PAPER = 3
+MAX_SCOPED_QUERIES_PER_PAPER = 5
+MAX_PARALLEL_SEARCHES = 5
 SEARCH_DECOMPOSITION_GUIDANCE = """
 Scope searches to exact document_id when the paper is known. Leave it out for a full-library search.
 """
@@ -40,6 +41,7 @@ Search one connected fact or procedure with one query. For different required ev
 paper, such as methods and validation results, use separate focused queries for that paper.
 Use at most {MAX_SCOPED_QUERIES_PER_PAPER} distinct scoped queries per paper for the question.
 Do not split by synonyms or optional details. Submit independent scoped queries together.
+At most {MAX_PARALLEL_SEARCHES} scoped searches execute concurrently in a round.
 Same-paper queries in a round share three main hits after reranking.
 """
 
