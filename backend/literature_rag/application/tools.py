@@ -31,14 +31,15 @@ class Request(BaseModel):
 
 SEARCH_MAIN_HITS = 8
 SEARCH_HITS_PER_DOCUMENT = 3
-MAX_SCOPED_QUERIES_PER_PAPER = 2
+MAX_SCOPED_QUERIES_PER_PAPER = 3
 SEARCH_DECOMPOSITION_GUIDANCE = """
 Scope searches to exact document_id when the paper is known. Leave it out for a full-library search.
 """
-SCOPED_BATCH_GUIDANCE = """
+SCOPED_BATCH_GUIDANCE = f"""
 Search one connected fact or procedure with one query. For different required evidence within a
-paper, such as methods and validation results, submit up to two focused queries for that paper.
-Do not split by synonyms or optional details. Send independent scoped queries together.
+paper, such as methods and validation results, use separate focused queries for that paper.
+Use at most {MAX_SCOPED_QUERIES_PER_PAPER} distinct scoped queries per paper for the question.
+Do not split by synonyms or optional details. Submit independent scoped queries together.
 Same-paper queries in a round share three main hits after reranking.
 """
 

@@ -28,6 +28,73 @@ def test_unified_agent_direct_answer_preserves_user_output_format():
     assert '"columns":' not in system and '"enum":' not in system
 
 
+def test_one_model_search_call_dispatches_independent_goals_in_parallel():
+    question = "Compare Paper A's data origin and validation against Paper B's validation."
+    requirements = [
+        dict(role="literature", paper_quote=paper, source_quote=question, deliverable=goal)
+        for paper, goal in [("Paper A", "data origin"), ("Paper A", "validation A"), ("Paper B", "validation B")]
+    ]
+    query_call = ToolCall("batch", "search_literature", dict(
+        reason="Gather the independent evidence", requirements=requirements,
+        queries=[
+            dict(target=1, query="measured or synthetic data", document_id="a"),
+            dict(target=2, query="external validation A", document_id="a"),
+            dict(target=3, query="external validation B", document_id="b"),
+        ],
+    ))
+    batch = []
+
+    def parallel(executions, *_):
+        batch.extend(request for request, _ in executions)
+        return [dict(status="completed", result={"evidence": []}) for _ in executions]
+
+    submission = json.dumps(dict(answer="The evidence is insufficient.", coverage=[
+        dict(requirement_id=f"need_{i}", status="missing", gap="No evidence found.")
+        for i in range(1, 4)
+    ]))
+    adapter = Fake([decision(calls=[query_call]), decision(submission), decision(submission)])
+    directory = [dict(document_id=doc, title=f"Paper {doc.upper()}") for doc in ("a", "b")]
+    state = AgentLoop(adapter, lambda *_: pytest.fail("expected a parallel batch"), lambda _: None,
+                      paper_directory=directory, unified_research=True,
+                      parallel_search_executor=parallel).run(question, "goal-search")
+    assert state["status"] == "completed", (state.get("stop_reason"), state.get("research_output_attempts"))
+    assert state["search_rounds"] == 1 and state["search_calls"] == state["tool_attempts"] == 3
+    assert [request["document_id"] for request in batch] == ["a", "a", "b"]
+    assert [event["coverage_schedule"]["target_requirements"] for event in state["tool_calls"]] == [
+        ["need_1"], ["need_2"], ["need_3"],
+    ]
+    assert {event["parent_provider_call_id"] for event in state["tool_calls"]} == {"batch"}
+    messages, tools, _ = adapter.requests[1]
+    assert [msg["tool_call_id"] for msg in messages if msg["role"] == "tool"] == ["batch"]
+    assert sum("Runtime evidence lookup result" in msg.get("content", "") for msg in messages) == 3
+    assert tools["search_literature"]["properties"]["queries"]["items"]["properties"]["target"]["type"] == "string"
+
+
+def test_search_plan_rejects_a_broad_query_for_a_named_paper_and_duplicate_goals():
+    question = "What evidence does Paper A report?"
+    checklist = ResearchChecklist(question)
+    trace = {}
+    operations, feedback = checklist.plan_search(dict(
+        reason="Find the result",
+        requirements=[dict(role="literature", paper_quote="Paper A", source_quote=question, deliverable="result")],
+        queries=[
+            dict(target=1, query="broad results"),
+            dict(target=1, query="specific result", document_id="a"),
+            dict(target=1, query="synonym", document_id="a"),
+        ],
+    ), trace, document_ids={"a"})
+    assert [need for _, need, _ in operations] == ["need_1"]
+    assert [error["code"] for error in feedback["errors"]] == ["invalid_goal_document", "duplicate_goal"]
+
+    checklist.lock(trace)
+    operations, feedback = checklist.plan_search(
+        dict(reason="Check an unresolved goal", queries=[dict(target="need_1", query="methods", document_id="a")]),
+        trace, document_ids={"a"},
+    )
+    assert [need for _, need, _ in operations] == ["need_1"]
+    assert feedback["status"] == "accepted"
+
+
 @pytest.mark.parametrize("issue,repair_succeeds", [
     (None, None), ("invalid", True), ("missing", True), ("both", True), ("missing", False),
 ])

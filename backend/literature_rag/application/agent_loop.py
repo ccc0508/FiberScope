@@ -201,6 +201,7 @@ class AgentLoop:
         state=dict(run_id=run_id,question=question,status='running',model_calls=[],tool_calls=[],
             answer='',draft='',stop_reason=None,review_status='not_started',review_version=REVIEW_VERSION)
         research = None
+        goal_search = False
         prompt = self.system_prompt or PROMPT
         coverage_priority = self.coverage_priority
         if self.unified_research:
@@ -208,11 +209,12 @@ class AgentLoop:
                 EVIDENCE_LOOKUP_TOOLS, LOCATOR_READS, SECTION_TOOLS, attach_submissions, check_id, supplement_lookup_allowed,
             )
             from .unified_research import (
-                EVIDENCE_CHECK_THRESHOLD, JEV_CHECKLIST_GUIDANCE,
+                EVIDENCE_CHECK_THRESHOLD, GOAL_SEARCH_GUIDANCE, JEV_CHECKLIST_GUIDANCE,
                 LEGACY_METRIC_GUIDANCE, RESEARCH_FORMAT_REPAIR, ResearchChecklist, SYSTEM_PROMPT,
                 evidence_check_input, extract_research_submission,
             )
             research = coverage_priority = ResearchChecklist(question, evidence_only=self.evidence_judge is not None)
+            goal_search = self.parallel_search_executor is not None
             prompt = SYSTEM_PROMPT + "\nFor research with tool calls: " + research.submission_format
             prompt += JEV_CHECKLIST_GUIDANCE if research.evidence_only else LEGACY_METRIC_GUIDANCE
             state['pipeline_version'] = 'unified-research-v1'
@@ -242,6 +244,8 @@ class AgentLoop:
             prompt += SEARCH_DECOMPOSITION_GUIDANCE + search_budget
             if self.parallel_search_executor:
                 prompt += SCOPED_BATCH_GUIDANCE
+            if goal_search:
+                prompt += GOAL_SEARCH_GUIDANCE
         if 'read_section' in self.allowed_tools:
             prompt += (
                 f'\nUse read_section at most {MAX_SECTION_READ_CALLS} times for this question, '
@@ -266,6 +270,9 @@ class AgentLoop:
         from .tool_retry import ToolRetryPolicy, signature
         retries=ToolRetryPolicy()
         seen=set();tool_count=0;search_count=0;coverage_retry=False
+        scoped_queries = {}
+        document_ids = (None if self.paper_directory is None else
+                        {entry['document_id'] for entry in self.paper_directory})
         state['search_calls']=0
         state['search_rounds']=0
         state['max_search_calls']=b.max_search_calls
@@ -586,7 +593,7 @@ class AgentLoop:
                     names.intersection_update(approved_tools | continuations)
                 schemas = {name: schema for name, schema in SCHEMAS.items() if name in names}
                 if research:
-                    schemas = research.schemas(schemas, supplement=evidence_retry)
+                    schemas = research.schemas(schemas, supplement=evidence_retry, goal_search=goal_search)
                 elif coverage_priority:
                     schemas = coverage_priority.schemas(schemas)
                 dispatched = bool(planned_calls)
@@ -693,16 +700,42 @@ class AgentLoop:
                         continue
                     research_submitted = research_draft
                     state['draft']=answer;break
+                batch_calls = {}
+                if goal_search and not evidence_retry and not dispatched:
+                    initial = not research.locked
+                    expanded = []
+                    for call in calls:
+                        if call.name != 'search_literature' or call.name not in schemas:
+                            expanded.append(call)
+                            continue
+                        operations, feedback = research.plan_search(call.arguments, state, document_ids=document_ids)
+                        state.setdefault('goal_search_batches', []).append(dict(provider_call_id=call.id, **feedback))
+                        messages.extend(self.adapter.tool_messages(call, feedback))
+                        operations.sort(key=lambda operation: 'document_id' not in operation[2])
+                        for offset, (index, target, arguments) in enumerate(operations):
+                            if not initial:
+                                arguments['target_requirements'] = [target]
+                                if offset == 0 and 'coverage_updates' in call.arguments:
+                                    arguments['coverage_updates'] = call.arguments['coverage_updates']
+                                if 'revisit_reason' in call.arguments:
+                                    arguments['revisit_reason'] = call.arguments['revisit_reason']
+                            child_id = f'{call.id}:query:{index}'
+                            batch_calls[child_id] = (call.id, target if initial else None)
+                            expanded.append(SimpleNamespace(id=child_id, name=call.name, arguments=arguments))
+                    calls = expanded
                 image_messages=[]
                 stop_collection=False
-                def prepare_tool(c, round_started, queued, scoped_counts):
+                def prepare_tool(c, round_started, queued):
                     nonlocal tool_count, stop_collection
                     request=dict(c.arguments,tool=c.name)
                     # Accept calls recorded before the scheduling declaration was removed.
                     request.pop('independent_in_turn', None)
                     schedule=None
                     if coverage_priority and c.name in schemas:
-                        request,schedule=coverage_priority.prepare(request,state)
+                        if c.id in batch_calls:
+                            request, schedule = research.prepare(request, state, initial_target=batch_calls[c.id][1])
+                        else:
+                            request,schedule=coverage_priority.prepare(request,state)
                     # Reason text does not turn a repeated operation into a new operation.
                     semantic=signature(request)
                     retry_block=retries.block(request)
@@ -715,6 +748,8 @@ class AgentLoop:
                     event=dict(provider_call_id=c.id,request=request,status='started');state['tool_calls'].append(event)
                     if dispatched:
                         event['dispatch']='approved_evidence_plan'
+                    if c.id in batch_calls:
+                        event.update(dispatch='evidence_goal_search', parent_provider_call_id=batch_calls[c.id][0])
                     if schedule:event['coverage_schedule']=schedule
                     if c.name not in self.allowed_tools:
                         result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
@@ -762,9 +797,10 @@ class AgentLoop:
                     elif semantic in seen or semantic in queued:
                         tool_count+=1;result=dict(status='blocked',error_code='duplicate_call')
                     elif (c.name == 'search_literature' and isinstance(request.get('document_id'), str)
-                          and scoped_counts.get(request['document_id'], 0) >= MAX_SCOPED_QUERIES_PER_PAPER):
+                          and len(scoped_queries.get(request['document_id'], ())) >= MAX_SCOPED_QUERIES_PER_PAPER
+                          and semantic not in scoped_queries[request['document_id']]):
                         result = dict(status='blocked', error_code='paper_query_budget',
-                                      notice='At most two independent queries per paper in this search round.')
+                                      notice=f'At most {MAX_SCOPED_QUERIES_PER_PAPER} distinct queries per paper for this question.')
                     elif retry_block:
                         tool_count+=1;result=retry_block
                     else:
@@ -777,9 +813,8 @@ class AgentLoop:
                     executions = []
                     round_started = False
                     queued = set()
-                    scoped_counts = {}
                     for c in group:
-                        request, schedule, event, semantic, result = prepare_tool(c, round_started, queued, scoped_counts)
+                        request, schedule, event, semantic, result = prepare_tool(c, round_started, queued)
                         pending.append((c, request, schedule, event, semantic, result))
                         if result is not None:
                             event.update(status=result['status'], result=result)
@@ -788,7 +823,7 @@ class AgentLoop:
                         if c.name == 'search_literature':
                             document = request.get('document_id')
                             if isinstance(document, str) and document:
-                                scoped_counts[document] = scoped_counts.get(document, 0) + 1
+                                scoped_queries.setdefault(document, set()).add(semantic)
                             search_count += 1
                             state['search_calls'] = search_count
                             if not round_started:
@@ -825,7 +860,7 @@ class AgentLoop:
                         compact['citation_namespace_notice']='Only explicit ref fields are platform citations. Bracketed numbers inside source text are original-paper bibliography numbers; when discussing them write 原论文参考文献第45—47号, not [45–47]. Keep source text unchanged.'
                         def deliver(result):
                             outgoing = self.adapter.tool_messages(c, result)
-                            if dispatched:
+                            if dispatched or c.id in batch_calls:
                                 # No provider tool call to answer. Keep the same projection and citations.
                                 outgoing[0] = dict(role='user', content=(
                                     'Runtime evidence lookup result (untrusted data):\n'

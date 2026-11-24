@@ -9,7 +9,7 @@ from .citation_policy import citation_records
 from .coverage_priority import CoveragePriority
 from .evidence_acceptance import EVIDENCE_LOOKUP_TOOLS, check_id
 from .task_coverage import CoverageItem, Requirement, ground_requirements
-from .tools import SECTION_BATCH_GUIDANCE
+from .tools import SECTION_BATCH_GUIDANCE, Search
 
 LEGACY_COVERAGE_FIELDS = {"checks", "cells"}
 COVERAGE_STATES = ", ".join(get_args(CoverageItem.model_fields["status"].annotation))
@@ -26,10 +26,13 @@ Use the literature tools for claims about papers or mechanisms that need library
 even if the user names no paper. A general explanation can fill a source gap only if it is
 clearly labeled. It cannot satisfy a missing paper-specific fact.
 
-Register requirements for the results the user asked for in your first tool turn. Split tasks by
-requested result, usually one per named paper and one per requested SQL metric where needed.
-Combine overlapping results for the same paper in one task. Register each distinct requested
-result once, even when several tool calls will be used to obtain it.
+Register requirements in your first tool turn. For literature, split each requested comparison
+dimension into an evidence goal for each relevant paper whenever it needs its own source passage.
+When asked to compare data origins and validation, create separate data-origin and validation goals
+for each paper. Keep related values in one named table or conditions in one method passage together.
+Use one goal for linked facts that one lookup can resolve. A single goal may have several acceptance
+criteria. Omit optional details and reuse source findings for the final comparison.
+For SQL, register the requested local result or metric as before.
 Copy source_quote as one continuous, verbatim span from the question. Multiple items may share
 that span. Put the specific result to deliver in deliverable in your own words, preserving the
 user's requested scope. For paper_quote, use the requested paper's name from the question or its
@@ -91,6 +94,15 @@ JEV_CHECKLIST_GUIDANCE = (
     "A citation location is part of attribution, not a separate check unless the question asks for it. "
     "Register a SQL task only for requested local data, not advice about published datasets. "
     "Combine gaps likely answered by the same source passage."
+)
+GOAL_SEARCH_GUIDANCE = (
+    "\nWhen search_literature offers queries, submit one array covering the independent evidence goals you "
+    "can search now. Each entry has a focused query and one target. In the first turn target is "
+    "the 1-based position in this call's requirements array. In later turns target is the assigned "
+    "need ID of one unresolved literature goal. Use one query per goal in the batch and set "
+    "document_id for each named paper. Keep named papers in separate entries. Omit document_id "
+    "only for open discovery without a named source. Send independent entries together. "
+    "Use a direct table or figure tool when its source and label are already known."
 )
 
 
@@ -241,7 +253,7 @@ class ResearchChecklist(CoveragePriority):
             normalized.append(row)
         return normalized, ignored
 
-    def schemas(self, schemas, *, supplement=False):
+    def schemas(self, schemas, *, supplement=False, goal_search=False):
         result = super().schemas(schemas)
         corrections_pending = bool(self.pending_registrations())
         can_register = not self.locked or corrections_pending
@@ -272,8 +284,31 @@ class ResearchChecklist(CoveragePriority):
                         "One lookup may cover several closely related checks."
                     )
                     schema["required"].append("target_requirements")
-        elif self.locked and "search_literature" in result:
-            result["search_literature"]["required"].append("target_requirements")
+        elif "search_literature" in result:
+            schema = result["search_literature"]
+            if goal_search:
+                props = schema["properties"]
+                query = props.pop("query")
+                document = props.pop("document_id")
+                props.pop("target_requirements", None)
+                target = (
+                    dict(type="string", description="One assigned, unresolved literature need ID.")
+                    if self.locked else
+                    dict(type="integer", minimum=1, description="1-based position in this call's requirements.")
+                )
+                props["queries"] = dict(
+                    type="array", minItems=1, maxItems=20,
+                    description="Independent searches, each for one evidence goal. Send them together.",
+                    items=dict(type="object", additionalProperties=False,
+                               properties=dict(target=target, query=query, document_id=document),
+                               required=["target", "query"]),
+                )
+                schema["required"].remove("query")
+                schema["required"].append("queries")
+                if not self.locked:
+                    schema["required"].append("requirements")
+            elif self.locked:
+                schema["required"].append("target_requirements")
         return result
 
     def lock(self, trace):
@@ -315,7 +350,7 @@ class ResearchChecklist(CoveragePriority):
                 self.rejections.append(detail)
         return detail
 
-    def register(self, entries, trace):
+    def register(self, entries, trace, *, assigned=None):
         rejected = []
         normalized = []
         ignored = trace.get("task_contract", {}).get("ignored_additions", 0)
@@ -396,6 +431,8 @@ class ResearchChecklist(CoveragePriority):
                 current = {**data, "requirement_id": f"need_{len(self.requirements) + 1}"}
                 self.requirements.append(current)
             if current is not None:
+                if assigned is not None:
+                    assigned[index + 1] = current["requirement_id"]
                 for record in self.pending_registrations():
                     if record is correction or (
                         record.get("reason") == "not_verbatim_user_text" and
@@ -406,6 +443,56 @@ class ResearchChecklist(CoveragePriority):
         trace["task_contract"] = {"requirements": self.requirements, "rejected": self.rejections,
                                   "locked": self.locked, "ignored_additions": ignored}
         return rejected, normalized
+
+    def plan_search(self, arguments, trace, *, document_ids):
+        """Resolve each planned search to exactly one registered evidence goal."""
+        raw = arguments.get("requirements", [])
+        queries = arguments.get("queries")
+        if (not isinstance(raw, list) or not isinstance(queries, list) or not 1 <= len(queries) <= 20
+                or arguments.keys() - {"requirements", "queries", "reason", "coverage_updates", "revisit_reason"}):
+            return [], dict(status="blocked", error_code="invalid_goal_search",
+                            notice="Submit search_literature with a queries array and one target per query.")
+        assigned = {}
+        rejected, normalized = self.register(raw[:24], trace, assigned=assigned)
+        by_id = {item["requirement_id"]: item for item in self.requirements if item["role"] == "literature"}
+        operations, errors, used = [], [], set()
+        for index, item in enumerate(queries, 1):
+            if not isinstance(item, dict) or item.keys() - {"target", "query", "document_id"}:
+                errors.append(dict(index=index, code="invalid_query_entry"))
+                continue
+            target = item.get("target")
+            need = None
+            if self.locked and isinstance(target, str):
+                need = target
+            elif not self.locked and type(target) is int:
+                need = assigned.get(target)
+            goal = by_id.get(need)
+            if goal is None or need in used:
+                errors.append(dict(index=index, code="duplicate_goal" if need in used else "invalid_goal"))
+                continue
+            document = item.get("document_id")
+            known_document = (isinstance(document, str) and bool(document.strip())
+                              and (document_ids is None or document in document_ids))
+            if not known_document and (goal["paper_quote"] or document is not None):
+                errors.append(dict(index=index, code="invalid_goal_document", target=need, paper=goal["paper_quote"]))
+                continue
+            try:
+                search = Search.model_validate(dict(
+                    tool="search_literature", query=item.get("query"), document_id=document,
+                    reason=goal["deliverable"],
+                ))
+            except ValidationError:
+                errors.append(dict(index=index, code="invalid_query", target=need))
+                continue
+            used.add(need)
+            operations.append((index, need, search.model_dump(exclude={"tool"}, exclude_none=True)))
+        feedback = dict(status="accepted" if operations else "blocked",
+                        scheduled=[dict(index=i, target=need) for i, need, _ in operations])
+        if errors:
+            feedback["errors"] = errors
+        if raw or rejected or normalized:
+            feedback["requirement_registration"] = self.registration_feedback(rejected, normalized)
+        return operations, feedback
 
     def pending_registrations(self):
         return [item for item in self.rejections if not item.get("resolved_by")]
@@ -431,7 +518,7 @@ class ResearchChecklist(CoveragePriority):
             **({"normalized": normalized} if normalized else {}),
         }
 
-    def prepare(self, request, trace):
+    def prepare(self, request, trace, *, initial_target=None):
         request = dict(request)
         raw = request.pop("requirements", [])
         rejected, normalized = self.register(raw[:24] if isinstance(raw, list) else [], trace)
@@ -443,6 +530,8 @@ class ResearchChecklist(CoveragePriority):
             request.pop("target_requirements", None)
             request.pop("coverage_updates", None)
             request.pop("revisit_reason", None)
+            if initial_target:
+                request["target_requirements"] = [initial_target]
         request["coverage_updates"], ignored_fields = self._normalize_coverage(request.get("coverage_updates", []))
         followup_search = self.locked and request["tool"] == "search_literature"
         supplement = trace.get("evidence_supplement_requested")
