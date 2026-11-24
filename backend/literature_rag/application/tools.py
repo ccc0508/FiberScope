@@ -54,6 +54,7 @@ class FindDocuments(Request):
 
 
 class FindTable(Request):
+    """Legacy locator for recorded requests. Only ReadTable is offered to agents."""
     tool: Literal['find_table']
     document_id: str = Field(min_length=1, max_length=200)
     table_number: str = Field(pattern=r'^[Ss]?[1-9]\d*(?:[.-]\d+)*[a-z]?$')
@@ -116,9 +117,23 @@ class ReadSection(Request):
 
 
 class ReadTable(Request):
+    """Read a table by its number in a known paper or by a verified table chunk ID."""
     tool: Literal['read_table']
-    document_id: str = Field(min_length=1, max_length=200)
-    chunk_id: str = Field(min_length=1, max_length=200)
+    document_id: str = Field(min_length=1, max_length=200, description='Exact paper ID.')
+    table_number: str | None = Field(default=None, pattern=r'^[Ss]?[1-9]\d*(?:[.-]\d+)*[a-z]?$',
+        description='Printed table number, such as "7" or "S1". Omit chunk_id when using this.')
+    chunk_id: str | None = Field(default=None, min_length=1, max_length=200,
+        description='Verified table chunk ID. Omit table_number when using this.')
+    offset: int = Field(default=0, ge=0,
+        description='Use next_offset to paginate ambiguous numbered candidates.')
+
+    @model_validator(mode='after')
+    def check_selector(self):
+        if (self.table_number is None) == (self.chunk_id is None):
+            raise ValueError('Supply exactly one of table_number and chunk_id')
+        if self.chunk_id is not None and self.offset:
+            raise ValueError('Offset is only available for numbered lookups')
+        return self
 
 
 class ViewImage(Request):
@@ -150,7 +165,7 @@ class QueryExperiments(Request):
 
 INPUT = TypeAdapter(Annotated[Search | ListSections | ReadSection | ReadTable | ViewImage | FindFigure | FindDocuments | FindTable | DescribeExperiments | QueryExperiments, Field(discriminator='tool')])
 SCHEMAS = {c.model_fields['tool'].annotation.__args__[0]: c.model_json_schema()
-           for c in (Search, ListSections, ReadSection, ReadTable, ViewImage, FindFigure, FindDocuments, FindTable, DescribeExperiments, QueryExperiments)}
+           for c in (Search, ListSections, ReadSection, ReadTable, ViewImage, FindFigure, FindDocuments, DescribeExperiments, QueryExperiments)}
 
 
 def encode(x):
@@ -320,20 +335,7 @@ class LiteratureTools:
             return dict(documents=matches[p.offset:end], total=len(matches), next_offset=end if end<len(matches) else None,
                 notice='Directory handles only, not scientific evidence. Confirm identity before restricting a search.'), None
         if isinstance(p, FindTable):
-            if self.catalog is None: raise LookupError('Catalog unavailable')
-            from html import unescape
-            rows = []
-            for c in self.catalog.chunks.values():
-                if c.document_id != p.document_id or c.kind != 'table': continue
-                caption = unescape(re.sub(r'<[^>]+>', ' ', c.text.split('<table',1)[0]))
-                labels = re.findall(r'(?:\bTables?\s*|表\s*)([Ss]?\d+(?:[.-]\d+)*[a-z]?)(?![\w.-]\d)', caption, re.I)
-                if p.table_number.casefold() not in [x.casefold().rstrip('.') for x in labels]: continue
-                rows.append(dict(chunk_id=c.id, document_id=c.document_id, page_start=c.page_start,
-                    page_end=c.page_end, caption=caption[:1500], **self.locator(c.id)))
-            rows.sort(key=lambda r:(r['page_start'],r['chunk_id']))
-            end=min(p.offset+20,len(rows))
-            return dict(tables=rows[p.offset:end], total=len(rows), next_offset=end if end<len(rows) else None,
-                notice='Handles only. Read matching tables with read_table; multiple matches may be continued tables or ambiguous labels.'), None
+            return self.table_directory(p.document_id, p.table_number, p.offset), None
         if isinstance(p, FindFigure):
             from .visual_evidence import locate_figures
             catalog = self.retriever.visual_catalog
@@ -374,7 +376,13 @@ class LiteratureTools:
                 notice='Original crop; no OCR or numerical reading performed by this tool.'), data
         if self.catalog is None: raise LookupError('Section catalog unavailable')
         if isinstance(p, ReadTable):
-            c = self.catalog.chunks.get(p.chunk_id)
+            chunk_id = p.chunk_id
+            if p.table_number is not None:
+                directory = self.table_directory(p.document_id, p.table_number, p.offset)
+                if directory['total'] != 1 or p.offset:
+                    return directory, None
+                chunk_id = directory['tables'][0]['chunk_id']
+            c = self.catalog.chunks.get(chunk_id)
             if c is None or c.document_id != p.document_id: raise LookupError('Unknown table')
             if self.catalog.mapping[c.id].get('content_role') != 'table': raise ValueError('Not a table')
             return dict(table=self.source(c), truncated=False,
@@ -387,6 +395,28 @@ class LiteratureTools:
                 return self.read_section(target, *self.section_plan(target), p.max_chars), None
             return self.read_section_batch(p.targets, p.max_chars), None
         raise ValueError('Unsupported literature tool')
+
+    def table_directory(self, document_id, table_number, offset):
+        from html import unescape
+
+        if self.catalog is None:
+            raise LookupError('Section catalog unavailable')
+        rows = []
+        for chunk in self.catalog.chunks.values():
+            if chunk.document_id != document_id or chunk.kind != 'table':
+                continue
+            caption = unescape(re.sub(r'<[^>]+>', ' ', chunk.text.split('<table', 1)[0]))
+            labels = re.findall(r'(?:\bTables?\s*|表\s*)([Ss]?\d+(?:[.-]\d+)*[a-z]?)(?!\w|[.-]\d)', caption, re.I)
+            if table_number.casefold() not in {label.casefold() for label in labels}:
+                continue
+            rows.append(dict(chunk_id=chunk.id, document_id=chunk.document_id, page_start=chunk.page_start,
+                page_end=chunk.page_end, caption=caption[:1500], **self.locator(chunk.id)))
+        rows.sort(key=lambda row: (row['page_start'], row['chunk_id']))
+        end = min(offset + 20, len(rows))
+        return dict(document_id=document_id, table_number=table_number, tables=rows[offset:end],
+            total=len(rows), next_offset=end if end < len(rows) else None,
+            notice=('Candidate handles only. Check the captions and pages; use read_table with a matching chunk_id.'
+                    if rows else 'No matching table label in this paper. Verify the paper and table number or use scoped search.'))
 
     def list_section_batch(self, document_ids):
         items = []

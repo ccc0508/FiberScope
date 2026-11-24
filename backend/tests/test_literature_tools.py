@@ -210,10 +210,47 @@ def test_directory_and_exact_table_number(kit):
     c=kit.catalog.chunks['1'];kit.catalog.chunks['1']=replace(c,text='Table 1. Definitions\n<table></table>')
     out=kit.call(dict(tool='find_documents',query='paper',reason='identify'),run_id='r')
     assert out['result']['documents'][0]['document_id']=='doc'
-    for number,count in [('1',1),('10',0),('S1',0)]:
-        out=kit.call(dict(tool='find_table',document_id='doc',table_number=number,reason='locate'),run_id='r')
-        assert out['result']['total']==count
+    from literature_rag.application.tools import SCHEMAS
+    assert 'read_table' in SCHEMAS and 'find_table' not in SCHEMAS
+    request = dict(tool='read_table', document_id='doc', reason='read')
+    for number in ('10', 'S1'):
+        out = kit.call(dict(request, table_number=number), run_id='r')
+        assert out['result']['total'] == 0
+        assert 'table' not in out['result']
+    out = kit.call(dict(request, document_id='other', table_number='1'), run_id='r')
+    assert out['result']['total'] == 0
     assert not kit.store.evidence('r')
+    out = kit.call(dict(request, table_number='1'), run_id='r')
+    assert out['result']['table']['text'] == kit.catalog.chunks['1'].text
+    assert out['result']['table']['ref'] == '[1]'
+    direct = kit.call(dict(request, chunk_id='1'), run_id='r')
+    assert direct['result']['table']['ref'] == '[1]'
+    assert len(kit.store.evidence('r')) == 1
+
+
+def test_numbered_read_returns_ambiguous_handles_without_evidence(kit):
+    from dataclasses import replace
+
+    first = replace(kit.catalog.chunks['1'], text='Table 1. Definitions\n<table></table>')
+    second = replace(first, id='continued', page_start=3, page_end=3)
+    other = replace(first, id='different', text='Table 1a. Another table\n<table></table>')
+    kit.catalog.chunks.update({'1': first, second.id: second, other.id: other})
+    kit.catalog.mapping.update({source.id: kit.catalog.mapping['1'] for source in (second, other)})
+    request = dict(tool='read_table', document_id='doc', reason='read')
+    out = kit.call(dict(request, table_number='1'), run_id='r')
+    assert out['status'] == 'completed'
+    assert out['result']['total'] == 2
+    assert [row['chunk_id'] for row in out['result']['tables']] == ['1', 'continued']
+    assert 'table' not in out['result']
+    assert kit.store.evidence('r') == []
+    out = kit.call(dict(request, chunk_id='continued'), run_id='r')
+    assert out['result']['table']['ref'] == '[1]'
+
+
+@pytest.mark.parametrize('selectors', [{}, {'table_number': '1', 'chunk_id': '1'}, {'chunk_id': '1', 'offset': 1}])
+def test_read_table_requires_one_selector(kit, selectors):
+    out = kit.call(dict(tool='read_table', document_id='doc', reason='read', **selectors), run_id='r')
+    assert out['status'] == 'invalid_arguments'
 
 
 def test_scoped_search_validates_ids_and_passes_filter(kit):

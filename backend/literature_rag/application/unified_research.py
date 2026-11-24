@@ -53,8 +53,9 @@ Use the validator's feedback without changing the intended population.
 Keep local database results distinct from published measurements and preserve actual units.
 
 Literature: use verified paper identities. Use scoped search for missing facts and exact
-section IDs for context. For a named table or figure prefer its locator when the handle is
-missing. Read the table or inspect the figure before making claims about values in it.
+section IDs for context. Read a named table by paper ID and table number, or by a verified
+table chunk ID. Use the figure locator if its asset ID is missing. Read the table or inspect
+the figure before making claims about values in it.
 Check row, column, units, conditions and intended metric. Check data origin and validation
 separately when comparing studies. A public dataset may be synthetic. Keep uncertainty and
 distinguish correlations, author explanations and causal findings. If a requested fact lacks

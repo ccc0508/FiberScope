@@ -234,7 +234,7 @@ SQL_PROMPT += '''\nPostgreSQL || is supported for string concatenation. For dist
 
 PAPER_PROMPT=COMMON+'''
 You handle literature only. Use provided paper IDs; search_literature expands evidence. Use document filters
-when known. read_section requires real IDs from list_sections. Locate tables by find_table then read_table;
+when known. read_section requires real IDs from list_sections. Use read_table with the paper ID and printed table number or verified table chunk ID;
 locate missing figures by find_figure then view_image. Captions are not viewed pixels; visual claims require
 view_image. Distinguish author explanation, correlation and causation; preserve conditions and uncertainty.
 If a requested fact lacks evidence and a targeted path/budget remains, check it. Never claim absence from
