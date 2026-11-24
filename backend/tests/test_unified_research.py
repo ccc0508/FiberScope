@@ -14,12 +14,13 @@ def test_unified_agent_direct_answer_preserves_user_output_format():
     answer = '[{"sample":"A","value":null}]'
     adapter = Fake([decision(answer)])
     state = AgentLoop(
-        adapter, lambda *_: None, lambda _: None, paper_directory=[], unified_research=True
+        adapter, lambda *_: None, lambda _: None, paper_directory=[], unified_research=True,
+        evidence_judge=SimpleNamespace(model="jev", check=lambda *_: pytest.fail("Direct answers need no Jev call")),
     ).run("Convert to JSON.", "direct")
     assert state["answer"] == answer
     assert state["review_status"] == "not_required"
     assert state["budget_usage"] == {"model": 1, "tools": 0, "search": 0}
-    assert len(adapter.requests[0][1]) == 8
+    assert len(adapter.requests[0][1]) == 6
     assert not {"list_sections", "read_section"} & adapter.requests[0][1].keys()
     assert "read_table" in adapter.requests[0][1] and "find_table" not in adapter.requests[0][1]
     assert all("independent_in_turn" not in schema["properties"] for schema in adapter.requests[0][1].values())
