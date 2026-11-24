@@ -109,6 +109,41 @@ def test_mixed_batch_keeps_required_parameter_validation():
     assert state['tool_attempts'] == 4 and len(adapter.requests) == 3
 
 
+
+def test_section_reads_have_a_separate_two_call_limit():
+    def read(key):
+        return ToolCall(key, 'read_section', dict(document_id='a', section_id=key, reason='read'))
+
+    batch = ToolCall('batch', 'read_section', dict(
+        targets=[dict(document_id='a', section_id='s2'), dict(document_id='b', section_id='s1')],
+        reason='read two known targets',
+    ))
+    directory = ToolCall('directory', 'list_sections', dict(document_id='b', reason='find sections'))
+    adapter = Fake([
+        decision(calls=[read('s1'), batch, read('s3')]),
+        decision(calls=[directory, read('s4')]),
+        decision('Done.'),
+    ])
+    executed = []
+
+    def execute(request, *_):
+        executed.append(request)
+        if request.get('section_id') == 's1':
+            return dict(status='failed', error_code='unknown_section')
+        return dict(status='completed', result={})
+
+    state = AgentLoop(adapter, execute, lambda _: None, review_enabled=False, paper_directory=[]).run(
+        'Compare two papers', 'r')
+    assert [request['tool'] for request in executed] == ['read_section', 'read_section', 'list_sections']
+    assert state['section_read_calls'] == state['max_section_read_calls'] == 2
+    assert 'read_section' in adapter.requests[0][1]
+    assert 'read_section' not in adapter.requests[1][1]
+    assert {'list_sections', 'search_literature'} <= adapter.requests[1][1].keys()
+    assert [event['result']['error_code'] for event in state['tool_calls'] if event['status'] == 'blocked'] == [
+        'section_read_budget', 'section_read_budget',
+    ]
+
+
 def test_duplicate_in_later_turn_is_still_blocked():
     call=ToolCall('a','search_literature',dict(query='q',reason='find'))
     again=ToolCall('b','search_literature',dict(query='q',reason='other reason'))
@@ -218,7 +253,7 @@ def test_invalid_arguments_can_be_corrected_and_retried():
 
 
 def test_failed_tool_retry_succeeds_then_is_deduplicated():
-    calls = [ToolCall(str(i), 'read_section', dict(document_id='d', section_id='s', reason=str(i))) for i in range(3)]
+    calls = [ToolCall(str(i), 'list_sections', dict(document_id='d', reason=str(i))) for i in range(3)]
     a = Fake([*(decision(calls=[c]) for c in calls), decision('draft'), decision('final')])
     executed = []
     def execute(*args):
