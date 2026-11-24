@@ -1,5 +1,6 @@
 """Opt-in bounded native-tool agent. Keeps the website's existing pipeline unchanged."""
 import argparse
+from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 import json
@@ -15,32 +16,107 @@ sys.path.insert(0,str(ROOT/'backend'))
 from literature_rag.application.agent_loop import AgentLoop,AgentBudget
 from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter
 from literature_rag.config import Settings
-from literature_rag.application.tools import ToolTraceStore
+from literature_rag.application.tools import SEARCH_HITS_PER_DOCUMENT, ToolTraceStore
+from literature_rag.stage_trace import StageTrace, stage
 from literature_rag.application.paper_directory import load_paper_directory
 from literature_rag.state_io import save_state
 
 
-def execute_parallel_searches(executions, run_id, timeout, *, execute, trace_store, tool_context):
-    # Each subprocess has its own retriever and diagnostics. Only this caller
-    # allocates run-local refs, in the original model request order.
+def finalize_shared_search(records, run_id, timeout, *, assemble):
+    """Select one distinct hit per query in rank order before filling the remaining quota."""
+    ranked = [iter(record['candidate_evidence']) for record in records]
+    seeds, owners = [], {}
+    while len(seeds) < SEARCH_HITS_PER_DOCUMENT:
+        previous_size = len(seeds)
+        for owner, candidates in enumerate(ranked):
+            candidate = next((row for row in candidates if row['chunk_id'] not in owners), None)
+            if candidate is not None:
+                owners[candidate['chunk_id']] = owner
+                seeds.append({**candidate, 'ref': f'[{len(seeds) + 1}]'})
+            if len(seeds) == SEARCH_HITS_PER_DOCUMENT:
+                break
+        if len(seeds) == previous_size:
+            break
+
+    shared_ids = [s['chunk_id'] for s in seeds]
+    call_ids = [record['call_id'] for record in records]
+    output = (assemble(seeds, ' '.join(record['input']['query'] for record in records), run_id, timeout)
+              if seeds else {})
+    result = output.get('result', {})
+    if seeds and 'evidence' not in result:
+        error = output.get('error_code', 'shared_context_failed')
+        for record in records:
+            record.update(status='failed', error_code=error)
+            record.pop('result', None)
+            record.pop('result_sha256', None)
+        return
+    evidence_by_owner = defaultdict(list)
+    for evidence in result.get('evidence', []):
+        owner = owners[evidence['chunk_id']]
+        evidence_by_owner[owner].append(evidence)
+    for owner, record in enumerate(records):
+        chosen = [s for s in seeds if owners[s['chunk_id']] == owner]
+        with StageTrace() as trace:
+            with stage('retrieval.select_seeds', top_k=SEARCH_HITS_PER_DOCUMENT,
+                       max_seeds_per_document=SEARCH_HITS_PER_DOCUMENT, shared_call_ids=call_ids) as event:
+                event['selected_ids'] = [s['chunk_id'] for s in chosen]
+                event['shared_selected_ids'] = shared_ids
+        record['seed_evidence'] = chosen
+        record['internal_steps'].extend(trace.records)
+        record['diagnostics']['last_context_diagnostics'] = output.get('context_diagnostics', {})
+        rank_diagnostics = record['diagnostics'].get('last_rerank_diagnostics') or {}
+        if rank_diagnostics:
+            selected = {s['chunk_id'] for s in chosen}
+            rank_diagnostics['selected_chunk_ids'] = [s['chunk_id'] for s in chosen]
+            for item in rank_diagnostics['candidates']:
+                item['selected'] = item['chunk_id'] in selected
+        if owner == 0:
+            record['internal_steps'].extend(output.get('internal_steps', []))
+        record['result'].update(result, evidence=evidence_by_owner[owner], shared_search={
+            'call_ids': call_ids, 'selected_chunk_ids': shared_ids,
+            'notice': 'These same-paper queries share a single evidence pool. Read the other results in this group.',
+        })
+
+
+def execute_parallel_searches(executions, run_id, timeout, *, execute, trace_store, tool_context,
+                              assemble=None):
+    # Each subprocess has its own retriever. Register final evidence in request order.
     deadline = monotonic() + timeout
     contexts = [tool_context(index=index) for _, index in executions]
+    document_counts = Counter(request.get('document_id') for request, _ in executions)
 
     def search(request, context):
         remaining = deadline - monotonic()
         if remaining <= 0:
             return dict(status='failed', error_code='tool_timeout')
-        return execute(request, run_id, remaining, context=context, defer_search_registration=True)
+        document = request.get('document_id')
+        shared = assemble is not None and document and document_counts[document] > 1
+        return execute(request, run_id, remaining, context=context, defer_search_registration=True,
+                       **({'rank_search_only': True} if shared else {}))
 
     with ThreadPoolExecutor(max_workers=min(5, len(executions))) as pool:
         futures = [pool.submit(search, request, context)
                    for (request, _), context in zip(executions, contexts, strict=True)]
         results = [future.result() for future in futures]
+        batches = defaultdict(list)
+        for (request, _), result in zip(executions, results, strict=True):
+            record = result.get('deferred_search_record')
+            document = request.get('document_id')
+            if record is not None and assemble is not None and document and document_counts[document] > 1:
+                batches[document].append(record)
+        assemblies = [pool.submit(finalize_shared_search, records, run_id, deadline - monotonic(), assemble=assemble)
+                      for records in batches.values()]
+        for future in assemblies:
+            future.result()
     for result in results:
         record = result.get('deferred_search_record')
         if record is not None:
-            trace_store.complete(record)
-            result = dict(call_id=record['call_id'], status=record['status'], result=record['result'])
+            if record['status'] == 'completed':
+                trace_store.complete(record)
+                result = dict(call_id=record['call_id'], status=record['status'], result=record['result'])
+            else:
+                trace_store.save(record)
+                result = dict(call_id=record['call_id'], status=record['status'], error_code=record['error_code'])
         yield result
 
 
@@ -124,13 +200,12 @@ def main():
                 pass  # Optional remote link must never fail the local answer.
     store=ToolTraceStore(ROOT/'.rag-data/tool-traces.sqlite3')
 
-    def execute(request,rid,timeout,*,context=None,defer_search_registration=False):
-        body=dict(tool_call=request,run_id=rid,data_dir=str(a.library.resolve()))
-        if defer_search_registration:
-            body['defer_search_registration'] = True
-        else:
-            context = telemetry.active_tool_context()
-        if context:body['trace_context']=context
+    def worker(body, timeout, context=None):
+        if timeout <= 0:
+            return dict(status='failed', error_code='tool_timeout')
+        body['data_dir'] = str(a.library.resolve())
+        if context:
+            body['trace_context'] = context
         try:
             r=subprocess.run([sys.executable,'-I','-X','utf8',str(ROOT/'backend/literature_worker.py')],
                 input=json.dumps(body,ensure_ascii=False),text=True,encoding='utf-8',capture_output=True,timeout=timeout,
@@ -139,9 +214,17 @@ def main():
         except subprocess.TimeoutExpired:return dict(status='failed',error_code='tool_timeout')
         except (json.JSONDecodeError, OSError):return dict(status='failed',error_code='worker_failed')
 
+    def execute(request, rid, timeout, *, context=None, defer_search_registration=False, rank_search_only=False):
+        body = dict(tool_call=request, run_id=rid, defer_search_registration=defer_search_registration,
+                    rank_search_only=rank_search_only)
+        return worker(body, timeout, context if defer_search_registration else telemetry.active_tool_context())
+
+    def assemble(seeds, query, rid, timeout):
+        return worker(dict(assemble_scoped_search=dict(seeds=seeds, query=query), run_id=rid), timeout)
+
     def parallel_search(executions, rid, timeout):
         return execute_parallel_searches(executions, rid, timeout, execute=execute,
-                                         trace_store=store, tool_context=telemetry.active_tool_context)
+                                         trace_store=store, tool_context=telemetry.active_tool_context, assemble=assemble)
 
     directory=load_paper_directory(a.library)
     loop=AgentLoop

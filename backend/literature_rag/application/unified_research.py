@@ -90,7 +90,7 @@ JEV_CHECKLIST_GUIDANCE = (
     "when explicitly requested or when omitting them would change the answer. "
     "A citation location is part of attribution, not a separate check unless the question asks for it. "
     "Register a SQL task only for requested local data, not advice about published datasets. "
-    "Start with one focused lookup per paper and combine gaps likely answered by the same source."
+    "Combine gaps likely answered by the same source passage."
 )
 
 

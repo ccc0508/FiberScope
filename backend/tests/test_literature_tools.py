@@ -314,3 +314,47 @@ def test_five_parallel_scoped_searches_register_in_request_order(tmp_path):
     assert [(e['document_id'], e['ref']) for r in results for e in r['result']['evidence']] == [
         (doc, f'[{i}]') for i, doc in enumerate(indices, 1)
     ]
+
+def test_same_paper_queries_share_three_distinct_anchors_and_expand_once(tmp_path):
+    from threading import Barrier
+    from scripts.run_literature_agent import execute_parallel_searches
+
+    store = ToolTraceStore(tmp_path / 'traces.db')
+    overlap = Barrier(2, timeout=5)
+    assembled = []
+    doc = 'paper'
+    rankings = {'methods': ['common', 'methods', 'unused'], 'validation': ['common', 'validation']}
+
+    def execute(request, run_id, timeout, *, context, defer_search_registration, rank_search_only):
+        assert rank_search_only and defer_search_registration
+        overlap.wait()
+        chunks = [
+            Chunk(chunk_id, doc, 'paper.pdf', i + 1, i + 1, i, chunk_id, 1, 'test')
+            for i, chunk_id in enumerate(rankings[request['query']])
+        ]
+        raw = [Evidence('', c.id, doc, c.filename, c.page_start, c.page_end, c.text, .9) for c in chunks]
+        def retrieve(query, top_k, min_score, **kwargs):
+            assert query == request['query'] and kwargs['rank_only']
+            return raw
+        retriever = SimpleNamespace(body_context_catalog=SimpleNamespace(chunks={c.id: c for c in chunks}, mapping={}),
+                                    retrieve=retrieve, last_candidate_evidences=raw)
+        return LiteratureTools(retriever, tmp_path, store).call(
+            request, run_id=run_id, defer_search_registration=True, rank_search_only=True,
+        )
+
+    def assemble(seeds, query, run_id, timeout):
+        assembled.append([seed['chunk_id'] for seed in seeds])
+        assert query == 'methods validation' and timeout > 0
+        assert store.evidence(run_id) == []
+        return {'result': {'evidence': seeds}, 'internal_steps': []}
+
+    executions = [(dict(tool='search_literature', document_id=doc, query=query, reason='target'), i)
+                  for i, query in enumerate(rankings)]
+    results = list(execute_parallel_searches(executions, 'run', 10, execute=execute, trace_store=store,
+                                             tool_context=lambda **kw: kw, assemble=assemble))
+    assert assembled == [['common', 'validation', 'methods']]
+    assert [[(e['chunk_id'], e['ref']) for e in r['result']['evidence']] for r in results] == [
+        [('common', '[1]'), ('methods', '[2]')], [('validation', '[3]')],
+    ]
+    assert len(store.evidence('run')) == 3
+    assert all(len(r['result']['shared_search']['selected_chunk_ids']) == 3 for r in results)

@@ -299,3 +299,24 @@ def test_distinct_paper_searches_share_one_round_but_use_individual_tool_slots()
     assert [(e['provider_call_id'], e['status']) for e in state['tool_calls']] == [
         ('a', 'completed'), ('b', 'failed'), ('c', 'completed'), ('broad', 'completed'), ('extra', 'blocked'),
     ]
+
+def test_independent_queries_for_one_paper_share_round_and_keep_tool_charges():
+    calls = [
+        ToolCall(str(i), 'search_literature', dict(document_id='doc', query=query, reason='find'))
+        for i, query in enumerate(['methods', 'methods', 'validation', 'third target'])
+    ]
+    adapter = Fake([decision(calls=calls), decision('done')])
+    batches = []
+
+    def execute_parallel(executions, *_):
+        batches.append([request['query'] for request, _ in executions])
+        return [{'status': 'completed', 'result': {'evidence': []}} for _ in executions]
+
+    state = AgentLoop(adapter, lambda *_: None, lambda _: None, review_enabled=False,
+                      parallel_search_executor=execute_parallel).run('Compare methods and validation', 'batch')
+    assert batches == [['methods', 'validation']]
+    assert state['search_calls'] == 2 and state['search_rounds'] == 1
+    assert state['tool_attempts'] == 3  # Two executed searches and one duplicate request.
+    assert [e['result'].get('error_code') for e in state['tool_calls']] == [
+        None, 'duplicate_call', None, 'paper_query_budget',
+    ]
