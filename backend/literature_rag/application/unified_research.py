@@ -1,6 +1,7 @@
 """The single research agent's instructions and task list."""
 
 import json
+from bisect import bisect_left
 from typing import get_args
 
 from pydantic import Field, TypeAdapter, ValidationError
@@ -192,27 +193,70 @@ class ResearchRequirement(Requirement):
                                description="Copy the registration error's correction_id when correcting that item.")
 
 
-def extract_research_submission(raw):
+def _escape_json_string_newlines(raw):
+    """Escape bare CR/LF inside strings and record the inserted character offsets."""
+    result = []
+    insertions = []
+    in_string = escaped = False
+    for character in raw:
+        if escaped:
+            escaped = False
+        elif character == '"':
+            in_string = not in_string
+        elif in_string:
+            if character == "\\":
+                escaped = True
+            elif character in "\r\n":
+                insertions.append(len(result) + len(insertions))
+                character = "\\r" if character == "\r" else "\\n"
+        result.append(character)
+    return "".join(result), insertions
+
+
+def _load_research_json(raw):
+    try:
+        return json.loads(raw), None, None
+    except json.JSONDecodeError as error:
+        if raw[error.pos:error.pos + 1] in ("\r", "\n") and error.msg == "Invalid control character at":
+            escaped, insertions = _escape_json_string_newlines(raw)
+            try:
+                return json.loads(escaped), "unescaped_json_newlines", None
+            except json.JSONDecodeError as remaining:
+                pos = remaining.pos - bisect_left(insertions, remaining.pos)
+                return None, None, json.JSONDecodeError(remaining.msg, raw, pos)
+            except ValueError as remaining:
+                return None, None, remaining
+        return None, None, error
+    except ValueError as error:
+        return None, None, error
+
+
+def extract_research_submission(raw, *, issues=None):
     """Extract a JSON envelope or an identifiable trailing internal coverage block."""
     from .agent_loop import unwrap_json
 
-    try:
-        payload = json.loads(unwrap_json(raw))
-    except ValueError:
+    payload, recovery, error = _load_research_json(unwrap_json(raw))
+    if error is not None:
         visible, marker, tail = raw.strip().rpartition("\n```json")
         header_suffix, _, fenced = tail.partition("\n")
-        if not marker or header_suffix.strip() or not fenced.endswith("\n```") or not visible.strip():
-            return None, None
-        try:
-            payload = json.loads(fenced[:-4])
-        except ValueError:
-            return None, None
-        if (not isinstance(payload, dict) or payload.keys() - {"answer", "coverage", "requirements", "evidence_checks"}
-                or not isinstance(payload.get("answer"), str) or not isinstance(payload.get("coverage"), list)):
-            return None, None
-        return {**payload, "answer": visible.strip()}, "trailing_coverage_block"
+        if marker and not header_suffix.strip() and fenced.endswith("\n```") and visible.strip():
+            footer, footer_recovery, footer_error = _load_research_json(fenced[:-4])
+            if (isinstance(footer, dict) and not footer.keys() - {"answer", "coverage", "requirements", "evidence_checks"}
+                    and isinstance(footer.get("answer"), str) and isinstance(footer.get("coverage"), list)):
+                return {**footer, "answer": visible.strip()}, footer_recovery or "trailing_coverage_block"
+            error = footer_error or error
+        if issues is not None:
+            issue = dict(code="invalid_response_envelope")
+            if isinstance(error, json.JSONDecodeError):
+                issue.update(message=error.msg, line=error.lineno, column=error.colno)
+            else:
+                issue["message"] = str(error)
+            issues.append(issue)
+        return None, None
     if isinstance(payload, dict):
-        return payload, None
+        return payload, recovery
+    if issues is not None:
+        issues.append(dict(code="invalid_response_envelope", message="Expected a JSON object at the top level."))
     return None, None
 
 
@@ -249,7 +293,7 @@ class ResearchChecklist(CoveragePriority):
         return (
             "Submit one JSON object only, with answer as a string containing all user-facing content and "
             "coverage as an array with one item per requirement_id. Put any prose and inline [n] citations "
-            "inside answer. Do not add prose outside the JSON. "
+            "inside answer. Escape line breaks within JSON strings as \\n. Do not add prose outside the JSON. "
             f"Use only these coverage item fields: {fields}. Allowed status values: {COVERAGE_STATES}. "
             "Use verified when the item is complete, partial when a gap remains, and missing when unsupported. "
             "Supply document_id for a named paper, refs for cited evidence, and gap for a partial item. "
@@ -622,16 +666,18 @@ class ResearchChecklist(CoveragePriority):
                 schedule["requirement_registration"] = self.registration_feedback(pending)
 
     def draft(self, raw, trace, *, stage):
-        payload, recovery = extract_research_submission(raw)
         self.evidence_submissions = []
         issues = []
+        payload, recovery = extract_research_submission(raw, issues=issues)
         attempt = dict(stage=stage, issues=issues)
         trace.setdefault("research_output_attempts", []).append(attempt)
         if recovery:
             attempt["recovery"] = recovery
         answer = payload.get("answer") if payload else None
         if not isinstance(answer, str) or not answer.strip():
-            issues.append({"code": "missing_answer" if payload is not None else "invalid_response_envelope"})
+            if payload is not None:
+                issues.append(dict(code="missing_answer", field="answer", message="Expected a non-empty string.",
+                                   received=type(answer).__name__ if "answer" in payload else "missing"))
             attempt["status"] = "invalid"
             trace["coverage_report"] = self.report(trace)
             return "", None
