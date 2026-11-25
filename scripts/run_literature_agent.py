@@ -305,15 +305,21 @@ def main():
                                          trace_store=store, tool_context=telemetry.active_tool_context, assemble=assemble,
                                          context_limits=context_limits if settings.context_expansion_enabled else None)
 
-    directory=load_paper_directory(a.library)
+    unified = a.architecture == 'single' and not a.prompt_file
+    directory = ([] if unified and not (a.library / 'metadata.sqlite3').is_file()
+                 else load_paper_directory(a.library))
+    public_search = None
+    if unified and settings.web_search_api_key and settings.web_search_api_key.get_secret_value().strip():
+        from literature_rag.adapters.providers.public_web import BravePublicSearch
+        public_search = BravePublicSearch(settings.web_search_api_key.get_secret_value().strip())
     loop=AgentLoop
     if a.architecture=='specialists':
         from literature_rag.application.specialist_agent import ResultDrivenCoordinator
         loop=ResultDrivenCoordinator
     try:
-        unified = a.architecture == 'single' and not a.prompt_file
         options=(dict(feedback_enabled=not a.no_task_feedback) if a.architecture=='specialists'
                  else dict(unified_research=bool(unified),
+                           first_turn_intent=bool(unified), public_search=public_search,
                            evidence_supplement_enabled=False,
                            parallel_search_executor=parallel_search if unified else None))
         result=loop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory,**options).run(a.question,run_id)

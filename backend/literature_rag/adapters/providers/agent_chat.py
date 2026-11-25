@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 import json
 from openai import OpenAI
+from literature_rag.application.question_intent import PLAN_TOOL
 from literature_rag.application.tools import SCHEMAS
 from literature_rag.diagnostics import provider_usage
 
@@ -38,15 +39,17 @@ class ChatAgentAdapter:
             schema=json.loads(json.dumps(schema))
             schema['properties'].pop('tool',None)
             schema['required']=[k for k in schema.get('required',[]) if k!='tool']
+            description = ('Declare separate user tasks and prerequisites; no external action.'
+                           if name == PLAN_TOOL else 'Read-only literature operation: '+name)
             tools.append(dict(type='function',function=dict(name=name,parameters=schema,
-                description='Read-only literature operation: '+name)))
+                description=description)))
         options={}
         if self.settings.llm_provider=='deepseek':
             options['extra_body']={'thinking':{'type':'enabled' if self.settings.llm_thinking_enabled else 'disabled'}}
         if self.settings.llm_reasoning_effort:options['reasoning_effort']=self.settings.llm_reasoning_effort
         response=self.client.chat.completions.create(model=self.settings.llm_model,messages=messages,
             **({'tools':tools,'tool_choice':'auto',
-                'parallel_tool_calls':schemas.keys() <= SCHEMAS.keys()} if tools else {}),
+                'parallel_tool_calls':schemas.keys() <= (SCHEMAS.keys() | {PLAN_TOOL})} if tools else {}),
             max_tokens=max_tokens,timeout=timeout,**options)
         choice=response.choices[0];m=choice.message
         calls=[]

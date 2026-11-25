@@ -135,6 +135,17 @@ class LangfuseTrace:
                 level='ERROR' if call['status']=='failed' else 'DEFAULT')
             if call['status'] != 'started':
                 self.end(key,node)
+        for i, search in enumerate(state.get('public_web_searches', [])):
+            key = f'public_web_search:{i}'
+            if key in self.ended:
+                continue
+            node = self.node(key, self.root, 'public_web_search', 'tool',
+                             {'task_id': search['task_id'], 'query': search['query']})
+            node.update(output=redact(search.get('sources')), metadata={
+                k: search.get(k) for k in ('status', 'elapsed_ms', 'error_type')
+            }, level='ERROR' if search['status'] == 'failed' else 'DEFAULT')
+            if search['status'] != 'started':
+                self.end(key, node)
         # End the specialist only after all its final observations have been updated.
         for child in state.get('children', []):
             key='child:'+child['id']
@@ -142,10 +153,11 @@ class LangfuseTrace:
                 self.end(key,self.nodes[key],child['ended_at_ns'])
         self.root.update(output=redact(state.get('answer')), metadata=redact({
             'status':state['status'], 'budget':state.get('budget_usage'),
-            'plan':state.get('plan'), 'stop_reason':state.get('stop_reason'),
+            'plan':state.get('plan'), 'question_intent':state.get('question_intent'),
+            'stop_reason':state.get('stop_reason'),
             'citation_validation':state.get('citation_validation'),
             'feedback':state.get('feedback'), 'task_schedule':state.get('task_schedule')}))
-        if state['status'] != 'running':
+        if state['status'] != 'running' and not state.get('intent_composition_pending'):
             self.close()
 
     def close(self):

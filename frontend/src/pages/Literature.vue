@@ -20,6 +20,7 @@ import {
 
 const documents = ref<LibraryDocument[]>([]);
 const enabled = ref(false);
+const generalQuestions = ref(false);
 const loading = ref(true);
 const loadError = ref("");
 const question = ref("");
@@ -40,7 +41,7 @@ const polling = useAbortablePolling();
 const canAsk = computed(
   () =>
     enabled.value &&
-    documents.value.length > 0 &&
+    (generalQuestions.value || documents.value.length > 0) &&
     !loading.value &&
     !asking.value &&
     historyReady.value &&
@@ -60,7 +61,7 @@ async function load() {
   loading.value = true;
   loadError.value = "";
   try {
-    const result = await get<{ enabled: boolean; documents: LibraryDocument[] }>(
+    const result = await get<{ enabled: boolean; documents: LibraryDocument[]; supports_general_questions?: boolean }>(
       "literature/documents",
       {},
       current.signal,
@@ -68,6 +69,7 @@ async function load() {
     if (!current.signal.aborted) {
       documents.value = result.documents;
       enabled.value = result.enabled;
+      generalQuestions.value = result.supports_general_questions ?? false;
     }
   } catch (e) {
     if (!current.signal.aborted) {
@@ -209,7 +211,7 @@ load();
       <template #actions>
         <span class="connection" :class="{ offline: !!loadError || (!loading && !enabled) }"
           ><span></span
-          >{{ loading ? "正在读取" : loadError ? "连接待检查" : enabled ? "文献库已连接" : "问答未启用" }}</span
+          >{{ loading ? "正在读取" : loadError ? "连接待检查" : enabled ? (documents.length ? "文献库已连接" : "问答已启用") : "问答未启用" }}</span
         ><button class="button" :disabled="loading || asking" @click="load">
           <RefreshCw :size="15" :class="{ spinning: loading }" />刷新文献库
         </button>
@@ -240,7 +242,7 @@ load();
           <div v-else class="lit-sig-empty skeleton" aria-hidden="true"></div>
           <figcaption>
             柱高 = PDF 页数 ·
-            <span class="nw">共 <b>{{ sig ? grouped(sig.pages) : "—" }}</b> 页</span><template v-if="enabled"> · <span class="nw">不检索互联网</span></template>
+            <span class="nw">共 <b>{{ sig ? grouped(sig.pages) : "—" }}</b> 页</span><template v-if="enabled"> · <span class="nw">{{ generalQuestions ? "科研问答使用本地证据" : "不检索互联网" }}</span></template>
           </figcaption>
         </figure>
       </template>
@@ -319,7 +321,7 @@ load();
             <h2 id="answer-title">
               {{ answer.status === "answered" ? "回答" : "暂时无法可靠回答" }}
             </h2>
-            <span class="lit-badge" :class="{ warn: answer.status !== 'answered' }">{{
+            <span v-if="answer.status !== 'answered' || answer.citations.length" class="lit-badge" :class="{ warn: answer.status !== 'answered' }">{{
               answer.status === "answered"
                 ? `${answer.citations.length} 条引用`
                 : "证据不足或未通过引用校验"
@@ -354,7 +356,15 @@ load();
               >
             </p>
           </div>
-          <p class="caveat lit-note">
+          <div v-if="answer.public_web_sources?.length" class="lit-note">
+            <h3>网页来源</h3>
+            <ol>
+              <li v-for="source in answer.public_web_sources" :key="source.index" :value="source.index">
+                <a :href="source.url" target="_blank" rel="noopener noreferrer">{{ source.title }}</a>
+              </li>
+            </ol>
+          </div>
+          <p v-if="answer.citations.length" class="caveat lit-note">
             回答依据本次取得的文献或实验数据；引用用于追溯来源，不替代对研究结论和适用条件的判断。
           </p>
         </div>

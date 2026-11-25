@@ -47,6 +47,10 @@ class LiteratureSettings(BaseSettings):
     def library_root(self) -> Path:
         return (BACKEND / self.library_dir).resolve() if self.library_dir is not None else self.root
 
+    @property
+    def supports_general_questions(self) -> bool:
+        return self.engine == 'agent' and self.agent_architecture == 'single'
+
 
 class Question(BaseModel):
     model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
@@ -164,13 +168,16 @@ class QuestionRunner:
     def _perform(self, record_id, question, configuration, started):
         try:
             try:
-                with step('qa.library_check'):
-                    available_documents = documents(self.config)
-                if not available_documents:
-                    result = {'status': 'refused', 'answer': '文献库中暂无已完成导入的文献，请先补充文献。', 'citations': [],
-                              'latency_ms': 0, 'reason_code': 'empty_library', 'retrieved_evidence': [], 'claims': [], 'generation_calls': []}
-                else:
+                if self.config.supports_general_questions:
                     result = run_answer(self.config, question)
+                else:
+                    with step('qa.library_check'):
+                        available_documents = documents(self.config)
+                    if available_documents:
+                        result = run_answer(self.config, question)
+                    else:
+                        result = {'status': 'refused', 'answer': '文献库中暂无已完成导入的文献，请先补充文献。', 'citations': [],
+                                  'latency_ms': 0, 'reason_code': 'empty_library', 'retrieved_evidence': [], 'claims': [], 'generation_calls': []}
                 from .qa_images import cache_answer_images
                 with step("qa.cache_images"):
                     cache_answer_images(result,self.config.library_root,self.config.root)
@@ -267,8 +274,13 @@ def router(config: LiteratureSettings | None = None, allowed_origins: list[str] 
         if not config.enabled:
             return {'enabled': False, 'documents': [], 'message': '文献问答尚未启用。'}
         try:
-            items = documents(config)
-            return {'enabled': True, 'documents': items, 'message': '仅依据当前文献库回答，每次提问独立处理。'}
+            supports_general = config.supports_general_questions
+            items = ([] if supports_general and not (config.library_root / 'metadata.sqlite3').is_file()
+                     else documents(config))
+            message = ('科研问题使用平台文献和实验数据，每次提问独立处理。' if supports_general
+                       else '仅依据当前文献库回答，每次提问独立处理。')
+            return {'enabled': True, 'documents': items, 'message': message,
+                    'supports_general_questions': supports_general}
         except sqlite3.Error:
             raise HTTPException(503, '文献库读取失败，请联系管理员。') from None
 

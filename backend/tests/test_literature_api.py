@@ -171,18 +171,31 @@ def test_question_validation(configured, monkeypatch, payload):
     assert client_for(configured).post('/api/v1/literature/ask', json=payload).status_code == 422
 
 
-def test_disabled_and_empty_library_do_not_call_model(configured, monkeypatch):
+def test_disabled_and_legacy_empty_library_do_not_call_model(configured, monkeypatch):
     monkeypatch.setattr(literature, 'run_answer', lambda *a: pytest.fail('unexpected provider call'))
     disabled = configured.model_copy(update={'enabled':False})
     assert client_for(disabled).get('/api/v1/literature/documents').json()['enabled'] is False
     assert client_for(disabled).post('/api/v1/literature/ask', json={'question':'打浆影响？'}).status_code == 503
     with sqlite3.connect(configured.root / 'metadata.sqlite3') as conn:
         conn.execute('DELETE FROM documents')
-    client = client_for(configured)
+    client = client_for(configured.model_copy(update={'engine': 'legacy'}))
     response = client.post('/api/v1/literature/ask', json={'question':'打浆影响？'})
     record = finished(client, response.json()['id'])
     assert record['status'] == 'refused'
     assert record['reason_code'] == 'empty_library'
+
+
+def test_single_agent_answers_directly_without_a_library(configured, monkeypatch):
+    config = configured.model_copy(update={'engine': 'agent', 'library_dir': configured.root / 'missing'})
+    monkeypatch.setattr(literature, 'run_answer', lambda config, question: {
+        'status': 'answered', 'answer': '今天是星期三。', 'citations': [],
+    })
+    client = client_for(config)
+    catalog = client.get('/api/v1/literature/documents').json()
+    assert catalog['supports_general_questions'] is True
+    assert catalog['documents'] == []
+    response = client.post('/api/v1/literature/ask', json={'question': '今天星期几？'})
+    assert finished(client, response.json()['id'])['result']['answer'] == '今天是星期三。'
 
 
 def test_worker_deadline_and_error_redaction(configured, monkeypatch):
