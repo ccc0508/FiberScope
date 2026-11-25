@@ -53,7 +53,7 @@ def test_private_evaluation_flow_can_rescore_without_regenerating(monkeypatch, t
         assert client.get("/api/v1/evaluation/cases").status_code == 401
         client.headers["Authorization"] = "Bearer test-eval-token"
         listing = client.get("/api/v1/evaluation/cases").json()
-        assert listing["max_concurrent_cases"] == 5
+        assert listing["max_concurrent_cases"] == 10
         assert Counter(c["group"] for c in listing["cases"]) == {"literature": 24, "sql": 20, "mixed": 20, "non_paper": 6}
         assert all("reference" not in case and "prompt" not in case for case in listing["cases"])
         assert client.post("/api/v1/evaluation/runs", json={"ids": ["missing"]}).status_code == 422
@@ -83,14 +83,14 @@ def test_private_evaluation_flow_can_rescore_without_regenerating(monkeypatch, t
     assert not snapshots
 
 
-def test_queue_runs_at_most_five_cases_across_batches(monkeypatch, tmp_path):
+def test_queue_runs_at_most_ten_cases_across_batches(monkeypatch, tmp_path):
     queue = EvaluationQueue(LiteratureSettings(enabled=True, data_dir=tmp_path))
     queue.initialize()
     active = set()
     counts = Counter()
     guard = Lock()
-    five_started = Event()
-    sixth_started = Event()
+    ten_started = Event()
+    eleventh_started = Event()
     release_one = Event()
     release_all = Event()
 
@@ -99,10 +99,10 @@ def test_queue_runs_at_most_five_cases_across_batches(monkeypatch, tmp_path):
         with guard:
             counts[key] += 1
             active.add(key)
-            if len(active) == 5:
-                five_started.set()
-            if len(counts) == 6:
-                sixth_started.set()
+            if len(active) == 10:
+                ten_started.set()
+            if len(counts) == 11:
+                eleventh_started.set()
         # Keep rows queued during setup to exercise the scheduler's in-flight deduplication.
         try:
             if key == (first, "case-0"):
@@ -115,20 +115,20 @@ def test_queue_runs_at_most_five_cases_across_batches(monkeypatch, tmp_path):
                 active.remove(key)
 
     monkeypatch.setattr(queue, "run_case", run_case)
-    specs = [dict(id=f"case-{i}", group="literature", category="single") for i in range(5)]
+    specs = [dict(id=f"case-{i}", group="literature", category="single") for i in range(10)]
     first = queue.create(specs)
     second = queue.create([specs[0]])
     queue.start()
     try:
-        assert five_started.wait(5)
-        assert not sixth_started.wait(.1)
+        assert ten_started.wait(5)
+        assert not eleventh_started.wait(.1)
         assert queue.detail(second)["cases"][0]["status"] == "queued"
         with guard:
-            assert len(active) == 5
+            assert len(active) == 10
         release_one.set()
-        assert sixth_started.wait(5)
+        assert eleventh_started.wait(5)
         with guard:
-            assert len(active) == 5
+            assert len(active) == 10
             assert counts == Counter({(first, spec["id"]): 1 for spec in specs} | {(second, "case-0"): 1})
     finally:
         release_one.set()
@@ -170,6 +170,52 @@ def test_new_evaluation_worker_takes_over_after_old_owner_exits(monkeypatch, tmp
         assert started.wait(4)
     finally:
         new.close()
+
+
+@pytest.mark.parametrize(("old_commit", "old_hash"), [
+    ("24eda96694c2020506681437d4b5e1f97387bbfa", "659ccc89e67da55c4b31eb4b5c8fd90d2b3fe1a351efa4739f0593f2951cdcc5"),
+    (None, "659ccc89e67da55c4b31eb4b5c8fd90d2b3fe1a351efa4739f0593f2951cdcc5"),
+    (None, "eefa5c09213d5a14a1a0a5bb627d61111e55e4d0b915c7faacbac694b7993275"),
+])
+@pytest.mark.parametrize("changes", [
+    {},
+    {"runtime_hash": "f" * 64},
+    {"configuration": {"RAG_LLM_MODEL": "different-model"}},
+    {"library": {"metadata.sqlite3": "changed-index"}},
+], ids=["scheduler-only", "other-code", "model", "index"])
+def test_queued_case_survives_only_compatible_runtime_upgrade(monkeypatch, tmp_path, old_commit, old_hash, changes):
+    config = LiteratureSettings(data_dir=tmp_path)
+    current = dict(commit="upgraded-checkout" if old_commit else None,
+                   runtime_hash="5a8d1a5e830dccaf66c7cd9cf0ed487452b29ac95a78e75112f5890e4984b794",
+                   configuration={"RAG_LLM_MODEL": "original-model"}, library={})
+    frozen = dict(current, commit=old_commit, runtime_hash=old_hash)
+    spec = dict(id="case", group="non_paper", category="daily", question="question",
+                prompt="question", reference={})
+    old = EvaluationQueue(config)
+    old.initialize()
+    with monkeypatch.context() as patch:
+        patch.setattr("app.evaluation.runtime_manifest", lambda _: frozen)
+        batch = old.create([spec])
+
+    current.update(changes)
+    monkeypatch.setattr("app.evaluation.runtime_manifest", lambda _: current)
+    answers = []
+
+    def answer(config, question, *, run_id):
+        answers.append(question)
+        return dict(agent_run=dict(status="completed", answer="saved"), agent_evidence=[], agent_tool_trace=[])
+
+    upgraded = EvaluationQueue(config, answer=answer)
+    monkeypatch.setattr(upgraded, "grade", lambda *_: {"score": 90})
+    with upgraded.db() as db:
+        row = db.execute("""SELECT e.*, b.manifest, b.snapshot FROM evaluations e
+            JOIN batches b ON b.id=e.batch WHERE e.batch=?""", (batch,)).fetchone()
+    assert row["status"] == "queued"
+    upgraded.run_case(row)
+    result = upgraded.detail(batch)
+    assert result["manifest"]["runtime_hash"] == frozen["runtime_hash"]
+    assert result["cases"][0]["status"] == ("setup_failed" if changes else "scored")
+    assert answers == ([] if changes else ["question"])
 
 
 @pytest.mark.parametrize("mismatch", [False, True])

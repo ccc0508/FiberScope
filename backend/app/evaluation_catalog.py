@@ -80,6 +80,17 @@ def runtime_manifest(config):
                             seconds=min(360 if specialists else 240, config.timeout_seconds - 10)))
 
 
+def runtime_matches(frozen, current):
+    changed = {key for key, value in current.items() if frozen.get(key) != value}
+    if not changed:
+        return True
+    if changed - {"commit", "runtime_hash"}:
+        return False
+    # Only allow specific scheduler upgrades between exact runtime fingerprints.
+    upgrades = read_json(ROOT / "backend/app/evaluation_runtime_upgrades.json")
+    return frozen.get("runtime_hash") in upgrades.get(current.get("runtime_hash"), ())
+
+
 def database_snapshot(selected):
     """Capture data provenance and reference queries in the same read-only transaction."""
     with connect() as db:
