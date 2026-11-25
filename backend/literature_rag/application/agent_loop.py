@@ -13,6 +13,7 @@ from .question_intent import (
     CROSS_SCOPE_DEPENDENCY, FIRST_DECISION_GUIDANCE, LOCAL_ROLES, PLAN_SCHEMA, PLAN_TOOL,
     InitialDecisionFormatError, rejection_code, validate_plan,
 )
+from .tool_feedback import add_recovery_guidance
 from literature_rag.application.tools import (
     MAX_SCOPED_QUERIES_PER_PAPER, SCHEMAS, SCOPED_BATCH_GUIDANCE, SEARCH_DECOMPOSITION_GUIDANCE,
     SECTION_BATCH_GUIDANCE,
@@ -242,6 +243,13 @@ class AgentLoop:
                     '\nThe runtime binds tool results to their task IDs. When offered initial_targets, '
                     'use the 1-based positions from that call\'s requirements. Once need IDs are assigned, '
                     'set target_requirements on evidence tools that offer it. Include only the tasks the call serves.'
+                )
+            if goal_search:
+                prompt += (
+                    '\nFor SQL, receive the view directory result before writing the SELECT. '
+                    'Use a SQL need ID already published in a prior tool result when target_requirements is offered, '
+                    'or send requirements and initial_targets together. Never send placeholder SELECT statements. '
+                    'After a rejected tool call, apply its recovery_guidance to the relevant arguments before retrying.'
                 )
             state['pipeline_version'] = 'unified-research-v1'
         gated_section_tools = research is not None and research.evidence_only
@@ -984,6 +992,7 @@ class AgentLoop:
                 image_messages=[]
                 stop_collection=False
                 evidence_lookup_delivered = False
+                visible_requirement_ids = frozenset(research.published_requirements) if research else None
                 def prepare_tool(c, round_started, queued):
                     nonlocal tool_count, stop_collection
                     request=dict(c.arguments,tool=c.name)
@@ -994,7 +1003,8 @@ class AgentLoop:
                         if research:
                             _, initial_target = batch_calls.get(c.id, (None, None))
                             request, schedule = research.prepare(request, state, initial_target=initial_target,
-                                                                 require_task_binding=goal_search)
+                                                                 require_task_binding=goal_search,
+                                                                 visible_requirement_ids=visible_requirement_ids)
                         else:
                             request,schedule=coverage_priority.prepare(request,state)
                     # Reason text does not turn a repeated operation into a new operation.
@@ -1129,6 +1139,10 @@ class AgentLoop:
                                 seen.add(semantic)
                             else:
                                 retries.observe(request, result)
+                        if result['status'] != 'completed':
+                            ready_sql_scopes = (research.intent_scopes.get('sql', ())
+                                                if research and research.intent_scopes is not None else ())
+                            result = add_recovery_guidance(request, result, schedule, ready_sql_scopes)
                         event.update(status=result['status'],result={k:v for k,v in result.items() if k!='image'});save()
                         trial=deepcopy(projection)
                         compact=trial.project({k:v for k,v in result.items() if k!='worker_diagnostic'})
@@ -1162,6 +1176,10 @@ class AgentLoop:
                         else:
                             projection=trial
                             delivered_refs.update({r['ref']:r for r in records})
+                            if research:
+                                research.published_requirements.update(
+                                    item['id'] for item in compact['coverage_priority']['items']
+                                )
                             if (research and not research.locked and c.name in RESEARCH_EVIDENCE_TOOLS
                                     and result['status'] == 'completed' and research.requirements
                                     and (not goal_search or (schedule and schedule['target_requirements']))):

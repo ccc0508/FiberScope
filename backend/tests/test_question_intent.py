@@ -147,6 +147,99 @@ def test_explicit_guard_on_missing_threshold_prevents_sql_dispatch():
     assert "请明确高转数的门槛" in state["answer"]
 
 
+@pytest.mark.parametrize("mode", ["published_id", "refine_published_id", "unique_current_requirement"])
+def test_sql_query_can_follow_directory_while_research_is_still_unlocked(mode):
+    quote = "查本地样本的长度"
+    rough = dict(role="sql", source_quote=quote, deliverable="按样本代码查长度",
+                 metric=dict(population="blends", operation="value", keys=["length"]))
+    refined = dict(rough, metric=dict(population="blends", operation="value", keys=["fiber_length_weighted_mm"]))
+    directory = ToolCall("directory", "describe_experiment_data", dict(
+        reason="Confirm schema", views=["fiber.v_blend_analysis"], requirements=[rough], initial_targets=[1],
+    ))
+    select = dict(reason="Read confirmed fields", sql="SELECT fiber_length_weighted_mm FROM fiber.v_blend_analysis",
+                  requirements=[refined])
+    if mode != "unique_current_requirement":
+        select["target_requirements"] = ["need_1"]
+    if mode == "published_id":
+        select.pop("requirements")
+    adapter = Fake([
+        decision(calls=[declare(task("local", "sql", quote)), directory]),
+        decision(calls=[ToolCall("query", "query_experiment_data", select)]),
+        decision(json.dumps(dict(answer="长度为 1.119 mm [1]。", coverage=[]), ensure_ascii=False)),
+    ])
+
+    def execute(request, *_):
+        if request["tool"] == "describe_experiment_data":
+            return dict(status="completed", result=dict(views=[]))
+        return dict(status="completed", result=dict(ref="[1]", rows=[["1.1190"]]))
+
+    state = AgentLoop(
+        adapter, execute, lambda _: None, unified_research=True, first_turn_intent=True,
+        evidence_supplement_enabled=False, paper_directory=[],
+        parallel_search_executor=lambda *_: pytest.fail("expected sequential SQL calls"),
+    ).run(quote, "directory-then-query")
+    assert state["status"] == "completed"
+    first, second = state["tool_calls"]
+    assert first["coverage_schedule"]["target_requirements"] == ["need_1"]
+    target = "need_1" if mode == "published_id" else "need_2"
+    assert second["status"] == "completed" and second["coverage_schedule"]["target_requirements"] == [target]
+    assert "target_requirements" in adapter.requests[1][1]["query_experiment_data"]["properties"]
+    if mode == "refine_published_id":
+        assert second["coverage_schedule"]["binding_details"]["normalization"] == "bound_to_refined_sql_requirement"
+
+
+def test_sql_binding_feedback_identifies_bad_position_and_reaches_next_tool_attempt():
+    quote = "查本地样本的比例"
+    requirement = dict(role="sql", source_quote=quote)
+    arguments = dict(reason="Confirm query columns", views=["fiber.v_blend_analysis"], requirements=[requirement])
+    adapter = Fake([
+        decision(calls=[declare(task("local", "sql", quote)), ToolCall(
+            "invalid", "describe_experiment_data", dict(arguments, initial_targets=[2]),
+        )]),
+        decision(calls=[ToolCall("corrected", "describe_experiment_data", dict(arguments, initial_targets=[1]))]),
+        decision(json.dumps(dict(answer="已确认字段。", coverage=[]), ensure_ascii=False)),
+    ])
+    state = AgentLoop(
+        adapter, lambda *_: dict(status="completed", result=dict(views=[])), lambda _: None,
+        unified_research=True, first_turn_intent=True, evidence_supplement_enabled=False,
+        parallel_search_executor=lambda *_: pytest.fail("expected sequential SQL calls"),
+    ).run(quote, "sql-binding-error")
+    failed, corrected = state["tool_calls"]
+    assert failed["status"] == "blocked" and corrected["status"] == "completed"
+    assert failed["result"]["binding_recovery"]["valid_initial_positions"] == [1]
+    feedback = failed["result"]["recovery_guidance"]
+    assert "initial_targets: [1]" in feedback and quote in feedback
+    delivered = next(message for message in adapter.requests[1][0] if message.get("tool_call_id") == "invalid")
+    assert json.loads(delivered["content"])["recovery_guidance"] == feedback
+
+
+def test_sql_cannot_reuse_an_unpublished_id_from_the_same_decision():
+    quote = "查本地样本的比例"
+    adapter = Fake([
+        decision(calls=[declare(task("local", "sql", quote)), ToolCall(
+            "directory", "describe_experiment_data", dict(
+                reason="Confirm schema", views=["fiber.v_sample_overview"],
+                requirements=[dict(role="sql", source_quote=quote)], initial_targets=[1],
+            ),
+        ), ToolCall("query", "query_experiment_data", dict(
+            reason="Read values", sql="SELECT sw_proportion_pct FROM fiber.v_sample_overview",
+            target_requirements=["need_1"],
+        ))]),
+        decision(json.dumps(dict(answer="已确认字段。", coverage=[]), ensure_ascii=False)),
+    ])
+
+    def execute(request, *_):
+        assert request["tool"] == "describe_experiment_data"
+        return dict(status="completed", result=dict(views=[]))
+
+    state = AgentLoop(
+        adapter, execute, lambda _: None, unified_research=True, first_turn_intent=True,
+        evidence_supplement_enabled=False, parallel_search_executor=lambda *_: pytest.fail("expected sequential SQL calls"),
+    ).run(quote, "sql-unpublished-id")
+    assert state["tool_calls"][1]["result"]["binding_recovery"]["issue"] == "unavailable_target_requirements"
+    assert state["tool_calls"][1]["result"]["binding_recovery"]["available_requirement_ids"] == []
+
+
 def test_clarification_can_share_text_with_its_blocked_lookup():
     quote = "统计针叶木高转数的样本数"
     question = quote + "，需要先明确高转数的门槛"
