@@ -1,13 +1,14 @@
 import json
 from datetime import datetime
+from types import SimpleNamespace
 
 import httpx
 import pytest
 
-from literature_rag.adapters.providers.agent_chat import ToolCall
+from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter, ToolCall
 from literature_rag.adapters.providers.public_web import BRAVE_SEARCH_URL, BravePublicSearch
 from literature_rag.application.agent_loop import AgentLoop
-from literature_rag.application.question_intent import PLAN_ARGUMENT, PLAN_TOOL, validate_plan
+from literature_rag.application.question_intent import PLAN_TOOL, validate_plan
 from tests.test_agent_loop import Fake, decision
 
 
@@ -72,7 +73,6 @@ def test_mixed_web_clarification_and_independent_local_lookup_use_separate_conte
     paper = ToolCall("paper", "search_literature", dict(
         query="paper A result", reason="find result",
         requirements=[dict(role="literature", source_quote="论文A的结果")], initial_targets=[1],
-        question_plan=plan.arguments,
     ))
     blocked = ToolCall("try_blocked", "describe_experiment_data", dict(
         views=["fiber.v_sample_overview"], reason="samples",
@@ -82,7 +82,7 @@ def test_mixed_web_clarification_and_independent_local_lookup_use_separate_conte
         task("swap", "web", "查论文A的结果", correction_id="quote_1"),
     ]))
     adapter = Fake([
-        decision(calls=[paper, blocked]),
+        decision(calls=[plan, paper, blocked]),
         decision(calls=[repeat]),
         decision(json.dumps({"answer": "论文A报告了结果 [1]。", "coverage": []}, ensure_ascii=False)),
         decision("首尔今天天气信息来自网页来源 1。"),
@@ -100,8 +100,7 @@ def test_mixed_web_clarification_and_independent_local_lookup_use_separate_conte
 
     state = run(adapter, question, execute=execute, public=public)
     assert state["status"] == "completed"
-    assert PLAN_ARGUMENT in adapter.requests[0][1]["search_literature"]["properties"]
-    assert PLAN_ARGUMENT not in adapter.requests[1][1]["search_literature"]["properties"]
+    assert PLAN_TOOL not in adapter.requests[1][1]
     assert web_queries == ["首尔今天天气"]
     assert "你指的是哪个打浆转数" in state["answer"]
     assert "论文A报告了结果 [1]" in state["answer"] and "网页来源 1" in state["answer"]
@@ -137,14 +136,26 @@ def test_explicit_guard_on_missing_threshold_prevents_sql_dispatch():
     plan = declare(task("samples", "sql", sql_quote))
     sql = ToolCall("sql", "query_experiment_data", dict(
         sql="SELECT count(*) FROM fiber.v_sample_overview",
-        reason="count samples", question_plan=plan.arguments,
+        reason="count samples",
     ))
-    adapter = Fake([decision(calls=[sql])])
+    adapter = Fake([decision(calls=[plan, sql])])
     state = run(adapter, sql_quote)
     assert state["status"] == "completed"
     assert state["review_status"] == "not_required"
     assert len(adapter.requests) == 1 and not state["tool_calls"]
     assert "请明确高转数的门槛" in state["answer"]
+
+
+def test_clarification_can_share_text_with_its_blocked_lookup():
+    quote = "统计针叶木高转数的样本数"
+    question = quote + "，需要先明确高转数的门槛"
+    plan = declare(
+        task("threshold", "clarify", question, clarification="请给出具体转数。"),
+        task("count", "sql", quote, depends_on=["threshold"]),
+    )
+    clarify, count = validate_plan(plan.arguments, question)
+    assert clarify["status"] == "ask"
+    assert count["status"] == "waiting" and count["blocked_by"] == ["threshold"]
 
 
 @pytest.mark.parametrize(("question", "scope"), [
@@ -191,3 +202,38 @@ def test_provider_receives_only_the_locked_query_and_returns_safe_links():
     with httpx.Client(transport=httpx.MockTransport(send)) as client:
         result = BravePublicSearch("example-key", client)("首尔今天天气", 5)
     assert result == [dict(title="天气预报", snippet="晴", url="https://weather.example/")]
+
+
+def test_chat_adapter_dispatches_initial_json_actions_without_fabricating_native_ids():
+    quote = "查询论文A的结果"
+    calls = []
+
+    def create(**kwargs):
+        calls.append(kwargs)
+        if len(calls) == 1:
+            assert kwargs["response_format"] == {"type": "json_object"}
+            assert "tools" not in kwargs
+            content = dict(plan=None, answer="", actions=[dict(name="search_literature", arguments=dict(
+                query="paper A result", reason="find result",
+                requirements=[dict(role="literature", source_quote=quote)], initial_targets=[1],
+            ))])
+        else:
+            assert "response_format" not in kwargs
+            assert all(message["role"] != "tool" for message in kwargs["messages"])
+            assert "Example evidence" in str(kwargs["messages"])
+            content = dict(answer="论文有明确的实验结果 [1]。", coverage=[])
+        message = SimpleNamespace(content=json.dumps(content, ensure_ascii=False), tool_calls=None)
+        return SimpleNamespace(choices=[SimpleNamespace(message=message, finish_reason="stop")], usage=None)
+
+    adapter = ChatAgentAdapter(
+        SimpleNamespace(llm_provider="deepseek", llm_model="deepseek-flash", llm_thinking_enabled=False,
+                        llm_reasoning_effort=None),
+        client=SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create))),
+    )
+    state = run(adapter, quote, execute=lambda *_: dict(
+        status="completed", result=dict(evidence=[dict(ref="[1]", text="Example evidence")]),
+    ))
+    assert state["status"] == "completed"
+    assert state["answer"] == "论文有明确的实验结果 [1]。"
+    assert len(calls) == 2
+    assert "First decision JSON protocol" in state["model_calls"][0]["input_messages"][0]["content"]

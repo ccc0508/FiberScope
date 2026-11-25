@@ -8,9 +8,9 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 
 PLAN_TOOL = "declare_question_tasks"
-PLAN_ARGUMENT = "question_plan"
 MAX_WEB_SEARCHES = 2
 LOCAL_ROLES = frozenset({"literature", "sql"})
+CROSS_SCOPE_DEPENDENCY = "cross-scope-dependency"
 PUBLIC_PREFIX = re.compile(
     r"^(?:(?:然后|另外|顺便|also\b|and\b)\s*)?(?:请\s*)?(?:(?:联网|上网|(?:在)?网上)(?:查询?|搜索|搜)|"
     r"search (?:the )?web(?: for)?|look up online)\s*[:：]?\s*", re.I,
@@ -58,10 +58,8 @@ Classify intent and choose the first ready tools in this same decision.
 For a single direct task, return its answer now. For a clear research request, its existing local
 tool calls and requirements already declare intent. Never use web for research, papers or experiment data.
 For web, clarification, or mixed direct/research tasks, include a task plan in this decision.
-If a local lookup can run, call the appropriate local tool now and attach the plan to its question_plan
-argument. If there are multiple independent first lookups, attach the plan to just one. Use
-declare_question_tasks only when there is no ready local lookup.
-Include separate verbatim, non-overlapping user clauses (source_quote); exclude shared formatting instructions.
+Include separate verbatim user clauses (source_quote); exclude shared formatting instructions.
+Only a clarification and its dependent task may quote overlapping text.
 Use literature for local papers, sql for local measurements, direct for general knowledge or date/time,
 web for day-to-day public facts needing a current lookup, clarify for a necessary missing choice.
 Give the clarify task a short user-facing question. Use clarify instead of a lookup for a clause
@@ -103,46 +101,66 @@ def validate_plan(arguments, question):
     tasks = {task.id: task for task in plan.tasks}
     if len(tasks) != len(plan.tasks) or sum(task.kind == "web" for task in plan.tasks) > MAX_WEB_SEARCHES:
         raise ValueError("invalid_task_count")
-    ranges = []
+    ranges = {}
     for task in plan.tasks:
         start = question.find(task.source_quote)
         if start < 0 or question.find(task.source_quote, start + 1) >= 0:
             raise ValueError("source_quote_must_be_unique_and_verbatim")
-        end = start + len(task.source_quote)
-        if any(start < right and left < end for left, right in ranges):
-            raise ValueError("overlapping_task_scopes")
-        ranges.append((start, end))
+        ranges[task.id] = (start, start + len(task.source_quote))
         if bool(task.clarification) != (task.kind == "clarify") or set(task.depends_on) - tasks.keys():
             raise ValueError("invalid_clarification_or_dependency")
 
-    def blockers(task, visiting):
-        if task.id in visiting:
+    pending_by_task = {}
+
+    def blockers(task_id, visiting):
+        if task_id in visiting:
             raise ValueError("cyclic_dependencies")
+        if task_id in pending_by_task:
+            return pending_by_task[task_id]
+        task = tasks[task_id]
         parents = [tasks[parent] for parent in task.depends_on]
-        inherited = set().union(*(blockers(parent, visiting | {task.id}) for parent in parents))
+        pending = set().union(*(blockers(parent.id, visiting | {task_id}) for parent in parents))
         if task.kind == "clarify":
-            return inherited | {task.id}
-        if any((parent.kind == "web") != (task.kind == "web") for parent in parents
-               if parent.kind != "clarify"):
+            pending.add(task_id)
+        elif any((parent.kind == "web") != (task.kind == "web") for parent in parents
+                 if parent.kind != "clarify"):
             # Separate evidence scopes cannot feed one another.
-            return inherited | {"cross_scope_dependency"}
-        return inherited
+            pending.add(CROSS_SCOPE_DEPENDENCY)
+        pending_by_task[task_id] = pending
+        return pending
+
+    for index, task in enumerate(plan.tasks):
+        start, end = ranges[task.id]
+        for other in plan.tasks[:index]:
+            left, right = ranges[other.id]
+            if start >= right or left >= end:
+                continue
+            # A clarification may reuse its dependent clause. Public and
+            # executable local scopes must always have separate source text.
+            if not (task.kind == "clarify" and task.id in blockers(other.id, set())
+                    or other.kind == "clarify" and other.id in blockers(task.id, set())):
+                raise ValueError("overlapping_task_scopes")
 
     # Preserve an explicit request to settle a missing choice before doing the
     # lookup, even when the model labels that clause as a ready SQL task.
     for task in plan.tasks:
         if task.kind not in LOCAL_ROLES:
             continue
-        confirmation = CONFIRM_WITH_USER.search(task.source_quote)
+        if blockers(task.id, set()) & tasks.keys():
+            continue
+        _, end = ranges[task.id]
+        before_next_clause = re.split(r"[。；;！？!?\n]", question[end:], maxsplit=1)[0]
+        confirmation = CONFIRM_WITH_USER.search(task.source_quote + before_next_clause)
         if confirmation:
             parameter = confirmation.group("parameter")
             tasks[task.id] = task.model_copy(update={
                 "kind": "clarify",
                 "clarification": f"请明确{parameter}。" if parameter else "请补充这项查询所需的条件。",
             })
+            pending_by_task.clear()
     resolved = []
     for task in tasks.values():
-        pending = blockers(task, set())
+        pending = blockers(task.id, set())
         result = task.model_dump(exclude_none=True)
         result.update(status="waiting" if pending else "ready", blocked_by=sorted(pending))
         if task.kind == "clarify" and pending == {task.id}:

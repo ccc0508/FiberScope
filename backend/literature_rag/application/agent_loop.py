@@ -10,7 +10,8 @@ from types import SimpleNamespace
 from zoneinfo import ZoneInfo
 from .agent_context import EvidenceProjection
 from .question_intent import (
-    FIRST_DECISION_GUIDANCE, LOCAL_ROLES, PLAN_ARGUMENT, PLAN_SCHEMA, PLAN_TOOL, rejection_code, validate_plan,
+    CROSS_SCOPE_DEPENDENCY, FIRST_DECISION_GUIDANCE, LOCAL_ROLES, PLAN_SCHEMA, PLAN_TOOL,
+    rejection_code, validate_plan,
 )
 from literature_rag.application.tools import (
     MAX_SCOPED_QUERIES_PER_PAPER, SCHEMAS, SCOPED_BATCH_GUIDANCE, SEARCH_DECOMPOSITION_GUIDANCE,
@@ -338,8 +339,12 @@ class AgentLoop:
             return sum(len(block['image_url']['url']) for m in ms if isinstance(m.get('content'),list)
                 for block in m['content'] if block.get('type')=='image_url')
         def save():self.checkpoint(state)
-        def model(stage,schemas,*,context=None):
+        def model(stage,schemas,*,context=None,initial=False):
             context = messages if context is None else context
+            decide = self.adapter.decide
+            if initial and hasattr(self.adapter, 'decide_initial'):
+                context = self.adapter.initial_context(context, schemas)
+                decide = self.adapter.decide_initial
             remaining=deadline-self.clock()
             if remaining<=0:raise TimeoutError()
             # Images have their own byte budget; base64 is not text context.
@@ -357,7 +362,7 @@ class AgentLoop:
                 input_messages=trace_messages(context),available_tools=list(schemas))
             state['model_calls'].append(entry);save()
             try:
-                d=self.adapter.decide(context,schemas,remaining,output_tokens)
+                d=decide(context,schemas,remaining,output_tokens)
                 entry.update(status='completed',usage=d.usage,finish_reason=d.finish_reason,
                     text=d.text,calls=[dict(id=c.id,name=c.name,arguments=c.arguments) for c in d.calls])
                 if self.clock()>=deadline:raise TimeoutError()
@@ -371,18 +376,13 @@ class AgentLoop:
             nonlocal tasks, local_question, dispatch_notice, tool_count
             declarations = [call for call in calls if call.name == PLAN_TOOL]
             local_calls = [call for call in calls if call.name != PLAN_TOOL]
-            plans = [call.arguments for call in declarations]
-            plans.extend(call.arguments[PLAN_ARGUMENT] for call in local_calls if PLAN_ARGUMENT in call.arguments)
-            if not plans:
+            if not declarations:
                 state['question_intent'] = dict(status='implicit', kind='research' if local_calls else 'direct')
                 return local_calls
-            local_calls = [SimpleNamespace(id=call.id, name=call.name,
-                                           arguments={k: v for k, v in call.arguments.items() if k != PLAN_ARGUMENT})
-                           for call in local_calls]
             try:
-                if len(plans) != 1:
+                if len(declarations) != 1:
                     raise ValueError('duplicate_task_declaration')
-                tasks = validate_plan(plans[0], question)
+                tasks = validate_plan(declarations[0].arguments, question)
             except ValueError as error:
                 tasks = []
                 dispatch_notice = '我没能确认各项任务的范围。请分别说明需要查本地资料、需要查公开信息，以及仍需明确的条件。'
@@ -772,12 +772,8 @@ class AgentLoop:
                 else:
                     initial_decision = self.first_turn_intent and not state['model_calls']
                     if initial_decision:
-                        plan_properties = {k: v for k, v in PLAN_SCHEMA.items() if k != '$defs'}
-                        for schema in schemas.values():
-                            schema.setdefault('$defs', {}).update(PLAN_SCHEMA.get('$defs', {}))
-                            schema['properties'][PLAN_ARGUMENT] = plan_properties
                         schemas[PLAN_TOOL] = PLAN_SCHEMA
-                    d=model('decide',schemas);messages.append(d.message)
+                    d=model('decide',schemas,initial=initial_decision);messages.append(d.message)
                     calls = d.calls
                     if initial_decision:
                         calls = accept_intent(calls)
@@ -1281,7 +1277,7 @@ class AgentLoop:
                     sections.append('请补充' + '\n' + task['clarification'])
                 elif task['status'] == 'web_scope_unconfirmed':
                     sections.append('请把要联网查的公开内容单独写成一项，例如“联网查首尔今天天气”。')
-                elif task['status'] == 'waiting' and 'cross_scope_dependency' in task['blocked_by']:
+                elif task['status'] == 'waiting' and CROSS_SCOPE_DEPENDENCY in task['blocked_by']:
                     sections.append('这项任务需要跨来源传递信息，本次未执行。请单独说明公开查询范围。')
             if sections:
                 extra = '\n\n'.join(sections)
