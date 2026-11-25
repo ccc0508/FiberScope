@@ -1,5 +1,5 @@
 """Grade completed RAG answers; failed executions stay visible, not sent as empty answers."""
-import grade_agent_eightpapers_20261105 as g
+import eval_eightpapers_grade as g
 
 g.RUN=g.ROOT/'.rag-data/evaluations/specialists-three-suites-20261107/latest-scored'
 g.LIBRARY=g.ROOT/'.rag-data/index-versions/paper-collection-definitions-20261106'

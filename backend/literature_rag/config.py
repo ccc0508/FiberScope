@@ -40,7 +40,14 @@ class Settings(BaseSettings):
     answer_guidance_enabled: bool = False
     evidence_review_enabled: bool = False
     corrective_review_enabled: bool = False
-    corrective_review_version: Literal['v1', 'v2', 'v3', 'v2_bound', 'v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'] = 'v1'
+    corrective_review_version: Literal['unified', 'basic'] = 'unified'
+    corrective_review_prioritize_supplement: bool = True
+    corrective_review_numeric_crosscheck: bool = True
+    corrective_review_check_relation: bool = True
+    corrective_review_check_comparison: bool = True
+    corrective_review_check_measurement: bool = True
+    corrective_review_check_ranking: bool = True
+    corrective_review_complete_comparisons: bool = True
     evidence_review_timeout_seconds: float = Field(default=120, gt=0, le=360, allow_inf_nan=False)
     evidence_review_max_output_tokens: int = Field(default=32768, ge=1024, le=65536)
     query_rewrite_enabled: bool = False
@@ -171,3 +178,22 @@ class Settings(BaseSettings):
             if not explicit and (self.llm_provider != 'deepseek' or not self.llm_model or not self.llm_api_key or not self.llm_api_key.get_secret_value().strip()):
                 raise ValueError('query rewrite requires configured DeepSeek credentials')
         return self
+
+    def diagnosis_policy(self):
+        from .application.review_diagnosis import DiagnosisPolicy
+        if self.corrective_review_version == 'basic':
+            return DiagnosisPolicy.from_version(
+                'basic',
+                prioritize_supplement=self.corrective_review_prioritize_supplement,
+                numeric_crosscheck=self.corrective_review_numeric_crosscheck,
+            )
+        return DiagnosisPolicy.from_version(
+            'unified',
+            prioritize_supplement=self.corrective_review_prioritize_supplement,
+            numeric_crosscheck=self.corrective_review_numeric_crosscheck,
+            check_relation=self.corrective_review_check_relation,
+            check_comparison=self.corrective_review_check_comparison,
+            check_measurement=self.corrective_review_check_measurement,
+            check_ranking=self.corrective_review_check_ranking,
+            complete_comparisons=self.corrective_review_complete_comparisons,
+        )

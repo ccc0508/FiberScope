@@ -30,7 +30,7 @@ def main():
     parser.add_argument('--max-output-tokens',type=int,default=None)
     parser.add_argument('--review-timeout',type=float,default=None)
     parser.add_argument('--deadline',type=int,default=295,choices=range(60,601),metavar='SECONDS')
-    parser.add_argument('--version', choices=['v1','v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'], default='v1')
+    parser.add_argument('--version', choices=['unified', 'basic'], default='unified')
     args = parser.parse_args()
     if args.output.exists():
         raise ValueError('Attempt directory already exists; never automatically repeat a paid attempt')

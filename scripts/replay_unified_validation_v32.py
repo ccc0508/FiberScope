@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'backend'))
 from qa_answer_replay_worker import evidence
-from literature_rag.application import review_diagnosis_unified as contract
+from literature_rag.application import review_diagnosis as contract
 from literature_rag.application.evidence_review import apply_edits,ReviewPayload,checksum
 from literature_rag.domain.models import GeneratedAnswer,GeneratedClaim
 

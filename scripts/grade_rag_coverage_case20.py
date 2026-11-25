@@ -1,5 +1,5 @@
 """Jev grade the frozen new case20 only, preserving raw requests/replies."""
-import grade_agent_eightpapers_20261105 as g
+import eval_eightpapers_grade as g
 import os
 g.RUN=g.ROOT/'.rag-data/evaluations/specialists-three-suites-20261107/rag-coverage-priority-20261109'
 revision=os.environ.get('RAG_CASE20_REVISION','1')

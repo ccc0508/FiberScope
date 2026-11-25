@@ -2,7 +2,7 @@ import json
 from types import SimpleNamespace as NS
 import pytest
 from literature_rag.application.review_diagnostics import archive_response,review_outcome
-from literature_rag.application import review_diagnosis_v2 as v2
+from literature_rag.application import review_diagnosis as rd
 from literature_rag.adapters.providers.evidence_review import DeepSeekEvidenceReviewer
 from literature_rag.domain.errors import ProviderResponseError
 from tests.test_evidence_review import DRAFT,SOURCES
@@ -16,7 +16,7 @@ def test_failure_response_private_archive(tmp_path,content,finish,stage):
     def create(**kwargs):
         return NS(model='deepseek-flash',usage=None,choices=[NS(finish_reason=finish,message=NS(content=content))])
     p=DeepSeekEvidenceReviewer('deepseek-flash','PRIVATE_KEY',client=NS(chat=NS(completions=NS(create=create))),
-        diagnostic=True,diagnosis_version='v2',diagnostics_dir=tmp_path)
+        diagnostic=True,diagnosis_version='unified',diagnostics_dir=tmp_path)
     with pytest.raises(ProviderResponseError):p.review('Q',SOURCES,DRAFT)
     artifact=p.last_model_info['failure_artifact']
     body=json.loads((tmp_path/(artifact['artifact_id']+'.json')).read_text(encoding='utf-8'))
@@ -31,8 +31,8 @@ def test_archive_io_failure_does_not_replace_review_failure(tmp_path):
 
 
 def test_auxiliary_field_error_has_location_without_value():
-    raw=dict(issues=[],requirements=[dict(id='R1',status='PRIVATE_VALUE')],claim_checks=[])
-    p=v2.parse_response(json.dumps(raw))
+    raw=dict(issues=[],requirements=[dict(id='R1',status='PRIVATE_VALUE')],units=[])
+    p=rd.parse_response(json.dumps(raw))
     e=p._parse_errors[0]
     assert any(f['location']==['status'] for f in e['fields'])
     assert 'PRIVATE_VALUE' not in json.dumps(e)

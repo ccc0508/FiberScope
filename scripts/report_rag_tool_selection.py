@@ -1,7 +1,7 @@
 """Source-calibrated two-case verification; never overwrite the full30 baseline."""
 import json,html
 from pathlib import Path
-from report_regression_baseline_20261106 import metrics,calibrate
+from eval_regression_report import metrics,calibrate
 ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/'.rag-data/evaluations/specialists-three-suites-20261107'
 RUN=BASE/'rag-tool-selection-20261109'

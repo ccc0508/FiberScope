@@ -1,7 +1,7 @@
 """Publish both development attempts and final source-calibrated case20 result."""
 import json,html,hashlib
 from pathlib import Path
-from report_regression_baseline_20261106 import metrics,calibrate
+from eval_regression_report import metrics,calibrate
 ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/'.rag-data/evaluations/specialists-three-suites-20261107'
 OUT=ROOT/'data/literature/qa-evaluation/reports/rag-coverage-priority-20261109'

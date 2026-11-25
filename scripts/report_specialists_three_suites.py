@@ -4,7 +4,7 @@ from hashlib import sha256
 from html import escape
 import json, statistics
 from pathlib import Path
-from report_regression_baseline_20261106 import metrics,calibrate
+from eval_regression_report import metrics,calibrate
 
 ROOT=Path(__file__).resolve().parents[1]
 RUN=ROOT/'.rag-data/evaluations/specialists-three-suites-20261107'

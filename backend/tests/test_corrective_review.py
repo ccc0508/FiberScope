@@ -12,7 +12,7 @@ from literature_rag.application.citations import CitationValidator
 from literature_rag.application.context import ContextOptions
 from literature_rag.application.corrective_review import CorrectiveReviewService, TargetedEvidenceReader
 from literature_rag.application.evidence_review import EvidenceReviewService, ReviewRejected
-from literature_rag.application.review_diagnosis import DiagnosticPayload, validate_diagnosis
+from literature_rag.application.review_diagnosis import DiagnosticPayload, is_relation, validate_diagnosis
 from literature_rag.adapters.providers.evidence_review import DeepSeekEvidenceReviewer
 from literature_rag.domain.errors import ProviderError, CitationValidationError
 from literature_rag.domain.models import Chunk, Evidence, GeneratedAnswer, GeneratedClaim, VectorMatch
@@ -28,8 +28,38 @@ def requirement(status='covered', **kwargs):
     return base
 
 
-def payload(status='covered', issues=None, **kwargs):
-    return DiagnosticPayload.model_validate(dict(requirements=[requirement(status, **kwargs)], issues=issues or []))
+def payload(status='covered', issues=None, units=None, **kwargs):
+    reqs = [requirement(status, **kwargs)]
+    if units is None:
+        units = []
+        for idx, iss in enumerate(issues or []):
+            ci = iss.get('claim_index')
+            if ci is not None and 0 <= ci < len(DRAFT.claims):
+                units.append(dict(
+                    claim_index=ci,
+                    issue_index=None,
+                    replacement_index=None,
+                    text=DRAFT.claims[ci].text,
+                    checked=['fact', 'citation', 'certainty'],
+                    sources=[dict(basis=iss['basis'][0], contribution='Original claim needs qualification.')],
+                    verdict='overstated',
+                    reason='Original claim needs qualification.',
+                    repair_issue_indexes=[idx],
+                ))
+            for ri, rep in enumerate(iss.get('replacement_claims') or []):
+                checked=['fact', 'citation', 'certainty'] + (['relation'] if is_relation(rep['text']) else [])
+                units.append(dict(
+                    claim_index=None,
+                    issue_index=idx,
+                    replacement_index=ri,
+                    text=rep['text'],
+                    checked=checked,
+                    sources=[dict(basis=iss['basis'][0], contribution='Replacement matches source.')],
+                    verdict='supported',
+                    reason='Supported replacement.',
+                    repair_issue_indexes=[],
+                ))
+    return DiagnosticPayload.model_validate(dict(requirements=reqs, issues=issues or [], units=units))
 
 
 class Reviewer:
@@ -79,7 +109,7 @@ def test_covered_uses_one_review_no_lookup_and_keeps_draft_bytes():
 
 
 def test_available_evidence_is_edited_without_lookup():
-    issue = proposal().issues[0].model_dump()
+    issue = proposal(original_text=DRAFT.claims[0].text).issues[0].model_dump()
     service, p, r = controller([payload('edit', [issue], issue_indexes=[0])])
     result = service.review('Q', SOURCES, DRAFT)
     assert 'might' in result.claims[0].text and result.claims[1] == DRAFT.claims[1]
@@ -87,7 +117,7 @@ def test_available_evidence_is_edited_without_lookup():
 
 
 def test_gap_gets_one_lookup_and_second_review_without_primary_regeneration():
-    issue = proposal(claim_index=None, category='measurement',
+    issue = proposal(claim_index=None, original_text=None, category='measurement',
         basis=[dict(kind='text', ref='[2]', quote='relative area, not an absolute count')],
         replacement_claims=[dict(text='This is a relative area, not an absolute count.', citation_refs=['[2]'])]).issues[0].model_dump()
     service, p, reader = controller([payload('lookup'), payload('edit', [issue], issue_indexes=[0], evidence_refs=['[1]', '[2]'])])
@@ -139,7 +169,7 @@ def test_empty_coverage_or_unmapped_edit_is_invalid():
     with pytest.raises(ValidationError):
         DiagnosticPayload(issues=[], requirements=[])
     with pytest.raises(ReviewRejected, match='unmapped'):
-        validate_diagnosis(payload(issues=[proposal().issues[0].model_dump()]), DRAFT, SOURCES)
+        validate_diagnosis(payload(issues=[proposal(original_text=DRAFT.claims[0].text).issues[0].model_dump()], units=[]), DRAFT, SOURCES)
 
 
 def test_second_review_cannot_silently_drop_prior_requirement():
@@ -149,7 +179,7 @@ def test_second_review_cannot_silently_drop_prior_requirement():
 
 
 def test_unverified_edit_is_not_labelled_resolved():
-    issue = proposal(basis=[dict(kind='text', ref='[1]', quote='not found in the source')]).issues[0].model_dump()
+    issue = proposal(original_text=DRAFT.claims[0].text, basis=[dict(kind='text', ref='[1]', quote='not found in the source')]).issues[0].model_dump()
     service, _, _ = controller([payload('edit', [issue], issue_indexes=[0])])
     assert service.review('Q', SOURCES, DRAFT) is DRAFT
     assert service.last_summary['status'] == 'incomplete'
@@ -315,7 +345,7 @@ def test_worker_publishes_new_evidence_and_history_keeps_both_rounds(monkeypatch
     settings=Settings(_env_file=None,llm_provider='deepseek',llm_model='deepseek-flash',llm_api_key='PRIVATE',
         embedding_model='fixture',embedding_dimensions=3,embedding_api_key='PRIVATE',evidence_review_enabled=True,
         corrective_review_enabled=True,rerank_enabled=True,rerank_api_key='PRIVATE',rerank_base_url='https://example.test/v1')
-    issue=proposal(claim_index=None,category='measurement',
+    issue=proposal(claim_index=None,original_text=None,category='measurement',
         basis=[dict(kind='text',ref='[2]',quote='relative area, not an absolute count')],
         replacement_claims=[dict(text='It measures relative area, not an absolute count.',citation_refs=['[2]'])]).issues[0].model_dump()
     p=Reviewer([payload('lookup'),payload('edit',[issue],issue_indexes=[0],evidence_refs=['[2]'])])

@@ -194,16 +194,10 @@ class EvidenceReviewService:
         diagnostic=getattr(self.provider,'diagnostic',False)
         if diagnostic:
             from literature_rag.application.review_diagnosis import diagnosis_contract
-            contract=diagnosis_contract(getattr(self.provider,'diagnosis_version','v1'))
+            contract=diagnosis_contract(getattr(self.provider,'diagnosis_version','unified'),
+                policy=getattr(self.provider,'diagnosis_policy',None))
             trace['version']=contract.VERSION
-            if hasattr(contract,'routing'):
-                trace['audit_routing']=contract.routing(question,draft,evidences)
-            if hasattr(contract,'ranking_context'):
-                trace['ranking_context']=contract.ranking_context(question,draft,evidences)
-            if hasattr(contract,'request_context'):
-                trace['causal_detail_context']=contract.request_context(draft,evidences)
-            if hasattr(contract,'measurement_context'):
-                trace['measurement_context']=contract.measurement_context(question,draft,evidences)
+            trace['audit_routing']=contract.routing(question,draft,evidences)
         remaining=self.deadline-perf_counter()-5 if self.deadline is not None else None
         required=15 if diagnostic else getattr(self.provider,'timeout_seconds',120)
         if remaining is not None and remaining<required:
@@ -213,39 +207,23 @@ class EvidenceReviewService:
             if diagnostic:
                 payload=self.provider.review(question,evidences,draft,context=context,
                     timeout_seconds=min(self.provider.timeout_seconds,remaining) if remaining is not None else None)
-                if hasattr(payload,'units'):
+                trace['units']=[u.model_dump() for u in payload.units]
+                trace['model_issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
+                contract.prepare_payload(payload,draft,evidences)
+                if payload._mechanical_repairs:
+                    trace['mechanical_repairs']=payload._mechanical_repairs
                     trace['units']=[u.model_dump() for u in payload.units]
-                if hasattr(contract,'prepare_payload'):
-                    trace['model_issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
-                    contract.prepare_payload(payload,draft,evidences)
-                    if hasattr(payload,'_mechanical_repairs'):
-                        trace['mechanical_repairs']=payload._mechanical_repairs
-                        trace['units']=[u.model_dump() for u in payload.units]
-                    trace['comparison_checks']=[c.model_dump() for c in payload.comparison_checks]
-                    trace['citation_only_repair_indexes']=sorted(payload._citation_repairs)
-                    if hasattr(payload,'_relation_target_repairs'):
-                        trace['relation_target_repairs']=payload._relation_target_repairs
+                trace['comparison_checks']=[c.model_dump() for c in payload._comparison_checks]
+                trace['citation_only_repair_indexes']=sorted(payload._citation_repairs)
                 trace['issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]
                 trace['requirements']=[r.model_dump(exclude_none=True) for r in payload.requirements]
-                if getattr(self.provider,'diagnosis_version','v1') in {'v2','v3','v2_bound','v2_budget','v2_relation','v2_relation_compact','v2_comparison','v2_causal','v2_measurement','v2_ranking','v3_unified'}:
-                    trace['claim_checks']=[r.model_dump() for r in payload.claim_checks]
-                    if hasattr(payload,'relation_checks'):
-                        trace['relation_checks']=[r.model_dump() for r in payload.relation_checks]
-                    if hasattr(payload,'revision_checks'):
-                        trace['revision_checks']=[r.model_dump() for r in payload.revision_checks]
-                    trace['raw_requirements']=trace['requirements']
-                    audit=contract.inspect_diagnosis(payload,draft,evidences,context)
-                    if hasattr(contract,'ranking_context'):
-                        audit['errors'].extend(contract.ranking_errors(payload,question,draft,evidences))
-                        audit['valid']=not audit['errors']
-                    if hasattr(contract,'measurement_context'):
-                        audit['errors'].extend(contract.measurement_errors(payload,question,draft,evidences))
-                        audit['valid']=not audit['errors']
-                    trace.update(requirements=audit['requirements'],diagnosis_errors=audit['errors'],
-                        diagnosis_valid=audit['valid'],diagnosis_actions_validated=True)
-                else:
-                    contract.validate_diagnosis(payload,draft,evidences,context)
-                    trace['diagnosis_valid']=True
+                trace['raw_requirements']=trace['requirements']
+                audit=contract.inspect_diagnosis(payload,draft,evidences,context)
+                audit['errors'].extend(contract.ranking_errors(payload,question,draft,evidences))
+                audit['errors'].extend(contract.measurement_errors(payload,question,draft,evidences))
+                audit['valid']=not audit['errors']
+                trace.update(requirements=audit['requirements'],diagnosis_errors=audit['errors'],
+                    diagnosis_valid=audit['valid'],diagnosis_actions_validated=True)
             else:
                 payload=self.provider.review(question,evidences,draft)
             trace['issues']=[i.model_dump(exclude_unset=True) for i in payload.issues]

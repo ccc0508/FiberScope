@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test tests/analysis.test.mjs tests/beating.test.mjs tests/overview.test.mjs tests/sources.test.mjs tests/extraction.test.mjs tests/urls.test.mjs tests/mode.test.mjs tests/prediction.test.mjs",
+    "test:smoke": "node tests/smoke.mjs",
     "dev": "vite --host 127.0.0.1",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1"
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@types/three": "0.187.0",
     "@vitejs/plugin-vue": "^5.2.0",
+    "playwright": "^1.65.1",
     "typescript": "~5.9.2",
     "vite": "^6.4.0",
     "vite-plugin-static-copy": "2.3.2",

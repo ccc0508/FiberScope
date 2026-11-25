@@ -106,7 +106,7 @@ def prepare():
 def digest_text(t):return sha256(t.encode()).hexdigest()
 
 def parse():
-    import parse_mineru_pfi_20261029 as api
+    import mineru_client as api
     for pdf in sorted((ROOT/'论文合集').glob('*.pdf')):
         api.PDF=pdf;api.FILENAME='paper-'+digest(pdf)[:16]+'.pdf';api.OUT=CACHE/digest(pdf)[:16]
         state=api.OUT/'api-state.json'

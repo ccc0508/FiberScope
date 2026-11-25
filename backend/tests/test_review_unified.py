@@ -3,11 +3,22 @@ from copy import deepcopy
 from dataclasses import replace
 from types import SimpleNamespace as NS
 import pytest
-from literature_rag.application import review_diagnosis_unified as u
+from literature_rag.application import review_diagnosis as u
 from literature_rag.adapters.providers.evidence_review import DeepSeekEvidenceReviewer
-from tests.test_evidence_review import DRAFT,SOURCES
-from tests.test_review_edit_binding import edit
-from tests.test_corrective_review import requirement,controller
+from literature_rag.application.context import ContextOptions
+from literature_rag.domain.errors import ProviderError
+from literature_rag.domain.models import GeneratedAnswer, GeneratedClaim
+from tests.test_evidence_review import DRAFT,SOURCES,proposal
+from tests.test_corrective_review import requirement,controller,make_reader,chunk
+
+
+def edit(**overrides):
+    return proposal(original_text=DRAFT.claims[0].text, **overrides).issues[0].model_dump()
+
+
+COMP_DRAFT=GeneratedAnswer('fixture',(GeneratedClaim('摘要0.888与正文0.912不一致。',('[2]',)),))
+COMP_ES=[replace(SOURCES[0],ref='[1]',text='Body reports coefficient 0.912 for softwood.'),
+    replace(SOURCES[0],ref='[2]',text='Abstract reports coefficient 0.888 for softwood.')]
 
 
 def unit(**changes):
@@ -25,7 +36,7 @@ def payload(units=None):
 
 
 def run(p):
-    s,provider,_=controller([p]);provider.diagnosis_version='v3_unified'
+    s,provider,_=controller([p]);provider.diagnosis_version='unified'
     result=s.review('Q',SOURCES,DRAFT)
     return result,s
 
@@ -35,7 +46,7 @@ def test_single_units_apply_supported_replacement_and_keep_unaffected_claim():
     assert result.claims[0].text=='The effect might be explained by hydration.'
     assert result.claims[1]==DRAFT.claims[1]
     t=s.last_trace['rounds'][0]
-    assert len(t['units'])==2 and t['claim_checks']==[] and t['relation_checks']==[]
+    assert len(t['units'])==2
     assert s.last_summary['status']=='completed'
 
 
@@ -63,13 +74,12 @@ def test_replacement_checked_separately(kind):
 
 
 def test_multiple_sources_share_comparison_unit_and_add_only_missing_citation():
-    from tests.test_review_comparison import DRAFT as d,ES
-    r=unit(text=d.claims[0].text,checked=['fact','citation','comparison'],verdict='supported',repair_issue_indexes=[],comparison_scope='same_scope',
-        sources=[dict(basis=dict(kind='text',ref=e.ref,quote=e.text),contribution=e.text) for e in ES])
+    r=unit(text=COMP_DRAFT.claims[0].text,checked=['fact','citation','comparison'],verdict='supported',repair_issue_indexes=[],comparison_scope='same_scope',
+        sources=[dict(basis=dict(kind='text',ref=e.ref,quote=e.text),contribution=e.text) for e in COMP_ES])
     p=u.parse_response(json.dumps(dict(issues=[],requirements=[requirement()],units=[r])))
-    s,provider,_=controller([p]);provider.diagnosis_version='v3_unified'
-    result=s.review('Q',ES,d)
-    assert result.claims[0].text==d.claims[0].text
+    s,provider,_=controller([p]);provider.diagnosis_version='unified'
+    result=s.review('Q',COMP_ES,COMP_DRAFT)
+    assert result.claims[0].text==COMP_DRAFT.claims[0].text
     assert result.claims[0].citation_refs==('[2]','[1]')
 
 
@@ -111,7 +121,7 @@ def test_provider_one_call_no_legacy_instructions():
         calls.append(kw)
         content=json.dumps(dict(issues=[],requirements=[requirement()],units=[]))
         return NS(model='deepseek-flash',usage=None,choices=[NS(finish_reason='stop',message=NS(content=content))])
-    p=DeepSeekEvidenceReviewer('deepseek-flash','PRIVATE',client=NS(chat=NS(completions=NS(create=create))),diagnostic=True,diagnosis_version='v3_unified')
+    p=DeepSeekEvidenceReviewer('deepseek-flash','PRIVATE',client=NS(chat=NS(completions=NS(create=create))),diagnostic=True,diagnosis_version='unified')
     p.review('Q',SOURCES,DRAFT)
     assert len(calls)==1 and calls[0]['max_tokens']==32768
     assert 'audit_routing' in calls[0]['messages'][1]['content']
@@ -217,10 +227,10 @@ def test_comparison_completion_is_bounded_and_never_rewrites_answer(scope):
         if scope=='extra_field':patch['text']='malicious rewrite'
         content='bad' if scope=='bad_json' else json.dumps(dict(patches=[patch]))
         return NS(usage=NS(prompt_tokens=4,completion_tokens=6,total_tokens=10),choices=[NS(finish_reason='length' if scope=='length' else 'stop',message=NS(content=content))])
-    provider=DeepSeekEvidenceReviewer('deepseek-flash','PRIVATE',client=NS(chat=NS(completions=NS(create=create))),diagnostic=True,diagnosis_version='v3_unified')
+    provider=DeepSeekEvidenceReviewer('deepseek-flash','PRIVATE',client=NS(chat=NS(completions=NS(create=create))),diagnostic=True,diagnosis_version='unified')
     provider.last_model_info={};provider.last_usage=dict(total_tokens=5);provider.last_api_calls=1
     before=[x.model_dump() for x in p.issues]
-    provider._complete_comparisons(p,u,DRAFT,SOURCES,[], '{}',{},perf_counter())
+    provider._complete_comparisons(p,u.DEFAULT_CONTRACT,DRAFT,SOURCES,[], '{}',{},perf_counter())
     assert len(calls)==1 and provider.last_api_calls==2 and calls[0]['max_tokens']==8192
     assert [x.model_dump() for x in p.issues]==before
     if scope in {'same_scope','unclear','different_scope'}:
@@ -233,9 +243,9 @@ def test_comparison_completion_skips_expired_budget():
     from time import perf_counter
     p=payload();p.units[1].text='A is higher than B.'
     p.issues[0].replacement_claims[0].text=p.units[1].text
-    provider=DeepSeekEvidenceReviewer('deepseek-flash','PRIVATE',client=NS(),diagnostic=True,diagnosis_version='v3_unified')
+    provider=DeepSeekEvidenceReviewer('deepseek-flash','PRIVATE',client=NS(),diagnostic=True,diagnosis_version='unified')
     provider.last_model_info={};provider.last_api_calls=1
-    provider._complete_comparisons(p,u,DRAFT,SOURCES,[], '{}',{'timeout':1},perf_counter())
+    provider._complete_comparisons(p,u.DEFAULT_CONTRACT,DRAFT,SOURCES,[], '{}',{'timeout':1},perf_counter())
     assert provider.last_api_calls==1
     assert provider.last_model_info['comparison_completion']['status']=='skipped_deadline'
 
@@ -247,7 +257,7 @@ def test_comparison_completion_skips_expired_budget():
     ('因为数据不足，不能排序。而长度和强度有关。',False),
 ])
 def test_causal_detail_does_not_join_therefore_to_later_but(text,expected):
-    assert u.causal.risk(text) is expected
+    assert u.causal_risk(text) is expected
 
 
 def test_v32_envelope_category_and_display_binding():
@@ -300,3 +310,38 @@ def test_v32_inline_citations_only_remove_declared_refs():
 def test_v32_bilingual_explicit_scope_disclaimers(text):
     assert u.local_evidence_limit(text)
     assert not u.local_evidence_limit(text+' 全文没有公式。')
+
+
+def test_diagnosis_policy_flags_toggle_strategy_gates():
+    d=replace(DRAFT,claims=(replace(DRAFT.claims[0],text='A causes B and C compared to D (most important).'),))
+    prompt_full,ctx_full=u.diagnosis_contract('unified').request_prompt('哪个最重要？',d,SOURCES)
+    assert u.RELATION_PROMPT in prompt_full and u.COMPARISON_PROMPT in prompt_full and u.RANKING_PROMPT in prompt_full
+    assert ctx_full['required']
+    basic=u.diagnosis_contract('basic')
+    prompt_basic,ctx_basic=basic.request_prompt('哪个最重要？',d,SOURCES)
+    assert u.RELATION_PROMPT not in prompt_basic and u.COMPARISON_PROMPT not in prompt_basic and u.RANKING_PROMPT not in prompt_basic
+    assert ctx_basic['required']==[{'claim_index': 0, 'aspects': ['certainty', 'citation', 'fact']}]
+    assert not basic.complete_comparisons
+
+
+def test_supplement_first_protects_original_citations_and_survives_second_failure():
+    sources=[replace(SOURCES[0],text=SOURCES[0].text+'a'*140),
+             replace(SOURCES[0],ref='[2]',chunk_id='spare',text='A new method explanation. '+'b'*175)]
+    reader,_=make_reader([chunk(text='z'*200)],options=ContextOptions(True,1,700,512))
+    first=edit(basis=[dict(kind='text',ref='[2]',quote='A new method explanation.')],
+        replacement_claims=[dict(text='A new method explanation.',citation_refs=['[2]'])])
+    reqs=[requirement('edit',issue_indexes=[0]),requirement('lookup',id='R2')]
+    units=[
+        unit(text=DRAFT.claims[0].text,checked=['fact','citation','certainty'],
+             sources=[dict(basis=first['basis'][0],contribution='Needs qualification.')],verdict='overstated',repair_issue_indexes=[0]),
+        unit(claim_index=None,issue_index=0,replacement_index=0,text='A new method explanation.',
+             checked=['fact','citation','certainty'],sources=[dict(basis=first['basis'][0],contribution='Supported.')],
+             verdict='supported',repair_issue_indexes=[]),
+    ]
+    response=u.parse_response(json.dumps(dict(issues=[first],requirements=reqs,units=units)))
+    service,provider,_=controller([response,ProviderError('PRIVATE')],reader)
+    result=service.review('Q',sources,DRAFT)
+    assert len(provider.calls)==2 and result is DRAFT
+    assert [e.ref for e in service.last_evidences]==['[1]','[3]']
+    assert service.last_trace['first_round_commit']['deferred_issues'][0]['missing_refs']==['[2]']
+    assert service.last_summary['status']=='incomplete'

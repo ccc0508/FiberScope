@@ -1,0 +1,283 @@
+/* Shared extraction workspace styles scoped under .literature-data */
+.literature-data .card {
+  padding: 22px 24px;
+}
+:root[data-mode="garden"] .literature-data .card {
+  padding: 24px 26px;
+}
+.ld-head {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+  padding-right: 30px;
+  cursor: pointer;
+  list-style: none;
+  border-radius: var(--radius-xs);
+}
+.ld-head::-webkit-details-marker,
+.ld-scan > summary::-webkit-details-marker,
+.scan-notes > summary::-webkit-details-marker,
+.conditions > summary::-webkit-details-marker {
+  display: none;
+}
+.ld-head-ic {
+  align-self: center;
+  color: var(--text-3);
+}
+.ld-title {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.ld-sub {
+  flex-basis: 100%;
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+.ld-count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.ld-chevron {
+  position: absolute;
+  right: 0;
+  top: 2px;
+  color: var(--text-2);
+  transition: transform 0.25s var(--ease);
+}
+details:not([open]) > summary > .ld-chevron {
+  transform: rotate(-90deg);
+}
+:root[data-mode="polarized"] .ld-head .ld-count {
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+:root[data-mode="garden"] .ld-head-ic {
+  display: none;
+}
+:root[data-mode="garden"] .ld-title {
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+:root[data-mode="garden"] .ld-head .ld-count {
+  font-size: 14px;
+}
+.ld-note {
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: var(--text-2);
+}
+.ld-state {
+  margin: 14px 0 4px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-2);
+}
+.ld-label {
+  display: block;
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+:root[data-mode="polarized"] .ld-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.ld-input,
+.table-input {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--text);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    background 0.15s;
+}
+textarea.ld-input {
+  resize: vertical;
+  line-height: 1.7;
+}
+.ld-input::placeholder,
+.table-input input::placeholder {
+  color: var(--text-3);
+}
+.ld-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+:root[data-mode="polarized"] .ld-input,
+:root[data-mode="polarized"] .table-input {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+:root[data-mode="polarized"] .ld-input:hover:not(:disabled),
+:root[data-mode="polarized"] .table-input:hover {
+  border-color: var(--line-strong);
+}
+:root[data-mode="polarized"] .ld-input:focus-visible {
+  outline: none;
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+:root[data-mode="garden"] .ld-input,
+:root[data-mode="garden"] .table-input {
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  box-shadow:
+    inset 0 0 0 1px var(--surface),
+    0 6px 16px -12px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+:root[data-mode="garden"] .ld-input:focus-visible {
+  outline: none;
+  border-color: var(--focus);
+  box-shadow:
+    inset 0 0 0 1px var(--surface),
+    0 0 0 3px color-mix(in srgb, var(--focus) 22%, transparent);
+}
+.ld-input:disabled {
+  color: var(--text-2);
+  cursor: not-allowed;
+}
+.ld-field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+.extraction-mode,
+.decision {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.extraction-mode legend,
+.decision legend {
+  padding: 0;
+  margin-bottom: 9px;
+}
+.ld-opts {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 100%;
+}
+.ld-opt {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  color: var(--text-2);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 0.18s,
+    background 0.18s,
+    border-color 0.18s,
+    box-shadow 0.25s;
+}
+.ld-opt:hover {
+  color: var(--text);
+}
+.ld-opt.on {
+  color: var(--text);
+}
+.ld-radio {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.ld-opt:has(.ld-radio:focus-visible) {
+  outline: 2.5px solid var(--focus);
+  outline-offset: 2px;
+}
+:root[data-mode="polarized"] .ld-opt {
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--text) 2.5%, transparent);
+}
+:root[data-mode="polarized"] .ld-opt:hover {
+  border-color: var(--line-strong);
+}
+:root[data-mode="polarized"] .ld-opt.on {
+  border-color: color-mix(in srgb, var(--text) 34%, transparent);
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+}
+:root[data-mode="garden"] .ld-opts {
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 50%, transparent);
+  box-shadow:
+    inset 0 0 0 1px var(--surface),
+    inset 0 2px 6px color-mix(in srgb, var(--accent) 7%, transparent);
+}
+:root[data-mode="garden"] .ld-opt {
+  min-height: 32px;
+}
+:root[data-mode="garden"] .ld-opt.on {
+  font-weight: 500;
+  background: var(--surface);
+  box-shadow:
+    0 6px 14px -8px color-mix(in srgb, var(--accent) 50%, transparent),
+    inset 0 0 0 1px var(--surface);
+}
+fieldset:disabled .ld-opt {
+  color: var(--text-3);
+  cursor: not-allowed;
+}
+fieldset:disabled .ld-opt.on {
+  color: var(--text-2);
+}
+.st-ic {
+  --st: var(--text-2);
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: var(--st);
+  background: color-mix(in srgb, var(--st) 16%, transparent);
+}
+.s-confirmed .st-ic,
+.review-pill.confirmed .st-ic,
+.lg-ok .st-ic,
+.o-confirmed .st-ic {
+  --st: var(--ok);
+}
+.s-rejected .st-ic,
+.review-pill.rejected .st-ic,
+.lg-bad .st-ic,
+.o-rejected .st-ic {
+  --st: var(--bad);
+}
+
+@media (max-width: 720px) {
+  .literature-data .card,
+  :root[data-mode="garden"] .literature-data .card {
+    padding: 18px 16px;
+  }
+  :root[data-mode="garden"] .literature-data .card {
+    border-radius: 24px;
+  }
+}
