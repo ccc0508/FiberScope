@@ -56,7 +56,7 @@ def test_private_evaluation_flow_can_rescore_without_regenerating(monkeypatch, t
         assert client.get("/api/v1/evaluation/cases").status_code == 401
         client.headers["Authorization"] = "Bearer test-eval-token"
         listing = client.get("/api/v1/evaluation/cases").json()
-        assert listing["max_concurrent_cases"] == 10
+        assert listing["max_concurrent_cases"] == 7
         assert Counter(c["group"] for c in listing["cases"]) == {"literature": 24, "sql": 20, "mixed": 20, "non_paper": 6}
         assert all("reference" not in case and "prompt" not in case for case in listing["cases"])
         assert client.post("/api/v1/evaluation/runs", json={"ids": ["missing"]}).status_code == 422
@@ -162,14 +162,14 @@ def test_holdout_grades_the_frozen_weights(monkeypatch):
     assert grade["review"]["dimensions"] == {"key_points": 52.5, "evidence": 15}
     assert grade["metrics"]["strict_pass"] is False and grade["metrics"]["figure_needs_manual_review"]
 
-def test_queue_runs_at_most_ten_cases_across_batches(monkeypatch, tmp_path):
+def test_queue_runs_at_most_seven_cases_across_batches(monkeypatch, tmp_path):
     queue = EvaluationQueue(LiteratureSettings(enabled=True, data_dir=tmp_path))
     queue.initialize()
     active = set()
     counts = Counter()
     guard = Lock()
-    ten_started = Event()
-    eleventh_started = Event()
+    seven_started = Event()
+    eighth_started = Event()
     release_one = Event()
     release_all = Event()
 
@@ -178,10 +178,10 @@ def test_queue_runs_at_most_ten_cases_across_batches(monkeypatch, tmp_path):
         with guard:
             counts[key] += 1
             active.add(key)
-            if len(active) == 10:
-                ten_started.set()
-            if len(counts) == 11:
-                eleventh_started.set()
+            if len(active) == 7:
+                seven_started.set()
+            if len(counts) == 8:
+                eighth_started.set()
         # Keep rows queued during setup to exercise the scheduler's in-flight deduplication.
         try:
             if key == (first, "case-0"):
@@ -194,20 +194,20 @@ def test_queue_runs_at_most_ten_cases_across_batches(monkeypatch, tmp_path):
                 active.remove(key)
 
     monkeypatch.setattr(queue, "run_case", run_case)
-    specs = [dict(id=f"case-{i}", group="literature", category="single") for i in range(10)]
+    specs = [dict(id=f"case-{i}", group="literature", category="single") for i in range(7)]
     first = queue.create(specs)
     second = queue.create([specs[0]])
     queue.start()
     try:
-        assert ten_started.wait(5)
-        assert not eleventh_started.wait(.1)
+        assert seven_started.wait(5)
+        assert not eighth_started.wait(.1)
         assert queue.detail(second)["cases"][0]["status"] == "queued"
         with guard:
-            assert len(active) == 10
+            assert len(active) == 7
         release_one.set()
-        assert eleventh_started.wait(5)
+        assert eighth_started.wait(5)
         with guard:
-            assert len(active) == 10
+            assert len(active) == 7
             assert counts == Counter({(first, spec["id"]): 1 for spec in specs} | {(second, "case-0"): 1})
     finally:
         release_one.set()
