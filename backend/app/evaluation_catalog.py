@@ -3,7 +3,9 @@
 import hashlib
 import json
 import os
+import sqlite3
 import subprocess
+from contextlib import closing
 from pathlib import Path
 
 from dotenv import dotenv_values
@@ -28,6 +30,30 @@ def read_json(path):
 
 def fingerprint(data):
     return hashlib.sha256(encode(data).encode()).hexdigest()
+
+
+def chroma_sqlite_fingerprint(path):
+    """Hash a consistent snapshot of the index, excluding Chroma's startup lock table."""
+    digest = hashlib.sha256()
+    with closing(sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True, timeout=10)) as db:
+        db.execute("BEGIN")
+        schema = db.execute("""
+            SELECT type, name, tbl_name, sql FROM sqlite_schema
+            WHERE tbl_name <> 'acquire_write' AND substr(name, 1, 7) <> 'sqlite_'
+            ORDER BY type, name
+        """).fetchall()
+        digest.update(encode(schema).encode("utf-8"))
+        for kind, name, _, _ in schema:
+            if kind != "table":
+                continue
+            identifier = '"' + name.replace('"', '""') + '"'
+            columns = db.execute(f"SELECT * FROM {identifier} LIMIT 0").description
+            order = ", ".join(str(index) for index in range(1, len(columns) + 1))
+            digest.update(encode(name).encode("utf-8"))
+            for row in db.execute(f"SELECT * FROM {identifier} ORDER BY {order}"):
+                digest.update(repr(row).encode("utf-8"))
+                digest.update(b"\n")
+    return digest.hexdigest()
 
 
 def cases():
@@ -66,6 +92,9 @@ def runtime_manifest(config):
     vector_files = sorted(path for path in index.rglob("*") if path.suffix in {".bin", ".pickle", ".sqlite3"})
     for path in (root / "metadata.sqlite3", root / "structure.json", *vector_files):
         if path.is_file():
+            if path == index / "chroma.sqlite3":
+                library[path.relative_to(root).as_posix()] = chroma_sqlite_fingerprint(path)
+                continue
             with path.open("rb") as handle:
                 library[path.relative_to(root).as_posix()] = hashlib.file_digest(handle, "sha256").hexdigest()
     try:
