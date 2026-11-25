@@ -11,6 +11,20 @@ PLAN_TOOL = "declare_question_tasks"
 MAX_WEB_SEARCHES = 2
 LOCAL_ROLES = frozenset({"literature", "sql"})
 CROSS_SCOPE_DEPENDENCY = "cross-scope-dependency"
+
+
+class InitialDecisionFormatError(ValueError):
+    """A received first response that cannot be used as a decision."""
+
+    def __init__(self, code, raw, usage, finish_reason, *, plan=None):
+        super().__init__(code)
+        self.code = code
+        self.raw = raw
+        self.usage = usage
+        self.finish_reason = finish_reason
+        self.plan = plan
+
+
 PUBLIC_PREFIX = re.compile(
     r"^(?:(?:然后|另外|顺便|also\b|and\b)\s*)?(?:请\s*)?(?:(?:联网|上网|(?:在)?网上)(?:查询?|搜索|搜)|"
     r"search (?:the )?web(?: for)?|look up online)\s*[:：]?\s*", re.I,

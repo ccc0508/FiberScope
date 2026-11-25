@@ -5,10 +5,11 @@ from types import SimpleNamespace
 import httpx
 import pytest
 
-from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter, ToolCall
+from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter, ToolCall, decode_initial_decision
 from literature_rag.adapters.providers.public_web import BRAVE_SEARCH_URL, BravePublicSearch
-from literature_rag.application.agent_loop import AgentLoop
-from literature_rag.application.question_intent import PLAN_TOOL, validate_plan
+from literature_rag.application.agent_loop import AgentBudget, AgentLoop
+from literature_rag.application.question_intent import InitialDecisionFormatError, PLAN_TOOL, validate_plan
+from literature_rag.application.tools import SCHEMAS
 from tests.test_agent_loop import Fake, decision
 
 
@@ -237,3 +238,147 @@ def test_chat_adapter_dispatches_initial_json_actions_without_fabricating_native
     assert state["answer"] == "论文有明确的实验结果 [1]。"
     assert len(calls) == 2
     assert "First decision JSON protocol" in state["model_calls"][0]["input_messages"][0]["content"]
+
+
+def response_adapter(*outputs):
+    prompts = []
+    replies = iter(outputs)
+
+    def create(**request):
+        prompts.append(request)
+        content = next(replies)
+        if isinstance(content, dict):
+            content = json.dumps(content, ensure_ascii=False)
+        message = SimpleNamespace(content=content, tool_calls=None)
+        return SimpleNamespace(choices=[SimpleNamespace(message=message, finish_reason="stop")], usage=None)
+
+    settings = SimpleNamespace(llm_provider="deepseek", llm_model="deepseek-flash", llm_thinking_enabled=False,
+                               llm_reasoning_effort=None)
+    client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    return ChatAgentAdapter(settings, client=client), prompts
+
+
+def first_search(quote):
+    return dict(name="search_literature", arguments=dict(
+        query="paper A result", reason="find result",
+        requirements=[dict(role="literature", source_quote=quote)], initial_targets=[1],
+    ))
+
+
+def test_missing_empty_answer_and_flat_tool_arguments_recover_without_model_retry():
+    quote = "查询论文A的实验结果"
+    search = first_search(quote)
+    adapter, prompts = response_adapter(
+        dict(plan=None, actions=[dict(name=search["name"], **search["arguments"])]),
+        dict(answer="论文报告了结果 [1]。", coverage=[]),
+    )
+
+    def execute(request, *_):
+        assert len(prompts) == 1
+        assert request["query"] == "paper A result"
+        return dict(status="completed", result=dict(evidence=[dict(ref="[1]", text="Evidence.")]))
+
+    state = run(adapter, quote, execute=execute)
+    assert state["status"] == "completed"
+    assert "first_decision_recovery" not in state
+    assert state["model_calls"][0]["format_normalizations"] == ["default_empty_answer", "wrapped_lookup_arguments:1"]
+    assert "coverage as an array" not in prompts[0]["messages"][0]["content"]
+    assert "coverage as an array" in prompts[1]["messages"][0]["content"]
+
+
+@pytest.mark.parametrize("raw", [
+    '{"plan":null,"actions":[],"answer":"","plan":null}',
+    '{"plan":null,"actions":[{"name":"search_literature","query":"changed","arguments":{"query":"old"}}],"answer":""}',
+])
+def test_conflicting_or_duplicate_fields_require_repair(raw):
+    with pytest.raises(InitialDecisionFormatError):
+        decode_initial_decision(raw, SCHEMAS, None, "stop")
+
+
+def test_invalid_json_gets_one_format_retry_before_local_lookup():
+    quote = "查询论文A的实验结果"
+    broken = '{"plan":null,"actions":['
+    adapter, prompts = response_adapter(
+        broken,
+        dict(plan=None, actions=[first_search(quote)], answer=""),
+        dict(answer="论文报告了结果 [1]。", coverage=[]),
+    )
+
+    def execute(request, *_):
+        assert len(prompts) == 2
+        return dict(status="completed", result=dict(evidence=[dict(ref="[1]", text="Evidence.")]))
+
+    state = run(adapter, quote, execute=execute)
+    assert state["status"] == "completed"
+    assert [call["stage"] for call in state["model_calls"]] == ["decide", "initial_format_repair", "decide"]
+    assert state["model_calls"][0]["raw_message"] == broken
+    assert state["first_decision_recovery"] == dict(status="repaired", initial_error="invalid_json")
+    assert prompts[1]["response_format"] == {"type": "json_object"}
+    assert json.loads(prompts[1]["messages"][-1]["content"])["previous_output_excerpt"] == broken
+
+
+def test_second_format_error_ends_run_and_keeps_both_raw_responses():
+    adapter, prompts = response_adapter("{bad", "{still bad")
+    state = run(adapter, "今天星期几？")
+    assert len(prompts) == 2 and state["tool_calls"] == []
+    assert state["status"] == "failed" and state["stop_reason"] == "initial_decision_format_failed"
+    assert state["first_decision_recovery"] == dict(status="failed", initial_error="invalid_json",
+                                                  repair_error="invalid_json")
+    assert [call["raw_message"] for call in state["model_calls"]] == ["{bad", "{still bad"]
+
+
+def test_repair_does_not_consume_reserved_closing_calls():
+    adapter, prompts = response_adapter("{bad")
+    state = AgentLoop(
+        adapter, lambda *_: pytest.fail("unexpected local call"), lambda _: None,
+        AgentBudget(max_model_calls=3), unified_research=True, first_turn_intent=True,
+        evidence_supplement_enabled=False,
+    ).run("今天星期几？", "no-repair-budget")
+    assert len(prompts) == 1
+    assert state["stop_reason"] == "initial_decision_format_failed"
+    assert state["first_decision_recovery"]["status"] == "skipped_budget"
+
+
+def test_new_web_task_in_repair_cannot_execute_without_first_authorization():
+    question = "首尔今天会下雨吗？"
+    repaired = dict(plan=dict(tasks=[task("weather", "web", question)]), actions=[], answer="")
+    adapter, prompts = response_adapter("{bad", repaired)
+    state = run(adapter, question, public=lambda *_: pytest.fail("web query authorized by repair"))
+    assert len(prompts) == 2 and state["status"] == "completed"
+    assert state["question_intent"]["tasks"][0]["status"] == "web_scope_unconfirmed"
+    assert state["public_web_searches"] == []
+
+
+def test_repair_preserves_validation_of_original_web_scope():
+    question = "首尔今天会下雨吗？"
+    plan = dict(tasks=[task("weather", "web", question)])
+    adapter, prompts = response_adapter(
+        dict(plan=plan, actions=[], answer="", coverage=[]),
+        dict(plan=plan, actions=[], answer=""),
+        "公开预报显示有雨，见网页来源 1。",
+    )
+    queries = []
+
+    def public(query, _):
+        queries.append(query)
+        return [dict(title="Weather", url="https://example.com", snippet="Rain today")]
+
+    state = run(adapter, question, public=public)
+    assert queries == ["首尔今天会下雨吗"] and len(prompts) == 3
+    assert state["status"] == "completed" and state["first_decision_recovery"]["status"] == "repaired"
+
+
+def test_repair_cannot_change_initial_valid_task_dependencies():
+    question = "统计高转数样本；先问我门槛"
+    locked = dict(tasks=[
+        task("count", "sql", "统计高转数样本", depends_on=["threshold"]),
+        task("threshold", "clarify", "先问我门槛", clarification="请指定门槛。"),
+    ])
+    changed = dict(tasks=[task("count", "sql", "统计高转数样本")])
+    adapter, prompts = response_adapter(
+        dict(plan=locked, actions=[], answer="", coverage=[]),
+        dict(plan=changed, actions=[], answer=""),
+    )
+    state = run(adapter, question)
+    assert len(prompts) == 2 and state["status"] == "failed"
+    assert state["first_decision_recovery"]["repair_error"] == "changed_locked_task_plan"
