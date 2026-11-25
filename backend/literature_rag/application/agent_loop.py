@@ -9,6 +9,7 @@ from copy import deepcopy
 from types import SimpleNamespace
 from zoneinfo import ZoneInfo
 from .agent_context import EvidenceProjection
+from .followup_tool_output import SQL_TOOL, followup_tool_output
 from .question_intent import (
     CROSS_SCOPE_DEPENDENCY, FIRST_DECISION_GUIDANCE, LOCAL_ROLES, PLAN_SCHEMA, PLAN_TOOL,
     InitialDecisionFormatError, rejection_code, validate_plan,
@@ -234,7 +235,11 @@ class AgentLoop:
                 evidence_review=self.evidence_judge is not None, retain_metric_audit=not self.evidence_supplement_enabled,
             )
             goal_search = self.parallel_search_executor is not None
-            research_output_guidance = "\nAfter gathering local evidence, submit the research answer. " + research.submission_format
+            research_output_guidance = (
+                "\nAfter the first decision, when another lookup is needed, use Function Calling for an offered "
+                "tool. Put its parameters in the tool call. When evidence collection is finished, submit the "
+                "research answer. " + research.submission_format
+            )
             prompt = SYSTEM_PROMPT if self.first_turn_intent else SYSTEM_PROMPT + "\nFor research with tool calls: " + research.submission_format
             if research.metric_audit:
                 prompt += LEGACY_METRIC_GUIDANCE
@@ -797,6 +802,77 @@ class AgentLoop:
                 state['research_format_repair_error'] = type(error).__name__
                 return ''
 
+        def recover_followup_tool(decision, schemas):
+            if not (research and self.first_turn_intent and schemas):
+                return [], False
+            delivered = [event for event in state['tool_calls'] if event['status'] == 'completed'
+                         and event.get('model_delivery', {}).get('status') == 'delivered']
+            delivered_names = {event['request']['tool'] for event in delivered}
+            ready_tools = set().union(*(
+                lookups for role, lookups in EVIDENCE_LOOKUP_TOOLS.items()
+                if delivered_names & lookups and (tasks is None or research.intent_scopes[role])
+            ))
+            if 'describe_experiment_data' not in delivered_names:
+                ready_tools.discard(SQL_TOOL)
+            local_schemas = {name: schema for name, schema in schemas.items() if name in ready_tools}
+            if not local_schemas:
+                return [], False
+            pending_sql_targets = {
+                target for event in delivered if event['request']['tool'] == 'describe_experiment_data'
+                for target in event.get('coverage_schedule', {}).get('target_requirements', ())
+            } & research.published_requirements
+            pending_sql_targets.difference_update(
+                target for event in delivered if event['request']['tool'] == SQL_TOOL
+                for target in event.get('coverage_schedule', {}).get('target_requirements', ())
+            )
+            lookup, issue = followup_tool_output(decision.text, local_schemas, pending_sql_targets)
+            if not lookup and not issue:
+                return [], False
+
+            events = state.setdefault('followup_tool_recoveries', [])
+            recovery = dict(model_call=len(state['model_calls']), issue=issue)
+            events.append(recovery)
+            if issue:
+                repair = dict(role='user', content=json.dumps({
+                    'instruction': 'Correct the previous tool request using Function Calling. Keep the existing '
+                                   'task scope and use only an offered local tool. Submit one tool call.',
+                    'problem': issue,
+                    'available_tools': sorted(local_schemas),
+                    'pending_sql_targets': sorted(pending_sql_targets),
+                }, ensure_ascii=False))
+                if (any(event.get('repair_model_call') for event in events)
+                        or len(state['model_calls']) >= model_limit - closing_calls
+                        or tool_count >= tool_limit or deadline-self.clock() <= b.reserve_seconds
+                        or size(messages + [repair]) >= stop_threshold):
+                    recovery['status'] = 'repair_unavailable'
+                    return [], True
+                messages.append(repair)
+                recovery.update(status='repair_started', repair_model_call=len(state['model_calls']) + 1)
+                try:
+                    corrected = model('followup_tool_format_repair', local_schemas)
+                except Exception as error:
+                    recovery.update(status='repair_failed', repair_error=type(error).__name__)
+                    return [], True
+                if corrected.calls:
+                    if len(corrected.calls) == 1 and corrected.calls[0].name in local_schemas:
+                        messages.append(corrected.message)
+                        recovery.update(status='repaired', tool=corrected.calls[0].name,
+                                        call_id=corrected.calls[0].id)
+                        return corrected.calls, False
+                    recovery.update(status='repair_failed', repair_error='expected_one_offered_local_tool')
+                    return [], True
+                messages.append(corrected.message)
+                lookup, issue = followup_tool_output(corrected.text, local_schemas, pending_sql_targets)
+                if not lookup:
+                    recovery.update(status='repair_failed', repair_error=issue or 'missing_tool_call')
+                    return [], True
+
+            name, arguments = lookup
+            call_id = f'text-lookup-{len(state["model_calls"])}'
+            recovery.update(status='repaired' if recovery.get('repair_model_call') else 'normalized',
+                            tool=name, call_id=call_id)
+            return [SimpleNamespace(id=call_id, name=name, arguments=arguments, native=False)], False
+
         try:
             while True:
                 collection_limit_reached=len(state['model_calls'])>=model_limit-closing_calls or tool_count>=tool_limit
@@ -843,6 +919,12 @@ class AgentLoop:
                         d = model('decide', schemas)
                     messages.append(d.message)
                     calls = d.calls
+                    if not first_request and not calls:
+                        calls, recovery_failed = recover_followup_tool(d, schemas)
+                        if recovery_failed:
+                            state['stop_reason'] = 'followup_tool_format_unresolved'
+                            save()
+                            break
                     if first_request:
                         calls = accept_intent(calls, approved_web)
                         if tasks is not None and not any(research.intent_scopes.values()):

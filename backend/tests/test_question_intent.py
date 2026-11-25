@@ -358,6 +358,102 @@ def first_search(quote):
     ))
 
 
+def sql_followup_run(second_reply, *later_replies, budget=None):
+    quote = "查本地样本的比例"
+    directory = dict(name="describe_experiment_data", arguments=dict(
+        reason="Confirm fields", views=["fiber.v_blend_analysis"],
+        requirements=[dict(role="sql", source_quote=quote)], initial_targets=[1],
+    ))
+    adapter, prompts = response_adapter(
+        dict(plan=dict(tasks=[task("local", "sql", quote)]), actions=[directory], answer=""),
+        second_reply, *later_replies,
+    )
+    requests = []
+
+    def execute(request, *_):
+        requests.append(request)
+        if request["tool"] == "describe_experiment_data":
+            return dict(status="completed", result=dict(views=[]))
+        return dict(status="completed", result=dict(ref="[1]", rows=[["50.00"]]))
+
+    state = AgentLoop(
+        adapter, execute, lambda _: None, budget,
+        unified_research=True, first_turn_intent=True, evidence_supplement_enabled=False,
+        parallel_search_executor=lambda *_: pytest.fail("expected sequential SQL calls"),
+        public_search=lambda *_: pytest.fail("unexpected public search"),
+    ).run(quote, "sql-followup-format")
+    return state, prompts, requests
+
+
+@pytest.mark.parametrize("named", [False, True])
+def test_recovers_both_followup_tool_payloads_without_model_retry(named):
+    arguments = dict(sql="SELECT sw_proportion_pct FROM fiber.v_blend_analysis",
+                     reason="Read proportion", target_requirements=["need_1"])
+    reply = dict(name="query_experiment_data", arguments=arguments) if named else arguments
+    state, prompts, calls = sql_followup_run(reply, dict(answer="比例为 50% [1]。", coverage=[]))
+    assert state["answer"] == "比例为 50% [1]。"
+    assert [m["stage"] for m in state["model_calls"]] == ["decide", "decide", "decide"]
+    assert state["model_calls"][1]["calls"] == []
+    assert "Function Calling" in prompts[1]["messages"][0]["content"]
+    assert calls[-1]["sql"] == arguments["sql"]
+    event = state["tool_calls"][-1]
+    assert event["coverage_schedule"]["target_requirements"] == ["need_1"]
+    assert event["model_delivery"]["messages"][0]["role"] == "user"
+    assert state["followup_tool_recoveries"] == [
+        dict(model_call=2, issue=None, status="normalized", tool="query_experiment_data", call_id="text-lookup-2"),
+    ]
+
+
+def test_ambiguous_sql_payload_receives_eligible_ids_and_one_tool_repair():
+    args = dict(sql="SELECT sw_proportion_pct FROM fiber.v_blend_analysis", reason="Read proportion")
+    repaired = dict(name="query_experiment_data", arguments=dict(args, target_requirements=["need_1"]))
+    state, prompts, calls = sql_followup_run(
+        dict(args, target_requirements=["unknown"]), repaired, dict(answer="比例为 50% [1]。", coverage=[]),
+    )
+    assert [m["stage"] for m in state["model_calls"]] == [
+        "decide", "decide", "followup_tool_format_repair", "decide",
+    ]
+    feedback = json.loads(state["model_calls"][2]["input_messages"][-1]["content"])
+    assert feedback["pending_sql_targets"] == ["need_1"]
+    assert "target_requirements" in feedback["problem"]
+    assert {tool["function"]["name"] for tool in prompts[2]["tools"]} == {
+        "describe_experiment_data", "query_experiment_data",
+    }
+    assert len(calls) == 2 and state["followup_tool_recoveries"][0]["status"] == "repaired"
+    assert state["tool_calls"][-1]["coverage_schedule"]["target_requirements"] == ["need_1"]
+
+
+def test_failed_followup_repair_closes_with_gap_without_repeated_execution():
+    bad = dict(sql="SELECT sw_proportion_pct FROM fiber.v_blend_analysis", reason="Missing task ID")
+    state, prompts, calls = sql_followup_run(bad, bad, dict(answer="还缺少实际查询结果。", coverage=[]))
+    assert [m["stage"] for m in state["model_calls"]] == [
+        "decide", "decide", "followup_tool_format_repair", "finalize",
+    ]
+    assert state["followup_tool_recoveries"][0]["status"] == "repair_failed"
+    assert state["stop_reason"] == "followup_tool_format_unresolved"
+    assert len(calls) == 1 and "tools" not in prompts[-1]
+
+
+def test_followup_tool_repair_preserves_closing_budget():
+    bad = dict(sql="SELECT sw_proportion_pct FROM fiber.v_blend_analysis", reason="Missing task ID")
+    state, _, calls = sql_followup_run(
+        bad, dict(answer="还缺少实际查询结果。", coverage=[]), budget=AgentBudget(max_model_calls=4),
+    )
+    assert [m["stage"] for m in state["model_calls"]] == ["decide", "decide", "finalize"]
+    assert state["followup_tool_recoveries"][0]["status"] == "repair_unavailable"
+    assert len(calls) == 1
+
+
+def test_sql_in_terminal_answer_remains_an_example():
+    example = dict(name="query_experiment_data", arguments=dict(
+        sql="SELECT sw_proportion_pct FROM fiber.v_blend_analysis", reason="Example", target_requirements=["need_1"],
+    ))
+    text = "示例查询\n```json\n" + json.dumps(example) + "\n```"
+    state, _, calls = sql_followup_run(dict(answer=text, coverage=[]))
+    assert state["answer"] == text and len(calls) == 1
+    assert "followup_tool_recoveries" not in state
+
+
 def test_missing_empty_answer_and_flat_tool_arguments_recover_without_model_retry():
     quote = "查询论文A的实验结果"
     search = first_search(quote)
