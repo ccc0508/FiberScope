@@ -2,6 +2,8 @@
 
 在平台的 `/evaluation` 打开工作台。题库含 24 道文献题、20 道 SQL 题、20 道综合题和 6 道日常题。可按题组选择，也可搜索题号单独勾选。
 
+配置 `FIBERSCOPE_HOLDOUT_DIR` 后可切换到独立的 Holdout 40 题，单独选题、查看历史和比较批次。配置填写封存的 `fiberscope-holdout-v1` 目录绝对路径。服务端按封存清单校验题目、答案和评分文件，答题 Agent 每次只收到题干。参考答案和参考 SQL 结果留在评分端。读图题仍需人工核对原图，Jev 只检查文字证据和工具轨迹。
+
 ## 启用
 
 在私有 `backend/.env` 中设置一个随机的 `FIBERSCOPE_EVALUATION_TOKEN`，在私有 `backend/.env.jev` 中配置 `QA_JEV_API_KEY`。评测与问答共用 `backend/.env.literature` 配好的 Agent 和文献库。启动后端和前端后，用评测访问令牌打开工作台。缺少访问令牌时，后端不会启用工作台。

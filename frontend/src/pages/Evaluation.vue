@@ -4,6 +4,7 @@ import { Activity, ArrowLeft, BookOpen, Database, FlaskConical, History, Layers,
 import { apiPath } from "../urls";
 
 type Group = "literature" | "sql" | "mixed" | "non_paper";
+type Suite = "regression" | "holdout";
 type Case = { id: string; group: Group; category: string; question: string };
 type Row = {
   id: string; group: Group; status: string; score: number | null; calibrated_score: number | null;
@@ -16,7 +17,7 @@ type Manifest = {
 };
 type Run = {
   id: string; created_at: string; parent: string | null; manifest: Manifest; cases: Row[];
-  scoring_manifest?: Manifest;
+  scoring_manifest?: Manifest; suite?: Suite;
   database_fingerprint: string | null; deepseek_usage: { total_tokens: number; incomplete: boolean };
 };
 type Grade = { score: number; model: string; metrics: Record<string, unknown>; review: Record<string, unknown>; decisions: Record<string, unknown>; usage: Record<string, number>; duration_ms?: number };
@@ -44,13 +45,18 @@ const metricLabels: Record<string, string> = {
   sql_attempts: "SQL 调用", sql_completed: "SQL 成功", exact_reference_matches: "参考行集精确匹配",
   covered_reference_results: "参考行已覆盖", reference_checks: "可对照查询数",
   tool_accuracy: "工具调用评分", passed: "日常题通过",
+  tool_calls: "工具调用次数", failed_tool_calls: "未成功的工具调用",
+  original_figure_delivered: "原图已交付", figure_needs_manual_review: "需要人工核图",
 };
+const suiteLabels: Record<Suite, string> = { regression: "开发回归 · 70 题", holdout: "Holdout 留出评测 · 40 题" };
 
 const savedToken = "fiberscope:evaluation:access";
 const token = ref(sessionStorage.getItem(savedToken) ?? "");
 const unlocked = ref(false);
 const manifest = ref<Manifest>();
 const maxConcurrentCases = ref<number>();
+const suite = ref<Suite>("regression");
+const availableSuites = ref<Suite[]>(["regression"]);
 const catalog = ref<Case[]>([]);
 const chosen = ref(new Set<string>());
 const filter = ref<Group | "all">("all");
@@ -76,9 +82,16 @@ const filtered = computed(() => {
 const active = (status: string) => ["queued", "answering", "scoring"].includes(status);
 const score = (row: Row) => row.calibrated_score ?? row.score;
 const stats = (run: Run) => {
-  const values = run.cases.flatMap(row => score(row) == null ? [] : [score(row)!]);
+  const values = run.cases.flatMap(row => {
+    const value = score(row);
+    if (value != null) return [value];
+    return run.suite === "holdout" && row.status === "answer_failed" ? [0] : [];
+  });
   const settled = run.cases.filter(row => !active(row.status)).length;
-  return { values: values.length, settled, mean: values.length ? values.reduce((a, b) => a + b, 0) / values.length : null };
+  const mean = values.length && (run.suite !== "holdout" || values.length === run.cases.length)
+    ? values.reduce((a, b) => a + b, 0) / values.length : null;
+  return { values: run.cases.filter(row => score(row) != null).length, settled, mean,
+    strict: run.cases.filter(row => row.metrics.strict_pass === true).length };
 };
 const progress = computed(() => current.value ? stats(current.value) : undefined);
 const baseline = computed(() => history.value.find(run => run.id === baselineId.value));
@@ -144,7 +157,9 @@ async function useRequest(action: () => Promise<void>) {
 }
 
 async function refresh() {
-  const { runs } = await request<{ runs: Run[] }>("/runs");
+  const selected = suite.value;
+  const { runs } = await request<{ runs: Run[] }>("/runs?suite=" + selected);
+  if (suite.value !== selected) return;
   history.value = runs;
   if (current.value) {
     const refreshed = runs.find(run => run.id === current.value?.id);
@@ -162,14 +177,39 @@ async function refresh() {
   }
 }
 
+async function loadCatalog(selected: Suite) {
+  const data = await request<{
+    cases: Case[]; manifest: Manifest; max_concurrent_cases?: number; available_suites?: Suite[];
+  }>("/cases?suite=" + selected);
+  catalog.value = data.cases;
+  manifest.value = data.manifest;
+  maxConcurrentCases.value = data.max_concurrent_cases;
+  availableSuites.value = data.available_suites ?? ["regression"];
+}
+
 async function unlock() {
   await useRequest(async () => {
-    const data = await request<{ cases: Case[]; manifest: Manifest; max_concurrent_cases?: number }>("/cases");
-    catalog.value = data.cases;
-    manifest.value = data.manifest;
-    maxConcurrentCases.value = data.max_concurrent_cases;
+    await loadCatalog(suite.value);
     sessionStorage.setItem(savedToken, token.value.trim());
     unlocked.value = true;
+    await refresh();
+  });
+}
+
+async function switchSuite(selected: Suite) {
+  if (selected === suite.value || busy.value) return;
+  await useRequest(async () => {
+    await loadCatalog(selected);
+    suite.value = selected;
+    chosen.value = new Set();
+    filter.value = "all";
+    search.value = "";
+    historyGroup.value = "all";
+    historySearch.value = "";
+    history.value = [];
+    current.value = undefined;
+    detail.value = undefined;
+    baselineId.value = "";
     await refresh();
   });
 }
@@ -272,6 +312,10 @@ onUnmounted(() => window.clearInterval(timer));
       </form>
 
       <template v-else>
+        <div v-if="availableSuites.length > 1" class="tabs" aria-label="评测题库">
+          <button v-for="item in availableSuites" :key="item" :aria-pressed="suite === item"
+            :disabled="busy" @click="switchSuite(item)">{{ suiteLabels[item] }}</button>
+        </div>
         <div class="tabs" aria-label="评测视图">
           <button :aria-pressed="tab === 'new'" @click="tab = 'new'"><Play :size="15" /> 新建评测</button>
           <button :aria-pressed="tab === 'history'" @click="openHistory"><History :size="16" /> 评测历史 <span>{{ history.length }}</span></button>
@@ -313,7 +357,7 @@ onUnmounted(() => window.clearInterval(timer));
               <div v-if="manifest"><dt>单题预算</dt><dd>{{ manifest.budget.models }} 次模型 · {{ manifest.budget.tools }} 次工具</dd></div>
               <div><dt>执行方式</dt><dd>{{ maxConcurrentCases ? `最多 ${maxConcurrentCases} 题并行，其余排队` : "后台运行" }}</dd></div>
             </dl>
-            <button class="primary start" :disabled="busy || !chosen.size" @click="start('/runs', { ids: [...chosen] })">
+            <button class="primary start" :disabled="busy || !chosen.size" @click="start('/runs', { ids: [...chosen], suite })">
               <Play :size="16" /> 开始评测
             </button>
             <p class="hint">运行会产生模型调用费用。离开页面后可从历史继续查看。</p>
@@ -347,7 +391,8 @@ onUnmounted(() => window.clearInterval(timer));
             <div class="summary">
               <div><small>已结束／计划</small><strong>{{ progress.settled }}/{{ current.cases.length }}</strong></div>
               <div><small>已评分</small><strong>{{ progress.values }}</strong></div>
-              <div><small>已评分均分</small><strong>{{ display(progress.mean) }}</strong></div>
+              <div><small>{{ suite === 'holdout' ? '本批均分' : '已评分均分' }}</small><strong>{{ display(progress.mean) }}</strong></div>
+              <div v-if="suite === 'holdout'"><small>自动判定严格通过</small><strong>{{ progress.strict }}/{{ current.cases.length }}</strong></div>
               <div><small>DeepSeek Token 总量</small><strong>{{ tokenCount(current.deepseek_usage) }}</strong>
                 <small v-if="current.deepseek_usage.incomplete">记录不全</small></div>
             </div>
@@ -401,7 +446,7 @@ onUnmounted(() => window.clearInterval(timer));
                   <a v-if="safeTrace" :href="safeTrace" target="_blank" rel="noopener noreferrer">Langfuse</a>
                 </p>
                 <details open><summary>Agent 回答</summary><pre>{{ detail.answer?.answer || "暂无回答" }}</pre></details>
-                <details><summary>参考答案与参考 SQL</summary><pre>{{ json(detail.reference) }}</pre><pre v-if="detail.reference_results.length">{{ json(detail.reference_results) }}</pre></details>
+                <details v-if="suite !== 'holdout'"><summary>参考答案与参考 SQL</summary><pre>{{ json(detail.reference) }}</pre><pre v-if="detail.reference_results.length">{{ json(detail.reference_results) }}</pre></details>
                 <details v-if="detail.grade"><summary>Jev 各维度评分与置信度</summary><pre>{{ json({ review: detail.grade.review, decisions: detail.grade.decisions, metrics: detail.grade.metrics }) }}</pre></details>
                 <details v-if="detail.answer"><summary>工具调用、逐任务证据与补查</summary><pre>{{ json({ tools: detail.answer.tool_calls, acceptance: detail.answer.evidence_check, supplement: detail.answer.evidence_supplement_planning }) }}</pre></details>
                 <details v-if="detail.grade"><summary>人工校准 {{ detail.calibrations.length ? '（' + detail.calibrations.length + '）' : '' }}</summary>

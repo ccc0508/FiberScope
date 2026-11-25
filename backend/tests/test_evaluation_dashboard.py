@@ -1,6 +1,8 @@
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
+from hashlib import sha256
 from json import dumps
+from pathlib import Path
 import sqlite3
 from threading import Event, Lock
 from time import monotonic, sleep
@@ -11,7 +13,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app.evaluation import EvaluationQueue, router
-from app.evaluation_catalog import cases
+from app.evaluation_catalog import cases, holdout_cases
 from app.literature import LiteratureSettings
 
 
@@ -83,6 +85,82 @@ def test_private_evaluation_flow_can_rescore_without_regenerating(monkeypatch, t
     assert prompts == [expected["prompt"]]
     assert not snapshots
 
+
+def test_holdout_catalog_runs_and_history_are_isolated(monkeypatch, tmp_path):
+    holdout = dict(id="FSHO-N01", group="non_paper", category="daily", question="A sealed prompt.",
+                   prompt="A sealed prompt.", reference={"checks": ["private reference"]}, holdout={"version": "v1"})
+    seen = []
+
+    def answer(config, question, *, run_id):
+        seen.append(question)
+        return dict(agent_run=dict(status="completed", answer="candidate"), agent_evidence=[], agent_tool_trace=[])
+
+    original = EvaluationQueue.__init__
+    monkeypatch.setattr(EvaluationQueue, "__init__", lambda self, config: original(self, config, answer=answer))
+    monkeypatch.setattr(EvaluationQueue, "grade", lambda self, spec, *_: {"score": 90 if "holdout" in spec else 80})
+    monkeypatch.setattr("app.evaluation.holdout_cases", lambda _: iter([holdout]))
+    monkeypatch.setattr("app.evaluation.runtime_manifest", lambda _: {})
+    monkeypatch.setenv("QA_JEV_API_KEY", "test-only-key")
+    monkeypatch.setenv("FIBERSCOPE_HOLDOUT_DIR", str(tmp_path))
+    app = FastAPI()
+    app.include_router(router(LiteratureSettings(enabled=True, data_dir=tmp_path), "test-token"))
+
+    with TestClient(app, headers={"Authorization": "Bearer test-token"}) as client:
+        api = "/api/v1/evaluation"
+        assert client.get(api + "/cases?suite=holdout").json()["cases"] == [
+            {key: holdout[key] for key in ("id", "group", "category", "question")}
+        ]
+        assert len(client.get(api + "/cases").json()["cases"]) == 70
+        assert client.post(api + "/runs", json={"ids": ["FSHO-N01"]}).status_code == 422
+        assert client.post(api + "/runs", json={"ids": ["FSHO-N01", "FS8-025"], "suite": "holdout"}).status_code == 422
+        regression = client.post(api + "/runs", json={"ids": ["FS8-025"]}).json()["id"]
+        run = client.post(api + "/runs", json={"ids": ["FSHO-N01"], "suite": "holdout"}).json()["id"]
+        assert wait_for(client, run)["suite"] == "holdout"
+        assert wait_for(client, regression)["suite"] == "regression"
+        assert [r["id"] for r in client.get(api + "/runs?suite=holdout").json()["runs"]] == [run]
+        assert [r["id"] for r in client.get(api + "/runs").json()["runs"]] == [regression]
+        detail = client.get(api + f"/runs/{run}/cases/FSHO-N01").json()
+        assert detail["score"] == 90 and detail["reference"] == {} and detail["reference_results"] == []
+        rescore = client.post(api + f"/runs/{run}/rescore", json={"ids": ["FSHO-N01"]}).json()["id"]
+        assert wait_for(client, rescore)["suite"] == "holdout"
+        assert seen.count("A sealed prompt.") == 1
+
+
+def test_holdout_requires_matching_seal(tmp_path):
+    question = tmp_path / "answer-input/questions.jsonl"
+    question.parent.mkdir()
+    question.write_text("original", encoding="utf-8")
+    (tmp_path / "manifest.json").write_text(dumps({
+        "version": "fiberscope-holdout-v1",
+        "sha256": {"answer-input/questions.jsonl": sha256(question.read_bytes()).hexdigest()},
+    }), encoding="utf-8")
+    question.write_text("altered", encoding="utf-8")
+    with pytest.raises(ValueError, match="sealed manifest"):
+        list(holdout_cases(tmp_path))
+
+
+def test_holdout_grades_the_frozen_weights(monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[2] / "scripts"))
+    import evaluation_web_grade
+
+    reference = dict(checks=[dict(id="one", expected="first"), dict(id="two", expected="second")],
+                     requires_original_figure=True, literature_evidence=[])
+    case = dict(group="literature", question="Assess the figure.", reference=reference,
+                holdout=dict(rubric=dict(weights={"key_points": 70, "evidence": 30}), sources={}))
+    result = dict(answer="candidate", tool_calls=[])
+
+    def decisions(config, request, post):
+        assert set(request["questions"]) == {"point_one", "point_two", "evidence", "material_error"}
+        assert request["state"]["reference_results"] == []
+        return {"model": "Jev"}, {key: {"choice": choice} for key, choice in {
+            "point_one": "full", "point_two": "partial", "evidence": "full", "material_error": "no",
+        }.items()}
+
+    monkeypatch.setattr(evaluation_web_grade, "request_decisions", decisions)
+    grade = evaluation_web_grade.grade(dict(case=case, result=result), SimpleNamespace(model="Jev"))
+    assert grade["score"] == 67.5
+    assert grade["review"]["dimensions"] == {"key_points": 52.5, "evidence": 15}
+    assert grade["metrics"]["strict_pass"] is False and grade["metrics"]["figure_needs_manual_review"]
 
 def test_queue_runs_at_most_ten_cases_across_batches(monkeypatch, tmp_path):
     queue = EvaluationQueue(LiteratureSettings(enabled=True, data_dir=tmp_path))
