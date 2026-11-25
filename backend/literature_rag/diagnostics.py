@@ -1,4 +1,5 @@
 """Allowlisted, credential-free configuration and provider usage snapshots."""
+import re
 from hashlib import sha256
 from pathlib import Path
 from traceback import extract_tb
@@ -6,23 +7,63 @@ from traceback import extract_tb
 from .config import Settings
 
 TOOL_WORKER_ERROR_PREFIX = "FIBERSCOPE_TOOL_WORKER_ERROR "
+_WORKER_ERROR_CODES = ("errno", "winerror", "sqlite_errorcode", "status_code")
+_MAX_EXCEPTION_CHAIN = 4
+_MAX_EXCEPTION_FRAMES = 5
+_FRAME_FILE = re.compile(r"[\w.-]+\.(?:pyw?|pyx)|<(?:frozen [\w.]+|string|stdin)>")
 
 
 def worker_exception_details(error):
     """Record exception types, codes and frame locations without exception messages."""
     chain = []
-    while error is not None and len(chain) < 4:
-        frames = extract_tb(error.__traceback__, limit=-5)
+    while error is not None and len(chain) < _MAX_EXCEPTION_CHAIN:
+        frames = extract_tb(error.__traceback__, limit=-_MAX_EXCEPTION_FRAMES)
         entry = dict(type=type(error).__name__, frames=[
             dict(file=Path(frame.filename).name, line=frame.lineno, function=frame.name)
             for frame in frames
         ])
-        for field in ("errno", "winerror", "sqlite_errorcode", "status_code"):
+        for field in _WORKER_ERROR_CODES:
             value = getattr(error, field, None)
             if type(value) is int:
                 entry[field] = value
         chain.append(entry)
         error = error.__cause__ or error.__context__
+    return chain
+
+
+def sanitize_worker_exception_details(payload):
+    """Keep only bounded exception and frame fields from the worker's stderr."""
+    if not isinstance(payload, list):
+        return []
+    chain = []
+    for entry in payload[:_MAX_EXCEPTION_CHAIN]:
+        if not isinstance(entry, dict):
+            continue
+        name = entry.get("type")
+        if not isinstance(name, str) or len(name) > 128 or not name.isidentifier():
+            continue
+        clean = dict(type=name, frames=[])
+        for field in _WORKER_ERROR_CODES:
+            value = entry.get(field)
+            if type(value) is int and -(2**31) <= value < 2**32:
+                clean[field] = value
+        frames = entry.get("frames")
+        if isinstance(frames, list):
+            for frame in frames[:_MAX_EXCEPTION_FRAMES]:
+                if not isinstance(frame, dict):
+                    continue
+                file, line, function = (frame.get(key) for key in ("file", "line", "function"))
+                if not isinstance(file, str) or len(file) > 128 or not _FRAME_FILE.fullmatch(file):
+                    continue
+                if type(line) is not int or not 0 < line < 2**31:
+                    continue
+                if not isinstance(function, str) or len(function) > 128 or not (
+                    function.isidentifier() or (function.startswith("<") and function.endswith(">")
+                                                and function[1:-1].isidentifier())
+                ):
+                    continue
+                clean["frames"].append(dict(file=file, line=line, function=function))
+        chain.append(clean)
     return chain
 
 

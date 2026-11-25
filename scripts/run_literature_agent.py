@@ -18,7 +18,9 @@ from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter
 from literature_rag.config import Settings
 from literature_rag.application.context import DISCONTINUOUS_SEPARATOR
 from literature_rag.application.tools import MAX_PARALLEL_SEARCHES, SHARED_SEARCH_HITS_PER_DOCUMENT, ToolTraceStore
-from literature_rag.diagnostics import TOOL_WORKER_ERROR_PREFIX, worker_exception_details
+from literature_rag.diagnostics import (
+    TOOL_WORKER_ERROR_PREFIX, sanitize_worker_exception_details, worker_exception_details,
+)
 from literature_rag.stage_trace import StageTrace, stage
 from literature_rag.application.paper_directory import load_paper_directory
 from literature_rag.state_io import save_state
@@ -51,10 +53,11 @@ def run_tool_worker(body, timeout):
         prefix = TOOL_WORKER_ERROR_PREFIX.encode('ascii')
         for line in reversed(result.stderr.splitlines()):
             if line.startswith(prefix):
-                try:
-                    exceptions = json.loads(line[len(prefix):])
-                except (ValueError, UnicodeError):
-                    pass
+                if len(line) - len(prefix) <= 16_384:
+                    try:
+                        exceptions = sanitize_worker_exception_details(json.loads(line[len(prefix):]))
+                    except (ValueError, RecursionError):
+                        pass
                 break
         stderr = result.stderr.lower()
         signatures = [name for name, markers in (

@@ -215,6 +215,8 @@ def main(body):
         if settings.corrective_review_enabled:
             query_embedding_calls.extend(evidence_reviewer.last_trace.get('supplement',{}).get('query_embedding_calls',[]))
     except (ProviderError, InfrastructureError) as error:
+        if 'assemble_scoped_search' in body:
+            raise  # Use the tool worker's structured failure protocol for shared assembly.
         print(json.dumps({'status': 'failed', 'answer': '', 'citations': [],
                           'reason_code': 'provider_error' if isinstance(error, ProviderError) else 'retrieval_error',
                           'error_status': 503, 'configuration': configuration,

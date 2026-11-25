@@ -71,7 +71,6 @@ def test_invalid_args_do_not_persist_extra_fields(kit):
     assert 'private' not in json.dumps(kit.store.read('r'))
 
 def test_tool_worker_reports_child_failure_without_recording_raw_stderr(monkeypatch):
-    import json
     import subprocess
 
     from literature_rag.diagnostics import TOOL_WORKER_ERROR_PREFIX, worker_exception_details
@@ -79,8 +78,14 @@ def test_tool_worker_reports_child_failure_without_recording_raw_stderr(monkeypa
 
     error = OSError(12, "private provider message")
     error.__cause__ = MemoryError("private allocation message")
+    chain = worker_exception_details(error)
+    chain[0].update(message="private error", winerror=True, status_code="private response", frames=[
+        dict(file="retrieve.py", line=123, function="search", source="private source text"),
+        dict(file="/private/retrieve.py", line=456, function="load"),
+        dict(file="retrieve.py", line=456, function="private response"),
+    ])
     stderr = ("unrelated private stderr: failed to allocate\n" + TOOL_WORKER_ERROR_PREFIX
-              + json.dumps(worker_exception_details(error))).encode()
+              + json.dumps(chain)).encode()
     monkeypatch.setattr(subprocess, "run", lambda *_, **__: subprocess.CompletedProcess([], 1, b'', stderr))
 
     result = run_tool_worker({"tool_call": {"tool": "search_literature"}}, 2)
@@ -89,10 +94,28 @@ def test_tool_worker_reports_child_failure_without_recording_raw_stderr(monkeypa
     diagnostic = result["worker_diagnostic"]
     assert diagnostic["kind"] == "nonzero_exit"
     assert diagnostic["returncode"] == 1
-    assert diagnostic["exceptions"][0]["errno"] == 12
+    assert diagnostic["exceptions"][0] == dict(type="OSError", errno=12, frames=[
+        dict(file="retrieve.py", line=123, function="search"),
+    ])
     assert diagnostic["exceptions"][1]["type"] == "MemoryError"
     assert diagnostic["stderr_signatures"] == ["memory_allocation"]
     assert "private" not in json.dumps(result)
+
+
+@pytest.mark.parametrize("payload", [b'{"extra":"private"}', b'[' * 1500 + b']' * 1500, b' ' * 16_385])
+def test_tool_worker_discards_invalid_stderr_markers(monkeypatch, payload):
+    import subprocess
+
+    from literature_rag.diagnostics import TOOL_WORKER_ERROR_PREFIX
+    from scripts.run_literature_agent import run_tool_worker
+
+    stderr = TOOL_WORKER_ERROR_PREFIX.encode() + payload
+    monkeypatch.setattr(subprocess, "run", lambda *_, **__: subprocess.CompletedProcess([], 1, b'', stderr))
+
+    result = run_tool_worker({"tool_call": {"tool": "read_table"}}, 2)
+
+    assert result["error_code"] == "worker_failed"
+    assert result["worker_diagnostic"]["exceptions"] == []
 
 
 def test_tool_worker_distinguishes_bad_json_from_an_os_failure(monkeypatch):
@@ -438,3 +461,66 @@ def test_shared_search_keeps_fitting_seeds_and_reuses_a_shared_hit_for_uncovered
     finalize_shared_search(records, "run", 5, assemble=assemble, context_limits=(8000, 24000))
     assert all(record["status"] == "completed" for record in records)
     assert [hit["chunk_id"] for hit in records[1]["result"]["evidence"]] == ["common"]
+
+
+@pytest.mark.parametrize("error_name", ["ProviderError", "InfrastructureError"])
+def test_shared_search_preserves_structured_worker_failure(tmp_path, monkeypatch, capsys, error_name):
+    import runpy
+    import subprocess
+    import sys
+    from dataclasses import asdict
+    from io import StringIO
+
+    from literature_rag.config import Settings
+    from literature_rag.domain import errors
+    from scripts.run_literature_agent import ROOT, finalize_shared_search, run_tool_worker
+
+    settings = Settings(_env_file=None, embedding_provider="openai", embedding_model="fake",
+                        embedding_dimensions=3, embedding_api_key="test-only", llm_provider="openai",
+                        llm_model="fake", llm_api_key="test-only", context_expansion_strategy="same_page",
+                        table_retrieval_enabled=False, visual_retrieval_enabled=False, rerank_enabled=False,
+                        evidence_review_enabled=False)
+    monkeypatch.setattr("literature_rag.config.Settings", lambda **_: settings)
+    monkeypatch.setattr("literature_rag.adapters.sqlite.metadata_store.SqliteMetadataStore.list_documents", lambda _: [])
+    monkeypatch.setattr("literature_rag.adapters.chroma.vector_store.ChromaVectorStore", lambda *_: None)
+    monkeypatch.setattr("literature_rag.adapters.providers.openai.OpenAIEmbedder", lambda *_: None)
+    monkeypatch.setattr("literature_rag.adapters.providers.openai.OpenAIGenerator",
+                        lambda *_, **__: SimpleNamespace(model_name="fake"))
+
+    def fail_assembly(*_):
+        raise getattr(errors, error_name)("private error message") from OSError(12, "private lower-level error")
+
+    monkeypatch.setattr("literature_rag.application.retrieve.RetrievalService.assemble_context", fail_assembly)
+    (tmp_path / "chroma").mkdir()
+    (tmp_path / "chroma/chroma.sqlite3").touch()
+    seed = asdict(Evidence("", "chunk", "doc", "paper.pdf", 1, 1, "synthetic text", .9))
+
+    def call_worker(args, *, input, **_):
+        with monkeypatch.context() as process:
+            process.setattr(sys, "stdin", StringIO(input.decode()))
+            process.setattr(sys, "path", list(sys.path))
+            process.setenv("ANONYMIZED_TELEMETRY", "False")
+            with pytest.raises(SystemExit) as exit_info:
+                runpy.run_path(str(ROOT / "backend/literature_worker.py"), run_name="__main__")
+        captured = capsys.readouterr()
+        return subprocess.CompletedProcess(args, exit_info.value.code, captured.out.encode(), captured.err.encode())
+
+    def assemble(seeds, query, run_id, timeout):
+        return run_tool_worker(dict(assemble_scoped_search=dict(seeds=seeds, query=query),
+                                    data_dir=str(tmp_path), run_id=run_id), timeout)
+
+    monkeypatch.setattr(subprocess, "run", call_worker)
+    records = [dict(call_id=str(i), input=dict(query=str(i)), candidate_evidence=[seed],
+                    status="completed", result=dict(evidence=[])) for i in range(2)]
+
+    finalize_shared_search(records, "run", 10, assemble=assemble)
+
+    for record in records:
+        assert record["status"] == "failed" and record["error_code"] == "worker_failed"
+        assert "result" not in record
+        diagnostic = record["worker_diagnostic"]
+        assert diagnostic["operation"] == "assemble_scoped_search"
+        assert diagnostic["exceptions"][0]["type"] == error_name
+        assert diagnostic["exceptions"][0]["frames"][-1]["function"] == "fail_assembly"
+        assert diagnostic["exceptions"][1]["errno"] == 12
+        assert "private" not in json.dumps(diagnostic)
