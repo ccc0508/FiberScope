@@ -250,6 +250,7 @@ def main(body):
 
 
 if __name__ == '__main__':
+    body = None
     try:
         body = json.loads(sys.stdin.read())
         from literature_rag.stage_trace import StageTrace
@@ -262,6 +263,9 @@ if __name__ == '__main__':
         finally:
             telemetry.flush()
     except Exception as error:
-        # Intentionally no traceback, question text, key or provider response in HTTP output.
-        print(type(error).__name__, file=sys.stderr)
+        if isinstance(body, dict) and ('tool_call' in body or 'assemble_scoped_search' in body):
+            from literature_rag.diagnostics import TOOL_WORKER_ERROR_PREFIX, worker_exception_details
+            print(TOOL_WORKER_ERROR_PREFIX + json.dumps(worker_exception_details(error)), file=sys.stderr)
+        else:
+            print(type(error).__name__, file=sys.stderr)
         sys.exit(1)

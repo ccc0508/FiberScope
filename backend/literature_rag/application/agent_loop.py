@@ -921,7 +921,7 @@ class AgentLoop:
                                 retries.observe(request, result)
                         event.update(status=result['status'],result={k:v for k,v in result.items() if k!='image'});save()
                         trial=deepcopy(projection)
-                        compact=trial.project(result)
+                        compact=trial.project({k:v for k,v in result.items() if k!='worker_diagnostic'})
                         if coverage_priority:compact['coverage_priority']=coverage_priority.snapshot(state)
                         if schedule and schedule.get('requirement_registration'):
                             compact['requirement_registration'] = schedule['requirement_registration']

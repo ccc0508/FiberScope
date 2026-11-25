@@ -1,8 +1,29 @@
 """Allowlisted, credential-free configuration and provider usage snapshots."""
 from hashlib import sha256
 from pathlib import Path
+from traceback import extract_tb
 
 from .config import Settings
+
+TOOL_WORKER_ERROR_PREFIX = "FIBERSCOPE_TOOL_WORKER_ERROR "
+
+
+def worker_exception_details(error):
+    """Record exception types, codes and frame locations without exception messages."""
+    chain = []
+    while error is not None and len(chain) < 4:
+        frames = extract_tb(error.__traceback__, limit=-5)
+        entry = dict(type=type(error).__name__, frames=[
+            dict(file=Path(frame.filename).name, line=frame.lineno, function=frame.name)
+            for frame in frames
+        ])
+        for field in ("errno", "winerror", "sqlite_errorcode", "status_code"):
+            value = getattr(error, field, None)
+            if type(value) is int:
+                entry[field] = value
+        chain.append(entry)
+        error = error.__cause__ or error.__context__
+    return chain
 
 
 def configuration_snapshot(env_file: Path, *, settings: Settings | None = None):

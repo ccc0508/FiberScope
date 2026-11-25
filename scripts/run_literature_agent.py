@@ -18,9 +18,62 @@ from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter
 from literature_rag.config import Settings
 from literature_rag.application.context import DISCONTINUOUS_SEPARATOR
 from literature_rag.application.tools import MAX_PARALLEL_SEARCHES, SHARED_SEARCH_HITS_PER_DOCUMENT, ToolTraceStore
+from literature_rag.diagnostics import TOOL_WORKER_ERROR_PREFIX, worker_exception_details
 from literature_rag.stage_trace import StageTrace, stage
 from literature_rag.application.paper_directory import load_paper_directory
 from literature_rag.state_io import save_state
+
+
+def run_tool_worker(body, timeout):
+    operation = body.get('tool_call', {}).get('tool', 'assemble_scoped_search')
+
+    def failure(kind, *, code='worker_failed', **details):
+        return dict(status='failed', error_code=code,
+                    worker_diagnostic=dict(kind=kind, operation=operation, **details))
+
+    if timeout <= 0:
+        return failure('deadline_exhausted', code='tool_timeout')
+    try:
+        result = subprocess.run(
+            [sys.executable, '-I', '-X', 'utf8', str(ROOT/'backend/literature_worker.py')],
+            input=json.dumps(body, ensure_ascii=False).encode('utf-8'),
+            capture_output=True, timeout=timeout, creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0),
+        )
+    except subprocess.TimeoutExpired as error:
+        return failure('timeout', code='tool_timeout', timeout_seconds=timeout,
+                       stdout_bytes=len(error.stdout or b''), stderr_bytes=len(error.stderr or b''))
+    except OSError as error:
+        return failure('process_io_error', exceptions=worker_exception_details(error))
+
+    sizes = dict(stdout_bytes=len(result.stdout), stderr_bytes=len(result.stderr))
+    if result.returncode != 0:
+        exceptions = []
+        prefix = TOOL_WORKER_ERROR_PREFIX.encode('ascii')
+        for line in reversed(result.stderr.splitlines()):
+            if line.startswith(prefix):
+                try:
+                    exceptions = json.loads(line[len(prefix):])
+                except (ValueError, UnicodeError):
+                    pass
+                break
+        stderr = result.stderr.lower()
+        signatures = [name for name, markers in (
+            ('memory_allocation', (b'out of memory', b'failed to allocate', b'paging file is too small')),
+            ('native_panic', (b'panicked at',)),
+            ('python_fatal_error', (b'fatal python error',)),
+            ('sqlite_lock', (b'database is locked',)),
+        ) if any(marker in stderr for marker in markers)]
+        return failure('nonzero_exit', returncode=result.returncode,
+                       exceptions=exceptions, stderr_signatures=signatures, **sizes)
+    try:
+        output = json.loads(result.stdout.decode('utf-8'))
+    except json.JSONDecodeError as error:
+        return failure('invalid_json', message=error.msg, line=error.lineno, column=error.colno, **sizes)
+    except UnicodeDecodeError as error:
+        return failure('invalid_encoding', byte_offset=error.start, **sizes)
+    if not isinstance(output, dict):
+        return failure('invalid_response_type', response_type=type(output).__name__, **sizes)
+    return output
 
 
 def finalize_shared_search(records, run_id, timeout, *, assemble, context_limits=None):
@@ -60,6 +113,8 @@ def finalize_shared_search(records, run_id, timeout, *, assemble, context_limits
         error = output.get('error_code', 'shared_context_failed')
         for record in records:
             record.update(status='failed', error_code=error)
+            if 'worker_diagnostic' in output:
+                record['worker_diagnostic'] = output['worker_diagnostic']
             record.pop('result', None)
             record.pop('result_sha256', None)
         return
@@ -142,7 +197,8 @@ def execute_parallel_searches(executions, run_id, timeout, *, execute, trace_sto
                 result = dict(call_id=record['call_id'], status=record['status'], result=record['result'])
             else:
                 trace_store.save(record)
-                result = dict(call_id=record['call_id'], status=record['status'], error_code=record['error_code'])
+                result = {key: record[key] for key in ('call_id', 'status', 'error_code', 'worker_diagnostic')
+                          if key in record}
         yield result
 
 
@@ -227,18 +283,10 @@ def main():
     store=ToolTraceStore(ROOT/'.rag-data/tool-traces.sqlite3')
 
     def worker(body, timeout, context=None):
-        if timeout <= 0:
-            return dict(status='failed', error_code='tool_timeout')
         body['data_dir'] = str(a.library.resolve())
         if context:
             body['trace_context'] = context
-        try:
-            r=subprocess.run([sys.executable,'-I','-X','utf8',str(ROOT/'backend/literature_worker.py')],
-                input=json.dumps(body,ensure_ascii=False),text=True,encoding='utf-8',capture_output=True,timeout=timeout,
-                creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
-            return json.loads(r.stdout) if r.returncode==0 else dict(status='failed',error_code='worker_failed')
-        except subprocess.TimeoutExpired:return dict(status='failed',error_code='tool_timeout')
-        except (json.JSONDecodeError, OSError):return dict(status='failed',error_code='worker_failed')
+        return run_tool_worker(body, timeout)
 
     def execute(request, rid, timeout, *, context=None, defer_search_registration=False, rank_search_only=False):
         body = dict(tool_call=request, run_id=rid, defer_search_registration=defer_search_registration,

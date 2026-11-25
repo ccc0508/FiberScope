@@ -70,6 +70,52 @@ def test_invalid_args_do_not_persist_extra_fields(kit):
     assert out['status']=='invalid_arguments'
     assert 'private' not in json.dumps(kit.store.read('r'))
 
+def test_tool_worker_reports_child_failure_without_recording_raw_stderr(monkeypatch):
+    import json
+    import subprocess
+
+    from literature_rag.diagnostics import TOOL_WORKER_ERROR_PREFIX, worker_exception_details
+    from scripts.run_literature_agent import run_tool_worker
+
+    error = OSError(12, "private provider message")
+    error.__cause__ = MemoryError("private allocation message")
+    stderr = ("unrelated private stderr: failed to allocate\n" + TOOL_WORKER_ERROR_PREFIX
+              + json.dumps(worker_exception_details(error))).encode()
+    monkeypatch.setattr(subprocess, "run", lambda *_, **__: subprocess.CompletedProcess([], 1, b'', stderr))
+
+    result = run_tool_worker({"tool_call": {"tool": "search_literature"}}, 2)
+
+    assert result["error_code"] == "worker_failed"
+    diagnostic = result["worker_diagnostic"]
+    assert diagnostic["kind"] == "nonzero_exit"
+    assert diagnostic["returncode"] == 1
+    assert diagnostic["exceptions"][0]["errno"] == 12
+    assert diagnostic["exceptions"][1]["type"] == "MemoryError"
+    assert diagnostic["stderr_signatures"] == ["memory_allocation"]
+    assert "private" not in json.dumps(result)
+
+
+def test_tool_worker_distinguishes_bad_json_from_an_os_failure(monkeypatch):
+    import subprocess
+
+    from scripts.run_literature_agent import run_tool_worker
+
+    monkeypatch.setattr(subprocess, "run", lambda *_, **__: subprocess.CompletedProcess([], 0, b'{', b''))
+    assert run_tool_worker({"tool_call": {"tool": "read_table"}}, 2)["worker_diagnostic"] == {
+        "kind": "invalid_json", "operation": "read_table", "message": "Expecting property name enclosed in double quotes",
+        "line": 1, "column": 2, "stdout_bytes": 1, "stderr_bytes": 0,
+    }
+
+    def broken_spawn(*_, **__):
+        raise OSError(12, "private process path")
+
+    monkeypatch.setattr(subprocess, "run", broken_spawn)
+    diagnostic = run_tool_worker({"tool_call": {"tool": "read_table"}}, 2)["worker_diagnostic"]
+    assert diagnostic["kind"] == "process_io_error"
+    assert diagnostic["exceptions"][0]["errno"] == 12
+    assert "private process path" not in str(diagnostic)
+
+
 def test_failure_redacts_provider_error_and_records(kit):
     def fail(*a):raise RuntimeError('secret upstream error')
     kit.retriever.retrieve=fail
