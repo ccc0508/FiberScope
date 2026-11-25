@@ -24,7 +24,7 @@ from .literature import LiteratureSettings
 from literature_rag.application.tools import encode
 
 ACTIVE = {"queued", "answering", "scoring"}
-MAX_CONCURRENT_CASES = 5
+MAX_CONCURRENT_CASES = 10
 logger = logging.getLogger(__name__)
 
 
