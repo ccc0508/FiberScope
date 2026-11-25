@@ -598,7 +598,11 @@ class AgentLoop:
 
         def repair_research_draft():
             nonlocal format_repair_requested
-            repair = dict(role='user', content=RESEARCH_FORMAT_REPAIR + research.submission_format)
+            content = RESEARCH_FORMAT_REPAIR + research.submission_format
+            attempts = state.get('research_output_attempts', [])
+            if attempts and attempts[-1]['issues']:
+                content += '\nFix these output errors.\n' + json.dumps(attempts[-1]['issues'], ensure_ascii=False)
+            repair = dict(role='user', content=content)
             if (format_repair_requested or len(state['model_calls']) >= model_limit
                     or deadline-self.clock() <= 2 or size(messages + [repair]) > b.max_context_chars):
                 return ''

@@ -6,7 +6,7 @@ import pytest
 from literature_rag.adapters.providers.agent_chat import ToolCall
 from literature_rag.application.agent_loop import AgentBudget, AgentLoop
 from literature_rag.application.tools import SCHEMAS
-from literature_rag.application.unified_research import ResearchChecklist
+from literature_rag.application.unified_research import ResearchChecklist, extract_research_submission
 from tests.test_agent_loop import Fake, decision
 
 
@@ -73,6 +73,33 @@ def test_disabled_evidence_supplement_closes_collection_after_draft(malformed):
     assert "evidence_checks" not in adapter.requests[0][0][0]["content"]
     if malformed:
         assert not adapter.requests[-1][1]
+        issue, = state["research_output_attempts"][0]["issues"]
+        assert issue == {"code": "invalid_response_envelope", "message": "Expecting value", "line": 1, "column": 39}
+        assert json.dumps([issue], ensure_ascii=False) in adapter.requests[-1][0][-1]["content"]
+
+
+def test_raw_markdown_newlines_in_research_submission_do_not_require_another_model_call():
+    answer = 'Paper A reports "ten" [1].\r\n\r\n| Result |\n|---|\n| ten |\nLiteral \\n stays a literal.'
+    submission = json.dumps({"answer": answer, "coverage": []}).replace("\\r\\n", "\r\n").replace("|\\n", "|\n")
+    state, adapter = run_submission([submission])
+    assert state["answer"] == answer and state["status"] == "completed"
+    assert state["citation_validation"]["status"] == "passed"
+    assert state["research_output_attempts"] == [
+        {"stage": "decide", "issues": [], "recovery": "unescaped_json_newlines", "status": "recovered"},
+    ]
+    assert len(adapter.requests) == 2
+
+
+@pytest.mark.parametrize("raw", [
+    '{"answer":"line\nsecond", "coverage": [',
+    '{"answer":"line\nsecond\x00", "coverage":[]}',
+    '{"answer":"line\\\nsecond", "coverage":[]}',
+])
+def test_research_json_newline_recovery_does_not_accept_other_invalid_json(raw):
+    issues = []
+    assert extract_research_submission(raw, issues=issues) == (None, None)
+    assert issues[0]["code"] == "invalid_response_envelope"
+    assert issues[0]["line"] > 0 and issues[0]["column"] > 0
 
 
 def test_one_model_search_call_dispatches_independent_goals_in_parallel():
