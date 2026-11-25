@@ -17,6 +17,7 @@ from literature_rag.application.agent_loop import AgentLoop,AgentBudget
 from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter
 from literature_rag.config import Settings
 from literature_rag.application.context import DISCONTINUOUS_SEPARATOR
+from literature_rag.application.tool_feedback import executor_failure
 from literature_rag.application.tools import MAX_PARALLEL_SEARCHES, SHARED_SEARCH_HITS_PER_DOCUMENT, ToolTraceStore
 from literature_rag.diagnostics import (
     TOOL_WORKER_ERROR_PREFIX, sanitize_worker_exception_details, worker_exception_details,
@@ -174,8 +175,11 @@ def execute_parallel_searches(executions, run_id, timeout, *, execute, trace_sto
             return dict(status='failed', error_code='tool_timeout')
         document = request.get('document_id')
         shared = assemble is not None and document and document_counts[document] > 1
-        return execute(request, run_id, remaining, context=context, defer_search_registration=True,
-                       **({'rank_search_only': True} if shared else {}))
+        try:
+            return execute(request, run_id, remaining, context=context, defer_search_registration=True,
+                           **({'rank_search_only': True} if shared else {}))
+        except Exception as error:
+            return executor_failure(error)
 
     with ThreadPoolExecutor(max_workers=min(MAX_PARALLEL_SEARCHES, len(executions))) as pool:
         futures = [pool.submit(search, request, context)
@@ -187,21 +191,29 @@ def execute_parallel_searches(executions, run_id, timeout, *, execute, trace_sto
             document = request.get('document_id')
             if record is not None and assemble is not None and document and document_counts[document] > 1:
                 batches[document].append(record)
-        assemblies = [pool.submit(finalize_shared_search, records, run_id, deadline - monotonic(),
-                                  assemble=assemble, context_limits=context_limits)
+        assemblies = [(records, pool.submit(finalize_shared_search, records, run_id, deadline - monotonic(),
+                                            assemble=assemble, context_limits=context_limits))
                       for records in batches.values()]
-        for future in assemblies:
-            future.result()
+        for records, future in assemblies:
+            try:
+                future.result()
+            except Exception as error:
+                for record in records:
+                    record.update(executor_failure(error))
+                    record.pop('result', None)
     for result in results:
         record = result.get('deferred_search_record')
         if record is not None:
-            if record['status'] == 'completed':
-                trace_store.complete(record)
-                result = dict(call_id=record['call_id'], status=record['status'], result=record['result'])
-            else:
-                trace_store.save(record)
-                result = {key: record[key] for key in ('call_id', 'status', 'error_code', 'worker_diagnostic')
-                          if key in record}
+            try:
+                if record['status'] == 'completed':
+                    trace_store.complete(record)
+                    result = dict(call_id=record['call_id'], status=record['status'], result=record['result'])
+                else:
+                    trace_store.save(record)
+                    result = {key: record[key] for key in ('call_id', 'status', 'error_code', 'worker_diagnostic')
+                              if key in record}
+            except Exception as error:
+                result = executor_failure(error)
         yield result
 
 

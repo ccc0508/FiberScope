@@ -124,6 +124,12 @@ class ReadSection(Request):
 
 class ReadTable(Request):
     """Read a table by its number in a known paper or by a verified table chunk ID."""
+    model_config = ConfigDict(json_schema_extra={
+        'oneOf': [
+            {'required': [selector], 'properties': {selector: {'type': 'string'}, other: {'type': 'null'}}}
+            for selector, other in (('table_number', 'chunk_id'), ('chunk_id', 'table_number'))
+        ],
+    })
     tool: Literal['read_table']
     document_id: str = Field(min_length=1, max_length=200, description='Exact paper ID.')
     table_number: str | None = Field(default=None, pattern=r'^[Ss]?[1-9]\d*(?:[.-]\d+)*[a-z]?$',

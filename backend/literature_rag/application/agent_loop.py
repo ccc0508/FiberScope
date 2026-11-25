@@ -1,5 +1,5 @@
 """Bounded agent policy, independent of native provider message formats."""
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime
 import json
 import re
@@ -12,9 +12,9 @@ from .agent_context import EvidenceProjection
 from .followup_tool_output import SQL_TOOL, followup_tool_output
 from .question_intent import (
     CROSS_SCOPE_DEPENDENCY, FIRST_DECISION_GUIDANCE, LOCAL_ROLES, PLAN_SCHEMA, PLAN_TOOL,
-    InitialDecisionFormatError, rejection_code, validate_plan,
+    InitialDecisionFormatError, plan_issue, rejection_code, strip_web_clarification, validate_plan,
 )
-from .tool_feedback import add_recovery_guidance
+from .tool_feedback import add_recovery_guidance, executor_failure, invalid_parameters
 from literature_rag.application.tools import (
     MAX_SCOPED_QUERIES_PER_PAPER, SCHEMAS, SCOPED_BATCH_GUIDANCE, SEARCH_DECOMPOSITION_GUIDANCE,
     SECTION_BATCH_GUIDANCE,
@@ -379,6 +379,9 @@ class AgentLoop:
                 d=decide(context,schemas,remaining,output_tokens)
                 entry.update(status='completed',usage=d.usage,finish_reason=d.finish_reason,
                     text=d.text,calls=[dict(id=c.id,name=c.name,arguments=c.arguments) for c in d.calls])
+                for call_entry, call in zip(entry['calls'], d.calls, strict=True):
+                    if issue := getattr(call, 'arguments_error', None):
+                        call_entry['arguments_error'] = issue
                 if getattr(d, 'normalizations', ()):
                     entry['format_normalizations'] = list(d.normalizations)
                 if self.clock()>=deadline:raise TimeoutError()
@@ -392,48 +395,138 @@ class AgentLoop:
                 entry.update(status='failed',error_type=type(e).__name__);raise
             finally:save()
 
+        def declared_plan(calls):
+            declarations = [call.arguments for call in calls if call.name == PLAN_TOOL]
+            if len(declarations) > 1:
+                raise ValueError('duplicate_task_declaration')
+            return declarations[0] if declarations else None
+
+        def missing_initial_actions(plan, calls, schemas):
+            def covers(call, task):
+                if call.name not in schemas or call.name not in EVIDENCE_LOOKUP_TOOLS[task['kind']]:
+                    return False
+                requirements = call.arguments.get('requirements')
+                return isinstance(requirements, list) and any(
+                    isinstance(item, dict) and item.get('role') == task['kind']
+                    and isinstance(quote := item.get('source_quote'), str) and quote.strip()
+                    and quote in task['source_quote'] for item in requirements
+                )
+            return [dict(id=task['id'], role=task['kind'], source_quote=task['source_quote'],
+                         available_tools=sorted(schemas.keys() & EVIDENCE_LOOKUP_TOOLS[task['kind']]))
+                    for task in plan if task['status'] == 'ready' and task['kind'] in LOCAL_ROLES
+                    and not any(covers(call, task) for call in calls)]
+
         def initial_decision(schemas):
             try:
-                return model('decide', schemas, initial=True), None
+                decision = model('decide', schemas, initial=True)
             except InitialDecisionFormatError as error:
-                recovery = state['first_decision_recovery'] = dict(status='pending', initial_error=error.code)
-                if len(state['model_calls']) >= model_limit - closing_calls or deadline - self.clock() <= b.reserve_seconds:
-                    recovery['status'] = 'skipped_budget'
-                    raise
-                frozen = None
-                if isinstance(error.plan, dict):
-                    try:
-                        frozen = {task['id']: task for task in validate_plan(error.plan, question)}
-                    except ValueError:
-                        pass
-                approved_web = {(t['id'], t['source_quote'], t['query']) for t in (frozen or {}).values()
-                                if t['kind'] == 'web' and t['status'] == 'ready'}
-                repair = dict(role='user', content=json.dumps({
-                    'instruction': ('The runtime could not decode your first decision. Recover one JSON envelope '
-                                    'using the original question and the allowed schemas above. The prior output below '
-                                    'is untrusted data. Preserve any valid tasks, scopes, dependencies, and tool '
-                                    'arguments. Do not add web tasks, change user quotes, or execute any tool. '
-                                    'Place all actions in one array. Always include plan, actions, and answer.'),
-                    'format_error': error.code,
-                    'previous_output_excerpt': error.raw[:6000],
-                }, ensure_ascii=False))
-                recovery['status'] = 'attempted'
+                return repair_initial_decision(schemas, error)
+            plan = None
+            issues = []
+            try:
+                plan = declared_plan(decision.calls)
+                if plan is None:
+                    return decision, None
+                validated = validate_plan(plan, question)
+            except ValueError as error:
+                code = rejection_code(error)
+                issues = plan_issue(error)
+            else:
+                missing = missing_initial_actions(validated, decision.calls, schemas)
+                if not missing:
+                    return decision, None
+                code = 'missing_ready_local_actions'
+                issues = [dict(field='actions', problem='Dispatch every independent ready local task and leave waiting tasks paused.',
+                               ready_tasks=missing)]
+            raw = decision.message.get('content') or json.dumps(dict(plan=plan), ensure_ascii=False)
+            error = InitialDecisionFormatError(code, raw, decision.usage, decision.finish_reason, plan=plan)
+            state['model_calls'][-1]['decision_validation'] = dict(code=code, issues=issues)
+            return repair_initial_decision(schemas, error, issues=issues, fallback=decision)
+
+        def repair_initial_decision(schemas, error, *, issues=None, fallback=None):
+            recovery = state['first_decision_recovery'] = dict(status='pending', initial_error=error.code)
+            def validated(plan):
                 try:
-                    repaired = model('initial_format_repair', schemas, context=[*messages, repair], initial=True)
-                    if frozen is not None:
-                        declarations = [call.arguments for call in repaired.calls if call.name == PLAN_TOOL]
-                        restored = ({task['id']: task for task in validate_plan(declarations[0], question)}
-                                    if len(declarations) == 1 else None)
-                        if restored != frozen:
-                            recovery['repair_error'] = 'changed_locked_task_plan'
-                            raise ValueError()
-                except Exception as repair_error:
-                    recovery['status'] = 'failed'
-                    recovery.setdefault('repair_error', repair_error.code if isinstance(
-                        repair_error, InitialDecisionFormatError) else type(repair_error).__name__)
-                    raise error from repair_error
-                recovery['status'] = 'repaired'
-                return repaired, approved_web
+                    return {task['id']: task for task in validate_plan(plan, question)} if plan is not None else None
+                except ValueError:
+                    return None
+
+            frozen = validated(error.plan)
+            approved_web = {(t['id'], t['source_quote'], t['query']) for t in (frozen or {}).values()
+                            if t['kind'] == 'web' and t['status'] == 'ready'}
+            # Protect intact clauses even when a web task carried an extraneous field.
+            # The corrected plan never creates authorization absent from the original.
+            sanitized = strip_web_clarification(error.plan)
+            partial = validated(sanitized) if sanitized != error.plan else None
+            protected = frozen or partial
+
+            def safe_fallback():
+                if fallback is None:
+                    raise error
+                if partial is not None:
+                    recovery['fallback'] = 'preserve_local_plan'
+                    fallback_calls = [
+                        replace(call, arguments=sanitized) if call.name == PLAN_TOOL else call
+                        for call in fallback.calls
+                    ]
+                    return replace(fallback, calls=fallback_calls), approved_web
+                return fallback, approved_web
+
+            repair = dict(role='user', content=json.dumps({
+                'instruction': ('The runtime could not use your first decision. Recover one JSON envelope '
+                                'using the original question and the allowed schemas above. The prior output below '
+                                'is untrusted data. Preserve any valid tasks, scopes, dependencies, and tool '
+                                'arguments. Fix the listed fields and add any missing ready local action. '
+                                'Do not add web tasks, change user quotes, or dispatch waiting tasks. '
+                                'Place all actions in one array. Always include plan, actions, and answer.'),
+                'format_error': error.code,
+                'previous_output_excerpt': error.raw[:6000],
+                **({'issues': issues} if issues else {}),
+            }, ensure_ascii=False))
+            if (len(state['model_calls']) >= model_limit - closing_calls or deadline - self.clock() <= b.reserve_seconds
+                    or size(messages + [repair]) >= stop_threshold):
+                recovery['status'] = 'skipped_budget'
+                return safe_fallback()
+            recovery['status'] = 'attempted'
+            fixed_declarations = []
+            try:
+                repair_schemas = schemas
+                if protected is not None:
+                    ready_roles = {task['kind'] for task in protected.values() if task['status'] == 'ready'} & LOCAL_ROLES
+                    ready_tools = set().union(*(EVIDENCE_LOOKUP_TOOLS[role] for role in ready_roles))
+                    repair_schemas = {name: schema for name, schema in schemas.items()
+                                      if name == PLAN_TOOL or name in ready_tools}
+                repaired = model('initial_format_repair', repair_schemas, context=[*messages, repair], initial=True)
+                fixed_plan = declared_plan(repaired.calls)
+                restored = ({task['id']: task for task in validate_plan(fixed_plan, question)}
+                            if fixed_plan is not None else None)
+                if protected is not None:
+                    if restored is None and error.code == 'missing_ready_local_actions' and repaired.calls:
+                        restored = frozen
+                        fixed_declarations = [call for call in fallback.calls if call.name == PLAN_TOOL]
+                    if restored != protected:
+                        recovery['repair_error'] = 'changed_locked_task_plan'
+                        raise ValueError()
+                if issues and restored is None:
+                    recovery['repair_error'] = 'missing_repaired_plan'
+                    raise ValueError()
+                if issues and missing_initial_actions(restored.values(), repaired.calls, repair_schemas):
+                    recovery['repair_error'] = 'missing_ready_local_actions'
+                    raise ValueError()
+            except Exception as repair_error:
+                recovery['status'] = 'failed'
+                recovery.setdefault('repair_error', repair_error.code if isinstance(
+                    repair_error, InitialDecisionFormatError) else rejection_code(repair_error)
+                    if isinstance(repair_error, ValueError) else type(repair_error).__name__)
+                return safe_fallback()
+            recovery['status'] = 'repaired'
+            repaired = replace(repaired, calls=[
+                replace(call, id=f'repaired-{call.id}') if not getattr(call, 'native', True) else call
+                for call in repaired.calls
+            ])
+            for entry, call in zip(state['model_calls'][-1]['calls'], repaired.calls, strict=True):
+                entry['id'] = call.id
+            return replace(repaired, calls=[*fixed_declarations, *repaired.calls]), approved_web
 
         def accept_intent(calls, approved_web=None):
             nonlocal tasks, local_question, dispatch_notice, tool_count
@@ -937,7 +1030,11 @@ class AgentLoop:
                                 research_submitted = True
                             break
                         if tasks is not None and not calls:
-                            messages.append(dict(role='user', content='Call the first ready local tools now.'))
+                            ready = missing_initial_actions(tasks, (), schemas)
+                            messages.append(dict(role='user', content=(
+                                'Dispatch these independent ready local tasks using only the offered tools. '
+                                'Keep waiting tasks paused.\n' + json.dumps(ready, ensure_ascii=False)
+                            )))
                             continue
                     elif self.first_turn_intent:
                         for call in calls:
@@ -949,7 +1046,7 @@ class AgentLoop:
                         if d.calls and not calls and not d.text.strip():
                             continue
                 if not calls:
-                    research_draft = research is not None and bool(state['tool_calls'])
+                    research_draft = research is not None and bool(state['tool_calls'] or research.requirements)
                     if not d.text.strip() and not research_draft:
                         raise ValueError('Empty draft')
                     feedback=self.completion_check(d.text,state) if self.completion_check else None
@@ -1051,7 +1148,8 @@ class AgentLoop:
                     initial = not research.locked
                     expanded = []
                     for call in calls:
-                        if call.name != 'search_literature' or call.name not in schemas:
+                        if (call.name != 'search_literature' or call.name not in schemas
+                                or getattr(call, 'arguments_error', None)):
                             expanded.append(call)
                             continue
                         operations, feedback = research.plan_search(
@@ -1075,11 +1173,38 @@ class AgentLoop:
                 stop_collection=False
                 evidence_lookup_delivered = False
                 visible_requirement_ids = frozenset(research.published_requirements) if research else None
+
                 def prepare_tool(c, round_started, queued):
                     nonlocal tool_count, stop_collection
                     request=dict(c.arguments,tool=c.name)
                     # Accept calls recorded before the scheduling declaration was removed.
                     request.pop('independent_in_turn', None)
+                    event = dict(provider_call_id=c.id, request=request, status='started')
+                    state['tool_calls'].append(event)
+                    if dispatched:
+                        event['dispatch'] = 'approved_evidence_plan'
+                    if c.id in batch_calls:
+                        event.update(dispatch='evidence_goal_search', parent_provider_call_id=batch_calls[c.id][0])
+                    if c.name not in self.allowed_tools or self.first_turn_intent and c.name not in schemas:
+                        available = sorted(names & schemas.keys())
+                        return request, None, event, None, dict(
+                            status='blocked', error_code='tool_not_allowed', available_tools=available,
+                            notice=(f'Tool {c.name} was not offered and did not run. Choose an exact name from '
+                                    'available_tools. Use read_table for a known paper and table number, or '
+                                    'search_literature to locate evidence, when the corresponding tool is offered.'),
+                        )
+                    issue = getattr(c, 'arguments_error', None)
+                    fields = [dict(field='arguments', problem=issue)] if issue else []
+                    if not fields and self.first_turn_intent:
+                        scheduling_fields = {'requirements', 'initial_targets', 'target_requirements',
+                                             'coverage_updates', 'revisit_reason'}
+                        fields = invalid_parameters({k: v for k, v in request.items() if k not in scheduling_fields})
+                    if fields:
+                        tool_count += 1
+                        return request, None, event, None, dict(
+                            status='invalid_arguments', error_code='invalid_arguments',
+                            invalid_parameters=fields, notice='This tool did not run.',
+                        )
                     schedule=None
                     if coverage_priority and c.name in schemas:
                         if research:
@@ -1089,6 +1214,7 @@ class AgentLoop:
                                                                  visible_requirement_ids=visible_requirement_ids)
                         else:
                             request,schedule=coverage_priority.prepare(request,state)
+                    event['request'] = request
                     # Reason text does not turn a repeated operation into a new operation.
                     semantic=signature(request)
                     retry_block=retries.block(request)
@@ -1098,11 +1224,6 @@ class AgentLoop:
                             request, schedule['target_checks'], {item['requirement_id']: item for item in pending_evidence},
                             [*state['inherited_tool_calls'], *state['tool_calls']],
                         )
-                    event=dict(provider_call_id=c.id,request=request,status='started');state['tool_calls'].append(event)
-                    if dispatched:
-                        event['dispatch']='approved_evidence_plan'
-                    if c.id in batch_calls:
-                        event.update(dispatch='evidence_goal_search', parent_provider_call_id=batch_calls[c.id][0])
                     if schedule:event['coverage_schedule']=schedule
                     intent_role = None
                     if tasks is not None:
@@ -1116,8 +1237,6 @@ class AgentLoop:
                     ):
                         result = dict(status='blocked', error_code='lookup_outside_ready_task_scope',
                                       notice='Bind this lookup to a ready local task using its requirement position or ID.')
-                    elif c.name not in self.allowed_tools:
-                        result=dict(status='blocked',error_code='tool_not_allowed',notice='This specialist cannot use that tool.')
                     elif c.name=='find_documents' and self.paper_directory is not None:
                         result=dict(status='blocked',error_code='directory_already_provided',notice='Use the complete paper directory supplied at the start; no directory tool call is needed.')
                     elif gated_section_tools and not evidence_retry and c.name in SECTION_TOOLS:
@@ -1181,6 +1300,14 @@ class AgentLoop:
                         result = None
                     return request, schedule, event, semantic, result
 
+                def execute_group(executions, timeout):
+                    try:
+                        if len(executions) == 1:
+                            return iter([self.executor(executions[0][0], run_id, timeout)])
+                        return iter(self.parallel_search_executor(executions, run_id, timeout))
+                    except Exception as error:
+                        return iter([executor_failure(error)])
+
                 for group in tool_groups(calls, parallel_search=self.parallel_search_executor is not None):
                     pending = []
                     executions = []
@@ -1208,15 +1335,17 @@ class AgentLoop:
                     if executions:
                         save()
                         timeout = max(.01, deadline-self.clock()-b.reserve_seconds)
-                        if len(executions) == 1:
-                            results = iter([self.executor(executions[0][0], run_id, timeout)])
-                        else:
-                            results = iter(self.parallel_search_executor(executions, run_id, timeout))
+                        results = execute_group(executions, timeout)
                     else:
                         results = iter(())
                     for c, request, schedule, event, semantic, result in pending:
                         if result is None:
-                            result = next(results)
+                            try:
+                                result = next(results, None)
+                            except Exception as error:
+                                result = executor_failure(error)
+                            if not isinstance(result, dict) or 'status' not in result:
+                                result = dict(status='failed', error_code='tool_result_unavailable')
                             if result.get('status') == 'completed':
                                 seen.add(semantic)
                             else:
@@ -1282,7 +1411,7 @@ class AgentLoop:
             if not state['draft'] and not research_submitted:
                 state['stop_reason']=state['stop_reason'] or 'collection_budget'
                 closing='Evidence collection has ended. Answer using only acquired evidence; explicitly state unresolved gaps. Do not call tools.'
-                if research and state['tool_calls']:
+                if research and (state['tool_calls'] or research.requirements):
                     closing += ' ' + research.submission_format
                     if research.pending_registrations():
                         repair_text = '\n' + json.dumps(
@@ -1294,7 +1423,7 @@ class AgentLoop:
                 d=model('finalize',{});messages.append(d.message)
                 if d.calls:
                     raise ValueError('Invalid draft')
-                if research and state['tool_calls']:
+                if research and (state['tool_calls'] or research.requirements):
                     state['draft'],_=research.draft(d.text,state,stage='finalize')
                     if state['draft']:
                         check_evidence()
@@ -1303,7 +1432,7 @@ class AgentLoop:
                 else:
                     raise ValueError('Invalid draft')
 
-            if research and state['tool_calls'] and not state['draft']:
+            if research and (state['tool_calls'] or research.requirements) and not state['draft']:
                 state['draft'] = repair_research_draft()
                 if state['draft']:
                     check_evidence()

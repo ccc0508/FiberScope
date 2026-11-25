@@ -2,6 +2,7 @@
 
 from pydantic import ValidationError
 
+from literature_rag.diagnostics import worker_exception_details
 from .tool_retry import TRANSIENT
 from .tools import INPUT
 
@@ -16,6 +17,26 @@ BINDING_ISSUES = {
     "conflicting_sql_bindings": "target_requirements and the SQL requirements in this call refer to different tasks.",
     "multiple_sql_binding_selectors": "Choose one binding field. Using initial_targets and target_requirements together is ambiguous.",
 }
+
+
+def invalid_parameters(request):
+    try:
+        INPUT.validate_python(request)
+    except ValidationError as error:
+        return [
+            {"field": ".".join(map(str, issue["loc"])), "problem": issue["msg"]}
+            for issue in error.errors(include_input=False, include_context=False, include_url=False)[:8]
+        ]
+    return []
+
+
+def executor_failure(error):
+    code = type(error).__name__
+    if code not in TRANSIENT:
+        code = "tool_execution_failed"
+    return dict(status="failed", error_code=code, worker_diagnostic=dict(
+        kind="executor_exception", exceptions=worker_exception_details(error),
+    ))
 
 
 def add_recovery_guidance(request, result, schedule=None, ready_sql_scopes=()):
@@ -51,17 +72,17 @@ def add_recovery_guidance(request, result, schedule=None, ready_sql_scopes=()):
                                                         valid_initial_positions=positions,
                                                         issue=binding.get("issue")))
     elif code in {"invalid_arguments", "invalid_query", "ValueError"}:
-        try:
-            INPUT.validate_python(request)
-        except ValidationError as error:
-            fields = [
-                {"field": ".".join(map(str, issue["loc"])), "problem": issue["msg"]}
-                for issue in error.errors(include_input=False, include_context=False, include_url=False)[:8]
-            ]
+        fields = result.get("invalid_parameters") or invalid_parameters(request)
+        if fields:
             result = dict(result, invalid_parameters=fields)
             feedback = "Correct these fields before retrying: " + "; ".join(
                 f"{item['field']}: {item['problem']}" for item in fields
             )
+            if tool == "read_table":
+                feedback += (
+                    " Use a known printed table_number or a verified chunk_id. If you have neither, "
+                    "use search_literature to locate the table first."
+                )
         if feedback is None and tool == "query_experiment_data":
             feedback = (
                 "The query returned no validated result. Correct sql using the validation message. "
@@ -91,6 +112,9 @@ def add_recovery_guidance(request, result, schedule=None, ready_sql_scopes=()):
         feedback = "Collection budget is exhausted. Use the evidence already delivered and state which requested facts remain unresolved."
     elif code == "query_execution_failed":
         feedback = "The experiment data service could not execute this request. Use previously returned rows or report the missing result. Do not infer values from the view definition."
+    elif code in {"tool_execution_failed", "tool_result_unavailable", "worker_failed"}:
+        feedback = ("This lookup returned no usable result. Continue independent tasks, try another offered lookup "
+                    "for the same requirement, or state the gap. Do not infer evidence from the failed call.")
     elif code == "batch_lookup_failed":
         feedback = "Use the diagnostic for each batch entry, correct the listed identifiers or offsets, and retry only the entries still needed."
     elif code in {"unknown_section", "offset_outside_section", "exclusions_outside_section"}:

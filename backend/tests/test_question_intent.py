@@ -571,3 +571,113 @@ def test_repair_cannot_change_initial_valid_task_dependencies():
     state = run(adapter, question)
     assert len(prompts) == 2 and state["status"] == "failed"
     assert state["first_decision_recovery"]["repair_error"] == "changed_locked_task_plan"
+
+
+def test_correction_of_web_task_field_keeps_local_lookup_and_denies_new_web_authorization():
+    local = "请查论文A的纤维宽度"
+    public = "另外联网查首尔天气"
+    question = f"{local}；{public}"
+    tasks = [task("paper", "literature", local), task("web", "web", public)]
+    wrong = [tasks[0], dict(tasks[1], clarification="是否另外联网？")]
+    adapter, prompts = response_adapter(
+        dict(plan=dict(tasks=wrong), actions=[], answer=""),
+        dict(plan=dict(tasks=tasks), actions=[first_search(local)], answer=""),
+        dict(answer="已从本地证据核对 [1]。", coverage=[]),
+    )
+    state = run(adapter, question, execute=lambda *_: dict(
+        status="completed", result=dict(evidence=[dict(ref="[1]", text="Local evidence.")]),
+    ), public=lambda *_: pytest.fail("invalid original plan granted web access"))
+    assert state["status"] == "completed" and state["first_decision_recovery"]["status"] == "repaired"
+    feedback = json.loads(prompts[1]["messages"][-1]["content"])
+    assert feedback["issues"][0]["field"].endswith(".clarification")
+    assert "kind=clarify" in feedback["issues"][0]["problem"]
+    assert state["tool_calls"][0]["provider_call_id"] == "repaired-initial-1"
+    assert state["question_intent"]["tasks"][1]["status"] == "web_scope_unconfirmed"
+
+
+def test_ready_literature_is_added_in_one_correction_and_waiting_sql_is_omitted():
+    paper = "另查论文A的纤维宽度"
+    threshold = "门槛先问我"
+    count = "统计高转数样本"
+    question = f"{count}，{threshold}；{paper}"
+    plan = dict(tasks=[
+        task("threshold", "clarify", threshold, clarification="门槛是多少？"),
+        task("count", "sql", count, depends_on=["threshold"]),
+        task("paper", "literature", paper),
+    ])
+    adapter, prompts = response_adapter(
+        dict(plan=plan, actions=[], answer=""),
+        dict(plan=plan, actions=[first_search(paper)], answer=""),
+        dict(answer="已确认宽度 [1]。", coverage=[]),
+    )
+    state = run(adapter, question, execute=lambda request, *_: dict(
+        status="completed", result=dict(evidence=[dict(ref="[1]", text="Local evidence.")]),
+    ))
+    assert state["status"] == "completed"
+    assert state["first_decision_recovery"]["initial_error"] == "missing_ready_local_actions"
+    ready = json.loads(prompts[1]["messages"][-1]["content"])["issues"][0]["ready_tasks"]
+    assert [t["id"] for t in ready] == ["paper"]
+    assert "query_experiment_data" not in state["model_calls"][1]["available_tools"]
+    assert [t["request"]["tool"] for t in state["tool_calls"]] == ["search_literature"]
+    assert "门槛是多少？" in state["answer"]
+
+
+def test_unoffered_name_and_invalid_table_selector_are_reported_before_binding():
+    quote = "查论文A的变量表"
+    adapter = Fake([
+        decision(calls=[declare(task("paper", "literature", quote)), ToolCall("missing-table", "read_table", dict(
+            document_id="paper", reason="find", requirements=[dict(role="literature", source_quote=quote)],
+        ))]),
+        decision(calls=[ToolCall("bad-name", "read_literature_table", dict(
+            document_id="paper", table_number="1", reason="find",
+        ))]),
+        decision(calls=[ToolCall("table", "read_table", dict(
+            document_id="paper", table_number="1", reason="find",
+            requirements=[dict(role="literature", source_quote=quote)], initial_targets=[1],
+        ))]),
+        decision(json.dumps(dict(answer="表 1 [1]。", coverage=[]), ensure_ascii=False)),
+    ])
+    executed = []
+
+    def execute(request, *_):
+        executed.append(request)
+        return dict(status="completed", result=dict(table=dict(ref="[1]", text="Width (μm)")))
+
+    state = run(adapter, quote, execute=execute)
+    assert [request["tool"] for request in executed] == ["read_table"]
+    bad_params, bad_name, _ = state["tool_calls"]
+    assert bad_name["result"]["error_code"] == "tool_not_allowed"
+    assert "read_table" in bad_name["result"]["available_tools"]
+    assert bad_params["result"]["error_code"] == "invalid_arguments"
+    assert "search_literature" in bad_params["result"]["recovery_guidance"]
+
+
+def test_tool_exception_preserves_other_results_and_is_delivered_as_observation():
+    quote = "查询论文A"
+    requirement = dict(role="literature", source_quote=quote)
+    adapter = Fake([
+        decision(calls=[ToolCall("bad", "read_table", dict(
+            document_id="paper", table_number="1", reason="find",
+            requirements=[requirement], initial_targets=[1],
+        )), ToolCall("ok", "search_literature", dict(
+            query="results", reason="find related text",
+            requirements=[requirement], initial_targets=[1],
+        ))]),
+        decision(json.dumps(dict(answer="根据正文 [1]。", coverage=[]), ensure_ascii=False)),
+    ])
+
+    def execute(request, *_):
+        if request["tool"] == "read_table":
+            raise RuntimeError("private infrastructure detail")
+        return dict(status="completed", result=dict(evidence=[dict(ref="[1]", text="Local evidence")]))
+
+    state = run(adapter, quote, execute=execute)
+    assert state["status"] == "completed"
+    failed, successful = state["tool_calls"]
+    assert successful["status"] == "completed"
+    assert failed["result"]["worker_diagnostic"]["exceptions"][0]["type"] == "RuntimeError"
+    observation = json.loads(next(message["content"] for message in adapter.requests[1][0]
+                                  if message.get("tool_call_id") == "bad"))
+    assert observation["error_code"] == "tool_execution_failed"
+    assert "Continue independent tasks" in observation["recovery_guidance"]
+    assert "worker_diagnostic" not in observation and "private infrastructure detail" not in str(observation)

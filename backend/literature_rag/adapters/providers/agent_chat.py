@@ -14,6 +14,7 @@ class ToolCall:
     name: str
     arguments: dict
     native: bool = True
+    arguments_error: str | None = None
 
 
 @dataclass
@@ -161,13 +162,29 @@ class ChatAgentAdapter:
         choice=response.choices[0];m=choice.message
         calls=[]
         for c in m.tool_calls or []:
-            try:args=json.loads(c.function.arguments)
-            except (ValueError,TypeError):args={}
-            if not isinstance(args,dict):args={}
-            calls.append(ToolCall(c.id,c.function.name,args))
-        if len({c.id for c in calls})!=len(calls):raise ValueError('Duplicate provider tool call IDs')
+            issue = None
+            try:
+                args = json.loads(c.function.arguments, object_pairs_hook=_unique_keys)
+            except json.JSONDecodeError as error:
+                issue = f'Invalid JSON at line {error.lineno}, column {error.colno}. Send one complete arguments object.'
+                args = {}
+            except (ValueError, TypeError, RecursionError):
+                issue = 'Send one JSON arguments object with unique field names.'
+                args = {}
+            if not isinstance(args, dict):
+                issue = 'Send arguments as a JSON object using the tool schema.'
+                args = {}
+            calls.append(ToolCall(c.id, c.function.name, args, arguments_error=issue))
         message={'role':'assistant','content':m.content}
-        if m.tool_calls:message['tool_calls']=[c.model_dump(exclude_none=True) for c in m.tool_calls]
+        if len({c.id for c in calls}) != len(calls):
+            calls = [
+                ToolCall(f'conflicting-{index}-{call.id}', call.name, call.arguments, native=False,
+                         arguments_error='The provider returned conflicting call IDs. Reissue one tool call.')
+                for index, call in enumerate(calls, 1)
+            ]
+            message['content'] = m.content or 'The previous tool response could not be decoded.'
+        elif m.tool_calls:
+            message['tool_calls']=[c.model_dump(exclude_none=True) for c in m.tool_calls]
         # Preserve provider continuation state for thinking-mode tool calls.
         if getattr(m,'reasoning_content',None) is not None:message['reasoning_content']=m.reasoning_content
         return Decision(m.content or '',calls,message,provider_usage(response),choice.finish_reason)

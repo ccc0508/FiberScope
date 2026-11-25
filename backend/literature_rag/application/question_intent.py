@@ -2,7 +2,7 @@
 
 import re
 import unicodedata
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -54,16 +54,25 @@ class TaskScope(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
     id: str = Field(pattern=r"^[a-z][a-z0-9_]{0,23}$")
-    kind: Literal["direct", "web", "literature", "sql", "clarify"]
     source_quote: str = Field(min_length=2, max_length=2000)
     depends_on: list[str] = Field(default_factory=list, max_length=10)
-    clarification: str | None = Field(default=None, min_length=2, max_length=300)
+
+
+class TaskAction(TaskScope):
+    kind: Literal["direct", "web", "literature", "sql"]
+
+
+class TaskClarification(TaskScope):
+    kind: Literal["clarify"]
+    clarification: str = Field(min_length=2, max_length=300)
 
 
 class QuestionPlan(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    tasks: list[TaskScope] = Field(min_length=1, max_length=16)
+    tasks: list[Annotated[TaskAction | TaskClarification, Field(discriminator="kind")]] = Field(
+        min_length=1, max_length=16,
+    )
 
 
 PLAN_SCHEMA = QuestionPlan.model_json_schema()
@@ -76,7 +85,7 @@ Include separate verbatim user clauses (source_quote); exclude shared formatting
 Only a clarification and its dependent task may quote overlapping text.
 Use literature for local papers, sql for local measurements, direct for general knowledge or date/time,
 web for day-to-day public facts needing a current lookup, clarify for a necessary missing choice.
-Give the clarify task a short user-facing question. Use clarify instead of a lookup for a clause
+Only a clarify task takes clarification. Give it a short user-facing question. Use clarify instead of a lookup for a clause
 that lacks an essential user choice, such as a requested threshold with no value. Never invent a
 choice or derive a substitute from database statistics. Link separate clauses requiring that choice
 using depends_on.
@@ -88,6 +97,9 @@ The runtime fixes and searches only the public query from that clause. Never gen
 using other tasks or local results. In mixed requests leave direct items for final composition.
 If a date/time is needed, use the runtime clock below. Never search for the current weekday in that timezone.
 If a current public fact needs a lookup and web search is unavailable, still register it as web. Do not guess.
+Use exact tool names from the offered schemas. Include an action for each ready local clause.
+Use read_table only with a known table number or a verified chunk_id. If both are unknown, first use
+search_literature to locate the right table.
 """
 
 
@@ -121,7 +133,7 @@ def validate_plan(arguments, question):
         if start < 0 or question.find(task.source_quote, start + 1) >= 0:
             raise ValueError("source_quote_must_be_unique_and_verbatim")
         ranges[task.id] = (start, start + len(task.source_quote))
-        if bool(task.clarification) != (task.kind == "clarify") or set(task.depends_on) - tasks.keys():
+        if set(task.depends_on) - tasks.keys():
             raise ValueError("invalid_clarification_or_dependency")
 
     pending_by_task = {}
@@ -167,10 +179,10 @@ def validate_plan(arguments, question):
         confirmation = CONFIRM_WITH_USER.search(task.source_quote + before_next_clause)
         if confirmation:
             parameter = confirmation.group("parameter")
-            tasks[task.id] = task.model_copy(update={
-                "kind": "clarify",
-                "clarification": f"请明确{parameter}。" if parameter else "请补充这项查询所需的条件。",
-            })
+            tasks[task.id] = TaskClarification(
+                **task.model_dump(exclude={"kind"}), kind="clarify",
+                clarification=f"请明确{parameter}。" if parameter else "请补充这项查询所需的条件。",
+            )
             pending_by_task.clear()
     resolved = []
     for task in tasks.values():
@@ -191,3 +203,34 @@ def validate_plan(arguments, question):
 
 def rejection_code(error):
     return "invalid_task_declaration" if isinstance(error, ValidationError) else str(error)
+
+
+def strip_web_clarification(plan):
+    if not isinstance(plan, dict) or not isinstance(plan.get("tasks"), list):
+        return plan
+    return dict(plan, tasks=[
+        {key: value for key, value in item.items() if key != "clarification"}
+        if isinstance(item, dict) and item.get("kind") == "web" else item
+        for item in plan["tasks"]
+    ])
+
+
+def plan_issue(error):
+    if isinstance(error, ValidationError):
+        issues = []
+        for detail in error.errors(include_input=False, include_context=False, include_url=False)[:8]:
+            path = ".".join(str(part) for part in detail["loc"])
+            message = detail["msg"]
+            if path.endswith(".clarification"):
+                message = "Only tasks with kind=clarify take this field. Remove it from a web or local task, or supply a question for a clarify task."
+            issues.append(dict(field=f"plan.{path}", problem=message))
+        return issues
+    instructions = {
+        "duplicate_task_declaration": "Return one plan object.",
+        "invalid_task_count": "Use unique task IDs and at most two web tasks.",
+        "source_quote_must_be_unique_and_verbatim": "Copy one exact, uniquely occurring span of the user's question into each source_quote.",
+        "invalid_clarification_or_dependency": "Each depends_on entry must refer to an existing task ID in this plan.",
+        "cyclic_dependencies": "Remove the dependency cycle while preserving the real prerequisites.",
+        "overlapping_task_scopes": "Use separate user clauses. Only a clarification and its dependent task may overlap.",
+    }
+    return [dict(field="plan.tasks", problem=instructions.get(rejection_code(error), "Use the task plan schema."))]
