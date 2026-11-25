@@ -1,6 +1,7 @@
 """The single research agent's instructions and task list."""
 
 import json
+from bisect import bisect_left
 from typing import get_args
 
 from pydantic import Field, TypeAdapter, ValidationError
@@ -193,8 +194,9 @@ class ResearchRequirement(Requirement):
 
 
 def _escape_json_string_newlines(raw):
-    """Escape bare CR/LF inside quoted strings, preserving all other characters."""
+    """Escape bare CR/LF inside strings and record the inserted character offsets."""
     result = []
+    insertions = []
     in_string = escaped = False
     for character in raw:
         if escaped:
@@ -205,9 +207,10 @@ def _escape_json_string_newlines(raw):
             if character == "\\":
                 escaped = True
             elif character in "\r\n":
+                insertions.append(len(result) + len(insertions))
                 character = "\\r" if character == "\r" else "\\n"
         result.append(character)
-    return "".join(result)
+    return "".join(result), insertions
 
 
 def _load_research_json(raw):
@@ -215,10 +218,16 @@ def _load_research_json(raw):
         return json.loads(raw), None, None
     except json.JSONDecodeError as error:
         if raw[error.pos:error.pos + 1] in ("\r", "\n") and error.msg == "Invalid control character at":
+            escaped, insertions = _escape_json_string_newlines(raw)
             try:
-                return json.loads(_escape_json_string_newlines(raw)), "unescaped_json_newlines", None
-            except json.JSONDecodeError:
-                pass
+                return json.loads(escaped), "unescaped_json_newlines", None
+            except json.JSONDecodeError as remaining:
+                pos = remaining.pos - bisect_left(insertions, remaining.pos)
+                return None, None, json.JSONDecodeError(remaining.msg, raw, pos)
+            except ValueError as remaining:
+                return None, None, remaining
+        return None, None, error
+    except ValueError as error:
         return None, None, error
 
 
@@ -237,8 +246,12 @@ def extract_research_submission(raw, *, issues=None):
                 return {**footer, "answer": visible.strip()}, footer_recovery or "trailing_coverage_block"
             error = footer_error or error
         if issues is not None:
-            issues.append(dict(code="invalid_response_envelope", message=error.msg, line=error.lineno,
-                               column=error.colno))
+            issue = dict(code="invalid_response_envelope")
+            if isinstance(error, json.JSONDecodeError):
+                issue.update(message=error.msg, line=error.lineno, column=error.colno)
+            else:
+                issue["message"] = str(error)
+            issues.append(issue)
         return None, None
     if isinstance(payload, dict):
         return payload, recovery
