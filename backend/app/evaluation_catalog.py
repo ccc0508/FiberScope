@@ -14,6 +14,7 @@ from dotenv import dotenv_values
 from psycopg import sql
 from sqlglot import parse_one
 
+from .evaluation_intent import FILES as INTENT_FILES, intent_cases
 from .experiment_sql import ALLOWED, connect, validate_sql
 from literature_rag.application.tools import encode
 
@@ -21,10 +22,11 @@ ROOT = Path(__file__).resolve().parents[2]
 PAPERS = ROOT / "fiberscope-eval-8papers-v1"
 SQL = ROOT / "data/text-to-sql-evaluation/cases-v1.json"
 MIXED = ROOT / "data/mixed-agent-evaluation"
-GROUPS = {"literature": "文献题", "sql": "SQL 题", "mixed": "综合题", "non_paper": "日常题"}
+GROUPS = {"literature": "文献题", "sql": "SQL 题", "mixed": "综合题", "non_paper": "日常题",
+          "intent": "意图与工具边界"}
 Suite = Literal["regression", "holdout"]
 RUBRICS = {"literature": "FS8-rubric-v2-20261106", "sql": "sql-web-v1",
-           "mixed": "mixed-v1", "non_paper": "daily-web-v1"}
+           "mixed": "mixed-v1", "non_paper": "daily-web-v1", "intent": "intent-boundary-v1"}
 
 
 def read_json(path):
@@ -70,6 +72,7 @@ def cases():
         for row in read_json(path):
             yield dict(id=row["id"], group=group, category=row["category"], question=row["question"],
                        prompt=row["question"], reference=row)
+    yield from intent_cases()
 
 
 def holdout_cases(root):
@@ -117,7 +120,7 @@ def runtime_manifest(config):
     runtime_paths = [ROOT / "scripts/run_literature_agent.py", *sorted((ROOT / "backend/literature_rag").rglob("*.py")),
                      *sorted((ROOT / "backend/app").glob("*.py")), ROOT / "backend/literature_worker.py",
                      ROOT / "scripts/evaluation_web_grade.py", ROOT / "scripts/grade_agent_eightpapers_20261105.py",
-                     PAPERS / "rubric.json", PAPERS / "sources.json", MIXED / "rubric-v1.json"]
+                     PAPERS / "rubric.json", PAPERS / "sources.json", MIXED / "rubric-v1.json", *INTENT_FILES]
     for path in runtime_paths:
         digest.update(path.relative_to(ROOT).as_posix().encode())
         digest.update(path.read_bytes())

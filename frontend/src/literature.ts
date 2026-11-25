@@ -32,6 +32,7 @@ export interface Answer {
   status: "answered" | "refused";
   answer: string;
   citations: Citation[];
+  public_web_sources?: { index: number; title: string; url: string }[];
   latency_ms: number;
   review_summary?: {
     status: "completed" | "unresolved" | "incomplete" | "not_required";

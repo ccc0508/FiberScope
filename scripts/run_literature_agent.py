@@ -213,8 +213,11 @@ def main():
     p.add_argument('--child',action='store_true',help=argparse.SUPPRESS)
     p.add_argument('--prompt-file',type=Path,help='Evaluation only: frozen PROMPT and REVIEW_PROMPT JSON; does not change website defaults')
     p.add_argument('--architecture',choices=['single','specialists'],default='single')
+    p.add_argument('--intent-evaluation-case', help='Development only: use a registered public-search fixture.')
     p.add_argument('--no-task-feedback',action='store_true',help='Specialists only: limit each selected role to one invocation for comparison.')
     a=p.parse_args();run_id=a.run_id or str(uuid4())
+    if a.intent_evaluation_case and (a.architecture != 'single' or a.prompt_file):
+        p.error('--intent-evaluation-case requires the current single agent')
     if a.no_task_feedback and a.architecture!='specialists':p.error('--no-task-feedback requires --architecture specialists')
     if a.max_model_calls is None:a.max_model_calls=20 if a.architecture=='specialists' else 10
     if a.seconds is None:a.seconds=360 if a.architecture=='specialists' else 240
@@ -232,6 +235,8 @@ def main():
         args.extend(['--architecture',a.architecture])
         if a.no_task_feedback:args.append('--no-task-feedback')
         if a.prompt_file:args.extend(['--prompt-file',str(a.prompt_file.resolve())])
+        if a.intent_evaluation_case:
+            args.extend(['--intent-evaluation-case', a.intent_evaluation_case])
         proc=subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
             start_new_session=os.name!='nt',
             creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
@@ -305,18 +310,33 @@ def main():
                                          trace_store=store, tool_context=telemetry.active_tool_context, assemble=assemble,
                                          context_limits=context_limits if settings.context_expansion_enabled else None)
 
-    directory=load_paper_directory(a.library)
+    unified = a.architecture == 'single' and not a.prompt_file
+    directory = ([] if unified and not (a.library / 'metadata.sqlite3').is_file()
+                 else load_paper_directory(a.library))
+    public_search = None
+    if a.intent_evaluation_case:
+        from app.evaluation_intent import IntentSearchFixture, replay_intent_boundary
+        public_search = IntentSearchFixture(a.intent_evaluation_case, a.question)
+    elif unified and settings.web_search_api_key and settings.web_search_api_key.get_secret_value().strip():
+        from literature_rag.adapters.providers.public_web import BravePublicSearch
+        public_search = BravePublicSearch(settings.web_search_api_key.get_secret_value().strip())
     loop=AgentLoop
     if a.architecture=='specialists':
         from literature_rag.application.specialist_agent import ResultDrivenCoordinator
         loop=ResultDrivenCoordinator
     try:
-        unified = a.architecture == 'single' and not a.prompt_file
         options=(dict(feedback_enabled=not a.no_task_feedback) if a.architecture=='specialists'
                  else dict(unified_research=bool(unified),
+                           first_turn_intent=bool(unified), public_search=public_search,
                            evidence_supplement_enabled=False,
                            parallel_search_executor=parallel_search if unified else None))
         result=loop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory,**options).run(a.question,run_id)
+        if a.intent_evaluation_case:
+            result['intent_evaluation'] = dict(
+                case_id=a.intent_evaluation_case, transport_queries=public_search.queries,
+                replay=replay_intent_boundary(a.intent_evaluation_case, a.question) or {},
+            )
+            checkpoint(result)
     finally:
         telemetry.close()
         telemetry.flush()

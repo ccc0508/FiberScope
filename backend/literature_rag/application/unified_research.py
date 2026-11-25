@@ -264,6 +264,7 @@ class ResearchChecklist(CoveragePriority):
     def __init__(self, question, *, evidence_only=False, evidence_review=True, retain_metric_audit=False):
         super().__init__([])
         self.question = question
+        self.intent_scopes = None
         self.evidence_only = evidence_only
         self.evidence_review = evidence_review and evidence_only
         self.metric_audit = not evidence_only or retain_metric_audit
@@ -442,6 +443,12 @@ class ResearchChecklist(CoveragePriority):
                     continue
             except ValidationError as error:
                 rejected.append(self._registration_error(entry, index, error))
+                continue
+            if self.intent_scopes is not None and not any(
+                candidate.source_quote.strip() and candidate.source_quote in scope
+                for scope in self.intent_scopes.get(candidate.role, ())
+            ):
+                rejected.append({"reason": "outside_ready_task_scope", "index": index})
                 continue
             correction = next((item for item in self.pending_registrations()
                                if self._matches_correction(candidate, item)), None)
