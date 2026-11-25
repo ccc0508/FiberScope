@@ -57,7 +57,9 @@ def test_private_evaluation_flow_can_rescore_without_regenerating(monkeypatch, t
         client.headers["Authorization"] = "Bearer test-eval-token"
         listing = client.get("/api/v1/evaluation/cases").json()
         assert listing["max_concurrent_cases"] == 7
-        assert Counter(c["group"] for c in listing["cases"]) == {"literature": 24, "sql": 20, "mixed": 20, "non_paper": 6}
+        assert Counter(c["group"] for c in listing["cases"]) == {
+            "literature": 24, "sql": 20, "mixed": 20, "non_paper": 6, "intent": 10,
+        }
         assert all("reference" not in case and "prompt" not in case for case in listing["cases"])
         assert client.post("/api/v1/evaluation/runs", json={"ids": ["missing"]}).status_code == 422
         result = client.post("/api/v1/evaluation/runs", json={"ids": ["FS8-025"]})
@@ -110,8 +112,10 @@ def test_holdout_catalog_runs_and_history_are_isolated(monkeypatch, tmp_path):
         assert client.get(api + "/cases?suite=holdout").json()["cases"] == [
             {key: holdout[key] for key in ("id", "group", "category", "question")}
         ]
-        assert len(client.get(api + "/cases").json()["cases"]) == 70
+        assert len(client.get(api + "/cases").json()["cases"]) == 80
+        assert "intent" not in client.get(api + "/cases?suite=holdout").json()["groups"]
         assert client.post(api + "/runs", json={"ids": ["FSHO-N01"]}).status_code == 422
+        assert client.post(api + "/runs", json={"ids": ["INTENT01"], "suite": "holdout"}).status_code == 422
         assert client.post(api + "/runs", json={"ids": ["FSHO-N01", "FS8-025"], "suite": "holdout"}).status_code == 422
         regression = client.post(api + "/runs", json={"ids": ["FS8-025"]}).json()["id"]
         run = client.post(api + "/runs", json={"ids": ["FSHO-N01"], "suite": "holdout"}).json()["id"]
@@ -137,6 +141,84 @@ def test_holdout_requires_matching_seal(tmp_path):
     question.write_text("altered", encoding="utf-8")
     with pytest.raises(ValueError, match="sealed manifest"):
         list(holdout_cases(tmp_path))
+
+
+def test_intent_case_runs_as_development_with_its_fixture_and_sql_reference(monkeypatch, tmp_path):
+    prompts, graded = [], []
+    reference_query = [{"columns": ["sw_proportion_pct", "hw_proportion_pct"], "rows": [[50, 50]]}]
+
+    def answer(config, question, *, run_id, intent_evaluation_case):
+        prompts.append((question, intent_evaluation_case))
+        return dict(agent_run=dict(status="completed", answer="candidate", intent_evaluation={"case_id": intent_evaluation_case}),
+                    agent_evidence=[], agent_tool_trace=[])
+
+    def snapshot(selected):
+        return dict(fingerprint="database", references={case["id"]: reference_query for case in selected})
+
+    def grade(queue, case, result, references):
+        graded.append((case, result, references))
+        return {"score": 75, "metrics": {"trace_checks_passed": 2}}
+
+    original = EvaluationQueue.__init__
+    monkeypatch.setattr(EvaluationQueue, "__init__", lambda self, config: original(self, config, answer=answer, snapshot=snapshot))
+    monkeypatch.setattr(EvaluationQueue, "grade", grade)
+    monkeypatch.setattr("app.evaluation.runtime_manifest", lambda _: {})
+    monkeypatch.setenv("QA_JEV_API_KEY", "test-only-key")
+    app = FastAPI()
+    app.include_router(router(LiteratureSettings(enabled=True, data_dir=tmp_path), "test-token"))
+    expected = next(case for case in cases() if case["id"] == "INTENT04")
+    with TestClient(app, headers={"Authorization": "Bearer test-token"}) as client:
+        api = "/api/v1/evaluation"
+        request = client.post(api + "/runs", json={"ids": ["INTENT04"]})
+        assert request.status_code == 202
+        run = request.json()["id"]
+        detail_url = f"{api}/runs/{run}/cases/INTENT04"
+        batch = wait_for(client, run)
+        assert batch["suite"] == "regression" and batch["database_fingerprint"] == "database"
+        result = client.get(detail_url).json()
+        assert result["group"] == "intent" and result["score"] == 75
+        assert result["reference_results"] == reference_query and result["reference"]["reference_answer"]
+    assert prompts == [(expected["question"], "INTENT04")]
+    assert graded[0][0] == expected and graded[0][1]["database_verified"] is True
+    assert graded[0][2] == reference_query
+
+
+@pytest.mark.parametrize("queries,score", [([], 100), (["an unexpected outbound query"], 0)])
+def test_intent_grades_answers_and_program_checks_separately(monkeypatch, queries, score):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[2] / "scripts"))
+    import evaluation_web_grade
+
+    case = next(item for item in cases() if item["id"] == "INTENT01")
+    answer = '{"date":"2026-11-25","weekday":"星期三"}'
+    trace = dict(case_id=case["id"], transport_queries=queries)
+    result = dict(answer=answer, model_calls=[{"text": answer}], tool_calls=[], intent_evaluation=trace)
+
+    def decisions(config, request, post):
+        assert set(request["questions"]) == {"answer_1", "answer_2", "answer_boundary"}
+        return {"model": "Jev"}, {key: {"choice": "pass"} for key in request["questions"]}
+
+    monkeypatch.setattr(evaluation_web_grade, "request_decisions", decisions)
+    grade = evaluation_web_grade.grade(dict(case=case, result=result), SimpleNamespace(model="Jev"))
+    assert grade["score"] == score
+    assert grade["metrics"]["answer_checks_passed"] == 2
+    assert grade["metrics"]["critical_violation"] is bool(queries)
+
+
+def test_intent_public_fixtures_are_local_and_replays_execute_policy():
+    from app.evaluation_intent import IntentSearchFixture, replay_intent_boundary
+
+    for case in (item for item in cases() if item["id"] in {"INTENT03", "INTENT10"}):
+        case_id, question = case["id"], case["question"]
+        fixture = IntentSearchFixture(case_id, question)
+        with pytest.raises(ValueError, match="registered question"):
+            IntentSearchFixture(case_id, question + " change")
+        assert fixture("another query", 1) == []
+        assert fixture.queries == ["another query"]
+        expected = case["reference"]["fixture"]["expected_query"]
+        assert fixture(expected, 1) == case["reference"]["fixture"]["sources"]
+        replay = replay_intent_boundary(case_id, question)
+        assert replay["passed"] is True
+        assert replay["transport_queries"] == ([] if case_id == "INTENT03" else [expected])
 
 
 def test_holdout_grades_the_frozen_weights(monkeypatch):

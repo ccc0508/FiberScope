@@ -52,7 +52,7 @@ def deepseek_usage(answer):
 
 class Selection(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    ids: list[str] = Field(min_length=1, max_length=70)
+    ids: list[str] = Field(min_length=1, max_length=80)
 
 
 class RunSelection(Selection):
@@ -311,12 +311,14 @@ class EvaluationQueue:
         try:
             config = self.config
             spec = json.loads(row["spec"])
+            intent_case = spec["group"] == "intent"
+            uses_database = spec["group"] in {"sql", "mixed"} or bool(spec.get("reference", {}).get("reference_sql"))
             frozen = json.loads(row["manifest"])
             manifest = runtime_manifest(config)
             if not runtime_matches(frozen, manifest):
                 raise ValueError("Agent 或文献索引发生变化。请新建评测。")
             snapshot = json.loads(row["snapshot"]) if row["snapshot"] else None
-            if spec["group"] in {"sql", "mixed"} and not row["answer"]:
+            if uses_database and not row["answer"]:
                 if snapshot is None:
                     snapshot = self.prepare_snapshot(row["batch"])
                 if self.snapshot([])["fingerprint"] != snapshot["fingerprint"]:
@@ -333,7 +335,8 @@ class EvaluationQueue:
             start = perf_counter()
             try:
                 with self.trace(run_id, row["id"]):
-                    record = self.answer(config, spec["prompt"], run_id=run_id)
+                    options = {"intent_evaluation_case": spec["id"]} if intent_case else {}
+                    record = self.answer(config, spec["prompt"], run_id=run_id, **options)
                 result = dict(record["agent_run"], evidence=record["agent_evidence"],
                               tool_trace=record["agent_tool_trace"])
                 link = ROOT / ".rag-data/agent-runs" / run_id / "langfuse.json"
@@ -343,7 +346,7 @@ class EvaluationQueue:
                 except (OSError, ValueError):
                     pass
                 result.update(case_id=spec["id"], end_to_end_ms=round((perf_counter() - start) * 1000))
-                if spec["group"] in {"sql", "mixed"}:
+                if uses_database:
                     result["database_verified"] = False
                 complete = result["status"] == "completed" and bool(result["answer"].strip())
                 tokens, incomplete = deepseek_usage(result)
@@ -433,8 +436,10 @@ def router(config=None, admin_token=None):
 
     @routes.get("/cases")
     def catalog(suite: Suite = "regression"):
-        return dict(groups=GROUPS, suite=suite, available_suites=["regression", "holdout"] if holdout_dir else ["regression"],
-                    cases=[{k: case[k] for k in ("id", "group", "category", "question")} for case in catalog_cases(suite)],
+        pool = catalog_cases(suite)
+        return dict(groups={key: name for key, name in GROUPS.items() if any(case["group"] == key for case in pool)},
+                    suite=suite, available_suites=["regression", "holdout"] if holdout_dir else ["regression"],
+                    cases=[{k: case[k] for k in ("id", "group", "category", "question")} for case in pool],
                     manifest=runtime_manifest(config), max_concurrent_cases=MAX_CONCURRENT_CASES)
 
     @routes.post("/runs", status_code=202)
@@ -446,7 +451,10 @@ def router(config=None, admin_token=None):
         keys = set(selection.ids)
         if len(keys) != len(selection.ids) or not keys <= {case["id"] for case in pool}:
             raise HTTPException(422, "题目编号不存在或重复。")
-        return {"id": queue.create([case for case in pool if case["id"] in keys], suite=selection.suite)}
+        selected = [case for case in pool if case["id"] in keys]
+        if config.agent_architecture != "single" and any(case["group"] == "intent" for case in selected):
+            raise HTTPException(422, "意图与工具边界题需要使用单 Agent 架构。")
+        return {"id": queue.create(selected, suite=selection.suite)}
 
     @routes.get("/runs")
     def listing(suite: Suite = "regression"):

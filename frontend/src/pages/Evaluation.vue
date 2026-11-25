@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import { Activity, ArrowLeft, BookOpen, Database, FlaskConical, History, Layers, MessageSquare, Play, Search } from "lucide-vue-next";
+import { Activity, ArrowLeft, BookOpen, Database, FlaskConical, History, Layers, MessageSquare, Play, Search, ShieldCheck } from "lucide-vue-next";
 import { apiPath } from "../urls";
 
-type Group = "literature" | "sql" | "mixed" | "non_paper";
+type Group = "literature" | "sql" | "mixed" | "non_paper" | "intent";
 type Suite = "regression" | "holdout";
 type Case = { id: string; group: Group; category: string; question: string };
 type Row = {
@@ -25,6 +25,7 @@ type Answer = {
   answer: string; langfuse?: { url?: string }; tool_calls: unknown[];
   model_calls: Array<{ stage: string; usage?: Record<string, number> }>;
   evidence_check?: Record<string, unknown>; evidence_supplement_planning?: Record<string, unknown>;
+  question_intent?: Record<string, unknown>; public_web_searches?: unknown[]; intent_evaluation?: Record<string, unknown>;
 };
 type Detail = Row & { question: string; reference: Record<string, unknown>; reference_results: unknown[];
   answer: Answer | null; grade: Grade | null; calibrations: Array<{ timestamp: string; score: number; reason: string }> };
@@ -34,6 +35,7 @@ const suites = [
   { key: "sql", name: "SQL 题", desc: "实验数据与口径", icon: Database },
   { key: "mixed", name: "综合题", desc: "文献与数据整合", icon: Layers },
   { key: "non_paper", name: "日常题", desc: "直接作答与格式", icon: MessageSquare },
+  { key: "intent", name: "意图与工具边界", desc: "首轮决策、联网与澄清", icon: ShieldCheck },
 ] as const;
 const label: Record<string, string> = {
   queued: "排队", answering: "作答中", scoring: "Jev 评分中", scored: "已评分",
@@ -47,8 +49,10 @@ const metricLabels: Record<string, string> = {
   tool_accuracy: "工具调用评分", passed: "日常题通过",
   tool_calls: "工具调用次数", failed_tool_calls: "未成功的工具调用",
   original_figure_delivered: "原图已交付", figure_needs_manual_review: "需要人工核图",
+  answer_checks_passed: "通过的回答检查（共 2 项）", trace_checks_passed: "通过的轨迹检查（共 2 项）",
+  critical_violation: "严重边界违规",
 };
-const suiteLabels: Record<Suite, string> = { regression: "开发回归 · 70 题", holdout: "Holdout 留出评测 · 40 题" };
+const suiteLabels: Record<Suite, string> = { regression: "开发回归", holdout: "Holdout 留出评测" };
 
 const savedToken = "fiberscope:evaluation:access";
 const token = ref(sessionStorage.getItem(savedToken) ?? "");
@@ -74,6 +78,7 @@ const calibrated = ref<number>();
 const calibrationReason = ref("");
 let timer: number | undefined;
 
+const catalogGroups = computed(() => suites.filter(group => catalog.value.some(item => item.group === group.key)));
 const filtered = computed(() => {
   const query = search.value.trim().toLowerCase();
   return catalog.value.filter(item => (filter.value === "all" || filter.value === item.group) &&
@@ -325,7 +330,7 @@ onUnmounted(() => window.clearInterval(timer));
           <section class="panel selection">
             <div class="panel-title"><h2>选择题目</h2><button class="secondary" @click="choose('all')">选择全部 {{ catalog.length }} 题</button></div>
             <div class="suites">
-              <button v-for="suite in suites" :key="suite.key" :class="{ selected: filter === suite.key }" @click="choose(suite.key)">
+              <button v-for="suite in catalogGroups" :key="suite.key" :class="{ selected: filter === suite.key }" @click="choose(suite.key)">
                 <component :is="suite.icon" :size="18" />
                 <strong>{{ suite.name }}</strong>
                 <span class="count">{{ catalog.filter(item => item.group === suite.key).length }}</span>
@@ -336,7 +341,7 @@ onUnmounted(() => window.clearInterval(timer));
               <label class="query"><Search :size="16" /><input v-model="search" placeholder="搜索题号或题目" aria-label="搜索题号或题目" /></label>
               <select v-model="filter" aria-label="按题组筛选">
                 <option value="all">全部题组</option>
-                <option v-for="suite in suites" :key="suite.key" :value="suite.key">{{ suite.name }}</option>
+                <option v-for="suite in catalogGroups" :key="suite.key" :value="suite.key">{{ suite.name }}</option>
               </select>
               <button class="plain" @click="chosen = new Set()">清空选择</button>
             </div>
@@ -353,7 +358,7 @@ onUnmounted(() => window.clearInterval(timer));
             <div class="tally"><strong>{{ chosen.size }}</strong><span>道已选题目</span></div>
             <dl>
               <div><dt>答题方式</dt><dd>每题独立上下文</dd></div>
-              <div><dt>评分模型</dt><dd>Jev</dd></div>
+              <div><dt>评分方式</dt><dd>{{ catalog.some(item => item.group === "intent" && chosen.has(item.id)) ? "Jev 与程序轨迹检查" : "Jev" }}</dd></div>
               <div v-if="manifest"><dt>单题预算</dt><dd>{{ manifest.budget.models }} 次模型 · {{ manifest.budget.tools }} 次工具</dd></div>
               <div><dt>执行方式</dt><dd>{{ maxConcurrentCases ? `最多 ${maxConcurrentCases} 题并行，其余排队` : "后台运行" }}</dd></div>
             </dl>
@@ -371,7 +376,7 @@ onUnmounted(() => window.clearInterval(timer));
               <input v-model="historySearch" placeholder="日期或提交号" aria-label="搜索评测历史" />
               <select v-model="historyGroup" aria-label="筛选评测历史题组">
                 <option value="all">全部题组</option>
-                <option v-for="suite in suites" :key="suite.key" :value="suite.key">{{ suite.name }}</option>
+                <option v-for="suite in catalogGroups" :key="suite.key" :value="suite.key">{{ suite.name }}</option>
               </select>
             </div>
             <p v-if="!filteredHistory.length" class="empty">{{ history.length ? "没有匹配的评测。" : "还没有评测记录。" }}</p>
@@ -413,7 +418,7 @@ onUnmounted(() => window.clearInterval(timer));
             <p v-if="configDifferences.length" class="hint">配置有差异：{{ configDifferences.join("、") }}</p>
             <div class="results">
               <table>
-                <thead><tr><th>题号</th><th>状态</th><th>Jev</th><th>校准</th><th v-if="baseline">分数变化</th><th>作答耗时</th></tr></thead>
+                <thead><tr><th>题号</th><th>状态</th><th>原始分</th><th>校准</th><th v-if="baseline">分数变化</th><th>作答耗时</th></tr></thead>
                 <tbody><tr v-for="row in current.cases" :key="row.id" :class="{ focused: row.id === detail?.id }">
                   <td><button class="text-link" @click="openCase(row.id)">{{ row.id }}</button></td>
                   <td>{{ label[row.status] ?? row.status }}</td><td>{{ display(row.score) }}</td><td>{{ display(row.calibrated_score) }}</td>
@@ -432,7 +437,7 @@ onUnmounted(() => window.clearInterval(timer));
                 <p>{{ detail.question }}</p>
                 <p v-if="detail.error" class="notice">{{ detail.error }}</p>
                 <div v-if="detail.grade" class="group-summary">
-                  <div><span>Jev 要点或综合分</span><b>{{ display(detail.grade.score) }}</b></div>
+                  <div><span>{{ detail.group === "intent" ? "回答与轨迹综合分" : "Jev 要点或综合分" }}</span><b>{{ display(detail.grade.score) }}</b></div>
                   <div v-for="(value, key) in detail.grade.metrics" v-show="metricLabels[key]" :key="key">
                     <span>{{ metricLabels[key] }}</span><b>{{ typeof value === "number" ? display(value) : value === true ? "是" : value === false ? "否" : "—" }}</b>
                   </div>
@@ -447,7 +452,8 @@ onUnmounted(() => window.clearInterval(timer));
                 </p>
                 <details open><summary>Agent 回答</summary><pre>{{ detail.answer?.answer || "暂无回答" }}</pre></details>
                 <details v-if="suite !== 'holdout'"><summary>参考答案与参考 SQL</summary><pre>{{ json(detail.reference) }}</pre><pre v-if="detail.reference_results.length">{{ json(detail.reference_results) }}</pre></details>
-                <details v-if="detail.grade"><summary>Jev 各维度评分与置信度</summary><pre>{{ json({ review: detail.grade.review, decisions: detail.grade.decisions, metrics: detail.grade.metrics }) }}</pre></details>
+                <details v-if="detail.grade"><summary>{{ detail.group === "intent" ? "回答评分与轨迹判定" : "Jev 各维度评分与置信度" }}</summary><pre>{{ json({ review: detail.grade.review, decisions: detail.grade.decisions, metrics: detail.grade.metrics }) }}</pre></details>
+                <details v-if="detail.answer && detail.group === 'intent'"><summary>首轮意图、模拟搜索与对照</summary><pre>{{ json({ intent: detail.answer.question_intent, search: detail.answer.public_web_searches, fixture: detail.answer.intent_evaluation }) }}</pre></details>
                 <details v-if="detail.answer"><summary>工具调用、逐任务证据与补查</summary><pre>{{ json({ tools: detail.answer.tool_calls, acceptance: detail.answer.evidence_check, supplement: detail.answer.evidence_supplement_planning }) }}</pre></details>
                 <details v-if="detail.grade"><summary>人工校准 {{ detail.calibrations.length ? '（' + detail.calibrations.length + '）' : '' }}</summary>
                   <ul v-if="detail.calibrations.length"><li v-for="entry in detail.calibrations" :key="entry.timestamp">{{ date(entry.timestamp) }} · {{ display(entry.score) }} · {{ entry.reason }}</li></ul>
@@ -497,7 +503,7 @@ onUnmounted(() => window.clearInterval(timer));
 .panel h2 { margin:0; color:var(--ink); font-size:19px; line-height:1.35; }
 .panel-title { display:flex; align-items:center; justify-content:space-between; gap:10px; }
 .panel-title .hint { margin:3px 0 0; }
-.suites { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:15px 0; }
+.suites { display:grid; grid-template-columns:repeat(auto-fit,minmax(132px,1fr)); gap:8px; margin:15px 0; }
 .suites button { text-align:left; position:relative; display:grid; gap:3px; background:#f5f9fa; border:1px solid var(--line); border-radius:7px; padding:12px; }
 .suites button:is(:hover,.selected) { border-color:var(--accent); background:#e8f4f0; }
 .suites button svg { color:var(--accent); margin-bottom:3px; }

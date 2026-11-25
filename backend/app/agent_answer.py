@@ -69,7 +69,7 @@ def adapt_run(state, evidence, trace, elapsed_ms):
         agent_run=state,agent_tool_trace=trace,agent_evidence=evidence,**review_summary)
 
 
-def run_agent_answer(config, question, *, run_id=None):
+def run_agent_answer(config, question, *, run_id=None, intent_evaluation_case=None):
     rid=run_id or 'web-'+uuid4().hex
     specialists=getattr(config,'agent_architecture','single')=='specialists'
     seconds=min(360 if specialists else 240,config.timeout_seconds-10)
@@ -80,10 +80,13 @@ def run_agent_answer(config, question, *, run_id=None):
     with step('qa.agent_process', run_id=rid):
         env=dict(os.environ)
         if context():env['FIBERSCOPE_TRACE_CONTEXT']=json.dumps(context())
-        result=subprocess.run([sys.executable,'-X','utf8',str(ROOT/'scripts/run_literature_agent.py'),
+        args = [sys.executable,'-X','utf8',str(ROOT/'scripts/run_literature_agent.py'),
         '--question',question,'--library',str(config.library_root),'--run-id',rid,'--seconds',str(seconds),
         '--architecture',getattr(config,'agent_architecture','single'),
-        '--max-model-calls','20' if specialists else '10'],
+        '--max-model-calls','20' if specialists else '10']
+        if intent_evaluation_case:
+            args.extend(['--intent-evaluation-case', intent_evaluation_case])
+        result=subprocess.run(args,
         env=env,capture_output=True,text=True,encoding='utf-8',creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
     folder=ROOT/'.rag-data/agent-runs'/rid
     if result.returncode or not (folder/'state.json').is_file():
