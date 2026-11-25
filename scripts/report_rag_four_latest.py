@@ -3,7 +3,7 @@ import hashlib
 import html
 import json
 from pathlib import Path
-from report_regression_baseline_20261106 import metrics, calibrate, summary
+from eval_regression_report import metrics, calibrate, summary
 
 ROOT=Path(__file__).resolve().parents[1]
 RUN=ROOT/'.rag-data/evaluations/specialists-three-suites-20261107/rag-four-latest-20261108'

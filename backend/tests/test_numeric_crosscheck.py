@@ -3,46 +3,47 @@ from dataclasses import replace
 import pytest
 
 from literature_rag.application.numeric_crosscheck import numeric_verification_requested,plan_crosscheck
-from literature_rag.application.review_diagnosis_v2 import validate_diagnosis,DiagnosticPayload,critical_claim_indexes
+from literature_rag.application.review_diagnosis import validate_diagnosis,DiagnosticPayload,critical_claim_indexes,DiagnosisPolicy
 from literature_rag.application.evidence_review import ReviewRejected
 from literature_rag.domain.models import GeneratedAnswer,GeneratedClaim
 from tests.test_corrective_review import SOURCES,DRAFT,requirement
 
-def payload(status='covered',issues=None,**kwargs):
-    return DiagnosticPayload.model_validate(dict(requirements=[requirement(status,**kwargs)],issues=issues or [],claim_checks=[]))
+def payload(status='covered',issues=None,units=None,**kwargs):
+    return DiagnosticPayload.model_validate(dict(requirements=[requirement(status,**kwargs)],issues=issues or [],units=units or []))
 
 
-def test_default_protocol_preserves_v1_and_v2_requires_explicit_selection():
+def test_unified_default_and_configurable_basic_policy():
     from literature_rag.config import Settings
     from literature_rag.application.review_diagnosis import diagnosis_contract
-    assert Settings(_env_file=None).corrective_review_version == 'v1'
-    assert diagnosis_contract().VERSION == 'bounded-corrective-review-v1'
-    assert 'claim_checks' not in diagnosis_contract().DiagnosticPayload.model_fields
-    assert diagnosis_contract('v2').VERSION == 'bounded-corrective-review-v2.1'
-    assert 'claim_checks' in diagnosis_contract('v2').DiagnosticPayload.model_fields
+    assert Settings(_env_file=None).corrective_review_version == 'unified'
+    assert diagnosis_contract().VERSION == 'bounded-corrective-review-unified-v1'
+    assert 'units' in diagnosis_contract().DiagnosticPayload.model_fields
+    basic = diagnosis_contract('basic')
+    assert basic.VERSION == 'bounded-corrective-review-basic-v1'
+    assert not basic.policy.check_relation and not basic.policy.check_comparison
     with pytest.raises(ValueError):
         diagnosis_contract('unknown')
 
 
-def test_numeric_policy_is_only_activated_in_experimental_controller(monkeypatch):
-    from tests.test_corrective_review import controller, payload as legacy_payload
+def test_numeric_policy_follows_diagnosis_policy_flag(monkeypatch):
+    from tests.test_corrective_review import controller
     import literature_rag.application.numeric_crosscheck as policy
     calls=[]
     def plan(question,evidences,requirements,catalog):
         calls.append(question)
         return requirements,[],dict(triggered=True,status='test')
     monkeypatch.setattr(policy,'plan_crosscheck',plan)
-    old,_,_=controller([legacy_payload()])
-    old.review('请核实0.9这个系数。',SOURCES,DRAFT)
+    disabled,provider,_=controller([payload()])
+    provider.diagnosis_policy=DiagnosisPolicy(numeric_crosscheck=False)
+    disabled.review('请核实0.9这个系数。',SOURCES,DRAFT)
     assert calls == []
-    new,provider,_=controller([payload()])
-    provider.diagnosis_version='v2'
-    new.review('请核实0.9这个系数。',SOURCES,DRAFT)
+    enabled,provider,_=controller([payload()])
+    enabled.review('请核实0.9这个系数。',SOURCES,DRAFT)
     assert len(calls)==1
-    assert new.last_trace['version']=='bounded-corrective-review-v2.1'
+    assert enabled.last_trace['version']=='bounded-corrective-review-unified-v1'
 
 
-def test_provider_v2_requests_and_parses_the_experimental_contract():
+def test_provider_unified_requests_and_parses_contract():
     from literature_rag.adapters.providers.evidence_review import DeepSeekEvidenceReviewer
     calls=[]
     def create(**kwargs):
@@ -50,11 +51,11 @@ def test_provider_v2_requests_and_parses_the_experimental_contract():
         return NS(model='deepseek-flash',usage=None,
             choices=[NS(finish_reason='stop',message=NS(content=payload().model_dump_json()))])
     provider=DeepSeekEvidenceReviewer('deepseek-flash','PRIVATE',diagnostic=True,
-        diagnosis_version='v2',client=NS(chat=NS(completions=NS(create=create))))
+        diagnosis_version='unified',client=NS(chat=NS(completions=NS(create=create))))
     result=provider.review('Explain the mechanism',SOURCES,DRAFT)
     assert isinstance(result,DiagnosticPayload)
-    assert 'claim_checks' in calls[0]['messages'][0]['content']
-    assert 'critical_claim_indexes' in calls[0]['messages'][1]['content']
+    assert 'units' in calls[0]['messages'][0]['content']
+    assert 'audit_routing' in calls[0]['messages'][1]['content']
 
 
 @pytest.mark.parametrize('q,expected',[
@@ -97,18 +98,18 @@ def test_missing_structural_comparison_cannot_report_success():
     draft=GeneratedAnswer('Hydration causes structural breakage. [1]',
         (GeneratedClaim('Hydration causes structural breakage.',('[1]',)),))
     assert critical_claim_indexes(draft)==[0]
-    with pytest.raises(ReviewRejected,match='critical_claim_check_missing'):
+    with pytest.raises(ReviewRejected,match='required_unit_or_aspect_missing'):
         validate_diagnosis(payload(),draft,SOURCES)
 
 
-def test_claim_check_requires_actual_source_quote_and_a_corrective_action():
-    check=dict(claim_index=0,source_ref='[1]',source_quote='might be explained by hydration',
-        source_object='interchain interaction',answer_object='backbone',source_change='interaction changes',
-        answer_change='covalent cleavage',source_certainty='proposed',answer_certainty='certain',
-        verdict='overstated',issue_indexes=[])
-    p=DiagnosticPayload.model_validate(dict(requirements=[requirement()],issues=[],claim_checks=[check]))
-    with pytest.raises(ReviewRejected,match='claim_check_needs_matching_action'):
+def test_unit_requires_actual_source_quote_and_a_corrective_action():
+    unit=dict(claim_index=0,issue_index=None,replacement_index=None,text=DRAFT.claims[0].text,
+        checked=['fact','citation','certainty'],
+        sources=[dict(basis=dict(kind='text',ref='[1]',quote='might be explained by hydration'),contribution='Tentative explanation.')],
+        verdict='overstated',reason='Overstated.',repair_issue_indexes=[])
+    p=DiagnosticPayload.model_validate(dict(requirements=[requirement()],issues=[],units=[unit]))
+    with pytest.raises(ReviewRejected,match='unit_action_mismatch'):
         validate_diagnosis(p,DRAFT,SOURCES)
-    p.claim_checks[0].verdict='supported';p.claim_checks[0].source_quote='invented source quotation'
-    with pytest.raises(ReviewRejected,match='quote_not_in_evidence'):
+    p.units[0].verdict='supported';p.units[0].sources[0].basis.quote='invented source quotation'
+    with pytest.raises(ReviewRejected,match='unit_quote_not_in_evidence'):
         validate_diagnosis(p,DRAFT,SOURCES)

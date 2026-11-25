@@ -1,53 +1,42 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, reactive, ref, watch, type ComponentPublicInstance } from "vue";
-import {
-  BookOpen,
-  ChevronDown,
-  ExternalLink,
-  RefreshCw,
-  Send,
-} from "lucide-vue-next";
+import { computed, onBeforeUnmount, ref } from "vue";
+import { BookOpen, RefreshCw, Send } from "lucide-vue-next";
 import { get } from "../api";
-import { apiPath, appPath } from "../urls";
-import { isGarden, reducedMotion } from "../mode";
-import { vTilt } from "../motion";
+import { isGarden } from "../mode";
 import PageHeader from "../components/PageHeader.vue";
 import LiteratureHistory from "../components/LiteratureHistory.vue";
-import EvidenceExcerpt from "../components/EvidenceExcerpt.vue";
+import LiteratureCitations from "../components/literature/LiteratureCitations.vue";
+import LiteratureLibrary, { type LibraryDocument } from "../components/literature/LiteratureLibrary.vue";
+import { useAbortablePolling } from "../composables/useAbortablePolling";
 import {
   answerBlocks,
-  citationKind,
-  citationKinds,
-  citationTitle,
   literatureRequest,
-  pageRange,
   secondsLabel,
   timeLabel,
   type Answer,
-  type Citation,
-  type HistoryRecord,
   type HistoryItem,
+  type HistoryRecord,
 } from "../literature";
 
-interface Document {
-  id: string;
-  filename: string;
-  page_count: number;
-  chunk_count: number;
-}
-const documents = ref<Document[]>([]),
-  enabled = ref(false),
-  loading = ref(true),
-  loadError = ref("");
-const question = ref(""),
-  submitted = ref(""),
-  asking = ref(false),
-  error = ref(""),
-  answer = ref<Answer | null>(null);
+const documents = ref<LibraryDocument[]>([]);
+const enabled = ref(false);
+const loading = ref(true);
+const loadError = ref("");
+const question = ref("");
+const submitted = ref("");
+const asking = ref(false);
+const error = ref("");
+const answer = ref<Answer | null>(null);
 const historyPanel = ref<InstanceType<typeof LiteratureHistory>>();
-const historyReady = ref(false), selected = ref<HistoryRecord | null>(null);
+const citationsPanel = ref<InstanceType<typeof LiteratureCitations>>();
+const historyReady = ref(false);
+const selected = ref<HistoryRecord | null>(null);
+
 let pendingSubmission: { question: string; request_id: string } | undefined;
-let pollTimer: number | undefined, disposed = false, selectionVersion = 0;
+let libraryController: AbortController | undefined;
+let answerController: AbortController | undefined;
+const polling = useAbortablePolling();
+
 const canAsk = computed(
   () =>
     enabled.value &&
@@ -62,16 +51,8 @@ const examples = [
   "PFI 打浆如何影响纤维素的聚集结构？",
   "这篇文献采用了哪些方法研究纤维素结构？",
 ];
-const pdf = (id: string, page = 1) =>
-  apiPath(`literature/documents/${encodeURIComponent(id)}/pdf#page=${page}`);
-const citationReader = (record: HistoryRecord | null, c: Citation) => record && /^\[\d+\]$/.test(c.ref)
-  ? appPath(`literature/read/${encodeURIComponent(record.id)}/${c.ref.slice(1, -1)}`)
-  : pdf(c.document_id, c.page_start);
-const imageUrl = (checksum: string) => apiPath(`literature/images/${encodeURIComponent(checksum)}`);
-const citation = (token: string) =>
-  answer.value?.citations.find((c) => c.ref === token);
-let libraryController: AbortController | undefined,
-  answerController: AbortController | undefined;
+const citation = (token: string) => answer.value?.citations.find((c) => c.ref === token);
+
 async function load() {
   libraryController?.abort();
   const current = new AbortController();
@@ -79,7 +60,7 @@ async function load() {
   loading.value = true;
   loadError.value = "";
   try {
-    const result = await get<{ enabled: boolean; documents: Document[] }>(
+    const result = await get<{ enabled: boolean; documents: LibraryDocument[] }>(
       "literature/documents",
       {},
       current.signal,
@@ -97,6 +78,7 @@ async function load() {
     if (!current.signal.aborted) loading.value = false;
   }
 }
+
 function showRecord(record: HistoryRecord) {
   selected.value = record;
   submitted.value = record.question;
@@ -109,44 +91,50 @@ function showRecord(record: HistoryRecord) {
     worker_error: "文献问答处理失败，本次失败记录已保存。",
     service_restarted: "服务在处理期间中断，本次记录已保存，可以重新提问。",
   };
-  error.value = record.status === "failed" || record.status === "interrupted"
-    ? failures[record.reason_code ?? ""] ?? "本次处理失败，可以重新提问。" : "";
+  error.value =
+    record.status === "failed" || record.status === "interrupted"
+      ? failures[record.reason_code ?? ""] ?? "本次处理失败，可以重新提问。"
+      : "";
 }
+
 async function openRecord(id: string, keepQuestion = false) {
-  clearTimeout(pollTimer);
+  polling.clearPoll();
   answerController?.abort();
-  const version = ++selectionVersion;
-  const current = new AbortController();
-  answerController = current;
-  const timer = window.setTimeout(() => current.abort(), 15000);
+  const version = polling.nextVersion();
+  const req = polling.createAbortable(15000);
+  answerController = req.controller;
   try {
-    const record = await literatureRequest<HistoryRecord>(`history/${encodeURIComponent(id)}`, undefined, current.signal);
-    if (disposed || version !== selectionVersion) return;
+    const record = await literatureRequest<HistoryRecord>(`history/${encodeURIComponent(id)}`, undefined, req.signal);
+    if (!polling.isCurrent(version)) return;
     showRecord(record);
     if (!keepQuestion) question.value = record.question;
     if (record.status === "processing") {
-      pollTimer = window.setTimeout(() => openRecord(id, true), 1500);
+      polling.schedulePoll(() => openRecord(id, true), 1500);
     } else {
       pendingSubmission = undefined;
       historyPanel.value?.refresh();
     }
-  } catch (e) {
-    if (disposed || version !== selectionVersion) return;
+  } catch {
+    if (!polling.isCurrent(version)) return;
     asking.value = false;
     error.value = "暂时无法读取回答，请点击历史记录重试。已接收的问题会继续在后台处理。";
-  } finally { clearTimeout(timer); }
+  } finally {
+    req.cleanup();
+  }
 }
+
 function historyLoaded(latest?: HistoryItem) {
   historyReady.value = true;
   if (!selected.value && !pendingSubmission && latest) openRecord(latest.id);
 }
+
 async function ask(fresh = false) {
   if (!canAsk.value) return;
-  clearTimeout(pollTimer);
+  polling.clearPoll();
   answerController?.abort();
-  const version = ++selectionVersion;
-  const current = new AbortController();
-  answerController = current;
+  const version = polling.nextVersion();
+  const req = polling.createAbortable(15000);
+  answerController = req.controller;
   asking.value = true;
   error.value = "";
   answer.value = null;
@@ -155,18 +143,17 @@ async function ask(fresh = false) {
   if (fresh || !pendingSubmission || pendingSubmission.question !== submitted.value) {
     pendingSubmission = { question: submitted.value, request_id: crypto.randomUUID() };
   }
-  const timeout = window.setTimeout(() => current.abort(), 15000);
   try {
-    const record = await literatureRequest<HistoryRecord>("ask", pendingSubmission, current.signal);
-    if (disposed || version !== selectionVersion) return;
+    const record = await literatureRequest<HistoryRecord>("ask", pendingSubmission, req.signal);
+    if (!polling.isCurrent(version)) return;
     showRecord(record);
     historyPanel.value?.refresh();
-    if (record.status === "processing") pollTimer = window.setTimeout(() => openRecord(record.id, true), 1000);
+    if (record.status === "processing") polling.schedulePoll(() => openRecord(record.id, true), 1000);
     else pendingSubmission = undefined;
   } catch (e) {
-    if (disposed || version !== selectionVersion) return;
+    if (!polling.isCurrent(version)) return;
     asking.value = false;
-    error.value = current.signal.aborted
+    error.value = req.signal.aborted
       ? "提交响应超时，请先刷新历史确认是否已接收，重试会沿用本次提交编号。"
       : e instanceof TypeError || e instanceof SyntaxError
         ? "暂时无法连接文献问答服务，请检查连接后重试。"
@@ -174,91 +161,28 @@ async function ask(fresh = false) {
           ? e.message
           : "文献问答暂不可用，请稍后重试。";
   } finally {
-    clearTimeout(timeout);
+    req.cleanup();
   }
 }
+
 function reask() {
   if (!selected.value || asking.value) return;
   question.value = selected.value.question;
   ask(true);
 }
 
-/* ---------------------------------------------------------------- citations */
-/*
- * A long excerpt starts as a clipped preview (v1 cite-card / v4 .ex) and opens in place.
- * Only excerpts taller than the preview get a toggle: a ResizeObserver measures the
- * unclipped content (KaTeX and tables change the height after mount).
- */
-const PREVIEW_HEIGHT = 190; // keep in sync with --lit-preview below
-const openCites = reactive(new Set<string>());
-const tallCites = reactive(new Set<string>());
-const highlighted = ref<string | null>(null);
-const citeEls = new Map<string, HTMLElement>();
-const citeObserver =
-  typeof ResizeObserver === "undefined"
-    ? undefined
-    : new ResizeObserver((entries) => {
-        for (const entry of entries) {
-          const el = entry.target as HTMLElement,
-            key = el.dataset.cite;
-          if (!key) continue;
-          if (el.offsetHeight > PREVIEW_HEIGHT + 12) tallCites.add(key);
-          else tallCites.delete(key);
-        }
-      });
-function trackExcerpt(key: string, el: Element | ComponentPublicInstance | null) {
-  const previous = citeEls.get(key);
-  if (previous && previous !== el) {
-    citeObserver?.unobserve(previous);
-    citeEls.delete(key);
-  }
-  if (el instanceof HTMLElement && previous !== el) {
-    citeEls.set(key, el);
-    citeObserver?.observe(el);
-  }
-}
-watch(answer, () => {
-  openCites.clear();
-  highlighted.value = null;
-});
-const collapsed = (c: Citation) => tallCites.has(c.ref) && !openCites.has(c.ref);
-function toggleCite(key: string) {
-  if (openCites.has(key)) openCites.delete(key);
-  else openCites.add(key);
-}
-/** A keyboard user tabbing into a clipped preview (a table region, a link) opens it. */
-function revealCite(key: string) {
-  if (tallCites.has(key)) openCites.add(key);
-}
-function focusCitation(token: string) {
-  openCites.add(token);
-  highlighted.value = token;
-  const el = document.getElementById(`literature-citation-${token.slice(1, -1)}`);
-  if (!el) return;
-  el.scrollIntoView({ block: "start", behavior: reducedMotion.value ? "auto" : "smooth" });
-  el.focus({ preventScroll: true });
-}
-const toggleLabel = (c: Citation) => {
-  const open = openCites.has(c.ref);
-  if (citationKind(c) === "db") return open ? "收起查询详情" : "展开查询详情";
-  return open ? "收起原文片段" : "展开原文片段";
-};
 const reviewTone = computed(() => {
   const status = answer.value?.review_summary?.status;
   return status === "completed" ? "ok" : status === "unresolved" || status === "incomplete" ? "warn" : "plain";
 });
 
-/* ---------------------------------------------------------------- library + garden signature */
 const maxPages = computed(() => Math.max(1, ...documents.value.map((d) => d.page_count)));
-/** share of the longest document, never thinner than a visible sliver */
-const pageShare = (d: Document) => Math.max(0.08, d.page_count / maxPages.value);
 const grouped = (n: number) => n.toLocaleString("zh-CN");
-/* v4 literatureSig: one spine per document, height = PDF pages (real library data) */
 const sig = computed(() => {
   const docs = documents.value;
   if (!docs.length) return null;
-  const slot = 300 / docs.length,
-    bw = Math.min(30, slot * 0.78);
+  const slot = 300 / docs.length;
+  const bw = Math.min(30, slot * 0.78);
   return {
     spines: docs.map((d, i) => {
       const h = 18 + (d.page_count / maxPages.value) * 92;
@@ -272,12 +196,10 @@ const sig = computed(() => {
 });
 
 onBeforeUnmount(() => {
-  disposed = true;
-  clearTimeout(pollTimer);
   libraryController?.abort();
   answerController?.abort();
-  citeObserver?.disconnect();
 });
+
 load();
 </script>
 
@@ -392,7 +314,6 @@ load();
         class="card lit-answer"
         aria-labelledby="answer-title"
       >
-        <!-- the live region covers the answer itself, not the long excerpts below it -->
         <div class="lit-answer-live" aria-live="polite">
           <div class="lit-head">
             <h2 id="answer-title">
@@ -424,7 +345,7 @@ load();
                     type="button"
                     class="lit-ref"
                     :aria-label="`查看引用 ${part.text}`"
-                    @click="focusCitation(part.text)"
+                    @click="citationsPanel?.focusCitation(part.text)"
                   ><span class="lit-ref-br">[</span>{{ part.text.slice(1, -1) }}<span class="lit-ref-br">]</span></button
                   ><component :is="part.strong ? 'strong' : 'span'" v-if="part.after">{{ part.after }}</component></span
                 ><code v-else-if="part.code">{{ part.text }}</code
@@ -442,79 +363,7 @@ load();
           <button class="button" :disabled="asking" @click="reask">重新提问</button>
         </div>
 
-        <section
-          v-if="answer.citations.length"
-          class="lit-cites"
-          aria-labelledby="literature-cites-title"
-        >
-          <h3 id="literature-cites-title">引用与原文片段 <span class="lit-cites-n">{{ answer.citations.length }}</span></h3>
-          <ol>
-            <li
-              v-for="c in answer.citations"
-              :id="`literature-citation-${c.ref.slice(1, -1)}`"
-              :key="c.ref"
-              class="lit-cite"
-              :class="[`k-${citationKind(c)}`, { hl: highlighted === c.ref }]"
-              tabindex="-1"
-            >
-              <div class="lit-cite-head">
-                <span class="lit-cite-n">{{ c.ref }}</span>
-                <span class="lit-kind">{{ citationKinds[citationKind(c)] }}</span>
-                <h4>{{ citationTitle(c) }}</h4>
-                <span v-if="c.document_id" class="lit-cite-page">PDF 第 {{ pageRange(c.page_start, c.page_end) }} 页</span>
-                <a
-                  v-if="c.document_id"
-                  class="lit-link"
-                  :href="citationReader(selected, c)"
-                  target="_blank"
-                  rel="noopener"
-                  :aria-label="`阅读引用 ${c.ref} 原文，${c.filename} 第 ${c.page_start} 页`"
-                  >阅读原文<ExternalLink :size="13" aria-hidden="true"
-                /></a>
-              </div>
-              <div
-                :id="`literature-excerpt-${c.ref.slice(1, -1)}`"
-                class="lit-cite-body"
-                :class="{ collapsed: collapsed(c) }"
-                @focusin="revealCite(c.ref)"
-              >
-                <div :ref="(el) => trackExcerpt(c.ref, el)" class="lit-cite-inner" :data-cite="c.ref">
-                  <EvidenceExcerpt
-                    :text="c.excerpt"
-                    :query="c.kind === 'experiment_query'"
-                    :label="c.ref"
-                  />
-                  <div v-if="c.visual_assets?.length" class="lit-images">
-                    <figure v-for="image in c.visual_assets" :key="image.id">
-                      <a :href="imageUrl(image.sha256)" target="_blank" rel="noreferrer"
-                        :aria-label="`查看 ${image.label} 原图，PDF 第 ${image.page} 页`">
-                        <img :src="imageUrl(image.sha256)" :alt="`${image.label}，PDF 第 ${image.page} 页原图`" loading="lazy" />
-                      </a>
-                      <figcaption>{{ image.label }} · PDF 第 {{ image.page }} 页 · 点击查看原图</figcaption>
-                    </figure>
-                  </div>
-                  <details v-if="(c.source_chunks?.length ?? 0) > 1" class="lit-parts">
-                    <summary>查看引用的原文组成（{{ c.source_chunks?.length }} 段）</summary>
-                    <div v-for="part in c.source_chunks" :key="part.chunk_id">
-                      <small>PDF 第 {{ pageRange(part.page_start, part.page_end) }} 页</small>
-                      <EvidenceExcerpt :text="part.text" />
-                    </div>
-                  </details>
-                </div>
-              </div>
-              <button
-                v-if="tallCites.has(c.ref)"
-                type="button"
-                class="lit-cite-toggle"
-                :aria-expanded="openCites.has(c.ref)"
-                :aria-controls="`literature-excerpt-${c.ref.slice(1, -1)}`"
-                @click="toggleCite(c.ref)"
-              >
-                <ChevronDown :size="14" aria-hidden="true" />{{ toggleLabel(c) }}
-              </button>
-            </li>
-          </ol>
-        </section>
+        <LiteratureCitations ref="citationsPanel" :citations="answer.citations" :selected="selected" />
       </section>
     </div>
 
@@ -526,61 +375,12 @@ load();
       @select="openRecord"
     />
 
-    <details v-if="!loading && !loadError" class="card lit-library" open>
-      <summary>
-        <span class="lit-title">当前文献库</span>
-        <span class="lit-badge">{{ documents.length }} 篇文献</span>
-        <ChevronDown class="lit-chevron" :size="17" aria-hidden="true" />
-      </summary>
-      <p class="lit-sub">
-        {{
-          enabled
-            ? "可查询以下文献及平台实验数据；不检索互联网。回答分别标注文献与实验数据来源。"
-            : "文献问答尚未启用，请先配置文献库和模型服务。"
-        }}
-      </p>
-      <ol v-if="documents.length" class="lit-docs">
-        <li
-          v-for="(doc, i) in documents"
-          :key="doc.id"
-          v-tilt
-          class="lit-doc"
-          :class="`n${(i % 3) + 1}`"
-          :style="{ '--p': pageShare(doc).toFixed(3) }"
-        >
-          <span class="lit-spine" aria-hidden="true"></span>
-          <span class="lit-doc-no" aria-hidden="true">No. {{ String(i + 1).padStart(2, "0") }}</span>
-          <strong class="lit-doc-name">{{ doc.filename }}</strong>
-          <span class="lit-doc-foot">
-            <span class="lit-doc-meta"
-              ><span class="nw">{{ doc.page_count }} 页 ·</span> <span class="nw">{{ doc.chunk_count }} 个文本片段</span></span
-            >
-            <a
-              class="lit-doc-link"
-              :href="pdf(doc.id)"
-              target="_blank"
-              rel="noopener"
-              :aria-label="`阅读原文 ${doc.filename}`"
-              >阅读原文<ExternalLink :size="13" aria-hidden="true"
-            /></a>
-          </span>
-        </li>
-      </ol>
-      <p v-if="enabled && !documents.length" class="lit-sub">
-        暂无已完成导入的文献，请先补充文献。
-      </p>
-    </details>
+    <LiteratureLibrary v-if="!loading && !loadError" :documents="documents" :enabled="enabled" />
   </div>
 </template>
 
 <style scoped>
-/* =================================================================== page grid
-   polarized (v1 .lit-grid): main column + 360px side (history over library)
-   garden (v4 bento): ask + answer (2/3) beside history (1/3), library full width below
-   The side blocks never share rows with the main column: .lit-main spans both side rows,
-   and the last row is 1fr, so the history keeps its own height. */
 .literature-page {
-  --lit-preview: 190px;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 18px;
@@ -631,15 +431,12 @@ load();
   grid-row: 3;
 }
 
-/* =================================================================== shared card parts */
 .lit-ask,
-.lit-answer,
-.lit-library {
+.lit-answer {
   padding: 22px;
 }
 :root[data-mode="garden"] .lit-ask,
-:root[data-mode="garden"] .lit-answer,
-:root[data-mode="garden"] .lit-library {
+:root[data-mode="garden"] .lit-answer {
   padding: 22px 24px;
 }
 .lit-head {
@@ -648,8 +445,7 @@ load();
   align-items: baseline;
   gap: 6px 12px;
 }
-.lit-head h2,
-.lit-title {
+.lit-head h2 {
   font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -658,8 +454,7 @@ load();
 .lit-head h2 label {
   cursor: text;
 }
-:root[data-mode="garden"] .lit-head h2,
-:root[data-mode="garden"] .lit-title {
+:root[data-mode="garden"] .lit-head h2 {
   font-size: 19px;
   font-weight: 500;
   letter-spacing: 0.03em;
@@ -694,7 +489,6 @@ load();
   white-space: nowrap;
 }
 
-/* =================================================================== states */
 .lit-state {
   padding: 26px 22px;
   text-align: center;
@@ -731,8 +525,6 @@ p.lit-state {
 .lit-error p {
   color: var(--text);
 }
-/* asking: an indeterminate interference bar (polarized) or three pulsing stain dots (garden).
-   Nothing here pretends to know how far along the answer is. */
 .lit-progress {
   position: relative;
   overflow: hidden;
@@ -755,12 +547,8 @@ p.lit-state {
   animation: lit-scan 1.6s var(--ease) infinite;
 }
 @keyframes lit-scan {
-  from {
-    translate: -100% 0;
-  }
-  to {
-    translate: 270% 0;
-  }
+  from { translate: -100% 0; }
+  to { translate: 270% 0; }
 }
 :root[data-mode="polarized"] .lit-progress-bar {
   display: block;
@@ -790,10 +578,7 @@ p.lit-state {
   animation-delay: 0.4s;
 }
 @keyframes lit-pulse {
-  to {
-    opacity: 0.35;
-    scale: 0.8;
-  }
+  to { opacity: 0.35; scale: 0.8; }
 }
 :root[data-mode="garden"] .lit-thinking {
   display: flex;
@@ -802,7 +587,6 @@ p.lit-state {
   display: none;
 }
 
-/* =================================================================== ask */
 .lit-askbox {
   margin-top: 14px;
 }
@@ -838,15 +622,12 @@ p.lit-state {
 .lit-submit {
   flex-shrink: 0;
 }
-/* v1 .ask-box: one dark well holding the textarea and its counter row */
 :root[data-mode="polarized"] .lit-askbox {
   padding: 4px;
   border: 1px solid var(--line);
   border-radius: 14px;
   background: color-mix(in srgb, var(--bg) 62%, transparent);
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 :root[data-mode="polarized"] .lit-askbox:hover {
   border-color: var(--line-strong);
@@ -866,7 +647,6 @@ p.lit-state {
 :root[data-mode="polarized"] .lit-askrow {
   padding: 6px 6px 6px 12px;
 }
-/* v4 .textarea: a soft glass well; the counter and button sit under it */
 :root[data-mode="garden"] .lit-askbox textarea {
   padding: 16px 18px;
   border: 0;
@@ -902,11 +682,7 @@ p.lit-state {
   line-height: 1.5;
   text-align: left;
   color: var(--text-2);
-  transition:
-    color 0.18s,
-    border-color 0.18s,
-    background 0.2s,
-    transform 0.3s var(--spring);
+  transition: color 0.18s, border-color 0.18s, background 0.2s, transform 0.3s var(--spring);
 }
 :root[data-mode="polarized"] .lit-try button {
   border: 1px solid var(--line);
@@ -926,7 +702,6 @@ p.lit-state {
   transform: translateY(-2px);
 }
 
-/* =================================================================== answer */
 .lit-q {
   margin: 14px 0 12px;
   font-size: 14.5px;
@@ -934,14 +709,12 @@ p.lit-state {
   color: var(--text);
   overflow-wrap: anywhere;
 }
-/* v1 .ans-q: quoted question with a cyan rule */
 :root[data-mode="polarized"] .lit-q {
   padding: 14px 16px;
   border-radius: 12px;
   border-left: 2px solid var(--accent);
   background: color-mix(in srgb, var(--text) 3.5%, transparent);
 }
-/* v4 .qbubble: a speech bubble */
 :root[data-mode="garden"] .lit-q {
   padding: 14px 18px;
   border-radius: 22px 22px 22px 6px;
@@ -1066,10 +839,7 @@ p.lit-state {
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1;
-  transition:
-    background 0.2s,
-    color 0.2s,
-    transform 0.3s var(--spring);
+  transition: background 0.2s, color 0.2s, transform 0.3s var(--spring);
 }
 :root[data-mode="polarized"] .lit-ref {
   border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
@@ -1119,482 +889,6 @@ p.lit-state {
   font-size: 13px;
 }
 
-/* =================================================================== citations */
-.lit-cites {
-  margin-top: 22px;
-  padding-top: 18px;
-  border-top: 1px solid var(--line-soft);
-}
-.lit-cites > h3 {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-size: 14px;
-  color: var(--text);
-}
-:root[data-mode="garden"] .lit-cites > h3 {
-  font-size: 17px;
-}
-.lit-cites-n {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--text-3);
-}
-.lit-cites ol {
-  list-style: none;
-  margin: 12px 0 0;
-  padding: 0;
-  display: grid;
-  gap: 10px;
-}
-.lit-cite {
-  --k: var(--line-strong);
-  --k-tint: var(--surface-2);
-  --k-ink: var(--text-2);
-  min-width: 0;
-  padding: 14px;
-  border-radius: 12px;
-  scroll-margin: calc(var(--chrome-top) + 16px) 0 calc(var(--chrome-bottom) + 16px);
-  transition:
-    border-color 0.3s,
-    background 0.3s,
-    box-shadow 0.4s;
-}
-.lit-cite:focus-visible {
-  outline: 2.5px solid var(--focus);
-  outline-offset: 3px;
-}
-/* kind identity: database (v1 gold edge / v4 green badge), paper text and figures (v1
-   magenta edge / v4 neutral badge), arithmetic */
-:root[data-mode="polarized"] .lit-cite.k-db {
-  --k: color-mix(in srgb, var(--warn) 55%, transparent);
-  --k-ink: var(--warn);
-}
-:root[data-mode="polarized"] .lit-cite:is(.k-paper, .k-image) {
-  --k: color-mix(in srgb, var(--bl) 55%, transparent);
-  --k-ink: var(--bl-ink);
-}
-:root[data-mode="garden"] .lit-cite.k-db {
-  --k-tint: var(--ok-tint);
-  --k-ink: var(--ok);
-}
-:root[data-mode="garden"] .lit-cite:is(.k-paper, .k-image) {
-  --k-tint: var(--accent-tint);
-  --k-ink: var(--text-2);
-}
-:root[data-mode="garden"] .lit-cite.k-calc {
-  --k-tint: var(--warn-tint);
-  --k-ink: var(--warn);
-}
-:root[data-mode="polarized"] .lit-cite {
-  border: 1px solid var(--line-soft);
-  background: color-mix(in srgb, var(--text) 2%, transparent);
-}
-:root[data-mode="polarized"] .lit-cite.hl {
-  border-color: color-mix(in srgb, var(--accent) 80%, transparent);
-  background: color-mix(in srgb, var(--accent) 6%, transparent);
-}
-:root[data-mode="garden"] .lit-cite {
-  padding: 14px 16px;
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--surface-2) 70%, transparent);
-  box-shadow: inset 0 0 0 1px var(--surface);
-}
-:root[data-mode="garden"] .lit-cite.hl {
-  background: var(--surface);
-  box-shadow:
-    inset 0 0 0 2px var(--bl),
-    0 16px 30px -18px color-mix(in srgb, var(--bl-ink) 60%, transparent);
-}
-.lit-cite-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 10px;
-  font-size: 13px;
-}
-.lit-cite-n {
-  font-family: var(--font-mono);
-  font-weight: 500;
-  color: var(--accent-ink);
-}
-:root[data-mode="garden"] .lit-cite-n {
-  color: var(--bl-ink);
-}
-.lit-kind {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 1px 8px;
-  border-radius: 999px;
-  font-size: 11.5px;
-  white-space: nowrap;
-  color: var(--text-2);
-}
-:root[data-mode="polarized"] .lit-kind {
-  border: 1px solid var(--k);
-}
-:root[data-mode="garden"] .lit-kind {
-  padding: 2px 10px;
-  font-size: 12px;
-  background: var(--k-tint);
-  color: var(--k-ink);
-}
-:root[data-mode="garden"] .lit-kind::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
-.lit-cite-head h4 {
-  flex: 1 1 180px;
-  min-width: 0;
-  margin: 0;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text);
-  overflow-wrap: anywhere;
-}
-.lit-cite.k-db h4 {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-}
-.lit-cite-page {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-3);
-  white-space: nowrap;
-}
-.lit-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12.5px;
-  white-space: nowrap;
-  color: var(--accent-ink);
-  border-radius: var(--radius-xs);
-}
-.lit-link:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-:root[data-mode="garden"] .lit-link {
-  color: var(--bl-ink);
-  font-weight: 500;
-}
-.lit-cite-body {
-  position: relative;
-  margin-top: 10px;
-  min-width: 0;
-}
-.lit-cite-body.collapsed {
-  max-height: var(--lit-preview);
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(180deg, currentColor 62%, transparent);
-  mask-image: linear-gradient(180deg, currentColor 62%, transparent);
-}
-.lit-cite-inner {
-  min-width: 0;
-  font-size: 13px;
-  line-height: 1.75;
-  color: var(--text-2);
-}
-.lit-cite-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 8px;
-  min-height: 32px;
-  padding: 0 12px;
-  border-radius: 999px;
-  font-size: 12.5px;
-  color: var(--text);
-}
-.lit-cite-toggle svg {
-  transition: transform 0.25s var(--ease);
-}
-.lit-cite-toggle[aria-expanded="true"] svg {
-  transform: rotate(180deg);
-}
-:root[data-mode="polarized"] .lit-cite-toggle {
-  border: 1px solid var(--line-strong);
-  background: color-mix(in srgb, var(--text) 3%, transparent);
-}
-:root[data-mode="polarized"] .lit-cite-toggle:hover {
-  background: color-mix(in srgb, var(--text) 8%, transparent);
-}
-:root[data-mode="garden"] .lit-cite-toggle {
-  background: color-mix(in srgb, var(--surface) 80%, transparent);
-  box-shadow: inset 0 0 0 1px var(--surface), var(--shadow-sm);
-}
-:root[data-mode="garden"] .lit-cite-toggle:hover {
-  background: var(--surface);
-}
-.lit-images {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-  gap: 16px;
-  margin: 12px 0;
-}
-.lit-images figure {
-  margin: 0;
-  min-width: 0;
-}
-.lit-images a {
-  display: block;
-  border-radius: var(--radius-xs);
-}
-.lit-images img {
-  display: block;
-  width: 100%;
-  max-height: 360px;
-  object-fit: contain;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-xs);
-}
-.lit-images figcaption {
-  margin-top: 8px;
-  font-size: 12px;
-  color: var(--text-3);
-}
-.lit-parts {
-  margin-top: 12px;
-}
-.lit-parts summary {
-  width: fit-content;
-  cursor: pointer;
-  font-size: 12.5px;
-  color: var(--text-2);
-  border-radius: var(--radius-xs);
-}
-.lit-parts summary:hover {
-  color: var(--text);
-}
-.lit-parts > div {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid var(--line-soft);
-}
-.lit-parts small {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  color: var(--text-3);
-}
-
-/* =================================================================== library */
-.lit-library {
-  container-type: inline-size;
-}
-.lit-library summary {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px 12px;
-  padding-right: 30px;
-  cursor: pointer;
-  list-style: none;
-  border-radius: var(--radius-xs);
-}
-.lit-library summary::-webkit-details-marker {
-  display: none;
-}
-.lit-chevron {
-  position: absolute;
-  right: 0;
-  top: 2px;
-  color: var(--text-2);
-  transition: transform 0.25s var(--ease);
-}
-.lit-library:not([open]) .lit-chevron {
-  transform: rotate(-90deg);
-}
-.lit-library > .lit-sub {
-  margin-top: 8px;
-}
-.lit-docs {
-  list-style: none;
-  margin: 14px 0 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-.lit-doc {
-  min-width: 0;
-}
-.lit-doc-no {
-  display: none;
-}
-.lit-doc-name {
-  font-size: 12.5px;
-  font-weight: 500;
-  line-height: 1.45;
-  color: var(--text);
-  overflow-wrap: anywhere;
-}
-.lit-doc-meta {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-3);
-}
-.lit-doc-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-  font-size: 12.5px;
-}
-/* v1 .doc: a page-count spine filled with the interference gradient, name, mono meta, pill */
-:root[data-mode="polarized"] .lit-doc {
-  display: grid;
-  grid-template-columns: 8px minmax(0, 1fr) auto;
-  grid-template-areas:
-    "spine name link"
-    "spine meta link";
-  align-items: center;
-  gap: 2px 12px;
-  padding: 10px 10px 10px 8px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--text) 2.5%, transparent);
-}
-:root[data-mode="polarized"] .lit-doc-foot {
-  display: contents;
-}
-:root[data-mode="polarized"] .lit-spine {
-  grid-area: spine;
-  position: relative;
-  width: 6px;
-  height: 40px;
-  border-radius: 3px;
-  overflow: hidden;
-  background: color-mix(in srgb, var(--text) 7%, transparent);
-}
-:root[data-mode="polarized"] .lit-spine::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: calc(var(--p) * 100%);
-  background: var(--ifl);
-}
-:root[data-mode="polarized"] .lit-doc-name {
-  grid-area: name;
-  align-self: end;
-}
-:root[data-mode="polarized"] .lit-doc-meta {
-  grid-area: meta;
-  align-self: start;
-}
-:root[data-mode="polarized"] .lit-doc-link {
-  grid-area: link;
-  min-height: 32px;
-  padding: 0 12px;
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--text) 3%, transparent);
-  color: var(--text);
-  transition:
-    background 0.2s,
-    border-color 0.2s;
-}
-:root[data-mode="polarized"] .lit-doc-link:hover {
-  background: color-mix(in srgb, var(--text) 8%, transparent);
-  border-color: color-mix(in srgb, var(--text) 32%, transparent);
-}
-@container (min-width: 640px) {
-  :root[data-mode="polarized"] .lit-docs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-/* v4 .docs: glass document tiles, a stain bar as long as the page count, "No. 01" */
-:root[data-mode="garden"] .lit-docs {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-:root[data-mode="garden"] .lit-doc {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-height: 160px;
-  padding: 16px;
-  border-radius: 22px;
-  background: linear-gradient(
-    160deg,
-    color-mix(in srgb, var(--surface) 94%, transparent),
-    color-mix(in srgb, var(--surface-2) 80%, transparent)
-  );
-  box-shadow: inset 0 0 0 1px var(--surface), var(--shadow-sm);
-}
-.lit-doc.n1 {
-  --n: var(--accent);
-}
-.lit-doc.n2 {
-  --n: color-mix(in oklab, var(--accent) 78%, var(--surface));
-}
-.lit-doc.n3 {
-  --n: color-mix(in oklab, var(--accent) 62%, var(--surface));
-}
-:root[data-mode="garden"] .lit-spine {
-  display: block;
-  width: calc(var(--p) * 100%);
-  height: 6px;
-  border-radius: 9px;
-  background: var(--n);
-}
-:root[data-mode="garden"] .lit-doc-no {
-  display: block;
-  font-family: var(--font-display), var(--font-body);
-  font-style: italic;
-  font-variation-settings: "SOFT" 100, "WONK" 1;
-  font-size: 12.5px;
-  color: var(--text-2);
-}
-:root[data-mode="garden"] .lit-doc-name {
-  flex: 1;
-  font-size: 13px;
-  line-height: 1.5;
-}
-:root[data-mode="garden"] .lit-doc-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px 8px;
-}
-:root[data-mode="garden"] .lit-doc-meta {
-  font-size: 12px;
-  color: var(--text-2);
-}
-:root[data-mode="garden"] .lit-doc-link {
-  padding: 2px 0;
-  font-weight: 500;
-  color: var(--bl-ink);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--bl-ink) 30%, transparent);
-  text-underline-offset: 3px;
-}
-:root[data-mode="garden"] .lit-doc-link:hover {
-  text-decoration-color: currentColor;
-}
-@container (max-width: 900px) {
-  :root[data-mode="garden"] .lit-docs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@container (max-width: 460px) {
-  :root[data-mode="garden"] .lit-docs {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  :root[data-mode="garden"] .lit-doc {
-    min-height: 0;
-  }
-}
-
-/* =================================================================== garden hero signature (v4 literatureSig) */
 .lit-sig {
   position: relative;
   margin: 0;
@@ -1625,38 +919,21 @@ p.lit-state {
   font-weight: 500;
   color: var(--text);
 }
-.sig-spine.n1 {
-  --n: var(--accent);
-}
-.sig-spine.n2 {
-  --n: color-mix(in oklab, var(--accent) 78%, var(--surface));
-}
-.sig-spine.n3 {
-  --n: color-mix(in oklab, var(--accent) 62%, var(--surface));
-}
+.sig-spine.n1 { --n: var(--accent); }
+.sig-spine.n2 { --n: color-mix(in oklab, var(--accent) 78%, var(--surface)); }
+.sig-spine.n3 { --n: color-mix(in oklab, var(--accent) 62%, var(--surface)); }
 .sig-spine rect {
   fill: var(--n);
   transform-box: fill-box;
   transform-origin: 50% 100%;
   animation: lit-grow 0.9s var(--spring) backwards;
 }
-.sig-spine:nth-child(2) rect {
-  animation-delay: 0.05s;
-}
-.sig-spine:nth-child(3) rect {
-  animation-delay: 0.1s;
-}
-.sig-spine:nth-child(4) rect {
-  animation-delay: 0.15s;
-}
-.sig-spine:nth-child(n + 5) rect {
-  animation-delay: 0.2s;
-}
+.sig-spine:nth-child(2) rect { animation-delay: 0.05s; }
+.sig-spine:nth-child(3) rect { animation-delay: 0.1s; }
+.sig-spine:nth-child(4) rect { animation-delay: 0.15s; }
+.sig-spine:nth-child(n + 5) rect { animation-delay: 0.2s; }
 @keyframes lit-grow {
-  from {
-    scale: 1 0.2;
-    opacity: 0;
-  }
+  from { scale: 1 0.2; opacity: 0; }
 }
 .sig-spine line {
   stroke: var(--surface);
@@ -1682,9 +959,6 @@ p.lit-state {
   fill: var(--text-2);
 }
 
-/* =================================================================== responsive
-   One column: the main column's blocks join the page grid (display: contents), so the
-   history can sit between the question and the answer (v4 bento order). */
 @media (max-width: 1100px) {
   :root[data-mode="polarized"] .literature-page {
     grid-template-columns: minmax(0, 1fr);
@@ -1699,20 +973,12 @@ p.lit-state {
     grid-column: 1;
     grid-row: auto;
   }
-  :root[data-mode="polarized"] .lit-ask {
-    order: 1;
-  }
-  :root[data-mode="polarized"] .lit-history {
-    order: 2;
-  }
+  :root[data-mode="polarized"] .lit-ask { order: 1; }
+  :root[data-mode="polarized"] .lit-history { order: 2; }
   :root[data-mode="polarized"] .lit-progress,
   :root[data-mode="polarized"] .lit-error,
-  :root[data-mode="polarized"] .lit-answer {
-    order: 3;
-  }
-  :root[data-mode="polarized"] .lit-library {
-    order: 4;
-  }
+  :root[data-mode="polarized"] .lit-answer { order: 3; }
+  :root[data-mode="polarized"] .lit-library { order: 4; }
 }
 @media (max-width: 980px) {
   :root[data-mode="garden"] .literature-page {
@@ -1727,20 +993,12 @@ p.lit-state {
     grid-column: 1;
     grid-row: auto;
   }
-  :root[data-mode="garden"] .lit-ask {
-    order: 1;
-  }
-  :root[data-mode="garden"] .lit-history {
-    order: 2;
-  }
+  :root[data-mode="garden"] .lit-ask { order: 1; }
+  :root[data-mode="garden"] .lit-history { order: 2; }
   :root[data-mode="garden"] .lit-progress,
   :root[data-mode="garden"] .lit-error,
-  :root[data-mode="garden"] .lit-answer {
-    order: 3;
-  }
-  :root[data-mode="garden"] .lit-library {
-    order: 4;
-  }
+  :root[data-mode="garden"] .lit-answer { order: 3; }
+  :root[data-mode="garden"] .lit-library { order: 4; }
 }
 @media (max-width: 720px) {
   .literature-page {
@@ -1748,15 +1006,12 @@ p.lit-state {
   }
   .lit-ask,
   .lit-answer,
-  .lit-library,
   :root[data-mode="garden"] .lit-ask,
-  :root[data-mode="garden"] .lit-answer,
-  :root[data-mode="garden"] .lit-library {
+  :root[data-mode="garden"] .lit-answer {
     padding: 18px 16px;
   }
   :root[data-mode="garden"] .lit-ask,
   :root[data-mode="garden"] .lit-answer,
-  :root[data-mode="garden"] .lit-library,
   :root[data-mode="garden"] .lit-state {
     border-radius: 24px;
   }
@@ -1766,13 +1021,6 @@ p.lit-state {
   .lit-body {
     font-size: 14.5px;
     line-height: 1.9;
-  }
-  .lit-cite,
-  :root[data-mode="garden"] .lit-cite {
-    padding: 12px;
-  }
-  .lit-fields > div {
-    grid-template-columns: minmax(0, 1fr);
   }
   .lit-sig {
     width: 100%;

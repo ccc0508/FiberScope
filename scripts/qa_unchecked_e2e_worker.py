@@ -15,7 +15,7 @@ from literature_rag.domain.models import GeneratedAnswer,GeneratedClaim,Citation
 from literature_rag.application.citations import ValidatedAnswer
 from literature_rag.application import answer_question,corrective_review
 from literature_rag.adapters.providers import evidence_review as provider
-from literature_rag.application import review_diagnosis_unified as contract
+from literature_rag.application import review_diagnosis as contract
 from literature_rag.diagnostics import combined_usage
 
 def parse_raw(content,**kwargs):
