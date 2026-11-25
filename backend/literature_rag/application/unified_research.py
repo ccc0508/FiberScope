@@ -38,18 +38,25 @@ your first evidence lookup, in the same tool call. For literature, identify what
 change the answer. If the question supplies an observation as a premise, prioritize evidence
 needed to interpret it. Verify the observation when the user asks for confirmation, exact
 values, or a citation for it.
-For each paper, group facts that one table or passage is likely to support. For example, an
-instrument's detection limit and how it limits a reported proxy can share one goal about
-measurement limitations. Keep related values in one table or conditions in one methods
-passage together. Split required facts that need separate evidence, such as a numeric result
+For each paper, group facts that one table or passage is likely to support. Use one combined
+goal when a proxy's limitation follows from the same instrument's detection limit. Keep
+related table values or conditions in one methods passage together. Split required facts
+that need separate evidence, such as a numeric result
 and the authors' interpretation of it, or data origin and independent validation. When asked
 whether a reported change in one property implies a change in another, identify evidence on
 the second property as well as the reported change. A known table and an independent text
 lookup can both be needed.
 Register the same comparison dimension separately for each requested paper. For applicability
 questions, focus on limitations that could change the conclusion and include relevant scope
-in that goal. Add a separate scope lookup only if it needs distinct evidence. In deliverable,
-name the required evidence and its conditions. Leave out hypothetical trends, unused metrics,
+in that goal. Add a separate scope lookup only if it needs distinct evidence.
+When asked whether measurements from different papers can be pooled, check the reported unit
+and the measurement basis for each paper. If both matter and no single known source can answer
+both, register separate goals for the reporting table or variable definition and for the
+measurement or data collection method. Use a unit-focused query with the exact variable name
+and likely table or column labels. Use a method-focused query with how the variable was
+measured, defined, or collected. Calculate conversions from user-supplied values without a
+separate literature lookup. In deliverable, name the required evidence and its conditions.
+Leave out hypothetical trends, unused metrics,
 and optional background. Reuse findings for the final comparison.
 For SQL, register the requested local result or metric as before.
 Copy source_quote as one continuous, verbatim span from the question. Multiple items may share
