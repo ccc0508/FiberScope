@@ -1,6 +1,7 @@
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from json import dumps
+import sqlite3
 from threading import Event, Lock
 from time import monotonic, sleep
 from types import SimpleNamespace
@@ -229,16 +230,30 @@ def test_manifest_captures_context_budget_and_vector_index(monkeypatch, tmp_path
 
     index = tmp_path / "chroma"
     index.mkdir()
-    (index / "chroma.sqlite3").write_bytes(b"version A")
+    database = index / "chroma.sqlite3"
+    with sqlite3.connect(database) as db:
+        db.execute("CREATE TABLE acquire_write (id INTEGER PRIMARY KEY)")
+        db.execute("CREATE TABLE embeddings_queue (id TEXT PRIMARY KEY, vector BLOB)")
+        db.execute("INSERT INTO embeddings_queue VALUES ('chunk-a', X'0102')")
+    vector_file = index / "data.bin"
+    vector_file.write_bytes(b"version A")
     config = SimpleNamespace(library_root=tmp_path, agent_architecture="single", timeout_seconds=370)
     monkeypatch.setenv("RAG_CONTEXT_MAX_TOTAL_CHARS", "24000")
     first = runtime_manifest(config)
+    with sqlite3.connect(database) as db:
+        db.execute("INSERT INTO acquire_write VALUES (1)")
+    assert runtime_manifest(config) == first
+
     monkeypatch.setenv("RAG_CONTEXT_MAX_TOTAL_CHARS", "40000")
-    (index / "chroma.sqlite3").write_bytes(b"version B")
+    with sqlite3.connect(database) as db:
+        db.execute("UPDATE embeddings_queue SET vector = X'0103' WHERE id = 'chunk-a'")
     second = runtime_manifest(config)
     assert second["configuration"]["RAG_CONTEXT_MAX_TOTAL_CHARS"] == "40000"
     assert first["configuration"] != second["configuration"]
     assert first["library"]["chroma/chroma.sqlite3"] != second["library"]["chroma/chroma.sqlite3"]
+    assert first["library"]["chroma/data.bin"] == second["library"]["chroma/data.bin"]
+    vector_file.write_bytes(b"version B")
+    assert runtime_manifest(config)["library"]["chroma/data.bin"] != second["library"]["chroma/data.bin"]
 
 
 def test_migration_counts_failed_deepseek_calls_and_skips_reused_history(tmp_path):
