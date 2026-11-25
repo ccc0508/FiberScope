@@ -19,7 +19,9 @@ from filelock import FileLock, Timeout
 from pydantic import BaseModel, ConfigDict, Field
 
 from .agent_answer import run_agent_answer
-from .evaluation_catalog import GROUPS, ROOT, cases, database_snapshot, fingerprint, read_json, runtime_manifest
+from .evaluation_catalog import (
+    GROUPS, ROOT, cases, database_snapshot, fingerprint, read_json, runtime_manifest, runtime_matches,
+)
 from .literature import LiteratureSettings
 from literature_rag.application.tools import encode
 
@@ -303,7 +305,7 @@ class EvaluationQueue:
             spec = json.loads(row["spec"])
             frozen = json.loads(row["manifest"])
             manifest = runtime_manifest(config)
-            if any(frozen.get(key) != manifest.get(key) for key in manifest):
+            if not runtime_matches(frozen, manifest):
                 raise ValueError("Agent 或文献索引发生变化。请新建评测。")
             snapshot = json.loads(row["snapshot"]) if row["snapshot"] else None
             if spec["group"] in {"sql", "mixed"} and not row["answer"]:

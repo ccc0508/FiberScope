@@ -172,6 +172,52 @@ def test_new_evaluation_worker_takes_over_after_old_owner_exits(monkeypatch, tmp
         new.close()
 
 
+@pytest.mark.parametrize(("old_commit", "old_hash"), [
+    ("24eda96694c2020506681437d4b5e1f97387bbfa", "659ccc89e67da55c4b31eb4b5c8fd90d2b3fe1a351efa4739f0593f2951cdcc5"),
+    (None, "659ccc89e67da55c4b31eb4b5c8fd90d2b3fe1a351efa4739f0593f2951cdcc5"),
+    (None, "eefa5c09213d5a14a1a0a5bb627d61111e55e4d0b915c7faacbac694b7993275"),
+])
+@pytest.mark.parametrize("changes", [
+    {},
+    {"runtime_hash": "f" * 64},
+    {"configuration": {"RAG_LLM_MODEL": "different-model"}},
+    {"library": {"metadata.sqlite3": "changed-index"}},
+], ids=["scheduler-only", "other-code", "model", "index"])
+def test_queued_case_survives_only_compatible_runtime_upgrade(monkeypatch, tmp_path, old_commit, old_hash, changes):
+    config = LiteratureSettings(data_dir=tmp_path)
+    current = dict(commit="upgraded-checkout" if old_commit else None,
+                   runtime_hash="5a8d1a5e830dccaf66c7cd9cf0ed487452b29ac95a78e75112f5890e4984b794",
+                   configuration={"RAG_LLM_MODEL": "original-model"}, library={})
+    frozen = dict(current, commit=old_commit, runtime_hash=old_hash)
+    spec = dict(id="case", group="non_paper", category="daily", question="question",
+                prompt="question", reference={})
+    old = EvaluationQueue(config)
+    old.initialize()
+    with monkeypatch.context() as patch:
+        patch.setattr("app.evaluation.runtime_manifest", lambda _: frozen)
+        batch = old.create([spec])
+
+    current.update(changes)
+    monkeypatch.setattr("app.evaluation.runtime_manifest", lambda _: current)
+    answers = []
+
+    def answer(config, question, *, run_id):
+        answers.append(question)
+        return dict(agent_run=dict(status="completed", answer="saved"), agent_evidence=[], agent_tool_trace=[])
+
+    upgraded = EvaluationQueue(config, answer=answer)
+    monkeypatch.setattr(upgraded, "grade", lambda *_: {"score": 90})
+    with upgraded.db() as db:
+        row = db.execute("""SELECT e.*, b.manifest, b.snapshot FROM evaluations e
+            JOIN batches b ON b.id=e.batch WHERE e.batch=?""", (batch,)).fetchone()
+    assert row["status"] == "queued"
+    upgraded.run_case(row)
+    result = upgraded.detail(batch)
+    assert result["manifest"]["runtime_hash"] == frozen["runtime_hash"]
+    assert result["cases"][0]["status"] == ("setup_failed" if changes else "scored")
+    assert answers == ([] if changes else ["question"])
+
+
 @pytest.mark.parametrize("mismatch", [False, True])
 def test_sql_verification_keeps_saved_answer_and_usage(monkeypatch, tmp_path, mismatch):
     version = {"commit": "answer-version"}
