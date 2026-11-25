@@ -30,17 +30,9 @@ async function run() {
 
     // Mode switching (polarized -> garden -> polarized)
     await page.locator(".mode-switch").getByRole("radio", { name: "花园" }).click();
-    assert.equal(
-      await page.evaluate(() => document.documentElement.dataset.mode),
-      "garden",
-      "Failed to switch to garden mode",
-    );
+    await page.locator('html[data-mode="garden"]').waitFor({ state: "attached" });
     await page.locator(".mode-switch").getByRole("radio", { name: "偏光" }).click();
-    assert.equal(
-      await page.evaluate(() => document.documentElement.dataset.mode),
-      "polarized",
-      "Failed to switch back to polarized mode",
-    );
+    await page.locator('html[data-mode="polarized"]').waitFor({ state: "attached" });
 
     // 2. Beating curve + table
     await page.goto(`${BASE_URL}/beating`, { waitUntil: "networkidle" });

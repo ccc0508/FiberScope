@@ -1,15 +1,20 @@
 """Isolated experiment: real retrieval/generation, unchecked review proposals.
 
-Only imported by the private evaluation worker, never by the website.
+Run as a private evaluation worker. Importing it does not enable the experiment.
 """
 import sys
 from pathlib import Path
-sys.path.insert(0,str(Path(__file__).resolve().parent))
+
+if __name__ == '__main__':
+    script_dir = Path(__file__).resolve().parent
+    sys.path[:0] = [str(script_dir), str(script_dir.parent / 'backend')]
+
 import json
 from dataclasses import asdict
 from copy import deepcopy
 from time import perf_counter
 from types import SimpleNamespace
+from unittest.mock import patch
 from replay_review_no_validation import apply_unchecked
 from literature_rag.domain.models import GeneratedAnswer,GeneratedClaim,Citation
 from literature_rag.application.citations import ValidatedAnswer
@@ -23,8 +28,6 @@ def parse_raw(content,**kwargs):
     if not isinstance(obj,dict) or not isinstance(obj.get('issues'),list):
         raise ValueError('Missing executable issue array')
     return SimpleNamespace(raw=obj,_parse_errors=[],_mechanical_repairs=[])
-contract.parse_response=parse_raw
-provider.DeepSeekEvidenceReviewer._complete_comparisons=lambda *a,**k:None
 
 class UncheckedSerializer:
     def validate(self,draft,evidences,**kwargs):
@@ -32,8 +35,6 @@ class UncheckedSerializer:
         return ValidatedAnswer(draft.answer,tuple(c.text+' '+' '.join(c.citation_refs) for c in draft.claims),
             tuple(Citation(e.ref,e.filename,e.page_start,e.page_end,e.chunk_id,e.source_chunks,e.visual_assets)
                   for e in evidences if e.ref in used))
-# Initial generation still uses RecordingCitationValidator; only post-review gates disabled.
-answer_question.CitationValidator=UncheckedSerializer
 
 def unchecked_review(self,question,evidences,draft):
     started=perf_counter();p=self.reviewer.provider
@@ -82,8 +83,21 @@ def unchecked_review(self,question,evidences,draft):
         latency_ms=round((perf_counter()-started)*1000))
     self.last_summary=dict(status=t['status'],notice='实验：修订未经程序内容校验',review_rounds=len(t['rounds']),supplement_rounds=t['supplement_rounds'])
     return final
-corrective_review.CorrectiveReviewService.review=unchecked_review
 
-if __name__=='__main__':
+
+def main():
     import literature_worker
-    literature_worker.main()
+
+    # These replacements are only active for the experimental worker invocation.
+    # Initial generation still uses RecordingCitationValidator.
+    with (
+        patch.object(contract, 'parse_response', parse_raw),
+        patch.object(provider.DeepSeekEvidenceReviewer, '_complete_comparisons', return_value=None),
+        patch.object(answer_question, 'CitationValidator', UncheckedSerializer),
+        patch.object(corrective_review.CorrectiveReviewService, 'review', unchecked_review),
+    ):
+        literature_worker.run_cli()
+
+
+if __name__ == '__main__':
+    main()

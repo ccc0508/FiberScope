@@ -44,7 +44,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends postgresql-client
           python -m pip install --upgrade pip
-          pip install -r backend/requirements.txt -r backend/requirements-parsing-review.txt -r database/importer/requirements.txt
+          # MinerU tests use pypdf to generate PDF fixtures.
+          pip install -r backend/requirements.txt -r backend/requirements-parsing-review.txt -r database/importer/requirements.txt pypdf==6.21.3
 
       - name: Initialize PostgreSQL schema, migrations, and Excel imports
         run: |
@@ -57,7 +58,7 @@ jobs:
       - name: Run backend test suite (including real PostgreSQL integration tests)
         env:
           TEST_DB_ENV: ${{ github.workspace }}/.ci/app.env
-        run: python -m pytest -q -c backend/pytest.ini
+        run: python -m pytest -q -c backend/pytest.ini backend/tests scripts
 
   frontend:
     runs-on: ubuntu-latest

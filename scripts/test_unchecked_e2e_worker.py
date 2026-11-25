@@ -4,9 +4,36 @@ from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'backend'))
 import unittest
 from types import SimpleNamespace
+from unittest.mock import patch
 import qa_unchecked_e2e_worker as w
 
 class UncheckedTests(unittest.TestCase):
+    def test_overrides_are_only_active_during_worker_execution(self):
+        reviewer = w.provider.DeepSeekEvidenceReviewer
+        service = w.corrective_review.CorrectiveReviewService
+
+        def bindings():
+            return (w.contract.parse_response, reviewer._complete_comparisons,
+                    w.answer_question.CitationValidator, service.review)
+
+        original = bindings()
+        self.assertIsNot(original[0], w.parse_raw)
+        self.assertIsNot(original[2], w.UncheckedSerializer)
+        self.assertIsNot(original[3], w.unchecked_review)
+
+        def fail_inside_worker():
+            self.assertIs(w.contract.parse_response, w.parse_raw)
+            self.assertIsNot(reviewer._complete_comparisons, original[1])
+            self.assertIs(w.answer_question.CitationValidator, w.UncheckedSerializer)
+            self.assertIs(service.review, w.unchecked_review)
+            raise RuntimeError('simulated worker failure')
+
+        worker = SimpleNamespace(run_cli=fail_inside_worker)
+        with patch.dict(sys.modules, {'literature_worker': worker}):
+            with self.assertRaisesRegex(RuntimeError, 'simulated worker failure'):
+                w.main()
+        self.assertEqual(bindings(), original)
+
     def test_accepts_unknown_review_fields_and_labels(self):
         p=w.parse_raw('{"issues":[],"units":"invalid","type":"unexpected"}')
         self.assertEqual(p.raw['units'],'invalid')

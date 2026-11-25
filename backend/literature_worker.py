@@ -253,7 +253,7 @@ def main(body):
                       'retrieved_evidence': [asdict(e) for e in evidence_by_chunk.values()]}, ensure_ascii=False))
 
 
-if __name__ == '__main__':
+def run_cli():
     body = None
     try:
         body = json.loads(sys.stdin.read())
@@ -273,3 +273,7 @@ if __name__ == '__main__':
         else:
             print(type(error).__name__, file=sys.stderr)
         sys.exit(1)
+
+
+if __name__ == '__main__':
+    run_cli()
