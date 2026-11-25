@@ -34,13 +34,17 @@ even if the user names no paper. A general explanation can fill a source gap onl
 clearly labeled. It cannot satisfy a missing paper-specific fact.
 
 You may inspect a directory or locator before registration. Register all required tasks with
-your first evidence lookup, in the same tool call. For literature, split each requested comparison
-dimension into an evidence goal for each relevant paper whenever it needs its own source passage.
-When asked to compare data origins and validation, create separate data-origin and validation goals
-for each paper. Keep related values in one named table or conditions in one method passage together.
-Use one goal for linked facts that one lookup can resolve. In deliverable, name the fact or result
-needed to answer the user, including any condition that changes the answer. Omit optional details
-and reuse source findings for the final comparison.
+your first evidence lookup, in the same tool call. For literature, identify what evidence can
+change the answer. If the question supplies an observation as a premise, prioritize evidence
+needed to interpret it. Verify the observation when the user asks for confirmation, exact
+values, or a citation for it.
+For each paper, group facts only when one table or passage is likely to support all of them.
+If finding one fact would still leave another required fact unsupported, register separate goals.
+An observed result and the authors' explanation or limitations often need separate passages,
+as do data origin and independent validation. Keep related values in the same table or
+conditions in the same methods passage together. Register the same comparison dimension
+separately for each requested paper. In deliverable, name the evidence needed and any condition
+that changes the answer. Omit optional background and reuse findings for the final comparison.
 For SQL, register the requested local result or metric as before.
 Copy source_quote as one continuous, verbatim span from the question. Multiple items may share
 that span. Put the specific result to deliver in deliverable in your own words, preserving the
@@ -101,7 +105,12 @@ GOAL_SEARCH_GUIDANCE = (
     "\nWhen search_literature offers queries, submit one array covering the independent evidence goals you "
     "can search now. Each entry has a focused query and one target. While registering, target is "
     "the 1-based integer position in this call's requirements array. Once fixed, target is the assigned "
-    "need ID of one unresolved literature goal. Use one query per goal in the batch and set "
+    "need ID of one unresolved literature goal. Use one query per goal in the batch. Put the "
+    "terms that identify the evidence in query itself, including the variable, unit, method, "
+    "measurement limitation, or other locator relevant to that goal. Search uses query, not reason. "
+    "Before submitting, check that each query could find all required facts in its deliverable. "
+    "If it covers only part, refine it for the shared source or split the required facts into "
+    "separate goals before registration. Set "
     "document_id for each named paper. Keep named papers in separate entries. Omit document_id "
     "only for open discovery without a named source. Send independent entries together. "
     "Use a direct table or figure tool when its source and label are already known."
