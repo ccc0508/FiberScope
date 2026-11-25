@@ -12,6 +12,16 @@ from evaluate_agent_eightpapers_20261105 import ROOT, RUN, LIBRARY
 OUT=RUN/'jev'
 PACK=ROOT/'fiberscope-eval-8papers-v1'
 
+
+def reference_pdf_text(library, source, pages):
+    import fitz
+
+    original = (library / source['library_relative_path']).read_bytes()
+    if sha256(original).hexdigest() != source['sha256']:
+        raise ValueError('Reference PDF differs from the benchmark source')
+    with fitz.open(stream=original, filetype='pdf') as pdf:
+        return '\n'.join(f'\n[PDF physical page {p}]\n'+pdf[p-1].get_text() for p in sorted(pages) if 1<=p<=len(pdf))
+
 def prepare(case, config, *, result=None, pack=None, library=None):
     tid=case['id'];x=j.read_json(RUN/(tid+'.json')) if result is None else result
     pack=PACK if pack is None else pack
@@ -40,14 +50,8 @@ def prepare(case, config, *, result=None, pack=None, library=None):
         cites.append(dict(ref=ref,text='UNAVAILABLE: this reference was not delivered to the answer model.',page_start=1,page_end=1,verification=dict(status='unavailable')))
     papers=[]
     for doc,nums in pages.items():
-        import fitz
-
         s=by_id[doc]
-        original = (library/s['library_relative_path']).read_bytes()
-        if sha256(original).hexdigest() != s['sha256']:
-            raise ValueError('Reference PDF differs from the benchmark source')
-        with fitz.open(stream=original, filetype='pdf') as pdf:
-            text='\n'.join(f'\n[PDF physical page {p}]\n'+pdf[p-1].get_text() for p in sorted(nums) if 1<=p<=len(pdf))
+        text=reference_pdf_text(library,s,nums)
         papers.append(dict(document_id=doc,title=s['title'],text=text,pages=sorted(nums)))
     ref=dict(question=case['question'],category=case['group'],expected_behavior=case['tool_expectation'],reference_answer=case['reference_answer'],
         key_points=[dict(id=f'K{i}',text=p,optional=False,capability='text') for i,p in enumerate(case['key_points'],1)],critical_errors=case['critical_errors'])

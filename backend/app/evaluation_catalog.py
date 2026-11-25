@@ -5,8 +5,10 @@ import json
 import os
 import sqlite3
 import subprocess
+from collections import Counter
 from contextlib import closing
 from pathlib import Path
+from typing import Literal
 
 from dotenv import dotenv_values
 from psycopg import sql
@@ -20,6 +22,7 @@ PAPERS = ROOT / "fiberscope-eval-8papers-v1"
 SQL = ROOT / "data/text-to-sql-evaluation/cases-v1.json"
 MIXED = ROOT / "data/mixed-agent-evaluation"
 GROUPS = {"literature": "文献题", "sql": "SQL 题", "mixed": "综合题", "non_paper": "日常题"}
+Suite = Literal["regression", "holdout"]
 RUBRICS = {"literature": "FS8-rubric-v2-20261106", "sql": "sql-web-v1",
            "mixed": "mixed-v1", "non_paper": "daily-web-v1"}
 
@@ -67,6 +70,38 @@ def cases():
         for row in read_json(path):
             yield dict(id=row["id"], group=group, category=row["category"], question=row["question"],
                        prompt=row["question"], reference=row)
+
+
+def holdout_cases(root):
+    manifest = read_json(root / "manifest.json")
+
+    def frozen(relative):
+        raw = (root / relative).read_bytes()
+        if hashlib.sha256(raw).hexdigest() != manifest["sha256"][relative]:
+            raise ValueError("Holdout file does not match the sealed manifest.")
+        return raw.decode("utf-8-sig")
+
+    if manifest["version"] != "fiberscope-holdout-v1":
+        raise ValueError("Unsupported Holdout version.")
+    questions = [json.loads(line) for line in frozen("answer-input/questions.jsonl").splitlines() if line.strip()]
+    gold = {row["id"]: row for row in map(json.loads, frozen("review-only/gold.jsonl").splitlines())}
+    rubric = json.loads(frozen("review-only/rubric.json"))
+    sources = {item["document_id"]: item for item in
+               json.loads(frozen("review-only/sources.json"))["source_documents"]}
+    expected = {"literature": 14, "sql": 10, "mixed": 12, "non_paper": 4}
+    if (len(questions) != 40 or len(gold) != 40 or {row["id"] for row in questions} != gold.keys()
+            or Counter(row["group"] for row in gold.values()) != expected or rubric["version"] != manifest["version"]):
+        raise ValueError("Invalid Holdout case catalog.")
+    for row in questions:
+        reference = gold[row["id"]]
+        group = reference["group"]
+        yield dict(id=row["id"], group=group, category=reference["topic"], question=row["question"],
+                   prompt=row["question"], reference=reference, holdout=dict(
+                       version=manifest["version"], fingerprint=fingerprint(manifest),
+                       rubric=dict(**rubric["scales"][group], rules=rubric["rules"]),
+                       sources={key: sources[key] for key in
+                                dict.fromkeys(item["document_id"] for item in reference["literature_evidence"])},
+                   ))
 
 
 def runtime_manifest(config):
@@ -131,10 +166,20 @@ def database_snapshot(selected):
         references = {}
         for case in selected:
             outputs = []
-            for reference in case["reference"].get("reference_sql", []):
+            gold = case["reference"]
+            frozen = gold.get("sql_references", []) if "holdout" in case else None
+            statements = [item["sql"] for item in frozen] if frozen is not None else gold.get("reference_sql", [])
+            for reference in statements:
                 query, _ = validate_sql(reference)
                 cur = db.execute(query)
                 outputs.append(dict(sql=query, columns=[col.name for col in cur.description],
                                     rows=cur.fetchall(), ordered=bool(parse_one(query, read="postgres").args.get("order"))))
+            if frozen is not None:
+                for actual, expected in zip(outputs, frozen, strict=True):
+                    rows = list(map(encode, actual["rows"]))
+                    gold_rows = list(map(encode, expected["rows"]))
+                    matches = rows == gold_rows if expected["ordered"] else Counter(rows) == Counter(gold_rows)
+                    if not matches or actual["columns"] != expected["columns"]:
+                        raise ValueError("实验数据与封存的 Holdout 参考结果不一致。")
             references[case["id"]] = outputs
     return dict(fingerprint=fingerprint(fingerprints), views=fingerprints, references=json.loads(encode(references)))

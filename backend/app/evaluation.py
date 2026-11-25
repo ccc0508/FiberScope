@@ -20,7 +20,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from .agent_answer import run_agent_answer
 from .evaluation_catalog import (
-    GROUPS, ROOT, cases, database_snapshot, fingerprint, read_json, runtime_manifest, runtime_matches,
+    GROUPS, ROOT, Suite, cases, database_snapshot, fingerprint, holdout_cases, read_json, runtime_manifest, runtime_matches,
 )
 from .literature import LiteratureSettings
 from literature_rag.application.tools import encode
@@ -53,6 +53,10 @@ def deepseek_usage(answer):
 class Selection(BaseModel):
     model_config = ConfigDict(extra="forbid")
     ids: list[str] = Field(min_length=1, max_length=70)
+
+
+class RunSelection(Selection):
+    suite: Suite = "regression"
 
 
 class Calibration(BaseModel):
@@ -106,6 +110,8 @@ class EvaluationQueue:
                 );
             """)
             db.execute("BEGIN IMMEDIATE")
+            if "suite" not in {row["name"] for row in db.execute("PRAGMA table_info(batches)")}:
+                db.execute("ALTER TABLE batches ADD COLUMN suite TEXT NOT NULL DEFAULT 'regression'")
             columns = {row["name"] for row in db.execute("PRAGMA table_info(evaluations)")}
             if "deepseek_tokens" not in columns:
                 db.execute("ALTER TABLE evaluations ADD COLUMN deepseek_tokens INTEGER NOT NULL DEFAULT 0")
@@ -132,12 +138,13 @@ class EvaluationQueue:
         if hasattr(self, "thread"):
             self.thread.join(timeout=1)
 
-    def create(self, selected, *, parent=None, copied=None, snapshot=None):
+    def create(self, selected, *, suite="regression", parent=None, copied=None, snapshot=None):
         batch = uuid4().hex
         manifest = runtime_manifest(self.config)
         manifest["cases_hash"] = fingerprint(selected)
         with self.db() as db:
-            db.execute("INSERT INTO batches VALUES(?,?,?,?,?)", (batch, now(), parent, encode(manifest), snapshot))
+            db.execute("INSERT INTO batches(id,created_at,parent,manifest,snapshot,suite) VALUES(?,?,?,?,?,?)",
+                       (batch, now(), parent, encode(manifest), snapshot, suite))
             db.executemany(
                 "INSERT INTO evaluations(batch,id,position,spec,status,run_id,duration_ms,answer) VALUES(?,?,?,?,?,?,?,?)",
                 ((batch, case["id"], i, encode(case), "queued", previous["run_id"] if previous else None,
@@ -193,7 +200,7 @@ class EvaluationQueue:
         manifest = json.loads(origin["manifest"])
         scoring_manifest = json.loads(run["manifest"])
         manifest["cases_hash"] = scoring_manifest.get("cases_hash")
-        return dict(id=run["id"], created_at=run["created_at"], parent=run["parent"],
+        return dict(id=run["id"], created_at=run["created_at"], parent=run["parent"], suite=run["suite"],
                     manifest=manifest, scoring_manifest=scoring_manifest,
                     database_fingerprint=snapshot.get("fingerprint"),
                     deepseek_usage=dict(total_tokens=usage["total_tokens"], incomplete=bool(usage["incomplete"])),
@@ -209,8 +216,9 @@ class EvaluationQueue:
                                  (batch, key)).fetchall()
         spec = json.loads(row["spec"])
         snapshot = json.loads(run["snapshot"]) if run["snapshot"] else {}
-        return dict(**self.summary(row), question=spec["question"], reference=spec["reference"],
-                    reference_results=snapshot.get("references", {}).get(key, []),
+        private = run["suite"] == "holdout"
+        return dict(**self.summary(row), question=spec["question"], reference={} if private else spec["reference"],
+                    reference_results=[] if private else snapshot.get("references", {}).get(key, []),
                     answer=json.loads(row["answer"]) if row["answer"] else None,
                     grade=json.loads(row["grade"]) if row["grade"] else None, calibrations=[dict(x) for x in reviews])
 
@@ -228,7 +236,7 @@ class EvaluationQueue:
                     and (not row["answer"] or json.loads(row["answer"])["status"] != "completed")]
         if not rows:
             raise HTTPException(422, "没有符合条件的题目。")
-        return self.create([json.loads(row["spec"]) for row in rows], parent=batch,
+        return self.create([json.loads(row["spec"]) for row in rows], suite=parent["suite"], parent=batch,
                            copied={row["id"]: row for row in rows} if mode == "rescore" else None,
                            snapshot=parent["snapshot"] if mode == "rescore" else None)
 
@@ -387,11 +395,23 @@ class EvaluationQueue:
 
 def router(config=None, admin_token=None):
     config = config or LiteratureSettings()
+    from dotenv import dotenv_values
+
+    options = dotenv_values(ROOT / "backend/.env", interpolate=False)
+    holdout_dir = os.environ.get("FIBERSCOPE_HOLDOUT_DIR", options.get("FIBERSCOPE_HOLDOUT_DIR")) or ""
     if admin_token is None:
-        from dotenv import dotenv_values
-        admin_token = os.environ.get("FIBERSCOPE_EVALUATION_TOKEN",
-            dotenv_values(ROOT / "backend/.env").get("FIBERSCOPE_EVALUATION_TOKEN", ""))
+        admin_token = os.environ.get("FIBERSCOPE_EVALUATION_TOKEN", options.get("FIBERSCOPE_EVALUATION_TOKEN", ""))
     queue = EvaluationQueue(config)
+
+    def catalog_cases(suite):
+        if suite == "regression":
+            return list(cases())
+        if not holdout_dir:
+            raise HTTPException(404, "此部署未配置 Holdout 题库。")
+        try:
+            return list(holdout_cases(Path(holdout_dir)))
+        except (OSError, ValueError, KeyError, TypeError):
+            raise HTTPException(503, "Holdout 题库不可用或未通过封存校验。") from None
 
     def authorize(request: Request):
         if not admin_token or not config.enabled or config.engine != "agent":
@@ -412,26 +432,28 @@ def router(config=None, admin_token=None):
     routes = APIRouter(prefix="/api/v1/evaluation", dependencies=[Depends(authorize)], lifespan=lifespan)
 
     @routes.get("/cases")
-    def catalog():
-        return dict(groups=GROUPS, cases=[{k: case[k] for k in ("id", "group", "category", "question")} for case in cases()],
+    def catalog(suite: Suite = "regression"):
+        return dict(groups=GROUPS, suite=suite, available_suites=["regression", "holdout"] if holdout_dir else ["regression"],
+                    cases=[{k: case[k] for k in ("id", "group", "category", "question")} for case in catalog_cases(suite)],
                     manifest=runtime_manifest(config), max_concurrent_cases=MAX_CONCURRENT_CASES)
 
     @routes.post("/runs", status_code=202)
-    def create(selection: Selection):
-        from dotenv import dotenv_values
+    def create(selection: RunSelection):
         judge_key = os.environ.get("QA_JEV_API_KEY", dotenv_values(ROOT / "backend/.env.jev").get("QA_JEV_API_KEY", ""))
         if not (judge_key or "").strip():
             raise HTTPException(503, "服务端尚未配置 Jev 评分密钥。")
-        pool = list(cases())
+        pool = catalog_cases(selection.suite)
         keys = set(selection.ids)
         if len(keys) != len(selection.ids) or not keys <= {case["id"] for case in pool}:
             raise HTTPException(422, "题目编号不存在或重复。")
-        return {"id": queue.create([case for case in pool if case["id"] in keys])}
+        return {"id": queue.create([case for case in pool if case["id"] in keys], suite=selection.suite)}
 
     @routes.get("/runs")
-    def listing():
+    def listing(suite: Suite = "regression"):
         with queue.db() as db:
-            ids = [row["id"] for row in db.execute("SELECT id FROM batches ORDER BY created_at DESC LIMIT 100")]
+            ids = [row["id"] for row in db.execute(
+                "SELECT id FROM batches WHERE suite=? ORDER BY created_at DESC LIMIT 100", (suite,),
+            )]
         return {"runs": [queue.detail(key) for key in ids]}
 
     @routes.get("/runs/{batch}")
