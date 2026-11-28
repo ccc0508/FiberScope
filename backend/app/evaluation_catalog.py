@@ -26,7 +26,7 @@ GROUPS = {"literature": "文献题", "sql": "SQL 题", "mixed": "综合题", "no
           "intent": "意图与工具边界"}
 Suite = Literal["regression", "holdout"]
 RUBRICS = {"literature": "FS8-rubric-v2-20261106", "sql": "sql-web-v1",
-           "mixed": "mixed-v1", "non_paper": "daily-web-v1", "intent": "intent-boundary-v1"}
+           "mixed": "mixed-v1", "non_paper": "daily-web-v1", "intent": "workflow-v1"}
 
 
 def read_json(path):

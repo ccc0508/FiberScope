@@ -1,51 +1,44 @@
-"""Recognize tool-shaped JSON in a research continuation's text output."""
+"""Separate a workflow tool request from an explicit final submission."""
 
 import json
 
 
-SQL_TOOL = "query_experiment_data"
-BARE_SQL_FIELDS = {"sql", "reason", "target_requirements"}
-
-
-def _unique_keys(pairs):
-    result = dict(pairs)
-    if len(result) != len(pairs):
-        raise ValueError("duplicate JSON key")
+def _unique_keys(items):
+    result = dict(items)
+    if len(result) != len(items):
+        raise ValueError("JSON fields must be unique.")
     return result
 
 
-def followup_tool_output(text, schemas, pending_sql_targets):
-    """Return an explicit lookup or an issue for one bounded correction."""
+def workflow_tool_output(text, schemas, *, native=False):
     try:
         payload = json.loads(text, object_pairs_hook=_unique_keys)
     except (ValueError, TypeError, RecursionError):
-        return None, None
-    if not isinstance(payload, dict) or payload.keys() & {"answer", "coverage", "plan"}:
-        return None, None
-
-    if "name" in payload and (set(payload) == {"name"} or "arguments" in payload):
-        name = payload.get("name")
-        if not isinstance(name, str) or name not in schemas:
-            return None, "The named tool is unavailable for this local task. Use one of the tools listed below."
-        if set(payload) != {"name", "arguments"} or not isinstance(payload["arguments"], dict):
-            return None, f"Send {name} through Function Calling with a single arguments object."
-        arguments = payload["arguments"]
-    elif SQL_TOOL in schemas and "sql" in payload and payload.keys() <= BARE_SQL_FIELDS:
-        name, arguments = SQL_TOOL, payload
-        targets = arguments.get("target_requirements")
-        if (payload.keys() != BARE_SQL_FIELDS or not isinstance(targets, list) or not targets
-                or any(not isinstance(target, str) or target not in pending_sql_targets for target in targets)
-                or not isinstance(arguments["sql"], str) or not arguments["sql"].strip()
-                or not isinstance(arguments["reason"], str) or not arguments["reason"].strip()):
-            return None, ("A SQL request was written in the response body without an unambiguous pending task. "
-                          "Call query_experiment_data with sql, reason and the published SQL task IDs in target_requirements.")
-    else:
-        return None, None
-
-    schema = schemas[name]
-    unknown = sorted(arguments.keys() - (schema["properties"].keys() - {"tool"}))
-    missing = sorted(set(schema.get("required", ())) - arguments.keys() - {"tool"})
-    if unknown or missing:
-        return None, (f"Incorrect arguments for {name}. Remove unrecognized fields {unknown} "
-                      f"and include missing required fields {missing}.")
-    return (name, arguments), None
+        if native and not text.strip():
+            return [], None
+        return [], "Use native Function Calling or one JSON object with top-level actions, or submit answer and coverage."
+    if not isinstance(payload, dict):
+        return [], "The decision must be a JSON object."
+    if payload.get("plan") is not None:
+        return [], "The plan is already locked. Submit actions for its ready tasks or finalize the answer."
+    if "actions" not in payload:
+        if not native and isinstance(payload.get("answer"), str) and payload["answer"].strip():
+            return [], None
+        if "sql" in payload:
+            return [], ("Missing tool name. Put the SQL and reason in query_experiment_data.arguments "
+                        "and include the ready task_id.")
+        return [], "Use native Function Calling, top-level actions, or answer for a final submission."
+    if native or payload.get("answer"):
+        return [], "Submit either tool requests or an answer, using one tool-call channel."
+    actions = payload["actions"]
+    if (payload.keys() - {"plan", "actions", "answer"} or not isinstance(actions, list)
+            or not 1 <= len(actions) <= 16 or payload.get("answer", "") != ""):
+        return [], "Use a non-empty actions array of {name, arguments} objects with no additional fields."
+    for i, action in enumerate(actions, 1):
+        if not isinstance(action, dict) or action.keys() != {"name", "arguments"}:
+            return [], f"Action {i} must contain only name and arguments."
+        if not isinstance(action["name"], str) or action["name"] not in schemas:
+            return [], f"Action {i} must name one of the offered tools."
+        if not isinstance(action["arguments"], dict):
+            return [], f"Action {i}.arguments must be a JSON object."
+    return actions, None

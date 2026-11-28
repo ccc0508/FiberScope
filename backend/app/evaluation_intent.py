@@ -1,117 +1,87 @@
-"""Fixed public-search inputs and execution checks for the intent development set."""
+"""Workflow development cases and readback of historical intent traces."""
 
 import json
 import re
 from pathlib import Path
 
+from literature_rag.application.citation_policy import citation_records
 from literature_rag.application.evidence_acceptance import EVIDENCE_LOOKUP_TOOLS
-from literature_rag.application.question_intent import PLAN_TOOL
 
 PACK = Path(__file__).resolve().parents[2] / "data/agent-intent-evaluation"
-FILES = (PACK / "questions.jsonl", PACK / "gold.jsonl")
-REFERENCE_SQL = {
-    "INTENT04": (
-        "SELECT sw_proportion_pct, hw_proportion_pct FROM fiber.v_sample_overview "
-        "WHERE canonical_code = 'BLEND_SW050_HW050'",
-    ),
-    "INTENT08": (
-        "SELECT fiber_length_weighted_mm FROM fiber.v_fiber_paper_analysis "
-        "WHERE canonical_code = 'BLEND_SW050_HW050'",
-    ),
-}
-
-
+FILES = (PACK / "workflow-v1.json",)
 def intent_cases():
-    questions, references = (
-        {row["id"]: row for row in map(json.loads, path.read_text(encoding="utf-8-sig").splitlines())}
-        for path in FILES
-    )
-    if len(questions) != 10 or questions.keys() != references.keys():
-        raise ValueError("Invalid intent development catalog")
-    for key, item in questions.items():
-        reference = references[key]
-        if key in REFERENCE_SQL:
-            reference["reference_sql"] = list(REFERENCE_SQL[key])
-        yield dict(id=key, group="intent", category=reference["title"],
-                   question=item["question"], prompt=item["question"], reference=reference)
+    definitions = json.loads(FILES[0].read_text(encoding="utf8"))
+    for case in definitions:
+        reference = {key: value for key, value in case.items() if key not in {"question", "id", "title"}}
+        yield dict(id=case["id"], group="intent", category=case["title"], question=case["question"],
+                   prompt=case["question"], reference=reference)
 
 
-class IntentSearchFixture:
-    def __init__(self, case_id, question):
-        case = next((case for case in intent_cases() if case["id"] == case_id), None)
-        if case is None or case["question"] != question:
-            raise ValueError("Intent fixture requires its registered question")
-        self.fixture = case["reference"].get("fixture", {})
-        self.queries = []
+def workflow_trace_checks(case, result):
+    reference = case["reference"]
+    calls = result.get("tool_calls", [])
+    executed = [call for call in calls if call["status"] in {"failed", "completed"}]
+    completed = [call for call in calls if call["status"] == "completed"]
+    tasks = {task["id"]: task for task in result.get("question_intent", {}).get("tasks", [])}
+    evidence_tools = {"query_experiment_data", "read_table", "search_literature", "read_section", "view_image"}
 
-    def __call__(self, query, timeout):
-        self.queries.append(query)
-        return self.fixture.get("sources", []) if query == self.fixture.get("expected_query") else []
+    def names(call_list):
+        return {call["request"]["tool"] for call in call_list}
 
-
-def replay_intent_boundary(case_id, question):
-    """Run the two control cases through the policy with fixed model decisions."""
-    if case_id not in {"INTENT03", "INTENT10"}:
-        return None
-    from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter, Decision, ToolCall
-    from literature_rag.application.agent_loop import AgentLoop
-
-    def declaration(*tasks):
-        return ToolCall("plan", PLAN_TOOL, {"tasks": list(tasks)}, native=False)
-
-    def decision(text="", calls=()):
-        return Decision(text, list(calls), {"role": "assistant", "content": text}, None, "stop")
-
-    fixture = IntentSearchFixture(case_id, question)
-    if case_id == "INTENT03":
-        steps = [decision(calls=[declaration(dict(id="public", kind="web", source_quote=question))])]
+    checks = reference["workflow_checks"]
+    first, *later = result.get("model_calls") or [{}]
+    trace_type = checks["type"]
+    if trace_type == "direct":
+        passed = (not later and first.get("text") == result.get("answer"), not executed)
+    elif trace_type == "clarify":
+        user_tasks = [task for task in tasks.values() if task["kind"] == "clarify" and task["status"] == "ask"]
+        passed = (bool(user_tasks) and not (names(executed) & EVIDENCE_LOOKUP_TOOLS["sql"]),
+                  bool(names(completed) & EVIDENCE_LOOKUP_TOOLS["literature"])
+                  if checks.get("paper") else not executed)
+    elif trace_type == "independent":
+        roles = {tasks.get(call.get("workflow_task_id"), {}).get("kind") for call in completed
+                 if call["request"]["tool"] in evidence_tools}
+        passed = (set(checks["roles"]) <= roles,
+                  any(task["kind"] == "direct" for task in tasks.values()) if checks.get("daily")
+                  else bool(tasks) and all(not task["depends_on"] for task in tasks.values()))
     else:
-        local, _, public = question.partition("；")
-        public = public.split("。", 1)[0]
-        plan = declaration(dict(id="paper", kind="literature", source_quote=local),
-                           dict(id="public", kind="web", source_quote=public))
-        lookup = ToolCall("paper", "read_table", dict(
-            document_id="replay", table_number="1", reason="Exercise a local lookup",
-            requirements=[dict(role="literature", source_quote=local)], initial_targets=[1],
-        ), native=False)
-        change = declaration(dict(id="paper", kind="web", source_quote=local))
-        steps = [
-            decision(calls=[plan, lookup]),
-            decision(calls=[change]),
-            decision('{"answer":"纤维宽度的单位为 μm [1]。","coverage":[]}'),
-            decision("模拟公开结果没有提供具体运营时间。"),
-        ]
-
-    class ReplayAdapter:
-        tool_messages = staticmethod(ChatAgentAdapter.tool_messages)
-
-        def decide(self, *_):
-            return next(decisions)
-
-    decisions = iter(steps)
-    local_calls = []
-
-    def execute(request, *_):
-        local_calls.append(request["tool"])
-        return dict(status="completed", result=dict(table=dict(ref="[1]", text="Width (μm)")))
-
-    result = AgentLoop(
-        ReplayAdapter(), execute, lambda _: None, unified_research=True, first_turn_intent=True,
-        evidence_supplement_enabled=False, public_search=None if case_id == "INTENT03" else fixture,
-    ).run(question, "fixture-replay")
-    rejected = any("intent_locked_after_first_decision" in json.dumps(call["input_messages"])
-                   for call in result["model_calls"])
-    statuses = [item["status"] for item in result["public_web_searches"]]
-    passed = result["status"] == "completed" and (
-        (statuses == ["unconfigured"] and not local_calls and not fixture.queries)
-        if case_id == "INTENT03" else
-        (rejected and local_calls == ["read_table"] and fixture.queries == [fixture.fixture["expected_query"]])
-    )
-    return dict(passed=passed, transport_queries=fixture.queries, local_calls=local_calls,
-                web_statuses=statuses, late_change_rejected=rejected, answer=result["answer"])
+        edges = [(task, dep) for task in tasks.values() if task["kind"] == checks["downstream"]
+                 for dep in task.get("depends_on", [])
+                 if tasks.get(dep["task_id"], {}).get("kind") == checks["upstream"]]
+        valid_order = False
+        for downstream, dependency in edges:
+            upstream = tasks[dependency["task_id"]]
+            source_refs = {upstream["outputs"][key]["ref"] for key in dependency["outputs"]
+                           if key in upstream.get("outputs", {})}
+            for index, call in enumerate(calls):
+                if (call["status"] != "completed" or call.get("workflow_task_id") != downstream["id"]
+                        or call["request"]["tool"] not in evidence_tools):
+                    continue
+                transferred = call.get("workflow_inputs", {}).get(upstream["id"], {})
+                earlier = {record["ref"] for event in calls[:index]
+                           if event.get("workflow_task_id") == upstream["id"]
+                           and event.get("model_delivery", {}).get("status") == "delivered"
+                           for record in citation_records(event["request"]["tool"], event.get("result", {}))}
+                if (set(dependency["outputs"]) <= transferred.keys() and source_refs
+                        and all(item["ref"] in earlier for item in transferred.values())):
+                    valid_order = True
+        passed = (bool(edges), valid_order)
+    critical = []
+    if result.get("public_web_searches") or any(
+        call["request"]["tool"] in {"web_search", "web", "public_search"} for call in executed
+    ):
+        critical.append("当前工作流不允许公开搜索。")
+    for call in executed:
+        task = tasks.get(call.get("workflow_task_id"), {})
+        if any(not set(item["outputs"]) <= call.get("workflow_inputs", {}).get(item["task_id"], {}).keys()
+               for item in task.get("depends_on", [])):
+            critical.append("前置证据未交付时执行了依赖任务。")
+    return passed, critical
 
 
 def intent_trace_checks(case, result):
+    if "workflow_checks" in case["reference"]:
+        return workflow_trace_checks(case, result)
     key = case["id"]
     trace = result.get("intent_evaluation")
     if not isinstance(trace, dict) or trace.get("case_id") != key:

@@ -3,7 +3,10 @@ from dataclasses import dataclass
 import json
 import re
 from openai import OpenAI
-from literature_rag.application.question_intent import InitialDecisionFormatError, PLAN_TOOL
+from pydantic import ValidationError
+from literature_rag.application.question_intent import (
+    FIRST_DECISION, FIRST_DECISION_GUIDANCE, DirectAnswer, InitialDecisionFormatError, PLAN_TOOL, validation_message,
+)
 from literature_rag.application.tools import SCHEMAS
 from literature_rag.diagnostics import provider_usage
 
@@ -35,64 +38,58 @@ def _unique_keys(pairs):
 
 
 def decode_initial_decision(raw, schemas, usage, finish_reason):
-    """Normalize unambiguous packaging and keep the declared plans unchanged."""
+    """Decode only the first response's declared JSON protocol."""
     normalizations = []
-    plan = None
 
     def fail(code):
-        raise InitialDecisionFormatError(code, raw, usage, finish_reason, plan=plan)
+        raise InitialDecisionFormatError(code, raw, usage, finish_reason)
+
+    def initial_fields(pairs):
+        fields = {}
+        for key, value in pairs:
+            if key in fields:
+                if type(value) is not type(fields[key]) or value != fields[key]:
+                    raise ValueError('Conflicting JSON field')
+                normalizations.append('identical_duplicate_field')
+            fields[key] = value
+        return fields
 
     if finish_reason == 'length':
         fail('output_truncated')
     wrapped = re.fullmatch(r'\s*```(?:json)?[ \t]*\r?\n(.*?)\r?\n```\s*', raw, re.I | re.S)
     body = wrapped[1] if wrapped else raw
-    if wrapped:
-        normalizations.append('removed_json_fence')
     try:
-        payload = json.loads(body, object_pairs_hook=_unique_keys)
+        payload = json.loads(body, object_pairs_hook=initial_fields)
+        decision = FIRST_DECISION.validate_python(payload)
+    except ValidationError as error:
+        fail(validation_message(error))
     except json.JSONDecodeError:
         fail('invalid_json' if body.strip() else 'empty_response')
-    except ValueError:
-        fail('duplicate_json_key')
-    if not isinstance(payload, dict):
-        fail('invalid_envelope')
-    plan, actions = payload.get('plan'), payload.get('actions')
-    if set(payload) == {'plan', 'actions'} and (isinstance(plan, dict) or isinstance(actions, list) and actions):
-        payload['answer'] = ''
-        normalizations.append('default_empty_answer')
-    if (set(payload) != {'plan', 'actions', 'answer'} or not isinstance(actions, list)
-            or len(actions) > 20 or not isinstance(payload['answer'], str)):
-        fail('invalid_envelope')
+    except (ValueError, RecursionError):
+        fail('Conflicting JSON keys or invalid JSON object. Return each field once.')
     calls = []
-    if plan is not None:
-        if not isinstance(plan, dict):
-            fail('invalid_task_plan')
-        calls.append(ToolCall('initial-plan', PLAN_TOOL, plan, native=False))
-    for index, action in enumerate(actions, 1):
-        name = action.get('name') if isinstance(action, dict) else None
-        if not isinstance(name, str) or name == PLAN_TOOL or name not in schemas:
-            fail('unknown_initial_lookup')
-        arguments = action.get('arguments', {})
-        inline = {k: v for k, v in action.items() if k not in {'name', 'arguments'}}
-        if (not isinstance(arguments, dict) or not inline.keys() <= schemas[name]['properties'].keys()
-                or inline.keys() & arguments.keys() or ('arguments' not in action and not inline)):
-            fail('invalid_initial_lookup_arguments')
-        if inline:
-            normalizations.append(f'wrapped_lookup_arguments:{index}')
-        arguments = dict(arguments, **inline)
-        if arguments.pop('tool', name) != name:
-            fail('mismatched_initial_lookup_name')
-        calls.append(ToolCall(f'initial-{index}', name, arguments, native=False))
-        action.clear()
-        action.update(name=name, arguments=arguments)
-    answer = payload['answer']
-    if calls and answer.strip():
-        fail('answer_with_planned_actions')
-    if not calls and not answer.strip():
-        fail('empty_decision')
-    # First actions are represented as runtime data during continuation.
-    message = {'role': 'assistant', 'content': json.dumps(payload, ensure_ascii=False, separators=(',', ':'))}
-    return Decision(answer, calls, message, usage, finish_reason, tuple(normalizations))
+    answer = ''
+    if isinstance(decision, DirectAnswer):
+        answer = decision.answer
+    else:
+        for task in decision.tasks:
+            action = getattr(task, 'first_action', None)
+            if action is None:
+                continue
+            args = dict(action.arguments)
+            if action.name not in schemas or 'task_id' in args or args.pop('tool', action.name) != action.name:
+                fail(f'{task.id}.first_action must name an offered local tool and use its lookup arguments.')
+            if 'tool' in action.arguments:
+                normalizations.append('removed_redundant_tool_field')
+            action.arguments = args
+            calls.append(ToolCall(f'initial-{task.id}', action.name,
+                                  dict(args, task_id=task.id), native=False))
+        calls.insert(0, ToolCall('initial-plan', PLAN_TOOL, decision.model_dump(exclude_none=True), native=False))
+    if wrapped:
+        normalizations.append('removed_json_fence')
+    cleaned = decision.model_dump(exclude_none=True)
+    return Decision(answer, calls, {'role': 'assistant', 'content': json.dumps(cleaned, ensure_ascii=False)},
+                    usage, finish_reason, tuple(dict.fromkeys(normalizations)))
 
 
 class ChatAgentAdapter:
@@ -115,20 +112,22 @@ class ChatAgentAdapter:
 
     @staticmethod
     def initial_context(messages, schemas):
-        operations = {name: schema for name, schema in schemas.items() if name != PLAN_TOOL}
+        operations = {
+            name: dict(schema, properties={k: v for k, v in schema['properties'].items() if k != 'tool'},
+                       required=[k for k in schema.get('required', []) if k != 'tool'])
+            for name, schema in schemas.items() if name in SCHEMAS
+        }
+        decision_schema = FIRST_DECISION.json_schema()
+        decision_schema['$defs']['FirstAction']['properties']['name']['enum'] = sorted(operations)
         contract = (
-            '\n\nFirst decision JSON protocol. Return exactly one JSON object with keys plan, actions, and answer. '
-            'For a wholly direct request, use plan=null, actions=[], and put the complete answer in answer '
-            'as a string, preserving its requested format. For clear research with no other task type, '
-            'use plan=null, answer="", and put the first local lookups in actions. '
-            'For a mixed task, public lookup, or clarification, provide plan as the object defined below '
-            'and leave answer="". For mixed tasks include every independent local lookup ready now in actions. '
-            'Each action is {"name":"exact_tool_name","arguments":{...}} using its schema below. '
-            'Omit the fixed tool field from arguments. Never write a promise to execute something later in answer. '
-            'The first decision never includes coverage. Use one envelope for all initial actions. '
-            'Example of the envelope for a wholly direct request: {"plan":null,"actions":[],"answer":"你好！"}\n'
-            'For local lookups, keep "answer":"" and put every parameter inside "arguments".\n'
-            'Plan schema: ' + json.dumps(schemas[PLAN_TOOL], ensure_ascii=False, separators=(',', ':')) +
+            FIRST_DECISION_GUIDANCE +
+            '\n\nFirst decision JSON protocol. Return one object conforming to this decision schema. '
+            'For type=answer return the complete answer in its requested format. '
+            'For type=workflow return tasks, with first_action attached only to a ready research task. '
+            'A first_action is {"name":"exact_tool_name","arguments":{...}}. '
+            'Use lookup parameters only: omit the fixed tool field and runtime bindings. '
+            'Never guess the result of another task. '
+            'Decision schema: ' + json.dumps(decision_schema, ensure_ascii=False, separators=(',', ':')) +
             '\nAvailable local lookup schemas: ' + json.dumps(operations, ensure_ascii=False, separators=(',', ':'))
         )
         system = dict(messages[0], content=messages[0]['content'] + contract)

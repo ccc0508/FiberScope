@@ -70,7 +70,6 @@ class Settings(BaseSettings):
     embedding_base_url: str | None = None
 
     llm_provider: str = "openai"
-    web_search_api_key: SecretStr | None = None
     llm_model: str | None = None
     llm_thinking_enabled: bool | None = None
     llm_reasoning_effort: Literal['low', 'high', 'max'] | None = None

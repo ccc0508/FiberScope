@@ -311,7 +311,6 @@ class EvaluationQueue:
         try:
             config = self.config
             spec = json.loads(row["spec"])
-            intent_case = spec["group"] == "intent"
             uses_database = spec["group"] in {"sql", "mixed"} or bool(spec.get("reference", {}).get("reference_sql"))
             frozen = json.loads(row["manifest"])
             manifest = runtime_manifest(config)
@@ -335,8 +334,7 @@ class EvaluationQueue:
             start = perf_counter()
             try:
                 with self.trace(run_id, row["id"]):
-                    options = {"intent_evaluation_case": spec["id"]} if intent_case else {}
-                    record = self.answer(config, spec["prompt"], run_id=run_id, **options)
+                    record = self.answer(config, spec["prompt"], run_id=run_id)
                 result = dict(record["agent_run"], evidence=record["agent_evidence"],
                               tool_trace=record["agent_tool_trace"])
                 link = ROOT / ".rag-data/agent-runs" / run_id / "langfuse.json"

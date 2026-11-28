@@ -54,15 +54,13 @@ def adapt_run(state, evidence, trace, elapsed_ms):
     if review_status!='disabled':
         review_summary['review_summary']=dict(
             status=review_status if review_status in ('not_required','completed') else 'incomplete',
-            notice=('本次使用公开搜索；网页来源单独列出。' if state.get('public_web_sources') else
-                    '本次为直接答复或澄清，未调用研究子任务。') if review_status=='not_required' else '已完成答案复核；复核不保证所有陈述正确。' if review_status=='completed' else '答案复核未完成，请核对引用原文。',
+            notice='本次为直接答复或澄清。' if review_status=='not_required' else '已完成答案复核；复核不保证所有陈述正确。' if review_status=='completed' else '答案复核未完成，请核对引用原文。',
             unresolved=[],supplement_rounds=0,review_rounds=int(review_status=='completed'))
     stop_reason = state.get('stop_reason')
     specific_errors = {'invalid_citations', 'missing_literature_citations', 'invalid_research_output',
                        'initial_decision_format_failed'}
     reason_code = stop_reason if stop_reason in specific_errors else 'agent_incomplete'
     return dict(status='answered' if completed else 'failed',answer=state.get('answer',''),citations=citations,
-        public_web_sources=state.get('public_web_sources',[]),
         latency_ms=elapsed_ms,reason_code=None if completed else reason_code,
         **({} if completed else dict(error_status=503)),
         configuration=dict(pipeline_version=state.get('pipeline_version','agentic-rag-directory-v1'),model=state.get('model'),budget=state.get('budget'),directory_policy=state.get('directory_policy')),
@@ -70,7 +68,7 @@ def adapt_run(state, evidence, trace, elapsed_ms):
         agent_run=state,agent_tool_trace=trace,agent_evidence=evidence,**review_summary)
 
 
-def run_agent_answer(config, question, *, run_id=None, intent_evaluation_case=None):
+def run_agent_answer(config, question, *, run_id=None):
     rid=run_id or 'web-'+uuid4().hex
     specialists=getattr(config,'agent_architecture','single')=='specialists'
     seconds=min(360 if specialists else 240,config.timeout_seconds-10)
@@ -85,8 +83,6 @@ def run_agent_answer(config, question, *, run_id=None, intent_evaluation_case=No
         '--question',question,'--library',str(config.library_root),'--run-id',rid,'--seconds',str(seconds),
         '--architecture',getattr(config,'agent_architecture','single'),
         '--max-model-calls','20' if specialists else '10']
-        if intent_evaluation_case:
-            args.extend(['--intent-evaluation-case', intent_evaluation_case])
         result=subprocess.run(args,
         env=env,capture_output=True,text=True,encoding='utf-8',creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
     folder=ROOT/'.rag-data/agent-runs'/rid

@@ -115,7 +115,7 @@ def test_holdout_catalog_runs_and_history_are_isolated(monkeypatch, tmp_path):
         assert len(client.get(api + "/cases").json()["cases"]) == 80
         assert "intent" not in client.get(api + "/cases?suite=holdout").json()["groups"]
         assert client.post(api + "/runs", json={"ids": ["FSHO-N01"]}).status_code == 422
-        assert client.post(api + "/runs", json={"ids": ["INTENT01"], "suite": "holdout"}).status_code == 422
+        assert client.post(api + "/runs", json={"ids": ["FLOW01"], "suite": "holdout"}).status_code == 422
         assert client.post(api + "/runs", json={"ids": ["FSHO-N01", "FS8-025"], "suite": "holdout"}).status_code == 422
         regression = client.post(api + "/runs", json={"ids": ["FS8-025"]}).json()["id"]
         run = client.post(api + "/runs", json={"ids": ["FSHO-N01"], "suite": "holdout"}).json()["id"]
@@ -143,13 +143,13 @@ def test_holdout_requires_matching_seal(tmp_path):
         list(holdout_cases(tmp_path))
 
 
-def test_intent_case_runs_as_development_with_its_fixture_and_sql_reference(monkeypatch, tmp_path):
+def test_workflow_case_runs_as_development_with_sql_reference(monkeypatch, tmp_path):
     prompts, graded = [], []
     reference_query = [{"columns": ["sw_proportion_pct", "hw_proportion_pct"], "rows": [[50, 50]]}]
 
-    def answer(config, question, *, run_id, intent_evaluation_case):
-        prompts.append((question, intent_evaluation_case))
-        return dict(agent_run=dict(status="completed", answer="candidate", intent_evaluation={"case_id": intent_evaluation_case}),
+    def answer(config, question, *, run_id):
+        prompts.append(question)
+        return dict(agent_run=dict(status="completed", answer="candidate"),
                     agent_evidence=[], agent_tool_trace=[])
 
     def snapshot(selected):
@@ -166,19 +166,19 @@ def test_intent_case_runs_as_development_with_its_fixture_and_sql_reference(monk
     monkeypatch.setenv("QA_JEV_API_KEY", "test-only-key")
     app = FastAPI()
     app.include_router(router(LiteratureSettings(enabled=True, data_dir=tmp_path), "test-token"))
-    expected = next(case for case in cases() if case["id"] == "INTENT04")
+    expected = next(case for case in cases() if case["id"] == "FLOW04")
     with TestClient(app, headers={"Authorization": "Bearer test-token"}) as client:
         api = "/api/v1/evaluation"
-        request = client.post(api + "/runs", json={"ids": ["INTENT04"]})
+        request = client.post(api + "/runs", json={"ids": ["FLOW04"]})
         assert request.status_code == 202
         run = request.json()["id"]
-        detail_url = f"{api}/runs/{run}/cases/INTENT04"
+        detail_url = f"{api}/runs/{run}/cases/FLOW04"
         batch = wait_for(client, run)
         assert batch["suite"] == "regression" and batch["database_fingerprint"] == "database"
         result = client.get(detail_url).json()
         assert result["group"] == "intent" and result["score"] == 75
-        assert result["reference_results"] == reference_query and result["reference"]["reference_answer"]
-    assert prompts == [(expected["question"], "INTENT04")]
+        assert result["reference_results"] == reference_query and result["reference"]["answer_checks"]
+    assert prompts == [expected["question"]]
     assert graded[0][0] == expected and graded[0][1]["database_verified"] is True
     assert graded[0][2] == reference_query
 
@@ -188,10 +188,9 @@ def test_intent_grades_answers_and_program_checks_separately(monkeypatch, querie
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[2] / "scripts"))
     import evaluation_web_grade
 
-    case = next(item for item in cases() if item["id"] == "INTENT01")
+    case = next(item for item in cases() if item["id"] == "FLOW01")
     answer = '{"date":"2026-11-25","weekday":"星期三"}'
-    trace = dict(case_id=case["id"], transport_queries=queries)
-    result = dict(answer=answer, model_calls=[{"text": answer}], tool_calls=[], intent_evaluation=trace)
+    result = dict(answer=answer, model_calls=[{"text": answer}], tool_calls=[], public_web_searches=queries)
 
     def decisions(config, request, post):
         assert set(request["questions"]) == {"answer_1", "answer_2", "answer_boundary"}
@@ -204,21 +203,14 @@ def test_intent_grades_answers_and_program_checks_separately(monkeypatch, querie
     assert grade["metrics"]["critical_violation"] is bool(queries)
 
 
-def test_intent_public_fixtures_are_local_and_replays_execute_policy():
-    from app.evaluation_intent import IntentSearchFixture, replay_intent_boundary
-
-    for case in (item for item in cases() if item["id"] in {"INTENT03", "INTENT10"}):
-        case_id, question = case["id"], case["question"]
-        fixture = IntentSearchFixture(case_id, question)
-        with pytest.raises(ValueError, match="registered question"):
-            IntentSearchFixture(case_id, question + " change")
-        assert fixture("another query", 1) == []
-        assert fixture.queries == ["another query"]
-        expected = case["reference"]["fixture"]["expected_query"]
-        assert fixture(expected, 1) == case["reference"]["fixture"]["sources"]
-        replay = replay_intent_boundary(case_id, question)
-        assert replay["passed"] is True
-        assert replay["transport_queries"] == ([] if case_id == "INTENT03" else [expected])
+def test_workflow_catalog_contains_both_dependency_directions():
+    catalog = [case for case in cases() if case["group"] == "intent"]
+    assert len(catalog) == 10 and all(case["id"].startswith("FLOW") for case in catalog)
+    directions = {
+        (checks.get("upstream"), checks.get("downstream"))
+        for case in catalog if (checks := case["reference"]["workflow_checks"])["type"] == "dependency"
+    }
+    assert directions == {("sql", "literature"), ("literature", "sql")}
 
 
 def test_holdout_grades_the_frozen_weights(monkeypatch):
