@@ -35,7 +35,7 @@ const suites = [
   { key: "sql", name: "SQL 题", desc: "实验数据与口径", icon: Database },
   { key: "mixed", name: "综合题", desc: "文献与数据整合", icon: Layers },
   { key: "non_paper", name: "日常题", desc: "直接作答与格式", icon: MessageSquare },
-  { key: "intent", name: "意图与工具边界", desc: "首轮决策、联网与澄清", icon: ShieldCheck },
+  { key: "intent", name: "意图与工具边界", desc: "首轮决策、结果依赖与澄清", icon: ShieldCheck },
 ] as const;
 const label: Record<string, string> = {
   queued: "排队", answering: "作答中", scoring: "Jev 评分中", scored: "已评分",
@@ -453,7 +453,7 @@ onUnmounted(() => window.clearInterval(timer));
                 <details open><summary>Agent 回答</summary><pre>{{ detail.answer?.answer || "暂无回答" }}</pre></details>
                 <details v-if="suite !== 'holdout'"><summary>参考答案与参考 SQL</summary><pre>{{ json(detail.reference) }}</pre><pre v-if="detail.reference_results.length">{{ json(detail.reference_results) }}</pre></details>
                 <details v-if="detail.grade"><summary>{{ detail.group === "intent" ? "回答评分与轨迹判定" : "Jev 各维度评分与置信度" }}</summary><pre>{{ json({ review: detail.grade.review, decisions: detail.grade.decisions, metrics: detail.grade.metrics }) }}</pre></details>
-                <details v-if="detail.answer && detail.group === 'intent'"><summary>首轮意图、模拟搜索与对照</summary><pre>{{ json({ intent: detail.answer.question_intent, search: detail.answer.public_web_searches, fixture: detail.answer.intent_evaluation }) }}</pre></details>
+                <details v-if="detail.answer && detail.group === 'intent'"><summary>首轮计划与执行状态</summary><pre>{{ json({ intent: detail.answer.question_intent, search: detail.answer.public_web_searches, fixture: detail.answer.intent_evaluation }) }}</pre></details>
                 <details v-if="detail.answer"><summary>工具调用、逐任务证据与补查</summary><pre>{{ json({ tools: detail.answer.tool_calls, acceptance: detail.answer.evidence_check, supplement: detail.answer.evidence_supplement_planning }) }}</pre></details>
                 <details v-if="detail.grade"><summary>人工校准 {{ detail.calibrations.length ? '（' + detail.calibrations.length + '）' : '' }}</summary>
                   <ul v-if="detail.calibrations.length"><li v-for="entry in detail.calibrations" :key="entry.timestamp">{{ date(entry.timestamp) }} · {{ display(entry.score) }} · {{ entry.reason }}</li></ul>

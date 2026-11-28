@@ -1,8 +1,12 @@
 """Native Chat Completions tool calling translated to provider-neutral decisions."""
 from dataclasses import dataclass
 import json
+import re
 from openai import OpenAI
-from literature_rag.application.question_intent import PLAN_TOOL
+from pydantic import ValidationError
+from literature_rag.application.question_intent import (
+    FIRST_DECISION, FIRST_DECISION_GUIDANCE, DirectAnswer, InitialDecisionFormatError, PLAN_TOOL, validation_message,
+)
 from literature_rag.application.tools import SCHEMAS
 from literature_rag.diagnostics import provider_usage
 
@@ -13,6 +17,7 @@ class ToolCall:
     name: str
     arguments: dict
     native: bool = True
+    arguments_error: str | None = None
 
 
 @dataclass
@@ -22,6 +27,69 @@ class Decision:
     message: dict
     usage: dict | None
     finish_reason: str
+    normalizations: tuple[str, ...] = ()
+
+
+def _unique_keys(pairs):
+    result = dict(pairs)
+    if len(result) != len(pairs):
+        raise ValueError("duplicate_json_key")
+    return result
+
+
+def decode_initial_decision(raw, schemas, usage, finish_reason):
+    """Decode only the first response's declared JSON protocol."""
+    normalizations = []
+
+    def fail(code):
+        raise InitialDecisionFormatError(code, raw, usage, finish_reason)
+
+    def initial_fields(pairs):
+        fields = {}
+        for key, value in pairs:
+            if key in fields:
+                if type(value) is not type(fields[key]) or value != fields[key]:
+                    raise ValueError('Conflicting JSON field')
+                normalizations.append('identical_duplicate_field')
+            fields[key] = value
+        return fields
+
+    if finish_reason == 'length':
+        fail('output_truncated')
+    wrapped = re.fullmatch(r'\s*```(?:json)?[ \t]*\r?\n(.*?)\r?\n```\s*', raw, re.I | re.S)
+    body = wrapped[1] if wrapped else raw
+    try:
+        payload = json.loads(body, object_pairs_hook=initial_fields)
+        decision = FIRST_DECISION.validate_python(payload)
+    except ValidationError as error:
+        fail(validation_message(error))
+    except json.JSONDecodeError:
+        fail('invalid_json' if body.strip() else 'empty_response')
+    except (ValueError, RecursionError):
+        fail('Conflicting JSON keys or invalid JSON object. Return each field once.')
+    calls = []
+    answer = ''
+    if isinstance(decision, DirectAnswer):
+        answer = decision.answer
+    else:
+        for task in decision.tasks:
+            action = getattr(task, 'first_action', None)
+            if action is None:
+                continue
+            args = dict(action.arguments)
+            if action.name not in schemas or 'task_id' in args or args.pop('tool', action.name) != action.name:
+                fail(f'{task.id}.first_action must name an offered local tool and use its lookup arguments.')
+            if 'tool' in action.arguments:
+                normalizations.append('removed_redundant_tool_field')
+            action.arguments = args
+            calls.append(ToolCall(f'initial-{task.id}', action.name,
+                                  dict(args, task_id=task.id), native=False))
+        calls.insert(0, ToolCall('initial-plan', PLAN_TOOL, decision.model_dump(exclude_none=True), native=False))
+    if wrapped:
+        normalizations.append('removed_json_fence')
+    cleaned = decision.model_dump(exclude_none=True)
+    return Decision(answer, calls, {'role': 'assistant', 'content': json.dumps(cleaned, ensure_ascii=False)},
+                    usage, finish_reason, tuple(dict.fromkeys(normalizations)))
 
 
 class ChatAgentAdapter:
@@ -44,18 +112,22 @@ class ChatAgentAdapter:
 
     @staticmethod
     def initial_context(messages, schemas):
-        operations = {name: schema for name, schema in schemas.items() if name != PLAN_TOOL}
+        operations = {
+            name: dict(schema, properties={k: v for k, v in schema['properties'].items() if k != 'tool'},
+                       required=[k for k in schema.get('required', []) if k != 'tool'])
+            for name, schema in schemas.items() if name in SCHEMAS
+        }
+        decision_schema = FIRST_DECISION.json_schema()
+        decision_schema['$defs']['FirstAction']['properties']['name']['enum'] = sorted(operations)
         contract = (
-            '\n\nFirst decision JSON protocol. Return exactly one JSON object with keys plan, actions, and answer. '
-            'For a wholly direct request, use plan=null, actions=[], and put the complete answer in answer '
-            'as a string, preserving its requested format. For clear research with no other task type, '
-            'use plan=null, answer="", and put the first local lookups in actions. '
-            'For a mixed task, public lookup, or clarification, provide plan as the object defined below '
-            'and leave answer="". For mixed tasks include every independent local lookup ready now in actions. '
-            'Each action is {"name":"exact_tool_name","arguments":{...}} using its schema below. '
-            'Omit the fixed tool field from arguments. Never write a promise to execute something later in answer. '
-            'Example of the envelope for a wholly direct request: {"plan":null,"actions":[],"answer":"你好！"}\n'
-            'Plan schema: ' + json.dumps(schemas[PLAN_TOOL], ensure_ascii=False, separators=(',', ':')) +
+            FIRST_DECISION_GUIDANCE +
+            '\n\nFirst decision JSON protocol. Return one object conforming to this decision schema. '
+            'For type=answer return the complete answer in its requested format. '
+            'For type=workflow return tasks, with first_action attached only to a ready research task. '
+            'A first_action is {"name":"exact_tool_name","arguments":{...}}. '
+            'Use lookup parameters only: omit the fixed tool field and runtime bindings. '
+            'Never guess the result of another task. '
+            'Decision schema: ' + json.dumps(decision_schema, ensure_ascii=False, separators=(',', ':')) +
             '\nAvailable local lookup schemas: ' + json.dumps(operations, ensure_ascii=False, separators=(',', ':'))
         )
         system = dict(messages[0], content=messages[0]['content'] + contract)
@@ -69,35 +141,8 @@ class ChatAgentAdapter:
             **self._model_options(),
         )
         choice = response.choices[0]
-        raw = choice.message.content or ''
-        calls = []
-        answer = ''
-        if choice.finish_reason != 'length':
-            payload = json.loads(raw)
-            if (not isinstance(payload, dict) or set(payload) != {'plan', 'actions', 'answer'}
-                    or not isinstance(payload['actions'], list) or len(payload['actions']) > 20
-                    or not isinstance(payload['answer'], str)):
-                raise ValueError('Invalid first decision envelope')
-            if payload['plan'] is not None:
-                if not isinstance(payload['plan'], dict):
-                    raise ValueError('Invalid first decision task plan')
-                calls.append(ToolCall('initial-plan', PLAN_TOOL, payload['plan'], native=False))
-            for index, action in enumerate(payload['actions'], 1):
-                if (not isinstance(action, dict) or not isinstance(action.get('name'), str)
-                        or action['name'] == PLAN_TOOL or action['name'] not in schemas
-                        or not isinstance(action.get('arguments'), dict)):
-                    raise ValueError('Invalid initial lookup')
-                arguments = dict(action['arguments'])
-                if arguments.pop('tool', action['name']) != action['name']:
-                    raise ValueError('Mismatched initial lookup name')
-                calls.append(ToolCall(f'initial-{index}', action['name'], arguments, native=False))
-            if calls and payload['answer'].strip():
-                raise ValueError('Initial answer must be empty when tasks or lookups are declared')
-            answer = payload['answer']
-        # First actions are runtime-dispatched. Their results come back as
-        # data messages without pretending the provider emitted native call IDs.
-        message = {'role': 'assistant', 'content': raw}
-        return Decision(answer, calls, message, provider_usage(response), choice.finish_reason)
+        return decode_initial_decision(choice.message.content or '', schemas, provider_usage(response),
+                                       choice.finish_reason)
 
     def decide(self,messages,schemas,timeout,max_tokens):
         tools=[]
@@ -116,13 +161,29 @@ class ChatAgentAdapter:
         choice=response.choices[0];m=choice.message
         calls=[]
         for c in m.tool_calls or []:
-            try:args=json.loads(c.function.arguments)
-            except (ValueError,TypeError):args={}
-            if not isinstance(args,dict):args={}
-            calls.append(ToolCall(c.id,c.function.name,args))
-        if len({c.id for c in calls})!=len(calls):raise ValueError('Duplicate provider tool call IDs')
+            issue = None
+            try:
+                args = json.loads(c.function.arguments, object_pairs_hook=_unique_keys)
+            except json.JSONDecodeError as error:
+                issue = f'Invalid JSON at line {error.lineno}, column {error.colno}. Send one complete arguments object.'
+                args = {}
+            except (ValueError, TypeError, RecursionError):
+                issue = 'Send one JSON arguments object with unique field names.'
+                args = {}
+            if not isinstance(args, dict):
+                issue = 'Send arguments as a JSON object using the tool schema.'
+                args = {}
+            calls.append(ToolCall(c.id, c.function.name, args, arguments_error=issue))
         message={'role':'assistant','content':m.content}
-        if m.tool_calls:message['tool_calls']=[c.model_dump(exclude_none=True) for c in m.tool_calls]
+        if len({c.id for c in calls}) != len(calls):
+            calls = [
+                ToolCall(f'conflicting-{index}-{call.id}', call.name, call.arguments, native=False,
+                         arguments_error='The provider returned conflicting call IDs. Reissue one tool call.')
+                for index, call in enumerate(calls, 1)
+            ]
+            message['content'] = m.content or 'The previous tool response could not be decoded.'
+        elif m.tool_calls:
+            message['tool_calls']=[c.model_dump(exclude_none=True) for c in m.tool_calls]
         # Preserve provider continuation state for thinking-mode tool calls.
         if getattr(m,'reasoning_content',None) is not None:message['reasoning_content']=m.reasoning_content
         return Decision(m.content or '',calls,message,provider_usage(response),choice.finish_reason)

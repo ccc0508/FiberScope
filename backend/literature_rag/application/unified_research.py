@@ -273,6 +273,7 @@ class ResearchChecklist(CoveragePriority):
         self.rejections = []
         self.locked = False
         self.evidence_submissions = []
+        self.published_requirements = set()
 
     @property
     def submission_format(self):
@@ -337,6 +338,16 @@ class ResearchChecklist(CoveragePriority):
                 schema["required"].remove(key)
                 if not self.locked:
                     schema["properties"].pop(key)
+            if (goal_search and not self.locked and tool in EVIDENCE_LOOKUP_TOOLS["sql"]
+                    and any(item["role"] == "sql" and item["requirement_id"] in self.published_requirements
+                            for item in self.requirements)):
+                schema["properties"]["target_requirements"] = dict(
+                    type="array", items=dict(type="string"), minItems=1, maxItems=20,
+                    description="Use SQL need IDs already returned in a prior tool result. "
+                                "If registering or refining the requirement in this call, use initial_targets instead.",
+                )
+                if "requirements" in schema["required"]:
+                    schema["required"].remove("requirements")
             if ((self.evidence_only or goal_search) and not self.locked
                     and any(tool in tools for tools in EVIDENCE_LOOKUP_TOOLS.values())
                     and not (goal_search and tool == "search_literature")):
@@ -553,6 +564,18 @@ class ResearchChecklist(CoveragePriority):
                         scheduled=[dict(index=i, target=need) for i, need, _ in operations])
         if errors:
             feedback["errors"] = errors
+            recovery = {
+                "invalid_query_entry": "Use one object with target, query and optional document_id per entry.",
+                "invalid_goal": ("Use the 1-based position of an accepted requirement in this request."
+                                 if not self.locked else "Use the listed unresolved literature need ID for target."),
+                "duplicate_goal": "Use one query per goal in this batch. Remove the duplicate target.",
+                "invalid_goal_document": "Use the verified document_id from the paper directory. If the named paper is unavailable, state that gap.",
+                "goal_document_mismatch": "Replace document_id with one listed in expected_document_ids for this goal.",
+                "invalid_query": "Provide a non-empty query string about the required evidence and keep the same goal.",
+            }
+            feedback["recovery_guidance"] = " ".join(
+                f"queries[{error['index'] - 1}]: {recovery[error['code']]}" for error in errors
+            )
             if not self.locked and any(error["code"] == "invalid_goal" for error in errors):
                 feedback["notice"] = INITIAL_TASK_NOTICE + " Each query's target is its task's position."
         if raw or rejected or normalized:
@@ -579,7 +602,36 @@ class ResearchChecklist(CoveragePriority):
             **({"normalized": normalized} if normalized else {}),
         }
 
-    def prepare(self, request, trace, *, initial_target=None, require_task_binding=False):
+    def _initial_sql_binding(self, positions, ids, assigned, eligible, visible):
+        current = list(dict.fromkeys(target for target in assigned.values() if target in eligible))
+        shown = sorted(eligible & visible)
+        details = dict(available_requirement_ids=shown,
+                       valid_initial_positions=[index for index, target in assigned.items() if target in eligible])
+        if positions is not None:
+            if ids is not None:
+                return [], dict(details, issue="multiple_sql_binding_selectors")
+            if (not isinstance(positions, list) or not positions
+                    or any(type(index) is not int or assigned.get(index) not in eligible for index in positions)):
+                return [], dict(details, issue="invalid_initial_targets")
+            return list(dict.fromkeys(assigned[index] for index in positions)), details
+        if ids is not None:
+            if not isinstance(ids, list) or not ids or any(not isinstance(item, str) or item not in shown for item in ids):
+                return [], dict(details, issue="unavailable_target_requirements")
+            # A newly verified field can refine the same SQL deliverable.
+            # Keep the role, verbatim scope and deliverable identical.
+            items = {item["requirement_id"]: item for item in self.requirements}
+            keys = ("role", "source_quote", "paper_quote", "deliverable")
+            if current and set(current) != set(ids):
+                if (len(current) == len(set(ids)) == 1
+                        and all(items[current[0]].get(key) == items[ids[0]].get(key) for key in keys)):
+                    return current, dict(details, normalization="bound_to_refined_sql_requirement")
+                return [], dict(details, issue="conflicting_sql_bindings")
+            return list(dict.fromkeys(ids)), details
+        if len(current) == 1:
+            return current, details
+        return [], dict(details, issue="missing_sql_binding")
+
+    def prepare(self, request, trace, *, initial_target=None, require_task_binding=False, visible_requirement_ids=None):
         request = dict(request)
         raw = request.pop("requirements", [])
         assigned = {}
@@ -588,16 +640,24 @@ class ResearchChecklist(CoveragePriority):
         lookup_role = next((role for role, tools in EVIDENCE_LOOKUP_TOOLS.items() if request["tool"] in tools), None)
         eligible = {item["requirement_id"] for item in self.requirements if item["role"] == lookup_role}
         binding_error = False
+        binding_details = None
+        visible = self.published_requirements if visible_requirement_ids is None else visible_requirement_ids
         if not isinstance(raw, list):
             rejected.append({"reason": "invalid_requirements", "invalid_fields": ["requirements"],
                              "errors": [{"type": "list_type", "msg": "Expected a list of task objects"}]})
         if not self.locked:
             # A tool decision cannot reference IDs assigned after that decision.
-            request.pop("target_requirements", None)
+            prior_ids = request.pop("target_requirements", None)
             request.pop("coverage_updates", None)
             request.pop("revisit_reason", None)
             if initial_target:
                 request["target_requirements"] = [initial_target]
+            elif require_task_binding and lookup_role == "sql" and not trace.get("evidence_supplement_requested"):
+                targets, binding_details = self._initial_sql_binding(
+                    positions, prior_ids, assigned, eligible, visible,
+                )
+                request["target_requirements"] = targets
+                binding_error = bool(binding_details.get("issue"))
             elif (self.evidence_only or require_task_binding) and lookup_role:
                 if positions is not None:
                     if (isinstance(positions, list) and positions and all(
@@ -630,6 +690,10 @@ class ResearchChecklist(CoveragePriority):
             elif not self.evidence_only and len(self.requirements) == 1:
                 request.setdefault("target_requirements", [self.requirements[0]["requirement_id"]])
         request, schedule = super().prepare(request, trace)
+        if binding_details is not None:
+            schedule["binding_details"] = dict(binding_details, phase="registration")
+        elif self.locked and lookup_role == "sql" and not supplement:
+            schedule["binding_details"] = dict(phase="locked", available_requirement_ids=sorted(eligible & visible))
         if ignored_fields:
             schedule["ignored_coverage_fields"] = ignored_fields
         if not self.locked and "missing_or_unknown_target_requirements" in schedule["errors"]:

@@ -17,6 +17,7 @@ from literature_rag.application.agent_loop import AgentLoop,AgentBudget
 from literature_rag.adapters.providers.agent_chat import ChatAgentAdapter
 from literature_rag.config import Settings
 from literature_rag.application.context import DISCONTINUOUS_SEPARATOR
+from literature_rag.application.tool_feedback import executor_failure
 from literature_rag.application.tools import MAX_PARALLEL_SEARCHES, SHARED_SEARCH_HITS_PER_DOCUMENT, ToolTraceStore
 from literature_rag.diagnostics import (
     TOOL_WORKER_ERROR_PREFIX, sanitize_worker_exception_details, worker_exception_details,
@@ -174,8 +175,11 @@ def execute_parallel_searches(executions, run_id, timeout, *, execute, trace_sto
             return dict(status='failed', error_code='tool_timeout')
         document = request.get('document_id')
         shared = assemble is not None and document and document_counts[document] > 1
-        return execute(request, run_id, remaining, context=context, defer_search_registration=True,
-                       **({'rank_search_only': True} if shared else {}))
+        try:
+            return execute(request, run_id, remaining, context=context, defer_search_registration=True,
+                           **({'rank_search_only': True} if shared else {}))
+        except Exception as error:
+            return executor_failure(error)
 
     with ThreadPoolExecutor(max_workers=min(MAX_PARALLEL_SEARCHES, len(executions))) as pool:
         futures = [pool.submit(search, request, context)
@@ -187,21 +191,29 @@ def execute_parallel_searches(executions, run_id, timeout, *, execute, trace_sto
             document = request.get('document_id')
             if record is not None and assemble is not None and document and document_counts[document] > 1:
                 batches[document].append(record)
-        assemblies = [pool.submit(finalize_shared_search, records, run_id, deadline - monotonic(),
-                                  assemble=assemble, context_limits=context_limits)
+        assemblies = [(records, pool.submit(finalize_shared_search, records, run_id, deadline - monotonic(),
+                                            assemble=assemble, context_limits=context_limits))
                       for records in batches.values()]
-        for future in assemblies:
-            future.result()
+        for records, future in assemblies:
+            try:
+                future.result()
+            except Exception as error:
+                for record in records:
+                    record.update(executor_failure(error))
+                    record.pop('result', None)
     for result in results:
         record = result.get('deferred_search_record')
         if record is not None:
-            if record['status'] == 'completed':
-                trace_store.complete(record)
-                result = dict(call_id=record['call_id'], status=record['status'], result=record['result'])
-            else:
-                trace_store.save(record)
-                result = {key: record[key] for key in ('call_id', 'status', 'error_code', 'worker_diagnostic')
-                          if key in record}
+            try:
+                if record['status'] == 'completed':
+                    trace_store.complete(record)
+                    result = dict(call_id=record['call_id'], status=record['status'], result=record['result'])
+                else:
+                    trace_store.save(record)
+                    result = {key: record[key] for key in ('call_id', 'status', 'error_code', 'worker_diagnostic')
+                              if key in record}
+            except Exception as error:
+                result = executor_failure(error)
         yield result
 
 
@@ -213,11 +225,8 @@ def main():
     p.add_argument('--child',action='store_true',help=argparse.SUPPRESS)
     p.add_argument('--prompt-file',type=Path,help='Evaluation only: frozen PROMPT and REVIEW_PROMPT JSON; does not change website defaults')
     p.add_argument('--architecture',choices=['single','specialists'],default='single')
-    p.add_argument('--intent-evaluation-case', help='Development only: use a registered public-search fixture.')
     p.add_argument('--no-task-feedback',action='store_true',help='Specialists only: limit each selected role to one invocation for comparison.')
     a=p.parse_args();run_id=a.run_id or str(uuid4())
-    if a.intent_evaluation_case and (a.architecture != 'single' or a.prompt_file):
-        p.error('--intent-evaluation-case requires the current single agent')
     if a.no_task_feedback and a.architecture!='specialists':p.error('--no-task-feedback requires --architecture specialists')
     if a.max_model_calls is None:a.max_model_calls=20 if a.architecture=='specialists' else 10
     if a.seconds is None:a.seconds=360 if a.architecture=='specialists' else 240
@@ -235,8 +244,6 @@ def main():
         args.extend(['--architecture',a.architecture])
         if a.no_task_feedback:args.append('--no-task-feedback')
         if a.prompt_file:args.extend(['--prompt-file',str(a.prompt_file.resolve())])
-        if a.intent_evaluation_case:
-            args.extend(['--intent-evaluation-case', a.intent_evaluation_case])
         proc=subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
             start_new_session=os.name!='nt',
             creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
@@ -313,13 +320,6 @@ def main():
     unified = a.architecture == 'single' and not a.prompt_file
     directory = ([] if unified and not (a.library / 'metadata.sqlite3').is_file()
                  else load_paper_directory(a.library))
-    public_search = None
-    if a.intent_evaluation_case:
-        from app.evaluation_intent import IntentSearchFixture, replay_intent_boundary
-        public_search = IntentSearchFixture(a.intent_evaluation_case, a.question)
-    elif unified and settings.web_search_api_key and settings.web_search_api_key.get_secret_value().strip():
-        from literature_rag.adapters.providers.public_web import BravePublicSearch
-        public_search = BravePublicSearch(settings.web_search_api_key.get_secret_value().strip())
     loop=AgentLoop
     if a.architecture=='specialists':
         from literature_rag.application.specialist_agent import ResultDrivenCoordinator
@@ -327,16 +327,11 @@ def main():
     try:
         options=(dict(feedback_enabled=not a.no_task_feedback) if a.architecture=='specialists'
                  else dict(unified_research=bool(unified),
-                           first_turn_intent=bool(unified), public_search=public_search,
+                           first_turn_intent=bool(unified),
                            evidence_supplement_enabled=False,
                            parallel_search_executor=parallel_search if unified else None))
         result=loop(ChatAgentAdapter(settings),execute,checkpoint,b,paper_directory=directory,**options).run(a.question,run_id)
-        if a.intent_evaluation_case:
-            result['intent_evaluation'] = dict(
-                case_id=a.intent_evaluation_case, transport_queries=public_search.queries,
-                replay=replay_intent_boundary(a.intent_evaluation_case, a.question) or {},
-            )
-            checkpoint(result)
+        checkpoint(result)
     finally:
         telemetry.close()
         telemetry.flush()

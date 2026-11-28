@@ -1,179 +1,266 @@
-"""Validate the first decision's scopes before any external lookup."""
+"""Validate and schedule the single agent's local task workflow."""
 
+from collections import defaultdict
 import re
-import unicodedata
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError
+
+from .evidence_acceptance import EVIDENCE_LOOKUP_TOOLS
+from .citation_policy import citation_records
 
 
 PLAN_TOOL = "declare_question_tasks"
-MAX_WEB_SEARCHES = 2
-LOCAL_ROLES = frozenset({"literature", "sql"})
-CROSS_SCOPE_DEPENDENCY = "cross-scope-dependency"
-PUBLIC_PREFIX = re.compile(
-    r"^(?:(?:然后|另外|顺便|also\b|and\b)\s*)?(?:请\s*)?(?:(?:联网|上网|(?:在)?网上)(?:查询?|搜索|搜)|"
-    r"search (?:the )?web(?: for)?|look up online)\s*[:：]?\s*", re.I,
+PUBLISH_TOOL = "publish_task_output"
+LOCAL_ROLES = frozenset(EVIDENCE_LOOKUP_TOOLS)
+TaskID = Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]{0,39}$")]
+CONFIRM = re.compile(r"先(?:问我|(?:向|和|跟)我确认)|等我(?:确认|提供|指定|回复)|"
+                     r"(?:需要|必须)先明确[^，。；！？\n]{0,24}(?:门槛|阈值)|"
+                     r"\b(?:ask me first|wait for my (?:confirmation|reply))\b", re.I)
+EXPLICIT_PAPER_LOOKUP = re.compile(
+    r"(?:(?:去|在|从)(?:本地)?文献库(?:里|中)?\s*(?:检索|查|找|搜)|(?:检索|搜索|查阅)(?:本地)?文献库)"
 )
-PUBLIC_CLAUSE_START = re.compile(
-    r"(?:^|[\n，,。；;：:！？?!])\s*(?:(?:然后|另外|顺便|also\b|and\b)\s*)?(?:请\s*)?$", re.I,
-)
-CONFIRM_WITH_USER = re.compile(
-    r"先(?:问我|(?:向|和|跟)我确认)|等我(?:确认|提供|指定|回复)|"
-    r"(?:需要|必须)先明确(?P<parameter>[^，。；！？\n]{1,24}?(?:门槛|阈值))|"
-    r"\b(?:ask me first|wait for my (?:confirmation|reply))\b", re.I,
-)
-OFFLINE_REQUEST = re.compile(
-    r"(?:不(?:要|得|用|许|使用|允许)?|禁止|无需|勿)\s*(?:联网|上网|网上|网络搜索|(?:搜索|访问)互联网)|"
-    r"\b(?:do not|don't|never|no)\s+(?:use\s+(?:the\s+)?)?(?:web|internet|online|search the web)\b", re.I,
-)
-PRIVATE_SCOPE = re.compile(
-    r"(?:本地|内部|未公开|我们的|我(?:的)?(?:实验|数据|样本|论文)|数据库|文献库|科研|论文|实验数据|"
-    r"纸浆|纤维素|植物纤维|打浆|抗张|粗度|造纸|上述|前面|刚才|该(?:值|结果|样本|试验)|"
-    r"\b(?:fiberscope|postgres(?:ql)?|paper|research|thesis|pulp|papermaking|cellulose|tensile|dataset|private|internal)\b|"
-    r"\b(?:api[_ -]?key|password|secret|bearer)\b|"
-    r"(?:doc|need|txt|blend|sample)[_-][\w-]+|https?://|[/\\@=`\[\]])", re.I,
-)
+NEGATED_PAPER_LOOKUP = re.compile(r"(?:不必|不用|不需要|不要|禁止|不允许|别)\s*(?:再|去|在|从)?(?:本地)?文献库")
 
 
-class TaskScope(BaseModel):
-    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+class InitialDecisionFormatError(ValueError):
+    def __init__(self, code, raw, usage, finish_reason):
+        super().__init__(code)
+        self.code, self.raw, self.usage, self.finish_reason = code, raw, usage, finish_reason
 
-    id: str = Field(pattern=r"^[a-z][a-z0-9_]{0,23}$")
-    kind: Literal["direct", "web", "literature", "sql", "clarify"]
+
+class StrictModel(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True, str_strip_whitespace=True)
+
+
+class Dependency(StrictModel):
+    task_id: TaskID
+    outputs: list[TaskID] = Field(min_length=1, max_length=8)
+
+
+class FirstAction(StrictModel):
+    name: str
+    arguments: dict
+
+
+class Task(StrictModel):
+    id: TaskID
     source_quote: str = Field(min_length=2, max_length=2000)
-    depends_on: list[str] = Field(default_factory=list, max_length=10)
-    clarification: str | None = Field(default=None, min_length=2, max_length=300)
+    goal: str = Field(min_length=2, max_length=2000)
+    depends_on: list[Dependency] = Field(default_factory=list, max_length=12)
 
 
-class QuestionPlan(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+class ResearchTask(Task):
+    kind: Literal["sql", "literature"]
+    paper_quote: str = Field(default="", max_length=200)
+    first_action: FirstAction | None = None
 
-    tasks: list[TaskScope] = Field(min_length=1, max_length=16)
+
+class DirectTask(Task):
+    kind: Literal["direct"]
 
 
-PLAN_SCHEMA = QuestionPlan.model_json_schema()
+class ClarifyTask(Task):
+    kind: Literal["clarify"]
+    clarification: str = Field(min_length=2, max_length=300)
+
+
+class Workflow(StrictModel):
+    type: Literal["workflow"]
+    tasks: list[Annotated[ResearchTask | DirectTask | ClarifyTask, Field(discriminator="kind")]] = Field(
+        min_length=1, max_length=16,
+    )
+
+
+class DirectAnswer(StrictModel):
+    type: Literal["answer"]
+    answer: str = Field(min_length=1)
+
+
+class PublishOutput(StrictModel):
+    task_id: TaskID
+    output: TaskID
+    ref: str = Field(pattern=r"^\[[1-9][0-9]*\]$")
+    quote: str | None = Field(default=None, min_length=1, max_length=2400,
+                              description="An exact excerpt from the source text, for literature output.")
+    column: str | None = Field(default=None, min_length=1, max_length=200,
+                               description="The exact returned column name, for SQL output.")
+    row_index: int | None = Field(default=None, ge=0, description="Zero-based result row, for SQL output.")
+
+
+FIRST_DECISION = TypeAdapter(Annotated[DirectAnswer | Workflow, Field(discriminator="type")])
+PUBLISH_SCHEMA = PublishOutput.model_json_schema()
 FIRST_DECISION_GUIDANCE = """
-Classify intent and choose the first ready tools in this same decision.
-For a single direct task, return its answer now. For a clear research request, its existing local
-tool calls and requirements already declare intent. Never use web for research, papers or experiment data.
-For web, clarification, or mixed direct/research tasks, include a task plan in this decision.
-Include separate verbatim user clauses (source_quote); exclude shared formatting instructions.
-Only a clarification and its dependent task may quote overlapping text.
-Use literature for local papers, sql for local measurements, direct for general knowledge or date/time,
-web for day-to-day public facts needing a current lookup, clarify for a necessary missing choice.
-Give the clarify task a short user-facing question. Use clarify instead of a lookup for a clause
-that lacks an essential user choice, such as a requested threshold with no value. Never invent a
-choice or derive a substitute from database statistics. Link separate clauses requiring that choice
-using depends_on.
-Tasks needing clarification or depending on it must wait. Dispatch independent ready local lookups
-now, with existing requirements whose source_quote lies within a matching ready
-literature or sql task. If both local and public information are requested, the user must explicitly ask
-for a web lookup in the public clause. Copy that clause as written, including the user's web instruction.
-The runtime fixes and searches only the public query from that clause. Never generate or revise a web query
-using other tasks or local results. In mixed requests leave direct items for final composition.
-If a date/time is needed, use the runtime clock below. Never search for the current weekday in that timezone.
-If a current public fact needs a lookup and web search is unavailable, still register it as web. Do not guess.
+Use the runtime Asia/Shanghai clock for date, weekday and time. Public web lookup is unavailable.
+Use type=answer for a direct answer, including when current external information cannot be verified.
+For local research use type=workflow. Quote exact spans of the user question in source_quote.
+Use sql, literature, direct (an independent everyday item in a mixed question), or clarify.
+Use clarify with a user-facing question when an essential choice is missing. Link affected tasks
+to that clarification. Continue the independent tasks. Do not guess missing conditions.
+Use depends_on entries {task_id,outputs} when a task really needs a prerequisite result.
+Include EVERY requested step in tasks, including a lookup that will run only later. A phrase like
+“先查本地样本实际浆种，再按查到的浆种去文献库找论文” needs two tasks: sql, then literature
+depending on the sql task's output (e.g. display_name). If a paper determines the metric to query,
+register literature then sql with the paper definition as a required output. Do not stop the plan
+at the first lookup or put the downstream lookup into the upstream goal.
+Name SQL outputs after SELECT aliases when possible. For literature use meaningful short output keys.
+Register later stages without first_action. Add first_action only to research tasks without dependencies,
+using an offered local lookup and its exact parameters. Include one first_action per independent ready
+research task when its parameters are known. Do not include internal requirement IDs in first_action.
+For SQL, first get the view's fields. For a named paper use a verified document ID; use read_table only
+with a known table number or chunk ID. Keep result formatting requests for the final answer.
 """
 
 
-def _public_query(question, task, mixed):
-    clause = task.source_quote
-    prefix = PUBLIC_PREFIX.match(clause)
-    if OFFLINE_REQUEST.search(unicodedata.normalize("NFKC", question)):
-        return None
-    position = question.index(clause)
-    if prefix and position and not PUBLIC_CLAUSE_START.search(question[:position]):
-        return None
-    if not prefix and (mixed or question.strip(" \t\n。！？?!") != clause.strip(" \t\n。！？?!")):
-        return None
-    query = clause[prefix.end():].strip(" \t。！？?!") if prefix else clause.strip(" \t。！？?!")
-    normalized = unicodedata.normalize("NFKC", query)
-    if (not 2 <= len(query) <= 160 or PRIVATE_SCOPE.search(normalized)
-            or any(c in normalized for c in "\r\n,;，；。!?")
-            or any(unicodedata.category(c).startswith("C") for c in normalized)):
-        return None
-    return query
+def validate_workflow(workflow, question):
+    tasks = {task.id: task for task in workflow.tasks}
+    if len(tasks) != len(workflow.tasks):
+        raise ValueError("Use a unique id for each task.")
+    if not any(task.kind != "direct" for task in tasks.values()):
+        raise ValueError("Use type=answer for a wholly direct request.")
+    if (EXPLICIT_PAPER_LOOKUP.search(question) and not NEGATED_PAPER_LOOKUP.search(question)
+            and not any(task.kind == "literature" for task in tasks.values())):
+        raise ValueError("The user explicitly requested a literature lookup. Register that task even if it must wait for SQL.")
+    ancestors = {}
 
+    def visit(task_id, seen):
+        if task_id in seen:
+            raise ValueError(f"Task {task_id} has a circular dependency. Split repeated lookups into ordered tasks.")
+        if task_id not in ancestors:
+            parents = [item.task_id for item in tasks[task_id].depends_on]
+            if (len(set(parents)) != len(parents)
+                    or any(parent not in tasks or tasks[parent].kind == "direct" for parent in parents)):
+                raise ValueError(f"{task_id}.depends_on must list unique research or clarification task IDs in this plan.")
+            ancestors[task_id] = set(parents).union(*(visit(p, seen | {task_id}) for p in parents))
+        return ancestors[task_id]
 
-def validate_plan(arguments, question):
-    plan = QuestionPlan.model_validate(arguments)
-    tasks = {task.id: task for task in plan.tasks}
-    if len(tasks) != len(plan.tasks) or sum(task.kind == "web" for task in plan.tasks) > MAX_WEB_SEARCHES:
-        raise ValueError("invalid_task_count")
-    ranges = {}
-    for task in plan.tasks:
+    for task in tasks.values():
         start = question.find(task.source_quote)
         if start < 0 or question.find(task.source_quote, start + 1) >= 0:
-            raise ValueError("source_quote_must_be_unique_and_verbatim")
-        ranges[task.id] = (start, start + len(task.source_quote))
-        if bool(task.clarification) != (task.kind == "clarify") or set(task.depends_on) - tasks.keys():
-            raise ValueError("invalid_clarification_or_dependency")
+            raise ValueError(f"{task.id}.source_quote must be one exact, uniquely occurring span of the user question.")
+        visit(task.id, set())
+        if task.kind in LOCAL_ROLES:
+            end = start + len(task.source_quote)
+            tail = re.split(r"[。；;！？!?\n]", question[end:], maxsplit=1)[0]
+            if CONFIRM.search(task.source_quote + tail) and not any(
+                tasks[ancestor].kind == "clarify" for ancestor in ancestors[task.id]
+            ):
+                raise ValueError(f"{task.id} requires a clarify prerequisite before any lookup.")
 
-    pending_by_task = {}
 
-    def blockers(task_id, visiting):
-        if task_id in visiting:
-            raise ValueError("cyclic_dependencies")
-        if task_id in pending_by_task:
-            return pending_by_task[task_id]
-        task = tasks[task_id]
-        parents = [tasks[parent] for parent in task.depends_on]
-        pending = set().union(*(blockers(parent.id, visiting | {task_id}) for parent in parents))
-        if task.kind == "clarify":
-            pending.add(task_id)
-        elif any((parent.kind == "web") != (task.kind == "web") for parent in parents
-                 if parent.kind != "clarify"):
-            # Separate evidence scopes cannot feed one another.
-            pending.add(CROSS_SCOPE_DEPENDENCY)
-        pending_by_task[task_id] = pending
-        return pending
+class WorkflowSchedule:
+    """Unlock tasks only when their named outputs have verifiable delivered sources."""
 
-    for index, task in enumerate(plan.tasks):
-        start, end = ranges[task.id]
-        for other in plan.tasks[:index]:
-            left, right = ranges[other.id]
-            if start >= right or left >= end:
-                continue
-            # A clarification may reuse its dependent clause. Public and
-            # executable local scopes must always have separate source text.
-            if not (task.kind == "clarify" and task.id in blockers(other.id, set())
-                    or other.kind == "clarify" and other.id in blockers(task.id, set())):
-                raise ValueError("overlapping_task_scopes")
+    def __init__(self, workflow):
+        self.tasks = {task.id: task for task in workflow.tasks}
+        self.required = defaultdict(set)
+        for task in self.tasks.values():
+            for dependency in task.depends_on:
+                self.required[dependency.task_id].update(dependency.outputs)
+        self.outputs = defaultdict(dict)
+        self.evidence = defaultdict(dict)
+        self.attempted = set()
+        self.directories = set()
+        self.requirements = {}
 
-    # Preserve an explicit request to settle a missing choice before doing the
-    # lookup, even when the model labels that clause as a ready SQL task.
-    for task in plan.tasks:
-        if task.kind not in LOCAL_ROLES:
-            continue
-        if blockers(task.id, set()) & tasks.keys():
-            continue
-        _, end = ranges[task.id]
-        before_next_clause = re.split(r"[。；;！？!?\n]", question[end:], maxsplit=1)[0]
-        confirmation = CONFIRM_WITH_USER.search(task.source_quote + before_next_clause)
-        if confirmation:
-            parameter = confirmation.group("parameter")
-            tasks[task.id] = task.model_copy(update={
-                "kind": "clarify",
-                "clarification": f"请明确{parameter}。" if parameter else "请补充这项查询所需的条件。",
-            })
-            pending_by_task.clear()
-    resolved = []
-    for task in tasks.values():
-        pending = blockers(task.id, set())
-        result = task.model_dump(exclude_none=True)
-        result.update(status="waiting" if pending else "ready", blocked_by=sorted(pending))
-        if task.kind == "clarify" and pending == {task.id}:
-            result["status"] = "ask"
-        if task.kind == "web" and not pending:
-            query = _public_query(question, task, len(tasks) > 1)
-            if query is None:
-                result["status"] = "web_scope_unconfirmed"
+    def missing(self, task):
+        return {dep.task_id: sorted(set(dep.outputs) - self.outputs[dep.task_id].keys())
+                for dep in task.depends_on if not set(dep.outputs) <= self.outputs[dep.task_id].keys()}
+
+    def ready(self, task):
+        return task.kind in LOCAL_ROLES and not self.missing(task)
+
+    def snapshot(self, *, final=False):
+        rows = []
+        for task in self.tasks.values():
+            missing = self.missing(task)
+            outputs = self.outputs[task.id]
+            row = task.model_dump(exclude={"first_action"}, exclude_none=True)
+            if missing:
+                status = "unresolved" if final else "waiting"
+            elif task.kind == "clarify":
+                status = "ask"
+            elif task.kind == "direct":
+                status = "answer_with_workflow"
+            elif self.required[task.id] and self.required[task.id] <= outputs.keys():
+                status = "outputs_ready"
+            elif final:
+                status = "evidence_collected" if self.evidence[task.id] else "unresolved"
             else:
-                result["query"] = query
-        resolved.append(result)
-    return resolved
+                status = "ready"
+            row.update(status=status, missing_inputs=missing,
+                       missing_outputs=sorted(self.required[task.id] - outputs.keys()))
+            if task.id in self.requirements:
+                row["requirement_id"] = self.requirements[task.id]
+            if outputs:
+                row["outputs"] = outputs.copy()
+            rows.append(row)
+        return rows
+
+    def record(self, task_id, tool, result):
+        if result["status"] != "completed":
+            return
+        if tool == "describe_experiment_data":
+            self.directories.add(task_id)
+        if tool == "query_experiment_data" or tool in {"search_literature", "read_table", "read_section", "view_image"}:
+            self.attempted.add(task_id)
+        for record in citation_records(tool, result):
+            self.evidence[task_id][record["ref"]] = (tool, result["result"])
+            if tool == "query_experiment_data":
+                data = result["result"]
+                if len(data.get("rows", [])) == 1 and not data.get("truncated"):
+                    for key in self.required[task_id] - self.outputs[task_id].keys():
+                        if data.get("columns", []).count(key) == 1:
+                            value = data["rows"][0][data["columns"].index(key)]
+                            if usable(value):
+                                self.outputs[task_id][key] = dict(ref=record["ref"], value=value, column=key, row_index=0)
+
+    def publish(self, raw, earlier_sources):
+        try:
+            proof = PublishOutput.model_validate(raw)
+        except ValidationError as error:
+            return failure("invalid_output_selector", validation_message(error))
+        if proof.output not in self.required.get(proof.task_id, ()):
+            return failure("unknown_output", "Use an outstanding output key from the workflow for this task.")
+        if proof.output in self.outputs[proof.task_id]:
+            return failure("output_already_published", "Reuse the immutable value already supplied for this output.")
+        source = earlier_sources.get(proof.task_id, {}).get(proof.ref)
+        if not source:
+            return failure("output_source_unavailable", "Use evidence already delivered for this exact task in an earlier turn.")
+        tool, data = source
+        if tool == "query_experiment_data":
+            cols, rows = data.get("columns", []), data.get("rows", [])
+            if (proof.quote is not None or cols.count(proof.column) != 1 or proof.row_index is None
+                    or proof.row_index >= len(rows) or data.get("truncated")):
+                return failure("invalid_output_cell", "Select an exact column and row_index from a complete SQL result.")
+            value = rows[proof.row_index][cols.index(proof.column)]
+        else:
+            entries = {"search_literature": data.get("evidence", []), "read_section": data.get("sources", []),
+                       "read_table": [data.get("table", {})]}.get(tool, [])
+            value = proof.quote
+            if (not value or proof.column is not None or proof.row_index is not None or not any(
+                entry.get("ref") == proof.ref and value in entry.get("text", "") for entry in entries
+            )):
+                return failure("invalid_output_quote", "Copy an exact excerpt supporting this output from the specified paper reference.")
+        if not usable(value):
+            return failure("empty_output", "The selected value is empty or NULL. Obtain usable evidence before publishing this output.")
+        saved = proof.model_dump(exclude={"task_id", "output", "quote"}, exclude_none=True)
+        self.outputs[proof.task_id][proof.output] = dict(saved, value=value)
+        return dict(status="completed", result=dict(task_id=proof.task_id, output=proof.output, **self.outputs[proof.task_id][proof.output]))
 
 
-def rejection_code(error):
-    return "invalid_task_declaration" if isinstance(error, ValidationError) else str(error)
+def usable(value):
+    if isinstance(value, str):
+        return bool(value.strip())
+    return value is not None and value != [] and value != {}
+
+
+def failure(code, notice):
+    return dict(status="blocked", error_code=code, notice=notice, recovery_guidance=notice)
+
+
+def validation_message(error):
+    return " ".join(
+        f"{'.'.join(map(str, item['loc']))}: {item['msg']}" for item in
+        error.errors(include_input=False, include_context=False, include_url=False)[:8]
+    )

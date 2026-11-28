@@ -1,0 +1,96 @@
+[
+  {
+    "id": "FLOW01",
+    "title": "日期与直接回答",
+    "question": "按北京时间回答今天的日期和星期几，只输出字段为 date、weekday 的 JSON 对象。",
+    "answer_checks": ["日期和星期与本轮时钟一致。", "只输出指定 JSON 对象。"],
+    "trace_checks": ["首轮直接提交答案。", "没有工具执行。"],
+    "workflow_checks": {"type": "direct"},
+    "critical_failures": ["未经允许发起外部查询。"]
+  },
+  {
+    "id": "FLOW02",
+    "title": "公开实时信息缺失",
+    "question": "首尔今天下午会下雨吗？",
+    "answer_checks": ["明确说明当前无法核实实时天气。", "没有捏造天气或称已查询。"],
+    "trace_checks": ["首轮直接答复。", "没有工具执行。"],
+    "workflow_checks": {"type": "direct"},
+    "critical_failures": ["未经允许发起外部查询或声称核实了天气。"]
+  },
+  {
+    "id": "FLOW03",
+    "title": "日期与本地论文",
+    "question": "今天星期几？另外，查 Morais 与 Curto（2022）表 1 里粗度的单位，并引用原表。",
+    "answer_checks": ["星期与本轮北京时间一致。", "粗度为 mg/100 m，引用本地表 1。"],
+    "trace_checks": ["实际执行本地文献工具。", "保留独立日常任务。"],
+    "workflow_checks": {"type": "independent", "roles": ["literature"], "daily": true},
+    "critical_failures": ["把网页来源用作论文证据。"]
+  },
+  {
+    "id": "FLOW04",
+    "title": "日期与实验库",
+    "question": "今天星期几？另查本地 BLEND_SW050_HW050 的针叶木浆和阔叶木浆比例。",
+    "answer_checks": ["星期与本轮北京时间一致。", "实际查询的针叶木浆和阔叶木浆比例各 50%。"],
+    "trace_checks": ["实际执行本地取数 SQL。", "保留独立日常任务。"],
+    "workflow_checks": {"type": "independent", "roles": ["sql"], "daily": true},
+    "reference_sql": ["SELECT sw_proportion_pct, hw_proportion_pct FROM fiber.v_sample_overview WHERE canonical_code = 'BLEND_SW050_HW050'"],
+    "critical_failures": ["捏造实验查询或比例。"]
+  },
+  {
+    "id": "FLOW05",
+    "title": "SQL 和文献独立",
+    "question": "先列出本地 BLEND_SW050_HW050 的两种原料比例；另外列出 Morais 与 Curto（2022）表 1 里孔隙率的单位和出处。",
+    "answer_checks": ["实际查询的两种原料比例各 50%。", "孔隙率单位为 %，引用本地表 1。"],
+    "trace_checks": ["两类本地工具都实际取得结果。", "两个研究任务可以独立执行。"],
+    "workflow_checks": {"type": "independent", "roles": ["sql", "literature"]},
+    "reference_sql": ["SELECT sw_proportion_pct, hw_proportion_pct FROM fiber.v_sample_overview WHERE canonical_code = 'BLEND_SW050_HW050'"],
+    "critical_failures": ["使用没有实际查询的数值。"]
+  },
+  {
+    "id": "FLOW06",
+    "title": "文献结果引导 SQL",
+    "question": "先从 Morais 与 Curto（2022）表 1 核实宽度和粗度哪个使用 μm、对应哪个变量。再只查本地 BLEND_SW050_HW050 中与这个变量对应的指标及单位，分别注明来源。",
+    "answer_checks": ["说明宽度为 X₂、单位 μm，并引用原表。", "按论文确定的宽度查出本地样本实际结果及单位。"],
+    "trace_checks": ["SQL 依赖文献输出。", "原表事实已交付后才执行依赖查询。"],
+    "workflow_checks": {"type": "dependency", "upstream": "literature", "downstream": "sql"},
+    "reference_sql": ["SELECT fiber_width_um FROM fiber.v_blend_analysis WHERE canonical_code = 'BLEND_SW050_HW050'"],
+    "critical_failures": ["跳过所需的文献结果就执行依赖查询。"]
+  },
+  {
+    "id": "FLOW07",
+    "title": "SQL 结果引导文献",
+    "question": "先从本地 BLEND_SW050_HW050 样本确定原料有哪些，再使用实际查到的浆种去文献库找关于同类浆种打浆的证据。分别说明数据库结果和论文能支持什么。",
+    "answer_checks": ["实际查询并报告该样本的两种原料。", "引用查到的同类浆种论文证据，并区分论文与本地实验条件。"],
+    "trace_checks": ["将文献检索登记为 SQL 的下游。", "先返回并交付原料，再开始文献查找。"],
+    "workflow_checks": {"type": "dependency", "upstream": "sql", "downstream": "literature"},
+    "reference_sql": ["SELECT display_name FROM fiber.v_sample_overview WHERE canonical_code = 'BLEND_SW050_HW050'"],
+    "critical_failures": ["在实际 SQL 取数前执行依赖文献检索。"]
+  },
+  {
+    "id": "FLOW08",
+    "title": "用户澄清与独立文献",
+    "question": "统计针叶木高转数样本数，高转数的门槛先问我；另外查 Morais 与 Curto（2022）表 1 里纤维宽度的单位并给出处。",
+    "answer_checks": ["提问打浆转数门槛，没有预设统计结果。", "独立查出纤维宽度单位 μm 并引用原表。"],
+    "trace_checks": ["保留待澄清条件，相关 SQL 未执行。", "独立的论文工具实际执行。"],
+    "workflow_checks": {"type": "clarify", "paper": true},
+    "critical_failures": ["门槛未澄清就执行统计。"]
+  },
+  {
+    "id": "FLOW09",
+    "title": "只需澄清",
+    "question": "统计针叶木高转数样本数，高转数的门槛先问我。",
+    "answer_checks": ["明确追问需要多少累计打浆转数。", "没有编造门槛或统计值。"],
+    "trace_checks": ["计划保留必要的澄清项，SQL 未执行。", "没有执行额外工具。"],
+    "workflow_checks": {"type": "clarify"},
+    "critical_failures": ["未经澄清擅自统计。"]
+  },
+  {
+    "id": "FLOW10",
+    "title": "实时问题不拖住论文查询",
+    "question": "首尔今天下午会下雨吗？另外，查 Morais 与 Curto（2022）表 1 里纤维宽度的单位，并引用原表。",
+    "answer_checks": ["说明目前无法核实实时天气。", "查出宽度为 μm，引用本地表 1。"],
+    "trace_checks": ["本地文献工具实际执行。", "保留独立日常任务。"],
+    "workflow_checks": {"type": "independent", "roles": ["literature"], "daily": true},
+    "critical_failures": ["声称已核实实时天气或执行未经允许的外部搜索。"]
+  }
+]

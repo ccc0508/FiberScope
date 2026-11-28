@@ -90,6 +90,7 @@ function showRecord(record: HistoryRecord) {
     timeout: "本次问答超时，记录已保存，可以重新提问。",
     provider_error: "模型服务暂不可用，本次失败记录已保存。",
     retrieval_error: "文献检索失败，本次失败记录已保存。",
+    initial_decision_format_failed: "首轮任务计划无法读取，本次失败记录已保存。",
     worker_error: "文献问答处理失败，本次失败记录已保存。",
     service_restarted: "服务在处理期间中断，本次记录已保存，可以重新提问。",
   };

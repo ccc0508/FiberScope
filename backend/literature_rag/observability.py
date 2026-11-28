@@ -119,7 +119,7 @@ class LangfuseTrace:
             node.update(model=call.get('model', self.model),
                         output=redact({k: call.get(k) for k in ('text','calls','raw_message','probabilities')}),
                         usage_details=counts or None, metadata=redact({k: call.get(k) for k in
-                        ('status','finish_reason','error_type','available_tools','usage')}),
+                        ('status','finish_reason','error_type','format_error','format_normalizations','available_tools','usage')}),
                         level='ERROR' if call['status']=='failed' else 'DEFAULT')
             if call['status'] != 'started':
                 self.end(key, node)
@@ -154,6 +154,7 @@ class LangfuseTrace:
         self.root.update(output=redact(state.get('answer')), metadata=redact({
             'status':state['status'], 'budget':state.get('budget_usage'),
             'plan':state.get('plan'), 'question_intent':state.get('question_intent'),
+            'first_decision_recovery':state.get('first_decision_recovery'),
             'stop_reason':state.get('stop_reason'),
             'citation_validation':state.get('citation_validation'),
             'feedback':state.get('feedback'), 'task_schedule':state.get('task_schedule')}))

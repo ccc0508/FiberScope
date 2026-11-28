@@ -61,7 +61,9 @@ def validate_sql(text):
            for node in tree.find_all(exp.DataType)):
         raise ValueError('CAST targets must be allowlisted built-in PostgreSQL scalar types')
     tables = physical_tables(tree) if tree.find(exp.With) else list(tree.find_all(exp.Table))
-    if not tables or any(t.db not in ('', 'fiber') or t.catalog or t.name not in ALLOWED for t in tables):
+    if not tables:
+        raise ValueError('This SELECT has no source view. Replace the placeholder with a query over an allowed fiber analysis view, using fields from describe_experiment_data')
+    if any(t.db not in ('', 'fiber') or t.catalog or t.name not in ALLOWED for t in tables):
         raise ValueError('Every relation, including inside subqueries, must be an allowed fiber analysis view; call describe_experiment_data')
     for table in tables:
         table.set('db', exp.to_identifier('fiber'))
